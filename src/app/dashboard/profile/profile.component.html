@@ -4,7 +4,7 @@
       <div class="user-profile-con">
         <div class="profile-pic-con">
           <div class="profile-pic">
-            <img [src]="profilePicUrl" (error)="onImgError($event)" alt="" width="80px" height="80px">
+            <img [src]="profilePicUrl"  alt="" width="80px" height="80px">
             <div class="file-input-con">
               <label for="profile-pic">
                 <img src="assets/svgs/camera.svg" alt="">
@@ -33,7 +33,7 @@
               <div class="form-row">
                 <div class="form-group col-md-4">
                   <label for="givenName">{{'First name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
                   <div *ngIf="submitted && f1.givenName.errors">
                     <small class="error-msg" *ngIf="f1.givenName.errors.required">{{'Enter first name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.givenName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="middleName">{{'Middle name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
                   <div *ngIf="submitted && f1.middleName.errors">
                     <small class="error-msg" *ngIf="f1.middleName.errors.required">{{'Enter middle name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.middleName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="familyName">{{'Last name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
                   <div *ngIf="submitted && f1.familyName.errors">
                     <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter last name'| translate}}</small>
                     <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only'| translate}}</small>
@@ -186,7 +186,7 @@
                       <div class="container">
                         <div class="form-row">
                           <div class="form-group col-md-12">
-                            <label for="drawSignature">{{'Draw signature'| translate}} * <span class="link"><a (click)="clearSignature()">{{'clear sign'| translate}}</a></span></label>
+                            <label for="drawSignature">{{'Draw signature'| translate}} * <span class="link"><a class="btn p-0" (click)="clearSignature()">{{'clear sign'| translate}}</a></span></label>
                           </div>
                           <div class="col-md-12" id="signature-container">
                             <signature-pad data-test-id="signaturePad" [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
@@ -203,6 +203,7 @@
                             <input type="text" class="form-control" placeholder="{{'Enter signature letters'|translate}}" formControlName="textOfSign" data-test-id="etSignature">
                             <div *ngIf="submitted && f1.textOfSign.errors">
                               <small class="error-msg" *ngIf="f1.textOfSign.errors.required">{{'Enter signature letters'|translate}}</small>
+                              <small class="error-msg" *ngIf="f1.textOfSign.errors.maxlength">{{'Maximum limit 20 characters'|translate}}</small>
                             </div>
                           </div>
                           <div class="form-group col-md-6">
@@ -223,12 +224,12 @@
                       </div>
                     </mat-tab>
 
-                    <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
+                    <!-- <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
                       <ng-container *ngIf="!signatureFile; else signaturePreview">
-                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="50000" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
+                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="49152" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
                         <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFile">
                           <img src="assets/svgs/add-btn-blue-square.svg" alt="" width="48px" height="48px">
-                          <p class="ml-2">{{'Upload a scanned image of your signature.' | translate}}<br> {{'Image size (5kb to 50kb)' | translate}}</p>
+                          <p class="ml-2">{{'Upload a scanned image of your signature. (PNG | JPG | JPEG)' | translate}}<br> {{'having size (5kb to 48kb)' | translate}}</p>
                         </div>
                       </ng-container>
                       <ng-template #signaturePreview>
@@ -239,7 +240,7 @@
                           </button>
                         </div>
                       </ng-template>
-                    </mat-tab>
+                    </mat-tab> -->
                   </mat-tab-group>
                   <p>
                     {{'By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.' | translate}}
@@ -279,9 +280,10 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="registrationNumber">{{'Registration Number'|translate}} *</label>
-                  <input type="text" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistedNum">
+                  <input type="text" maxlength="20" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistedNum">
                   <div *ngIf="submitted && f2.registrationNumber.errors">
                     <small class="error-msg" *ngIf="f2.registrationNumber.errors.required">{{'Enter registration number'|translate}}</small>
+                    <small class="error-msg" *ngIf="f2.registrationNumber.errors.pattern">{{'Enter valid registration number'|translate}}</small>
                   </div>
                 </div>
               </div>
@@ -307,7 +309,7 @@
                       <div class="pretty p-image p-plain">
                         <input type="checkbox" [checked]="item$.selected"/>
                         <div class="state">
-                            <img class="image" src="assets/svgs/checkbox-tick.png">
+                            <img class="image" alt="" src="assets/svgs/checkbox-tick.png">
                             <label>{{item.name}}</label>
                         </div>
                       </div>

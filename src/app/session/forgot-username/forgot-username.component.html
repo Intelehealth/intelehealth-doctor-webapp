@@ -8,11 +8,11 @@
     </div>
     <div class="col-md-12 px-0 py-4">
 
-      <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
+      <ul id="navTabs" ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
         <li [ngbNavItem]="'phone'">
           <a ngbNavLink data-test-id="navMobile">{{'Mobile number'|translate}}</a>
           <ng-template ngbNavContent>
-            <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
+            <form [formGroup]="forgotUsernameForm" id="forgotUsernameByPhone" (ngSubmit)="forgotUsername()">
               <div class="form-group">
                 <label for="phone">
                   {{'Mobile number'|translate}}
@@ -53,7 +53,7 @@
         <li [ngbNavItem]="'email'">
           <a ngbNavLink data-test-id="navEmail">{{'EMAIL'|translate}}</a>
           <ng-template ngbNavContent>
-            <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
+            <form id="forgotUsernameByEmail" [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
               <div class="form-group">
                 <label for="email">
                   {{'EMAIL'|translate}}

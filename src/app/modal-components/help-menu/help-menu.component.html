@@ -4,19 +4,10 @@
 <div mat-dialog-title>
   <div class="d-flex flex-row justify-content-between align-items-center">
     <h6 class="mb-0 font-weight-bold">{{'Help' | translate}}</h6>
-    <!-- <div class="d-flex">
-      <img src="assets/svgs/whatsapp-help-icon.svg" class="mr-2" alt="" width="24px">
-      <img src="assets/svgs/phone-help-icon.svg" alt="" width="24px">
-    </div> -->
   </div>
 </div>
 <mat-dialog-content>
-  <ul class="chat-item-list">
-    <!-- <li class="chat-item timestamp-item">Mon at 5:30 PM</li>
-    <li class="chat-item left">Hi! How to change language?</li>
-    <li class="chat-item">Go to My profile where there is a Change language option. From that list select the preferred language.</li>
-    <li class="chat-item timestamp-item">Mon at 5:41 PM</li>
-    <li class="chat-item left">Hey! I am unable send prescriptions</li> -->
+  <ul class="chat-item-list" style="overflow-x: hidden !important;">
     <ng-container *ngFor="let m of messages; let first = first">
       <li class="chat-item read-status" [class.text-left]="m?.from === 'System Administrator'">
         <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
@@ -35,7 +26,7 @@
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessage">
+  <input type="text" placeholder="{{'Type here'|translate}}" maxlength="255" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessage">
   <button class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessage">
     <mat-icon aria-hidden="false" aria-label="send icon">{{'send'|translate}}</mat-icon>
   </button>

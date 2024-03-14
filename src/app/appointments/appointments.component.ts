@@ -9,7 +9,9 @@ import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData } from '../utils/utility-functions';
+import { getCacheData, checkIfDateOldThanOneDay} from '../utils/utility-functions';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
+import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 
 @Component({
   selector: 'app-appointments',
@@ -24,7 +26,7 @@ export class AppointmentsComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   isLoaded: boolean = false;
-  appointments: any = [];
+  appointments: AppointmentModel[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
@@ -42,44 +44,53 @@ export class AppointmentsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
-    // this.getVisits();
     this.getAppointments();
   }
 
+  /**
+  * Get booked appointments for a logged-in doctor in a current year
+  * @return {void}
+  */
   getAppointments() {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
-      .subscribe((res: any) => {
+    this.appointments = [];
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+      .subscribe((res: ApiResponseModel) => {
         let appointmentsdata = res.data;
-        appointmentsdata.forEach(appointment => {
-          if (appointment.status == 'booked') {
+        appointmentsdata.forEach((appointment: AppointmentModel) => {
+          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
-              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
+              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
           }
         });
-        this.dataSource = new MatTableDataSource(this.appointments);
+        this.dataSource.data = [...this.appointments];
         this.dataSource.paginator = this.paginator;
-        this.dataSource.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
+        this.dataSource.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
   }
 
-  getCheifComplaint2(visit: any) {
-    let recent: any = [];
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string[]} - Chief complaints array
+  */
+  getCheifComplaint(visit: CustomVisitModel): string[] {
+    let recent: string[] = [];
     const encounters = visit.encounters;
-    encounters.forEach(encounter => {
+    encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
-        obs.forEach(currentObs => {
+        obs.forEach((currentObs: CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -90,34 +101,12 @@ export class AppointmentsComponent implements OnInit {
     return recent;
   }
 
-  getVisits() {
-    this.appointments = [];
-    this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
-      if (res) {
-        let visits = res.results;
-        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
-        .subscribe((res: any) => {
-          let appointmentsdata = res.data;
-          appointmentsdata.forEach((appointment: any) => {
-            if (appointment.status == 'booked') {
-              let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-              if (matchedVisit) {
-                matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                appointment.visit_info = matchedVisit;
-                appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                this.appointments.push(appointment);
-              }
-            }
-          });
-          this.dataSource = new MatTableDataSource(this.appointments);
-          this.dataSource.paginator = this.paginator;
-          this.isLoaded = true;
-        });
-      }
-    });
-  }
-
-  checkIfDateOldThanOneDay(data: any) {
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
+  checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
     if(hours > 24) {
@@ -130,86 +119,85 @@ export class AppointmentsComponent implements OnInit {
     return `${hours} hrs`;
   }
 
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    const encounters = visit.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
-      }
-    });
-    return recent;
-  }
-
-  reschedule(appointment: any) {
-    // const len = appointment.visit_info.encounters.filter((e: any) => {
-    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
-    // }).length;
-    const len = appointment.visit.encounters.filter((e: any) => {
-      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
+  /**
+  * Reschedule appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
+  reschedule(appointment: AppointmentModel) {
+    const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
+      return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
       this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+    } else if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
-      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
         if (res) {
           let newSlot = res;
-          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: any) => {
+          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: boolean) => {
             if (result) {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
-              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
                 const message = res.message;
                 if (res.status) {
-                  this.getVisits();
+                  this.getAppointments();
                   this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
                   this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
                 }
               });
             }
-          })
+          });
         }
       });
     }
   }
 
-  cancel(appointment: any) {
-    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
+  /**
+  * Cancel appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
+  cancel(appointment: AppointmentModel) {
+    if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      return;
+    }
+    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
         this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
-        this.getVisits();
+        this.getAppointments();
       }
     });
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  get userId(): string {
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  get userId() {
-    return getCacheData(true,'user').uuid;
-  }
-
+  /**
+  * Apply filter on a datasource
+  * @param {Event} event - Input's change event
+  * @return {void}
+  */
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  /**
+  * Clear filter from a datasource
+  * @return {void}
+  */
   clearFilter() {
     this.dataSource.filter = null;
     this.searchElement.nativeElement.value = "";

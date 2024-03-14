@@ -5,7 +5,8 @@
   font-family: DM Sans;
   background: #E6FFF3;
   border-radius: 12px;
-  padding: 16px 24px;
+  padding: 24px;
+  flex-wrap: wrap;
 
   h6 {
     font-size: 16px;
@@ -19,7 +20,6 @@
     line-height: 150%;
     color: var(--color-green);
     display: flex;
-    margin-bottom: 0px;
   }
 
   .start-call-btn {
@@ -84,6 +84,7 @@
         color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
+        word-break: break-all;
       }
     }
 
@@ -200,7 +201,6 @@
   li .list-item {
     display: flex;
     flex-wrap: nowrap;
-    // align-items: center;
 
     label {
       width: 25%;
@@ -455,7 +455,7 @@
   }
 
   .error-msg {
-    color: var(----color-red);
+    color: var(--color-red);
   }
 }
 
@@ -519,10 +519,6 @@ textarea.form-control {
   border: 1px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
   box-shadow: none;
-
-  // .ng-value-container {
-  //   position: relative;
-  // }
 
   .ng-value-container .ng-input {
     top: 50%;
@@ -643,10 +639,6 @@ tr.mat-row.upcoming {
   background: #E6FFF3 !important;
 }
 
-// tr.mat-row:nth-child(odd){
-//   background: #F7F7FA;
-// }
-
 td.mat-cell:first-child,
 th.mat-header-cell:first-child {
   border-radius: 8px 0 0 8px;
@@ -743,6 +735,32 @@ th.mat-header-cell:last-child {
 }
 
 @media (max-width: 768px) {
+
+  ::ng-deep .visit-summary-tab-group.mat-tab-group {
+
+    .mat-tab-body-wrapper {
+      .mat-tab-body {
+        .mat-tab-body-content {
+          padding: 10px;
+        }
+      }
+    }
+  }
+
+  .intel-card {
+    .card-body {
+      padding: 10px !important;
+    }
+  }
+
+  .patient-info-wrapper{
+    margin: 0 !important;
+  }
+
+  .no-docs {
+    padding: 10px 0px !important;
+  }
+
   .patient-info-section {
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
     border-right: none !important;
@@ -768,7 +786,7 @@ th.mat-header-cell:last-child {
 
   .items-list {
     list-style-type: none;
-    padding: 24px 0px 0px;
+    padding: 5px 0px 0px;
 
     li .list-item {
       flex-direction: column;
@@ -800,6 +818,10 @@ th.mat-header-cell:last-child {
   .col-form-label {
     font-weight: bold;
   }
+
+  .cheif-complaint-wrapper {
+    padding: 5px 0px 0px !important;
+  }
 }
 
 .webrtc-controls {
@@ -809,7 +831,6 @@ th.mat-header-cell:last-child {
   z-index: 999;
   display: flex;
   flex-direction: column;
-  // width: 87px;
   align-items: center;
 
   img {

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from '../utils/utility-functions';
+import { languages } from 'src/config/constant';
+import { DataItemModel, SlideModel } from '../model/model';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-session',
@@ -9,7 +13,7 @@ import { getCacheData, setCacheData } from '../utils/utility-functions';
 })
 export class SessionComponent implements OnInit {
 
-  slides: any = [
+  slides: SlideModel[] = [
     {
       img_url: "assets/svgs/slide-1.svg",
       title: "Deliver quality health care where there is no doctor",
@@ -33,8 +37,8 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  selectedLanguage: any = 'en';
-  languages: any = [
+  selectedLanguage: string = 'en';
+  languages: DataItemModel[] = [
     {
       id: 1,
       name: 'English',
@@ -46,17 +50,23 @@ export class SessionComponent implements OnInit {
       code: 'ru'
     }
   ];
-  constructor(public translate: TranslateService) { }
+
+  constructor(public translate: TranslateService, public router: Router, public location: Location) { 
+  }
 
   ngOnInit(): void {
-    if(getCacheData(false,'selectedLanguage')) {
-      this.selectedLanguage = getCacheData(false,'selectedLanguage');
+    if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
+      this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     }
   }
 
+  /**
+  * Callback for language changed event
+  * @return {void}
+  */
   changeLanguage() {
     this.translate.use(this.selectedLanguage);
-    setCacheData("selectedLanguage", this.selectedLanguage);
+    setCacheData( languages.SELECTED_LANGUAGE, this.selectedLanguage);
     window.location.reload();
   }
 

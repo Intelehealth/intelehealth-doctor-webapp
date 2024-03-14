@@ -5,10 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, timer } from 'rxjs';
+import { RequestOtpModel, RequestOtpResponseModel, VerifyOtpModel, VerifyOtpResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-otp-verification',
@@ -66,9 +68,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
 
   get fCtrl() { return this.otpVerificationForm.get('otp') }
 
-  onOtpChange($event: any) {
-  }
-
+  /**
+  * Switch the verification to the desired action
+  * @return {void}
+  */
   verify() {
     this.submitted = true;
     if (this.otpVerificationForm.invalid) {
@@ -97,17 +100,23 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Verify otp for the login action
+  * @return {void}
+  */
   verifyLogin() {
-    let payload: any = {};
+    let payload: VerifyOtpModel = {};
     payload.verifyFor = "verification";
-    payload.username = (getCacheData(true,'user')).username ? (getCacheData(true,'user')).username : (getCacheData(true,'user')).systemId;
+    payload.username = (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId;
     if (this.via == 'phone') {
-      payload.phoneNumber = this.cred.split('||')[1]
+      let phoneNumber = this.cred.split('||');
+      payload.countryCode = phoneNumber[0];
+      payload.phoneNumber = phoneNumber[1];
     } else {
       payload.email = this.cred
     }
     payload.otp = this.otpVerificationForm.value.otp;
-    this.authService.verifyOtp(payload).subscribe((res: any) => {
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.authService.updateVerificationStatus();
         this.translationService.getTranslation("You have sucessfully logged in.", "Login Successful",true);
@@ -131,18 +140,26 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify Otp for the forgot username action
+  * @return {void}
+  */
   verifyForgetUsername() {
-    let payload: any = {}
+    let payload: VerifyOtpModel = {};
     payload.verifyFor = "username";
+    let msgSentOn = "email";
     if (this.via == 'phone') {
-      payload.phoneNumber = this.cred.split('||')[1]
+      let phoneNumber = this.cred.split('||');
+      payload.countryCode = phoneNumber[0];
+      payload.phoneNumber = phoneNumber[1];
+      msgSentOn = "mobile number"
     } else {
       payload.email = this.cred
     }
     payload.otp = this.otpVerificationForm.value.otp;
-    this.authService.verifyOtp(payload).subscribe((res: any) => {
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
-        this.translationService.getTranslation("Username has been successfully sent on your email and mobile number", "Username Sent",true);
+        this.translationService.getTranslation("Username has been successfully sent on your "+ msgSentOn, "Username Sent",true);
         this.router.navigate(['/session/login']);
       } else {
         this.translationService.getTranslation(res.message, "Error",false);
@@ -150,12 +167,16 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify the Otp for forgot password action
+  * @return {void}
+  */
   verifyForgetPassword() {
-    let payload: any = {}
-    payload.verifyFor = "password";
+    let payload: VerifyOtpModel = {};
+    payload.verifyFor = doctorDetails.PASSWORD;
     payload.username = this.cred;
     payload.otp = this.otpVerificationForm.value.otp;
-    this.authService.verifyOtp(payload).subscribe((res: any) => {
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
       } else {
@@ -164,8 +185,12 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify prescription otp
+  * @return {void}
+  */
   verifyPrescription() {
-    this.linkSvc.verifyPresctionOtp(this.hash, this.otpVerificationForm.value.otp).subscribe((res: any) => {
+    this.linkSvc.verifyPresctionOtp(this.hash, this.otpVerificationForm.value.otp).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.router.navigate(['/i', this.hash], { state: { visitId: this.visitId, accessToken: btoa(this.otpVerificationForm.value.otp) } });
       } else {
@@ -174,21 +199,25 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Resend otp for which the otp-verification requested
+  * @return {void}
+  */
   resendOtp() {
     this.counter = 60;
     this.resendIn = '01:00';
-    let payload: any = {};
+    let payload: RequestOtpModel = {};
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
-        payload.username = (getCacheData(true,'user')).username;
+        payload.username = (getCacheData(true, doctorDetails.USER)).username;
         if (this.via == 'phone') {
           payload.phoneNumber = this.cred.split('||')[1],
             payload.countryCode = this.cred.split('||')[0]
         } else {
           payload.email = this.cred
         }
-        this.authService.requestOtp(payload).subscribe((res: any) => {
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
              this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) :
@@ -207,7 +236,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         } else {
           payload.email = this.cred
         }
-        this.authService.requestOtp(payload).subscribe((res: any) => {
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
              this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) :
@@ -220,10 +249,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
 
       case 'forgot-password':
         payload = {
-          otpFor: "password",
+          otpFor: doctorDetails.PASSWORD,
           username: this.cred
         };
-        this.authService.requestOtp(payload).subscribe((res: any) => {
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.translationService.getTranslation(`OTP sent on your mobile number/email successfully!`, "OTP Sent",true);
           } else {
@@ -241,6 +270,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
   replaceWithStar(str: string) {
     let n = str.length;
     return str.replace(str.substring(5, (this.via == 'phone') ? n - 2 : n - 4), "*****");

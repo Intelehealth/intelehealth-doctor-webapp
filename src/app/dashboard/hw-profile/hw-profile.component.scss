@@ -85,7 +85,6 @@
 
   .mat-horizontal-content-container {
     padding: 24px 24px 100px;
-    // overflow: visible;
   }
 
   .mat-horizontal-stepper-header-container {
@@ -133,7 +132,6 @@
     min-width: 10px;
     max-width: 10px;
     border: none;
-    // display: none;
   }
   .mat-stepper-horizontal-line::after {
     position: absolute;
@@ -170,7 +168,6 @@
 
     .link {
       a {
-        // text-decoration: underline;
         font-size: 14px;
         color: var(--color-gray);
         font-weight: normal;
@@ -223,7 +220,7 @@
   }
 
   .error-msg {
-    color: var(----color-red);
+    color: var(--color-red);
   }
 }
 
@@ -437,7 +434,7 @@ textarea.form-control {
     }
 
     .mat-icon.error {
-      color: var(----color-red);
+      color: var(--color-red);
     }
   }
 }

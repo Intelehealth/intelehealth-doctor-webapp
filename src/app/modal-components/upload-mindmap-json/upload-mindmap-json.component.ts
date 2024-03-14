@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MindmapService } from 'src/app/services/mindmap.service';
 
@@ -7,24 +7,30 @@ import { MindmapService } from 'src/app/services/mindmap.service';
   templateUrl: './upload-mindmap-json.component.html',
   styleUrls: ['./upload-mindmap-json.component.scss']
 })
-export class UploadMindmapJsonComponent implements OnInit {
+export class UploadMindmapJsonComponent {
 
   file: any;
   filename: string = '';
   jsonData: string = '';
   @ViewChild('hiddenFileInput', { static: false }) hiddenFileInput: ElementRef;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<UploadMindmapJsonComponent>,
   private mindmapService: MindmapService) { }
 
-  ngOnInit(): void {
-  }
-
+  /**
+  * Close modal
+  * @return {void}
+  */
   close() {
     this.dialogRef.close(false);
   }
 
+  /**
+  * Callback for file drop event
+  * @param {any} event - File drop event
+  * @return {void}
+  */
   onFilesDropped(event: any) {
     if (event.addedFiles.length) {
       this.file = event.addedFiles[0];
@@ -46,6 +52,11 @@ export class UploadMindmapJsonComponent implements OnInit {
     }
   }
 
+  /**
+  * Callback for file changed event
+  * @param {any} event - File changed event
+  * @return {void}
+  */
   onFileChanged(event: any) {
     if (event.target.files) {
       this.file = event.target.files[0];
@@ -67,6 +78,10 @@ export class UploadMindmapJsonComponent implements OnInit {
     }
   }
 
+  /**
+  * Reset file
+  * @return {void}
+  */
   reset() {
     this.file = undefined;
     this.filename = '';
@@ -74,10 +89,11 @@ export class UploadMindmapJsonComponent implements OnInit {
     this.hiddenFileInput.nativeElement.value = "";
   }
 
+  /**
+  * Upload mindmap and close the modal
+  * @return {void}
+  */
   uploadMindmap() {
-    if (this.file, this) {
-
-    }
     this.dialogRef.close({
       filename: this.filename,
       value: this.jsonData

@@ -17,6 +17,8 @@ import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
+import { languages, doctorDetails } from 'src/config/constant';
+import { ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -49,12 +51,12 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class HwProfileComponent implements OnInit, OnDestroy {
 
-  file: any;
-  user: any;
-  provider: any;
-  hwName: any;
+  file;
+  user: UserModel;
+  provider: ProviderModel;
+  hwName: string;
   baseUrl: string = environment.baseURL;
-  profilePicUrl: any = 'assets/svgs/user.svg';
+  profilePicUrl: string|ArrayBuffer = 'assets/svgs/user.svg';
   @ViewChild(MatStepper) stepper: MatStepper;
   personalInfoForm: FormGroup;
   phoneNumberValid = false;
@@ -62,15 +64,15 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   phoneNumber = '';
   whatsAppNumber = '';
   submitted = false;
-  providerAttributeTypes: any = [];
-  phoneNumberObj: any;
-  whatsAppObj: any;
+  providerAttributeTypes: ProviderAttributeTypeModel[] = [];
+  phoneNumberObj;
+  whatsAppObj;
   subscription1: Subscription;
   subscription2: Subscription;
   maxTelLegth1 = 10;
   maxTelLegth2 = 10;
   oldPhoneNumber = '';
-  today: any;
+  today: string;
   phoneValid = false;
   emailValid = false;
   checkingPhoneValidity = false;
@@ -97,48 +99,56 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         countryCode2: new FormControl('+91'),
         phoneNumber: new FormControl('', [Validators.required]),
         whatsapp: new FormControl('', [Validators.required]),
-        emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true, 'provider').uuid)])
+        emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')], [ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, getCacheData(true, doctorDetails.PROVIDER).uuid)])
       });
   }
 
   get f1() { return this.personalInfoForm.controls; }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false, 'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.today = moment().format('YYYY-MM-DD');
-    this.user = getCacheData(true, 'user');
-    this.provider = getCacheData(true, 'provider');
-    this.hwName = getCacheData(false, 'doctorName');
+    this.user = getCacheData(true, doctorDetails.USER);
+    this.provider = getCacheData(true, doctorDetails.PROVIDER);
+    this.hwName = getCacheData(false, doctorDetails.DOCTOR_NAME);
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
-    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
+    this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
-          this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+          this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).setValue(val.substring(0, this.maxTelLegth1));
         }
       }
     });
-    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
+    this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth2) {
-          this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+          this.personalInfoForm.get(doctorDetails.WHATS_APP).setValue(val.substring(0, this.maxTelLegth2));
         }
       }
     });
   }
 
+  /**
+  * Subscribe to form control value changes observables
+  * @return {void}
+  */
   formControlValueChanges() {
-    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(doctorDetails.BIRTHDATE).valueChanges.subscribe(val => {
       if (val) {
         this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
     });
   }
 
+  /**
+  * Get provider attribute types
+  * @return {void}
+  */
   getProviderAttributeTypes() {
-    this.providerService.getProviderAttributeTypes().subscribe((res: any) => {
+    this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
       if (res.results.length) {
         this.providerAttributeTypes = res.results;
         this.patchFormValues();
@@ -146,6 +156,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Patch the form values with the provider details
+  * @return {void}
+  */
   patchFormValues() {
     if (this.provider) {
 
@@ -157,61 +171,66 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null;
-      this.providerAttributeTypes.forEach((attrType: any) => {
+      this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
         switch (attrType.display) {
-          case 'address':
-
+          case doctorDetails.ADDRESS:
             break;
-          case 'consultationLanguage':
+          case doctorDetails.CONSULTATION_LANGUAGE:
             break;
-          case 'countryCode':
+          case doctorDetails.COUNTRY_CODE:
             personalFormValues.countryCode1 = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.countryCode2 = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'emailId':
+          case doctorDetails.EMAIL_ID:
             personalFormValues.emailId = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'fontOfSign':
+          case doctorDetails.FONT_OF_SIGN:
             break;
-          case 'phoneNumber':
+          case doctorDetails.PHONE_NUMBER:
+            console.log(this.getAttributeValue(attrType.uuid, attrType.display));
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             this.phoneNumberValid = (personalFormValues.phoneNumber) ?  true : false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'qualification':
-
+          case doctorDetails.QUALIFICATION:
             break;
-          case 'registrationNumber':
+          case doctorDetails.REGISTRATION_NUMBER:
             break;
-          case 'researchExperience':
+          case doctorDetails.RESEARCH_EXPERIENCE:
             break;
-          case 'signature':
+          case doctorDetails.SIGNATURE:
             break;
-          case 'signatureType':
+          case doctorDetails.SIGNATURE_TYPE:
             break;
-          case 'specialization':
+          case doctorDetails.SPECIALIZATION:
             break;
-          case 'textOfSign':
+          case doctorDetails.TEXT_OF_SIGN:
             break;
-          case 'typeOfProfession':
+          case doctorDetails.TYPE_OF_PROFESSION:
             break;
-          case 'whatsapp':
+          case doctorDetails.WHATS_APP:
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
             this.whatsAppNumberValid = (personalFormValues.whatsapp) ? true :  false;
             break;
-          case 'workExperience':
+          case doctorDetails.WORK_EXPERIENCE:
             break;
-          case 'workExperienceDetails':
+          case doctorDetails.WORK_EXPERIENCE_DETAILS:
             break;
           default:
             break;
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
-      if (personalFormValues.phoneNumber) { this.validateProviderAttribute('phoneNumber'); }
+      if (personalFormValues.phoneNumber) { this.validateProviderAttribute(doctorDetails.PHONE_NUMBER); }
     }
   }
 
+  /**
+  * Get attribute value for the given provider attribute uuid and type
+  * @param {string} uuid - Provider attribute uuid
+  * @param {string} display - Provider attribute type name/display
+  * @return {any} - Provider attribute value
+  */
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
@@ -223,11 +242,21 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     return attrValue;
   }
 
-  stepChanged(event: any) {
+  /**
+  * Callback for step change event
+  * @param {Event} event - Step change event
+  * @return {void}
+  */
+  stepChanged(event) {
     this.submitted = false;
   }
 
-  preview(event: any) {
+  /**
+  * Callback for image upload event
+  * @param {Event} event - File upload event
+  * @return {void}
+  */
+  preview(event) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
@@ -235,14 +264,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         return;
       }
       const reader = new FileReader();
-      reader.onload = (e: any) => {
+      reader.onload = (e) => {
         this.profilePicUrl = reader.result;
         const imageBolb = reader.result.toString().split(',');
         const payload = {
           person: this.provider.person.uuid,
           base64EncodedImage: imageBolb[1]
         };
-        this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+        this.profileService.updateProfileImage(payload).subscribe((res) => {
           this.toastr.success('Profile picture uploaded successfully!', 'Profile Pic Uploaded');
         });
       };
@@ -250,55 +279,75 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  hasError(event: any, errorFor: string) {
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @param {string} errorFor - Error for which input
+  * @return {void}
+  */
+  hasError(event, errorFor: string) {
     switch (errorFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = event;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = event;
         break;
     }
   }
 
-  getNumber(event: any, changedFor: string) {
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @param {string} changedFor - Which input changed
+  * @return {void}
+  */
+  getNumber(event, changedFor: string) {
     switch (changedFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = true;
         this.phoneNumber = event;
-        this.validateProviderAttribute('phoneNumber');
+        this.validateProviderAttribute(doctorDetails.PHONE_NUMBER);
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = true;
         this.whatsAppNumber = event;
         break;
     }
   }
 
-  telInputObject(event: any, objectFor: string) {
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @param {string} objectFor - Which object changed
+  * @return {void}
+  */
+  telInputObject(event, objectFor: string) {
     switch (objectFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberObj = event;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppObj = event;
         break;
     }
   }
 
-  onCountryChange(event: any, changedFor: string) {
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @param {string} changedFor - For which object country changed
+  * @return {void}
+  */
+  onCountryChange(event, changedFor: string) {
     switch (changedFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
         this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o !== ' ').length;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
@@ -307,6 +356,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Update user profile
+  * @return {void}
+  */
   updateProfile() {
     this.submitted = true;
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
@@ -328,66 +381,70 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Update logged-in user provider attributes
+  * @return {void}
+  */
   updateProviderAttributes() {
     const requests = [];
-    this.providerAttributeTypes.forEach((attrType: any) => {
+    this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
       switch (attrType.display) {
-        case 'address':
+        case doctorDetails.ADDRESS:
           break;
-        case 'consultationLanguage':
+        case doctorDetails.CONSULTATION_LANGUAGE:
           break;
-        case 'countryCode':
+        case doctorDetails.COUNTRY_CODE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm('countryCode1')));
           break;
-        case 'emailId':
+        case doctorDetails.EMAIL_ID:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'fontOfSign':
+        case doctorDetails.FONT_OF_SIGN:
           break;
-        case 'phoneNumber':
+        case doctorDetails.PHONE_NUMBER:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'qualification':
+        case doctorDetails.QUALIFICATION:
           break;
-        case 'registrationNumber':
+        case doctorDetails.REGISTRATION_NUMBER:
           break;
-        case 'researchExperience':
+        case doctorDetails.RESEARCH_EXPERIENCE:
           break;
-        case 'signature':
+        case doctorDetails.SIGNATURE:
           break;
-        case 'signatureType':
+        case doctorDetails.SIGNATURE_TYPE:
           break;
-        case 'specialization':
+        case doctorDetails.SPECIALIZATION:
           break;
-        case 'textOfSign':
+        case doctorDetails.TEXT_OF_SIGN:
           break;
-        case 'typeOfProfession':
+        case doctorDetails.TYPE_OF_PROFESSION:
           break;
-        case 'whatsapp':
+        case doctorDetails.WHATS_APP:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'workExperience':
+        case doctorDetails.WORK_EXPERIENCE:
           break;
-        case 'workExperienceDetails':
+        case doctorDetails.WORK_EXPERIENCE_DETAILS:
           break;
         default:
           break;
       }
     });
-    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm('phoneNumber')) {
+    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
+      if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
         this.toastr.success('Profile has been updated successfully', 'Profile Updated');
         this.toastr.warning('Kindly re-login to see updated details', 'Re-login');
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(getCacheData(true, 'user').uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: ProviderResponseModel) => {
           if (provider.results.length) {
-            setCacheData('provider', JSON.stringify(provider.results[0]));
-            setCacheData('doctorName', provider.results[0].person.display);
-            const u = getCacheData(true, 'user');
+            setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
+            setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
+            const u = getCacheData(true, doctorDetails.USER);
             u.person.display = provider.results[0].person.display;
-            setCacheData('user', JSON.stringify(u));
+            setCacheData(doctorDetails.USER, JSON.stringify(u));
             this.toastr.success('Profile has been updated successfully', 'Profile Updated');
           }
         });
@@ -395,8 +452,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAttributeUuid(uuid: string, display: string) {
-    let attrUuid = null;
+  /**
+  * Get provider attribute uuid for a given diaplay and provider attrubute type uuid
+  * @param {string} uuid - Provider attribute type uuid
+  * @param {string} display - Display name
+  * @return {string} - Provider attribute uuid
+  */
+  getAttributeUuid(uuid: string, display: string): string {
+    let attrUuid: string = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
       if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrUuid = this.provider.attributes[i].uuid;
@@ -406,20 +469,35 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     return attrUuid;
   }
 
+  /**
+  * Get value for a given key from form
+  * @param {string} key - Key name
+  * @return {any} - Value for a given key
+  */
   getAttributeValueFromForm(key: string) {
     const formValue = { ...this.personalInfoForm.value };
     return formValue[key];
   }
 
+  /**
+  * Detect MIME type from the base 64 url
+  * @param {string} b64 - Base64 url
+  * @return {string} - MIME type
+  */
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
+  /**
+  * Validate phone number/email already exists or not
+  * @param {string} type - Attribute Type email/phone number
+  * @return {void}
+  */
   validateProviderAttribute(type: string) {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
       if (res.success) {
-        if (type === 'phoneNumber')  {
+        if (type === doctorDetails.PHONE_NUMBER)  {
           this.phoneValid = res.data;
         } else {
           this.emailValid = res.data;

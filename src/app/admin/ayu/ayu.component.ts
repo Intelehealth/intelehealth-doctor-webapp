@@ -8,6 +8,8 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
+import { ApiResponseModel, UploadMindmapResponseModel, MindmapKeyModel, MindmapModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-ayu',
@@ -21,8 +23,8 @@ export class AyuComponent implements OnInit {
   selection = new SelectionModel<any>(false, []);
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  mindmaps = [];
-  mindmapDatas = [];
+  mindmaps: MindmapKeyModel[] = [];
+  mindmapDatas: MindmapModel[] = [];
   selectedLicense: string;
   expiryDate: string;
 
@@ -33,13 +35,22 @@ export class AyuComponent implements OnInit {
     private pageTitleService: PageTitleService,
     private translateService: TranslateService) { }
 
+  /**
+  * OnInit Callback
+  * @return {void}
+  */
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
     this.fetchMindmaps();
   }
 
-  /** Download JSON mindmap. */
+  /**
+  * Downloads a mindmap in JSON format
+  * @param {string} json - JSON object for the mindmap
+  * @param {string} exponent - name to be given for the downloaded JSON mindmap file
+  * @return {void}
+  */
   downloadMindmap(json: string, name: string) {
     let sJson = JSON.stringify(JSON.parse(json));
     let element = document.createElement('a');
@@ -48,10 +59,13 @@ export class AyuComponent implements OnInit {
     element.click();
   }
 
-  /** Get lsit of available license keys. */
+  /**
+  * Get all license keys from the server
+  * @return {void}
+  */
   fetchMindmaps(): void {
     this.mindmapService.getMindmapKey().subscribe(
-      (response) => {
+      (response: ApiResponseModel) => {
         this.mindmaps = response.data;
         this.selectedLicense = this.mindmaps[0].keyName
         this.licenceKeySelecter();
@@ -62,14 +76,17 @@ export class AyuComponent implements OnInit {
     );
   }
 
-  /** Get lsit of available mindmaps for the selected license key. */
+  /**
+  * Get lsit of available mindmaps for the selected license key.
+  * @return {void}
+  */
   licenceKeySelecter(): void {
     this.mindmapService.detailsMindmap(this.selectedLicense).subscribe(
-      (response) => {
+      (response: ApiResponseModel) => {
         this.mindmapDatas = response.data;
         this.dataSource = new MatTableDataSource(this.mindmapDatas);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.filterPredicate = (data: any, filter: string) => data.name.toLowerCase().includes(filter);
+        this.dataSource.filterPredicate = (data, filter: string) => data.name.toLowerCase().includes(filter);
         const { expiry } = this.mindmaps.find(
           (m) => m.keyName === this.selectedLicense
         );
@@ -81,18 +98,21 @@ export class AyuComponent implements OnInit {
     );
   }
 
-  /** Open Upload Json Mindmap Modal. */
+  /**
+  * Open Upload Json Mindmap Modal.
+  * @return {void}
+  */
   openUploadMindmapModal() {
-    this.coreService.openUploadMindmapModal().subscribe((result: any) => {
+    this.coreService.openUploadMindmapModal().subscribe((result: UploadMindmapResponseModel) => {
       if (result) {
         if (result.filename && result.value) {
           result.key = this.selectedLicense;
-          this.mindmapService.postMindmap(result).subscribe((res: any) => {
+          this.mindmapService.postMindmap(result).subscribe((res: ApiResponseModel) => {
             if (res.success) {
               this.mindmapDatas.push(res.data);
               this.dataSource = new MatTableDataSource(this.mindmapDatas);
               this.dataSource.paginator = this.paginator;
-              this.toastr.success(`${result.filename} ${this.translateService.instant('has been uploaded successfully!')}`,this.translateService.instant('Mindmap Uploaded'));
+              this.toastr.success(`${result.filename} ${this.translateService.instant('has been uploaded successfully!')}`, this.translateService.instant('Mindmap Uploaded'));
             } else {
               this.toastr.error(`${this.translateService.instant('Failed to upload')} ${result.filename}`, this.translateService.instant('Mindmap Upload Failed'));
             }
@@ -102,15 +122,18 @@ export class AyuComponent implements OnInit {
     });
   }
 
-  /** Open the Add/Edit License Key Modal. */
+  /**
+  * Open the Add/Edit License Key Modal.
+  * @param {string} mode - mode in which modal should open (add/edit)
+  * @return {void}
+  */
   openAddLicenseKeyModal(mode: string) {
     let licKey = this.mindmaps.find((m) => m.keyName === this.selectedLicense);
-    this.coreService.openAddLicenseKeyModal((mode == 'edit') ? licKey : null ).subscribe((result: any) => {
+    this.coreService.openAddLicenseKeyModal((mode == 'edit') ? licKey : null).subscribe((result: MindmapKeyModel) => {
       if (result) {
         if (mode == 'edit') {
-          this.mindmaps.forEach(m => {
+          this.mindmaps.forEach((m: MindmapKeyModel) => {
             if (m.keyName == result.keyName) {
-              m = result;
               this.expiryDate = result.expiry;
             }
           });
@@ -125,57 +148,77 @@ export class AyuComponent implements OnInit {
     });
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
+  /**
+  * Check whether the number of selected elements matches the total number of rows.
+  * @return {boolean} - Returns true/false whether the number of selected elements matches the total number of rows
+  */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  /**
+  * Select all rows if they are not all selected; otherwise clear selection.
+  * @return {void}
+  */
   masterToggle() {
     if (this.isAllSelected()) {
-      this.selection.clear();
+      this.clearSelection();
       return;
     }
-
     this.selection.select(...this.dataSource.data);
   }
 
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: any): string {
+  /**
+  * Get the label for the checkbox on the passed row
+  * @return {string} - Label for the checkbox on the passed row
+  */
+  checkboxLabel(row?): string {
     if (!row) {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
-  /** Delete selected mindmap protocol. */
+  /**
+  * Delete selected mindmap protocol.
+  * @return {void}
+  */
   deleteMindmap() {
     this.mindmapService.deleteMindmap(this.selection.selected[0].keyName, { mindmapName: this.selection.selected[0].name })
-    .subscribe((res: any) => {
-      if (res) {
-        this.toastr.success(this.translateService.instant(res.message), this.translateService.instant("Mindmap Deleted"));
-        this.selection.clear();
-        this.licenceKeySelecter();
-      } else {
-        this.toastr.error(this.translateService.instant("Something went wrong"), this.translateService.instant("Mindmap Delete Failed"));
-      }
-    });
+      .subscribe((res: ApiResponseModel) => {
+        if (res) {
+          this.toastr.success(this.translateService.instant(res.message), this.translateService.instant("Mindmap Deleted"));
+          this.clearSelection();
+          this.licenceKeySelecter();
+        } else {
+          this.toastr.error(this.translateService.instant("Something went wrong"), this.translateService.instant("Mindmap Delete Failed"));
+        }
+      });
   }
 
-  /** Toggle status selected mindmap protocol. */
-  toggleStatus(mindmap: any) {
+  /**
+  * Toggle status of the selected mindmap protocol.
+  * @param {MindmapModel} mindmap - Mindmap protocol
+  * @return {void}
+  */
+  toggleStatus(mindmap: MindmapModel) {
     this.mindmapService.toggleMindmapStatus({ mindmapName: mindmap.name, keyName: mindmap.keyName })
-    .subscribe((res: any) => {
-      if (res.success) {
-        this.toastr.success(this.translateService.instant(res.message), this.translateService.instant("Mindmap Status Updated"));
-      } else {
-        this.toastr.error(this.translateService.instant("Something went wrong"), this.translateService.instant("Mindmap Update Failed"));
-      }
-    });
+      .subscribe((res: ApiResponseModel) => {
+        if (res.success) {
+          this.toastr.success(this.translateService.instant(res.message), this.translateService.instant("Mindmap Status Updated"));
+        } else {
+          this.toastr.error(this.translateService.instant("Something went wrong"), this.translateService.instant("Mindmap Update Failed"));
+        }
+      });
   }
 
+  /**
+  * Apply filter
+  * @param {Event} event - Input's change event
+  * @return {void}
+  */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -184,6 +227,10 @@ export class AyuComponent implements OnInit {
     }
   }
 
+  /**
+  * Clear selection for the rows selected
+  * @return {void}
+  */
   clearSelection() {
     this.selection.clear();
   }

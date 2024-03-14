@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-forgot-username',
@@ -19,7 +21,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   phoneIsValid: boolean = false;
   phoneNumber: string;
-  telObject: any;
+  telObject;
   maxTelLegth: number = 10;
   subscription: Subscription;
 
@@ -34,8 +36,8 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translate.use(getCacheData(false,'selectedLanguage'));
-    this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
+    this.translate.use(getCacheData(false, languages.SELECTED_LANGUAGE));
+    this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: string) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
       }
@@ -44,6 +46,10 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
 
   get f() { return this.forgotUsernameForm.controls; }
 
+  /**
+  * Reset the forgotUsernameForm and its validators
+  * @return {void}
+  */
   reset() {
     if (this.active == 'phone' ) {
       this.forgotUsernameForm.get('phone').setValidators([Validators.required]);
@@ -66,6 +72,10 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+  * Request the Otp for forgot username and redirect to the otp-verification screen
+  * @return {void}
+  */
   forgotUsername() {
     this.submitted = true;
     if (this.forgotUsernameForm.invalid) {
@@ -75,7 +85,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let payload: any = {
+    let payload: RequestOtpModel = {
       otpFor: "username"
     };
     if (this.active == 'phone') {
@@ -85,7 +95,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
       payload.email = this.forgotUsernameForm.value.email
     }
 
-    this.authService.requestOtp(payload).subscribe((res: any) => {
+    this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
       if (res.success) {
         this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)
          : this.replaceWithStar(this.forgotUsernameForm.value.email) } ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
@@ -96,25 +106,50 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     });
   }
 
-  replaceWithStar(str: string) {
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
+  replaceWithStar(str: string): string {
     let n = str.length;
     return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
-  hasError($event: any) {
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @return {void}
+  */
+  hasError($event: boolean) {
     this.phoneIsValid = $event;
   }
 
-  getNumber($event: any) {
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @return {void}
+  */
+  getNumber($event: string) {
     this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
-  telInputObject($event: any) {
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @return {void}
+  */
+  telInputObject($event) {
     this.telObject = $event;
   }
 
-  onCountryChange($event: any) {
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @return {void}
+  */
+  onCountryChange($event) {
     this.telObject.setCountry($event.iso2);
     this.forgotUsernameForm.patchValue({
       countryCode: $event.dialCode

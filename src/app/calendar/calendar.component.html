@@ -45,10 +45,10 @@
             [viewDate]="viewDate"
             [locale]="locale"
             [hourDuration]="30"
-            [dayStartHour]="9"
+            [dayStartHour]="0"
             [dayStartMinute]="0"
-            [dayEndHour]="19"
-            [dayEndMinute]="30"
+            [dayEndHour]="23"
+            [dayEndMinute]="59"
             [hourSegmentHeight]="100"
             [hourSegments]="1"
             [currentTimeMarkerTemplate]="currentTimeMarkerTemplate"
@@ -68,10 +68,10 @@
             [weekStartsOn]="1"
             [events]="events"
             [hourDuration]="30"
-            [dayStartHour]="9"
+            [dayStartHour]="0"
             [dayStartMinute]="0"
-            [dayEndHour]="19"
-            [dayEndMinute]="30"
+            [dayEndHour]="23"
+            [dayEndMinute]="59"
             [hourSegmentHeight]="100"
             [hourSegments]="1"
             [headerTemplate]="headerTemplate"
@@ -171,14 +171,14 @@
                 </div>
               </div>
               <div class="con-item">
-                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
+                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" >
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Patient'|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
-                <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
+                <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" >
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.hwGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Health Worker'|translate}}</p>
@@ -216,7 +216,7 @@
               <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm'}} {{(weekEvent.tempEvent || weekEvent.event).start|date:'a'|lowercase|translate}} -
                  {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm'}}{{(weekEvent.tempEvent || weekEvent.event).end|date:'a'|lowercase|translate}}</p>
               <div class="con-item">
-                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
+                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" >
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}}</h6>
                   <h6 class="mb-0">({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate |noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
@@ -289,7 +289,6 @@
           <div [class.dayOff]="checkIfDayOff(day.date)">
             <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'"  data-test-id="mwlCalMonthView">
               <span aria-hidden="true">
-                <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
                 <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
               </span>
               <div class="day-off-con">

@@ -7,7 +7,7 @@
               <div class="chat-sidebar-wrapper card intel-card chat-list-border-radius">
                 <div class="chat-sidebar-title">
                   <h6 class="mb-0">{{'Patients'| translate}}</h6>
-                  <span>({{'Via Comunity health workers' | translate}})</span>
+                  <span>({{'Via Community health workers' | translate}})</span>
                 </div>
                 <div class="chat-sidebar-body">
                   <div class="chat-items-search">
@@ -47,9 +47,9 @@
                     >
                       <div class="chat-item-con">
                         <img
-                          [src]="patientPic"
+                          [src]="conversation.patientPic"
                           alt=""
-                          (error)="onImgError($event)"
+
                         />
                         <div>
                           <h6>
@@ -58,9 +58,19 @@
                                 ? (conversation.patientName | titlecase)
                                 : "Unknown" |translate
                             }}
-                          </h6>
+                            {{
+                              conversation.openMrsId
+                                ? '('+(conversation.openMrsId | uppercase)+')'
+                                : ""
+                            }}
+                          </h6> 
                           <p>{{ conversation.message }}</p>
                         </div>
+                      </div>
+                    </li>
+                    <li *ngIf="searchValue && filteredConversations.length == 0">
+                      <div class="text-center p-3">
+                          <p>{{ 'No Record Found' }}</p>
                       </div>
                     </li>
                   </ul>
@@ -74,7 +84,7 @@
               >
                 <div class="chat-con-title">
                   <div class="chat-item-info">
-                    <img src="assets/svgs/user.svg" alt="" />
+                    <img src="{{selectedConversation.patientPic? selectedConversation.patientPic : 'assets/svgs/user.svg'}}" alt="" />
                     <div class="title">
                       <h6 class="mb-0">
                         {{
@@ -82,13 +92,18 @@
                             ? (selectedConversation.patientName | titlecase)
                             :  "Unknown" |translate
                         }}
+                        {{
+                          selectedConversation.openMrsId
+                            ? '('+(selectedConversation.openMrsId | uppercase)+')'
+                            : ""
+                        }}
                       </h6>
                       <span>
                         {{'CHW' |translate}}: {{ selectedConversation?.hwName | titlecase }}
                       </span>
                     </div>
                   </div>
-                  <div class="d-flex align-items-center">
+                  <div class="d-flex align-items-center chat-date">
                     <ng-select
                       class="custom mr-2"
                       [items]="visits"
@@ -111,9 +126,6 @@
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
                     </ng-select>
-                    <!-- <button mat-icon-button>
-                      <img src="assets/svgs/phone.svg" alt="" />
-                    </button> -->
                   </div>
                 </div>
                 <div class="chat-con-body">
@@ -162,6 +174,7 @@
                                 : defaultImage
                             "
                             (click)="setImage(item.message)"
+                            alt=""
                           />
                         </ng-container>
                         <ng-template #message>
@@ -170,15 +183,6 @@
                       </li>
                     </ng-container>
                   </ul>
-                  <!-- <ul class="chat-messages-list">
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message">The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.</li>
-                    <li class="chat-message">The patient was not feeling good for 2-3 days but lately the patient is doing well. </li>
-                    <li class="chat-message right">Hi! How is patient feeling now?</li>
-
-                  </ul> -->
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
                       <input
@@ -189,17 +193,6 @@
                         (keyup.enter)="sendMessage()"
                         data-test-id="etSendMessage1"
                       />
-                      <!-- <div class="input-group-append">
-                        <button type="button" (click)="fileInput.click()">
-                          <img src="assets/svgs/attachment-icon.svg" alt="" />
-                          <input
-                            #fileInput
-                            type="file"
-                            (change)="uploadFile($event.target.files)"
-                            style="display: none"
-                          />
-                        </button>
-                      </div> -->
                     </div>
                     <button
                       type="button"

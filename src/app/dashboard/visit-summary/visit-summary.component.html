@@ -30,8 +30,8 @@
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
-                    src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
-                    (error)="onImgError($event)"
+                    src="{{ baseURL + '/personimage/' + patient?.person.uuid }}"
+
                     alt=""
                     width="100%"
                     height="100%"
@@ -61,6 +61,7 @@
               <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+                <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">
@@ -79,17 +80,6 @@
                 <p data-test-id="etWhatsApp" *ngIf="getPersonAttributeValue('Telephone Number') === 'NA'">
                    {{ getPersonAttributeValue("Telephone Number") }}
                 </p>
-                <p data-test-id="etWhatsApp" *ngIf="getPersonAttributeValue('Telephone Number') !== 'NA'">
-                  {{ getPersonAttributeValue("Telephone Number") }}
-                  <a
-                    href="{{ getWhatsAppLink() }}"
-                    target="_blank"
-                    class="icon-btn"
-                    data-test-id="linkWhatsApp"
-                  >
-                    <img src="assets/svgs/whatsapp-icon.svg" alt="" />
-                  </a>
-                </p>
                 <p data-test-id="etPhoneNumber" *ngIf="getPersonAttributeValue('Telephone Number') !== 'NA'">
                   {{ getPersonAttributeValue("Telephone Number") }}
                   <a
@@ -99,6 +89,14 @@
                     data-test-id="linkPhoneNumber"
                   >
                     <img src="assets/svgs/phone-circle.svg" alt="" />
+                  </a>
+                  <a
+                    href="{{ getWhatsAppLink() }}"
+                    target="_blank"
+                    class="icon-btn"
+                    data-test-id="linkWhatsApp"
+                  >
+                    <img src="assets/svgs/whatsapp-icon.svg" alt="" />
                   </a>
                 </p>
               </div>
@@ -156,7 +154,7 @@
                 <ul class="items-list">
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etVisitIdConDets">{{'Visit ID'|translate}}</label>
+                      <label class="border-0" data-test-id="etVisitIdConDets">{{'Visit ID'|translate}}</label>
                       <div class="list-item-content" data-test-id="etVisitIdDataConDets">
                         {{
                           visit?.uuid
@@ -178,7 +176,7 @@
                     <div class="list-item">
                       <label data-test-id="etVisitUplConDets">{{'Visit Uploaded'|translate}}</label>
                       <div class="list-item-content" data-test-id="etVisitUplDataConDets">
-                        {{ visit?.visitUploadTime | date : "medium" }}
+                        {{ visit?.dateCreated | date : "medium" }}
                       </div>
                     </div>
                   </li>
@@ -249,7 +247,7 @@
                 <ul class="items-list">
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etHeightVitals">{{'Height (cm)'|translate}}</label>
+                      <label class="border-0" data-test-id="etHeightVitals">{{'Height (cm)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Height (cm)')"
@@ -340,7 +338,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etTempVitals">{{'Temprature (F)'|translate}}</label>
+                      <label data-test-id="etTempVitals">{{'Temperature (F)'|translate}}</label>
                       <div
                         class="list-item-content"
                         data-test-id="etTempDataVitals"
@@ -485,19 +483,19 @@
                             </div>
                           </div>
                         </li>
-                        <li *ngIf="eyeImages.length">
+                        <li *ngIf="getImagesBySection(pe.title).length">
                           <div class="list-item">
-                            <label [attr.data-test-id]="'etEyeImgPhysicalExam'">{{'Eye images'|translate}}</label>
+                            <label [attr.data-test-id]="'etEyeImgPhysicalExam'">{{'Pictures'|translate}}</label>
                             <div class="list-item-content">
                               <div class="eye-images-con">
                                 <div
                                   class="eye-item"
-                                  *ngFor="let e of eyeImages; let x = index"
+                                  *ngFor="let e of getImagesBySection(pe.title); let x = index"
                                 >
                                   <img [src]="e.src" alt="" [attr.data-test-id]="'etImage'+x+'PhysicalExam'"/>
                                   <div
                                     class="cover"
-                                    (click)="previewEyeImages(x)"
+                                    (click)="previewEyeImages(x,pe.title)"
                                     [attr.data-test-id]="'etValue'+x+'PhysicalExam'"
                                   >
                                     <img
@@ -515,8 +513,35 @@
                     <ng-container *ngIf="pe.title == 'Abdomen'">
                       <h6 class="my-3" [attr.data-test-id]="'etTitle'+pe.title.slice(0,3)+'PhysicalExam'">{{ pe.title }}</h6>
                       <ul class="items-list pt-0">
-                        <li *ngFor="let pei of pe.data" [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">
-                          {{ pei.key }}
+                        <li *ngFor="let pei of pe.data">
+                          <div class="list-item">
+                            <label [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">{{ pei.key }}</label>
+                          </div>
+                        </li>
+                        <li *ngIf="getImagesBySection(pe.title).length">
+                          <div class="list-item">
+                            <label [attr.data-test-id]="'etEyeImgPhysicalExam'">{{'Pictures'|translate}}</label>
+                            <div class="list-item-content">
+                              <div class="eye-images-con">
+                                <div
+                                  class="eye-item"
+                                  *ngFor="let e of getImagesBySection(pe.title); let x = index"
+                                >
+                                  <img [src]="e.src" alt="" [attr.data-test-id]="'etImage'+x+'PhysicalExam'"/>
+                                  <div
+                                    class="cover"
+                                    (click)="previewEyeImages(x,pe.title)"
+                                    [attr.data-test-id]="'etValue'+x+'PhysicalExam'"
+                                  >
+                                    <img
+                                      src="assets/svgs/maximize.svg"
+                                      alt=""
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </li>
                       </ul>
                     </ng-container>
@@ -608,12 +633,6 @@
                         <img src="assets/svgs/maximize.svg" alt="" />
                       </div>
                     </div>
-                    <!-- <div class="doc-item">
-                      <div class="other-doc">
-                        <img src="assets/svgs/pdf-doc.svg" alt="">
-                        <span>Blood test report.pdf</span>
-                      </div>
-                    </div> -->
                   </div>
                 </ng-container>
 
@@ -708,7 +727,7 @@
 
           <mat-tab label="{{'Past visit history'|translate}}" data-test-id="mtPast">
             <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
-              <table mat-table [dataSource]="dataSource">
+              <table mat-table [dataSource]="dataSource" aria-describedby="pastVisit">
                 <!-- Action Column -->
                 <ng-container matColumnDef="action">
                   <th mat-header-cell *matHeaderCellDef></th>
@@ -743,7 +762,7 @@
                             '/personimage/' +
                             element?.doctor?.person_uuid
                         }}"
-                        (error)="onImgError($event)"
+
                         alt=""
                         width="32px"
                         height="32px"
@@ -758,7 +777,7 @@
                   </td>
                 </ng-container>
 
-                <!-- Cheif Complaint Column -->
+                <!-- Chief complaint Column -->
                 <ng-container matColumnDef="cheif_complaint">
                   <th mat-header-cell *matHeaderCellDef>{{'Chief Complaint'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
@@ -814,16 +833,6 @@
                     </div>
                   </td>
                 </ng-container>
-
-                <!-- <tr class="mat-row" *matNoDataRow>
-                  <td
-                    class="mat-cell text-center"
-                    [attr.colspan]="displayedColumns.length"
-                  >
-                    No past visit history
-                  </td>
-                </tr> -->
-
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr
                   mat-row
@@ -838,47 +847,6 @@
             </div>
           </mat-tab>
         </mat-tab-group>
-      </div>
-    </div>
-
-    <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
-      <div class="intel-card">
-        <div class="card-body">
-          <mat-accordion class="intel-accordion-con ddx" multi>
-            <mat-expansion-panel [expanded]="true" #panelDDx hideToggle [disabled]="true">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img
-                      src="assets/svgs/ic_ayu.png"
-                      alt=""
-                      width="44px"
-                      style="border-radius: 50%; background-color: var(--color-white);"
-                    />
-                    <h6 class="mb-0 ml-2">{{'Differential Diagnosis'|translate}} (DDx)</h6>
-                  </div>
-                </mat-panel-title>
-                <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->
-              </mat-expansion-panel-header>
-              <table *ngIf="ddx" class="ddx-table mt-3">
-                <thead>
-                  <tr>
-                    <th *ngFor="let h of ddx.data[0]" [attr.colspan]="ddx.data[0].length == 1 && ddx.maxCols > ddx.data[0].length ? ddx.maxCols : 1">{{h}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngFor="let d of ddx.data; let i=index;">
-                    <tr *ngIf="i!=0">
-                      <ng-container *ngFor="let dd of d">
-                        <td [attr.colspan]="d.length == 1 && ddx.maxCols > d.length ? ddx.maxCols : 1">{{dd}}</td>
-                      </ng-container>
-                    </tr>
-                  </ng-container>
-                </tbody>
-              </table>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
       </div>
     </div>
 
@@ -960,7 +928,7 @@
                           </a>
                         </div>
                         <span class="text-muted"
-                          >{{'Click here to connent with the patient'|translate}}</span
+                          >{{'Click here to connect with the patient'|translate}}</span
                         >
                       </div>
                       <ng-template #noContactDetails>
@@ -1022,7 +990,7 @@
                   </button>
                 </div>
                 <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Patient interaction'|translate}}</th>
@@ -1063,14 +1031,14 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}*</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
               <div class="table-responsive">
-                <table class="table">
+                <table class="table" aria-describedby="">
                   <thead>
                     <tr>
                       <th scope="col">{{'Diagnosis'|translate}}</th>
@@ -1232,82 +1200,6 @@
                   </div>
                 </form>
               </ng-container>
-
-              <!-- <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
-                <ul class="items-list">
-                  <li>
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label">Do you have enough information for diagnosis?</label>
-                      <div class="col-sm-9 d-flex align-items-center">
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'Yes'" formControlName="diagnosisIdentified" />
-                          <div class="state p-success">
-                            <label>Yes</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'No'" formControlName="diagnosisIdentified" />
-                          <div class="state p-success">
-                            <label>No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <ng-container *ngIf="diagnosisForm.value.diagnosisIdentified == 'Yes'">
-                    <li>
-                      <div class="row">
-                        <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
-                        <div class="col-sm-3">
-                          <ng-select class="visit-select custom" formControlName="diagnosisName" (search)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
-                          </ng-select>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Diagnosis type</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Primary'" formControlName="diagnosisType" />
-                            <div class="state p-success">
-                              <label>Primary</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Secondary'" formControlName="diagnosisType" />
-                            <div class="state p-success">
-                              <label>Secondary</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Select</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus" />
-                            <div class="state p-success">
-                              <label>Provisional</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus" />
-                            <div class="state p-success">
-                              <label>Confirmed</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ng-container>
-                </ul>
-                <div class="form-group mb-0" *ngIf="isVisitNoteProvider && !visitEnded && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
-                  <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Save</button>
-                </div>
-              </form> -->
             </mat-expansion-panel>
 
             <mat-expansion-panel [expanded]="true" #panel3 hideToggle>
@@ -1416,7 +1308,7 @@
 
               <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
                 <div class="table-responsive medication-con">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Drug name'|translate}}</th>
@@ -1472,29 +1364,6 @@
                             </div>
                           </td>
                         </tr>
-                        <!-- <tr *ngIf="!addMoreMedicine">
-                          <td>
-                            <ng-select appendTo=".table-responsive" formControlName="drug" class="visit-select custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select drug">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select strength">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select days">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select timing">
-                            </ng-select>
-                          </td>
-                          <td colspan="2">
-                            <div class="form-group mb-0">
-                              <input formControlName="remark" type="text" class="form-control" placeholder="Enter Remark">
-                            </div>
-                          </td>
-                        </tr> -->
                         <tr *ngIf="!addMoreMedicine">
                           <td>
                             <div class="form-group mb-0">
@@ -1630,7 +1499,6 @@
                   *ngIf="!addMoreAdditionalInstruction"
                 >
                   <div class="form-group">
-                    <!-- <label for="note"><b>Additional instructions</b></label> -->
                     <textarea
                       formControlName="note"
                       class="form-control"
@@ -1853,7 +1721,7 @@
 
               <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
                 <div class="table-responsive medication-con">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Referral to' | translate}}</th>
@@ -2048,6 +1916,7 @@
                           <input
                             type="radio"
                             value="{{'No' | translate}}"
+                            (change)="saveFollowUp()"
                             formControlName="wantFollowUp"
                             data-test-id="radioFollowUpNo"
                           />
@@ -2067,7 +1936,6 @@
                           >{{'Select date'|translate}}*</label
                         >
                         <div class="col-sm-3">
-                          <!-- <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate"> -->
                           <div class="input-group">
                             <input
                               type="text"
@@ -2105,7 +1973,7 @@
                         <div class="col-sm-3">
                           <ng-select
                             class="visit-select custom"
-                            appendTo="body"
+                            appendTo=".visit-summary-tab-group"
                             formControlName="followUpTime"
                             [items]="timeList"
                             bindLabel="name"
@@ -2159,7 +2027,7 @@
               </form>
 
               <div class="table-responsive" *ngIf="followUpForm.value.present">
-                <table class="table">
+                <table class="table" aria-describedby="">
                   <thead>
                     <tr>
                       <th scope="col">{{'Follow Up Requested'|translate}}</th>
@@ -2220,7 +2088,7 @@
   </div>
 </div>
 
-<div class="webrtc-controls">
-  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
-  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
+<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling">
+  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
+  <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
 </div>

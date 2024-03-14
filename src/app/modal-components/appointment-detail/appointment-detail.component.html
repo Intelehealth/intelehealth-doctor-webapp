@@ -9,7 +9,7 @@
         <div class="col-md-12 p-0">
           <div class="patient-info-con">
             <div class="patient-con">
-              <img class="mr-2" [src]="baseUrl + '/personimage/' + data?.meta.patientId" alt="" (error)="onImgError($event)">
+              <img class="mr-2" [src]="baseUrl + '/personimage/' + data?.meta.patientId" alt="" >
               <div class="d-flex flex-column">
                 <h6 class="mb-0">{{ data?.meta.patientName|noValue:('NA'|translate) }} ({{(data?.meta.patientGender)|translate |noValue:('NA'|translate)}}, {{data?.meta.patientAge|noValue:'0'}})</h6>
                 <p class="mb-0">{{'PID'|translate}} : {{data?.meta.openMrsId}}</p>
@@ -59,7 +59,7 @@
           <div class="appointment-info-con">
             <div class="info-row">
               <div class="info-label">{{'Booked by'|translate}}</div>
-              <div class="info-con" *ngIf="data?.meta.hwName">{{data?.meta.hwName}} <a href="tel:{{data?.meta.hwPhoneNo }}"><img class="ml-2" src="assets/svgs/num.svg"/></a></div>
+              <div class="info-con" *ngIf="data?.meta.hwName">{{data?.meta.hwName}} <a href="tel:{{data?.meta.hwPhoneNo }}"><img alt="" class="ml-2" src="assets/svgs/num.svg"/></a></div>
             </div>
           </div>
         </div>

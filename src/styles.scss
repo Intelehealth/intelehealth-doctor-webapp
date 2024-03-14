@@ -226,8 +226,22 @@ body.font-lato td {
 
 /* Chatbot css*/
 
+
 .chatbot-backdrop {
-  background: transparent;
+  background: black;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  opacity: 0.5 !important;
+}
+
+.chatbot-container {
+  width: 300px !important;
+  height: 500px;
+  margin-bottom: 80px;
+  right: 20px;
+  position: fixed !important;
+  bottom: 0px;
 }
 
 .chatbot-container .mat-dialog-container {
@@ -376,6 +390,19 @@ body.font-lato td {
       .material-icons {
         font-size: 16px;
       }
+    }
+  }
+}
+
+
+@media all and (min-width:0px) and (max-width: 568px) {
+  .chatbot-container {
+    &.chatbot-container-mobile {
+      width: 100%!important;
+      height: 76%!important;
+      max-width: 100%!important;
+      max-height: 76%!important;
+      position: static!important;
     }
   }
 }
@@ -614,30 +641,30 @@ body.font-lato td {
       align-items: center;
       padding: 24px;
       position: relative;
-  
+
       .close-btn-con {
         position: absolute;
         right: 24px;
         top: 20px;
-  
+
         .modal-close-btn {
           border: none;
           background: transparent;
           outline: none;
         }
       }
-  
+
       .modal-con {
         max-height: 70vh;
         overflow: auto;
-  
+
         h6 {
           font-size: 24px;
           font-weight: bold;
           text-align: center;
           line-height: 150%;
         }
-  
+
         p {
           font-size: 18px;
           color: #7F7B92;
@@ -645,13 +672,13 @@ body.font-lato td {
           line-height: 150%;
         }
       }
-  
+
       .modal-action-btn-con {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-  
+
         .modal-btn {
           padding: 8px 24px;
           min-width: 119px;
@@ -664,7 +691,7 @@ body.font-lato td {
           color: #2E1E91;
           font-weight: bold;
         }
-  
+
         .modal-btn.blue-btn {
           background: #2E1E91;
           border: 1px solid #2E1E91;
@@ -677,7 +704,7 @@ body.font-lato td {
 
 .vc-modal-lg {
   width: auto;
-  min-width: 450px;
+  min-width: 20%;
   max-width: 80% !important;
 
   .mat-dialog-container {
@@ -709,17 +736,19 @@ body.font-lato td {
     min-width: auto;
     max-width: 96% !important;
   }
+
   .intel-accordion-con {
     .mat-expansion-panel {
       padding: 10px !important;
       margin-bottom: 10px !important;
     }
   }
-  .mat-expansion-indicator{
+
+  .mat-expansion-indicator {
     padding: 1rem !important;
   }
-  
-  .mat-tab-label{
+
+  .mat-tab-label {
     padding: 0px 10px !important;
   }
 }

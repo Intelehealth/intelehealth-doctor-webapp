@@ -6,27 +6,25 @@ import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
-
+import { notifications, doctorDetails, languages } from 'src/config/constant'
+import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss']
 })
 export class SupportComponent implements OnInit, OnDestroy {
-  conversations: any = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
-  searchResults: any = [];
-  selectedConversation: any;
+  selectedConversation: ConversationModel;
 
   message = "";
   fromUuid = null;
-  messageList: any;
+  messageList: MessageModel[];
   openMenu: boolean = false;
   isOver = false;
   isAttachment = false;
-  readSentImg: any;
-  images: any = {};
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   subscription1: Subscription;
@@ -40,45 +38,38 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
-    // this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("supportMessage").subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message for support",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
+    this.subscription1 = this.socketSvc.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
-        this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
       } else {
-        const doc = this.conversations.findIndex((d: any) => d.userUuid == data.from);
+        const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         if (doc == -1) {
           this.getDoctorsList(this.userId);
         } else {
           this.conversations[doc].createdAt = data.createdAt;
           this.conversations[doc].unread++;
-          this.conversations.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
+          this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
       }
     });
 
-    this.subscription2 = this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
       if (data.msgTo == this.selectedConversation?.userUuid) {
         this.getMessages();
       }
     });
   }
 
-  search() {
-
-  }
-
+  /**
+  * Get filtered conversations based on doctor name or user uuid.
+  * @return {void}
+  */
   get filteredConversations() {
-    return this.conversations.filter((conversation: any) => {
+    return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.doctorName
           .toLowerCase()
@@ -90,9 +81,14 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get doctors list/ conversations.
+  * @param {string} userUuid - User uuid of the logged-in doctor
+  * @return {void}
+  */
   getDoctorsList(userUuid: string) {
     this.supportService.getDoctorsList(userUuid).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         if (res.success) {
           this.conversations = res.data;
         }
@@ -100,33 +96,26 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
-  conversationSelected(conversation: any) {
+  /**
+  * Select conversation.
+  * @param {ConversationModel} conversation - Conversation to select
+  * @return {void}
+  */
+  conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.getMessages();
     this.readMessages(this.selectedConversation?.id);
     this.selectedConversation.unread = 0;
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  // submitMessage(event) {
-  //   let value = event.target.value.trim();
-  //   this.message = "";
-  //   if (value.length < 1) return false;
-  //   this.selectedConversation.latestMessage = value;
-  //   this.selectedConversation.messages.unshift({
-  //     id: 1,
-  //     message: value,
-  //     me: true,
-  //   });
-  // }
-
+  /**
+  * Get all messages for the selected conversation.
+  * @return {void}
+  */
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           if (res.success) {
             this.messageList = res?.data;
           }
@@ -134,7 +123,13 @@ export class SupportComponent implements OnInit, OnDestroy {
       });
   }
 
-  readMessages(messageId: any) {
+
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
+  readMessages(messageId: number) {
     this.supportService.readMessageById(this.userId, messageId).subscribe({
       next: (res) => {
         this.getMessages();
@@ -142,6 +137,10 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       this.selectedConversation.message = this.message;
@@ -175,28 +174,13 @@ export class SupportComponent implements OnInit, OnDestroy {
     }
   }
 
-  get userId() {
-    return getCacheData(true,'user').uuid;
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  get userId(): string {
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
-
-  // setImage(src) {
-  //   this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
-  // }
-
-  // isPdf(url) {
-  //   return url.includes('.pdf');
-  // }
-
-  // uploadFile(files) {
-  //   this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-  //     next: (res: any) => {
-  //       this.isAttachment = true;
-
-  //       this.message = res.data;
-  //       this.sendMessage();
-  //     }
-  //   })
-  // }
 
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();

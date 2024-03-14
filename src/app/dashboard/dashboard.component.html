@@ -51,7 +51,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #apSearchInput class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
                   <div class="input-group-append">
@@ -74,7 +74,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{'Patient' | translate}} </th>
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apPatient'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]">
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patientId }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <img src="{{ baseUrl + '/personimage/' + element.patientId }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
                     <span class="font-bold ml-2">{{element.patientName}} ({{(element.patientGender)| translate}})</span>
                   </div>
                 </td>
@@ -89,7 +89,7 @@
               <!-- Starts In Column -->
               <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> {{'Starts in' | translate}} </th>
-                <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apStartIn'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+                <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apStartIn'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('Hour')||element.starts_in.includes('Minute') }">{{element.starts_in}}</span></td>
               </ng-container>
 
               <!-- Location Column -->
@@ -98,7 +98,7 @@
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apLocation'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.visit?.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apComplaint'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.cheif_complaint}} </td>
@@ -107,7 +107,7 @@
               <!-- Prescription Sent Column -->
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> {{'Actions'| translate}} </th>
-                <td mat-cell *matCellDef="let element; let j=index;" [attr.data_test_id]="'apAction'+j">
+                <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apAction'+j">
                   <div class="actions-btn-wrap d-flex align-items-center">
                     <button class="action-btn blue-btn mr-2" [attr.data-test-id]="'btnReschedule'+j" type="button" (click)="reschedule(element)">{{'Reschedule' | translate}}</button>
                     <button class="action-btn pink-btn " [attr.data-test-id]="'btnCancel'+j" type="button" (click)="cancel(element)">{{'Cancel' |translate}}</button>
@@ -137,7 +137,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/red-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpPriority">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpPriority">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #prSearchInput class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
                   <div class="input-group-append">
@@ -159,10 +159,10 @@
               <!-- Name Column -->
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> {{'Patient' | translate}} </th>
-                <td mat-cell *matCellDef="let element; let j=index;" [attr.data_test_id]="'prPatient'+j">
+                <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'prPatient'+j">
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -170,25 +170,25 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> {{'Age' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'prAge'+j"> {{element.person.age}} {{'y'| translate}}</td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prAge'+j"> {{element.person.age}} {{'y'| translate}}</td>
               </ng-container>
 
               <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> {{'Location' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'prLocation'+j"> {{element.location.name}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'prComplaint'+j"> {{element.cheif_complaint}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prComplaint'+j"> {{element.cheif_complaint}} </td>
               </ng-container>
 
               <!-- Visit Uploaded Column -->
               <ng-container matColumnDef="visit_created">
                 <th mat-header-cell *matHeaderCellDef> {{'Visit Uploaded' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'prCreated'+j">
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prCreated'+j">
                   <div class="red-pill">
                     <img src="assets/svgs/red-pad.svg" alt="">
                     <span class="ml-2">{{element.visit_created}}</span>
@@ -203,7 +203,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
-              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns2;" [attr.data_test_id]="'pr'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
+              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns2;" [attr.data-test-id]="'pr'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
@@ -220,7 +220,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/green-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAwaiting">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAwaiting">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #awSearchInput class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAwaitingDashboard">
                   <div class="input-group-append">
@@ -242,10 +242,10 @@
               <!-- Name Column -->
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> {{'Patient' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'awPatient'+j">
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awPatient'+j">
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <img [src]="baseUrl + '/personimage/' + element.person.uuid" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -253,25 +253,25 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> {{'Age' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'awAge'+j"> {{element.person.age}} {{'y'| translate}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awAge'+j"> {{element.person.age}} {{'y'| translate}} </td>
               </ng-container>
 
               <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> {{'Location' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'awLocation'+j"> {{element.location.name}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'awComplaint'+j"> {{element.cheif_complaint}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awComplaint'+j"> {{element.cheif_complaint}} </td>
               </ng-container>
 
               <!-- Visit Uploaded Column -->
               <ng-container matColumnDef="visit_created">
                 <th mat-header-cell *matHeaderCellDef> {{'Visit Uploaded' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'awCreated'+j">
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awCreated'+j">
                   <div class="red-pill">
                     <img src="assets/svgs/red-pad.svg" alt="">
                     <span class="ml-2">{{element.visit_created}}</span>
@@ -286,7 +286,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
-              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns3;" [attr.data_test_id]="'aw'+x"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
+              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns3;" [attr.data-test-id]="'aw'+x"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
@@ -303,7 +303,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/pen-board.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpInprogress">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpInprogress">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #ipSearchInput class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchInprogressDashboard">
                   <div class="input-group-append">
@@ -325,10 +325,10 @@
               <!-- Name Column -->
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> {{'Patient' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'ipPatient'+j">
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipPatient'+j">
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -336,25 +336,25 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> {{'Age' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'ipAge'+j"> {{element.person.age}} {{'y'| translate}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipAge'+j"> {{element.person.age}} {{'y'| translate}} </td>
               </ng-container>
 
               <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> {{'Location'|translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'ipLocation'+j"> {{element.location.name}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint'|translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'ipComplaint'+j"> {{element.cheif_complaint}} </td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipComplaint'+j"> {{element.cheif_complaint}} </td>
               </ng-container>
 
               <!-- Prescription Started Column -->
               <ng-container matColumnDef="prescription_started">
                 <th mat-header-cell *matHeaderCellDef> {{'Prescription Started' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data_test_id]="'ipPresStart'+j">
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipPresStart'+j">
                   <div class="red-pill">
                     <img src="assets/svgs/red-pad.svg" alt="">
                     <span class="ml-2">{{element.prescription_started}}</span>
@@ -369,7 +369,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
-              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns4;" [attr.data_test_id]="'ip'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
+              <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns4;" [attr.data-test-id]="'ip'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>

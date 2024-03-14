@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { ApiResponseModel, RescheduleAppointmentModalResponseModel, ScheduleDataModel, SlotModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 
 export const PICK_FORMATS = {
@@ -38,17 +39,17 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class RescheduleAppointmentComponent implements OnInit {
 
-  minDate: any;
-  scheduleData: any = {
+  minDate: Date;
+  scheduleData: ScheduleDataModel = {
     morning: [],
     afternoon: [],
     evening: []
   };
   selectedDate = moment().format("YYYY-MM-DD");
-  slots: any = [];
-  selectedSlot: any;
+  slots: SlotModel[] = [];
+  selectedSlot: SlotModel;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<RescheduleAppointmentComponent>,
     private appointmentService: AppointmentService,
     private toastr: ToastrService,
@@ -60,21 +61,33 @@ export class RescheduleAppointmentComponent implements OnInit {
     this.getAppointmentSlots();
   }
 
-  dateChanged(event: any) {
+  /**
+  * Callback for date change event
+  * @param {Event} event - Date changed event
+  * @return {void}
+  */
+  dateChanged(event) {
     this.selectedSlot = null;
     this.selectedDate = moment(event.target.value).format("YYYY-MM-DD");
     this.getAppointmentSlots();
   }
 
+  /**
+  * Get appointment slots for a given speciality, from and to date
+  * @param {string} fromDate - From date
+  * @param {string} toDate - To date
+  * @param {string} speciality - Speciality
+  * @return {void}
+  */
   getAppointmentSlots(fromDate = this.selectedDate, toDate = this.selectedDate, speciality = this.data?.speciality) {
     this.scheduleData = {
       morning: [],
       afternoon: [],
       evening: []
     };
-    this.appointmentService.getAppointmentSlots(moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: any) => {
+    this.appointmentService.getAppointmentSlots(moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: ApiResponseModel) => {
       this.slots = res.dates;
-      this.slots.forEach((slot: any) => {
+      this.slots.forEach((slot: SlotModel) => {
         if (moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))) {
           this.scheduleData.morning.push(slot.slotTime);
         } else if (moment(slot.slotTime, "LT").isBetween(moment("11:30 AM", "LT"), moment("5:00 PM", "LT"))) {
@@ -86,6 +99,10 @@ export class RescheduleAppointmentComponent implements OnInit {
     });
   }
 
+  /**
+  * Reschedule appointment
+  * @return {void}
+  */
   reschedule() {
     if (this.selectedDate && this.selectedSlot) {
       this.close({ date: this.selectedDate, slot: this.selectedSlot });
@@ -94,7 +111,12 @@ export class RescheduleAppointmentComponent implements OnInit {
     }
   }
 
-  close(val: any) {
+  /**
+  * Close modal
+  * @param {boolean|RescheduleAppointmentModalResponseModel} val - Dialog result
+  * @return {void}
+  */
+  close(val: boolean|RescheduleAppointmentModalResponseModel) {
     this.dialogRef.close(val);
   }
 

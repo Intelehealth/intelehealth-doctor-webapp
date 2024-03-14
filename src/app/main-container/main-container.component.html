@@ -96,8 +96,8 @@
 
   <div class="admin-sidenav-content">
     <div class="header-main">
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="javascript:void(0)">
+      <nav class="navbar navbar-expand-lg navbar-light" aria-label="Header menu">
+        <a class="navbar-brand">
           <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile" data-test-id="btnToggleDrawer">
             <mat-icon>menu</mat-icon>
           </button>
@@ -112,7 +112,10 @@
                 <div class="input-group">
                     <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()" data-test-id="etSearchPatient">
                     <div class="input-group-append">
-                      <span class="input-group-text click" id="basic-addon1" (click)="search()" data-test-id="spanSearchPatient">
+                      <span class="input-group-text click p-0" id="basic-addon1" *ngIf="searchForm.value.keyword" (click)="resetSearch()" data-test-id="spanResetSearchPatient">
+                        <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                      </span>
+                      <span class="input-group-text click" id="basic-addon2" (click)="search()" data-test-id="spanSearchPatient">
                         <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                       </span>
                     </div>
@@ -144,13 +147,29 @@
                 <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpMenu">
                   <mat-icon>help_outline</mat-icon>
                 </button>
-                <button mat-button class="notification-button mr-3" (click)="toggleNotification()" data-test-id="btnNotification">
-                  <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
+                <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3">
+                  <mat-icon *ngIf="notificationEnabled && !snoozed">notifications_none</mat-icon>
+                  <mat-icon *ngIf="notificationEnabled && snoozed">notifications_paused</mat-icon>
                   <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
                 </button>
+                <mat-menu #notificationmenu="matMenu" class="notification-menu">
+                  <ng-container *ngIf="notificationEnabled && !snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('30m')">Snooze for 30 Minutes</button>
+                    <button mat-menu-item (click)="snoozeNotification('1h')">Snooze for 1 Hour</button>
+                    <button mat-menu-item (click)="snoozeNotification('2h')">Snooze for 2 Hours</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="notificationEnabled && snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('off')">Awake notification</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="!notificationEnabled">
+                    <button mat-menu-item (click)="toggleNotification()">Turn On</button>
+                  </ng-container>
+                </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
-                  <img class="user-img mr-3" src="{{profilePic}}" (error) ="onImgError($event)" alt="">
-                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+                  <img class="user-img mr-3" src="{{profilePic}}" alt="">
+                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
                 </div>
                 <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon" data-test-id="btnProfileDropdown">
                   <mat-icon>more_vert</mat-icon>
@@ -166,10 +185,9 @@
         </div>
       </nav>
     </div>
-    <div class="main-container">
+    <div class="main-container" [class.pb-0]="this.routeUrl?.includes('messages')||this.routeUrl?.includes('support')">
       <router-outlet></router-outlet>
       <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
-        <!-- <button class="help-btn" type="button" (click)="openHelpMenu()" data-test-id="btnToggleHelpMenu">{{'Help'| translate}}</button> -->
         <div class="menu-item">
           <span>{{'Raise a Ticket'| translate}}</span>
           <button class="help-btn-2 mr-1" type="button" (click)="openRaiseTicketModal()" data-test-id="btnToggleTicket">

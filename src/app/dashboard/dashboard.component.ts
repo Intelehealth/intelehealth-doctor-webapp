@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,14 +12,16 @@ import { Router } from '@angular/router';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData } from '../utils/utility-functions';
+import { getCacheData, checkIfDateOldThanOneDay } from '../utils/utility-functions';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
+import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
   showAll: boolean = true;
   displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
@@ -33,10 +35,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dataSource4 = new MatTableDataSource<any>();
 
   baseUrl: string = environment.baseURL;
-  appointments: any = [];
-  priorityVisits: any = [];
-  awaitingVisits: any = [];
-  inProgressVisits: any = [];
+  appointments: AppointmentModel[] = [];
+  priorityVisits: CustomVisitModel[] = [];
+  awaitingVisits: CustomVisitModel[] = [];
+  inProgressVisits: CustomVisitModel[] = [];
 
   specialization: string = '';
   priorityVisitsCount: number = 0;
@@ -90,9 +92,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
-    let provider = getCacheData(true,'provider');
+    let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
@@ -100,57 +102,52 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/get-started']);
       }
       this.getAppointments();
-      // this.getVisits();
-      // this.getVisitCounts(this.specialization);
       this.getAwaitingVisits(1);
       this.getPriorityVisits(1);
       this.getInProgressVisits(1);
     }
 
-
     this.socket.initSocket(true);
-    // this.socket.onEvent("updateMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
-    // this.socket.onEvent("supportMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New support chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
   }
 
+  /**
+  * Get awaiting visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getAwaitingVisits(page: number = 1) {
-    if(page == 1) this.awaitingVisits = [];
-    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: any) => {
+    if(page == 1) {
+      this.awaitingVisits = [];
+      this.awatingRecordsFetched = 0;
+    }
+    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: ApiResponseModel) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
         this.awatingRecordsFetched += this.offset;
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
-          this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource3.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
         }
       }
     });
   }
 
+  /**
+  * Callback for page change event and Get awaiting visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getAwaitingData(event?:PageEvent){
     this.pageIndex1 = event.pageIndex;
     this.pageSize1 = event.pageSize;
@@ -160,7 +157,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
       this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator2.nextPage();
       } else {
@@ -170,30 +166,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return event;
   }
 
+  /**
+  * Get priority visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getPriorityVisits(page: number = 1) {
-    if(page == 1) this.priorityVisits = [];
-    this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: any) => {
+    if(page == 1) {
+      this.priorityVisits = [];
+      this.priorityRecordsFetched = 0;
+    }
+    this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: ApiResponseModel) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
         this.priorityRecordsFetched += this.offset;
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'Flagged');
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
-          this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource2.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
         }
       }
     });
   }
 
+  /**
+  * Callback for page change event and Get priority visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getPriorityData(event?:PageEvent){
     this.pageIndex2 = event.pageIndex;
     this.pageSize2 = event.pageSize;
@@ -203,7 +213,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
       this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator1.nextPage();
       } else {
@@ -213,31 +222,45 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return event;
   }
 
+  /**
+  * Get inprogress visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getInProgressVisits(page: number = 1) {
-    if(page == 1) this.inProgressVisits = [];
-    this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: any) => {
+    if(page == 1) {
+      this.inProgressVisits = [];
+      this.inprogressRecordsFetched = 0;
+    }
+    this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: ApiResponseModel) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
         this.inprogressRecordsFetched += this.offset;
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
-          visit.prescription_started = this.getEncounterCreated2(visit, 'Visit Note');
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
-          this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource4.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
         }
       }
     });
   }
 
+  /**
+  * Callback for page change event and Get inprogress visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getInprogressData(event?:PageEvent){
     this.pageIndex3 = event.pageIndex;
     this.pageSize3 = event.pageSize;
@@ -247,7 +270,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
       this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator3.nextPage();
       } else {
@@ -257,29 +279,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return event;
   }
 
+  /**
+  * Get booked appointments for a logged-in doctor in a current year
+  * @return {void}
+  */
   getAppointments() {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
-      .subscribe((res: any) => {
+    this.appointments = [];
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+      .subscribe((res: ApiResponseModel) => {
         let appointmentsdata = res.data;
-        appointmentsdata.forEach(appointment => {
-          if (appointment.status == 'booked') {
+        appointmentsdata.forEach((appointment: AppointmentModel) => {
+          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
-              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
+              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
           }
         });
-        this.dataSource1 = new MatTableDataSource(this.appointments);
+        this.dataSource1.data = [...this.appointments];
         this.dataSource1.paginator = this.appointmentPaginator;
-        this.dataSource1.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
+        this.dataSource1.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
   }
 
-  getEncounterCreated2(visit: any, encounterName: string) {
+  /**
+  * Get encounter datetime for a given encounter type
+  * @param {CustomVisitModel} visit - Visit
+  * @param {string} encounterName - Encounter type
+  * @return {string} - Encounter datetime
+  */
+  getEncounterCreated(visit: CustomVisitModel, encounterName: string) {
     let created_at = '';
     const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
+    encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
         created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
@@ -288,19 +321,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return created_at;
   }
 
-  getCheifComplaint2(visit: any) {
-    let recent: any = [];
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string[]} - Chief complaints array
+  */
+  getCheifComplaint(visit: CustomVisitModel) {
+    let recent: string[] = [];
     const encounters = visit.encounters;
-    encounters.forEach(encounter => {
+    encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
-        obs.forEach(currentObs => {
+        obs.forEach((currentObs :CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -311,143 +349,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return recent;
   }
 
-  calculateAge(birthdate: any) {
+  /**
+  * Returns the age in years from the birthdate
+  * @param {string} birthdate - Date in string format
+  * @return {number} - Age
+  */
+  calculateAge(birthdate: string) {
     return moment().diff(birthdate, 'years');
   }
 
-  getVisits() {
-    this.appointments = [];
-    this.awaitingVisits = [];
-    this.inProgressVisits = [];
-    this.priorityVisits = [];
-    this.visitService.getVisits({ includeInactive: true }).subscribe(
-      (response: any) => {
-        let visits = response.results;
-        visits.forEach((visit: any) => {
-          // Check if visit has encounters
-          if (visit.encounters.length > 0) {
-            /*
-              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
-              If no attributes, consider it as General Physician
-            */
-            if (visit.attributes.length) {
-              let flag = 0;
-              visit.attributes.forEach((visitAttr: any) => {
-                if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                  // If specialization matches process visit
-                  if (visitAttr.value == this.specialization) {
-                    this.processVisit(visit);
-                  }
-                }
-              });
-            } else if (this.specialization == 'General Physician') {
-              this.processVisit(visit);
-            }
-          }
-        });
-
-        // Check appointments
-        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
-          .subscribe((res: any) => {
-            let appointmentsdata = res.data;
-            appointmentsdata.forEach(appointment => {
-              if (appointment.status == 'booked') {
-                let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-                if (matchedVisit) {
-                  matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                  appointment.visit_info = matchedVisit;
-                  appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                  this.appointments.push(appointment);
-                }
-              }
-            });
-            this.dataSource1 = new MatTableDataSource(this.appointments);
-            this.dataSource1.paginator = this.appointmentPaginator;
-          });
-      }
-    );
-  }
-
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
-  }
-
-  processVisit(visit: any) {
-    const { encounters } = visit;
-    visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
-
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
-      this.inProgressVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
-      this.priorityVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
-      this.awaitingVisits.push(visit);
-    }
-
-    this.dataSource2 = new MatTableDataSource(this.priorityVisits);
-    this.dataSource2.paginator = this.priorityPaginator;
-    this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
-    this.dataSource3.paginator = this.awaitingPaginator;
-    this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
-    this.dataSource4.paginator = this.inprogressPaginator;
-  }
-
-  // getVisitCounts(specialization: string) {
-  //   const getTotal = (data, type) => {
-  //     const item = data.find(({ Status }: any) => Status === type);
-  //     return item?.Total || 0;
-  //   };
-  //   this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
-  //     if (data.length) {
-  //       this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
-  //       this.priorityVisitsCount = getTotal(data, "Priority");
-  //       this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
-  //     }
-  //   });
-  // }
-
-  // getAppointments() {
-  //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
-  //     if (res) {
-  //       let visits = res.results;
-  //       this.appointmentService.getUserSlots(getCacheData(true,'user')).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
-  //       .subscribe((res: any) => {
-  //         let appointmentsdata = res.data;
-  //         appointmentsdata.forEach(appointment => {
-  //           if (appointment.status == 'booked') {
-  //             let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-  //             if (matchedVisit) {
-  //               matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-  //             }
-  //             appointment.visit_info = matchedVisit;
-  //             appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-  //             this.appointments.push(appointment);
-  //           }
-  //         });
-  //         this.dataSource1 = new MatTableDataSource(this.appointments);
-  //         this.dataSource1.paginator = this.appointmentPaginator;
-  //       });
-  //     }
-  //   });
-  // }
-
-  checkIfDateOldThanOneDay(data: any) {
-    let hours = moment(data).diff(moment(), 'hours');
-    let minutes = moment(data).diff(moment(), 'minutes');
-    if (hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm A');
-    };
-    if (hours < 1) {
-      if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
-    }
-    return `${hours} hrs`;
-  }
-
-  getCreatedAt(data: any) {
+  /**
+  * Returns the created time in words from the date
+  * @param {string} data - Date
+  * @return {string} - Created time in words from the date
+  */
+  getCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if (hours > 24) {
@@ -459,44 +375,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return `${hours} hrs ago`;
   }
 
-  getEncounterCreated(visit: any, encounterName: string) {
-    let created_at = '';
-    const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
-      const display = encounter.display;
-      if (display.match(encounterName) !== null) {
-        created_at = this.getCreatedAt(encounter.encounterDatetime);
-      }
-    });
-    return created_at;
-  }
-
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    const encounters = visit.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
-      }
-    });
-    return recent;
-  }
-
-  getSpecialization(attr: any) {
+  /**
+  * Get doctor speciality
+  * @param {ProviderAttributeModel[]} attr - Array of provider attributes
+  * @return {string} - Doctor speciality
+  */
+  getSpecialization(attr: ProviderAttributeModel[]) {
     let specialization = '';
-    attr.forEach((a: any) => {
+    attr.forEach((a: ProviderAttributeModel) => {
       if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
         specialization = a.value;
       }
@@ -504,32 +390,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return specialization;
   }
 
-  reschedule(appointment: any) {
-    // const len = appointment.visit_info.encounters.filter((e: any) => {
-    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
-    // }).length;
-    const len = appointment.visit.encounters.filter((e: any) => {
-      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
+  /**
+  * Reschedule appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
+  reschedule(appointment: AppointmentModel) {
+    const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
+      return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
       this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+    } else if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
-      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
         if (res) {
           let newSlot = res;
-          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: any) => {
+          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: boolean) => {
             if (result) {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
-              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
                 const message = res.message;
                 if (res.status) {
                   this.getAppointments();
-                  this.getAwaitingVisits();
-                  this.getPriorityVisits();
-                  this.getInProgressVisits();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {
                   this.toastr.success(message, 'Rescheduling failed!');
@@ -542,32 +429,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancel(appointment: any) {
-    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
+  /**
+  * Cancel appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
+  cancel(appointment: AppointmentModel) {
+    if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      return;
+    }
+    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
         this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
         this.getAppointments();
-        this.getAwaitingVisits();
-        this.getPriorityVisits();
-        this.getInProgressVisits();
       }
     });
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Play notification sound
+  * @return {void}
+  */
   playNotify() {
     const audioUrl = "assets/notification.mp3";
     new Audio(audioUrl).play();
   }
 
+  /**
+  * Clear filter from a datasource 1
+  * @return {void}
+  */
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource1.filter = filterValue.trim().toLowerCase();
   }
 
+  /**
+  * Clear filter from a datasource 2
+  * @return {void}
+  */
   applyFilter2(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
@@ -575,6 +476,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.priorityPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource 3
+  * @return {void}
+  */
   applyFilter3(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource3.filter = filterValue.trim().toLowerCase();
@@ -582,6 +487,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.awaitingPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource 4
+  * @return {void}
+  */
   applyFilter4(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource4.filter = filterValue.trim().toLowerCase();
@@ -589,6 +498,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.inprogressPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a given datasource
+  * @param {string} dataSource - Datasource name
+  * @return {void}
+  */
   clearFilter(dataSource: string) {
     switch (dataSource) {
       case 'Appointment':
@@ -610,11 +524,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       default:
         break;
     }
-  }
-
-  ngOnDestroy() {
-    if (this.socket.socket && this.socket.socket.close)
-      this.socket.socket.close();
   }
 
 }

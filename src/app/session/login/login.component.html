@@ -7,7 +7,7 @@
       </p>
     </div>
     <div class="col-md-12 px-0 py-4">
-      <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="form">
+      <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="login()" data-test-id="form">
         <div class="form-group">
           <label for="username">
             {{'Username'|translate}}
@@ -27,12 +27,12 @@
           <div class="password-field">
             <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPassword">
             <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePassword">
-              <img src="assets/svgs/icon-eye.svg" alt="">
+              <img [hidden]="visible" src="assets/svgs/icon-eye.svg" alt="">
+              <img [hidden]="!visible" src="assets/svgs/icon-eye-closed.svg" alt="">
             </button>
           </div>
           <div *ngIf="submitted && f.password.errors">
             <small *ngIf="f.password.errors.required" class="error-msg">{{'Please enter password'|translate}}</small>
-            <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
           </div>
         </div>
         <div class="form-group" *ngIf="showCaptcha">
@@ -40,27 +40,10 @@
           <ngx-recaptcha2 #captchaElem
             [siteKey]="siteKey"
             [hl]="selectedLanguage"
-            (reset)="handleReset()"
-            (expire)="handleExpire()"
-            (load)="handleLoad()"
-            (success)="handleSuccess($event)"
             [useGlobalDomain]="false"
             formControlName="recaptcha">
           </ngx-recaptcha2>
         </div>
-        <!-- <div class="form-group mb-0">
-          <div class="pretty p-image p-plain">
-            <input
-              type="checkbox"
-              (change)="authService.rememberMe = !authService.rememberMe"
-              [checked]="authService.rememberMe"
-            />
-            <div class="state">
-              <img class="image" src="assets/svgs/checkbox-tick.png" />
-              <label>Remember me</label>
-            </div>
-          </div>
-        </div> -->
         <div class="form-group mt-3">
           <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
             {{'Next'|translate}}

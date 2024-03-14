@@ -22,6 +22,9 @@ import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-cr
 import { MatDialogRef } from '@angular/material/dialog';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
+import { languages, doctorDetails } from 'src/config/constant';
+import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { AppointmentService } from 'src/app/services/appointment.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -54,18 +57,18 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  file: any;
-  user: any;
-  provider: any;
-  doctorName: any;
+  file;
+  user: UserModel;
+  provider: ProviderModel;
+  doctorName: string;
   baseUrl: string = environment.baseURL;
-  profilePicUrl: any = 'assets/svgs/user.svg';
+  profilePicUrl: string|ArrayBuffer = 'assets/svgs/user.svg';
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   dialogRef: MatDialogRef<ImageCropComponent>;
 
-  fonts: any[] = [
+  fonts: DataItemModel[] = [
     {
       id: 1,
       name: 'Arty',
@@ -88,7 +91,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  languages: any[] = [
+  languages: DataItemModel[] = [
     {
       id: 1,
       name: 'English'
@@ -111,7 +114,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  professions: any[] = [
+  professions: DataItemModel[] = [
     {
       id: 1,
       name: 'MBBS'
@@ -130,7 +133,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  specializations: any[] = [
+  specializations: DataItemModel[] = [
     {
       id: 1,
       name: 'General Physician'
@@ -153,32 +156,33 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     'minWidth': 5,
     'canvasWidth': 300,
     'canvasHeight': 100,
-    'backgroundColor': 'var(--color-offWhite)'
+    'backgroundColor': '#FFFFFF'
   };
 
   personalInfoForm: FormGroup;
   professionalInfoForm: FormGroup;
   signatureType = 'Draw';
   selectedSignatureTabIndex = 0;
-  signatureFile: any;
-  signaturePicUrl: any;
+  signatureFile;
+  signaturePicUrl: string|ArrayBuffer;
   phoneNumberValid = false;
   whatsAppNumberValid = false;
   phoneNumber = '';
   whatsAppNumber = '';
   submitted = false;
-  providerAttributeTypes: any = [];
-  phoneNumberObj: any;
-  whatsAppObj: any;
+  providerAttributeTypes: ProviderAttributeTypeModel[] = [];
+  phoneNumberObj;
+  whatsAppObj;
   subscription1: Subscription;
   subscription2: Subscription;
   maxTelLegth1 = 10;
   maxTelLegth2 = 10;
   oldPhoneNumber = '';
-  today: any;
+  today: string;
   phoneValid = false;
   emailValid = false;
   checkingPhoneValidity = false;
+  specialization: string = '';
   @ViewChild('fileUploader') fileUploader: ElementRef;
 
   constructor(
@@ -191,12 +195,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
     private translateService: TranslateService,
-    private coreService: CoreService) {
-
+    private coreService: CoreService,
+    private appointmentService: AppointmentService) {
+  
     this.personalInfoForm = new FormGroup({
-      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
+      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),
@@ -204,7 +209,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
-      emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true, 'provider').uuid)]),
+      emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')], [ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, getCacheData(true, doctorDetails.PROVIDER).uuid)]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
       fontOfSign: new FormControl(null),
@@ -213,7 +218,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.professionalInfoForm = new FormGroup({
       typeOfProfession: new FormControl(null, [Validators.required]),
-      registrationNumber: new FormControl(null, [Validators.required]),
+      registrationNumber: new FormControl(null, [Validators.required, Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9-]*$/)]),
       specialization: new FormControl(null, [Validators.required]),
       consultationLanguage: new FormControl(null, [Validators.required]),
       workExperience: new FormControl(null, [Validators.required]),
@@ -227,26 +232,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false, 'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.today = moment().format('YYYY-MM-DD');
-    this.user = getCacheData(true, 'user');
-    this.provider = getCacheData(true, 'provider');
-    this.doctorName = getCacheData(false, 'doctorName');
+    this.user = getCacheData(true, doctorDetails.USER);
+    this.provider = getCacheData(true, doctorDetails.PROVIDER);
+    this.doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
-    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
+    this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
-          this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+          this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).setValue(val.substring(0, this.maxTelLegth1));
         }
       }
     });
-    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
+    this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth2) {
-          this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+          this.personalInfoForm.get(doctorDetails.WHATS_APP).setValue(val.substring(0, this.maxTelLegth2));
         }
       }
     });
@@ -258,29 +263,33 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
+  /**
+  * Subscribe to form control value changes observables
+  * @return {void}
+  */
   formControlValueChanges() {
-    this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).valueChanges.subscribe(val => {
       if (val) {
-        this.fonts.map((f: any) => f.text = val);
+        this.fonts.map((f: DataItemModel) => f.text = val);
       } else {
-        this.fonts.map((f: any) => f.text = f.name);
+        this.fonts.map((f: DataItemModel) => f.text = f.name);
       }
     });
 
-    this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(doctorDetails.SIGNATURE_TYPE).valueChanges.subscribe(val => {
       const tabs = ['Draw', 'Generate', 'Upload'];
       if (val) {
         this.signatureType = val;
         if (val === 'Generate') {
-          this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).setValidators([Validators.required, Validators.maxLength(20)]);
+          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).updateValueAndValidity();
+          this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).setValidators([Validators.required]);
+          this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).updateValueAndValidity();
         } else {
-          this.personalInfoForm.get('textOfSign').clearValidators();
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').clearValidators();
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).clearValidators();
+          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).updateValueAndValidity();
+          this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).clearValidators();
+          this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).updateValueAndValidity();
         }
         if (this.selectedSignatureTabIndex !== tabs.indexOf(val)) {
           setTimeout(() => {
@@ -288,25 +297,45 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           }, 1000);
         }
       } else {
-        this.personalInfoForm.get('textOfSign').clearValidators();
-        this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-        this.personalInfoForm.get('fontOfSign').clearValidators();
-        this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+        this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).clearValidators();
+        this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).updateValueAndValidity();
+        this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).clearValidators();
+        this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).updateValueAndValidity();
         setTimeout(() => {
           this.personalInfoForm.patchValue({ signatureType: 'Draw' });
         }, 1000);
       }
     });
 
-    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(doctorDetails.BIRTHDATE).valueChanges.subscribe(val => {
       if (val) {
         this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
     });
+
+    this.professionalInfoForm.get(doctorDetails.SPECIALIZATION).valueChanges.subscribe(val => {
+      if (val && val != this.specialization) {
+        this.appointmentService.checkAppointmentPresent(this.user.uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.specialization).subscribe((res: ApiResponseModel) => {
+          if (res.status) {
+            if (res.data) {
+              this.toastr.warning("You have some appointments booked for this specialization, please complete them first.", "Can't change specialization!");
+              this.professionalInfoForm.patchValue({ specialization: this.specialization });
+            }
+          }
+        }, (err => {
+          this.toastr.error("Something went wrong.", "Can't change specialization!");
+          this.professionalInfoForm.patchValue({ specialization: this.specialization });
+        }));
+      }
+    });
   }
 
+  /**
+  * Get provider attribute types
+  * @return {void}
+  */
   getProviderAttributeTypes() {
-    this.providerService.getProviderAttributeTypes().subscribe((res: any) => {
+    this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
       if (res.results.length) {
         this.providerAttributeTypes = res.results;
         this.patchFormValues();
@@ -314,77 +343,79 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+  * Patch the form values with the provider details
+  * @return {void}
+  */
   patchFormValues() {
     if (this.provider) {
 
       const personalFormValues: any = {};
       const professionalFormValues: any = {};
 
-      // personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
-      // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
-      // personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
       personalFormValues.givenName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.givenName : null,
       personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
       personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null;
-      this.providerAttributeTypes.forEach((attrType: any) => {
+      this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
         switch (attrType.display) {
-          case 'address':
+          case doctorDetails.ADDRESS:
 
             break;
-          case 'consultationLanguage':
+          case doctorDetails.CONSULTATION_LANGUAGE:
             professionalFormValues.consultationLanguage = this.getAttributeValue(attrType.uuid, attrType.display)?.split(',');
             break;
-          case 'countryCode':
+          case doctorDetails.COUNTRY_CODE:
             personalFormValues.countryCode1 = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.countryCode2 = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'emailId':
+          case doctorDetails.EMAIL_ID:
             personalFormValues.emailId = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'fontOfSign':
+          case doctorDetails.FONT_OF_SIGN:
             personalFormValues.fontOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'phoneNumber':
+          case doctorDetails.PHONE_NUMBER:
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             this.phoneNumberValid = (personalFormValues.phoneNumber) ?  true : false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'qualification':
+          case doctorDetails.QUALIFICATION:
 
             break;
-          case 'registrationNumber':
+          case doctorDetails.REGISTRATION_NUMBER:
             professionalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'researchExperience':
+          case doctorDetails.RESEARCH_EXPERIENCE:
             professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'signature':
+          case doctorDetails.SIGNATURE:
             personalFormValues.signature = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'signatureType':
+          case doctorDetails.SIGNATURE_TYPE:
             this.signatureType = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.signatureType = this.signatureType;
             break;
-          case 'specialization':
+          case doctorDetails.SPECIALIZATION:
+            this.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'textOfSign':
+          case doctorDetails.TEXT_OF_SIGN:
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'typeOfProfession':
+          case doctorDetails.TYPE_OF_PROFESSION:
             professionalFormValues.typeOfProfession = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'whatsapp':
+          case doctorDetails.WHATS_APP:
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
             this.whatsAppNumberValid = (personalFormValues.whatsapp) ?  true : false;
             break;
-          case 'workExperience':
+          case doctorDetails.WORK_EXPERIENCE:
             professionalFormValues.workExperience = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'workExperienceDetails':
+          case doctorDetails.WORK_EXPERIENCE_DETAILS:
             professionalFormValues.workExperienceDetails = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           default:
@@ -392,7 +423,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
-      if (personalFormValues.phoneNumber) { this.validateProviderAttribute('phoneNumber'); }
+      if (personalFormValues.phoneNumber) { this.validateProviderAttribute(doctorDetails.PHONE_NUMBER); }
       this.professionalInfoForm.patchValue(professionalFormValues);
       const signature = this.personalInfoForm.value.signature;
       switch (this.signatureType) {
@@ -417,6 +448,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Get attribute value for the given provider attribute uuid and type
+  * @param {string} uuid - Provider attribute uuid
+  * @param {string} display - Provider attribute type name/display
+  * @return {any} - Provider attribute value
+  */
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
@@ -428,12 +465,21 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     return attrValue;
   }
 
-
-  stepChanged(event: any) {
+  /**
+  * Callback for step change event
+  * @param {Event} event - Step change event
+  * @return {void}
+  */
+  stepChanged(event) {
     this.submitted = false;
   }
 
-  async preview(event: any) {
+  /**
+  * Callback for image upload event
+  * @param {Event} event - File upload event
+  * @return {void}
+  */
+  async preview(event) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
@@ -455,7 +501,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             person: this.provider.person.uuid,
             base64EncodedImage: imageBlob
           };
-          this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+          this.profileService.updateProfileImage(payload).subscribe((res) => {
             this.profilePicUrl = result;
             this.profileService.setProfilePic(result);
             this.toastr.success(this.translateService.instant('Profile picture uploaded successfully!'), this.translateService.instant('Profile Pic Uploaded'));
@@ -464,60 +510,78 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialogRef = undefined;
         this.fileUploader.nativeElement.value = null;
       });
-
-
     }
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  hasError(event: any, errorFor: string) {
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @param {string} errorFor - Error for which input
+  * @return {void}
+  */
+  hasError(event, errorFor: string) {
     switch (errorFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = event;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = event;
         break;
     }
   }
 
-  getNumber(event: any, changedFor: string) {
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @param {string} changedFor - Which input changed
+  * @return {void}
+  */
+  getNumber(event, changedFor: string) {
     switch (changedFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = true;
         this.phoneNumber = event;
-        this.validateProviderAttribute('phoneNumber');
+        this.validateProviderAttribute(doctorDetails.PHONE_NUMBER);
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = true;
         this.whatsAppNumber = event;
         break;
     }
   }
 
-  telInputObject(event: any, objectFor: string) {
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @param {string} objectFor - Which object changed
+  * @return {void}
+  */
+  telInputObject(event, objectFor: string) {
     switch (objectFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberObj = event;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppObj = event;
         break;
     }
   }
 
-  onCountryChange(event: any, changedFor: string) {
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @param {string} changedFor - For which object country changed
+  * @return {void}
+  */
+  onCountryChange(event, changedFor: string) {
     switch (changedFor) {
-      case 'phoneNumber':
+      case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
         this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o !== ' ').length;
         break;
-      case 'whatsAppNumber':
+      case doctorDetails.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
@@ -526,31 +590,58 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Clear signature pad
+  * @return {void}
+  */
   clearSignature() {
     this.signaturePad.clear();
   }
 
+  /**
+  * Callback for draw complete on signature pad
+  * @return {void}
+  */
   drawComplete() {
     // will be notified of szimek/signature_pad's onEnd event
   }
 
+  /**
+  * Callback for draw started on signature pad
+  * @return {void}
+  */
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
   }
 
-  signatureTabChanged(event: any) {
+  /**
+  * Callback for signature tab changed event
+  * @param {Event} event - Tab changed event
+  * @return {void}
+  */
+  signatureTabChanged(event) {
     this.selectedSignatureTabIndex = event.index;
     this.signatureType = event.tab.textLabel;
     this.personalInfoForm.patchValue({ signatureType: event.tab.textLabel });
   }
 
-  onFilesDropped(event: any) {
+  /**
+  * Callback for file drop event
+  * @param {Event} event - File drop event
+  * @return {void}
+  */
+  onFilesDropped(event) {
     if (event.addedFiles.length) {
       this.signatureFile = event.addedFiles[0];
       const filename = this.signatureFile.name;
-      if (!filename.endsWith('.png') || filename.endsWith('.jgp') || filename.endsWith('.jpeg')) {
+      if (!(filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.PNG') || filename.endsWith('.JPEG') || filename.endsWith('.JPG'))) {
         this.reset();
         alert('Please upload png, jpg or jpeg file only.');
+        return;
+      }
+      if (this.signatureFile.size < 5120) {
+        this.reset();
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 48kb)'), this.translateService.instant('Invalid File!'));
         return;
       }
       const fileReader = new FileReader();
@@ -564,7 +655,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (event.rejectedFiles.length) {
       if (event.rejectedFiles[0].reason === 'size') {
-        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 48kb)'), this.translateService.instant('Invalid File!'));
       }
       if (event.rejectedFiles[0].reason === 'type') {
         this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having type png, jpg, jpeg only.'), this.translateService.instant('Invalid File!'));
@@ -572,11 +663,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Reset signature
+  * @return {void}
+  */
   reset() {
     this.signatureFile = undefined;
     this.signaturePicUrl = '';
   }
 
+  /**
+  * Check if step 1 is valid and move to next step
+  * @return {void}
+  */
   goToNextStep() {
     this.submitted = true;
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
@@ -594,6 +693,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
+  /**
+  * Update user profile
+  * @return {void}
+  */
   updateProfile() {
     this.submitted = true;
     if (this.professionalInfoForm.invalid) {
@@ -616,22 +719,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
+  /**
+  * Update signature
+  * @return {void}
+  */
   updateSignature() {
-    let signature: string;
+    let signature: string|ArrayBuffer;
 
     switch (this.signatureType) {
       case 'Draw':
         signature = this.signaturePad.toDataURL('image/jpeg');
-        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res) => {
           this.personalInfoForm.patchValue({ signature });
           this.updateProviderAttributes();
         });
         break;
 
       case 'Generate':
-        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
-          if (res.fname) {
-            fetch(res.fname).then(pRes => pRes.blob()).then(blob => {
+        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
+          if (res.success) {
+            fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
               const reader = new FileReader();
               reader.onload = () => {
                 signature = reader.result.toString();
@@ -646,7 +753,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       case 'Upload':
         signature = this.signaturePicUrl;
-        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+        this.providerService.uploadSignature((<string>signature).split(',')[1], this.provider.uuid).subscribe((res) => {
           this.personalInfoForm.patchValue({ signature });
           this.updateProviderAttributes();
         });
@@ -657,83 +764,90 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Update logged-in user provider attributes
+  * @return {void}
+  */
   updateProviderAttributes() {
     const requests = [];
-    this.providerAttributeTypes.forEach((attrType: any) => {
+    this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
       switch (attrType.display) {
-        case 'address':
+        case doctorDetails.ADDRESS:
           break;
-        case 'consultationLanguage':
+        case doctorDetails.CONSULTATION_LANGUAGE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display).toString()));
           break;
-        case 'countryCode':
+        case doctorDetails.COUNTRY_CODE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm('countryCode1')));
           break;
-        case 'emailId':
+        case doctorDetails.EMAIL_ID:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'fontOfSign':
+        case doctorDetails.FONT_OF_SIGN:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'phoneNumber':
+        case doctorDetails.PHONE_NUMBER:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'qualification':
+        case doctorDetails.QUALIFICATION:
           break;
-        case 'registrationNumber':
+        case doctorDetails.REGISTRATION_NUMBER:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'researchExperience':
+        case doctorDetails.RESEARCH_EXPERIENCE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'signature':
+        case doctorDetails.SIGNATURE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'signatureType':
+        case doctorDetails.SIGNATURE_TYPE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'specialization':
+        case doctorDetails.SPECIALIZATION:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'textOfSign':
+        case doctorDetails.TEXT_OF_SIGN:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'typeOfProfession':
+        case doctorDetails.TYPE_OF_PROFESSION:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'whatsapp':
+        case doctorDetails.WHATS_APP:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'workExperience':
+        case doctorDetails.WORK_EXPERIENCE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'workExperienceDetails':
+        case doctorDetails.WORK_EXPERIENCE_DETAILS:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         default:
           break;
       }
     });
-    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm('phoneNumber')) {
-        this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
+      this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+      if (this.specialization != this.professionalInfoForm.get('specialization').value) {
+        this.specialization = this.professionalInfoForm.get('specialization').value;
+        this.appointmentService.updateSlotSpeciality(this.user.uuid, this.specialization).subscribe((resp: ApiResponseModel) => {});
+      }
+      if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
         this.toastr.warning(this.translateService.instant('Kindly re-login to see updated details'), this.translateService.instant('Re-login'));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(getCacheData(true, 'user').uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: ProviderResponseModel) => {
           if (provider.results.length) {
-            setCacheData('provider', JSON.stringify(provider.results[0]));
-            setCacheData('doctorName', provider.results[0].person.display);
-            const u = getCacheData(true, 'user');
+            setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
+            setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
+            let u = getCacheData(true,doctorDetails.USER);
             u.person.display = provider.results[0].person.display;
-            setCacheData('user', JSON.stringify(u));
-            this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+            setCacheData(doctorDetails.USER, JSON.stringify(u));
             const role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
               this.router.navigate(['/admin']);
             } else {
-              this.stepper.reset();
+              this.router.navigate(['/dashboard']);
             }
           }
         });
@@ -741,8 +855,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getAttributeUuid(uuid: string, display: string) {
-    let attrUuid = null;
+  /**
+  * Get provider attribute uuid for a given diaplay and provider attrubute type uuid
+  * @param {string} uuid - Provider attribute type uuid
+  * @param {string} display - Display name
+  * @return {string} - Provider attribute uuid
+  */
+  getAttributeUuid(uuid: string, display: string): string {
+    let attrUuid: string = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
       if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrUuid = this.provider.attributes[i].uuid;
@@ -752,20 +872,35 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     return attrUuid;
   }
 
+  /**
+  * Get value for a given key from form
+  * @param {string} key - Key name
+  * @return {any} - Value for a given key
+  */
   getAttributeValueFromForm(key: string) {
     const formValue = { ...this.personalInfoForm.value, ...this.professionalInfoForm.value };
     return formValue[key];
   }
 
+  /**
+  * Detect MIME type from the base 64 url
+  * @param {string} b64 - Base64 url
+  * @return {string} - MIME type
+  */
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
+  /**
+  * Validate phone number/email already exists or not
+  * @param {string} type - Attribute Type email/phone number
+  * @return {void}
+  */
   validateProviderAttribute(type: string) {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
       if (res.success) {
-        if (type === 'phoneNumber') {
+        if (type === doctorDetails.PHONE_NUMBER) {
           this.phoneValid = res.data;
         } else {
           this.emailValid = res.data;
