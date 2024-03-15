@@ -1,0 +1,12 @@
+<div class="intel-con-modal">
+    <div class="close-btn-con">
+      <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    </div>
+    <div class="modal-con mt-4">
+        <div style="width: 30%;">
+            <h1>File downloading...{{value1}}</h1>
+            <div style="width: 100%;">
+                <mat-progress-bar mode="determinate" [value]="value1"></mat-progress-bar>
+            </div>
+        </div>   
+  </div>
