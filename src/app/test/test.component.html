@@ -1,0 +1,75 @@
+<div class="test-main">
+  <div class="test-header w-100">
+    <div class="test-header-content w-100">
+      <img [src]="iconImg" alt="" />
+      <div class="test-img-title">Test</div>
+      <div
+        *ngIf="showToggle"
+        data-toggle="collapse"
+        data-target="#test"
+        class="click"
+        (click)="isCollapsed = !isCollapsed"
+      >
+        <img
+          class="arrow"
+          alt=""
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
+      </div>
+    </div>
+  </div>
+
+  <div id="test" class="test-details collapse multi-collapse show w-100">
+    <hr class="hr" />
+
+    <div class="d-flex justify-content-center mb-2 w-100">
+      <ul class="first-list p-0 m-0">
+        <li *ngFor="let test of testData, index as i" class="mb-2">
+          {{ test.value }}
+          <span (click)="delete(i)" class="btn-height click float-right">
+            <img *ngIf="!readOnly" alt="" src="assets/svgs/delete-icon.svg" />
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <ng-container *ngIf="!readOnly">
+      <div *ngIf="showAddMore">
+        <img
+          alt=""
+          class="click"
+          src="assets/svgs/add-more-plus-icon.svg"
+          (click)="showAddMore = !showAddMore"
+        />
+
+        <label class="ml-2 font-size-md"> Add more tests</label>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!showAddMore && !readOnly">
+      <span class="text-area-label font-bold">Test </span>
+      <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newTest">
+      <button
+        *ngIf="!readOnly"
+        type="button"
+        class="btn cancel-add-test-btn font-bold mt-4"
+        (click)="showAddMore = !showAddMore; newTest=''"
+      >
+        Cancel
+      </button>
+
+      <button
+        *ngIf="!readOnly"
+        type="button"
+        (click)="submit()" 
+        class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
+      >
+        Add test
+      </button>
+    </ng-container>
+  </div>
+</div>

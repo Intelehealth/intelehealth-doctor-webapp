@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>{{'Forgot Username'|translate}}</h6>
+      <p>
+        {{'No worries, enter your Mobile number or Email ID and we will send you the OTP to retrive your username.'|translate}}
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4">
+
+      <ul id="navTabs" ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
+        <li [ngbNavItem]="'phone'">
+          <a ngbNavLink data-test-id="navMobile">{{'Mobile number'|translate}}</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="forgotUsernameForm" id="forgotUsernameByPhone" (ngSubmit)="forgotUsername()">
+              <div class="form-group">
+                <label for="phone">
+                  {{'Mobile number'|translate}}
+                </label>
+                <div class="phone-field">
+                  <input type="text"
+                    data-test-id="etMobile"
+                    ng2TelInput
+                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true}"
+                    (hasError)="hasError($event)"
+                    (ng2TelOutput)="getNumber($event)"
+                    (intlTelInputObject)="telInputObject($event)"
+                    (countryChange)="onCountryChange($event)"
+                    placeholder="{{'Enter Mobile Number'|translate}}"
+                    class="form-control"
+                    formControlName="phone"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+                  <button class="btn toggle-password-btn" type="button">
+                    <img src="assets/svgs/mobile.svg" alt="">
+                  </button>
+                </div>
+                <div *ngIf="submitted && f.phone.errors">
+                  <small *ngIf="f.phone.errors.required" class="error-msg">{{'Please enter mobile number'|translate}}</small>
+                </div>
+                <div *ngIf="submitted  && !phoneIsValid && !f.phone.errors">
+                  <small class="error-msg">{{'Please enter valid mobile number'|translate}}</small>
+                </div>
+              </div>
+              <div class="form-group mt-5">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitMobile">
+                  {{'Next'|translate}}
+                  <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="'email'">
+          <a ngbNavLink data-test-id="navEmail">{{'EMAIL'|translate}}</a>
+          <ng-template ngbNavContent>
+            <form id="forgotUsernameByEmail" [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
+              <div class="form-group">
+                <label for="email">
+                  {{'EMAIL'|translate}}
+                </label>
+                <div class="email-id-field">
+                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}" data-test-id="etEmail">
+                  <button class="btn toggle-password-btn" type="button">
+                    <img src="assets/svgs/email.svg" alt="">
+                  </button>
+                </div>
+                <div *ngIf="submitted && f.email.errors">
+                  <small *ngIf="f.email.errors.required" class="error-msg">{{'Please enter email'|translate}}</small>
+                  <small *ngIf="f.email.errors.pattern" class="error-msg">{{'Please enter valid email'|translate}}</small>
+                </div>
+              </div>
+              <div class="form-group mt-5">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitEmail">
+                  {{'Next'|translate}}
+                  <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class="mt-5"></div>
+    </div>
+  </div>
+</div>

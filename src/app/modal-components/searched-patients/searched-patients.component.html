@@ -1,0 +1,33 @@
+<div mat-dialog-title class="modal-title">
+  <h6 class="mb-0">{{'Patients' | translate}}</h6>
+</div>
+<mat-dialog-content>
+  <div class="table-responsive">
+    <ng-container *ngIf="data && data?.length; else noPatientsFound;">
+      <div class="row m-0 pt-2 pb-2 flex-nowrap align-items-center" *ngFor="let value of data; let i = index;">
+        <div class="col-3 identifier">
+          <span>
+            {{(value.identifiers[0].identifierType.name) | translate}}
+          </span>
+          {{value.identifiers[0].identifier}}
+        </div>
+        <div class="col-6"><span>{{ value.person.display }}</span><span class="gender">({{ (value.person.gender)| translate}}, {{ value.person.age}})</span></div>
+        <div class="col-3">
+          <button mat-button type="button" class="blue-btn float-right" (click)="view(value.uuid)" [attr.data-test-id]="'btnViewSearchedPatients'+i">{{'View' | translate}}</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noPatientsFound>
+      <div class="row m-0">
+        <div class="col-12 text-center p-3">
+          {{'No patients found!' | translate}}
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close="false" class="blue-btn mr-2" [attr.data-test-id]="'btnCloseSearchedPatients'">
+    {{'Close'| translate}}
+  </button>
+</mat-dialog-actions>

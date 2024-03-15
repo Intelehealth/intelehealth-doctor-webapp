@@ -1,0 +1,14 @@
+.form-control {
+  padding: 14px 16px;
+  background: var(--color-offWhite);
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: var(--color-darkestBlue);
+  text-align: center;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}

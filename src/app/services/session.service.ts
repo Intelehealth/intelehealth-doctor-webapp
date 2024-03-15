@@ -7,8 +7,10 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class SessionService {
+
   private baseURL = environment.baseURL;
   visitStateProviderType = "0406ffeb-a11a-4bb3-8ea6-3ef43b79dc77";
+
   constructor(private http: HttpClient) { }
 
   session(): Observable<any> {
@@ -31,7 +33,7 @@ export class SessionService {
   }
 
   provider(userId): Observable<any> {
-    const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender),attributes)`;
+    const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate),attributes)`;
     return this.http.get(url);
   }
 }

@@ -27,30 +27,38 @@
       }
     }
   ],
-  "dataGroups": [{
-    "name": "api-performance",
-    "urls": [
-      "/assets/i18n/**",
-      "/api/**"
-    ],
-    "cacheConfig": {
-      "strategy": "performance",
-      "maxSize": 100,
-      "maxAge": "3d"
+  "dataGroups": [
+    {
+      "name": "api-performance",
+      "urls": ["/assets/i18n/**"],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "3d"
+      }
+    },
+    {
+      "name": "api-freshness",
+      "urls": [
+        "https://fonts.googleapis.com/**",
+        "https://use.fontawesome.com/**",
+        "/openmrs/ws/rest/v1/visit/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 1000,
+        "maxAge": "0",
+        "timeout": "20s"
+      }
+    },
+    {
+      "name": "api",
+      "urls": ["/api/messages/**", "/api/support/**"],
+      "cacheConfig": {
+        "maxSize": 0,
+        "maxAge": "0u",
+        "strategy": "freshness"
+      }
     }
-  },
-  {
-    "name": "api-freshness",
-    "urls": [
-      "https://fonts.googleapis.com/**",
-      "https://use.fontawesome.com/**",
-      "/openmrs/ws/rest/v1/visit/**"
-    ],
-    "cacheConfig": {
-      "strategy": "freshness",
-      "maxSize": 1000,
-      "maxAge": "0",
-      "timeout": "20s"
-    }
-  }]
+  ]
 }

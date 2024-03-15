@@ -1,0 +1,223 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 p-0">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-4 p-0">
+              <div class="chat-sidebar-wrapper card intel-card chat-list-border-radius">
+                <div class="chat-sidebar-title">
+                  <h6 class="mb-0">{{'Patients'| translate}}</h6>
+                  <span>({{'Via Community health workers' | translate}})</span>
+                </div>
+                <div class="chat-sidebar-body">
+                  <div class="chat-items-search">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                          <img
+                            src="assets/svgs/search-icon.svg"
+                            alt=""
+                            width="20px"
+                            height="20px"
+                          />
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        [(ngModel)]="searchValue"
+                        class="form-control"
+                        placeholder="{{'Search by patient name or ID'|translate}}"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                        data-test-id="etSearchPatientName"
+                      />
+                    </div>
+                  </div>
+                  <ul class="chat-items-list">
+                    <li
+                      [class.selected]="
+                        conversation.id == selectedConversation?.id
+                      "
+                      *ngFor="
+                        let conversation of !searchValue
+                          ? conversations
+                          : filteredConversations
+                      "
+                      (click)="conversationSelected(conversation)"
+                    >
+                      <div class="chat-item-con">
+                        <img
+                          [src]="conversation.patientPic"
+                          alt=""
+
+                        />
+                        <div>
+                          <h6>
+                            {{
+                              conversation.patientName
+                                ? (conversation.patientName | titlecase)
+                                : "Unknown" |translate
+                            }}
+                            {{
+                              conversation.openMrsId
+                                ? '('+(conversation.openMrsId | uppercase)+')'
+                                : ""
+                            }}
+                          </h6> 
+                          <p>{{ conversation.message }}</p>
+                        </div>
+                      </div>
+                    </li>
+                    <li *ngIf="searchValue && filteredConversations.length == 0">
+                      <div class="text-center p-3">
+                          <p>{{ 'No Record Found' }}</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8 p-0">
+              <div
+                class="chat-main-con card intel-card chat-border-radius"
+                *ngIf="selectedConversation; else noConversationSelected"
+              >
+                <div class="chat-con-title">
+                  <div class="chat-item-info">
+                    <img src="{{selectedConversation.patientPic? selectedConversation.patientPic : 'assets/svgs/user.svg'}}" alt="" />
+                    <div class="title">
+                      <h6 class="mb-0">
+                        {{
+                          selectedConversation.patientName
+                            ? (selectedConversation.patientName | titlecase)
+                            :  "Unknown" |translate
+                        }}
+                        {{
+                          selectedConversation.openMrsId
+                            ? '('+(selectedConversation.openMrsId | uppercase)+')'
+                            : ""
+                        }}
+                      </h6>
+                      <span>
+                        {{'CHW' |translate}}: {{ selectedConversation?.hwName | titlecase }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center chat-date">
+                    <ng-select
+                      class="custom mr-2"
+                      [items]="visits"
+                      bindLabel="createdAt"
+                      bindValue="visitId"
+                      [(ngModel)]="visitId"
+                      [clearable]="false"
+                      [searchable]="false"
+                      placeholder="Select visit"
+                      data-test-id="selectVisit"
+                    >
+                      <ng-template ng-label-tmp let-item="item">
+                        {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
+                      </ng-template>
+                      <ng-template
+                        ng-option-tmp
+                        let-item="item"
+                        let-index="index"
+                      >
+                        {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="chat-con-body">
+                  <ul class="chat-messages-list">
+                    <ng-container
+                      *ngFor="
+                        let item of messageList;
+                        index as i;
+                        let first = first
+                      "
+                    >
+                      <li
+                        class="chat-status"
+                        [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                      >
+                        <span class="mr-1">{{
+                          item.createdAt | amDateFormat : "LT"
+                        }}</span>
+                        <ng-container
+                          *ngIf="
+                            first && item?.fromUser === chatSvc?.user?.uuid
+                          "
+                        >
+                          <ng-container *ngIf="item.isRead">
+                            <img src="assets/svgs/read-status.svg" alt="" />
+                            <span class="ml-1">{{'Read'|translate}}</span>
+                          </ng-container>
+                          <ng-container *ngIf="!item.isRead">
+                            <img src="assets/svgs/sent-status.svg" alt="" />
+                            <span class="ml-1">{{'Sent'|translate}}</span>
+                          </ng-container>
+                        </ng-container>
+                      </li>
+                      <li
+                        class="chat-message"
+                        [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                      >
+                        <ng-container
+                          *ngIf="item.type === 'attachment'; else message"
+                        >
+                          <img
+                            class="attachment"
+                            [src]="
+                              isPdf(item.message)
+                                ? pdfDefaultImage
+                                : defaultImage
+                            "
+                            (click)="setImage(item.message)"
+                            alt=""
+                          />
+                        </ng-container>
+                        <ng-template #message>
+                          {{ item.message }}
+                        </ng-template>
+                      </li>
+                    </ng-container>
+                  </ul>
+                  <div class="chat-input-con">
+                    <div class="input-group mr-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Type here"
+                        [(ngModel)]="message"
+                        (keyup.enter)="sendMessage()"
+                        data-test-id="etSendMessage1"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      class="send-btn"
+                      (click)="sendMessage()"
+                      data-test-id="etSendMessage2"
+                    >
+                      <img src="assets/svgs/send-icon-white.svg" alt="" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noConversationSelected>
+                <div class="no-conversation-selected chat-border-radius">
+                  <img src="assets/svgs/chat-messages.png" alt="" />
+                  <h6>{{'No messages selected'|translate}}</h6>
+                  <p>
+                    {{'Please select patient from the list'|translate}} <br />
+                    {{'to view the messages'|translate}}
+                  </p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

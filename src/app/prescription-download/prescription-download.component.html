@@ -1,0 +1,18 @@
+<div *ngIf="visitId && prescriptionVerified" class="col external-prescription-col">
+  <div class="row justify-content-center">
+    <div class="text-center">
+      <button (click)="download()" type="button" class="blue-btn m-2" data-test-id="btnDownloadPrecription">
+        Download e-Prescription
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <page #prescription id="prescription" size="A4" class="external-prescription">
+      <app-view-visit-prescription
+        [isDownloadPrescription]="true"
+        [visitId]="visitId"
+        [download]="eventsSubject.asObservable()"
+      ></app-view-visit-prescription>
+    </page>
+  </div>
+</div>

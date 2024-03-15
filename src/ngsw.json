@@ -80,6 +80,16 @@
         "ignoreVary": true
       },
       "version": 1
+    },
+    {
+      "name": "api",
+      "urls": ["/api/**"],
+      "cacheConfig": {
+        "timeout": "10s",
+        "maxSize": 0,
+        "maxAge": "0u",
+        "strategy": "freshness"
+      }
     }
   ],
   "hashTable": {

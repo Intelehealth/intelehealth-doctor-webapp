@@ -1,0 +1,47 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8 p-0">
+      <div class="welcome-banner-con">
+        <span>x</span>
+        <h6>{{greetingMsg | translate}}, {{doctorName|titlecase}}! <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
+        <p>{{'Complete the following actions to start treating the patients' | translate}}</p>
+      </div>
+    </div>
+    <div class="col-md-8 p-0">
+      <div *ngIf="pc" class="card intel-horz-card my-3">
+        <div class="d-flex flex-row">
+          <div class="pr-3">
+            <img src="assets/svgs/user-pink-circle.svg" alt="..." width="44px">
+          </div>
+          <div>
+            <div class="card-body p-0">
+              <h6 class="card-title">{{'Set up your profile'|translate}}</h6>
+              <p class="card-text">{{'You need to set-up your profile by adding few details of yours & start receiving the patient prescription requests.' |translate}}</p>
+              <button type="button" class="intel-blue-btn" (click)="setupProfile()" [disabled]="!pc" data-test-id="btnSetupProfile">
+                {{'Setup profile'| translate}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8 p-0">
+      <div class="card intel-horz-card my-3" [class.disabled]="!sc">
+        <div class="d-flex flex-row">
+          <div class="pr-3">
+            <img src="assets/svgs/calendar-pink-circle.svg" alt="..." width="44px">
+          </div>
+          <div>
+            <div class="card-body p-0">
+              <h6 class="card-title">{{'Set up your calendar' | translate}}</h6>
+              <p class="card-text">{{'You need to set-up your calendar so you can start taking appointments of the patients.' | translate}}</p>
+              <button type="button" class="intel-blue-btn" (click)="setupCalendar()" [disabled]="!sc" data-test-id="btnSetupCalendar">
+                {{'Setup calendar' | translate}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,23 +1,21 @@
-import { SessionService } from './services/session.service';
-import { VisitService } from './services/visit.service';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
-import { UserIdleService } from 'angular-user-idle';
-import * as introJs from 'intro.js/intro.js';
-import { Router } from '@angular/router';
-import { PushNotificationsService } from './services/push-notification.service';
-import { GlobalConstants } from './js/global-constants';
-import { SwPush, SwUpdate } from '@angular/service-worker';
-declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
-  ngOnInit () {   
+
+  constructor(public translate: TranslateService) {
+    translate.addLangs(['en', 'ru']);
+    translate.setDefaultLang('en');
+
+    const browserLang = translate.getBrowserLang();
+    translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+  }
+
+  ngOnInit() {
   }
 
 }

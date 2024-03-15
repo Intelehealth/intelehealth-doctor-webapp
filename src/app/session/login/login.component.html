@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>{{'LOGIN'|translate}}</h6>
+      <p>
+        {{'Login with your provided username and password then you can choose the verification method.'|translate}}
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4">
+      <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="login()" data-test-id="form">
+        <div class="form-group">
+          <label for="username">
+            {{'Username'|translate}}
+            <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsername">{{'Forgot Username'|translate}} ?</a></span>
+          </label>
+          <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsername">
+          <div *ngIf="submitted && f.username.errors">
+            <small *ngIf="f.username.errors.required" class="error-msg">{{'Please enter username'|translate}}</small>
+            <small *ngIf="f.username.errors.usernameExists" class="error-msg">Couldn’t find you, please enter valid username</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">
+            {{'Password'|translate}}
+            <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPassword">{{'Forgot Password'|translate}} ?</a></span>
+          </label>
+          <div class="password-field">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPassword">
+            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePassword">
+              <img [hidden]="visible" src="assets/svgs/icon-eye.svg" alt="">
+              <img [hidden]="!visible" src="assets/svgs/icon-eye-closed.svg" alt="">
+            </button>
+          </div>
+          <div *ngIf="submitted && f.password.errors">
+            <small *ngIf="f.password.errors.required" class="error-msg">{{'Please enter password'|translate}}</small>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="showCaptcha">
+          <label for="capcha">{{'Before logging in, please confirm you are not a robot'|translate}}</label>
+          <ngx-recaptcha2 #captchaElem
+            [siteKey]="siteKey"
+            [hl]="selectedLanguage"
+            [useGlobalDomain]="false"
+            formControlName="recaptcha">
+          </ngx-recaptcha2>
+        </div>
+        <div class="form-group mt-3">
+          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
+            {{'Next'|translate}}
+            <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12">
+      <p class="section-terms-conditions">
+        Intelehealth <a data-test-id="linkTermsAndConditions" href="https://intelehealth.org/terms-of-use" target="_blank">{{'Terms & Conditions'|translate}}</a>  {{'AND'|translate}} <a data-test-id="linkPrivacyPolicy" href="https://intelehealth.org/privacy-policy" target="_blank">{{'Privacy Policy'|translate}}</a>
+      </p>
+    </div>
+  </div>
+</div>
+

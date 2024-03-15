@@ -1,0 +1,48 @@
+<div class="container-fluid">
+  <div class="row main-container-row">
+    <div class="col-md-6 p-0">
+      <div class="login-info-wrapper">
+        <div class="info-banner">
+          <div class="grid-icon">
+            <img  src="assets/svgs/grid-dots.svg" alt="grid-icon" width="100%">
+            <img class="logo-icon "src="assets/images/Intelehealth-logo-white.png" alt="">
+          </div>
+        </div>
+        <div class="carousel-container flex-fill">
+          <ngb-carousel [showNavigationArrows]="false" [showNavigationIndicators]="true">
+            <ng-template ngbSlide *ngFor="let slide of slides">
+              <div class="picsum-img-wrapper">
+                <img class="hb1" [src]="slide.heartbeat1" alt="">
+                <img class="main" [src]="slide.img_url" alt="Random slide">
+                <img class="hb2" [src]="slide.heartbeat2" alt="">
+              </div>
+              <div class="carousel-caption">
+                <h3>{{slide.title|translate}}</h3>
+              </div>
+            </ng-template>
+          </ngb-carousel>
+        </div>
+        <div class="copy-right-footer justify-self-end">
+          <span>{{'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation'|translate}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 p-0">
+      <div class="main-container">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6 col-6 px-0 py-4">
+              <img class="btn-icon web-back-btn click" (click)="location.back()" *ngIf="!router.url.includes('/session/login')" src="assets/svgs/left-arrow-blue.svg" alt="">
+              <img class="w-75 rounded mobile-logo" src="assets/images/intelehealth-logo-reverse.png" alt="">
+            </div>
+            <div class="col-sm-6 col-6 px-0 py-4">
+              <ng-select data-test-id="selectLanguageSession" class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="code" [searchable]="false" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage" (ngModelChange)="changeLanguage()">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

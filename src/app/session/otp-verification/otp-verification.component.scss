@@ -1,0 +1,112 @@
+.section-title {
+  font-family: DM Sans;
+  h6 {
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 150%;
+    color: var(--color-darkBlue);
+  }
+
+  p {
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--color-gray);
+    line-height: 150%;
+  }
+}
+
+::ng-deep .ng-otp-input-wrapper .otp-input-box {
+  background: var(--color-offWhite);
+  border: 1px solid rgba(178, 175, 190, 0.2) !important;
+  border-radius: 8px !important;
+  outline: none;
+  color: var(--color-darkestBlue) !important;
+  font-size: 16px !important;
+}
+
+.resend-otp-text {
+  font-size: 16px;
+  color: var(--color-gray);
+  padding: 8px 0px;
+
+  a {
+    text-decoration: underline;
+    color: var(--color-darkBlue);
+  }
+}
+
+.form-group {
+  label {
+    font-size: 14px;
+    color: var(--color-darkestBlue);
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .link {
+      a {
+        text-decoration: underline;
+        font-size: 14px;
+        color: var(--color-gray);
+        font-weight: normal;
+      }
+    }
+  }
+
+  .next-btn {
+    height: 56px;
+    background: var(--color-darkBlue);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-white);
+    position: relative;
+
+    .btn-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .next-btn:focus {
+    box-shadow: none;
+  }
+
+  .error-msg {
+    color: var(--color-red);
+    padding: 10px 0px;
+  }
+
+  .password-field, .email-id-field, .phone-field {
+    position: relative;
+
+    .btn {
+      position: absolute;
+      right: 2px;
+      bottom: 6px;
+      background-color: var(--color-offWhite);
+    }
+
+    .btn:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+.form-control {
+  padding: 14px 16px;
+  background: var(--color-offWhite);
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: var(--color-darkestBlue);
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
