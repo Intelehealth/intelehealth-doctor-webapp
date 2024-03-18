@@ -1441,5 +1441,13 @@
   "Patient":"المريض",
   "Collected by":"أخذ العينة",
   "Resulted by":"تحميل النتيجة",
-  "Medical Tests":" الفحوصات الطبية"
+  "Medical Tests":" الفحوصات الطبية",
+  "Assessment And Plan": "التقييم و خطة التداخل",
+  "Collected Samples":"العينات المجموعة",
+  "Collected samples by":"العينات التي تم جمعها بواسطة",
+  "Test Results":"نتائج التحاليل",
+  "Test results by":"نتائج الاختبار بواسطة",
+  "Verify the accuracy of the collected data by directly communicating with the patient and field staff":"التحقق من دقة البيانات التي تم جمعها من خلال التواصل المباشر مع المريض والموظفين الميدانيين",
+  "through the communication windows provided below, as the history and clinical examination were conducted":"من خلال نوافذ التواصل الموضحة أدناه، حيث تم إجراء التاريخ المرضي والفحص السريري",
+  "by a nurse or field health professional.":"بواسطة ممرضة أو أخصائي صحة ميداني"
 }

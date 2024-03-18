@@ -1,5 +1,5 @@
 <div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
-  <h4><i class='fa fa-hospital'></i> {{'Collected by'| translate}}</h4>
+  <h4><i class='fa fa-hospital'></i> {{'Collected Samples'| translate}}</h4>
   <hr>
   <div>
     <ng-container *ngIf="dispenseMedAid.length > 0">
@@ -10,7 +10,7 @@
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    <b>{{('Collected by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</b>
+                    <b>{{('Collected samples by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</b>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
@@ -66,7 +66,7 @@
                       </tr>
                     </table>
                     <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                      <span class="comment-blue">{{('Collected by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y ,hh:mm a'}}</span>
+                      <span class="comment-blue">{{('Collected samples by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y ,hh:mm a'}}</span>
                     </div>
                   </div>
                 </div>

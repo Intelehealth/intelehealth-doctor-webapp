@@ -1390,5 +1390,13 @@
     "Patient":"Patient",
     "Collected by":"Collected by",
     "Resulted by":"Resulted by",
-    "Medical Tests":"Medical Tests"
+    "Medical Tests":"Medical Tests",
+    "Assessment And Plan": "Assessment And Plan",
+    "Collected Samples":"Collected Samples",
+    "Collected samples by":"Collected samples by",
+    "Test Results":"Test Results",
+    "Test results by":"Test results by",
+    "Verify the accuracy of the collected data by directly communicating with the patient and field staff":"Verify the accuracy of the collected data by directly communicating with the patient and field staff",
+    "through the communication windows provided below, as the history and clinical examination were conducted":"through the communication windows provided below, as the history and clinical examination were conducted",
+    "by a nurse or field health professional.":"by a nurse or field health professional."
   }
