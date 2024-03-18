@@ -9,6 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ImagesPreviewComponent implements OnInit {
 
   imgUrl: string;
+  imgId: string;
   source: any = [];
   startIndex: number;
   min: number = -1;
@@ -22,6 +23,7 @@ export class ImagesPreviewComponent implements OnInit {
     if (this.source.length) this.min = 0;
     if (this.source.length) this.max = this.source.length - 1;
     if (this.source.length) this.imgUrl = this.data.source[this.data.startIndex].src;
+    if (this.source.length) this.imgId = this.data.source[this.data.startIndex].imgId;
   }
 
   close(val: any) {
@@ -31,11 +33,13 @@ export class ImagesPreviewComponent implements OnInit {
   next() {
     this.startIndex++;
     this.imgUrl = this.source[this.startIndex].src;
+    this.imgId = this.source[this.startIndex].imgId;
   }
 
   previous() {
     this.startIndex--;
     this.imgUrl = this.source[this.startIndex].src;
+    this.imgId = this.source[this.startIndex].imgId;
   }
 
   onImageError(event: any) {

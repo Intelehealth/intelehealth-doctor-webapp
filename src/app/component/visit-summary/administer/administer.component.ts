@@ -79,7 +79,10 @@ export class AdministerComponent implements OnInit {
               dispenseObs['coveredCost'] = obsData.coveredCost
             }
             if(e.obs[i].display.includes("Complex Image")){
-              const data = { src: `${this.baseURL}/obs/${e.obs[i].uuid}/value` }
+              const data = { 
+                src: `${this.baseURL}/obs/${e.obs[i].uuid}/value`,
+                imgId: e.obs[i].uuid.split("_")[0]
+              }
               this.eyeImages.push(data);
               imageDoc.push(data);
               dispenseObs['docImage'] = imageDoc
