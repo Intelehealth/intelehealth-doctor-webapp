@@ -872,7 +872,7 @@ export class SetupCalendarComponent implements OnInit {
       const lastIndex = (timeSlots.length-1);
       const lastSlot = timeSlots[lastIndex];
       const start1 = moment([lastSlot.startTime,lastSlot.startMeridiem].join(" ") , ["h:mm A"]);
-      const end1 = moment([lastSlot.startTime,lastSlot.startMeridiem].join(" "), ["h:mm A"]);
+      const end1 = moment([lastSlot.endTime,lastSlot.endMeridiem].join(" "), ["h:mm A"]);
       let countSameDay = 1;
       for (let i = 0; i < lastIndex; i++) {
         // prevent comparision of slot with itself
@@ -885,7 +885,7 @@ export class SetupCalendarComponent implements OnInit {
         if (countSameDay > 3) return {invalid: true, error: "Maximum 3 slots allowed for a day"};
 
         const start2 = moment([currSlot.startTime,currSlot.startMeridiem].join(" "), ["h:mm A"]);
-        const end2 = moment([currSlot.startTime,currSlot.startMeridiem].join(" "), ["h:mm A"]);
+        const end2 = moment([currSlot.endTime,currSlot.endMeridiem].join(" "), ["h:mm A"]);
 
         if (
           (start2.isBetween(start1, end1, undefined, "[]") ||
