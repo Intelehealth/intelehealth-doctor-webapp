@@ -15,6 +15,9 @@ import { ModalService } from './services/modal.service';
 import { ReportsSuccessComponent } from './modals/reports-success/reports-success.component';
 import { ReportErrorComponent } from './modals/reports-error/reports-error.component';
 import { FileDownloadComponent } from './modals/file-download/file-download.component';
+import { ReportGeneratorComponent } from './modals/report-generator/report-generator.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReoportService } from './services/report.service';
 
 
 
@@ -24,10 +27,13 @@ import { FileDownloadComponent } from './modals/file-download/file-download.comp
     ReportListComponent,
     ReportsSuccessComponent,
     ReportErrorComponent,
-    FileDownloadComponent 
+    FileDownloadComponent,
+    ReportGeneratorComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     ReportsRoutingModule,
     NgbNavModule,
     MatExpansionModule,
@@ -39,7 +45,8 @@ import { FileDownloadComponent } from './modals/file-download/file-download.comp
     MatProgressBarModule,
   ],
   providers: [
-    ModalService
+    ModalService,
+    ReoportService
   ]
 })
 export class ReportsModule { }
