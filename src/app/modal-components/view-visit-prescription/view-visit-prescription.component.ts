@@ -955,6 +955,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 '',
                 ''
               ],
+              [
+                {
+                  colSpan: 4,
+                  alignment: 'left',
+                  stack: [
+                    { text: `*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline`,margin: [10, 50, 10, 10], fontSize: 10, bold: true},
+                  ]
+                },
+                '',
+                '',
+                ''
+              ],
             ]
           },
           layout: 'noBorders'
