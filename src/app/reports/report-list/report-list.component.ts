@@ -17,7 +17,7 @@ export class ReportListComponent {
     },
     {
       id: 2,
-      name: 'List of patient between two dates',
+      name: 'Baseline Survey',
       buttonName: "Create Report"
     }
   ];
@@ -36,7 +36,7 @@ export class ReportListComponent {
     };
     this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
       if (res) {
-        this.modalService.openFileDownloadDialoag().subscribe((res: any) => {
+        this.modalService.openFileDownloadDialoag(res).subscribe((res: any) => {
           if (res) {
             this.reportSuccess();
           } else {

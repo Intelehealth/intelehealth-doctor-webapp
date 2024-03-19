@@ -15,16 +15,19 @@ export class FileDownloadComponent implements OnInit {
     private reportService: ReoportService) { }
 
   ngOnInit(): void {
-    this.reportService.getCompletedVisits().subscribe({
+    this.reportService.getReport(this.data).subscribe({
       next: (event: any) => {
         if (event['loaded'] && event['total']) {
           this.value = Math.round(event['loaded'] / event['total'] * 100);
+        }
+        if (event?.body) {
+          window.location.href = event.body.fname;
         }
         setTimeout(() => {
           this.close(true);
         }, 2000);
       },
-      error: (error) => {
+      error: () => {
         this.dialogRef.close(false);
       }
     });

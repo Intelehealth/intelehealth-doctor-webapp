@@ -6,12 +6,11 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class ReoportService {
-  private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) { }
 
-  getCompletedVisits() {
+  getReport(body) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getCompletedVisits?ngsw-bypass=true&state=All&speciality=General Physician&page=1`, { reportProgress: true, observe: "events" });
+      `${environment.reportURL}/${body.value.field1}/${body.value.field2}`,{ reportProgress: true, observe: "events" });
   }
 }

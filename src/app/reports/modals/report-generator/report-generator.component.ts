@@ -11,6 +11,7 @@ export class ReportGeneratorComponent {
 
   reportForm: FormGroup;
   submitted: boolean = false;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ReportGeneratorComponent>) {
     this.reportForm = new FormGroup({
@@ -20,6 +21,10 @@ export class ReportGeneratorComponent {
   }
 
   get f() { return this.reportForm.controls; }
+
+  get isDatesValid() {
+    return new Date(this.reportForm.value.field1).getTime() > new Date(this.reportForm.value.field2).getTime();
+  }
 
   /**
   * Close modal

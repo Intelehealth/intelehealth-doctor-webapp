@@ -19,8 +19,8 @@ export class ModalService {
     return dialogRef.afterClosed();
   }
 
-  openFileDownloadDialoag(): Observable<any> {
-    const dialogRef = this.dialog.open(FileDownloadComponent, { panelClass: 'modal-md' });
+  openFileDownloadDialoag(data): Observable<any> {
+    const dialogRef = this.dialog.open(FileDownloadComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
   openReportSuccessDialog(): Observable<any> {
