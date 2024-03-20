@@ -1,0 +1,91 @@
+.mat-elevation-z8 {
+    box-shadow: none;
+    width: 100%;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    font-family: DM Sans;
+}
+th.mat-header-cell {
+    border: none;
+    font-size: 14px !important;
+    font-weight: 700;
+    color: #7f7b92;
+    height: 21px;
+}
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+    border: none !important;
+    min-width: 60px;
+    white-space: nowrap;
+    padding-right: 24px;
+}
+th.mat-header-cell span.alert-danger, td.mat-cell span.alert-danger, td.mat-footer-cell span.alert-danger {
+    color: #ff475d;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+}
+th.mat-header-cell span.alert-success, td.mat-cell span.alert-success, td.mat-footer-cell span.alert-success {
+    color: #0fd197;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+}
+td.mat-cell {
+    font-size: 16px;
+}
+tr.mat-row, tr.mat-footer-row {
+    height: 64px;
+    border-radius: 8px;
+}
+tr.mat-row.upcoming {
+    background: #e6fff3 !important;
+}
+td.mat-cell:first-child, th.mat-header-cell:first-child {
+    border-radius: 8px 0 0 8px;
+}
+td.mat-cell:last-child, th.mat-header-cell:last-child {
+    border-radius: 0 8px 8px 0;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.vertical-line-cell {
+    position: relative;
+}
+
+.vertical-line-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); 
+    border-left: 4px solid gray;
+    height: 100%;
+}
+
+.vertical-line-cell .i-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; 
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid gray;
+}
+
+.vertical-line-cell .o-circle {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #fff;
+    left: 50%;
+}
+

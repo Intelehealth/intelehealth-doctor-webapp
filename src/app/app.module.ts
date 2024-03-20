@@ -108,6 +108,7 @@ import { ToastrModule } from "ngx-toastr";
 import { MomentModule } from "ngx-moment";
 import { CollectedByComponent } from './component/visit-summary/collected-by/collected-by.component';
 import { ResultedByComponent } from './component/visit-summary/resulted-by/resulted-by.component';
+import { HwAssessmentComponent } from './component/visit-summary/hw-assessment/hw-assessment.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -170,7 +171,8 @@ registerLocaleData(localeAr);
     ImagesPreviewComponent,
     VideoCallComponent,
     CollectedByComponent,
-    ResultedByComponent
+    ResultedByComponent,
+    HwAssessmentComponent
   ],
 
   imports: [

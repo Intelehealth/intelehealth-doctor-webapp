@@ -1,0 +1,60 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4>{{'Health Worker’s Assessment'| translate}}</h4>
+    <hr>
+    <div>
+        <mat-accordion>
+            <ng-container>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title *ngFor="let i of addBy">
+                            <b>{{('Health worker’s assessment added by'|translate)+' : '+i.creator.person.display}}</b>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <ng-container>
+                        <div class="mat-elevation-z8">
+                            <table mat-table [dataSource]="dataSource">
+                                
+                            <!-- Time Date Column -->
+                            <ng-container matColumnDef="time_date">
+                                <th mat-header-cell *matHeaderCellDef>{{'Cheif Complaint'|translate}}</th>
+                                <td mat-cell *matCellDef="let element">
+                                    <span class="time1">{{ element.additional_remark.dateTime | date : "dd-MMM-y, hh:mm a":'':locale }}</span>
+                                </td>
+                            </ng-container>
+                        
+                            <!-- Action Column -->
+                            <ng-container matColumnDef="action">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let element" class="vertical-line-cell">
+                                    <div class="o-circle">
+                                        <div class="i-circle"></div>
+                                    </div>
+                                </td>
+            
+                            </ng-container>
+                        
+                            <!-- Created on Column -->
+                            <ng-container matColumnDef="created_on">
+                                <th mat-header-cell *matHeaderCellDef>{{'Created on'|translate}}</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.additional_remark.additional_remark }}
+                                </td>
+                            </ng-container>
+                        
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                                    {{'No assessment added by health worker'|translate}}
+                                </td>
+                            </tr>
+                        
+                            <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> -->
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+                        </div>
+                    </ng-container>
+                </mat-expansion-panel>
+            </ng-container>
+        </mat-accordion>
+    </div>
+</div>
+
