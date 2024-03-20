@@ -200,7 +200,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
-      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      middleName: new FormControl('', [Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       familyName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
@@ -221,8 +221,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       registrationNumber: new FormControl(null, [Validators.required, Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9-]*$/)]),
       specialization: new FormControl(null, [Validators.required]),
       consultationLanguage: new FormControl(null, [Validators.required]),
-      workExperience: new FormControl(null, [Validators.required]),
-      researchExperience: new FormControl(null, [Validators.required]),
+      workExperience: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]*$/)]),
+      researchExperience: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]*$/)]),
       workExperienceDetails: new FormControl('', [Validators.required])
     });
   }
