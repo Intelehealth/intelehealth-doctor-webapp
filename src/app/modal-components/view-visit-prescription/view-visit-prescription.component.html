@@ -581,7 +581,7 @@
         </div>
 
       <div *ngIf="isDownloadPrescription" class="signature w-100">
-        <div class="float-right my-4">
+        <div class="text-right my-4">
           <img class="signature" alt="" [src]="signature?.value" />
           <div class="title-name">{{ consultedDoctor?.name }}</div>
           <div class="title">{{ consultedDoctor?.typeOfProfession }}</div>
@@ -589,6 +589,9 @@
             {{'Registration No'|translate}}:{{ consultedDoctor?.registrationNumber }}
           </div>
         </div>
+      </div>
+      <div *ngIf="isDownloadPrescription" class="col-md-12 mb-3">
+        <b>*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline</b>
       </div>
     </div>
   </div>
