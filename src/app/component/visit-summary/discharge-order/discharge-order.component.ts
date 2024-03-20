@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-discharge-order',
@@ -29,7 +30,7 @@ import { TranslateService } from '@ngx-translate/core';
     ])
   ]
 })
-export class DischargeOrderComponent implements OnInit {
+export class DischargeOrderComponent implements OnInit, OnDestroy {
 
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
@@ -39,6 +40,11 @@ export class DischargeOrderComponent implements OnInit {
   visitUuid: string;
   conceptDischargeOrder = 'b682c5de-bcac-4e70-a6d9-789034194d99';
 
+  tempDischarge: any = [];
+  tempDischargeDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
+  
   dischargeOrderForm = new FormGroup({
     dischargeOrder: new FormControl('', [Validators.required])
   });
@@ -70,6 +76,7 @@ export class DischargeOrderComponent implements OnInit {
           }
         });
       });
+      this.eventsSubscription = this.events.subscribe(() => this.dischargeEvent());
   }
 
   Submit() {
@@ -91,11 +98,16 @@ export class DischargeOrderComponent implements OnInit {
         value: this.getObj(value),
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-        .subscribe(resp => {
-          const user = getFromStorage("user");
-          this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
-        });
+
+      this.tempDischarge.push(json);
+      const user = getFromStorage("user");
+      this.tempDischargeDisplay.push({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }});
+
+      // this.service.postObs(json)
+      //   .subscribe(resp => {
+      //     const user = getFromStorage("user");
+      //     this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
+      //   });
     }
   }
 
@@ -142,5 +154,31 @@ export class DischargeOrderComponent implements OnInit {
       "en": value
     }
     return JSON.stringify(value1);
+  }
+
+  dischargeEvent(){
+    console.log('Discharge V')
+    for (let i = 0; i < this.tempDischarge.length; i++) {
+      this.service.postObs(this.tempDischarge[i]).subscribe(response => {
+        const user = getFromStorage("user");
+        const obj = { 
+          uuid: response.uuid, 
+          value: response.value, 
+          obsDatetime: response.obsDatetime, 
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`, 
+          creator: { uuid: user.uuid, person: user.person } 
+        }
+        this.dischargeOrders.push(this.diagnosisService.getData(obj));
+      });
+    }
+
+    setTimeout(() => {
+      this.tempDischargeDisplay = [];
+      this.tempDischarge = [];
+    }, 500);
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
   }
 }

@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
@@ -34,7 +34,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
     ])
   ]
 })
-export class PrescribedMedicationComponent implements OnInit {
+export class PrescribedMedicationComponent implements OnInit, OnDestroy {
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   meds: any = [];
@@ -54,6 +54,10 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
   isShow: boolean[] = Array(this.medicineObsList.length).fill(false);
 
+  tempMedication: any = [];
+  tempMedicationDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
@@ -231,10 +235,12 @@ export class PrescribedMedicationComponent implements OnInit {
         }
       }
     });
+    this.eventsSubscription = this.events.subscribe(() => this.commentMedication());
   }
 
   ngOnDestroy() {
     this.visitSvc.lockMedicineAidOrder.unsubscribe();
+    this.eventsSubscription.unsubscribe();
   }
 
   onSubmit() {
@@ -314,12 +320,17 @@ export class PrescribedMedicationComponent implements OnInit {
           });
           return;
         }
-        this.service.postObs(json)
-          .subscribe(response => {
-            const user = getFromStorage("user");
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creatorRegNo: `(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
-            this.add = false;
-          });
+
+        this.tempMedication.push(json);
+        const user = getFromStorage("user");
+        this.tempMedicationDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+  
+        // this.service.postObs(json)
+        //   .subscribe(response => {
+        //     const user = getFromStorage("user");
+        //     this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creatorRegNo: `(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+        //     this.add = false;
+        //   });
       }
     }, 500);
 
@@ -397,5 +408,26 @@ export class PrescribedMedicationComponent implements OnInit {
 
   toggleShow(index: number): void {
     this.isShow[index] = !this.isShow[index];
+  }
+
+  
+  commentMedication(){
+    console.log('Medication V')
+    for (let i = 0; i < this.tempMedication.length; i++) {
+      this.service.postObs(this.tempMedication[i]).subscribe(response => {
+        const user = getFromStorage("user");
+        this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: response.value, obsDatetime: response.obsDatetime, creatorRegNo: `(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+        this.add = false;
+      });
+    }
+
+    setTimeout(() => {
+      this.tempMedicationDisplay = [];
+      this.tempMedication = [];
+    }, 500);
+  }
+
+  tempDdelete(i){    
+    return this.tempMedicationDisplay.splice(i, 1) && this.tempMedication.splice(i, 1);
   }
 }

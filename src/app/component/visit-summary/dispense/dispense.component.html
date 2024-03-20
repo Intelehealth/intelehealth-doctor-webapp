@@ -124,9 +124,9 @@
                                                         <div class="list-item">
                                                             <div class="list-item-content">
                                                                 <div class="eye-images-con">
-                                                                    <div class="eye-item" *ngFor="let e of meds.docImage; let x = index">
+                                                                    <div class="eye-item" *ngFor="let e of meds.docImage;">
                                                                         <img [src]="e.src" alt="" />
-                                                                        <div class="image-cover" (click)="previewEyeImages(x)">
+                                                                        <div class="image-cover" (click)="previewEyeImages(i)">
                                                                             <img src="assets/svgs/maximize.svg" alt=""/>
                                                                         </div>
                                                                     </div>

@@ -1,6 +1,6 @@
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -15,6 +15,8 @@ import { CoreService } from "src/app/services/core/core.service";
 import { SocketService } from "src/app/services/socket.service";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from "rxjs";
+import { AdditionalCommentComponent } from './additional-comment/additional-comment.component'; // Import the ChildComponent
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -48,6 +50,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isReceiveBy = false;
   visit: any;
   chatBoxRef: any;
+
+  eventsSubject: Subject<void> = new Subject<void>();
+  @ViewChild(AdditionalCommentComponent) childComponent!: AdditionalCommentComponent; // Access the ChildComponent
 
   constructor(
     private service: EncounterService,
@@ -228,6 +233,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         });
       }
     }
+    setTimeout(() => {
+      this.translationService.getTranslation("Data will not be save until click's 'Save' or 'Complete Prescription' button.");
+    }, 4000);
   }
 
   sign() {
@@ -363,7 +371,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   saveData() {
-    this.translationService.getTranslation('Data saved successfully');
+    const tempObsLength = this.childComponent.getTempCommentLength();
+    if (tempObsLength > 0) {
+      this.translationService.getTranslation('Data saved successfully');
+      this.eventsSubject.next();
+    } else {
+      this.translationService.getTranslation('Assessment And Plan are compulsory. Please enter at least one note.');
+    }
   }
 
   openChatModal() {

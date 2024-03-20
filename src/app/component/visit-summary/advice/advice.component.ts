@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
@@ -33,7 +33,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class AdviceComponent implements OnInit {
+export class AdviceComponent implements OnInit, OnDestroy {
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   advice: any = [];
@@ -43,6 +43,11 @@ export class AdviceComponent implements OnInit {
   visitUuid: string;
   patientId: string;
   errorText: string;
+
+  tempAdvice: any = [];
+  tempAdviceDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
 
   adviceForm = new FormGroup({
     advice: new FormControl('', [Validators.required])
@@ -93,6 +98,7 @@ export class AdviceComponent implements OnInit {
           }
         });
       });
+      this.eventsSubscription = this.events.subscribe(() => this.adviceEvent());
   }
 
   submit() {
@@ -117,18 +123,25 @@ export class AdviceComponent implements OnInit {
           encounter: this.encounterUuid
         };
 
-        this.service.postObs(json)
-          .subscribe(response => {
-            const user = getFromStorage("user");
-            let obj = {
-              uuid: response.uuid,
-              value: json.value,
-              obsDatetime: response.obsDatetime,
-              creatorRegNo: `(${getFromStorage("registrationNumber")})`,
-              creator: { uuid: user.uuid, person: user.person }
-            }
-            this.advice.push(this.diagnosisService.getData(obj));
-          });
+        this.tempAdvice.push(json);
+        const user = getFromStorage("user");
+        this.tempAdviceDisplay.push(this.diagnosisService.getData({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }}));
+  
+        // this.service.postObs(json)
+        //   .subscribe(response => {
+        //     console.log(response,"Vishal RES");
+            
+        //     const user = getFromStorage("user");
+        //     let obj = {
+        //       uuid: response.uuid,
+        //       value: json.value,
+        //       obsDatetime: response.obsDatetime,
+        //       creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+        //       creator: { uuid: user.uuid, person: user.person }
+        //     }
+        //     console.log(obj,"Vishal OBJ");
+        //     this.advice.push(this.diagnosisService.getData(obj));
+        //   });
       }, 1000);
     }
   }
@@ -173,5 +186,35 @@ export class AdviceComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
+  }
+
+  adviceEvent(){
+    console.log('Advice V')
+    for (let i = 0; i < this.tempAdvice.length; i++) {
+      this.service.postObs(this.tempAdvice[i]).subscribe(response => {
+        const user = getFromStorage("user");
+        let obj = {
+          uuid: response.uuid,
+          value: response.value,
+          obsDatetime: response.obsDatetime,
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
+        }
+        this.advice.push(this.diagnosisService.getData(obj));
+      });
+    }
+
+    setTimeout(() => {
+      this.tempAdviceDisplay = [];
+      this.tempAdvice = [];
+    }, 500);
+  }
+
+  tempDdelete(i){    
+    return this.tempAdviceDisplay.splice(i, 1) && this.tempAdvice.splice(i, 1);
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
   }
 }

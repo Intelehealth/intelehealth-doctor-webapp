@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { SessionService } from 'src/app/services/session.service';
+import { Observable, Subscription } from 'rxjs';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -29,7 +30,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
     ])
   ]
 })
-export class FollowUpComponent implements OnInit {
+export class FollowUpComponent implements OnInit, OnDestroy {
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   minDate = new Date();
@@ -39,6 +40,11 @@ export class FollowUpComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   errorText: string;
+
+  tempFollowUp: any = [];
+  tempFollowUpDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
 
   followForm = new FormGroup({
     date: new FormControl('', [Validators.required]),
@@ -72,6 +78,7 @@ export class FollowUpComponent implements OnInit {
         });
       });
     this.dateAdapter.setLocale(this.getLang());
+    this.eventsSubscription = this.events.subscribe(() => this.followUpEvent());
   }
 
   get allowFollowUp() {
@@ -92,20 +99,25 @@ export class FollowUpComponent implements OnInit {
         value: this.getObj(obsdate, advice),
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-        .subscribe(resp => {
-          const user = getFromStorage("user");
-          let obj = {
-            uuid: resp.uuid,
-            value: json.value,
-            obsDatetime: resp.obsDatetime,
-            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
-            creator: { uuid: user.uuid, person: user.person }
-          }
-          let obs1 = this.diagnosisService.getData(obj);
-          this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
-          // this.followUp.push(this.diagnosisService.getData(obj));
-        });
+
+      this.tempFollowUp.push(json);
+      const user = getFromStorage("user");
+      this.tempFollowUpDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+
+      // this.service.postObs(json)
+      //   .subscribe(resp => {
+      //     const user = getFromStorage("user");
+      //     let obj = {
+      //       uuid: resp.uuid,
+      //       value: json.value,
+      //       obsDatetime: resp.obsDatetime,
+      //       creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+      //       creator: { uuid: user.uuid, person: user.person }
+      //     }
+      //     let obs1 = this.diagnosisService.getData(obj);
+      //     this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+      //     // this.followUp.push(this.diagnosisService.getData(obj));
+      //   });
     }
   }
 
@@ -173,5 +185,37 @@ export class FollowUpComponent implements OnInit {
       .replace("December", "شهر كانون الأول");
     obs.value = valaue;
     return obs;
+  }
+
+  followUpEvent(){
+    console.log('FollowUp V')
+    for (let i = 0; i < this.tempFollowUp.length; i++) {
+      this.service.postObs(this.tempFollowUp[i]).subscribe(response => {
+          const user = getFromStorage("user");
+          let obj = {
+            uuid: response.uuid,
+            value: response.value,
+            obsDatetime: response.obsDatetime,
+            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+            creator: { uuid: user.uuid, person: user.person }
+          }
+          let obs1 = this.diagnosisService.getData(obj);
+          this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+          // this.followUp.push(this.diagnosisService.getData(obj));
+        });
+    }
+
+    setTimeout(() => {
+      this.tempFollowUpDisplay = [];
+      this.tempFollowUp = [];
+    }, 500);
+  }
+
+  tempDdelete(i){    
+    return this.tempFollowUpDisplay.splice(i, 1) && this.tempFollowUp.splice(i, 1);
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
   }
 }

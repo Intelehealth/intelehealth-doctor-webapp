@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
+import { Observable, Subscription } from 'rxjs';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -29,7 +30,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
      ])
  ]
 })
-export class DiagnosisComponent implements OnInit {
+export class DiagnosisComponent implements OnInit, OnDestroy {
 @Input() isManagerRole : boolean;
 @Input() visitCompleted: boolean;
 diagnosis: any = [];
@@ -39,18 +40,25 @@ patientId: string;
 visitUuid: string;
 encounterUuid: string;
 
+tempDiagnosis: any = [];
+tempDiagnosisDisplay: any = [];
+private eventsSubscription: Subscription;
+@Input() events: Observable<void>;
+
 diagnosisForm = new FormGroup({
   text: new FormControl('', [Validators.required]),
   type: new FormControl('', [Validators.required]),
   confirm: new FormControl('', [Validators.required])
 });
 
-  constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute,
-              private translationService: TranslateService,
-              private snackbar: MatSnackBar,
-              private sessionSvc:SessionService) { }
+  constructor(
+    private service: EncounterService,
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute,
+    private translationService: TranslateService,
+    private snackbar: MatSnackBar,
+    private sessionSvc:SessionService
+  ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -71,6 +79,7 @@ diagnosisForm = new FormGroup({
         }
       });
     });
+    this.eventsSubscription = this.events.subscribe(() => this.diagnosisEvent());
   }
 
   search(event) {
@@ -100,19 +109,25 @@ diagnosisForm = new FormGroup({
           value:  this.getBody('diagnosis',value.text, value.type, value.confirm),
           encounter: this.encounterUuid
         };
-        this.service.postObs(json)
-        .subscribe(resp => {
-          this.diagnosisList = [];
-          const user = getFromStorage("user");
-          let obj = {
-            uuid : resp.uuid,
-            value: json.value,
-            obsDatetime: resp.obsDatetime,
-            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
-            creator: { uuid: user.uuid, person: user.person }
-          }
-          this.diagnosis.push(this.diagnosisService.getData(obj));
-        });
+
+        this.tempDiagnosis.push(json);
+        const user = getFromStorage("user");
+        this.tempDiagnosisDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+        console.log(this.tempDiagnosisDisplay,"Demo");
+        
+        // this.service.postObs(json)
+        // .subscribe(resp => {
+        //   this.diagnosisList = [];
+        //   const user = getFromStorage("user");
+        //   let obj = {
+        //     uuid : resp.uuid,
+        //     value: json.value,
+        //     obsDatetime: resp.obsDatetime,
+        //     creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+        //     creator: { uuid: user.uuid, person: user.person }
+        //   }
+        //   this.diagnosis.push(this.diagnosisService.getData(obj));
+        // });
       }, 1000);
     }
   }
@@ -174,5 +189,36 @@ diagnosisForm = new FormGroup({
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
+
+  diagnosisEvent(){
+    console.log('Comment V')
+    for (let i = 0; i < this.tempDiagnosis.length; i++) {
+      this.service.postObs(this.tempDiagnosis[i]).subscribe(response => {
+        this.diagnosisList = [];
+        const user = getFromStorage("user");
+        let obj = {
+          uuid : response.uuid,
+          value: response.value,
+          obsDatetime: response.obsDatetime,
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
+        }
+        this.diagnosis.push(this.diagnosisService.getData(obj));
+      });
+    }
+
+    setTimeout(() => {
+      this.tempDiagnosisDisplay = [];
+      this.tempDiagnosis = [];
+    }, 500);
+  }
+
+  tempDdelete(i){    
+    return this.tempDiagnosisDisplay.splice(i, 1) && this.tempDiagnosis.splice(i, 1);
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
+  }
 }

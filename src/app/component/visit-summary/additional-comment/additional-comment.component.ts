@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subscription } from 'rxjs';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -29,7 +30,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
     ])
   ]
 })
-export class AdditionalCommentComponent implements OnInit {
+export class AdditionalCommentComponent implements OnInit, OnDestroy {
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   comment: any = [];
@@ -37,6 +38,11 @@ export class AdditionalCommentComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+
+  tempComment: any = [];
+  tempCommentDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])
@@ -69,6 +75,7 @@ export class AdditionalCommentComponent implements OnInit {
           }
         });
       });
+      this.eventsSubscription = this.events.subscribe(() => this.commentEvent());
   }
 
   Submit() {
@@ -90,11 +97,18 @@ export class AdditionalCommentComponent implements OnInit {
         value: this.getObj(value),
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-        .subscribe(resp => {
-          const user = getFromStorage("user");
-          this.comment.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
-        });
+
+      this.tempComment.push(json);
+      const user = getFromStorage("user");
+      this.tempCommentDisplay.push(this.diagnosisService.getData({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+      
+      // this.service.postObs(json)
+      //   .subscribe(resp => {
+      //     console.log(resp,"Vishal JSON 22222");
+      //     const user = getFromStorage("user");
+      //     this.comment.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
+      //   });
+      //   console.log(this.comment,"Vishal JSON 3333333");
     }
   }
 
@@ -149,5 +163,39 @@ export class AdditionalCommentComponent implements OnInit {
       "en": value
     }
     return JSON.stringify(value1);
+  }
+
+  commentEvent(){
+    console.log('Comment V')
+    for (let i = 0; i < this.tempComment.length; i++) {
+      this.service.postObs(this.tempComment[i]).subscribe(response => {
+        const user = getFromStorage("user");
+        let obj = {
+          uuid: response.uuid, 
+          value: response.value, 
+          obsDatetime: response.obsDatetime, 
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`, 
+          creator: { uuid: user.uuid, person: user.person } 
+        }
+        this.comment.push(this.diagnosisService.getData(obj));
+      });
+    }
+
+    setTimeout(() => {
+      this.tempCommentDisplay = [];
+      this.tempComment = [];
+    }, 500);
+  }
+
+  getTempCommentLength(): number {
+    return this.tempComment.length || this.comment.length;
+  }
+
+  tempDdelete(i){    
+    return this.tempCommentDisplay.splice(i, 1) && this.tempComment.splice(i, 1);
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
   }
 }

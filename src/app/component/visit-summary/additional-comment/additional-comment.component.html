@@ -1,5 +1,5 @@
 <div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
-    <h4><i class="fas fa-notes-medical"></i> {{ 'Assessment And Plan' | translate }}</h4>
+    <h4><i class="fas fa-notes-medical"></i> {{ 'Assessment And Plan' | translate }}<span class="red-star">*</span></h4>
     <hr>
     <form [formGroup]='commentForm'>
         <div id="doctor-notes">
@@ -23,6 +23,21 @@
                 </div>
               </div>
               <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.comment && !visitCompleted"
+                  style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="tempCommentDisplay.length > 0">
+        <div  *ngFor="let c of tempCommentDisplay, index as i" >
+            <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !c.tempCommentDisplay, 'alert-danger': c.tempCommentDisplay }">
+              <div class="doctor-value d-flex flex-column">
+                <span [class.strike]="c.tempCommentDisplay">{{c.value}}</span>
+                <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                  <span class="comment-blue">{{c|comment:'addedBy-creator'}} {{c.creatorRegNo}} | {{c.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                  <span *ngIf="c.tempCommentDisplay" class="comment">{{c.tempCommentDisplay|comment}}</span>
+                </div>
+              </div>
+              <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.tempCommentDisplay && !visitCompleted"
                   style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
             </div>
         </div>

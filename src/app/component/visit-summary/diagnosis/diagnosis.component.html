@@ -48,4 +48,20 @@
       </div>
     </div>
   </ng-container>
+  <ng-container *ngIf="tempDiagnosisDisplay.length > 0">
+    <br>
+    <div *ngFor='let diagnosis of tempDiagnosisDisplay, index as i'>
+      <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !diagnosis.comment, 'alert-danger': diagnosis.comment }">
+        <div class="doctor-value d-flex flex-column">
+          <span [class.strike]="diagnosis.comment">{{diagnosis.value}}</span>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{diagnosis|comment:'addedBy-creator'}} {{diagnosis.creatorRegNo}} | {{diagnosis.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span *ngIf="diagnosis.comment" class="comment">{{diagnosis.comment|comment}}</span>
+          </div>
+        </div>
+        <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment && !visitCompleted"
+            style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+    </div>
+  </ng-container>
 </div>

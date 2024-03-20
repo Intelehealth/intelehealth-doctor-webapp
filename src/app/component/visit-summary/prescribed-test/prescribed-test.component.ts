@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
@@ -33,7 +33,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
      ])
  ]
 })
-export class PrescribedTestComponent implements OnInit {
+export class PrescribedTestComponent implements OnInit, OnDestroy {
   @Input() isManagerRole : boolean;
   @Input() visitCompleted: boolean;
 
@@ -50,6 +50,11 @@ export class PrescribedTestComponent implements OnInit {
   objectKeys = Object.keys;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
   isShow: boolean[] = Array(this.medicineObsList.length).fill(false);
+
+  tempTest: any = [];
+  tempTestDisplay: any = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
 
   testForm = new FormGroup({
     test: new FormControl('', [Validators.required])
@@ -150,10 +155,12 @@ export class PrescribedTestComponent implements OnInit {
         }
       }
     });
+    this.eventsSubscription = this.events.subscribe(() => this.testEvent());
   }
 
   ngOnDestroy() {
     this.visitSvc.lockPrescribedTest.unsubscribe();
+    this.eventsSubscription.unsubscribe();
   }
 
   submit() {
@@ -177,18 +184,23 @@ export class PrescribedTestComponent implements OnInit {
           value: JSON.stringify(this.diagnosisService.getBody('tests', value)),
           encounter: this.encounterUuid
         };
-        this.service.postObs(json)
-        .subscribe(resp => {
-          const user = getFromStorage("user");
-          let obj = {
-            uuid : resp.uuid,
-            value: json.value,
-            obsDatetime: resp.obsDatetime,
-            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
-            creator: { uuid: user.uuid, person: user.person }
-          }
-          this.tests.push(this.diagnosisService.getData(obj));
-        });
+
+        this.tempTest.push(json);
+        const user = getFromStorage("user");
+        this.tempTestDisplay.push({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }});
+  
+        // this.service.postObs(json)
+        // .subscribe(resp => {
+        //   const user = getFromStorage("user");
+        //   let obj = {
+        //     uuid : resp.uuid,
+        //     value: json.value,
+        //     obsDatetime: resp.obsDatetime,
+        //     creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+        //     creator: { uuid: user.uuid, person: user.person }
+        //   }
+        //   this.tests.push(this.diagnosisService.getData(obj));
+        // });
       }, 1000);
     }
   }
@@ -269,5 +281,26 @@ export class PrescribedTestComponent implements OnInit {
     this.isShow[index] = !this.isShow[index];
   }
 
+  testEvent(){
+    console.log('Test V')
+    for (let i = 0; i < this.tempTest.length; i++) {
+      this.service.postObs(this.tempTest[i]).subscribe(response => {
+        const user = getFromStorage("user");
+        const obj = {
+          uuid : response.uuid,
+          value: response.value,
+          obsDatetime: response.obsDatetime,
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
+        }
+        this.tests.push(this.diagnosisService.getData(obj));
+      });
+    }
+
+    setTimeout(() => {
+      this.tempTestDisplay = [];
+      this.tempTest = [];
+    }, 500);
+  }
 }
 

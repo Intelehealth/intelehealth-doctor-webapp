@@ -37,5 +37,22 @@
       </div>
       <p>*{{'please delete current schedule to schedule a new follow up.'| translate}}</p>
     </ng-container>
+    <ng-container *ngIf="tempFollowUpDisplay.length > 0">
+      <div *ngFor='let followUp of tempFollowUpDisplay, index as i'>
+        <div [@moveInLeft]  class="alert" [ngClass]="{ 'alert-primary': !followUp.comment, 'alert-danger': followUp.comment }">
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="followUp.comment">{{followUp.value}}</span>
+            <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+              <span class="comment-blue">{{followUp|comment:'addedBy-creator'}} {{followUp.creatorRegNo}} | {{followUp.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+              <span *ngIf="followUp.comment" class="comment">{{followUp.comment|comment}}</span>
+            </div>
+          </div>
+          <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!followUp.comment && !visitCompleted"
+            style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        </div>
+      </div>
+      <p>*{{'please delete current schedule to schedule a new follow up.'| translate}}</p>
+    </ng-container>
+
   </div>
 </div>

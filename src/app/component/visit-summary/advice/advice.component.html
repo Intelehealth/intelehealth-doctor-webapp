@@ -7,8 +7,7 @@
         <input matInput placeholder="{{'Advice or Refer Patient'| translate}}" [ngbTypeahead]="search"
           formControlName='advice'>
       </mat-form-field>
-      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
-        Advice'|translate}}</button>
+      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Advice'|translate}}</button>
     </form>
     <br>
   </div>
@@ -23,6 +22,21 @@
             </div>
           </div>
           <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!advice.comment && !visitCompleted"
+              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="tempAdviceDisplay.length > 0">
+    <div *ngFor='let advice of tempAdviceDisplay, index as i'>
+        <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !advice.comment, 'alert-danger': advice.comment }">
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="advice.comment">{{advice.value}}</span>
+            <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+              <span class="comment-blue">{{advice|comment:'addedBy-creator'}} {{advice.creatorRegNo}} | {{advice.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+              <span *ngIf="advice.comment" class="comment">{{advice.comment|comment}}</span>
+            </div>
+          </div>
+          <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!advice.comment && !visitCompleted"
               style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
     </div>
