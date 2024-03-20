@@ -64,12 +64,13 @@
         min-width: 119px;
         height: 48px;
         background: #FFFFFF;
-        border: 1px solid #FFFFFF;
+        border: 1px solid #EFE8FF;
         border-radius: 8px;
         font-size: 18px;
         line-height: 150%;
         color: #2E1E91;
         font-weight: bold;
+        outline: none;
       }
 
       .confirm-btn {
@@ -83,11 +84,18 @@
         line-height: 150%;
         color: #FFFFFF;
         font-weight: bold;
+        outline: none;
       }
     }
   }
 
   .text-danger {
     color: #dc3545 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .create-report-modal s.modal-body .report-form .confirm-btn {
+    padding: 0px;
   }
 }

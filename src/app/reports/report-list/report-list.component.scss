@@ -74,7 +74,9 @@ th:last-child {
   border-radius: 0 8px 8px 0;
 }
 
-
+#btnMindmapDownload {
+  outline: none;
+}
 
 @media (max-width: 768px) {
   .mat-elevation-z8 {

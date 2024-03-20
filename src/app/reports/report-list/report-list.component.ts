@@ -28,7 +28,7 @@ export class ReportListComponent {
   createReport(element) {
     let data = {
       reportId: element.id,
-      title: 'List of visits between two dates',
+      title: element.name,
       field1: 'Start date',
       field2: 'End date',
       cancelBtnText: 'Cancel',
