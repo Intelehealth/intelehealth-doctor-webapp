@@ -321,6 +321,8 @@ body.font-lato td {
         margin: 4px 0px;
         background: #faf9ff;
         text-overflow: wrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
 
       li.chat-item.left {
