@@ -407,7 +407,6 @@ export class AidOrderComponent implements OnInit {
     };
 
     this.encounterService.postObs(json).subscribe(response => {
-      // console.log(response);
       this.aidOrderForm.get(key).setValue(response.uuid);
       this.aidOrderForm.get(key.replace('Uuid', 'CreatorUuid')).setValue(getFromStorage('user').uuid);
       const user = getFromStorage("user");

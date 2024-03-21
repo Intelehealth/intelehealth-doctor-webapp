@@ -113,7 +113,6 @@ diagnosisForm = new FormGroup({
         this.tempDiagnosis.push(json);
         const user = getFromStorage("user");
         this.tempDiagnosisDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
-        console.log(this.tempDiagnosisDisplay,"Demo");
         
         // this.service.postObs(json)
         // .subscribe(resp => {
@@ -192,7 +191,6 @@ diagnosisForm = new FormGroup({
   }
 
   diagnosisEvent(){
-    console.log('Comment V')
     for (let i = 0; i < this.tempDiagnosis.length; i++) {
       this.service.postObs(this.tempDiagnosis[i]).subscribe(response => {
         this.diagnosisList = [];
@@ -214,11 +212,15 @@ diagnosisForm = new FormGroup({
     }, 500);
   }
 
-  tempDdelete(i){    
+  tempDelete(i){    
     return this.tempDiagnosisDisplay.splice(i, 1) && this.tempDiagnosis.splice(i, 1);
   }
 
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe();
+  }
+
+  unSaveChanges() {    
+    return this.tempDiagnosisDisplay.length > 0 && this.tempDiagnosis.length > 0;
   }
 }

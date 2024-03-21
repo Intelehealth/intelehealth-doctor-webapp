@@ -37,7 +37,7 @@
                   <span *ngIf="c.tempCommentDisplay" class="comment">{{c.tempCommentDisplay|comment}}</span>
                 </div>
               </div>
-              <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.tempCommentDisplay && !visitCompleted"
+              <i (click)="tempDelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.tempCommentDisplay && !visitCompleted"
                   style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
             </div>
         </div>

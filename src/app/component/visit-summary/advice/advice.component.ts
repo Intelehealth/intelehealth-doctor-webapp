@@ -128,9 +128,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
         this.tempAdviceDisplay.push(this.diagnosisService.getData({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }}));
   
         // this.service.postObs(json)
-        //   .subscribe(response => {
-        //     console.log(response,"Vishal RES");
-            
+        //   .subscribe(response => { 
         //     const user = getFromStorage("user");
         //     let obj = {
         //       uuid: response.uuid,
@@ -139,7 +137,6 @@ export class AdviceComponent implements OnInit, OnDestroy {
         //       creatorRegNo:`(${getFromStorage("registrationNumber")})`,
         //       creator: { uuid: user.uuid, person: user.person }
         //     }
-        //     console.log(obj,"Vishal OBJ");
         //     this.advice.push(this.diagnosisService.getData(obj));
         //   });
       }, 1000);
@@ -189,7 +186,6 @@ export class AdviceComponent implements OnInit, OnDestroy {
   }
 
   adviceEvent(){
-    console.log('Advice V')
     for (let i = 0; i < this.tempAdvice.length; i++) {
       this.service.postObs(this.tempAdvice[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -210,11 +206,15 @@ export class AdviceComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  tempDdelete(i){    
+  tempDelete(i){    
     return this.tempAdviceDisplay.splice(i, 1) && this.tempAdvice.splice(i, 1);
   }
 
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe();
+  }
+
+  unSaveChanges() {
+    return this.tempAdviceDisplay.length > 0 && this.tempAdvice.length > 0
   }
 }

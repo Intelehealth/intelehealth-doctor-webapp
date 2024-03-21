@@ -77,7 +77,7 @@
 
       <div *ngIf="show">
             <mat-card>
-                  <app-patient-interaction [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-patient-interaction>
+                  <app-patient-interaction [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-patient-interaction>
             </mat-card>
             <br>
             <mat-card>

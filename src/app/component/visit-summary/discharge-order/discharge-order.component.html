@@ -36,7 +36,7 @@
                 <span *ngIf="dior.comment" class="comment">{{dior.comment|comment}}</span>
               </div>
             </div>
-            <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!dior.comment && !visitCompleted"
+            <i (click)="tempDelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!dior.comment && !visitCompleted"
                 style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
     </div>

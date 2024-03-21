@@ -412,7 +412,6 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
 
   
   commentMedication(){
-    console.log('Medication V')
     for (let i = 0; i < this.tempMedication.length; i++) {
       this.service.postObs(this.tempMedication[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -427,7 +426,11 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  tempDdelete(i){    
+  tempDelete(i){    
     return this.tempMedicationDisplay.splice(i, 1) && this.tempMedication.splice(i, 1);
+  }
+
+  unSaveChanges() {
+    return this.tempMedicationDisplay.length > 0 && this.tempMedication.length > 0;
   }
 }

@@ -2,14 +2,14 @@
 <h4><i class="material-icons">contact_phone</i> {{'Patient Interaction'| translate}}</h4>
 <hr />
 <div>{{'Have you spoken with the patient directly' | translate}}?</div>
-<form [formGroup]="interaction" (ngSubmit)="submit()">
+<form [formGroup]="interaction" (ngSubmit)="tempSave()">
   <div id="patient-interaction">
     <br />
     <mat-radio-group aria-label="Select an option" formControlName="interaction">
       <mat-radio-button value="{{'Yes' | translate}}">{{'Yes' |translate}} </mat-radio-button>
       <mat-radio-button value="{{'No' | translate}}">{{'No'|translate}}</mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || isManagerRole" [hidden]="msg.length > 0" *ngIf="!visitCompleted">
+    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || isManagerRole" [hidden]="msg.length > 0 || tempmsg.length > 0" *ngIf="!visitCompleted">
       {{'Submit'|translate}}
     </button>
   </div>
@@ -29,6 +29,14 @@
     <div [@moveInLeft] class="alert alert-primary">
       <div class="doctor-value">{{ msg.value }}</div>
       <i (click)="delete(msg.uuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
+        style="color: rgb(235, 30, 30); cursor: pointer" *ngIf="!visitCompleted">delete</i>
+    </div>
+  </div>
+
+  <div *ngFor="let msg of tempmsg">
+    <div [@moveInLeft] class="alert alert-primary">
+      <div class="doctor-value">{{ msg.value }}</div>
+      <i (click)="tempdelete()" class="material-icons float-right" [class.disabled]="isManagerRole"
         style="color: rgb(235, 30, 30); cursor: pointer" *ngIf="!visitCompleted">delete</i>
     </div>
   </div>

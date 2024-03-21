@@ -48,7 +48,6 @@ export class HwAssessmentComponent implements OnInit {
     .subscribe(visitDetail => {
       visitDetail.encounters.filter((remark) => {
         if(remark.display.includes("ADULTINITIAL")){
-          console.log(remark.obs);
           for(let i = 0; i < remark.obs.length; i++){
             if(remark.obs[i].display.includes("Additional Remarks")){
               let obsData = JSON.parse(remark.obs[i].value)

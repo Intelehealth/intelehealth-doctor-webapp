@@ -109,6 +109,8 @@ import { MomentModule } from "ngx-moment";
 import { CollectedByComponent } from './component/visit-summary/collected-by/collected-by.component';
 import { ResultedByComponent } from './component/visit-summary/resulted-by/resulted-by.component';
 import { HwAssessmentComponent } from './component/visit-summary/hw-assessment/hw-assessment.component';
+import { CanDeactivateGuard } from './can-deactivate.guard';
+import { ConfirmationDialogComponent } from './component/visit-summary/confirmation-dialog/confirmation-dialog.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -172,7 +174,8 @@ registerLocaleData(localeAr);
     VideoCallComponent,
     CollectedByComponent,
     ResultedByComponent,
-    HwAssessmentComponent
+    HwAssessmentComponent,
+    ConfirmationDialogComponent
   ],
 
   imports: [
@@ -219,7 +222,7 @@ registerLocaleData(localeAr);
         { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
         { path: "appointment/schedule", component: AppointmentScheduleComponent },

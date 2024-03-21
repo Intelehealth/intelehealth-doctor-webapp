@@ -104,11 +104,9 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
       
       // this.service.postObs(json)
       //   .subscribe(resp => {
-      //     console.log(resp,"Vishal JSON 22222");
       //     const user = getFromStorage("user");
       //     this.comment.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
       //   });
-      //   console.log(this.comment,"Vishal JSON 3333333");
     }
   }
 
@@ -166,7 +164,6 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   }
 
   commentEvent(){
-    console.log('Comment V')
     for (let i = 0; i < this.tempComment.length; i++) {
       this.service.postObs(this.tempComment[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -191,11 +188,15 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
     return this.tempComment.length || this.comment.length;
   }
 
-  tempDdelete(i){    
+  tempDelete(i){    
     return this.tempCommentDisplay.splice(i, 1) && this.tempComment.splice(i, 1);
   }
 
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe();
+  }
+
+  unSaveChanges() {
+    return this.tempCommentDisplay.length > 0 && this.tempComment.length > 0
   }
 }

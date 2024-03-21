@@ -59,7 +59,7 @@
             <span *ngIf="diagnosis.comment" class="comment">{{diagnosis.comment|comment}}</span>
           </div>
         </div>
-        <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment && !visitCompleted"
+        <i (click)="tempDelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment && !visitCompleted"
             style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>

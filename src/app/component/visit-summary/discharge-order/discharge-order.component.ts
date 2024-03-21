@@ -157,7 +157,6 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
   }
 
   dischargeEvent(){
-    console.log('Discharge V')
     for (let i = 0; i < this.tempDischarge.length; i++) {
       this.service.postObs(this.tempDischarge[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -180,5 +179,13 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe();
+  }
+
+  tempDelete(i){    
+    return this.tempDischargeDisplay.splice(i, 1) && this.tempDischarge.splice(i, 1);
+  }
+
+  unSaveChanges() {
+    return this.tempDischargeDisplay.length > 0 && this.tempDischarge.length > 0
   }
 }

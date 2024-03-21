@@ -188,7 +188,6 @@ export class FollowUpComponent implements OnInit, OnDestroy {
   }
 
   followUpEvent(){
-    console.log('FollowUp V')
     for (let i = 0; i < this.tempFollowUp.length; i++) {
       this.service.postObs(this.tempFollowUp[i]).subscribe(response => {
           const user = getFromStorage("user");
@@ -211,11 +210,15 @@ export class FollowUpComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  tempDdelete(i){    
+  tempDelete(i){    
     return this.tempFollowUpDisplay.splice(i, 1) && this.tempFollowUp.splice(i, 1);
   }
 
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe();
+  }
+
+  unSaveChanges() {
+    return this.tempFollowUpDisplay.length > 0 && this.tempFollowUp.length > 0
   }
 }

@@ -15,8 +15,17 @@ import { CoreService } from "src/app/services/core/core.service";
 import { SocketService } from "src/app/services/socket.service";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from "rxjs";
-import { AdditionalCommentComponent } from './additional-comment/additional-comment.component'; // Import the ChildComponent
+import { Observable, Subject } from "rxjs";
+import { AdditionalCommentComponent } from './additional-comment/additional-comment.component';
+import { DiagnosisComponent } from './diagnosis/diagnosis.component';
+import { FollowUpComponent } from './follow-up/follow-up.component';
+import { PrescribedTestComponent } from './prescribed-test/prescribed-test.component';
+import { PrescribedMedicationComponent } from './prescribed-medication/prescribed-medication.component';
+import { DischargeOrderComponent } from './discharge-order/discharge-order.component';
+import { AdviceComponent } from './advice/advice.component';
+import { PatientInteractionComponent } from './patient-interaction/patient-interaction.component';
+import { ConfirmationDialogComponent } from "../visit-summary/confirmation-dialog/confirmation-dialog.component";
+import { ComfirmationDialogService } from "./confirmation-dialog/comfirmation-dialog.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -52,7 +61,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   chatBoxRef: any;
 
   eventsSubject: Subject<void> = new Subject<void>();
-  @ViewChild(AdditionalCommentComponent) childComponent!: AdditionalCommentComponent; // Access the ChildComponent
+  @ViewChild(AdditionalCommentComponent) childComponentAdditionalComment!: AdditionalCommentComponent;
+  @ViewChild(DiagnosisComponent) childComponentDiagnosis!: DiagnosisComponent;
+  @ViewChild(FollowUpComponent) childComponentFollowUp!: FollowUpComponent;
+  @ViewChild(PrescribedTestComponent) childComponentPrescribedTest!: PrescribedTestComponent;
+  @ViewChild(PrescribedMedicationComponent) childComponentPrescribedMedication!: PrescribedMedicationComponent;
+  @ViewChild(DischargeOrderComponent) childComponentDischargeOrder!: DischargeOrderComponent;
+  @ViewChild(AdviceComponent) childComponentAdvice!: AdviceComponent;
+  @ViewChild(PatientInteractionComponent) childComponentPatient!: PatientInteractionComponent;
 
   constructor(
     private service: EncounterService,
@@ -68,7 +84,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private cs: CoreService,
     private socketSvc: SocketService,
     private toastr: ToastrService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private ComfirmationDialogService: ComfirmationDialogService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -371,7 +388,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   saveData() {
-    const tempObsLength = this.childComponent.getTempCommentLength();
+    const tempObsLength = this.childComponentAdditionalComment.getTempCommentLength();
     if (tempObsLength > 0) {
       this.translationService.getTranslation('Data saved successfully');
       this.eventsSubject.next();
@@ -409,4 +426,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         return null
     }
  }
+
+ canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+  const tempObsAC = this.childComponentAdditionalComment.unSaveChanges();
+  const tempObsD = this.childComponentDiagnosis.unSaveChanges();
+  const tempObsFU = this.childComponentFollowUp.unSaveChanges();
+  const tempObsPT = this.childComponentPrescribedTest.unSaveChanges();
+  const tempObsPM = this.childComponentPrescribedMedication.unSaveChanges();
+  const tempObsDO = this.childComponentDischargeOrder.unSaveChanges();
+  const tempObsA = this.childComponentAdvice.unSaveChanges();
+  const tempObsPI = this.childComponentPatient.unSaveChanges();
+  
+  if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI) {
+    const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to procced?");
+    return dialogRef.afterClosed();
+  }
+  return true;
+}
+
 }

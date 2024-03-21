@@ -282,7 +282,6 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
   }
 
   testEvent(){
-    console.log('Test V')
     for (let i = 0; i < this.tempTest.length; i++) {
       this.service.postObs(this.tempTest[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -301,6 +300,14 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
       this.tempTestDisplay = [];
       this.tempTest = [];
     }, 500);
+  }
+
+  tempDelete(i){    
+    return this.tempTestDisplay.splice(i, 1) && this.tempTest.splice(i, 1);
+  }
+
+  unSaveChanges() {
+    return this.tempTestDisplay.length > 0 && this.tempTest.length > 0;
   }
 }
 

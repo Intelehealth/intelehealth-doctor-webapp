@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -14,6 +14,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { TranslationService } from "src/app/services/translation.service";
 import { TranslateService } from "@ngx-translate/core";
 import * as moment from "moment";
+import { Observable, Subscription } from "rxjs";
 declare var getFromStorage: any, getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -45,10 +46,11 @@ declare var getFromStorage: any, getEncounterUUID: any, getFromStorage: any;
     ]),
   ],
 })
-export class PatientInteractionComponent implements OnInit {
-  @Input() isManagerRole : boolean;
+export class PatientInteractionComponent implements OnInit, OnDestroy {
+  @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   msg: any = [];
+  tempmsg: any = [];
   whatsappLink: string;
   phoneNo;
   patientDetails: any;
@@ -62,6 +64,10 @@ export class PatientInteractionComponent implements OnInit {
   interaction = new FormGroup({
     interaction: new FormControl("", [Validators.required]),
   });
+
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
+
   constructor(
     private diagnosisService: DiagnosisService,
     private visitService: VisitService,
@@ -69,7 +75,7 @@ export class PatientInteractionComponent implements OnInit {
     private encounterService: EncounterService,
     private translationService: TranslationService,
     private translate: TranslateService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.visitId = this.route.snapshot.params["visit_id"];
@@ -77,6 +83,7 @@ export class PatientInteractionComponent implements OnInit {
     this.fetchVisitDetails();
     this.getAttributes();
     this.getAdviceObs();
+    this.eventsSubscription = this.events.subscribe(() => this.submit());
   }
 
   fetchVisitDetails() {
@@ -112,7 +119,7 @@ export class PatientInteractionComponent implements OnInit {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
       const result = response.results;
       var tempMsg = result.filter((pType) =>
-          pType.display.includes('Patient Interaction')
+        pType.display.includes('Patient Interaction')
       );
       let data = this.diagnosisService.getData(tempMsg[0])
       if (data) {
@@ -133,10 +140,24 @@ export class PatientInteractionComponent implements OnInit {
       });
   }
 
+  tempSave() {
+    this.diagnosisService.getTranslationData();
+    if (this.diagnosisService.isEncounterProvider()) {
+      const formValue = this.interaction.value;
+      const value = formValue.interaction;
+      
+      this.tempmsg.push(this.diagnosisService.getData({ value: value }));
+      this.interaction.reset();
+    } else {
+      this.translationService.getTranslation("Another doctor is viewing this case");
+    }
+  }
+
   submit() {
     const visitId = this.route.snapshot.params["visit_id"];
-    const formValue = this.interaction.value;
-    const value = formValue.interaction;
+    // const formValue = this.interaction.value;
+    // const value = formValue.interaction;
+    const value = this.tempmsg[0].value;
     const providerDetails = getFromStorage("provider");
     this.diagnosisService.getTranslationData();
     if (this.diagnosisService.isEncounterProvider()) {
@@ -144,14 +165,12 @@ export class PatientInteractionComponent implements OnInit {
         attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
         value: this.getBody(value),
       };
-      this.visitService
-        .postAttribute(visitId, json)
-        .subscribe((response1) => {
-          let obj = {
-            uuid : response1.uuid,
-            value: json.value
-          }
-         this.msg.push(this.diagnosisService.getData(obj));
+      this.visitService.postAttribute(visitId, json).subscribe((response1) => {
+        let obj = {
+          uuid: response1.uuid,
+          value: json.value
+        }
+        this.msg.push(this.diagnosisService.getData(obj));
       });
 
       this.encounterUuid = getEncounterUUID();
@@ -187,9 +206,13 @@ export class PatientInteractionComponent implements OnInit {
             this.diagnosisService.isVisitSummaryChanged = true;
             this.getAdviceObs();
           });
+
+          setTimeout(() => {
+            this.tempmsg = [];
+          }, 500);
         }
       }
-    }else {
+    } else {
       this.translationService.getTranslation("Another doctor is viewing this case");
     }
   }
@@ -207,6 +230,11 @@ export class PatientInteractionComponent implements OnInit {
     }
   }
 
+  tempdelete(i) {
+    if (this.diagnosisService.isEncounterProvider()) {
+      this.tempmsg = [];
+    }
+  }
 
   getBody(value) {
     let value1;
@@ -226,5 +254,13 @@ export class PatientInteractionComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
+  }
+
+  unSaveChanges() {
+    return this.tempmsg.length > 0;
+  }
 }

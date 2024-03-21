@@ -109,7 +109,7 @@
           <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Hide Details'|translate}}</span>
           <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show Details'|translate}}</span>
         </div>
-        <i (click)="tempDdelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted && !meds.disabled" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        <i (click)="tempDelete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted && !meds.disabled" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
     </div>
   </div>
 </ng-container>
