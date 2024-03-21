@@ -1,14 +1,14 @@
 <div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
-    <h4><i class="fas fa-notes-medical"></i> {{ 'Assessment And Plan' | translate }}<span class="red-star">*</span></h4>
+    <h4><i class="fas fa-notes-medical"></i> {{ 'Assessment and Plan' | translate }}<span class="red-star">*</span></h4>
     <hr>
     <form [formGroup]='commentForm'>
         <div id="doctor-notes">
             <mat-form-field class="example-full-width">
-                <textarea matInput placeholder="{{ 'Notes' | translate }}"
+                <textarea matInput placeholder="{{ 'Assessment and Plan' | translate }}"
                     formControlName='comment'></textarea>
             </mat-form-field>
             <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || isManagerRole' *ngIf="!visitCompleted">{{
-                'Add Note' | translate}}</button>
+                'Add' | translate}}</button>
         </div>
     </form>
     <br>
