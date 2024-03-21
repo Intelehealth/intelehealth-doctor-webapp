@@ -105,7 +105,7 @@ export class ResultedByComponent implements OnInit {
     return localStorage.getItem("selectedLanguage");
    }
 
-  previewEyeImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => { });
+  previewEyeImages(index: number, imgs: any) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: imgs }).subscribe((res: any) => { });
   }
 }
