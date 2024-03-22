@@ -49,7 +49,7 @@
     </div>
   </ng-container>
   <ng-container *ngIf="tempDiagnosisDisplay.length > 0">
-    <!-- <br> -->
+    <span *ngIf="!diagnosis.length"><br></span>
     <div *ngFor='let diagnosis of tempDiagnosisDisplay, index as i'>
       <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !diagnosis.comment, 'alert-danger': diagnosis.comment }">
         <div class="doctor-value d-flex flex-column">

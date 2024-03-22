@@ -121,7 +121,7 @@
             </mat-card>
             <br>
             <mat-card>
-              <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-aid-order>
+              <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-aid-order>
             </mat-card>
             <br>
             <mat-card>

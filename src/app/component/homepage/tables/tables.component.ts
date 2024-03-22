@@ -78,19 +78,21 @@ export class TablesComponent implements OnInit {
   }
 
   refresh() {
-    const newData = this.service[this.tableFor];
-    let data = [];
-    newData.forEach((item) => {
-      data = this.helper.getUpdatedValue(data, item, "id");
-    });
-    this.loadedDataLength = Number(`${data.length}`);
-    data.length = this.visitCounts;
-    if (data && Array.isArray(data)) {
-      this.dataSource.data = data;
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.table.renderRows();
-    }
+    setTimeout(() => {
+      const newData = this.service[this.tableFor];
+      let data = [];
+      newData.forEach((item) => {
+        data = this.helper.getUpdatedValue(data, item, "id");
+      });
+      this.loadedDataLength = Number(`${data.length}`);
+      data.length = this.visitCounts;
+      if (data && Array.isArray(data)) {
+        this.dataSource.data = data;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.table.renderRows();
+      }
+    }, 1000);
   }
 
   hasEmptyRow() {

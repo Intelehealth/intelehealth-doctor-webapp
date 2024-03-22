@@ -24,7 +24,7 @@ import { PrescribedMedicationComponent } from './prescribed-medication/prescribe
 import { DischargeOrderComponent } from './discharge-order/discharge-order.component';
 import { AdviceComponent } from './advice/advice.component';
 import { PatientInteractionComponent } from './patient-interaction/patient-interaction.component';
-import { ConfirmationDialogComponent } from "../visit-summary/confirmation-dialog/confirmation-dialog.component";
+import { AidOrderComponent } from "../visit-summary/aid-order/aid-order.component";
 import { ComfirmationDialogService } from "./confirmation-dialog/comfirmation-dialog.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
@@ -69,6 +69,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   @ViewChild(DischargeOrderComponent) childComponentDischargeOrder!: DischargeOrderComponent;
   @ViewChild(AdviceComponent) childComponentAdvice!: AdviceComponent;
   @ViewChild(PatientInteractionComponent) childComponentPatient!: PatientInteractionComponent;
+  @ViewChild(AidOrderComponent) childComponentAidOrder!: AidOrderComponent;
 
   constructor(
     private service: EncounterService,
@@ -436,8 +437,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   const tempObsDO = this.childComponentDischargeOrder.unSaveChanges();
   const tempObsA = this.childComponentAdvice.unSaveChanges();
   const tempObsPI = this.childComponentPatient.unSaveChanges();
+  const tempObsAid = this.childComponentAidOrder.unSaveChanges();
   
-  if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI) {
+  if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI || tempObsAid) {
     const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to procced?");
     return dialogRef.afterClosed();
   }

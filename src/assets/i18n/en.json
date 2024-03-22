@@ -1400,5 +1400,9 @@
     "Test results by":"Test results by",
     "Verify the accuracy of the collected data by directly communicating with the patient and field staff":"Verify the accuracy of the collected data by directly communicating with the patient and field staff",
     "through the communication windows provided below, as the history and clinical examination were conducted":"through the communication windows provided below, as the history and clinical examination were conducted",
-    "by a nurse or field health professional.":"by a nurse or field health professional."
+    "by a nurse or field health professional.":"by a nurse or field health professional.",
+    "You have unsaved changes, do you want to procced?":"You have unsaved changes, do you want to procced?",
+    "Health Worker’s Assessment":"Health Worker’s Assessment",
+    "Health worker’s assessment added by":"Health worker’s assessment added by",
+    "No assessment added by health worker":"No assessment added by health worker"
   }

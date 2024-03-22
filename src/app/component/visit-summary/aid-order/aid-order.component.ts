@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { TranslationService } from 'src/app/services/translation.service';
 import { SessionService } from 'src/app/services/session.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { Observable, Subscription } from 'rxjs';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -32,7 +33,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class AidOrderComponent implements OnInit {
+export class AidOrderComponent implements OnInit, OnDestroy {
 
   @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
@@ -112,7 +113,11 @@ export class AidOrderComponent implements OnInit {
   aidObs = [];
   aidObsList = [];
   objectKeys = Object.keys;
-
+  tempObs = [];
+  tempDeleteObs = [];
+  private eventsSubscription: Subscription;
+  @Input() events: Observable<void>;
+  
   constructor(
     private diagnosisService: DiagnosisService,
     private encounterService: EncounterService,
@@ -154,6 +159,7 @@ export class AidOrderComponent implements OnInit {
     this.formControlValueChanges();
     this.getAidOrders();
     this.getAidObsList();
+    this.eventsSubscription = this.events.subscribe(() => this.saveChanges());
   }
 
   get aidUuidList() {
@@ -406,19 +412,65 @@ export class AidOrderComponent implements OnInit {
       encounter: this.encounterUuid
     };
 
-    this.encounterService.postObs(json).subscribe(response => {
-      this.aidOrderForm.get(key).setValue(response.uuid);
-      this.aidOrderForm.get(key.replace('Uuid', 'CreatorUuid')).setValue(getFromStorage('user').uuid);
-      const user = getFromStorage("user");
-      let obj = {
-        uuid: response.uuid,
-        value: json.value,
-        obsDatetime: response.obsDatetime,
-        creatorRegNo: `(${getFromStorage("registrationNumber")})`,
-        creator: { uuid: user.uuid, person: user.person }
-      }
-      this.aidOrderForm.get(key.replace('Uuid', 'Obs')).setValue(obj);
+    this.aidOrderForm.get(key).setValue('TEMP');
+    this.aidOrderForm.get(key.replace('Uuid', 'CreatorUuid')).setValue(getFromStorage('user').uuid);
+    const user = getFromStorage("user");
+    let obj = {
+      uuid: 'TEMP',
+      value: json.value,
+      obsDatetime: json.obsDatetime,
+      creatorRegNo: `(${getFromStorage("registrationNumber")})`,
+      creator: { uuid: user.uuid, person: user.person }
+    }
+    this.aidOrderForm.get(key.replace('Uuid', 'Obs')).setValue(obj);
+    this.tempObs.push({
+      payload: json,
+      key,
+      obsObj: obj
     });
+
+    // this.encounterService.postObs(json).subscribe(response => {
+    //   // console.log(response);
+    //   this.aidOrderForm.get(key).setValue(response.uuid);
+    //   this.aidOrderForm.get(key.replace('Uuid', 'CreatorUuid')).setValue(getFromStorage('user').uuid);
+    //   const user = getFromStorage("user");
+    //   let obj = {
+    //     uuid: response.uuid,
+    //     value: json.value,
+    //     obsDatetime: response.obsDatetime,
+    //     creatorRegNo: `(${getFromStorage("registrationNumber")})`,
+    //     creator: { uuid: user.uuid, person: user.person }
+    //   }
+    //   this.aidOrderForm.get(key.replace('Uuid', 'Obs')).setValue(obj);
+    // });
+  }
+
+  saveChanges() {
+    for (let i = 0; i < this.tempObs.length; i++) {
+      this.encounterService.postObs(this.tempObs[i].payload).subscribe(response => {
+        this.aidOrderForm.get(this.tempObs[i].key).setValue(response.uuid);
+        this.aidOrderForm.get(this.tempObs[i].key.replace('Uuid', 'CreatorUuid')).setValue(getFromStorage('user').uuid);
+        const user = getFromStorage("user");
+        let obj = {
+          uuid: response.uuid,
+          value: this.tempObs[i].payload.value,
+          obsDatetime: response.obsDatetime,
+          creatorRegNo: `(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
+        }
+        this.aidOrderForm.get(this.tempObs[i].key.replace('Uuid', 'Obs')).setValue(obj);
+      });
+    }
+
+    setTimeout(() => {
+      this.tempObs = [];
+      for (let i = 0; i < this.tempDeleteObs.length; i++) {
+        this.encounterService.updateObs(this.tempDeleteObs[i].payload, this.tempDeleteObs[i].uuid).subscribe(response => {});
+      }
+      setTimeout(() => {
+        this.tempDeleteObs = [];
+      }, 1000);
+    }, 1000);
   }
 
   updateObs(value: string, uuid: string) {
@@ -432,82 +484,83 @@ export class AidOrderComponent implements OnInit {
   }
 
   deleteObs(uuid: string, key: string, creatorUuid: string) {
-    // if (creatorUuid == getFromStorage('user').uuid) {
-    //   this.encounterService.deleteObs(uuid).subscribe(response => {
-    //     // console.log(response);
-    //     this.aidOrderForm.get(key).setValue(null);
-    //     switch (key) {
-    //       case 'type1Uuid':
-    //         this.aidOrderForm.patchValue({ type1: null, type1Other: null });
-    //         break;
-    //       case 'type2Uuid':
-    //         this.aidOrderForm.patchValue({ type2: null, type2Other: null });
-    //         break;
-    //       case 'type3Uuid':
-    //         this.aidOrderForm.patchValue({ type3: null });
-    //         break;
-    //       case 'type4Uuid':
-    //         this.aidOrderForm.patchValue({ type4: null });
-    //         break;
-    //       case 'type5Uuid':
-    //         this.aidOrderForm.patchValue({ type5: null });
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   });
-    // } else {
-    const provider = getFromStorage("provider");
-    const deletedTimestamp = moment.utc().toISOString();
-    let observation: any = {};
-    switch (key) {
-      case 'type1Uuid':
-        observation = this.aidOrderForm.value.type1Obs
-        break;
-      case 'type2Uuid':
-        observation = this.aidOrderForm.value.type2Obs
-        break;
-      case 'type3Uuid':
-        observation = this.aidOrderForm.value.type3Obs
-        break;
-      case 'type4Uuid':
-        observation = this.aidOrderForm.value.type4Obs
-        break;
-      case 'type5Uuid':
-        observation = this.aidOrderForm.value.type5Obs
-        break;
-    }
-    const prevCreator = observation?.creator?.person?.display;
-    const deletorRegistrationNumber = getFromStorage("registrationNumber");
-    const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
-    this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}` }, uuid).subscribe(response => {
+    if (this.aidOrderForm.value.key == 'TEMP') {
       this.aidOrderForm.get(key).setValue(null);
       switch (key) {
         case 'type1Uuid':
-          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
           this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null, type1Obs: null });
           break;
         case 'type2Uuid':
-          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
           this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null, type2Obs: null });
           break;
         case 'type3Uuid':
-          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
           this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null, type3Obs: null });
           break;
         case 'type4Uuid':
-          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
           this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null, type4Obs: null });
           break;
         case 'type5Uuid':
-          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
           this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null, type5Obs: null });
           break;
         default:
           break;
       }
-    });
-    // }
+    } else {
+      const provider = getFromStorage("provider");
+      const deletedTimestamp = moment.utc().toISOString();
+      let observation: any = {};
+      switch (key) {
+        case 'type1Uuid':
+          observation = this.aidOrderForm.value.type1Obs
+          break;
+        case 'type2Uuid':
+          observation = this.aidOrderForm.value.type2Obs
+          break;
+        case 'type3Uuid':
+          observation = this.aidOrderForm.value.type3Obs
+          break;
+        case 'type4Uuid':
+          observation = this.aidOrderForm.value.type4Obs
+          break;
+        case 'type5Uuid':
+          observation = this.aidOrderForm.value.type5Obs
+          break;
+      }
+      const prevCreator = observation?.creator?.person?.display;
+      const deletorRegistrationNumber = getFromStorage("registrationNumber");
+      const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
+
+      this.aidOrderForm.get(key).setValue(null);
+      switch (key) {
+        case 'type1Uuid':
+          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+          this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null, type1Obs: null });
+          break;
+        case 'type2Uuid':
+          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+          this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null, type2Obs: null });
+          break;
+        case 'type3Uuid':
+          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
+          this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null, type3Obs: null });
+          break;
+        case 'type4Uuid':
+          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
+          this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null, type4Obs: null });
+          break;
+        case 'type5Uuid':
+          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
+          this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null, type5Obs: null });
+          break;
+        default:
+          break;
+      }
+      this.tempDeleteObs.push({
+        uuid,
+        key,
+        payload: { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}` }
+      });
+    }
   }
 
   getLang() {
@@ -629,5 +682,13 @@ export class AidOrderComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  unSaveChanges() {
+    return this.tempObs.length > 0;
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription.unsubscribe();
   }
 }
