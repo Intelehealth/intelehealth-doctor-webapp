@@ -28,11 +28,10 @@ export class ReportGeneratorComponent {
 
   /**
   * Close modal
-  * @param {boolean} val - Dialog result
   * @return {void}
   */
-  close(val: boolean) {
-    this.dialogRef.close(val);
+  close() {
+    this.dialogRef.close();
   }
 
   /**
