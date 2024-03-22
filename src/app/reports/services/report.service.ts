@@ -10,7 +10,20 @@ export class ReoportService {
   constructor(private http: HttpClient) { }
 
   getReport(body) {
-    return this.http.get(
-      `${environment.reportURL}/${body.value.field1}/${body.value.field2}`,{ reportProgress: true, observe: "events" });
+    if (body.reportId === 1) {
+      return this.http.get(
+        `${environment.reportURL}/gen/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+    }
+
+    if (body.reportId === 2) {
+      return this.http.get(
+        `${environment.reportURL}/vl2/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+    }
+
+    if (body.reportId === 3) {
+      return this.http.get(
+        `${environment.reportURL}/bs/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+    }
+
   }
 }

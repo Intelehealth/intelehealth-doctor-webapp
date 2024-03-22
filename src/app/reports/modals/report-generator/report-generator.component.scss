@@ -95,7 +95,10 @@
 }
 
 @media (max-width: 768px) {
-  .create-report-modal s.modal-body .report-form .confirm-btn {
-    padding: 0px;
+  .create-report-modal .modal-title {
+    height: 80px;
+  }
+  .create-report-modal .modal-body .report-form .confirm-btn {
+    font-size: 17px;
   }
 }

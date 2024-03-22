@@ -12,12 +12,17 @@ export class ReportListComponent {
   reports = [
     {
       id: 1,
-      name: 'List of visit between two dates',
+      name: 'List of Visits between two dates',
       buttonName: "Create Report"
     },
     {
       id: 2,
-      name: 'Baseline Survey',
+      name: 'Visit Details with Textual Clinical Note and Data Segregation',
+      buttonName: "Create Report"
+    },
+    {
+      id: 3,
+      name: 'Individual Client Report Part 1',
       buttonName: "Create Report"
     }
   ];
@@ -36,7 +41,11 @@ export class ReportListComponent {
     };
     this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
       if (res) {
-        this.modalService.openFileDownloadDialoag(res).subscribe((res: any) => {
+        let body = {
+          reportId: element.id,
+          selectedData: res
+        }
+        this.modalService.openFileDownloadDialoag(body).subscribe((res: any) => {
           if (res) {
             this.reportSuccess();
           } else {
@@ -49,18 +58,12 @@ export class ReportListComponent {
 
 
   reportSuccess() {
-    this.modalService.openReportSuccessDialog().subscribe((res: any) => {
-      if (res) {
-        console.log("Error", res)
-      }
+    this.modalService.openReportSuccessDialog().subscribe(() => {
     });
   }
 
   reportError() {
-    this.modalService.openReportErrorDialog().subscribe((res: any) => {
-      if (res) {
-        console.log("Error", res)
-      }
+    this.modalService.openReportErrorDialog().subscribe(() => {
     });
   }
 }
