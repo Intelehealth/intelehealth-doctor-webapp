@@ -4,6 +4,7 @@ export const environment = {
   baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
+  reportURL: `${window.location.protocol}//${window.location.hostname}`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,

@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { NgModule } from "@angular/core";
+import { NO_ERRORS_SCHEMA, NgModule } from "@angular/core";
 import {
   APP_BASE_HREF,
   LocationStrategy,
@@ -130,6 +130,10 @@ const ROUTES: any[] = [
         canActivate: [AuthGuard],
       },
       { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+      {
+        path: 'reports',
+        loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule)
+      },
       {
         path: "modals",
         component: ModalsComponent,
@@ -324,5 +328,6 @@ const ROUTES: any[] = [
     },
   ],
   bootstrap: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA],
 })
 export class AppModule { }
