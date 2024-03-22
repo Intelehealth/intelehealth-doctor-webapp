@@ -523,7 +523,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
-      pageMargins: [ 20, 50, 20, 55 ],
+      pageMargins: [ 20, 50, 20, 40 ],
       watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
@@ -534,8 +534,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage, pageCount) => {
         return {
           columns: [
-            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n\n'),bold: true,fontSize: 10,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
-            { text: '\n\n\n'+currentPage.toString() + ' of ' + pageCount, width:"10%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
+            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
+            { text: '\n\n'+currentPage.toString() + ' of ' + pageCount, width:"7%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
       },
