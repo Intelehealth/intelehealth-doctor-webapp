@@ -11,6 +11,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
+      console.log("err", err)
       if ([401, 403].indexOf(err.status) != -1) {
         this.authService.logOut();
       }
@@ -24,7 +25,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       if (request.method == 'DELETE' && request.url.includes('session')) {
         return throwError(error);
       }
-      if (error == 'OK') {
+      if (error == 'OK' || err?.url.includes('/abha/')) {
         return throwError(error);
       }
       this.toastr.error(error);

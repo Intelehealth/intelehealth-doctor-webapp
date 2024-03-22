@@ -1555,7 +1555,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
                 });
               } else {
-                this.updateAbhaDetails();
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
                   if (result === 'view') {
                     // Open visit summary modal here....
@@ -1712,10 +1711,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
    * Get Abha numner / Abha address from patient
    */
   getAbhaDetails(_patient: PatientModel): void {
-    console.log("_patient", _patient)
     this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier
     this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
-    console.log("patientIdentifiers", this.patient.person.abhaNumber)
   }
 
   updateAbhaDetails(): void {
@@ -1724,7 +1721,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.visitService.postAttribute(this.visit.uuid,
         {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
-          value: 1,
+          value: true,
         }).subscribe((data) => {
           this.visitService.postVisitToABDM({
             visitUUID: this.visit.uuid,
