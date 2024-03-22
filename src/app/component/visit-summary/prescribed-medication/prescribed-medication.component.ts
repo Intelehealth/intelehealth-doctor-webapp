@@ -235,12 +235,12 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.eventsSubscription = this.events.subscribe(() => this.commentMedication());
+    this.eventsSubscription = this.events?.subscribe(() => this.commentMedication());
   }
 
   ngOnDestroy() {
     this.visitSvc.lockMedicineAidOrder.unsubscribe();
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   onSubmit() {

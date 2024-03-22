@@ -76,7 +76,7 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
           }
         });
       });
-      this.eventsSubscription = this.events.subscribe(() => this.dischargeEvent());
+      this.eventsSubscription = this.events?.subscribe(() => this.dischargeEvent());
   }
 
   Submit() {
@@ -178,7 +178,7 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   tempDelete(i){    

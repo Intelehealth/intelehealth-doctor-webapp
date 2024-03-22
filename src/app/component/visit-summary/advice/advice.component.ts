@@ -98,7 +98,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
           }
         });
       });
-      this.eventsSubscription = this.events.subscribe(() => this.adviceEvent());
+      this.eventsSubscription = this.events?.subscribe(() => this.adviceEvent());
   }
 
   submit() {
@@ -211,7 +211,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   unSaveChanges() {

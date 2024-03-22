@@ -75,7 +75,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
           }
         });
       });
-      this.eventsSubscription = this.events.subscribe(() => this.commentEvent());
+      this.eventsSubscription = this.events?.subscribe(() => this.commentEvent());
   }
 
   Submit() {
@@ -193,7 +193,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   unSaveChanges() {

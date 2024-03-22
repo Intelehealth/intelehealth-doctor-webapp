@@ -159,7 +159,7 @@ export class AidOrderComponent implements OnInit, OnDestroy {
     this.formControlValueChanges();
     this.getAidOrders();
     this.getAidObsList();
-    this.eventsSubscription = this.events.subscribe(() => this.saveChanges());
+    this.eventsSubscription = this.events?.subscribe(() => this.saveChanges());
   }
 
   get aidUuidList() {
@@ -689,6 +689,6 @@ export class AidOrderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 }

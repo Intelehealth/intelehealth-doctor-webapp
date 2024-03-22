@@ -83,7 +83,7 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
     this.fetchVisitDetails();
     this.getAttributes();
     this.getAdviceObs();
-    this.eventsSubscription = this.events.subscribe(() => this.submit());
+    this.eventsSubscription = this.events?.subscribe(() => this.submit());
   }
 
   fetchVisitDetails() {
@@ -257,7 +257,7 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   unSaveChanges() {

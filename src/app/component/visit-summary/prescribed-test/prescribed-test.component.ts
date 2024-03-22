@@ -155,12 +155,12 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.eventsSubscription = this.events.subscribe(() => this.testEvent());
+    this.eventsSubscription = this.events?.subscribe(() => this.testEvent());
   }
 
   ngOnDestroy() {
     this.visitSvc.lockPrescribedTest.unsubscribe();
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   submit() {

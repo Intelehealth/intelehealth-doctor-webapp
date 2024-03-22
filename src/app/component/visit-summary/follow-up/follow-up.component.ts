@@ -78,7 +78,7 @@ export class FollowUpComponent implements OnInit, OnDestroy {
         });
       });
     this.dateAdapter.setLocale(this.getLang());
-    this.eventsSubscription = this.events.subscribe(() => this.followUpEvent());
+    this.eventsSubscription = this.events?.subscribe(() => this.followUpEvent());
   }
 
   get allowFollowUp() {
@@ -215,7 +215,7 @@ export class FollowUpComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   unSaveChanges() {

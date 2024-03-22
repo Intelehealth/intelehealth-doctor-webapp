@@ -79,7 +79,7 @@ diagnosisForm = new FormGroup({
         }
       });
     });
-    this.eventsSubscription = this.events.subscribe(() => this.diagnosisEvent());
+    this.eventsSubscription = this.events?.subscribe(() => this.diagnosisEvent());
   }
 
   search(event) {
@@ -217,7 +217,7 @@ diagnosisForm = new FormGroup({
   }
 
   ngOnDestroy() {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription?.unsubscribe();
   }
 
   unSaveChanges() {    
