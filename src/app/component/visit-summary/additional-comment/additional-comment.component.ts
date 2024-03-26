@@ -168,6 +168,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
       this.service.postObs(this.tempComment[i]).subscribe(response => {
         const user = getFromStorage("user");
         let obj = {
+          comment:null,
           uuid: response.uuid, 
           value: response.value, 
           obsDatetime: response.obsDatetime, 
@@ -185,7 +186,13 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   }
 
   getTempCommentLength(): number {
-    return this.tempComment.length || this.comment.length;
+    let isNoteAdded = false;
+    for (let i = 0; i < this.comment.length; i++) {
+      if(this.comment[i]?.comment === null){
+        isNoteAdded = true;
+      }
+    }
+    return this.tempComment.length || isNoteAdded;
   }
 
   tempDelete(i){    

@@ -342,7 +342,7 @@
     "Call rejected by Health Worker":"تم رفض المكالمة من قبل العامل الصحي",
     "Call ended from Health Worker end.":"تم انهاء المكالمة من قبل العامل الصحي",
     "Health Worker is offline.":"الاخصائي الصحي خارج التغطية",
-    "Assessment And Plan are compulsory. Please enter at least one note.":"الملاحظات ضرورية، الرجاء كتابة ملاحظة واحدة على الأقل",
+    "Assessment and Plan are compulsory. Please enter at least one note.":"الملاحظات ضرورية، الرجاء كتابة ملاحظة واحدة على الأقل",
     "Data will not be save until click's 'Save' or 'Complete Prescription' button.":"لن يتم حفظ البيانات إلا بضغط زر  ' حفظ' أو ' إنهاء'"
   },
   "No slots avalable for the day, try changing dates.": "لا توجد مواعيد متاحة لهذا اليوم ، حاول تغيير التواريخ",
@@ -1452,7 +1452,7 @@
   "Verify the accuracy of the collected data by directly communicating with the patient and field staff":"التحقق من دقة البيانات التي تم جمعها من خلال التواصل المباشر مع المريض والموظفين الميدانيين",
   "through the communication windows provided below, as the history and clinical examination were conducted":"من خلال نوافذ التواصل الموضحة أدناه، حيث تم إجراء التاريخ المرضي والفحص السريري",
   "by a nurse or field health professional.":"بواسطة ممرضة أو أخصائي صحة ميداني",
-  "You have unsaved changes, do you want to procced?":"لم يتم حفظ التعديلات، هل تريد حفظها؟",
+  "You have unsaved changes, do you want to proceed?":"لم يتم حفظ التعديلات، هل تريد حفظها؟",
   "Health Worker’s Assessment":"تقييم مقدم الخدمة الصحية",
   "Health worker’s assessment added by":"",
   "No assessment added by health worker":""

@@ -8,7 +8,7 @@
                     formControlName='comment'></textarea>
             </mat-form-field>
             <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || isManagerRole' *ngIf="!visitCompleted">{{
-                'Add' | translate}}</button>
+                'Add Assessment and Plan' | translate}}</button>
         </div>
     </form>
     <br>

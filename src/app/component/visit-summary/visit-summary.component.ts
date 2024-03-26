@@ -394,7 +394,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.translationService.getTranslation('Data saved successfully');
       this.eventsSubject.next();
     } else {
-      this.translationService.getTranslation('Assessment And Plan are compulsory. Please enter at least one note.');
+      this.translationService.getTranslation('Assessment and Plan are compulsory. Please enter at least one note.');
     }
   }
 
@@ -440,7 +440,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   const tempObsAid = this.childComponentAidOrder.unSaveChanges();
   
   if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI || tempObsAid) {
-    const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to procced?");
+    const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to proceed?");
     return dialogRef.afterClosed();
   }
   return true;

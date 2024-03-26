@@ -109,7 +109,7 @@ export class DiagnosisService {
   }
 
   getBody(element: string, elementName: string) {
-    this.getTranslationData();
+    // this.getTranslationData();
     let value, ar1, en1;
     if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
       localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,

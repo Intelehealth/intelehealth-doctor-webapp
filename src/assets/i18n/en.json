@@ -330,7 +330,7 @@
       "Please try again later.":"Please try again later.",
       "Message length should not exceed 1000.":"Message length should not exceed 1000.",
       "Health Worker is offline.":"Health Worker is offline.",
-      "Assessment And Plan are compulsory. Please enter at least one note.":"Assessment And Plan are compulsory. Please enter at least one note.",
+      "Assessment and Plan are compulsory. Please enter at least one note.":"Assessment and Plan are compulsory. Please enter at least one note.",
       "Data will not be save until click's 'Save' or 'Complete Prescription' button.":"Data will not be save until click's 'Save' or 'Complete Prescription' button."
     },
     "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
@@ -1401,7 +1401,7 @@
     "Verify the accuracy of the collected data by directly communicating with the patient and field staff":"Verify the accuracy of the collected data by directly communicating with the patient and field staff",
     "through the communication windows provided below, as the history and clinical examination were conducted":"through the communication windows provided below, as the history and clinical examination were conducted",
     "by a nurse or field health professional.":"by a nurse or field health professional.",
-    "You have unsaved changes, do you want to procced?":"You have unsaved changes, do you want to procced?",
+    "You have unsaved changes, do you want to proceed?":"You have unsaved changes, do you want to proceed?",
     "Health Worker’s Assessment":"Health Worker’s Assessment",
     "Health worker’s assessment added by":"Health worker’s assessment added by",
     "No assessment added by health worker":"No assessment added by health worker"
