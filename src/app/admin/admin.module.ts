@@ -25,6 +25,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
+import { AdminActionsComponent } from './admin-actions/admin-actions.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -37,12 +38,16 @@ const routes: Routes = [
     component: AdminComponent,
     children: [
       {
-        path: '',
+        path: 'ayu',
         component: AyuComponent
       },
       {
         path: 'support',
         component: SupportComponent
+      },
+      {
+        path: '',
+        component: AdminActionsComponent
       }
     ]
   }
@@ -52,7 +57,8 @@ const routes: Routes = [
   declarations: [
     AdminComponent,
     AyuComponent,
-    SupportComponent
+    SupportComponent,
+    AdminActionsComponent
   ],
   imports: [
     CommonModule,
