@@ -870,8 +870,8 @@ export class SetupCalendarComponent implements OnInit {
     if(timeSlots){
       const lastIndex = (timeSlots.length-1);
       const lastSlot = timeSlots[lastIndex];
-      let startdate = moment(this.addSlotsForm.value.startDate);
-      let enddate = moment(this.addSlotsForm.value.endDate);
+      const startdate = moment(this.addSlotsForm.value.startDate);
+      const enddate = moment(this.addSlotsForm.value.endDate);
 
       if(enddate.diff(startdate,"days") < 7){
         let WeekDays = ["Sun", "Mon", "Tue", "Wed","Thu", "Fri","Sat"];
@@ -879,9 +879,10 @@ export class SetupCalendarComponent implements OnInit {
         let missingDays = [];
         lastSlot.days.forEach(day=>{
           let isValidDays = false;
-          while(startdate <= enddate){
-            if(WeekDays.indexOf(day) === startdate.weekday()) isValidDays = true;
-            startdate = startdate.add(1,'days');
+          let currDate = moment(new Date(startdate.toString()));
+          while(currDate.unix() <= enddate.unix()){
+            if(WeekDays.indexOf(day) === currDate.weekday()) isValidDays = true;
+            currDate.add(1,'d');
           };
           if(!isValidDays) missingDays.push(WeekFullDays[WeekDays.indexOf(day)]);
         });
