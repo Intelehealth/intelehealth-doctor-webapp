@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -44,6 +44,7 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
   tempDischargeDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   
   dischargeOrderForm = new FormGroup({
     dischargeOrder: new FormControl('', [Validators.required])
@@ -100,6 +101,7 @@ export class DischargeOrderComponent implements OnInit, OnDestroy {
       };
 
       this.tempDischarge.push(json);
+      this.editedEvent.emit(true);
       const user = getFromStorage("user");
       this.tempDischargeDisplay.push({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }});
 

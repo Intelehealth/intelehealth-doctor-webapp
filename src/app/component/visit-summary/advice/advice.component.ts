@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -48,6 +48,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
   tempAdviceDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   adviceForm = new FormGroup({
     advice: new FormControl('', [Validators.required])
@@ -124,6 +125,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
         };
 
         this.tempAdvice.push(json);
+        this.editedEvent.emit(true);
         const user = getFromStorage("user");
         this.tempAdviceDisplay.push(this.diagnosisService.getData({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }}));
   

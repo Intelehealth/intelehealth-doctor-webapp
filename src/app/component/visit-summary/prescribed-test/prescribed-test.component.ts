@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -55,6 +55,7 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
   tempTestDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   testForm = new FormGroup({
     test: new FormControl('', [Validators.required])
@@ -186,6 +187,7 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
         };
 
         this.tempTest.push(json);
+        this.editedEvent.emit(true);
         const user = getFromStorage("user");
         this.tempTestDisplay.push({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person }});
   

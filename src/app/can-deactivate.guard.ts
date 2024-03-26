@@ -13,6 +13,11 @@ export class CanDeactivateGuard implements CanDeactivate<VisitSummaryComponent> 
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
+    if (nextState && nextState.url.includes('/login')) {
+      return true;
+    }
+
     return component.canDeactivate();
   }  
 }

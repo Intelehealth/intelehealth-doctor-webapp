@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -117,6 +117,7 @@ export class AidOrderComponent implements OnInit, OnDestroy {
   tempDeleteObs = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   
   constructor(
     private diagnosisService: DiagnosisService,
@@ -428,6 +429,7 @@ export class AidOrderComponent implements OnInit, OnDestroy {
       key,
       obsObj: obj
     });
+    this.editedEvent.emit(true);
 
     // this.encounterService.postObs(json).subscribe(response => {
     //   // console.log(response);

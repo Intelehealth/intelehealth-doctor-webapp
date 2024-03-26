@@ -1454,6 +1454,7 @@
   "by a nurse or field health professional.":"بواسطة ممرضة أو أخصائي صحة ميداني",
   "You have unsaved changes, do you want to proceed?":"لم يتم حفظ التعديلات، هل تريد حفظها؟",
   "Health Worker’s Assessment":"تقييم مقدم الخدمة الصحية",
-  "Health worker’s assessment added by":"",
-  "No assessment added by health worker":""
+  "Added by":"تمت إضافته بواسطة",
+  "No assessment added by health worker":"لم يتم اضافة اي خطة علاجية",
+  "Add Assessment and Plan":"ضف الخطة العلاجية"
 }

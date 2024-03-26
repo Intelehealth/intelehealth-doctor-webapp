@@ -77,15 +77,15 @@
 
       <div *ngIf="show">
             <mat-card>
-                  <app-patient-interaction [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-patient-interaction>
+                  <app-patient-interaction [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-patient-interaction>
             </mat-card>
             <br>
             <mat-card>
-                  <app-diagnosis [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-diagnosis>
+                  <app-diagnosis [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-diagnosis>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-medication [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-prescribed-medication>
+                  <app-prescribed-medication [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-prescribed-medication>
             </mat-card>
             <br>
             <div  *ngIf="isDispense">
@@ -101,7 +101,7 @@
                   <br>
             </div>
             <mat-card>
-                  <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-prescribed-test>
+                  <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-prescribed-test>
             </mat-card>
             <br>
             <div  *ngIf="isCollectedBy">
@@ -117,23 +117,23 @@
                   <br>
             </div>
             <mat-card>
-                  <app-advice [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-advice>
+                  <app-advice [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-advice>
             </mat-card>
             <br>
             <mat-card>
-              <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-aid-order>
+              <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-aid-order>
             </mat-card>
             <br>
             <mat-card>
-                  <app-additional-comment [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-additional-comment>
+                  <app-additional-comment [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-additional-comment>
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-follow-up>
+                  <app-follow-up [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-follow-up>
             </mat-card>
             <br>
             <mat-card>
-              <app-discharge-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()"></app-discharge-order>
+              <app-discharge-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole" [events]="eventsSubject.asObservable()" (editedEvent)="editEventHandler($event)"></app-discharge-order>
             </mat-card>
             <br>
             <mat-card *ngIf="(!(userSpeciality == 'Admin' && visitSpecialitySecondary == 'Admin')) && !visitCompletePresent">

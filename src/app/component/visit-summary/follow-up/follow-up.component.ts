@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -45,6 +45,7 @@ export class FollowUpComponent implements OnInit, OnDestroy {
   tempFollowUpDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   followForm = new FormGroup({
     date: new FormControl('', [Validators.required]),
@@ -101,6 +102,7 @@ export class FollowUpComponent implements OnInit, OnDestroy {
       };
 
       this.tempFollowUp.push(json);
+      this.editedEvent.emit(true);
       const user = getFromStorage("user");
       this.tempFollowUpDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
 

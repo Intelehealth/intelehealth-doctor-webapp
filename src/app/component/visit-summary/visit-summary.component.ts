@@ -26,6 +26,7 @@ import { AdviceComponent } from './advice/advice.component';
 import { PatientInteractionComponent } from './patient-interaction/patient-interaction.component';
 import { AidOrderComponent } from "../visit-summary/aid-order/aid-order.component";
 import { ComfirmationDialogService } from "./confirmation-dialog/comfirmation-dialog.service";
+import { UnsavedChangesService } from "src/app/services/unsaved-changes.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -70,6 +71,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   @ViewChild(AdviceComponent) childComponentAdvice!: AdviceComponent;
   @ViewChild(PatientInteractionComponent) childComponentPatient!: PatientInteractionComponent;
   @ViewChild(AidOrderComponent) childComponentAidOrder!: AidOrderComponent;
+  hasUnsavedChanges: boolean = false;
 
   constructor(
     private service: EncounterService,
@@ -86,7 +88,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private socketSvc: SocketService,
     private toastr: ToastrService,
     private translateService: TranslateService,
-    private ComfirmationDialogService: ComfirmationDialogService
+    private ComfirmationDialogService: ComfirmationDialogService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -393,6 +396,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (tempObsLength > 0) {
       this.translationService.getTranslation('Data saved successfully');
       this.eventsSubject.next();
+      this.hasUnsavedChanges = false;
+      this.unsavedChangesService.updateUnsavedStatus(false);
     } else {
       this.translationService.getTranslation('Assessment and Plan are compulsory. Please enter at least one note.');
     }
@@ -426,24 +431,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     } catch (error) {
         return null
     }
- }
-
- canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-  const tempObsAC = this.childComponentAdditionalComment.unSaveChanges();
-  const tempObsD = this.childComponentDiagnosis.unSaveChanges();
-  const tempObsFU = this.childComponentFollowUp.unSaveChanges();
-  const tempObsPT = this.childComponentPrescribedTest.unSaveChanges();
-  const tempObsPM = this.childComponentPrescribedMedication.unSaveChanges();
-  const tempObsDO = this.childComponentDischargeOrder.unSaveChanges();
-  const tempObsA = this.childComponentAdvice.unSaveChanges();
-  const tempObsPI = this.childComponentPatient.unSaveChanges();
-  const tempObsAid = this.childComponentAidOrder.unSaveChanges();
-  
-  if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI || tempObsAid) {
-    const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to proceed?");
-    return dialogRef.afterClosed();
   }
-  return true;
-}
 
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    const tempObsAC = this.childComponentAdditionalComment.unSaveChanges();
+    const tempObsD = this.childComponentDiagnosis.unSaveChanges();
+    const tempObsFU = this.childComponentFollowUp.unSaveChanges();
+    const tempObsPT = this.childComponentPrescribedTest.unSaveChanges();
+    const tempObsPM = this.childComponentPrescribedMedication.unSaveChanges();
+    const tempObsDO = this.childComponentDischargeOrder.unSaveChanges();
+    const tempObsA = this.childComponentAdvice.unSaveChanges();
+    const tempObsPI = this.childComponentPatient.unSaveChanges();
+    const tempObsAid = this.childComponentAidOrder.unSaveChanges();
+    
+    if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI || tempObsAid) {
+      const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to proceed?");
+      return dialogRef.afterClosed();
+    }
+    return true;
+  }
+
+  editEventHandler($event: boolean) {
+    this.hasUnsavedChanges = $event;
+    this.unsavedChangesService.updateUnsavedStatus($event);
+  }
 }

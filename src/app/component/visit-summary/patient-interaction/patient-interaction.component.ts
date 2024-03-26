@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -67,6 +67,7 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
 
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -147,6 +148,7 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
       const value = formValue.interaction;
       
       this.tempmsg.push(this.diagnosisService.getData({ value: value }));
+      this.editedEvent.emit(true);
       this.interaction.reset();
     } else {
       this.translationService.getTranslation("Another doctor is viewing this case");

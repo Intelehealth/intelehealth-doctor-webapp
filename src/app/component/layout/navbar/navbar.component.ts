@@ -18,6 +18,8 @@ import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { TranslateService } from "@ngx-translate/core";
 import { TranslationService } from "src/app/services/translation.service";
+import { UnsavedChangesService } from "src/app/services/unsaved-changes.service";
+import { ComfirmationDialogService } from "src/app/component/visit-summary/confirmation-dialog/comfirmation-dialog.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -76,7 +78,8 @@ export class NavbarComponent implements OnInit {
     public notificationService: PushNotificationsService,
     private translateService: TranslateService,
     private translationService: TranslationService,
-
+    private unsavedChangesService: UnsavedChangesService,
+    private ComfirmationDialogService: ComfirmationDialogService,
   ) { }
 
   ngOnInit() {
@@ -146,10 +149,22 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    this.unsubscribeNotification();
-    setTimeout(() => {
-      this.authService.logout();
-    }, 0);
+    if (!this.unsavedChangesService.currentValue) {
+      this.unsubscribeNotification();
+      setTimeout(() => {
+        this.authService.logout();
+      }, 0);
+    } else {
+      const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to procced?");
+      return dialogRef.afterClosed().subscribe(res => {
+        if (res) {
+          this.unsubscribeNotification();
+          setTimeout(() => {
+            this.authService.logout();
+          }, 0);
+        }
+      });
+    }
   }
 
   useLanguage(lang: string): void {

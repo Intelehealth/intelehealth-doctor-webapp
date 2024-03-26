@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -58,6 +58,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
   tempMedicationDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
@@ -322,6 +323,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
         }
 
         this.tempMedication.push(json);
+        this.editedEvent.emit(true);
         const user = getFromStorage("user");
         this.tempMedicationDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
   

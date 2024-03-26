@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -44,6 +44,7 @@ tempDiagnosis: any = [];
 tempDiagnosisDisplay: any = [];
 private eventsSubscription: Subscription;
 @Input() events: Observable<void>;
+@Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 diagnosisForm = new FormGroup({
   text: new FormControl('', [Validators.required]),
@@ -111,6 +112,7 @@ diagnosisForm = new FormGroup({
         };
 
         this.tempDiagnosis.push(json);
+        this.editedEvent.emit(true);
         const user = getFromStorage("user");
         this.tempDiagnosisDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
         

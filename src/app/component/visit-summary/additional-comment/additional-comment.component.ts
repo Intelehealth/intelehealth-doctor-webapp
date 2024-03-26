@@ -43,6 +43,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   tempCommentDisplay: any = [];
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
+  @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])
@@ -99,6 +100,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
       };
 
       this.tempComment.push(json);
+      this.editedEvent.emit(true);
       const user = getFromStorage("user");
       this.tempCommentDisplay.push(this.diagnosisService.getData({ value: value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
       
