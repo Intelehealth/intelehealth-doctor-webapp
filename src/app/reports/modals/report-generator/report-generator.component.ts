@@ -11,6 +11,7 @@ export class ReportGeneratorComponent {
 
   reportForm: FormGroup;
   submitted: boolean = false;
+  today = new Date().toISOString().slice(0, 10);
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ReportGeneratorComponent>) {
