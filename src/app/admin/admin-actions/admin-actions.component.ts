@@ -23,7 +23,7 @@ export class AdminActionsComponent implements OnInit {
     },
     {
       title: "System Admin",
-      desc: "Redirect to OpenMRS Admin portal",
+      desc: "Redirect to System Admin portal",
       icon: "assets/svgs/system-admin.svg",
       path: this.baseURLLegacy + "/admin/index.htm",
       isLocalPath: false
@@ -65,7 +65,7 @@ export class AdminActionsComponent implements OnInit {
     },
     {
       title: "User Creation",
-      desc: "User Creation",
+      desc: "Create New User",
       icon: "assets/svgs/user-creation.svg",
       path: this.baseURLLegacy + "/admin/users/users.list",
       isLocalPath: false

@@ -31,7 +31,6 @@
       font-size: 18px;
       font-weight: bold;
       margin-bottom: 12px;
-      margin-top: 8px;
     }
   
     .chip-info span {
@@ -55,4 +54,10 @@
         }
     }
 
+  }
+
+  @media (max-width: 768px) {
+    .chip-item{
+      height: unset;
+    }
   }
