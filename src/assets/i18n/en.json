@@ -1405,5 +1405,6 @@
     "Health Worker’s Assessment":"Health Worker’s Assessment",
     "Added by":"Added by",
     "No assessment added by health worker":"No assessment added by health worker",
-    "Add Assessment and Plan":"Add Assessment and Plan"
+    "Add Assessment and Plan":"Add Assessment and Plan",
+    "Data will not be saved until the user click's 'Save' button.":"Data will not be saved until the user click's 'Save' button."
   }

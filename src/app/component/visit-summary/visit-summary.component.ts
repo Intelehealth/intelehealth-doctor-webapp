@@ -255,12 +255,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       }
     }
     setTimeout(() => {
-      this.translationService.getTranslation("Data will not be save until click's 'Save' or 'Complete Prescription' button.");
-    }, 4000);
+      window.alert("Data will not be saved until the user click's 'Save' button.");
+    }, 1000);
   }
 
   sign() {
-    this.dialogService.openConfirmDialog("Are you sure to complete this visit? Once completed prescription can not be edited.")
+    if(!this.hasUnsavedChanges){
+      this.dialogService.openConfirmDialog("Are you sure to complete this visit? Once completed prescription can not be edited.")
       .afterClosed().subscribe(res => {
         if (res) {
           const myDate = new Date(Date.now() - 30000);
@@ -322,6 +323,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
         }
       });
+    } else {
+      window.alert("Data will not be saved until the user click's 'Save' button.");
+    }
   }
 
   getDoctorValue = () => {
