@@ -50,7 +50,7 @@
                 <label>{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
                   <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon1" (change)="changeDate()" readonly data-test-id="etSelStartDate">
+                    aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
                   <mat-datepicker #picker1></mat-datepicker>
                   <div class="input-group-append">
                     <span class="input-group-text" id="basic-addon1" data-test-id="dpicSelStartDate">
@@ -65,7 +65,7 @@
                 <label>{{'End date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.endDate.errors">
                   <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
-                    aria-describedby="basic-addon2" (change)="changeDate()" readonly data-test-id="etSelEndDate">
+                    aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
                   <mat-datepicker #picker2></mat-datepicker>
                   <div class="input-group-append">
                     <span class="input-group-text" id="basic-addon2" data-test-id="dpicSelEndDate">
