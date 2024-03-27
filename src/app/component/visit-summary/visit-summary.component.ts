@@ -208,6 +208,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.show = true;
             this.isVisitNoteEncProvider = true;
             this.translationService.getTranslation(`Visit Note Created`);
+            window.alert("Data will not be saved until the user click's 'Save' button.");
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
@@ -242,21 +243,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (encounterDetails && providerDetails) {
         const providerUuid = providerDetails.uuid;
         const encounterUuid = encounterDetails.uuid;
-
         const json = {
           provider: providerUuid,
           encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03"
         };
         this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
-          window.location.reload();
+          window.alert("Data will not be saved until the user click's 'Save' button.");
           this.isVisitNoteEncProvider = true;
           this.show = true;
+          window.location.reload();
         });
       }
     }
-    setTimeout(() => {
-      window.alert("Data will not be saved until the user click's 'Save' button.");
-    }, 1000);
   }
 
   sign() {
@@ -438,15 +436,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    const tempObsAC = this.childComponentAdditionalComment.unSaveChanges();
-    const tempObsD = this.childComponentDiagnosis.unSaveChanges();
-    const tempObsFU = this.childComponentFollowUp.unSaveChanges();
-    const tempObsPT = this.childComponentPrescribedTest.unSaveChanges();
-    const tempObsPM = this.childComponentPrescribedMedication.unSaveChanges();
-    const tempObsDO = this.childComponentDischargeOrder.unSaveChanges();
-    const tempObsA = this.childComponentAdvice.unSaveChanges();
-    const tempObsPI = this.childComponentPatient.unSaveChanges();
-    const tempObsAid = this.childComponentAidOrder.unSaveChanges();
+    const tempObsAC = this.childComponentAdditionalComment?.unSaveChanges();
+    const tempObsD = this.childComponentDiagnosis?.unSaveChanges();
+    const tempObsFU = this.childComponentFollowUp?.unSaveChanges();
+    const tempObsPT = this.childComponentPrescribedTest?.unSaveChanges();
+    const tempObsPM = this.childComponentPrescribedMedication?.unSaveChanges();
+    const tempObsDO = this.childComponentDischargeOrder?.unSaveChanges();
+    const tempObsA = this.childComponentAdvice?.unSaveChanges();
+    const tempObsPI = this.childComponentPatient?.unSaveChanges();
+    const tempObsAid = this.childComponentAidOrder?.unSaveChanges();
     
     if (tempObsAC || tempObsD || tempObsFU || tempObsPT || tempObsPM || tempObsDO || tempObsA || tempObsPI || tempObsAid) {
       const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to proceed?");
