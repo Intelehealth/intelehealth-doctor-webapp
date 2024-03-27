@@ -13,7 +13,7 @@
         </tr>
         <tr>
           <th scope="row">Sex</th>
-          <td>{{ info.gender === 'M' ? 'Male': 'Female' }}</td>
+          <td>{{ info.gender === 'M' ? 'Male': info.gender === 'F' ?'Female': 'Other' }}</td>
         </tr>
         <tr>
           <th scope="row">DOB</th>
