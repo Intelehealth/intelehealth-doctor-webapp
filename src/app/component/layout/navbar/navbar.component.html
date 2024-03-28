@@ -101,7 +101,7 @@
               >Monitoring</a
             >
             <a
-              *ngIf="systemAccess"
+              *ngIf="systemAccess || videoLibraryAccess"
               class="dropdown-item"
               data-target="#navbarSupportedContent-4" data-toggle="collapse"
               routerLink="/videoLibrary"
