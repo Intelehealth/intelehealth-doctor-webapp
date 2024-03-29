@@ -53,28 +53,16 @@
             <span>{{'Help & Support' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemAyu">
-          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyu">
-            <img src="assets/svgs/warning.svg" alt="">
-            <span>{{'Ayu'| translate}}</span>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemAdminAction">
+          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" data-test-id="listAdminAction">
+            <img src="assets/svgs/add-user-male.svg" alt="">
+            <span>{{'Admin Actions' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSupport">
           <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkSupport">
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>{{'Support' | translate}} <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div> </span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSystem">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank" data-test-id="linkSystem">
-            <img src="assets/svgs/user-settings.svg" alt="">
-            <span>{{'System Admin' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemUser">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank" data-test-id="linkUser">
-            <img src="assets/svgs/add-user.svg" alt="">
-            <span>{{'User Creation' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemReport">
