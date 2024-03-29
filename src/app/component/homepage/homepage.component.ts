@@ -151,65 +151,67 @@ export class HomepageComponent implements OnInit, OnDestroy {
           this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
         });
         this.allVisits.forEach((active) => {
-          for(let location = 0; location < this.doctorLocation.split(',').length; location++){
-            if (active?.location?.uuid == this.doctorLocation.split(',')[location]) {
-              // Check if doctor is visit note encounter provider
-              if (active.encounters.length > 0) {
-                let isVnEncProvider = false;
-                let isSameSpecialityDoctorViewingVisit = false;
-                for (let i = 0; i < active.encounters.length; i++) {
-                  if (active.encounters[i].encounterType.display == "Visit Note") {
-                    for (let j = 0; j < active.encounters[i].encounterProviders.length; j++) {
-                      for (let x = 0; x < active.encounters[i].encounterProviders[j].provider.attributes.length; x++) {
-                        if (active.encounters[i].encounterProviders[j].provider.attributes[x].value == this.specialization) {
-                          isSameSpecialityDoctorViewingVisit = true;
+          if(this.doctorLocation){
+            for(let location = 0; location < this.doctorLocation.split(',').length; location++){
+              if (active?.location?.uuid == this.doctorLocation.split(',')[location]) {
+                // Check if doctor is visit note encounter provider
+                if (active.encounters.length > 0) {
+                  let isVnEncProvider = false;
+                  let isSameSpecialityDoctorViewingVisit = false;
+                  for (let i = 0; i < active.encounters.length; i++) {
+                    if (active.encounters[i].encounterType.display == "Visit Note") {
+                      for (let j = 0; j < active.encounters[i].encounterProviders.length; j++) {
+                        for (let x = 0; x < active.encounters[i].encounterProviders[j].provider.attributes.length; x++) {
+                          if (active.encounters[i].encounterProviders[j].provider.attributes[x].value == this.specialization) {
+                            isSameSpecialityDoctorViewingVisit = true;
+                            break;
+                          }
+                        }
+                        if (active.encounters[i].encounterProviders[j].provider.uuid == this.provider.uuid) {
+                          isVnEncProvider = true;
                           break;
                         }
                       }
-                      if (active.encounters[i].encounterProviders[j].provider.uuid == this.provider.uuid) {
-                        isVnEncProvider = true;
-                        break;
-                      }
-                    }
-                    break;
-                  }
-                }
-
-                // Check if visit is referred to this doctor or not
-                let isReferred = false;
-                const referralHistory = active.attributes.find(attr => attr.attributeType.uuid == 'eb2ea3f4-006f-470e-8f1f-0966ab00cd2d')?.value;
-                let ref = [];
-                if(referralHistory) {
-                  ref = referralHistory.split('-->');
-                  let index = ref.indexOf(this.specialization);
-                  if (index != 0 && index != -1) {
-                    isReferred = true;
-                  }
-                }
-
-                if(this.systemAccess) {
-                  this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
-                } else if (isVnEncProvider) {
-                  this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
-                } else if (active.attributes.length) {
-                  const attributes = active.attributes;
-                  const speRequired = attributes.filter(
-                    (attr) =>
-                      attr.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d" || attr.attributeType.uuid === "8100ec1a-063b-47d5-9781-224d835fc688"
-                  );
-                  if (speRequired.length) {
-                    for (let x = 0; x < speRequired.length; x++) {
-                      if (speRequired[x].value === this.specialization) {
-                        this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
-                        break;
-                      }
+                      break;
                     }
                   }
-                } else if (this.specialization === "General Physician") {
-                  this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+  
+                  // Check if visit is referred to this doctor or not
+                  let isReferred = false;
+                  const referralHistory = active.attributes.find(attr => attr.attributeType.uuid == 'eb2ea3f4-006f-470e-8f1f-0966ab00cd2d')?.value;
+                  let ref = [];
+                  if(referralHistory) {
+                    ref = referralHistory.split('-->');
+                    let index = ref.indexOf(this.specialization);
+                    if (index != 0 && index != -1) {
+                      isReferred = true;
+                    }
+                  }
+  
+                  if(this.systemAccess) {
+                    this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+                  } else if (isVnEncProvider) {
+                    this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+                  } else if (active.attributes.length) {
+                    const attributes = active.attributes;
+                    const speRequired = attributes.filter(
+                      (attr) =>
+                        attr.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d" || attr.attributeType.uuid === "8100ec1a-063b-47d5-9781-224d835fc688"
+                    );
+                    if (speRequired.length) {
+                      for (let x = 0; x < speRequired.length; x++) {
+                        if (speRequired[x].value === this.specialization) {
+                          this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+                          break;
+                        }
+                      }
+                    }
+                  } else if (this.specialization === "General Physician") {
+                    this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+                  }
                 }
+                this.value = {};
               }
-              this.value = {};
             }
           }
         });

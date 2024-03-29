@@ -155,7 +155,7 @@ export class NavbarComponent implements OnInit {
         this.authService.logout();
       }, 0);
     } else {
-      const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to procced?");
+      const dialogRef = this.ComfirmationDialogService.openConfirmDialog("You have unsaved changes, do you want to proceed?");
       return dialogRef.afterClosed().subscribe(res => {
         if (res) {
           this.unsubscribeNotification();

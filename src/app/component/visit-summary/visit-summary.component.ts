@@ -208,7 +208,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.show = true;
             this.isVisitNoteEncProvider = true;
             this.translationService.getTranslation(`Visit Note Created`);
-            window.alert("Data will not be saved until the user click's 'Save' button.");
+            window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
@@ -248,7 +248,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03"
         };
         this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
-          window.alert("Data will not be saved until the user click's 'Save' button.");
+          window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
           this.isVisitNoteEncProvider = true;
           this.show = true;
           window.location.reload();
@@ -322,7 +322,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      window.alert("Data will not be saved until the user click's 'Save' button.");
+      window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
     }
   }
 

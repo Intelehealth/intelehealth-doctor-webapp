@@ -10,5 +10,5 @@ export const environment = {
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
   version:"SYR-v1.1.2",
   versionCode:"9",
-  publicKey: "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54",
+  publicKey: "BMGYasq0YzQ4B9RmKuaMJY3hWcOmN-3BMZfy4e9jXXUp8w7tcoNikwXAkS86Eb9nWANm_gU7CyOaVD9zMZ0QU2w",
 };
