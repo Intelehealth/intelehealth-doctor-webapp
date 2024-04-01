@@ -334,6 +334,8 @@ export interface PatientModel {
     preferredAddress?: {
       cityVillage?: string
     }
+    abhaNumber?: string
+    abhaAddress?: string
   }
 }
 
