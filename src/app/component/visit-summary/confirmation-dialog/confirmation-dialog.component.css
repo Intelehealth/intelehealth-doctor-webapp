@@ -1,0 +1,14 @@
+.content-spans {
+    padding: 0px 16px;
+    font-size: 19px;
+}
+
+.classA {
+    text-align: right;
+    padding: 10px 0px 35px 0px;
+}
+
+.classB {
+    text-align: left;
+    padding: 10px 0px 35px 0px;
+}

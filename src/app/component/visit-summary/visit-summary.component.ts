@@ -26,6 +26,7 @@ import { AdviceComponent } from './advice/advice.component';
 import { PatientInteractionComponent } from './patient-interaction/patient-interaction.component';
 import { AidOrderComponent } from "../visit-summary/aid-order/aid-order.component";
 import { ComfirmationDialogService } from "./confirmation-dialog/comfirmation-dialog.service";
+import { CustomAlertService } from "./custom-alert/custom-alert.service";
 import { UnsavedChangesService } from "src/app/services/unsaved-changes.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
@@ -89,6 +90,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private translateService: TranslateService,
     private ComfirmationDialogService: ComfirmationDialogService,
+    private CustomAlertService: CustomAlertService,
     private unsavedChangesService: UnsavedChangesService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
@@ -208,7 +210,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.show = true;
             this.isVisitNoteEncProvider = true;
             this.translationService.getTranslation(`Visit Note Created`);
-            window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
+            const dialogRef = this.CustomAlertService.openConfirmDialog("Data will not be saved until the user click's 'Save' button.");
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
@@ -230,6 +232,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 }
               }
             });
+            return dialogRef.afterClosed();
           } else {
             this.translationService.getTranslation(`Visit Note Not Created`);
           }
@@ -248,10 +251,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03"
         };
         this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
-          window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
+          const dialogRef = this.CustomAlertService.openConfirmDialog("Data will not be saved until the user click's 'Save' button.");
           this.isVisitNoteEncProvider = true;
           this.show = true;
           window.location.reload();
+          return dialogRef.afterClosed();
         });
       }
     }
@@ -322,7 +326,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      window.alert(this.translateService.instant("Data will not be saved until the user click's 'Save' button."));
+      const dialogRef = this.CustomAlertService.openConfirmDialog("Data will not be saved until the user click's 'Save' button.");
+      return dialogRef.afterClosed();
     }
   }
 

@@ -20,8 +20,8 @@
               <span class="comment-blue" *ngIf="isShow[i]">{{test|comment:'addedBy-creator'}} {{test.creatorRegNo}} | {{test.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
               <div *ngFor="let mds of medicineObsList">
                 <div *ngFor="let med of mds[objectKeys(mds)]">
-                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'collected' && isShow[i]">{{ ('Collected By'|translate)+' : '+med[0].collected}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
-                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'resulted' && isShow[i]">{{ ('Resulted By'|translate)+' : '+med[0].resulted}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'collected' && isShow[i]">{{ ('Collected samples by'|translate)+' : '+med[0].collected}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'resulted' && isShow[i]">{{ ('Test results by'|translate)+' : '+med[0].resulted}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
                 </div>
               </div>
               <div><span *ngIf="test.comment && isShow[i]" class="comment">{{test.comment|comment}}</span></div>
@@ -42,8 +42,8 @@
             <span class="comment-blue" *ngIf="isShow[i]">{{test|comment:'addedBy-creator'}} {{test.creatorRegNo}} | {{test.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
             <div *ngFor="let mds of medicineObsList">
               <div *ngFor="let med of mds[objectKeys(mds)]">
-                <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'collected' && isShow[i]">{{ ('Collected By'|translate)+' : '+med[0].collected}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
-                <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'resulted' && isShow[i]">{{ ('Resulted By'|translate)+' : '+med[0].resulted}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'collected' && isShow[i]">{{ ('Collected samples by'|translate)+' : '+med[0].collected}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'resulted' && isShow[i]">{{ ('Test results by'|translate)+' : '+med[0].resulted}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
               </div>
             </div>
             <div><span *ngIf="test.comment && isShow[i]" class="comment">{{test.comment|comment}}</span></div>

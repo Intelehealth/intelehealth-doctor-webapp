@@ -1,0 +1,24 @@
+.ok-btn {
+  height: 50px;
+  width: 20%;
+  background-color: #3f51b5;
+  color: white;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  margin-left: 40%;
+  border: none;
+}
+.content-spans {
+  padding: 0px 16px;
+  font-size: 19px;
+}
+
+.classA {
+  text-align: right;
+  padding: 10px 0px 35px 0px;
+}
+
+.classB {
+  text-align: left;
+  padding: 10px 0px 35px 0px;
+}

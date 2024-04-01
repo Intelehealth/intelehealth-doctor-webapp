@@ -111,6 +111,7 @@ import { ResultedByComponent } from './component/visit-summary/resulted-by/resul
 import { HwAssessmentComponent } from './component/visit-summary/hw-assessment/hw-assessment.component';
 import { CanDeactivateGuard } from './can-deactivate.guard';
 import { ConfirmationDialogComponent } from './component/visit-summary/confirmation-dialog/confirmation-dialog.component';
+import { CustomAlertComponent } from './component/visit-summary/custom-alert/custom-alert.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -175,7 +176,8 @@ registerLocaleData(localeAr);
     CollectedByComponent,
     ResultedByComponent,
     HwAssessmentComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    CustomAlertComponent
   ],
 
   imports: [

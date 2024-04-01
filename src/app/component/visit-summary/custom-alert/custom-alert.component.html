@@ -1,0 +1,9 @@
+<div>
+    <div class="content-container">
+      <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
+    </div>
+    <div [ngClass]="getLang() === 'ar' ? 'classA' : 'classB'">
+      <span class="content-spans">{{ data.message | translate }}</span>
+    </div>
+    <button class="ok-btn" (click)="closeDialog()">{{ "Ok" | translate }}</button>
+</div>

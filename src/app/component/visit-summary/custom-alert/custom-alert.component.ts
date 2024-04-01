@@ -1,14 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-confirmation-dialog',
-  templateUrl: './confirmation-dialog.component.html',
-  styleUrls: ['./confirmation-dialog.component.css']
+  selector: 'app-custom-alert',
+  templateUrl: './custom-alert.component.html',
+  styleUrls: ['./custom-alert.component.css']
 })
-export class ConfirmationDialogComponent implements OnInit {
+export class CustomAlertComponent implements OnInit {
   constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+    public dialogRef: MatDialogRef<CustomAlertComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { message: string }
   ) { }
 
