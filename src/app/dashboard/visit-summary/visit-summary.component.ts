@@ -1721,7 +1721,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.visitService.postAttribute(this.visit.uuid,
         {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
-          value: true,
+          value: false,
         }).subscribe((data) => {
           this.visitService.postVisitToABDM({
             visitUUID: this.visit.uuid,
