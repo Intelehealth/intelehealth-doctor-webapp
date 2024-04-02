@@ -326,7 +326,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
         this.editedEvent.emit(true);
         const user = getFromStorage("user");
         this.tempMedicationDisplay.push(this.diagnosisService.getData({ value: json.value, obsDatetime: date, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
-  
+        this.add = false;
         // this.service.postObs(json)
         //   .subscribe(response => {
         //     const user = getFromStorage("user");
@@ -417,7 +417,14 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
     for (let i = 0; i < this.tempMedication.length; i++) {
       this.service.postObs(this.tempMedication[i]).subscribe(response => {
         const user = getFromStorage("user");
-        this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: response.value, obsDatetime: response.obsDatetime, creatorRegNo: `(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+        const obj = {
+          uuid: response.uuid,
+          value: response.value,
+          obsDatetime: response.obsDatetime,
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
+        }
+        this.meds.push(this.diagnosisService.getData(obj));
         this.add = false;
       });
     }
@@ -425,7 +432,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.tempMedicationDisplay = [];
       this.tempMedication = [];
-    }, 500);
+    }, 1000);
   }
 
   tempDelete(i){    

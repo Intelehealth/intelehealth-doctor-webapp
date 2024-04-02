@@ -301,7 +301,7 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.tempTestDisplay = [];
       this.tempTest = [];
-    }, 500);
+    }, 1000);
   }
 
   tempDelete(i){    
