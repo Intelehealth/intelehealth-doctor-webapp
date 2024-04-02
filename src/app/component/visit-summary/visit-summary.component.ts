@@ -250,12 +250,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           provider: providerUuid,
           encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03"
         };
-        this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
-          const dialogRef = this.CustomAlertService.openConfirmDialog("Data will not be saved until the user click's 'Save' button.");
-          this.isVisitNoteEncProvider = true;
-          this.show = true;
-          window.location.reload();
-          return dialogRef.afterClosed();
+        const dialogRef = this.CustomAlertService.openConfirmDialog("Data will not be saved until the user click's 'Save' button.");
+        dialogRef.afterClosed().subscribe(result => {
+          if(!result){
+            this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
+              this.isVisitNoteEncProvider = true;
+              this.show = true;
+              window.location.reload();
+            });
+          }
         });
       }
     }
