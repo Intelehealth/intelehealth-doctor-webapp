@@ -1,32 +1,32 @@
 .modal-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #1b163a86;
-    padding: 10px;
-  }
-  
-  .preview-con {
-    .nav-icon {
-      width: 100px;
-      a {
-        text-decoration: none;
-      }
-    }
-    .img-con {
-      height: 65vmin;
-    }
-  
-    .pdf-con{
-      height: 75vmin;
-      width: 100%;
-    }
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1b163a86;
+  padding: 10px;
+}
 
-  .file-name{
-    color: white;
-  }
+.preview-con .nav-icon {
+  width: 100px;
+}
+
+.preview-con .nav-icon a {
+  text-decoration: none;
+}
+
+.preview-con .img-con {
+    height: 65vmin;
+}
+
+.preview-con .pdf-con{
+  height: 75vmin;
+  width: 100%;
+}
+
+.file-name{
+  color: white;
+}

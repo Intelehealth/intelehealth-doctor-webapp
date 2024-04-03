@@ -404,10 +404,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   saveData() {
     const tempObsLength = this.childComponentAdditionalComment.getTempCommentLength();
     if (tempObsLength > 0) {
-      this.translationService.getTranslation('Data saved successfully');
       this.eventsSubject.next();
       this.hasUnsavedChanges = false;
       this.unsavedChangesService.updateUnsavedStatus(false);
+      this.translationService.getTranslation('Data saved successfully');
     } else {
       this.translationService.getTranslation('Assessment and Plan are compulsory. Please enter at least one note.');
     }

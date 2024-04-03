@@ -159,6 +159,9 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
     const visitId = this.route.snapshot.params["visit_id"];
     // const formValue = this.interaction.value;
     // const value = formValue.interaction;
+    if(!this.tempmsg.length){
+      return;
+    }
     const value = this.tempmsg[0].value;
     const providerDetails = getFromStorage("provider");
     this.diagnosisService.getTranslationData();
