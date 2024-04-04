@@ -1727,7 +1727,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             visitUUID: this.visit.uuid,
             name: this.patient?.person?.display,
             gender: this.patient?.person?.gender,
-            abhaNumber: this.patient.person.abhaNumber,
+            abhaNumber: this.patient?.person?.abhaNumber?.replace(/-/g, ''),
             abhaAddress: this.patient.person.abhaAddress,
             yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null
           }).subscribe();
