@@ -122,10 +122,10 @@ export class DiagnosisService {
     } else {
       if (localStorage.getItem('selectedLanguage') === 'ar') {
         ar1 = elementName;
-        en1 = this.values?.[`${element}`]?.[`${elementName}`];
+        en1 = this.values?.[`${element}`]?.[`${elementName}`] ? this.values?.[`${element}`]?.[`${elementName}`] : elementName;
       } else {
         en1 = this.translateService.instant(`${element}.${elementName}`);
-        ar1 = this.values?.[`${element}`]?.[`${elementName}`];
+        ar1 = this.values?.[`${element}`]?.[`${elementName}`] ? this.values?.[`${element}`]?.[`${elementName}`] : this.translateService.instant(`${element}.${elementName}`);
       }
       value = {
         "ar": ar1,

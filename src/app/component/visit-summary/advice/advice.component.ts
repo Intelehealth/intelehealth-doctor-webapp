@@ -49,6 +49,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  interval: any;
 
   adviceForm = new FormGroup({
     advice: new FormControl('', [Validators.required])
@@ -100,6 +101,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
         });
       });
       this.eventsSubscription = this.events?.subscribe(() => this.adviceEvent());
+      this.interval = setInterval(()=>{ console.log("Temporary Advices: ", this.tempAdvice.length) }, 15000);
   }
 
   submit() {
@@ -188,6 +190,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
   }
 
   adviceEvent(){
+    console.log("Saving advices");
     for (let i = 0; i < this.tempAdvice.length; i++) {
       this.service.postObs(this.tempAdvice[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -214,6 +217,7 @@ export class AdviceComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.eventsSubscription?.unsubscribe();
+    if(this.interval) clearInterval(this.interval);
   }
 
   unSaveChanges() {

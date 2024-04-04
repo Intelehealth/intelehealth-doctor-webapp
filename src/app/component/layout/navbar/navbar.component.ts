@@ -6,6 +6,7 @@ import {
   ViewChild,
   ElementRef,
   Inject,
+  OnDestroy,
 } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -20,6 +21,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { TranslationService } from "src/app/services/translation.service";
 import { UnsavedChangesService } from "src/app/services/unsaved-changes.service";
 import { ComfirmationDialogService } from "src/app/component/visit-summary/confirmation-dialog/comfirmation-dialog.service";
+import { Subscription } from "rxjs";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -27,7 +29,7 @@ declare var getFromStorage: any, saveToStorage: any;
   templateUrl: "./navbar.component.html",
   styleUrls: ["./navbar.component.css"],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   @ViewChild("closeBtn") closeBtn: ElementRef;
   baseURL = environment.baseURL;
   baseURLLegacy = environment.baseURLLegacy;
@@ -50,6 +52,7 @@ export class NavbarComponent implements OnInit {
   langs = ['en', 'hi', 'ru', 'ar'];
   selectedLanguage: string = 'en';
   isProjectManger: boolean = false;
+  subscription: Subscription;
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -146,6 +149,7 @@ export class NavbarComponent implements OnInit {
       this.notificationService.notificationHandler();
     }
     this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
+    this.subscription = this.unsavedChangesService.currentUnsavedChanges.subscribe(res => console.log("Unsaved changes: ", res));
   }
 
   logout() {
@@ -359,5 +363,9 @@ export class NavbarComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }

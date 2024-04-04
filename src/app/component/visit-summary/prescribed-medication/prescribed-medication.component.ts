@@ -59,6 +59,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  interval: any;
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
@@ -237,11 +238,13 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
       }
     });
     this.eventsSubscription = this.events?.subscribe(() => this.commentMedication());
+    this.interval = setInterval(()=>{ console.log("Temporary Medicines: ", this.tempMedication.length) }, 15000);
   }
 
   ngOnDestroy() {
     this.visitSvc.lockMedicineAidOrder.unsubscribe();
     this.eventsSubscription?.unsubscribe();
+    if(this.interval) clearInterval(this.interval);
   }
 
   onSubmit() {
@@ -414,6 +417,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
 
   
   commentMedication(){
+    console.log("Saving medication");
     for (let i = 0; i < this.tempMedication.length; i++) {
       this.service.postObs(this.tempMedication[i]).subscribe(response => {
         const user = getFromStorage("user");

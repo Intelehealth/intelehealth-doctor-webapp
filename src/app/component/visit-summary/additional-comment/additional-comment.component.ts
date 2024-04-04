@@ -44,6 +44,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  interval: any;
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])
@@ -77,6 +78,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
         });
       });
       this.eventsSubscription = this.events?.subscribe(() => this.commentEvent());
+      this.interval = setInterval(()=>{ console.log("Temporary Assessment & Plan: ", this.tempComment.length) }, 15000);
   }
 
   Submit() {
@@ -166,6 +168,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   }
 
   commentEvent(){
+    console.log("Saving asssessment & plan");
     for (let i = 0; i < this.tempComment.length; i++) {
       this.service.postObs(this.tempComment[i]).subscribe(response => {
         const user = getFromStorage("user");
@@ -203,6 +206,7 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.eventsSubscription?.unsubscribe();
+    if(this.interval) clearInterval(this.interval);
   }
 
   unSaveChanges() {

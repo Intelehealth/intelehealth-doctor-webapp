@@ -45,6 +45,7 @@ tempDiagnosisDisplay: any = [];
 private eventsSubscription: Subscription;
 @Input() events: Observable<void>;
 @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+interval: any;
 
 diagnosisForm = new FormGroup({
   text: new FormControl('', [Validators.required]),
@@ -81,6 +82,7 @@ diagnosisForm = new FormGroup({
       });
     });
     this.eventsSubscription = this.events?.subscribe(() => this.diagnosisEvent());
+    this.interval = setInterval(()=>{ console.log("Temporary Diagnosis: ", this.tempDiagnosis.length) }, 15000);
   }
 
   search(event) {
@@ -193,6 +195,7 @@ diagnosisForm = new FormGroup({
   }
 
   diagnosisEvent(){
+    console.log("Saving diagnosis");
     for (let i = 0; i < this.tempDiagnosis.length; i++) {
       this.service.postObs(this.tempDiagnosis[i]).subscribe(response => {
         this.diagnosisList = [];
@@ -220,6 +223,7 @@ diagnosisForm = new FormGroup({
 
   ngOnDestroy() {
     this.eventsSubscription?.unsubscribe();
+    if(this.interval) clearInterval(this.interval);
   }
 
   unSaveChanges() {    

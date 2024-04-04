@@ -6,5 +6,5 @@
     <span class="content-spans">{{ data.message | translate }}</span>
   </div>
   <button mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">{{ "NO" | translate }}</button>
-  <button mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">{{ "YES" | translate }}</button>
+  <button mat-raised-button color="primary" id="yes-button" (click)="dischardChangesAndClose()">{{ "YES" | translate }}</button>
 </div>

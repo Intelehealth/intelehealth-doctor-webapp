@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UnsavedChangesService } from 'src/app/services/unsaved-changes.service';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -8,6 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class ConfirmationDialogComponent implements OnInit {
   constructor(
+    private uc: UnsavedChangesService,
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { message: string }
   ) { }
@@ -17,6 +19,11 @@ export class ConfirmationDialogComponent implements OnInit {
 
   closeDialog() {
     this.dialogRef.close(false);
+  }
+
+  dischardChangesAndClose() {
+    this.uc.updateUnsavedStatus(false);
+    this.dialogRef.close(true);
   }
 
   getLang() {

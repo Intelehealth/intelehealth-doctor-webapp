@@ -56,6 +56,7 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
   private eventsSubscription: Subscription;
   @Input() events: Observable<void>;
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  interval: any;
 
   testForm = new FormGroup({
     test: new FormControl('', [Validators.required])
@@ -157,11 +158,13 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
       }
     });
     this.eventsSubscription = this.events?.subscribe(() => this.testEvent());
+    this.interval = setInterval(()=>{ console.log("Temporary Tests: ", this.tempTest.length) }, 15000);
   }
 
   ngOnDestroy() {
     this.visitSvc.lockPrescribedTest.unsubscribe();
     this.eventsSubscription?.unsubscribe();
+    if(this.interval) clearInterval(this.interval);
   }
 
   submit() {
@@ -284,6 +287,7 @@ export class PrescribedTestComponent implements OnInit, OnDestroy {
   }
 
   testEvent(){
+    console.log("Saving tests");
     for (let i = 0; i < this.tempTest.length; i++) {
       this.service.postObs(this.tempTest[i]).subscribe(response => {
         const user = getFromStorage("user");
