@@ -440,7 +440,11 @@ export class HomepageComponent implements OnInit {
     const complaint = attr.find(atr => atr.attribute_type_id === 8);
     let recent: any = []
     if (complaint) {
-      recent = complaint.value_reference.split(',').filter(val => val)
+      if(complaint.value_reference.includes("<br")) {
+        recent = complaint.value_reference.replace("<br",'');
+      } else {
+        recent = complaint.value_reference.split(',').filter(val => val);
+      }
     }
 
     return recent?.length ? recent : ["-"];
