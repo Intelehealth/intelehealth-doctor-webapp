@@ -18,7 +18,7 @@ export class AdminActionsComponent implements OnInit {
       title: "Ayu",
       desc: "Ayu",
       icon: "assets/svgs/ayu-new.svg",
-      path: "admin/ayu",
+      path: "admin/actions/ayu",
       isLocalPath: true
     },
     {
@@ -29,17 +29,17 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: false
     },
     {
-      title: "Doctor Sepciallity",
-      desc: "Manage Doctor Specialities",
-      icon: "assets/svgs/doctor-speciality.svg",
-      path: "admin/config/doctor-specialities",
+      title: "Doctor Specialty",
+      desc: "Manage Doctor Specialties",
+      icon: "assets/svgs/doctor-specialty.svg",
+      path: "admin/actions/doctor-specialties",
       isLocalPath: true
     },
     {
       title: "Mobile App Language",
       desc: "Manage Mobile App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
-      path: "admin/config/mobile-lang",
+      path: "admin/actions/mobile-app-languages",
       isLocalPath: true
     },
     {

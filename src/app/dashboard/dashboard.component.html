@@ -206,10 +206,10 @@
               <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns2;" [attr.data-test-id]="'pr'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
-            <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of periodic elements"></mat-paginator>
+            <!-- <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="priorityVisitsCount" [pageIndex]="pageIndex2" [pageSize]="pageSize2" (page)="pageEvent2 = getPriorityData($event)" aria-label="Select page of periodic elements" data-test-id="matPaginatorPriority">
-            </mat-paginator>
+            </mat-paginator> -->
           </div>
 
         </mat-expansion-panel>
@@ -289,10 +289,10 @@
               <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns3;" [attr.data-test-id]="'aw'+x"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
-            <mat-paginator #awaitingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of periodic elements"></mat-paginator>
+            <!-- <mat-paginator #awaitingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="awaitingVisitsCount" [pageIndex]="pageIndex1" [pageSize]="pageSize1" (page)="pageEvent1 = getAwaitingData($event)" aria-label="Select page of periodic elements" data-test-id="matPaginatorAwaiting">
-            </mat-paginator>
+            </mat-paginator> -->
           </div>
 
         </mat-expansion-panel>
@@ -372,10 +372,10 @@
               <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns4;" [attr.data-test-id]="'ip'+x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
-            <mat-paginator #inprogressPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of periodic elements"></mat-paginator>
+            <!-- <mat-paginator #inprogressPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="inprogressVisitsCount" [pageIndex]="pageIndex3" [pageSize]="pageSize3" (page)="pageEvent3 = getInprogressData($event)" aria-label="Select page of periodic elements" data-test-id="matPaginatorInprogress">
-            </mat-paginator>
+            </mat-paginator> -->
           </div>
 
         </mat-expansion-panel>
