@@ -50,7 +50,7 @@ export class MobileAppLanguagesComponent implements OnInit {
   * @return {void}
   */
   updateStatus(id: number, status: boolean): void {
-    this.configServce.updateSpecialityStatus(id, status).subscribe(res => {
+    this.configServce.updateLanguageStatus(id, status).subscribe(res => {
       this.toastr.success("Language status updated successfully!","Update successful!");
       this.getLanguages();
     }, err => {
