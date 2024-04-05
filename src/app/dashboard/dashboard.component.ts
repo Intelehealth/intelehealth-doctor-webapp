@@ -159,7 +159,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const { encounters } = visit;
     visit.cheif_complaint = this.getCheifComplaint(visit);
     visit.visit_created = this.getEncounterCreated(visit, 'ADULTINITIAL');
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey') || visit.stopDatetime) {
 
     } else if (this.checkIfEncounterExists(encounters, 'Remote Prescription')) {
 

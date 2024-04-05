@@ -448,7 +448,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
-        this.checkVisitStatus(visit.encounters);
+        if(this.visit.stopDatetime){
+          this.visitStatus = 'Ended Visit';
+        }else{
+          this.checkVisitStatus(visit.encounters);
+        }
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: any) => {
           if (patient) {
             this.patient = patient;
@@ -458,7 +462,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             // check if visit complete exists for this visit
             this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Remote Prescription');
             // check if visit note provider and logged in provider are same
-            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
+            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || this.checkIfEncounterExists(visit.encounters, 'Visit Complete') || visit.stopDatetime;
             // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
             if (this.visitNotePresent) {

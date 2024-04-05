@@ -48,7 +48,7 @@ export class PrescriptionComponent implements OnInit {
                 if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
                   let flag = 0;
                   visit.encounters.forEach((encounter: any) => {
-                    if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete') {
+                    if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete' || visit.stopDatetime) {
                       visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                       visit.cheif_complaint = this.getCheifComplaint(visit);
                       this.completedVisits.push(visit);
