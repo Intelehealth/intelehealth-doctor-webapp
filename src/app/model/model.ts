@@ -539,3 +539,21 @@ export interface HwModel {
   hwGender: string,
   hwProviderUuid: string
 }
+
+export interface DoctorSpecialityModel {
+  createdAt?: string,
+  id: number,
+  isActive: boolean,
+  specialization: string,
+  doctorsMapped: number,
+  updatedAt: string
+}
+
+export interface MobileAppLanguageModel {
+  createdAt?: string,
+  id: number,
+  isActive: boolean,
+  name: string,
+  updatedAt: string
+  isDefault: boolean
+}

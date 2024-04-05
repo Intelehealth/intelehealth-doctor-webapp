@@ -7,6 +7,7 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap.scss';
 @import "angular-calendar/css/angular-calendar.css";
+@import "./app/core/directives/mat-table-responsive.directive.scss";
 
 @font-face {
   font-family: arty;
@@ -752,6 +753,10 @@ body.font-lato td {
 
   .mat-tab-label {
     padding: 0px 10px !important;
+  }
+
+  .mat-paginator-range-label{
+    margin: 0 10px 0 0 !important;
   }
 }
 

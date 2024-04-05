@@ -26,6 +26,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
 import { AdminActionsComponent } from './admin-actions/admin-actions.component';
+import { DoctorSpecialityComponent } from './admin-actions/doctor-speciality/doctor-speciality.component';
+import { MobileAppLanguagesComponent } from './admin-actions/mobile-app-languages/mobile-app-languages.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -35,19 +37,37 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
 const routes: Routes = [
   {
     path: '',
+    redirectTo: "actions",
+    pathMatch: "full"
+  },
+  {
+    path: '',
     component: AdminComponent,
     children: [
-      {
-        path: 'ayu',
-        component: AyuComponent
-      },
       {
         path: 'support',
         component: SupportComponent
       },
       {
-        path: '',
-        component: AdminActionsComponent
+        path: 'actions',
+        children:[
+          {
+            path: 'ayu',
+            component: AyuComponent
+          },
+          {
+            path: 'doctor-specialties',
+            component: DoctorSpecialityComponent
+          },
+          {
+            path: 'mobile-app-languages',
+            component: MobileAppLanguagesComponent
+          },
+          {
+            path: '',
+            component: AdminActionsComponent
+          }
+        ]
       }
     ]
   }
@@ -58,7 +78,9 @@ const routes: Routes = [
     AdminComponent,
     AyuComponent,
     SupportComponent,
-    AdminActionsComponent
+    AdminActionsComponent,
+    DoctorSpecialityComponent,
+    MobileAppLanguagesComponent
   ],
   imports: [
     CommonModule,
