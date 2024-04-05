@@ -32,6 +32,7 @@ export class VisitSummaryComponent implements OnInit {
   visitCompletePresent = false;
   isVisitSummaryChanged: boolean = false
   isVisitEnded:boolean = false;
+  openChat:boolean = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -47,6 +48,7 @@ export class VisitSummaryComponent implements OnInit {
   dialogRef2: MatDialogRef<VideoCallComponent>;
   isCalling: boolean = false;
   isSameProvider: boolean = false;
+  chatBoxRef: any;
 
   constructor(
     private service: EncounterService,
@@ -73,6 +75,7 @@ export class VisitSummaryComponent implements OnInit {
     }, 1000);
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.openChat = this.route.snapshot.queryParamMap.get("openChat") === 'true';
     this.checkProviderRole();
     this.checkMadnatoryTabs();
     this.visitService
@@ -109,9 +112,21 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
         this.visit = visitDetails;
+        if(this.openChat) this.openChatModal();
         this.checkOpenChatBoxFlag();
       });
   }
+
+  openChatModal() {
+    this.chatBoxRef = this.cs.openChatBoxModal({
+      patientId: this.visit?.patient?.uuid,
+      visitId: this.visit?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
+    });
+  }
+  
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
@@ -415,5 +430,6 @@ export class VisitSummaryComponent implements OnInit {
 
   ngOnDestroy() {
     if (this.dialogRef1) this.dialogRef1.close();
+    if (this.chatBoxRef) this.chatBoxRef.close();
   }
 }

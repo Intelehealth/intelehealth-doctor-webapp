@@ -86,11 +86,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
     }
     this.socket.initSocket(true);
     this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
       this.playNotify();
     });
   }
