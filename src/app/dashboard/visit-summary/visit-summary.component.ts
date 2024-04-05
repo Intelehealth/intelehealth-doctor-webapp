@@ -131,6 +131,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   openChatFlag: boolean = false;
 
+  isAbhaDetails: boolean = false;
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -299,6 +301,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+            // check if abha number / abha address exists for this patient
+            this.getAbhaDetails(patient)
             // check if visit note exists for this visit
             this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             // check if visit complete exists for this visit
@@ -1546,6 +1550,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                       });
                     }
                   });
+                  
+                  this.updateAbhaDetails();
+
                 });
               } else {
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
@@ -1698,5 +1705,33 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       body: "Click notification to see!"
     }
     this.mindmapService.notifyApp(hwUuid, payload).subscribe();
+  }
+
+  /**
+   * Get Abha numner / Abha address from patient
+   */
+  getAbhaDetails(_patient: PatientModel): void {
+    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier
+    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+  }
+
+  updateAbhaDetails(): void {
+    // Added call to generate linking token and add isABDMLink attribute
+    if(this.patient?.person?.abhaNumber || this?.patient?.person?.abhaAddress) {
+      this.visitService.postAttribute(this.visit.uuid,
+        {
+          attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
+          value: false,
+        }).subscribe((data) => {
+          this.visitService.postVisitToABDM({
+            visitUUID: this.visit.uuid,
+            name: this.patient?.person?.display,
+            gender: this.patient?.person?.gender,
+            abhaNumber: this.patient?.person?.abhaNumber?.replace(/-/g, ''),
+            abhaAddress: this.patient.person.abhaAddress,
+            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null
+          }).subscribe();
+        });
+    }
   }
 }
