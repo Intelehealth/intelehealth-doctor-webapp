@@ -12,7 +12,7 @@
         </div>
         <div class="card-body">
           <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource">
+            <table mat-table [dataSource]="dataSource" matTableResponsive>
               <!-- Position Column -->
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef> {{'Sr. No.' | translate}} </th>
@@ -38,11 +38,12 @@
               <ng-container matColumnDef="is_default">
                 <th mat-header-cell *matHeaderCellDef class="text-center"> {{'Default Language' | translate}} </th>
                 <td mat-cell *matCellDef="let element" class="text-center">
-                  <!-- <input type="radio" name="isDefaultLang" [disabled]="!element.is_enabled" (change)="changeDefault(element)" [checked]="element.is_default"/> -->
-                  <div class="pretty p-default p-round">
-                    <input type="radio" name="isDefault" [checked]="element.is_default" (change)="changeDefault(element.id, $event.target.checked)" [disabled]="!element.is_enabled">
-                    <div class="state p-success">
-                      <label></label>
+                  <div>
+                    <div class="pretty p-default p-round mr-0">
+                      <input type="radio" name="isDefault" [checked]="element.is_default" (change)="changeDefault(element.id, $event.target.checked)" [disabled]="!element.is_enabled">
+                      <div class="state p-success">
+                        <label></label>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -52,12 +53,14 @@
               <ng-container matColumnDef="is_enabled">
                 <th mat-header-cell *matHeaderCellDef> {{'Active' | translate}} </th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="pretty p-switch p-fill">
-                    <input type="checkbox" [disabled]="element.is_default" [checked]="element.is_enabled"
-                      (change)="updateStatus(element.id, $event.target.checked)"
-                      data-test-id="checkboxMindmapToggleStatus" />
-                    <div class="state">
-                      <label></label>
+                  <div>
+                    <div class="pretty p-switch p-fill">
+                      <input type="checkbox" [disabled]="element.is_default" [checked]="element.is_enabled"
+                        (change)="updateStatus(element.id, $event.target.checked)"
+                        data-test-id="checkboxMindmapToggleStatus" />
+                      <div class="state">
+                        <label></label>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -75,6 +78,8 @@
           </div>
           <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
             aria-label="Select page of periodic elements"></mat-paginator>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">{{'Publish' | translate}}</button>
+          
         </div>
       </div>
     </div>

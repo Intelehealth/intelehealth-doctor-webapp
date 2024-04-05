@@ -85,6 +85,31 @@
       color: var(--color-white);
       position: relative;
       min-width: 100px;
+      font-weight: bold;
+    }
+  }
+
+  .btn-block {
+    display: none;
+    height: 50px;
+    background: var(--color-darkBlue);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-white);
+    position: relative;
+    width: 100%;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .card-header-actions {
+      .btn {
+        display: none;
+      }
+    }
+
+    .btn-block {
+      display: block;
     }
   }
   
