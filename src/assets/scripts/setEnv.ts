@@ -56,6 +56,7 @@ const environmentFileContent = `
     baseURLCoreApp: '${process.env.BASE_URL_CORD_APP}',
     baseURLLegacy: '${process.env.BASE_URL_LEGACY}',
     mindmapURL: '${process.env.MIND_MAP_URL}',
+    configURL: '${process.env.CONFIG_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
     socketURL: '${process.env.SOCKET_URL}',
     captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',

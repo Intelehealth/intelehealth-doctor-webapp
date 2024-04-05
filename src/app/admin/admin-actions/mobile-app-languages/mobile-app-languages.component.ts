@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { isDefined } from '@ng-bootstrap/ng-bootstrap/util/util';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { MobileAppLanguageModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./mobile-app-languages.component.scss']
 })
 export class MobileAppLanguagesComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'default', 'updatedAt', 'active'];
+  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_default', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   mobileAppLangData : MobileAppLanguageModel[];
@@ -23,28 +23,57 @@ export class MobileAppLanguagesComponent implements OnInit {
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private configServce: ConfigService
+    private configServce: ConfigService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.configServce.getMobileAppLanguages().subscribe(res=>{
-      let dummyData = {
-        data:[
-          {id:1, name:"English", isActive: true, isDefault: false, updatedAt: "2024-04-01"},
-          {id:1, name:"Hindi", isActive: true, isDefault: true, updatedAt: "2024-04-01"},
-          {id:1, name:"Marathi", isActive: false, isDefault: false, updatedAt: "2024-04-01"},
-        ]
-      }
-      this.mobileAppLangData = dummyData.data;
+    this.getLanguages()
+  }
+
+  /**
+  * Get languages.
+  * @return {void}
+  */
+  getLanguages(): void {
+    this.configServce.getAppLanguages().subscribe(res=>{
+      this.mobileAppLangData = res.languages;
       this.dataSource = new MatTableDataSource(this.mobileAppLangData);
       this.dataSource.paginator = this.paginator;
     });
   }
 
-  changeDefault(element:MobileAppLanguageModel){
-    this.mobileAppLangData.forEach(obj=>obj.isDefault = false);
-    element.isDefault = true;
+  /**
+  * Update language status.
+  * @return {void}
+  */
+  updateStatus(id: number, status: boolean): void {
+    this.configServce.updateSpecialityStatus(id, status).subscribe(res => {
+      this.toastr.success("Language status updated successfully!","Status updated!");
+      this.getLanguages();
+    }, err => {
+      this.getLanguages();
+    });
+  }
+
+  changeDefault(id: number) {
+    this.configServce.setAsDefaultLanguage(id).subscribe(res => {
+      this.toastr.success("Language set as default successfully!","Set as default!");
+      this.getLanguages();
+    }, err => {
+      this.getLanguages();
+    });
+  }
+
+  /**
+  * Publish langauge changes.
+  * @return {void}
+  */
+  onPublish(): void {
+    this.configServce.publishConfig().subscribe(res => {
+      this.toastr.success("Language changes published successfully!", "Changes published!");
+    });
   }
 }

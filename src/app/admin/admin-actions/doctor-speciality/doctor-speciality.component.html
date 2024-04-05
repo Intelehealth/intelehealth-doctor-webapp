@@ -21,15 +21,15 @@
                 </ng-container>
   
                 <!-- Name Column -->
-                <ng-container matColumnDef="specialization">
+                <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef> {{'Specialization' | translate}} </th>
-                  <td mat-cell *matCellDef="let element"> {{element.specialization}} </td>
+                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
                 </ng-container>
 
                 <!-- Name Column -->
-                <ng-container matColumnDef="doctorsMapped">
+                <ng-container matColumnDef="doctor_count">
                   <th mat-header-cell *matHeaderCellDef class="text-center"> {{'Doctors Mapped' | translate}} </th>
-                  <td mat-cell class="text-center" *matCellDef="let element"> {{element.doctorsMapped}} </td>
+                  <td mat-cell class="text-center" *matCellDef="let element"> {{element.doctor_count}} </td>
                 </ng-container>
   
                 <!-- Last Updated Column -->
@@ -39,11 +39,11 @@
                 </ng-container>
   
                 <!-- Active Column -->
-                <ng-container matColumnDef="active">
+                <ng-container matColumnDef="is_enabled">
                   <th mat-header-cell *matHeaderCellDef> {{'Active' | translate}} </th>
                   <td mat-cell *matCellDef="let element">
                     <div class="pretty p-switch p-fill">
-                      <input type="checkbox" [checked]="element.isActive" (change)="element.isActive = !element.isActive" data-test-id="checkboxMindmapToggleStatus"/>
+                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateStatus(element.id, $event.target.checked)" [disabled]="element.doctor_count" data-test-id="checkboxMindmapToggleStatus"/>
                       <div class="state">
                           <label></label>
                       </div>
