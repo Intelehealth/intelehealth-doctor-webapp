@@ -55,7 +55,7 @@ export class DoctorSpecialityComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configServce.updateSpecialityStatus(id, status).subscribe(res => {
-      this.toastr.success("Speciality status updated successfully!", "Status updated!");
+      this.toastr.success("Speciality status updated successfully!", "Update successful!");
       this.getDoctorSpecialities();
     }, err => {
       this.getDoctorSpecialities();
