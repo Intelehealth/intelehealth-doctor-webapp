@@ -8,8 +8,6 @@ import { DoctorSpecialityModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
-import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
-
 
 @Component({
   selector: 'app-doctor-speciality',
