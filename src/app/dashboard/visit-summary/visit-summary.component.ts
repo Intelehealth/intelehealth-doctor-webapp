@@ -1520,6 +1520,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   this.visitCompleted = true;
                   this.notifyHwForAvailablePrescription();
                   this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+                  this.updateAbhaDetails(post.uuid);
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (linkSvcRes: ApiResponseModel) => {
                       const link = linkSvcRes.data.hash;
@@ -1550,9 +1551,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                       });
                     }
                   });
-                  
-                  this.updateAbhaDetails();
-
                 });
               } else {
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
@@ -1715,21 +1713,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
   }
 
-  updateAbhaDetails(): void {
+  updateAbhaDetails(encounterUUID): void {
     // Added call to generate linking token and add isABDMLink attribute
     if(this.patient?.person?.abhaNumber || this?.patient?.person?.abhaAddress) {
       this.visitService.postAttribute(this.visit.uuid,
         {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
           value: false,
-        }).subscribe((data) => {
+        }).subscribe(() => {
+          const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
           this.visitService.postVisitToABDM({
             visitUUID: this.visit.uuid,
             name: this.patient?.person?.display,
             gender: this.patient?.person?.gender,
             abhaNumber: this.patient?.person?.abhaNumber?.replace(/-/g, ''),
-            abhaAddress: this.patient.person.abhaAddress,
-            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null
+            abhaAddress: this.patient?.person?.abhaAddress ?? `${abhaNumber}@sbx`,
+            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
+            startDateTime: this.visit.startDatetime,
+            encounterUUID: encounterUUID,
+            personDisplay: this.patient?.person?.display
           }).subscribe();
         });
     }
