@@ -4,16 +4,16 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://testing.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://testing.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://testing.intelehealth.org/openmrs",
-  mindmapURL: "https://testing.intelehealth.org:3004/api",
-  notificationURL: "https://testing.intelehealth.org:3004/notification",
-  socketURL: "https://testing.intelehealth.org:3004",
-  version: "NAS-v1.2.9",
+  baseURL: "https://astesting.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://astesting.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://astesting.intelehealth.org/openmrs",
+  mindmapURL: "https://astesting.intelehealth.org:3004/api",
+  notificationURL: "https://astesting.intelehealth.org:3004/notification",
+  socketURL: "https://astesting.intelehealth.org:3004",
+  version: "NAS-v1.2.10",
   versionCode: "26",
-  webrtcSdkServerUrl: "wss://testing.intelehealth.org:9090",
-  webrtcTokenServerUrl: "https://testing.intelehealth.org:3000/"
+  webrtcSdkServerUrl: "wss://astesting.intelehealth.org:9090",
+  webrtcTokenServerUrl: "https://astesting.intelehealth.org:3000/"
 };
 /*
  * For easier debugging in development mode, you can import the following file
