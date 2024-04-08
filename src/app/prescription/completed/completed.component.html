@@ -95,10 +95,10 @@
               <tr mat-row *matRowDef="let row; let x=index; columns: displayedColumns;" [attr.data-test-id]="'comp'+x" [routerLink]="['/dashboard/visit-summary', row?.uuid]" ></tr>
             </table>
 
-            <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
-            <mat-paginator #completedPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of periodic elements"></mat-paginator>
+            <!-- <mat-paginator #completedPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="completedVisitsCount" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEvent = getData($event)" aria-label="Select page of periodic elements" data-test-id="matPaginatorCompleted">
-            </mat-paginator>
+            </mat-paginator> -->
           </div>
 
         </mat-expansion-panel>
