@@ -280,11 +280,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.searchForm.reset();
       },
         (err) => {
-          if (err.error instanceof Error) {
-            this.toastr.error('Client-side error', null, { timeOut: 2000 });
-          } else {
-            this.toastr.error('Server-side error', null, { timeOut: 2000 });
-          }
+          // if (err.error instanceof Error) {
+          //   this.toastr.error('Client-side error', null, { timeOut: 2000 });
+          // } else {
+          //   this.toastr.error('Server-side error', null, { timeOut: 2000 });
+          // }
         }
       );
     }
