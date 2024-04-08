@@ -8,6 +8,8 @@ import { DoctorSpecialityModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
+import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
+
 
 @Component({
   selector: 'app-doctor-speciality',
@@ -55,7 +57,7 @@ export class DoctorSpecialityComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configServce.updateSpecialityStatus(id, status).subscribe(res => {
-      this.toastr.success("Speciality status updated successfully!", "Update successful!");
+      this.toastr.success("Doctor Speciality has been successfully updated", "Update successful!");
       this.getDoctorSpecialities();
     }, err => {
       this.getDoctorSpecialities();
@@ -68,7 +70,7 @@ export class DoctorSpecialityComponent implements OnInit {
   */
   onPublish(): void {
     this.configServce.publishConfig().subscribe(res => {
-      this.toastr.success("Speciality changes published successfully!", "Changes published!");
+      this.toastr.success("Doctor Speciality changes published successfully!", "Changes published!");
     });
   }
 }
