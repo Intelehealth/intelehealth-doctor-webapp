@@ -70,7 +70,7 @@
 
       <div class="text-center" *ngIf="!show">
             <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"
-            [disabled]="isSameSpecialityDoctorViewingVisit || (visitSpeciality != userSpeciality && visitSpecialitySecondary != userSpeciality ) || isManagerRole">{{'Start Visit Note' | translate}}</button>
+            [disabled]="visitNotePresent || isSameSpecialityDoctorViewingVisit || (visitSpeciality != userSpeciality && visitSpecialitySecondary != userSpeciality ) || isManagerRole">{{'Start Visit Note' | translate}}</button>
       </div>
 
       <br>
