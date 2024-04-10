@@ -51,7 +51,9 @@ export class PrescriptionComponent implements OnInit {
                     if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete' || visit.stopDatetime) {
                       visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                       visit.cheif_complaint = this.getCheifComplaint(visit);
-                      this.completedVisits.push(visit);
+                      if(!this.completedVisits.includes(visit)){
+                        this.completedVisits.push(visit);                        
+                      }
                       flag = 1;
                     }
                   });
