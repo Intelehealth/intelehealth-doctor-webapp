@@ -142,6 +142,7 @@ export class MyAccountComponent implements OnInit {
   onEdit() {
     this.dialog.open(EditDetailsComponent, {
       width: "400px",
+      maxHeight: "calc(100vh - 60px)",
       data: this.providerDetails,
     });
     (document.scrollingElement as any).style.top = ''; /** AEAT-823 */

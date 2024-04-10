@@ -27,6 +27,7 @@ export class NavbarComponent implements OnInit {
   subscribeAccess = false;
   notificationMenu = false;
   showBellIcon = false;
+  videoLibraryAccess = false;
   selectedNotification = "";
   values: any = [];
   weekDays: any = [
@@ -76,6 +77,9 @@ export class NavbarComponent implements OnInit {
           role.uuid === "b01d45ed-8539-409a-8b95-12b670017afa"
         ) {
           this.reportAccess = true;
+        }
+        if(role.uuid === "f8ecb440-3498-4901-a04a-05396ccca54a") {
+          this.videoLibraryAccess = true;
         }
       });
     } else {

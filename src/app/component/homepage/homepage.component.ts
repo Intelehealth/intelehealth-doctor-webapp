@@ -338,7 +338,8 @@ export class HomepageComponent implements OnInit {
    * @returns Object | null
    */
   checkVisit(encounters, visitType) {
-    return encounters.find((enc: any) => enc?.type?.name === visitType);
+    let enc =  encounters?.filter((enc: any) => enc?.type?.name === visitType);
+    return enc[enc?.length-1];
   }
 
   getMaxEncounter(active) {

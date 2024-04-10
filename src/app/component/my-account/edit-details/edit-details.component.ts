@@ -93,7 +93,7 @@ export class EditDetailsComponent implements OnInit {
       pid: this.data.uuid,
       type: "edit",
     };
-    this.dialog.open(SignatureComponent, { width: "500px", data: obj });
+    this.dialog.open(SignatureComponent, { width: "500px",maxHeight: "calc(100vh - 60px)", data: obj });
   }
 
   isValidTime(value: any) {

@@ -73,7 +73,7 @@
         <li *ngIf="reportAccess" class="nav-item">
           <a
             class="nav-link"
-            href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page"
+            routerLink="/reports"
             >Reports</a
           >
         </li>
@@ -101,7 +101,7 @@
               >Monitoring</a
             >
             <a
-              *ngIf="systemAccess"
+              *ngIf="systemAccess || videoLibraryAccess"
               class="dropdown-item"
               data-target="#navbarSupportedContent-4" data-toggle="collapse"
               routerLink="/videoLibrary"
