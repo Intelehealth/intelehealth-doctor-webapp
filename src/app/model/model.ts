@@ -557,3 +557,14 @@ export interface MobileAppLanguageModel {
   updatedAt: string
   isDefault: boolean
 }
+
+export interface SpecializationModel {
+  name: string,
+  key?: string
+}
+
+export interface LanguageModel {
+  name: string,
+  code: string,
+  is_default: boolean
+}

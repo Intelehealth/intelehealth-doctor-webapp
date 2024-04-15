@@ -62,6 +62,7 @@ import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
+import { AppConfigService } from "./services/app-config.service";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -80,6 +81,12 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
+
+export function appConfigInit(appConfigService: AppConfigService) {
+  return () => {
+    return appConfigService.load()
+  };
 }
 
 registerLocaleData(localeRu);
@@ -145,6 +152,12 @@ registerLocaleData(localeEn);
     })
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appConfigInit,
+      multi: true,
+      deps: [AppConfigService]
+    },
     CookieService,
     SocketService,
     { provide: APP_BASE_HREF, useValue: "/" },
