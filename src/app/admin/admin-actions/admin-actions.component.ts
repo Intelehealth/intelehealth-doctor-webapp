@@ -53,7 +53,7 @@ export class AdminActionsComponent implements OnInit {
       title: "Patient Registration",
       desc: "Manage fields to be shown during patient registration",
       icon: "assets/svgs/patient-reg.svg",
-      path: "admin/config/patien-reg",
+      path: "admin/actions/patient-registration",
       isLocalPath: true
     },
     {
