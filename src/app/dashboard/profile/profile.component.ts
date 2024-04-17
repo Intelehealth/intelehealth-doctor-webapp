@@ -23,8 +23,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
-import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, SpecializationModel, UserModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -133,24 +134,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  specializations: DataItemModel[] = [
-    {
-      id: 1,
-      name: 'General Physician'
-    },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
-      id: 3,
-      name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
-    }
-  ];
+  specializations: SpecializationModel[] = [];
+
+  // specializations: DataItemModel[] = [
+  //   {
+  //     id: 1,
+  //     name: 'General Physician'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Dermatologist'
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Gynecologist'
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'Pediatrician'
+  //   }
+  // ];
 
   signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
     'minWidth': 5,
@@ -196,7 +199,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private rolesService: NgxRolesService,
     private translateService: TranslateService,
     private coreService: CoreService,
-    private appointmentService: AppointmentService) {
+    private appointmentService: AppointmentService,
+    private appConfigService: AppConfigService) {
   
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
@@ -241,6 +245,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
+    this.specializations = this.appConfigService.specialization;
     this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
