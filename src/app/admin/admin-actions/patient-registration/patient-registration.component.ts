@@ -133,6 +133,11 @@ export class PatientRegistrationComponent {
       this.sortedData = data;
       this.sortOptions.forEach(e=>e['direction']=null);
       return;
+    } else {
+      this.sortOptions.forEach(e=>{
+        if(sortOption.colName != e.colName) 
+          e['direction'] = null;
+      });
     }
     switch(sortOption.direction){
       case 'asc':
@@ -146,7 +151,6 @@ export class PatientRegistrationComponent {
         sortOption['direction'] = 'asc';
         break;
     }
-
     this.sortedData = data.sort((a, b) => {
       const isAsc = sortOption.direction === 'asc';
       switch (sortOption.colName) {
