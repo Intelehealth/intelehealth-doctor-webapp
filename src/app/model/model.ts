@@ -557,3 +557,13 @@ export interface MobileAppLanguageModel {
   updatedAt: string
   isDefault: boolean
 }
+export interface PatientRegistrationFieldsModel {
+  createdAt?: string,
+  id: number,
+  is_active: boolean,
+  name: string,
+  updatedAt: string
+  is_mandatory: boolean,
+  is_editable: boolean,
+  is_locked: boolean
+}

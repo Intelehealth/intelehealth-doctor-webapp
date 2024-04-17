@@ -69,4 +69,46 @@ export class ConfigService {
     const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
   }
+
+  /**
+  * Get patient registartion fields
+  * @return {Observable<any>}
+  */
+  getPatientRegistrationFields(): Observable<any> {
+    const url = `${this.baseURL}/pr/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update Patient Registration enabled status
+  * @param {boolean} id - id of speciality
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientRegistrationStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/pr/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Update Patient Registration Mandatory status
+  * @param {boolean} id - id of speciality
+  * @param {boolean} is_mandatory - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientRegistrationMandatoryStatus(id: number, is_mandatory: boolean): Observable<any> {
+    const url = `${this.baseURL}/pr/updateIsMandatory/${id}`;
+    return this.http.put(url, { is_mandatory });
+  }
+
+  /**
+  * Update Patient Registration Editable status
+  * @param {boolean} id - id of speciality
+  * @param {boolean} is_editable - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientRegistrationEditableStatus(id: number, is_editable: boolean): Observable<any> {
+    const url = `${this.baseURL}/pr/updateIsEditable/${id}`;
+    return this.http.put(url, { is_editable });
+  }
 }

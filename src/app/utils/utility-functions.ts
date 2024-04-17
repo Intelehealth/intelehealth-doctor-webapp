@@ -66,3 +66,13 @@ export function checkIfDateOldThanOneDay(data: string) {
   }
   return resString.trim();
 }
+/**
+  * Compare data for sorting
+  * @param {number|string} a
+  * @param {number|string} b
+  * @param {boolean} isAsc
+  * @return {number} - Returns order as 1 or -1
+  */
+export function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}

@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -28,6 +29,10 @@ import { SharedModule } from '../shared.module';
 import { AdminActionsComponent } from './admin-actions/admin-actions.component';
 import { DoctorSpecialityComponent } from './admin-actions/doctor-speciality/doctor-speciality.component';
 import { MobileAppLanguagesComponent } from './admin-actions/mobile-app-languages/mobile-app-languages.component';
+import { PatientRegistrationComponent } from './admin-actions/patient-registration/patient-registration.component';
+import { MatSortModule } from '@angular/material/sort';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -64,6 +69,10 @@ const routes: Routes = [
             component: MobileAppLanguagesComponent
           },
           {
+            path: 'patient-registration',
+            component: PatientRegistrationComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -80,7 +89,8 @@ const routes: Routes = [
     SupportComponent,
     AdminActionsComponent,
     DoctorSpecialityComponent,
-    MobileAppLanguagesComponent
+    MobileAppLanguagesComponent,
+    PatientRegistrationComponent
   ],
   imports: [
     CommonModule,
@@ -99,6 +109,11 @@ const routes: Routes = [
     MatGridListModule,
     MatMenuModule,
     MatTooltipModule,
+    MatTabsModule,
+    MatSortModule,
+    MatSelectModule,
+    MatIconModule,
+    MatFormFieldModule,
     NgxPermissionsModule.forChild({
       permissionsIsolate: false,
       rolesIsolate: false,
