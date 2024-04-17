@@ -52,6 +52,8 @@ export class PatientRegistrationComponent {
 
   onTabChange(tabIndex){
     this.currentTabIndex = tabIndex;
+    this.paginator.pageIndex = 0;
+    this.sort.sort({id: '', start: 'asc', disableClear: false});
     this.sortDataAndUpdate();
   }
 
