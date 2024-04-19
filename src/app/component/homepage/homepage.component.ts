@@ -124,9 +124,11 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits(query, false).subscribe(
       (response) => {
         response.results.forEach((item) => {
-          var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
-          if (i <= -1) {
-            this.allVisits.push(item);
+          if(item.patient.identifiers.length) {
+            var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
+            if (i <= -1) {
+              this.allVisits.push(item);
+            }
           }
         });
         this.allVisits.forEach((active) => {
