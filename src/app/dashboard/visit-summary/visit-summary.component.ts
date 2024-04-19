@@ -1715,25 +1715,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   updateAbhaDetails(encounterUUID): void {
     // Added call to generate linking token and add isABDMLink attribute
-    if(this.patient?.person?.abhaNumber || this?.patient?.person?.abhaAddress) {
-      this.visitService.postAttribute(this.visit.uuid,
-        {
-          attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
-          value: false,
-        }).subscribe(() => {
-          const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
-          this.visitService.postVisitToABDM({
-            visitUUID: this.visit.uuid,
-            name: this.patient?.person?.display,
-            gender: this.patient?.person?.gender,
-            abhaNumber: this.patient?.person?.abhaNumber?.replace(/-/g, ''),
-            abhaAddress: this.patient?.person?.abhaAddress ?? `${abhaNumber}@sbx`,
-            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
-            startDateTime: this.visit.startDatetime,
-            encounterUUID: encounterUUID,
-            personDisplay: this.patient?.person?.display
-          }).subscribe();
-        });
-    }
+    const mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    this.visitService.postAttribute(this.visit.uuid,
+      {
+        attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
+        value: false,
+      }).subscribe(() => {
+        const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+        const openMRSID = this.getPatientIdentifier("OpenMRS ID")
+        this.visitService.postVisitToABDM({
+          openMRSID: openMRSID,
+          mobileNumber: mobileNumber != 'NA' ? mobileNumber: '+917405579424',
+          visitUUID: this.visit.uuid,
+          name: this.patient?.person?.display,
+          gender: this.patient?.person?.gender,
+          abhaNumber: abhaNumber ?? undefined,
+          abhaAddress: this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined) ?? undefined,
+          yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
+          startDateTime: this.visit.startDatetime,
+          encounterUUID: encounterUUID,
+          personDisplay: this.patient?.person?.display
+        }).subscribe();
+      });
   }
 }
