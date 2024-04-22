@@ -1714,9 +1714,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   updateAbhaDetails(encounterUUID): void {
-    if (environment.abhaEnabled == true) {
-      // Added call to generate linking token and add isABDMLink attribute
-      const mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    let mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    mobileNumber = mobileNumber != 'NA' ? mobileNumber: undefined
+    const openMRSID = this.getPatientIdentifier("OpenMRS ID");
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    const abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
+    if (environment.abhaEnabled && (abhaNumber || abhaAddress || mobileNumber)) {
+      // Added call to generate linking token and add isABDMLink attribute 
       this.visitService.postAttribute(this.visit.uuid,
         {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
@@ -1726,12 +1730,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           const openMRSID = this.getPatientIdentifier("OpenMRS ID")
           this.visitService.postVisitToABDM({
             openMRSID: openMRSID,
-            mobileNumber: mobileNumber != 'NA' ? mobileNumber : '+917405579424',
+            mobileNumber: mobileNumber,
             visitUUID: this.visit.uuid,
             name: this.patient?.person?.display,
             gender: this.patient?.person?.gender,
-            abhaNumber: abhaNumber ?? undefined,
-            abhaAddress: this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined) ?? undefined,
+            abhaNumber: abhaNumber,
+            abhaAddress: abhaAddress,
             yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
             startDateTime: this.visit.startDatetime,
             encounterUUID: encounterUUID,
