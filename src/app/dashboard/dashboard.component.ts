@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, checkIfDateOldThanOneDay } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
+import { AppConfigService } from '../services/app-config.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -72,6 +73,8 @@ export class DashboardComponent implements OnInit {
   pageIndex4:number = 0;
   pageSize4:number = 5;
 
+  patientRegFields: string[] = [];
+
   @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
   @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
   @ViewChild('tempPaginator3') tempPaginator3: MatPaginator;
@@ -89,7 +92,16 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private coreService: CoreService,
     private toastr: ToastrService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private appConfigService: AppConfigService) { 
+      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
+      }); 
+      this.displayedColumns1 = this.displayedColumns1.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+      this.displayedColumns2 = this.displayedColumns2.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+      this.displayedColumns3 = this.displayedColumns3.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+      this.displayedColumns4 = this.displayedColumns4.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+    }
 
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
@@ -134,7 +146,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
-          this.dataSource3.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource3.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
@@ -190,7 +202,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
-          this.dataSource2.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource2.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
@@ -247,7 +259,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
-          this.dataSource4.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource4.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
@@ -524,6 +536,10 @@ export class DashboardComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  checkPatientRegField(fieldName): boolean{
+    return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
 }

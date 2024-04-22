@@ -332,7 +332,14 @@ export interface PatientModel {
     gender?: string,
     attributes?: PersonAttributeModel[],
     preferredAddress?: {
+      address2: string,
+      address1: string,
       cityVillage?: string
+    }
+    preferredName?: {
+      givenName?: string,
+      middleName?: string,
+      familyName?: string
     }
     abhaNumber?: string
     abhaAddress?: string
@@ -560,10 +567,10 @@ export interface MobileAppLanguageModel {
 
 export interface PatientRegistrationFieldsModel {
   createdAt?: string,
-  id: number,
-  is_active: boolean,
+  id?: number,
+  is_enabled: boolean,
   name: string,
-  updatedAt: string
+  updatedAt?: string
   is_mandatory: boolean,
   is_editable: boolean,
   is_locked: boolean
@@ -578,4 +585,10 @@ export interface LanguageModel {
   name: string,
   code: string,
   is_default: boolean
+}
+
+export interface PatientRegistrationFieldsConfigModel {
+  personal: PatientRegistrationFieldsModel[],
+  address: PatientRegistrationFieldsModel[],
+  other: PatientRegistrationFieldsModel[]
 }

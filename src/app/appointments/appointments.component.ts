@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, checkIfDateOldThanOneDay} from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, RescheduleAppointmentModalResponseModel } from '../model/model';
+import { AppConfigService } from '../services/app-config.service';
 
 @Component({
   selector: 'app-appointments',
@@ -27,6 +28,7 @@ export class AppointmentsComponent implements OnInit {
   baseUrl: string = environment.baseURL;
   isLoaded: boolean = false;
   appointments: AppointmentModel[] = [];
+  patientRegFields: string[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
@@ -41,7 +43,13 @@ export class AppointmentsComponent implements OnInit {
     private pageTitleService: PageTitleService,
     private coreService: CoreService,
     private toastr: ToastrService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private appConfigService: AppConfigService) { 
+      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
+      }); 
+      this.displayedColumns = this.displayedColumns.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+    }
 
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
@@ -203,4 +211,7 @@ export class AppointmentsComponent implements OnInit {
     this.searchElement.nativeElement.value = "";
   }
 
+  checkPatientRegField(fieldName): boolean{
+    return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
 }

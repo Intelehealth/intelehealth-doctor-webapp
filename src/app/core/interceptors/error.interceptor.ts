@@ -20,9 +20,9 @@ export class ErrorInterceptor implements HttpInterceptor {
         return throwError(err.error.message || err.error.error.message || err.statusText  || err.error.error);
       }
 
-      const error = err.error.message || err.error.error.message || err.statusText  || err.error.error;
+      const error = err.error.message || err.error.error.message  || err.error.error || err.statusText;
       if (request.method == 'DELETE' && request.url.includes('session')) {
-        return throwError(error);
+        return throwError(error); 
       }
       if (error == 'OK' || err?.url.includes('/abha/')) {
         return throwError(error);

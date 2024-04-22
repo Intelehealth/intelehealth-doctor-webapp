@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
-import { LanguageModel, SpecializationModel } from '../model/model';
+import { LanguageModel, PatientRegistrationFieldsConfigModel, SpecializationModel } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,7 @@ export class AppConfigService {
   public apiEndpoint: string;
   public specialization: SpecializationModel[];
   public language: LanguageModel[];
+  public patient_registration: PatientRegistrationFieldsConfigModel;
 
   constructor(private http: HttpClient) { }
 
