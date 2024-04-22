@@ -1727,6 +1727,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           value: false,
         }).subscribe(() => {
           const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+          const openMRSID = this.getPatientIdentifier("OpenMRS ID")
           this.visitService.postVisitToABDM({
             openMRSID: openMRSID,
             mobileNumber: mobileNumber,
