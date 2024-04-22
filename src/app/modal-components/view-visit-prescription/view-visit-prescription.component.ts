@@ -579,7 +579,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         },
                         [
                           {
-                            text: `${this.patient?.person?.preferredName?.givenName}` + (this.checkPatientRegField('Middle Name') && this.patient?.person?.preferredName?.middleName ? ' ' + this.patient?.person?.preferredName?.middleName : '' ) + `${this.patient?.person?.preferredName?.familyName}`,
+                            text: `${this.patient?.person?.preferredName?.givenName}` + (this.checkPatientRegField('Middle Name') && this.patient?.person?.preferredName?.middleName ? ' ' + this.patient?.person?.preferredName?.middleName : '' ) + ` ${this.patient?.person?.preferredName?.familyName}`,
                             bold: true,
                             margin: [10, 10, 0, 5],
                           }
