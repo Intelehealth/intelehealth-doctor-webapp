@@ -13,6 +13,7 @@ import { doctorDetails, visitTypes } from 'src/config/constant';
 import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription, logo } from "../../utils/base64"
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-view-visit-prescription',
@@ -59,13 +60,20 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   vitalObs: ObsModel[] = [];
   eventsSubscription: Subscription;
 
+  patientRegFields: string[] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
     private visitService: VisitService,
     private profileService: ProfileService,
     private diagnosisService: DiagnosisService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private appConfigService: AppConfigService) {
+      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
+      }); 
+    }
 
   ngOnInit(): void {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
@@ -564,14 +572,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         {
-                          image: (userImg && !userImg?.includes('application/json')) ? userImg : 'user',
+                          image: (userImg && !userImg?.includes('application/json')) && this.checkPatientRegField('Profile Photo') ? userImg : 'user',
                           width: 30,
                           height: 30,
                           margin: [0, (userImg && !userImg?.includes('application/json')) ? 15 : 5, 0, 5]
                         },
                         [
                           {
-                            text: `${this.patient?.person.display}`,
+                            text: `${this.patient?.person?.preferredName?.givenName}` + (this.checkPatientRegField('Middle Name') && this.patient?.person?.preferredName?.middleName ? ' ' + this.patient?.person?.preferredName?.middleName : '' ) + `${this.patient?.person?.preferredName?.familyName}`,
                             bold: true,
                             margin: [10, 10, 0, 5],
                           }
@@ -587,10 +595,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
-                          {text: 'Gender', style: 'subheader'},
-                          `${ (this.patient?.person.gender) === 'M' ? 'Male' : (this.patient?.person.gender) === 'F' ? 'Female' : 'Other'}`,
-                          {text: 'Age', style: 'subheader', margin:[0, 5, 0, 0]},
-                          `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
+                          ...this.getPatientRegFieldsForPDF('Gender'),
+                          ...this.getPatientRegFieldsForPDF('Age'),
                         ]
                       ]
                     ]
@@ -616,11 +622,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
-                          {text: 'Address', style: 'subheader'},
-                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`,
-
-                          {text: 'Occupation', style: 'subheader'},
-                          `${this.getPersonAttributeValue('occupation')}`,
+                          ...this.getPatientRegFieldsForPDF('Address'),
+                          ...this.getPatientRegFieldsForPDF('Occupation')
                         ]
                       ]
                     ]
@@ -646,11 +649,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [ 
                         [ 
-                          {text: 'National ID', style: 'subheader'},
-                          `${this.getPersonAttributeValue('NationalID')}`,
-
-                          {text: 'Contact no.', style: 'subheader'},
-                          `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`
+                          ...this.getPatientRegFieldsForPDF('National ID'),
+                          ...this.getPatientRegFieldsForPDF('Phone Number'),
                           , {text: ' ', style: 'subheader'}, {text: ' '}
                         ]
                       ],
@@ -1133,5 +1133,54 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       }
     });
     return val;
+  }
+
+  checkPatientRegField(fieldName): boolean{
+    return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
+
+  getPatientRegFieldsForPDF(fieldName: string): Array<any>{
+    let fieldArray: any = ['',''];
+    switch(fieldName){
+      case 'Gender':
+        if(this.checkPatientRegField('Gender')){
+          fieldArray = [{text: 'Gender', style: 'subheader'},`${ (this.patient?.person.gender) === 'M' ? 'Male' : (this.patient?.person.gender) === 'F' ? 'Female' : 'Other'}`];
+        }
+        break;
+      
+      case 'Age':
+        if(this.checkPatientRegField('Age')){
+          fieldArray = [{text: 'Age', style: 'subheader'},`${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`];
+        }
+        break;
+
+      case 'Address':
+          if(this.checkPatientRegField('Village/Town/City') || this.checkPatientRegField('Corresponding Address 1') || this.checkPatientRegField('Corresponding Address 2')){
+            let strAddress = this.checkPatientRegField('Village/Town/City') ? this.patient?.person?.preferredAddress?.cityVillage?.replace(':',' : ') : '';
+            strAddress += this.patient?.person?.preferredAddress?.address1  && this.checkPatientRegField('Corresponding Address 1') ? ' ' + this.patient?.person?.preferredAddress?.address1 : '';
+            strAddress += this.patient?.person?.preferredAddress?.address2  && this.checkPatientRegField('Corresponding Address 2') ? ' ' + this.patient?.person?.preferredAddress?.address2 : '';
+            fieldArray = [{text: 'Address', style: 'subheader'},`${strAddress}`];
+          }
+          break;
+
+      case 'Occupation':
+        if(this.checkPatientRegField('Occupation')){
+          fieldArray = [{text: 'Occupation', style: 'subheader'},`${this.getPersonAttributeValue('occupation')}`];
+        }
+        break;
+
+      case 'National ID':
+        if(this.checkPatientRegField('National ID')){
+          fieldArray = [{text: 'National ID', style: 'subheader'},`${this.getPersonAttributeValue('NationalID')}`];
+        }
+        break;
+      
+      case 'Phone Number':
+        if(this.checkPatientRegField('Phone Number')){
+          fieldArray = [{text: 'Contact no.', style: 'subheader'},`${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`];
+        }
+        break;
+    }
+    return fieldArray;
   }
 }

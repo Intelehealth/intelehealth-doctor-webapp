@@ -16,7 +16,7 @@
           <div class="patient-img-item mb-2">
             <div class="patient-img">
               <img
-                src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
+                src="{{ checkPatientRegField('Profile Photo') ? baseUrl + '/personimage/' + patient?.person.uuid : ''}}"
 
                 alt=""
                 width="100%"
@@ -25,14 +25,17 @@
             </div>
             <div class="ml-3">
               <h6>
-                {{ patient?.person.display }} ({{ (patient?.person.gender)| translate }})
+                <span>{{ patient?.person?.preferredName?.givenName }}</span>
+                <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
+                <span>{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
+                <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ") "}}</span>
               </h6>
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item mb-3">
+          <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Age')">
             <h6>{{'Age'|translate}}</h6>
             <p>
               {{
@@ -42,23 +45,24 @@
               }}
             </p>
           </div>
-          <div class="patient-info-item">
-            <h6>{{"Address"|translate}}</h6>
-            <!-- <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p> -->
+          <div class="patient-info-item" *ngIf="checkPatientRegField('Village/Town/City') || checkPatientRegField('Corresponding Address 1') || checkPatientRegField('Corresponding Address 2')">
+            <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
+            <p data-test-id="etPatient">{{ checkPatientRegField('Village/Town/City') ? patient?.person.preferredAddress.cityVillage.replace(':',' : ') : ''}}</p>
+            <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1  && checkPatientRegField('Corresponding Address 1') ?? ''}} {{ patient?.person?.preferredAddress?.address2 && checkPatientRegField('Corresponding Address 2')? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item mb-3">
+          <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Occupation')">
             <h6>{{'Occupation'|translate}}</h6>
             <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
-          <div class="patient-info-item">
+          <div class="patient-info-item" *ngIf="checkPatientRegField('National ID')">
             <h6>{{'National ID'|translate}}</h6>
             <p>{{ getPersonAttributeValue("NationalID") }}</p>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item">
+          <div class="patient-info-item" *ngIf="checkPatientRegField('Phone Number')">
             <h6>{{'Contact no.'|translate}}</h6>
             <p>
               <img src="assets/svgs/phone-black.svg" alt="" />

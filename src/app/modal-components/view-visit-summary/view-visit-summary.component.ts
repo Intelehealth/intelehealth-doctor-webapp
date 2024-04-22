@@ -13,6 +13,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { promise } from 'protractor';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -38,6 +39,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   baseURL = environment.baseURL;
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
+  patientRegFields: string[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -46,7 +48,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private coreService: CoreService,
     private translateService: TranslateService,
-  ) { }
+    private appConfigService: AppConfigService) {
+      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
+      }) 
+    }
 
   ngOnInit(): void {
     this.getVisit(this.data.uuid);
@@ -954,5 +960,9 @@ export class ViewVisitSummaryComponent implements OnInit {
         break;
     }
     return records;
+  }
+
+  checkPatientRegField(fieldName): boolean{
+    return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 }
