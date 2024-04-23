@@ -34,11 +34,11 @@
   }
   
   tr.mat-row:nth-child(odd){
-    background: #F7F7FA;
+    background: var(--color-grayShade);
   }
   
   tr.mat-row.selected {
-    background: #E6FFF3;
+    background: var(--color-lightGreenShade);
   }
   
   td:first-child,
@@ -115,7 +115,7 @@
     ::ng-deep{
         .sort-btn{
             display: unset !important;
-            border: 2px solid #EFE8FF;
+            border: 2px solid var(--color-lightGray);
             border-radius: 8px;
             padding: 0 10px;
             margin: 10px 0px;

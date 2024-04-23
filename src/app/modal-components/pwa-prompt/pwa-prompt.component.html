@@ -1,7 +1,7 @@
 <div *ngIf="data?.mobileType === 'android'" color="primary" class="android-prompt">
   <span>Add to Home Screen</span>
   <div>
-    <button mat-flat-button color="primary" (click)="installPwa()" data-test-id="btnInstall">
+    <button mat-flat-button class="blue-btn" (click)="installPwa()" data-test-id="btnInstall">
       Install
     </button>
     <button mat-icon-button (click)="close(false)" data-test-id="btnClose">

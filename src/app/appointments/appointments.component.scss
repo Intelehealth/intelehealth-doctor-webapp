@@ -49,11 +49,11 @@ tr.mat-row, tr.mat-footer-row {
 }
 
 tr.mat-row.upcoming {
-  background: #E6FFF3 !important;
+  background: var(--color-lightGreenShade) !important;
 }
 
 tr.mat-row:nth-child(odd){
-  background: #F7F7FA;
+  background: var(--color-grayShade);
 }
 
 td:first-child,

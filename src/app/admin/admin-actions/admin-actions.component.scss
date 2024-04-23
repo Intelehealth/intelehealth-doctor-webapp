@@ -7,15 +7,15 @@
     border-radius: 12px;
     align-items: center;
     padding: 16px;
-    background: #FAF9FF;
-    border: 1px solid #EFE8FF;
+    background: var(--color-offWhite);
+    border: 1px solid var(--color-lightGray);
   
     .chip-img {
       width: 40px;
     }
   
     .chip-info {
-        font-family: 'DM Sans';
+        font-family: var(--font-family);
         font-style: normal;
         color: var(--color-black);
         padding: 0 0 0 3%;

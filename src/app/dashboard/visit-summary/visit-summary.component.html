@@ -2089,6 +2089,6 @@
 </div>
 
 <div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling">
-  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
-  <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
+  <img class="img shadow" [ngStyle]="{'filter': cssColor}" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
+  <img class="img shadow" [ngStyle]="{'filter': cssColor}" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
 </div>

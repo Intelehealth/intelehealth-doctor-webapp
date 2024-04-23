@@ -4,7 +4,7 @@
   background: var(--color-darkBlue);
   display: flex;
   flex-direction: column;
-  font-family: 'DM Sans';
+  font-family: var(--font-family);
   font-style: normal;
 
   .info-banner {

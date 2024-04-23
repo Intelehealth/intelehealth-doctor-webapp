@@ -14,7 +14,7 @@
   }
 
   .chip-info {
-    font-family: 'DM Sans';
+    font-family: var(--font-family);
     font-style: normal;
     color: var(--color-black);
     padding: 3%;
@@ -41,7 +41,7 @@
 }
 
 .chip-item-green {
-  background: #E6FFF3;
+  background: var(--color-lightGreenShade);
 }
 
 .chip-item-red {
@@ -99,11 +99,11 @@ tr.mat-row, tr.mat-footer-row {
 }
 
 tr.mat-row.upcoming {
-  background: #E6FFF3 !important;
+  background: var(--color-lightGreenShade) !important;
 }
 
 tr.mat-row:nth-child(odd){
-  background: #F7F7FA;
+  background: var(--color-grayShade);
 }
 
 td:first-child,

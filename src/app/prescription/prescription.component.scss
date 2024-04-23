@@ -23,7 +23,7 @@
         }
 
         .chip-info {
-          font-family: 'DM Sans';
+          font-family: var(--font-family);
           font-style: normal;
           color: var(--color-black);
           padding: 16px;
@@ -47,7 +47,7 @@
       }
 
       .chip-item-green {
-        background: #E6FFF3;
+        background: var(--color-lightGreenShade);
       }
 
     }

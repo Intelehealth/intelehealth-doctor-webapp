@@ -50,12 +50,12 @@
 }
 .toast-message {
   word-wrap: break-word;
-  color: #7F7B92;
+  color: var(--color-gray);
   /* width: 220px; */
 }
 .toast-message a,
 .toast-message label {
-  color: #FFFFFF;
+  color: var(--color-white);
 }
 .toast-message a:hover {
   color: #CCCCCC;
@@ -67,8 +67,8 @@
   /* top: -0.3em; */
   float: right;
   font-size: 30px;
-  color: #7F7B92;
-  text-shadow: 0 1px 0 #7F7B92;
+  color: var(--color-gray);
+  text-shadow: 0 1px 0 var(--color-gray);
   font-weight: normal;
   /* opacity: 0.8; */
 }
@@ -101,10 +101,10 @@ button.toast-close-button {
   background-repeat: no-repeat;
   background-size: 24px;
   box-shadow: 0 0 8px #999999;
-  color: #000000;
+  color: var(--color-black);
   font-family: DM Sans;
   font-weight: 18px;
-  background: #FFFFFF;
+  background: var(--color-white);
 }
 .toast-container .ngx-toastr:hover {
   /* box-shadow: 0 0 12px #000000; */
@@ -113,15 +113,15 @@ button.toast-close-button {
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/info-circle.svg */
 .toast-info {
-  border-left: 7px solid #2E1E91;
+  border-left: 7px solid var(--color-darkBlue);
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/times-circle.svg */
 .toast-error {
-  border-left: 7px solid #EA315B;
+  border-left: 7px solid var(--color-lightRed);
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/check.svg */
 .toast-success {
-  border-left: 7px solid #0FD197;
+  border-left: 7px solid var(--color-green);
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/exclamation-triangle.svg */
 .toast-warning {
@@ -144,13 +144,13 @@ button.toast-close-button {
   pointer-events: auto;
 }
 .toast-success {
-  background-color: #0FD197;
+  background-color: var(--color-green);
 }
 .toast-error {
-  background-color: #EA315B;
+  background-color: var(--color-lightRed);
 }
 .toast-info {
-  background-color: #2E1E91;
+  background-color: var(--color-darkBlue);
 }
 .toast-warning {
   background-color: #F89406;
@@ -160,7 +160,7 @@ button.toast-close-button {
   left: 0;
   bottom: 0;
   height: 4px;
-  background-color: #000000;
+  background-color: var(--color-black);
   opacity: 0.4;
 }
 /* Responsive Design */

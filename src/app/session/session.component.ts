@@ -5,6 +5,7 @@ import { languages } from 'src/config/constant';
 import { DataItemModel, SlideModel } from '../model/model';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-session',
@@ -37,6 +38,12 @@ export class SessionComponent implements OnInit {
     }
   ];
 
+  logoImages = {
+    url1: "assets/images/Intelehealth-logo-white.png",
+    url2: "assets/images/Intelehealth-logo-white2.png",
+    alt: "Company Logo"
+  }
+
   selectedLanguage: string = 'en';
   languages: DataItemModel[] = [
     {
@@ -51,13 +58,24 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  constructor(public translate: TranslateService, public router: Router, public location: Location) { 
+  logos: any;
+
+  constructor(public translate: TranslateService, public router: Router, public location: Location, public appConfigService : AppConfigService) { 
   }
 
   ngOnInit(): void {
     if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
       this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     }
+
+    this.appConfigService.getConfig().subscribe(config => {
+      const configLength = Object.keys(config.logos).length;
+      if(configLength){
+        this.logos = config.logos;
+      }else{
+        this.logos = this.logoImages;
+      }
+    });
   }
 
   /**

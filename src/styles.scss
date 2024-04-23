@@ -35,7 +35,7 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
 }
 
 body {
-  background-color: #ffffff;
+  background-color: var(--color-white);
   margin: 0;
   font-family: DM Sans;
 }
@@ -100,7 +100,7 @@ body.font-lato td {
 .confirm-dialog-container #no-button {
   height: 50px;
   width: 50%;
-  background-color: #dc3545;
+  background-color: var(--color-lightRedShade);
   color: white;
   border-radius: 0px;
 }
@@ -108,7 +108,7 @@ body.font-lato td {
 .confirm-dialog-container #yes-button {
   height: 50px;
   width: 50%;
-  background-color: #3f51b5;
+  background-color: var(--color-lightBlue);
   color: white;
   border-radius: 0px;
 }
@@ -147,7 +147,7 @@ body.font-lato td {
 }
 
 .grey-color {
-  color: #7f7b92;
+  color: var(--color-gray);
 }
 
 .font-sm {
@@ -156,13 +156,13 @@ body.font-lato td {
 }
 
 .card-shadow {
-  background: #ffffff;
+  background: var(--color-white);
   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
   border-radius: 12px;
 }
 
 .section-odd {
-  background: #faf9ff;
+  background: var(--color-offWhite);
 }
 
 .common-dialog-modal {
@@ -213,11 +213,11 @@ body.font-lato td {
 }
 
 .red-color {
-  color: #ea315b;
+  color: var(--color-lightRed);
 }
 
 .light-green {
-  color: #0fd197;
+  color: var(--color-green);
 }
 
 .isDisabled {
@@ -270,8 +270,8 @@ body.font-lato td {
   .mat-dialog-title {
     margin: 0px;
     padding: 20px;
-    background: #0fd197;
-    color: #ffffff;
+    background: var(--color-green);
+    color: var(--color-white);
     border-radius: 12px 12px 0px 0px;
 
     h6 {
@@ -320,34 +320,34 @@ body.font-lato td {
         border-radius: 8px 8px 8px 0px;
         font-size: 14px;
         margin: 4px 0px;
-        background: #faf9ff;
+        background: var(--color-offWhite);
         text-overflow: wrap;
         word-wrap: break-word;
         word-break: break-all;
       }
 
       li.chat-item.left {
-        background: #e6fff3;
+        background: var(--color-lightGreenShade);
         margin-left: auto;
         border-radius: 8px 8px 0px 8px;
       }
 
       li.chat-item.timestamp-item {
-        background: #ffffff;
+        background: var(--color-white);
         max-width: 100%;
         width: 100%;
         padding: 0px;
-        color: #7f7b92;
+        color: var(--color-gray);
         text-align: center;
         font-size: 12px;
       }
 
       li.chat-item.read-status {
-        background: #ffffff;
+        background: var(--color-white);
         max-width: 100%;
         width: 100%;
         padding: 0px;
-        color: #7f7b92;
+        color: var(--color-gray);
         text-align: right;
         font-size: 12px;
       }
@@ -361,7 +361,7 @@ body.font-lato td {
     font-family: DM Sans;
 
     input[type="text"] {
-      background: #faf9ff;
+      background: var(--color-offWhite);
       border: 1px solid rgba(178, 175, 190, 0.2);
       border-radius: 8px;
       font-size: 16px;
@@ -380,7 +380,7 @@ body.font-lato td {
       padding: 12px;
       width: 44px;
       height: 44px;
-      background: #0fd197;
+      background: var(--color-green);
       border-radius: 8px;
       color: white;
       font-size: 16px;
@@ -423,22 +423,22 @@ body.font-lato td {
 }
 
 .pretty.p-switch .state label:after {
-  background-color: #2e1e91 !important;
+  background-color: var(--color-darkBlue) !important;
 }
 
 .pretty.p-switch.p-fill input~.state:before {
-  background-color: #e4d7ff;
-  border-color: #e4d7ff;
+  background-color: var(--color-lightVioletShade);
+  border-color: var(--color-lightVioletShade);
 }
 
 .pretty.p-switch.p-fill input:checked~.state:before {
-  border-color: #2e1e91;
-  background-color: #2e1e91 !important;
+  border-color: var(--color-darkBlue);
+  background-color: var(--color-darkBlue) !important;
 }
 
 .mat-checkbox-checked .mat-checkbox-background,
 .mat-checkbox-indeterminate .mat-checkbox-background {
-  background-color: #0fd197 !important;
+  background-color: var(--color-green) !important;
 }
 
 .mat-checkbox-frame,
@@ -447,7 +447,7 @@ body.font-lato td {
 }
 
 .mat-checkbox-frame {
-  border: 2px solid #b0adbe;
+  border: 2px solid var(--color-violetGray);
 }
 
 .modal-dialog .modal-content {
@@ -474,7 +474,7 @@ body.font-lato td {
 
   .mat-dialog-container {
     padding: 0px;
-    background: #ffffff;
+    background: var(--color-white);
     border-radius: 12px;
     position: relative;
   }
@@ -506,7 +506,7 @@ body.font-lato td {
 
   .mat-dialog-container {
     padding: 0px;
-    background: #ffffff;
+    background: var(--color-white);
     border-radius: 12px;
     position: relative;
 
@@ -524,7 +524,7 @@ body.font-lato td {
           font-size: 24px;
           line-height: 150%;
           font-weight: bold;
-          color: #1B163A;
+          color: var(--color-darkestBlue);
         }
 
         .close-btn-con {
@@ -538,13 +538,13 @@ body.font-lato td {
 
       .modal-con {
         .lang-item {
-          background: #FFFFFF;
+          background: var(--color-white);
           border: 1px solid rgba(178, 175, 190, 0.2);
           border-radius: 8px;
           padding: 12px;
           font-size: 16px;
           line-height: 150%;
-          color: #1B163A;
+          color: var(--color-darkestBlue);
           margin-bottom: 5px;
         }
 
@@ -552,19 +552,19 @@ body.font-lato td {
           padding: 8px 24px;
           min-width: 119px;
           height: 48px;
-          background: #FFFFFF;
-          border: 1px solid #EFE8FF;
+          background: var(--color-white);
+          border: 1px solid var(--color-lightGray);
           border-radius: 8px;
           font-size: 18px;
           line-height: 150%;
-          color: #2E1E91;
+          color: var(--color-darkBlue);
           font-weight: bold;
         }
 
         .modal-btn.blue-btn {
-          background: #2E1E91;
-          border: 1px solid #2E1E91;
-          color: #FFFFFF;
+          background: var(--color-darkBlue);
+          border: 1px solid var(--color-darkBlue);
+          color: var(--color-white);
         }
       }
     }
@@ -604,7 +604,7 @@ body.font-lato td {
 
         p {
           font-size: 18px;
-          color: #7F7B92;
+          color: var(--color-gray);
           text-align: center;
           line-height: 150%;
         }
@@ -620,19 +620,19 @@ body.font-lato td {
           padding: 8px 24px;
           min-width: 119px;
           min-height: 48px;
-          background: #FFFFFF;
-          border: 1px solid #EFE8FF;
+          background: var(--color-white);
+          border: 1px solid var(--color-lightGray);
           border-radius: 8px;
           font-size: 18px;
           line-height: 150%;
-          color: #2E1E91;
+          color: var(--color-darkBlue);
           font-weight: bold;
         }
 
         .modal-btn.blue-btn {
-          background: #2E1E91;
-          border: 1px solid #2E1E91;
-          color: #FFFFFF;
+          background: var(--color-darkBlue);
+          border: 1px solid var(--color-darkBlue);
+          color: var(--color-white);
         }
       }
     }
@@ -670,7 +670,7 @@ body.font-lato td {
 
         p {
           font-size: 18px;
-          color: #7F7B92;
+          color: var(--color-gray);
           text-align: center;
           line-height: 150%;
         }
@@ -686,19 +686,19 @@ body.font-lato td {
           padding: 8px 24px;
           min-width: 119px;
           min-height: 48px;
-          background: #FFFFFF;
-          border: 1px solid #EFE8FF;
+          background: var(--color-white);
+          border: 1px solid var(--color-lightGray);
           border-radius: 8px;
           font-size: 18px;
           line-height: 150%;
-          color: #2E1E91;
+          color: var(--color-darkBlue);
           font-weight: bold;
         }
 
         .modal-btn.blue-btn {
-          background: #2E1E91;
-          border: 1px solid #2E1E91;
-          color: #FFFFFF;
+          background: var(--color-darkBlue);
+          border: 1px solid var(--color-darkBlue);
+          color: var(--color-white);
         }
       }
     }
@@ -712,7 +712,7 @@ body.font-lato td {
 
   .mat-dialog-container {
     padding: 0px;
-    background: #ffffff;
+    background: var(--color-white);
     border-radius: 12px;
     position: relative;
   }
@@ -770,7 +770,7 @@ body.font-lato td {
 
 .intel-accordion-con {
   .mat-expansion-panel {
-    background: #FFFFFF;
+    background: var(--color-white);
     box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
     border-radius: 20px !important;
     padding: 24px;
@@ -804,7 +804,7 @@ body.font-lato td {
         height: 20px;
         width: 20px;
         font-size: 20px;
-        color: #2E1E91;
+        color: var(--color-darkBlue);
         margin-left: 8px;
       }
 
@@ -829,14 +829,14 @@ body.font-lato td {
         height: 1px;
         left: 0px;
         right: 0px;
-        background: #EFE8FF;
+        background: var(--color-lightGray);
       }
     }
   }
 }
 
 .intel-card {
-  background: #FFFFFF;
+  background: var(--color-white);
   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
   border-radius: 12px;
   width: 100%;
@@ -849,7 +849,7 @@ body.font-lato td {
     font-size: 18px;
     line-height: 150%;
     font-weight: bold;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     background: none;
     border: none;
     position: relative;
@@ -873,7 +873,7 @@ body.font-lato td {
     left: 24px;
     right: 24px;
     height: 1px;
-    background: #EFE8FF;
+    background: var(--color-lightGray);
   }
 
   .card-body {
@@ -882,7 +882,7 @@ body.font-lato td {
 }
 
 .intel-horz-card {
-  background: #FFFFFF;
+  background: var(--color-white);
   box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
   border-radius: 12px;
   padding: 24px;
@@ -893,13 +893,13 @@ body.font-lato td {
       font-weight: bold;
       font-size: 18px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
     }
 
     p {
       font-size: 16px;
       line-height: 150%;
-      color: #7F7B92;
+      color: var(--color-gray);
     }
   }
 
@@ -910,7 +910,7 @@ body.font-lato td {
 }
 
 .intel-blue-btn {
-  background: #2E1E91;
+  background: var(--color-darkBlue);
   border-radius: 8px;
   padding: 10px 32px;
   font-family: DM Sans;
@@ -941,7 +941,7 @@ body.font-lato td {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #B0ADBE;
+  background: var(--color-violetGray);
   border-radius: 3px;
 }
 
@@ -1015,7 +1015,7 @@ body.font-lato td {
 }
 
 .mat-fab.mat-accent {
-  background-color: #2e1e91;
+  background-color: var(--color-darkBlue);
 }
 
 .msg-time {
@@ -1044,11 +1044,11 @@ body.font-lato td {
 }
 
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
-  background: #FFFFFF !important;
+  background: var(--color-white) !important;
 }
 
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
-  background: #FFFFFF !important;
+  background: var(--color-white) !important;
 
   .ng-option-label {
     font-weight: normal !important;

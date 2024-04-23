@@ -23,6 +23,7 @@ import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-main-container',
@@ -56,6 +57,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   snoozed: any = '';
   profilePic: string;
   profilePicSubscription;
+  logos:any;
+  logoImages = {
+    url1: "assets/images/Intelehealth-logo-white.png",
+    url2: "assets/images/Intelehealth-logo-white2.png",
+    alt: "Company Logo"
+  }
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -70,7 +77,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private socketService: SocketService,
     private _swPush: SwPush,
     private translateService: TranslateService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private appConfigService: AppConfigService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -118,6 +126,20 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img => {
       this.profilePic = img;
     });
+
+    this.appConfigService.getConfig().subscribe(config => {
+      this.logos = config.logos;
+    });
+
+    this.appConfigService.getConfig().subscribe(config => {
+      const configLength = Object.keys(config.logos).length;
+      if(configLength){
+        this.logos = config.logos;
+      }else{
+        this.logos = this.logoImages;
+      }
+    });
+    
   }
 
   /**

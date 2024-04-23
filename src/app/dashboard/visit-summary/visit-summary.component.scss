@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   font-family: DM Sans;
-  background: #E6FFF3;
+  background: var(--color-lightGreenShade);
   border-radius: 12px;
   padding: 24px;
   flex-wrap: wrap;
@@ -636,7 +636,7 @@ tr.mat-footer-row {
 }
 
 tr.mat-row.upcoming {
-  background: #E6FFF3 !important;
+  background: var(--color-lightGreenShade) !important;
 }
 
 td.mat-cell:first-child,
@@ -667,7 +667,7 @@ th.mat-header-cell:last-child {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: #E6FFF3;
+  background: var(--color-lightGreenShade);
   border-radius: 4px;
   border: 1px solid var(--color-green);
   height: 32px;

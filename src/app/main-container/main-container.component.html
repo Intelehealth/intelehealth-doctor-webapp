@@ -7,8 +7,12 @@
             <img [src]="getUrl()" alt="">
           </button>
         </div>
-        <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed">
-        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
+        <!-- <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed"> -->
+        <!-- <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed"> -->
+        <span *ngIf="logos">
+          <img [src]="logos.url1" alt="" width="100%" *ngIf="!collapsed">
+          <img [src]="logos.url2" alt="" width="100%" *ngIf="collapsed">
+        </span>
       </div>
       <ul class="admin-nav">
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemDashboard">

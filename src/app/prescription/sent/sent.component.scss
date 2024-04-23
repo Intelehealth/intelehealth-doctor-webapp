@@ -49,11 +49,11 @@ tr.mat-row, tr.mat-footer-row {
 }
 
 tr.mat-row.upcoming {
-  background: #E6FFF3 !important;
+  background: var(--color-lightGreenShade) !important;
 }
 
 tr.mat-row:nth-child(odd){
-  background: #F7F7FA;
+  background: var--color-grayShade;
 }
 
 td:first-child,
@@ -71,7 +71,7 @@ th:last-child {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: #E6FFF3;
+  background: var(--color-lightGreenShade);
   border-radius: 4px;
   height: 32px;
   color: var(--color-green);

@@ -28,6 +28,7 @@ import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utili
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -133,6 +134,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   isAbhaDetails: boolean = false;
 
+  cssColor: any; 
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -161,7 +164,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
-    private mindmapService: MindmapService) {
+    private mindmapService: MindmapService,
+    private appConfigService: AppConfigService) {
     
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
@@ -238,6 +242,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
+    });
+
+    this.appConfigService.getConvertedFilterColor().then((result) => {
+      this.cssColor = result
     });
   }
 

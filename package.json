@@ -41,6 +41,7 @@
     "angular2-signaturepad": "^4.0.2",
     "bootstrap": "^4.6.2",
     "core-js": "^2.5.4",
+    "css-filter-converter": "^1.0.109",
     "date-fns": "^2.29.3",
     "html2pdf.js": "^0.10.1",
     "intl-tel-input": "^17.0.19",
