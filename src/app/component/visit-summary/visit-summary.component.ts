@@ -345,11 +345,11 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   openVcModal() {
-    const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getPatientVisitProvider()?.provider?.uuid);
-    if (!hw) {
-      this.toastr.error("Please try again later.", "Health Worker is offline.");
-      return;
-    }
+    // const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getPatientVisitProvider()?.provider?.uuid);
+    // if (!hw) {
+    //   this.toastr.error("Please try again later.", "Health Worker is offline.");
+    //   return;
+    // }
     this.cs.openVideoCallModal({
       patientId: this.patientId,
       visitId: this.visitUuid,
