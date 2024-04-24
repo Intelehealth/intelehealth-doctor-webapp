@@ -245,11 +245,11 @@ export class VisitSummaryComponent implements OnInit {
       .afterClosed().subscribe(res => {
         if (res) {
           const userDetails = getFromStorage('user');
-          const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getFromStorage('patientVisitProvider')?.provider?.uuid);
-          if (!hw) {
-            this.toastr.error("Please try again later.", "Health Worker is offline.");
-            return;
-          }
+          // const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getFromStorage('patientVisitProvider')?.provider?.uuid);
+          // if (!hw) {
+          //   this.toastr.error("Please try again later.", "Health Worker is offline.");
+          //   return;
+          // }
           this.cs.openVideoCallModal({
             patientId: this.patientUuid,
             visitId: this.visitUuid,
