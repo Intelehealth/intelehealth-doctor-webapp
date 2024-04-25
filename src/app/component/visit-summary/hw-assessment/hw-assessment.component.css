@@ -3,10 +3,12 @@
     width: 100%;
     overflow-x: auto;
 }
+
 table {
     width: 100%;
-    font-family: DM Sans;
+    font-family: 'DM Sans';
 }
+
 th.mat-header-cell {
     border: none;
     font-size: 14px !important;
@@ -14,19 +16,27 @@ th.mat-header-cell {
     color: #7f7b92;
     height: 21px;
 }
-th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
     border: none !important;
     min-width: 60px;
-    white-space: nowrap;
     padding-right: 24px;
 }
-th.mat-header-cell span.alert-danger, td.mat-cell span.alert-danger, td.mat-footer-cell span.alert-danger {
+
+th.mat-header-cell span.alert-danger,
+td.mat-cell span.alert-danger,
+td.mat-footer-cell span.alert-danger {
     color: #ff475d;
     font-weight: bold;
     background: transparent;
     border: none;
 }
-th.mat-header-cell span.alert-success, td.mat-cell span.alert-success, td.mat-footer-cell span.alert-success {
+
+th.mat-header-cell span.alert-success,
+td.mat-cell span.alert-success,
+td.mat-footer-cell span.alert-success {
     color: #0fd197;
     font-weight: bold;
     background: transparent;
@@ -35,24 +45,33 @@ th.mat-header-cell span.alert-success, td.mat-cell span.alert-success, td.mat-fo
 td.mat-cell {
     font-size: 16px;
 }
-tr.mat-row, tr.mat-footer-row {
+
+tr.mat-row,
+tr.mat-footer-row {
     height: 64px;
     border-radius: 8px;
 }
+
 tr.mat-row.upcoming {
     background: #e6fff3 !important;
 }
-td.mat-cell:first-child, th.mat-header-cell:first-child {
+
+td.mat-cell:first-child,
+th.mat-header-cell:first-child {
     border-radius: 8px 0 0 8px;
 }
-td.mat-cell:last-child, th.mat-header-cell:last-child {
+
+td.mat-cell:last-child,
+th.mat-header-cell:last-child {
     border-radius: 0 8px 8px 0;
     white-space: normal;
     word-break: break-all;
+    width: 740px;
 }
 
 .vertical-line-cell {
     position: relative;
+    width: 50px;
 }
 
 .vertical-line-cell::before {
@@ -80,12 +99,50 @@ td.mat-cell:last-child, th.mat-header-cell:last-child {
 }
 
 .vertical-line-cell .o-circle {
-    position: relative;
+    position: absolute;
     width: 24px;
     height: 24px;
     border-radius: 50%;
     background-color: #fff;
     border: 2px solid #fff;
-    left: 50%;
+    left: 18px;
 }
 
+.time-date {
+    width: 230px;
+    display: flex;
+}
+
+/* Responsive Styles */
+
+@media only screen and (max-width: 768px) {
+    .time-date {
+        display: flex;
+        flex-direction: column;
+        width: 110px;
+    }
+
+    th.mat-header-cell:first-of-type, 
+    td.mat-cell:first-of-type, 
+    td.mat-footer-cell:first-of-type {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    .top-half,
+    .bottom-half {
+        padding: 6px 0;
+    }
+
+    th.mat-header-cell:last-of-type, 
+    td.mat-cell:last-of-type, 
+    td.mat-footer-cell:last-of-type {
+        padding-right: 0px;
+    }
+
+    th.mat-header-cell,
+    td.mat-cell,
+    td.mat-footer-cell {
+        padding-right: 25px;
+    }
+}
