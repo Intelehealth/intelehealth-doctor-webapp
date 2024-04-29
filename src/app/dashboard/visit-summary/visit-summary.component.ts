@@ -1001,15 +1001,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Diagnosis Already Exist'), this.translateService.instant('Duplicate Diagnosis'));
       return;
     }
+    const diagnosisName = this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ');
     this.encounterService.postObs({
       concept: conceptIds.conceptDiagnosis,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ')}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
+      value: `${diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: ObsModel) => {
       if (res) {
-        this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
+        this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value, diagnosisName: diagnosisName });
         this.diagnosisForm.reset();
       }
     });
