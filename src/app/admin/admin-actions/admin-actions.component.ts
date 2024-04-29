@@ -29,7 +29,7 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: false
     },
     {
-      title: "Doctor Specialty",
+      title: "Doctor Speciality",
       desc: "Manage Doctor Specialties",
       icon: "assets/svgs/doctor-speciality.svg",
       path: "admin/actions/doctor-specialties",

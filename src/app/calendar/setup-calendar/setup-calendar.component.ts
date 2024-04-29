@@ -772,7 +772,7 @@ export class SetupCalendarComponent implements OnInit {
 
   /**
   * Get doctor speciality from localstorage provider
-  * @return {string} - Doctor specialty
+  * @return {string} - Doctor Speciality
   */
   private getSpeciality() {
     return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: ProviderAttributeModel) =>
