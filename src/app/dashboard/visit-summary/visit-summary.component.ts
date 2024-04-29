@@ -1005,7 +1005,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: conceptIds.conceptDiagnosis,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
+      value: `${this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ')}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: ObsModel) => {
       if (res) {

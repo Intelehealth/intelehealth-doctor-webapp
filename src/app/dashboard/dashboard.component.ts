@@ -164,7 +164,7 @@ export class DashboardComponent implements OnInit {
     this.pageIndex1 = event.pageIndex;
     this.pageSize1 = event.pageSize;
     if (this.dataSource3.filter) {
-      this.awaitingPaginator.firstPage();
+      this.awaitingPaginator?.firstPage();
     }
     if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
       this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
@@ -220,7 +220,7 @@ export class DashboardComponent implements OnInit {
     this.pageIndex2 = event.pageIndex;
     this.pageSize2 = event.pageSize;
     if (this.dataSource2.filter) {
-      this.priorityPaginator.firstPage();
+      this.priorityPaginator?.firstPage();
     }
     if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
       this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
@@ -277,7 +277,7 @@ export class DashboardComponent implements OnInit {
     this.pageIndex3 = event.pageIndex;
     this.pageSize3 = event.pageSize;
     if (this.dataSource4.filter) {
-      this.inprogressPaginator.firstPage();
+      this.inprogressPaginator?.firstPage();
     }
     if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
       this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
@@ -485,7 +485,7 @@ export class DashboardComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
     this.tempPaginator1.firstPage();
-    this.priorityPaginator.firstPage();
+    this.priorityPaginator?.firstPage();
   }
 
   /**
@@ -495,8 +495,8 @@ export class DashboardComponent implements OnInit {
   applyFilter3(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource3.filter = filterValue.trim().toLowerCase();
-    this.tempPaginator2.firstPage();
-    this.awaitingPaginator.firstPage();
+    this.tempPaginator2?.firstPage();
+    this.awaitingPaginator?.firstPage();
   }
 
   /**
@@ -507,7 +507,7 @@ export class DashboardComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource4.filter = filterValue.trim().toLowerCase();
     this.tempPaginator3.firstPage();
-    this.inprogressPaginator.firstPage();
+    this.inprogressPaginator?.firstPage();
   }
 
   /**
