@@ -1,4 +1,4 @@
-<div class="chat-main-con">
+<div class="chat-main-con" [ngClass]="getLang() === 'ar' ? 'rtl' : 'ltr'">
   <button type="button" class="modal-close-btn" mat-dialog-close>
     <img src="assets/svgs/modal-close-icon.svg" alt="" width="100%" />
   </button>
@@ -22,7 +22,10 @@
       >
         <li
           class="chat-status"
-          [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+          [ngClass]="{
+            right: (getLang() === 'en' && item?.fromUser === chatSvc?.user?.uuid), 
+            left: (getLang() === 'ar' && item?.fromUser === chatSvc?.user?.uuid)
+          }"
         >
           <span class="mr-1">{{ item.createdAt | amDateFormat : "LT" }}</span>
           <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
@@ -50,7 +53,10 @@
         </li>
         <li
           class="chat-message"
-          [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+          [ngClass]="{
+            right: (getLang() === 'en' && item?.fromUser === chatSvc?.user?.uuid), 
+            left: (getLang() === 'ar' && item?.fromUser === chatSvc?.user?.uuid)
+          }"
         >
           <ng-container *ngIf="item.type === 'attachment'; else message">
             <img

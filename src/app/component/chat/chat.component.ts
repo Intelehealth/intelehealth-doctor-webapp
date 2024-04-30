@@ -166,4 +166,8 @@ export class ChatComponent implements OnInit {
   get msgCharCount() {
     return this.message?.length || 0
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  }
 }
