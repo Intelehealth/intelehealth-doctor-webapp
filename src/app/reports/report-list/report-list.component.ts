@@ -24,7 +24,7 @@ export class ReportListComponent {
       id: 3,
       name: 'Individual Client Report Part 1',
       buttonName: "Create Report"
-    }, 
+    },
     {
       id: 4,
       name: 'Village Level Report',
@@ -44,23 +44,35 @@ export class ReportListComponent {
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };
-    this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
-      if (res) {
-        let body = {
-          reportId: element.id,
-          selectedData: res
-        }
-        this.modalService.openFileDownloadDialoag(body).subscribe((res: any) => {
-          if (res) {
-            this.reportSuccess();
-          } else {
-            this.reportError();
+
+    if (element.id === 4) {
+      let body = {
+        reportId: element.id,
+        selectedData: ''
+      }
+      this.fileDownloadDialog(body);
+    } else {
+      this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
+        if (res) {
+          let body = {
+            reportId: element.id,
+            selectedData: res
           }
-        });
+          this.fileDownloadDialog(body);
+        }
+      });
+    }
+  }
+  
+  fileDownloadDialog(body: { reportId: any; selectedData: any; }) {
+    this.modalService.openFileDownloadDialog(body).subscribe((res: any) => {
+      if (res) {
+        this.reportSuccess();
+      } else {
+        this.reportError();
       }
     });
   }
-
 
   reportSuccess() {
     this.modalService.openReportSuccessDialog().subscribe(() => {
