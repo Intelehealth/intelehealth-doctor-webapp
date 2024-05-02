@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReoportService } from '../../services/report.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-file-download',
@@ -26,10 +27,14 @@ export class FileDownloadComponent implements OnInit {
   }
 
    getReportSuccess(event: any) {
-    if (event['loaded'] && event['total']) {
-      this.value = Math.round(event['loaded'] / event['total'] * 100);
-    }
-    if (event?.body) {
+    this.value = 10;
+    setInterval(() => {
+      if (event && event.type !== 4 && this.value < 90) {
+        this.value += 20;
+      }
+    }, 500);
+    
+    if (event.type === HttpEventType.Response) {
       window.location.href = event.body.fname;
       this.close(true);
     }
