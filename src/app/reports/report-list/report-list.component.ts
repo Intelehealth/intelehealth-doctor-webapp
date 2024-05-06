@@ -29,6 +29,11 @@ export class ReportListComponent {
       id: 4,
       name: 'Village Level Report',
       buttonName: "Create Report"
+    },
+    {
+      id: 5,
+      name: 'Location Level Report',
+      buttonName: "Create Report"
     }
   ];
 
