@@ -106,11 +106,13 @@ th.mat-header-cell:last-child {
     background-color: #fff;
     border: 2px solid #fff;
     left: 18px;
+    top: 20px;
 }
 
 .time-date {
     width: 230px;
     display: flex;
+    margin-top: 20px;
 }
 
 /* Responsive Styles */

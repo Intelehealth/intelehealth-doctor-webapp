@@ -151,6 +151,9 @@
   height: 44px;
   background: #2E1E91;
   border-radius: 8px;
+  img {
+    transform: rotate(180deg);
+  }
 }
 
 .attachment {

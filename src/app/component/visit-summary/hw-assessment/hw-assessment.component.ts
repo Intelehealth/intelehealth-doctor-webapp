@@ -30,6 +30,7 @@ export class HwAssessmentComponent implements OnInit {
   displayedColumns: string[] = ['time_date','action', 'created_on'];
   dataSource = new MatTableDataSource<any>();
   addBy: any = [];
+  locale: any = localStorage.getItem('selectedLanguage');
 
 
   constructor(
