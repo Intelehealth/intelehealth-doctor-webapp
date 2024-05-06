@@ -1,0 +1,24 @@
+.form-group {
+    label {
+      font-size: 14px;
+      color: #1B163A;
+      font-weight: bold;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+}
+
+.form-control {
+    padding: 14px 16px;
+    background: #FAF9FF;
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    height: 48px;
+    font-size: 16px;
+    color: #1B163A;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}

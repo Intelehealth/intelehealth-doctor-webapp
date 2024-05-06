@@ -1,0 +1,40 @@
+<div class="select-lang-modal">
+    <div class="modal-title-con">
+        <h6 class="mb-0">Edit ChatGpt Model</h6>
+        <div class="close-btn-con">
+            <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/CloseX.svg" alt=""></button>
+        </div>
+    </div>
+    <div class="modal-con">
+        <div class="container-fluid">
+            <div class="row">
+                <form [formGroup]="chatGptForm" (ngSubmit)="save()" class="col-md-12 p-0">
+                    <div class="form-group row">
+                        <label for="model" class="col-sm-3 col-form-label">Model</label>
+                        <div class="col-sm-9">
+                            <input type="text" readonly class="form-control-plaintext" formControlName="model">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="temprature" class="col-sm-3 col-form-label">Temprature</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" formControlName="temprature" min="0" max="2">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="top_p" class="col-sm-3 col-form-label">Top_p</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" formControlName="top_p" min="0" max="1">
+                        </div>
+                    </div>
+                    <div class="form-group row py-2">
+                        <div class="col-md-12 text-center">
+                            <button class="modal-btn blue-btn" type="submit">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>

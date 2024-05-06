@@ -559,6 +559,19 @@ textarea.form-control {
   color: #FFFFFF;
 }
 
+.gray-btn {
+  padding: 14px 24px;
+  background: #EFE8FF;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-family: DM Sans;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  color: #2E1E91;
+}
+
 .blue-btn:disabled {
   opacity: 0.5;
 }

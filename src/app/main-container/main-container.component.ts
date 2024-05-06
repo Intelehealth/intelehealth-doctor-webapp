@@ -306,6 +306,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.router.navigate(['/dashboard/gpt-input']);
   }
 
+  goToAiConfiguration() {
+    this.router.navigate(['/dashboard/ai-configuration']);
+  }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();

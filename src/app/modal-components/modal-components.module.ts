@@ -37,6 +37,8 @@ import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-id.component';
+import { UpdateChatgptModelComponent } from './update-chatgpt-model/update-chatgpt-model.component';
+import { DiagnosisDetailComponent } from './diagnosis-detail/diagnosis-detail.component';
 
 @NgModule({
     declarations: [
@@ -64,7 +66,9 @@ import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-
         ConfirmDayOffComponent,
         ConfirmHoursOffComponent,
         PwaPromptComponent,
-        ConfirmOpenmrsIdComponent
+        ConfirmOpenmrsIdComponent,
+        UpdateChatgptModelComponent,
+        DiagnosisDetailComponent
     ],
     imports: [
         CommonModule,

@@ -1,0 +1,88 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="card intel-card">
+                <div class="card-header">
+                    <img class="mr-2" src="assets/svgs/learn-more-btn.svg" alt="">
+                    <h6 class="mb-0">ChatGPT Model</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Model</th>
+                                    <th scope="col">Temprature</th>
+                                    <th scope="col">Top_p</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="align-middle" *ngFor="let m of gptModels; let i=index;">
+                                    <th scope="row">{{i+1}}</th>
+                                    <td>{{m.model}} <span class="badge badge-success mr-2" *ngIf="m.isDefault">Default</span></td>
+                                    <td>{{m.temprature}}</td>
+                                    <td>{{m.top_p}}</td>
+                                    <td>
+                                        <div class="d-flex flex-nowrap">
+                                            <button type="button" class="action-btn blue-btn mr-2" *ngIf="!m.isDefault" (click)="setAsDefaultModel(m.id)">
+                                                Set As Default
+                                            </button>
+                                            <button type="button" class="action-btn red-btn" (click)="updateChatGptModel(m)">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-12">
+            <div class="card intel-card">
+                <div class="card-header">
+                    <img class="mr-2" src="assets/svgs/learn-more-btn.svg" alt="">
+                    <h6 class="mb-0">ChatGPT Prompts</h6>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="promptForm" (ngSubmit)="savePrompts()">
+                        <div class="form-group">
+                            <label for="givenName">Prompt #1 To generate AI Diagnosis based on case information *</label>
+                            <textarea rows="5" class="form-control" formControlName="prompt1"></textarea>
+                            <div *ngIf="submitted && f1.prompt1.errors">
+                                <span class="error-msg" *ngIf="f1.prompt1.errors.required">Enter prompt*</span>
+                                <span class="error-msg" *ngIf="f1.prompt1.errors.pattern"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">Prompt #2 To update AI Diagnosis based on case information and additional information *</label>
+                            <textarea rows="5" class="form-control" formControlName="prompt2"></textarea>
+                            <div *ngIf="submitted && f1.prompt2.errors">
+                                <span class="error-msg" *ngIf="f1.prompt2.errors.required">Enter prompt*</span>
+                                <span class="error-msg" *ngIf="f1.prompt2.errors.pattern"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="familyName">Prompt #3 To generate treatment plan based on given diagnosis *</label>
+                            <textarea rows="5" class="form-control" formControlName="prompt3"></textarea>
+                            <div *ngIf="submitted && f1.prompt3.errors">
+                                <span class="error-msg" *ngIf="f1.prompt3.errors.required">Enter prompt*</span>
+                                <span class="error-msg" *ngIf="f1.prompt3.errors.pattern"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <button type="submit" class="action-btn blue-btn">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
