@@ -19,7 +19,7 @@
                                 <th mat-header-cell *matHeaderCellDef>{{'Cheif Complaint'|translate}}</th>
                                 <td mat-cell *matCellDef="let element" class="time-date">
                                     <div class="top-half">{{ element.additional_remark.dateTime | date : "dd-MMM-y," : "" : locale }}</div>
-                                    <div class="bottom-half">{{ element.additional_remark.dateTime | date : " hh:mm a" : "" : locale }}</div>
+                                    <div class="bottom-half">{{ element.additional_remark.dateTime | date : " hh:mm a" }}</div>
                                 </td>
                             </ng-container>
                         
