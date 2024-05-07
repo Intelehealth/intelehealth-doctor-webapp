@@ -1913,6 +1913,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               ]
             }).subscribe((post) => {
               this.aiDiagnosisPresent = post;
+              this.diagnosisSuggestionsObsUuid = post?.obs[0].uuid;
             });
           } else {
             this.getDiagnosisSuggestions();
