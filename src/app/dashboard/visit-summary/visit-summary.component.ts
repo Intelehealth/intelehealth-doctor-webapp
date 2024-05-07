@@ -571,7 +571,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAiDiagnosisSuggestions).subscribe((response: any) => {
                 response.results.forEach((obs: any) => {
                   if (obs.encounter.visit.uuid === this.visit.uuid) {
-                    this.diagnosisSuggestions = JSON.parse(JSON.parse(obs.value).data.choices[0]?.message.content.replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+                    const result = (JSON.parse(obs.value)?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+                    this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
                     this.diagnosisSuggestionsObsUuid = obs.uuid;
                   }
                 });
@@ -580,7 +581,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAiTreatmentPlan).subscribe((response: any) => {
                   response.results.forEach((obs: any) => {
                     if (obs.encounter.visit.uuid === this.visit.uuid) {
-                      this.treatmentPlan = JSON.parse(JSON.parse(obs.value).data.choices[0]?.message.content.replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
+                      const result = (JSON.parse(obs.value)?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+                      this.treatmentPlan = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
                     }
                   });
                 });
@@ -1887,28 +1889,39 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.visitService.getDiagnosisSuggestions(
         `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`
       ).subscribe((res: any) => {
-        this.diagnosisSuggestions = JSON.parse(res?.data.choices[0]?.message.content.replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
-        this.encounterService.postEncounter({
-          patient: this.visit.patient.uuid,
-          encounterType: "0a1863c0-5747-43ff-b125-45dd1e7ab6dd", //AI diagnosis and treatment plan encounter type uuid
-          encounterProviders: [
-            {
-              provider: this.provider.uuid,
-              encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
-            },
-          ],
-          visit: this.visit.uuid,
-          encounterDatetime: new Date(Date.now() - 30000),
-          obs: [
-            {
-              concept: this.conceptAiDiagnosisSuggestions, // AI Diagnosis concept uuid
-              value: JSON.stringify(res),
-              comment: res?.data.model
-            },
-          ]
-        }).subscribe((post) => {
-          this.aiDiagnosisPresent = post;
-        });
+        try {
+          const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          if (result) {
+            this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+            this.encounterService.postEncounter({
+              patient: this.visit.patient.uuid,
+              encounterType: "0a1863c0-5747-43ff-b125-45dd1e7ab6dd", //AI diagnosis and treatment plan encounter type uuid
+              encounterProviders: [
+                {
+                  provider: this.provider.uuid,
+                  encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+                },
+              ],
+              visit: this.visit.uuid,
+              encounterDatetime: new Date(Date.now() - 30000),
+              obs: [
+                {
+                  concept: this.conceptAiDiagnosisSuggestions, // AI Diagnosis concept uuid
+                  value: JSON.stringify(res),
+                  comment: res?.data.model
+                },
+              ]
+            }).subscribe((post) => {
+              this.aiDiagnosisPresent = post;
+            });
+          } else {
+            this.getDiagnosisSuggestions();
+          }
+        } catch (error: any) {
+          this.getDiagnosisSuggestions();          
+        }
+      }, (err: any) => {
+        this.getDiagnosisSuggestions();
       });
     }
   }
@@ -1963,12 +1976,23 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`,
         this.patientInteractionNotesForm.value.chiefComplaintNotes
       ).subscribe((res: any) => {
-        this.diagnosisSuggestions = JSON.parse(res?.data.choices[0]?.message.content.replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
-        // Update AI DIAGNOSIS SUGGESTIONS observation
-        this.encounterService.updateObs({
-          value: JSON.stringify(res),
-          comment: res.data?.model
-        }, this.diagnosisSuggestionsObsUuid).subscribe(response => {});
+        try {
+          const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          if (result) {
+            this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+            // Update AI DIAGNOSIS SUGGESTIONS observation
+            this.encounterService.updateObs({
+              value: JSON.stringify(res),
+              comment: res.data?.model
+            }, this.diagnosisSuggestionsObsUuid).subscribe(response => {});
+          } else {
+            this.updateAIDiagnosis();
+          }
+        } catch (error: any) {
+          this.updateAIDiagnosis();
+        }
+      }, (err: any) => {
+        this.updateAIDiagnosis();
       });
     }
   }
@@ -2016,17 +2040,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`,
         finalDiagnosis
       ).subscribe((res: any) => {
-        this.treatmentPlan = JSON.parse(res?.data.choices[0]?.message.content.replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
-        this.encounterService.postObs({
-          concept: this.conceptAiTreatmentPlan,
-          person: this.visit.patient.uuid,
-          obsDatetime: new Date(),
-          value: JSON.stringify(res),
-          comment: res?.data.model,
-          encounter: this.aiDiagnosisPresent.uuid
-        }).subscribe((obs) => {
-          this.getVisit(this.visit.uuid);
-        });
+        try {
+          const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          if (result) {
+            this.treatmentPlan = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
+            this.encounterService.postObs({
+              concept: this.conceptAiTreatmentPlan,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: JSON.stringify(res),
+              comment: res?.data.model,
+              encounter: this.aiDiagnosisPresent.uuid
+            }).subscribe((obs) => {
+              this.getVisit(this.visit.uuid);
+            });
+          } else {
+            this.getTreatmentPlan(finalDiagnosis);
+          }
+        } catch (error: any) {
+          this.getTreatmentPlan(finalDiagnosis);
+        }
+      }, (err: any) => {
+        this.getTreatmentPlan(finalDiagnosis);
       });
     }
   }
