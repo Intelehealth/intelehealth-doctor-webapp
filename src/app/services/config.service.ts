@@ -111,4 +111,59 @@ export class ConfigService {
     const url = `${this.baseURL}/pr/updateIsEditable/${id}`;
     return this.http.put(url, { is_editable });
   }
+
+  /**
+  * Get Theme config
+  * @return {Observable<any>}
+  */
+  getThemeConfig(): Observable<any> {
+    const url = `${this.baseURL}/theme_config/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Upload Image
+  * @param {string} url - api URL
+  * @param {FormData} formData - form data
+  * @return {Observable<any>}
+  */
+  uploadImage(url: string, method: string,formData: FormData): Observable<any> {
+    if(method === 'POST')
+      return this.http.post(url, formData);
+    else
+      return this.http.put(url, formData);
+  }
+
+  /**
+  * Donwload File
+  * @param {string} url - api URL
+  * @return {Observable<any>}
+  */
+  downloadImage(url: string): Observable<any> {
+      return this.http.get(url,{responseType:'blob'});
+  }
+
+  /**
+  * Delete Image
+  * @param {string} url - api URL
+  * @param {string} filePath - file path
+  * @return {Observable<any>}
+  */
+  deleteImage(url: string, filePath:string): Observable<any> {
+    return this.http.delete(url,{body:{filePath}});
+  }
+
+
+  /**
+  * Delete Image
+  * @param {string} url - api URL
+  * @param {string} filePath - file path
+  * @return {Observable<any>}
+  */
+  updateImagesWithText(data:any): Observable<any> {
+    const url = `${this.baseURL}/theme_config/updateImagesText`;
+    return this.http.put(url,data);
+  }
 }
+
+

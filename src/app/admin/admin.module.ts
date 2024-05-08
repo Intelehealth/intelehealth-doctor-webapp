@@ -33,6 +33,10 @@ import { PatientRegistrationComponent } from './admin-actions/patient-registrati
 import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PartnerLabelComponent } from './admin-actions/partner-label/partner-label.component';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { FileUploadComponent } from '../core/components/file-upload/file-upload.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -73,6 +77,10 @@ const routes: Routes = [
             component: PatientRegistrationComponent
           },
           {
+            path: 'partner-label',
+            component: PartnerLabelComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -90,7 +98,9 @@ const routes: Routes = [
     AdminActionsComponent,
     DoctorSpecialityComponent,
     MobileAppLanguagesComponent,
-    PatientRegistrationComponent
+    PatientRegistrationComponent,
+    PartnerLabelComponent,
+    FileUploadComponent
   ],
   imports: [
     CommonModule,
@@ -114,6 +124,8 @@ const routes: Routes = [
     MatSelectModule,
     MatIconModule,
     MatFormFieldModule,
+    MatProgressBarModule,
+    ColorPickerModule,
     NgxPermissionsModule.forChild({
       permissionsIsolate: false,
       rolesIsolate: false,

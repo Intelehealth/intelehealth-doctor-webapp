@@ -5,6 +5,8 @@ import { languages } from 'src/config/constant';
 import { DataItemModel, SlideModel } from '../model/model';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { AppConfigService } from '../services/app-config.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-session',
@@ -12,7 +14,8 @@ import { Location } from '@angular/common';
   styleUrls: ['./session.component.scss']
 })
 export class SessionComponent implements OnInit {
-
+  logoImageURL: string;
+  configPublicUrl = environment.configPublicURL;
   slides: SlideModel[] = [
     {
       img_url: "assets/svgs/slide-1.svg",
@@ -51,10 +54,11 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  constructor(public translate: TranslateService, public router: Router, public location: Location) { 
+  constructor(public translate: TranslateService, public router: Router, public location: Location, private appConfigService: AppConfigService) { 
   }
 
   ngOnInit(): void {
+    this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
     if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
       this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     }
