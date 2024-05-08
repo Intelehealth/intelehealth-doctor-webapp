@@ -60,7 +60,7 @@ export class AdminActionsComponent implements OnInit {
       title: "Partner White Labelling",
       desc: "Upload partner logo and manage color theme",
       icon: "assets/svgs/partner-label.svg",
-      path: "admin/config/patien-vitals",
+      path: "admin/actions/partner-label",
       isLocalPath: true
     },
     {

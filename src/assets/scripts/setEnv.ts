@@ -77,7 +77,8 @@ const environmentFileContent = `
     authGatwayURL: '${process.env.AUTH_GATE_WAY_URL}',
     showCaptcha: ${showCaptcha},
     recordsPerPage: 1000,
-    abhaEnabled: ${process.env.ABHA_ENABLED}
+    abhaEnabled: ${process.env.ABHA_ENABLED},
+    configPublicURL: '${process.env.CONFIG_PUBLIC_URL}'
   };
 `;
 

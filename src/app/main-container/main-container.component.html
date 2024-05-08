@@ -7,8 +7,8 @@
             <img [src]="getUrl()" alt="">
           </button>
         </div>
-        <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed">
-        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
+        <img src="{{ configPublicUrl + logoImageURL }}" alt="" width="100%" *ngIf="!collapsed">
+        <img src="{{ configPublicUrl + thumbnailLogoURL }}" alt="" width="100%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemDashboard">

@@ -33,6 +33,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   hwPhoneNo: string;
   clinicName: string;
   baseURL = environment.baseURL;
+  configPublicURL = environment.configPublicURL;
   visitNotePresent: EncounterModel;
   spokenWithPatient: string = 'No';
   notes: ObsModel[] = [];
@@ -61,6 +62,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   eventsSubscription: Subscription;
 
   patientRegFields: string[] = [];
+  logoImageURL: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -76,6 +78,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
+    this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
     pdfMake.fonts = {
       DmSans: {
@@ -527,7 +530,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
-
+    const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -536,7 +539,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       header: {
         columns: [
           { text: ''},
-          { image: 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
+          { image: (logo && !logo?.includes('application/json')) ? logo : 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
         ]
       },
       footer: (currentPage, pageCount) => {

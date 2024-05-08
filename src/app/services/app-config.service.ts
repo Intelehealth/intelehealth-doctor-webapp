@@ -14,6 +14,7 @@ export class AppConfigService {
   public specialization: SpecializationModel[];
   public language: LanguageModel[];
   public patient_registration: PatientRegistrationFieldsConfigModel;
+  public theme_config: any[];
 
   constructor(private http: HttpClient) { }
 

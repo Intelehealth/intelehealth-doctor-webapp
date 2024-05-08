@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent implements OnInit {
 
-  constructor(public translate: TranslateService) {
+  constructor(public translate: TranslateService, public vcRef: ViewContainerRef) {
     translate.addLangs(['en', 'ru']);
     translate.setDefaultLang('en');
 

@@ -23,6 +23,7 @@ import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
+import { AppConfigService } from '../services/app-config.service';
 
 @Component({
   selector: 'app-main-container',
@@ -33,6 +34,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   collapsed = false;
   baseUrl: string = environment.baseURL;
+  configPublicUrl: string = environment.configPublicURL;
   baseURLLegacy: string = environment.baseURLLegacy;
   username = '';
   header: PageTitleItem;
@@ -56,6 +58,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   snoozed: any = '';
   profilePic: string;
   profilePicSubscription;
+  logoImageURL: string = '';
+  thumbnailLogoURL: string = '';
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -70,7 +74,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private socketService: SocketService,
     private _swPush: SwPush,
     private translateService: TranslateService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private appConfigService: AppConfigService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -80,6 +85,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
+    this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
+    this.thumbnailLogoURL = this.appConfigService.theme_config.find(obj=>obj.key==='thumbnail_logo')?.value;
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
