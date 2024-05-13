@@ -77,7 +77,14 @@ const routes: Routes = [
             redirectTo: '/dashboard'
           }
         }
-      }
+      },
+      {
+        path: 'reports',
+        data: {
+          breadcrumb: 'Report'
+        },
+        loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule)
+      },
     ]
   },
   {
