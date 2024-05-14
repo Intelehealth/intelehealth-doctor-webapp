@@ -34,7 +34,6 @@ const routes: Routes = [
     MatTabsModule,
     MatExpansionModule,
     SharedModule,
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     NgbNavModule,

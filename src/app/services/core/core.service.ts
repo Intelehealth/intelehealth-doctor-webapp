@@ -19,7 +19,9 @@ import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
 import { RaiseTicketComponent } from 'src/app/modal-components/raise-ticket/raise-ticket.component';
+import { ReportErrorComponent } from 'src/app/modal-components/report-error/report-error.component';
 import { ReportGeneratorComponent } from 'src/app/modal-components/report-generator/report-generator.component';
+import { ReportSuccessComponent } from 'src/app/modal-components/report-success/report-success.component';
 import { RescheduleAppointmentConfirmComponent } from 'src/app/modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
 import { RescheduleAppointmentComponent } from 'src/app/modal-components/reschedule-appointment/reschedule-appointment.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
@@ -302,22 +304,41 @@ export class CoreService {
     return dialogRef;
   }
 
+   /**
+  * Open report generator modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<ReportGeneratorComponent>} - Dialog reference
+  */
   openGenerateReportDialog(data: { reportId: Number, title: string, field1: string, field2: string, cancelBtnText: string, confirmBtnText: string }): Observable<any> {
     const dialogRef = this.dialog.open(ReportGeneratorComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
 
+   /**
+  * Open file download modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<FileDownloadComponent>} - Dialog reference
+  */
   openFileDownloadDialog(data): Observable<any> {
     const dialogRef = this.dialog.open(FileDownloadComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
+
+   /**
+  * Open report success modal
+  * @return {MatDialogRef<ReportSuccessComponent>} - Dialog reference
+  */
   openReportSuccessDialog(): Observable<any> {
-    const dialogRef = this.dialog.open(SharePrescriptionSuccessComponent, { panelClass: 'modal-md' });
+    const dialogRef = this.dialog.open(ReportSuccessComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+   /**
+  * Open report error modal
+  * @return {MatDialogRef<ImageCropComponent>} - Dialog reference
+  */
   openReportErrorDialog(): Observable<any> {
-    const dialogRef = this.dialog.open(SharePrescriptionErrorComponent, { panelClass: 'modal-md' });
+    const dialogRef = this.dialog.open(ReportErrorComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
   
