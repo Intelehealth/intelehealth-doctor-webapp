@@ -29,6 +29,11 @@ export class ReportListComponent {
       id: 4,
       name: 'Village Level Report',
       buttonName: "Create Report"
+    },
+    {
+      id: 5,
+      name: 'Location Level Report',
+      buttonName: "Create Report"
     }
   ];
 
@@ -45,7 +50,7 @@ export class ReportListComponent {
       confirmBtnText: 'Generate Report'
     };
 
-    if (element.id === 4) {
+    if (element.id === 4 || 5) {
       let body = {
         reportId: element.id,
         selectedData: ''
