@@ -32,7 +32,7 @@ export class ReoportService {
 
     if (body.reportId === 5) {
       return this.http.get(
-        `${environment.reportURL}/vlr`, { reportProgress: true, observe: "events" });
+        `${environment.reportURL}/lcrep`, { reportProgress: true, observe: "events" });
     }
   }
 }
