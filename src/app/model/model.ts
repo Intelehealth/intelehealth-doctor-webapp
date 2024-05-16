@@ -592,3 +592,12 @@ export interface PatientRegistrationFieldsConfigModel {
   address: PatientRegistrationFieldsModel[],
   other: PatientRegistrationFieldsModel[]
 }
+
+export interface PatientVitalModel {
+  id?: number,
+  name: string,
+  createdAt?: string,
+  updatedAt?: string
+  is_mandatory: boolean,
+  is_enabled: boolean,
+}

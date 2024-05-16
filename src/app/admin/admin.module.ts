@@ -36,6 +36,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PartnerLabelComponent } from './admin-actions/partner-label/partner-label.component';
 import { FileUploadComponent } from '../core/components/file-upload/file-upload.component';
+import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -80,6 +81,10 @@ const routes: Routes = [
             component: PartnerLabelComponent
           },
           {
+            path: 'patient-vitals',
+            component: PatientVitalsComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -99,7 +104,8 @@ const routes: Routes = [
     MobileAppLanguagesComponent,
     PatientRegistrationComponent,
     PartnerLabelComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    PatientVitalsComponent
   ],
   imports: [
     CommonModule,

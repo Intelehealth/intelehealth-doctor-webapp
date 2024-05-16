@@ -164,6 +164,37 @@ export class ConfigService {
     const url = `${this.baseURL}/theme_config/updateImagesText`;
     return this.http.put(url,data);
   }
+
+  /**
+  * Get patient vitals
+  * @return {Observable<any>}
+  */
+  getPatientVitals(): Observable<any> {
+    const url = `${this.baseURL}/vitals/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update patient vital enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateVitalEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/vitals/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Update patient vital enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_mandatory - mandatory status true/false
+  * @return {Observable<any>}
+  */
+  updateVitalMandatoryStatus(id: number, is_mandatory: boolean): Observable<any> {
+    const url = `${this.baseURL}/vitals/updateIsMandatory/${id}`;
+    return this.http.put(url, { is_mandatory });
+  }
 }
 
 
