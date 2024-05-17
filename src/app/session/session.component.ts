@@ -16,29 +16,7 @@ import { environment } from 'src/environments/environment';
 export class SessionComponent implements OnInit {
   logoImageURL: string;
   configPublicUrl = environment.configPublicURL;
-  slides: SlideModel[] = [
-    {
-      img_url: "assets/svgs/slide-1.svg",
-      title: "Deliver quality health care where there is no doctor",
-      description: "",
-      heartbeat1: "assets/images/login/right_red_heartbeat.png",
-      heartbeat2: "assets/images/login/right_green_heartbeat.png"
-    },
-    {
-      img_url: "assets/svgs/slide-2.svg",
-      title: "2,75,000 population covered from 215 villages in 2 countries",
-      description: "",
-      heartbeat1: "assets/images/login/right_green_heartbeat.png",
-      heartbeat2: "assets/images/login/right_red_heartbeat.png"
-    },
-    {
-      img_url: "assets/svgs/slide-3.svg",
-      title: "Take online consultations and send prescriptions to the patients virtually",
-      description: "",
-      heartbeat1: "assets/images/login/right_red_heartbeat.png",
-      heartbeat2: "assets/images/login/right_green_heartbeat.png"
-    }
-  ];
+  slides: SlideModel[] = [];
 
   selectedLanguage: string = 'en';
   languages: DataItemModel[] = [
@@ -59,6 +37,7 @@ export class SessionComponent implements OnInit {
 
   ngOnInit(): void {
     this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
+    this.getSlideImages();
     if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
       this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     }
@@ -72,6 +51,23 @@ export class SessionComponent implements OnInit {
     this.translate.use(this.selectedLanguage);
     setCacheData( languages.SELECTED_LANGUAGE, this.selectedLanguage);
     window.location.reload();
+  }
+
+  getSlideImages(){
+    let imagesList = this.appConfigService.theme_config.find(obj=>obj.key==='images_with_text')?.value;
+    if(imagesList && imagesList.length){
+      imagesList.forEach(element => {
+        this.slides.push(
+          {
+              img_url: this.configPublicUrl + element.image,
+              title: element.text,
+              description: "",
+              heartbeat1: "assets/images/login/right_red_heartbeat.png",
+              heartbeat2: "assets/images/login/right_green_heartbeat.png"
+          }
+        );
+      });
+    }
   }
 
 }
