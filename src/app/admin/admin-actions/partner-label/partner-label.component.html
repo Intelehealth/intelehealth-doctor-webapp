@@ -74,7 +74,7 @@
                         <div class="slide-image-row">
                             <span><b>{{'Text ' + (i+1) | translate}}</b></span>
                         </div>
-                        <input type="text" [(ngModel)]="item.text" maxlength="7" class="form-control image-text" placeholder="{{'Enter Text ' + (i+1) | translate}}">
+                        <input type="text" [(ngModel)]="item.text" class="form-control image-text" placeholder="{{'Enter Text ' + (i+1) | translate}}">
                     </div>
                     <div class="col-md-12 text-right">
                         <button type="button" class="btn btn-delete-slide" *ngIf="i!==0" (click)="onDeleteSlides(i)"><img class="mr-1 h-75" src="assets/svgs/delete-icon.svg">{{'Delete' | translate}}</button>
