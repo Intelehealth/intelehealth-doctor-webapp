@@ -422,12 +422,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Get vital value for a given vital name
-  * @param {string} name - Vital name
+  * Get vital value for a given vital uuid
+  * @param {string} uuid - Vital uuid
   * @return {any} - Obs value
   */
-  getObsValue(name: string): any {
-    const v = this.vitalObs.find(e => e.concept.display.includes(name));
+  getObsValue(uuid: string): any {
+    const v = this.vitalObs.find(e => e.concept.uuid === uuid);
     return v?.value ?  v.value : null;
   }
 

@@ -222,12 +222,12 @@ export class ViewVisitSummaryComponent implements OnInit {
   }
 
   /**
-  * Get vital value for a given vital name
-  * @param {string} name - Vital name
+  * Get vital value for a given vital uuid
+  * @param {string} uuid - Vital uuid
   * @return {any} - Obs value
   */
-  getObsValue(name: string): any {
-    const v = this.vitalObs.find(e => e.concept.display.includes(name));
+  getObsValue(uuid: string): any {
+    const v = this.vitalObs.find(e => e.concept.uuid === uuid);
     return v?.value ?  v.value : null;
   }
 
@@ -934,7 +934,7 @@ export class ViewVisitSummaryComponent implements OnInit {
         break;
       case visitTypes.VITALS:
         this.vitals.forEach((v: VitalModel) => {
-          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.name) ? this.getObsValue(v.name) : `No information`}`], margin: [0, 5, 0, 5] });
+          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.uuid) ? this.getObsValue(v.uuid) : `No information`}`], margin: [0, 5, 0, 5] });
         });
         break;
       

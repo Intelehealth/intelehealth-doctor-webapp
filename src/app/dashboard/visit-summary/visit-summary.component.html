@@ -252,12 +252,12 @@
                       <label class="border-0" [attr.data-test-id]="v.key">{{v.name|translate}}</label>
                       <div
                         class="list-item-content"
-                        [class.text-muted]="!getObsValue(v.name)"
+                        [class.text-muted]="!getObsValue(v.uuid)"
                         data-test-id="etHeightDataVitals"
                       >
                         {{
-                          getObsValue(v.name)
-                            ? getObsValue(v.name)
+                          getObsValue(v.uuid)
+                            ? getObsValue(v.uuid)
                             : ('No information'|translate)
                         }}
                       </div>

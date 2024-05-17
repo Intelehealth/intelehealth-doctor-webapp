@@ -200,8 +200,8 @@
                 <li *ngFor="let v of vitals;">
                   <div class="list-item">
                     <label>{{v.name|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue(v.name)">
-                      {{(getObsValue(v.name))?getObsValue(v.name):'No information' | translate}}
+                    <div class="list-item-content" [class.text-muted]="!getObsValue(v.uuid)">
+                      {{(getObsValue(v.uuid))?getObsValue(v.uuid):'No information' | translate}}
                     </div>
                   </div>
                 </li>

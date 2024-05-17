@@ -596,6 +596,7 @@ export interface PatientRegistrationFieldsConfigModel {
 export interface PatientVitalModel {
   id?: number,
   name: string,
+  key: string;
   createdAt?: string,
   updatedAt?: string
   is_mandatory: boolean,
@@ -605,5 +606,6 @@ export interface PatientVitalModel {
 export interface VitalModel {
   name: string,
   key: string,
+  uuid: string,
   is_mandatory: boolean
 }
