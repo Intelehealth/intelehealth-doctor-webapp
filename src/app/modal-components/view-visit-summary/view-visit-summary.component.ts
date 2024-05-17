@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel } from 'src/app/model/model';
+import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { TranslateService } from '@ngx-translate/core';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -40,6 +40,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
   patientRegFields: string[] = [];
+  vitals: VitalModel[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -51,7 +52,8 @@ export class ViewVisitSummaryComponent implements OnInit {
     private appConfigService: AppConfigService) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
-      }) 
+      });
+      this.vitals = [...this.appConfigService.patient_vitals];
     }
 
   ngOnInit(): void {
@@ -220,18 +222,13 @@ export class ViewVisitSummaryComponent implements OnInit {
   }
 
   /**
-  * Get observation value for a given observation name
-  * @param {string} obsName - Observation name
+  * Get vital value for a given vital name
+  * @param {string} name - Vital name
   * @return {any} - Obs value
   */
-  getObsValue(obsName: string) {
-    let val = null;
-    this.vitalObs.forEach((obs: ObsModel) => {
-      if (obs.concept.display == obsName) {
-        val = obs.value;
-      }
-    });
-    return val;
+  getObsValue(name: string): any {
+    const v = this.vitalObs.find(e => e.concept.display.includes(name));
+    return v?.value ?  v.value : null;
   }
 
   /**
@@ -936,11 +933,9 @@ export class ViewVisitSummaryComponent implements OnInit {
         }
         break;
       case visitTypes.VITALS:
-        if (this.vitalObs.length) {
-          this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
-          });
-        }
+        this.vitals.forEach((v: VitalModel) => {
+          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.name) ? this.getObsValue(v.name) : `No information`}`], margin: [0, 5, 0, 5] });
+        });
         break;
       
       case 'additionalDocs':

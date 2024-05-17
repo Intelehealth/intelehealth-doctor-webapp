@@ -197,67 +197,11 @@
             </div>
             <div class="data-section-content">
               <ul class="items-list">
-                <li>
+                <li *ngFor="let v of vitals;">
                   <div class="list-item">
-                    <label>{{'Height (cm)'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)')">
-                      {{(getObsValue('Height (cm)'))?getObsValue('Height (cm)'):'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'Weight (kg)'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
-                      {{(getObsValue('Weight (kg)'))?getObsValue('Weight (kg)'):'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'BMI'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)') || !getObsValue('Weight (kg)')">
-                      {{(getObsValue('Height (cm)') && getObsValue('Weight (kg)'))? ((getObsValue('Weight (kg)')/((getObsValue('Height (cm)')/100)*(getObsValue('Height (cm)')/100)))|number:'1.2-2') :'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'BP'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('SYSTOLIC BLOOD PRESSURE')">
-                      {{getObsValue('SYSTOLIC BLOOD PRESSURE') ? getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'Pulse'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Pulse')">
-                      {{(getObsValue('Pulse'))?getObsValue('Pulse'):'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'Temperature (F)'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('TEMPERATURE (C)')">
-                      {{(getObsValue('TEMPERATURE (C)'))?(((getObsValue('TEMPERATURE (C)')* 9/5)+32)|number:'0.2-2'):'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'SpO2'|translate}} (%)</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('BLOOD OXYGEN SATURATION')">
-                      {{(getObsValue('BLOOD OXYGEN SATURATION'))?getObsValue('BLOOD OXYGEN SATURATION'):'No information' | translate}}
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>{{'Respiratory Rate'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Respiratory rate')">
-                      {{(getObsValue('Respiratory rate'))?getObsValue('Respiratory rate'):'No information' | translate}}
+                    <label>{{v.name|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue(v.name)">
+                      {{(getObsValue(v.name))?getObsValue(v.name):'No information' | translate}}
                     </div>
                   </div>
                 </li>

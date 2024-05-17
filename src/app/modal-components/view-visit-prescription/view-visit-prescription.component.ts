@@ -10,7 +10,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
+import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription, logo } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -63,6 +63,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   patientRegFields: string[] = [];
   logoImageURL: string;
+  vitals: VitalModel[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -74,7 +75,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     private appConfigService: AppConfigService) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
-      }); 
+      });
+      this.vitals = [...this.appConfigService.patient_vitals]; 
     }
 
   ngOnInit(): void {
@@ -1075,25 +1077,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         }
         break;
       case visitTypes.VITALS:
-        let weightValue, heightValue, bmi, bp, pulse, temperature, spO2, respRate;
-        heightValue = this.getObsValue('Height (cm)') ? this.getObsValue('Height (cm)') : `No information`;
-        weightValue = this.getObsValue('Weight (kg)') ? this.getObsValue('Weight (kg)') : 'No information';
-        bmi = (this.getObsValue('Height (cm)') && this.getObsValue('Weight (kg)')) ? Number(weightValue / ((heightValue / 100) * (heightValue / 100))).toFixed(2)
-          : `No information`;
-        bp = this.getObsValue('SYSTOLIC BLOOD PRESSURE') ? this.getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + this.getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information';
-        pulse = this.getObsValue('Pulse') ? this.getObsValue('Pulse') : 'No information';
-        temperature = this.getObsValue('TEMPERATURE (C)') ?
-          Number(this.getObsValue('TEMPERATURE (C)') * 9 / 5 + 32).toFixed(2) : `No information`;
-        spO2 = this.getObsValue('BLOOD OXYGEN SATURATION') ? this.getObsValue('BLOOD OXYGEN SATURATION') : 'No information';
-        respRate = this.getObsValue('Respiratory rate') ? this.getObsValue('Respiratory rate') : 'No information';
-        records.push({ text: [{ text: `Height (cm) : `, bold: true }, `${heightValue}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `Weight (kg) : `, bold: true }, `${weightValue}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `BMI : `, bold: true }, `${bmi}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `BP : `, bold: true }, `${bp}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `Pulse : `, bold: true }, `${pulse}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `Temperature (F) : `, bold: true }, `${temperature}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `SpO2 : `, bold: true }, `${spO2}`], margin: [0, 5, 0, 5] });
-        records.push({ text: [{ text: `Respiratory Rate : `, bold: true }, `${respRate}`], margin: [0, 5, 0, 5]});
+        this.vitals.forEach((v: VitalModel) => {
+          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.name) ? this.getObsValue(v.name) : `No information`}`], margin: [0, 5, 0, 5] });
+        });
         break;
     }
     return records;
@@ -1125,17 +1111,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   /**
   * Get observation value for a given observation name
-  * @param {string} obsName - Observation name
+  * @param {string} name - Vital name
   * @return {any} - Obs value
   */
-  getObsValue(obsName: string) {
-    let val = null;
-    this.vitalObs.forEach((obs: ObsModel) => {
-      if (obs.concept.display == obsName) {
-        val = obs.value;
-      }
-    });
-    return val;
+  getObsValue(name: string): any {
+    const v = this.vitalObs.find(e => e.concept.display.includes(name));
+    return v?.value ?  v.value : null;
   }
 
   checkPatientRegField(fieldName): boolean{

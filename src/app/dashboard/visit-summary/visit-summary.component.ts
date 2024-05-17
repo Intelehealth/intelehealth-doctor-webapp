@@ -27,7 +27,7 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
-import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 class PickDateAdapter extends NativeDateAdapter {
@@ -135,6 +135,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isAbhaDetails: boolean = false;
 
   patientRegFields: string[] = [];
+  vitals: VitalModel[] = [];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -170,6 +171,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
     });
+
+    this.vitals = [...this.appConfigService.patient_vitals];
     
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
@@ -410,7 +413,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @param {EncounterModel[]} encounters - Array of encounters
   * @return {void}
   */
-  getVitalObs(encounters: EncounterModel[]) {
+  getVitalObs(encounters: EncounterModel[]): void {
     encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.VITALS) {
         this.vitalObs = enc.obs;
@@ -419,18 +422,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Get observation value for a given observation name
-  * @param {string} obsName - Observation name
+  * Get vital value for a given vital name
+  * @param {string} name - Vital name
   * @return {any} - Obs value
   */
-  getObsValue(obsName: string) {
-    let val = null;
-    this.vitalObs.forEach((obs: ObsModel) => {
-      if (obs.concept.display === obsName) {
-        val = obs.value;
-      }
-    });
-    return val;
+  getObsValue(name: string): any {
+    const v = this.vitalObs.find(e => e.concept.display.includes(name));
+    return v?.value ?  v.value : null;
   }
 
   /**
@@ -438,7 +436,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @param {EncounterModel[]} encounters - Array of encounters
   * @return {void}
   */
-  getCheckUpReason(encounters: EncounterModel[]) {
+  getCheckUpReason(encounters: EncounterModel[]): void {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
     encounters.forEach((enc: EncounterModel) => {

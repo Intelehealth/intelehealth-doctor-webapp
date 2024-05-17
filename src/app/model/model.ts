@@ -601,3 +601,9 @@ export interface PatientVitalModel {
   is_mandatory: boolean,
   is_enabled: boolean,
 }
+
+export interface VitalModel {
+  name: string,
+  key: string,
+  is_mandatory: boolean
+}
