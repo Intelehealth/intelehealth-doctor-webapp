@@ -118,8 +118,8 @@ body.font-lato td {
 
 
 .vc-modal-lg {
-  width: auto;
-  min-width: 30%;
+  width: 30%;
+  // min-width: 30%;
   max-width: 80% !important;
 
   .mat-dialog-container {
@@ -142,6 +142,13 @@ body.font-lato td {
   .mat-dialog-actions {
     margin: 0px;
     border-top: 2px solid rgba(178, 175, 190, 0.2);
+  }
+}
+
+.vc-modal-lg.minimized {
+  width: fit-content;
+  .mat-dialog-container {
+    width: fit-content;
   }
 }
 
