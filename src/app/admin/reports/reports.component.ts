@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PageTitleService } from '../core/page-title/page-title.service';
-import { getCacheData } from '../utils/utility-functions';
+import { PageTitleService } from '../../core/page-title/page-title.service';
+import { getCacheData } from '../../utils/utility-functions';
 import { languages } from 'src/config/constant';
 
 @Component({

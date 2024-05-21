@@ -37,6 +37,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PartnerLabelComponent } from './admin-actions/partner-label/partner-label.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { FileUploadComponent } from '../core/components/file-upload/file-upload.component';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReportListComponent } from './reports/report-list/report-list.component';
+import { ReportsComponent } from './reports/reports.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -85,7 +88,11 @@ const routes: Routes = [
             component: AdminActionsComponent
           }
         ]
-      }
+      },
+      {
+        path: 'report',
+        component: ReportsComponent
+      },
     ]
   }
 ];
@@ -100,7 +107,9 @@ const routes: Routes = [
     MobileAppLanguagesComponent,
     PatientRegistrationComponent,
     PartnerLabelComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    ReportsComponent,
+    ReportListComponent
   ],
   imports: [
     CommonModule,
@@ -139,6 +148,7 @@ const routes: Routes = [
       }
     }),
     MomentModule,
+    NgbNavModule,
     SharedModule
   ],
   providers: [

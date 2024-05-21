@@ -45,6 +45,7 @@ import { ReportGeneratorComponent } from './report-generator/report-generator.co
 import { FileDownloadComponent } from './file-download/file-download.component';
 import { ReportErrorComponent } from './report-error/report-error.component';
 import { ReportSuccessComponent } from './report-success/report-success.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
     declarations: [
@@ -97,7 +98,8 @@ import { ReportSuccessComponent } from './report-success/report-success.componen
         NgSelectModule,
         SignaturePadModule,
         ImageCropperModule,
-        SharedModule
+        SharedModule,
+        MatProgressBarModule
     ],
     exports: [ViewVisitPrescriptionComponent],
 })

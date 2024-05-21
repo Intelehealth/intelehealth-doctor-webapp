@@ -131,7 +131,8 @@ registerLocaleData(localeEn);
         'https://dev.intelehealth.org:3004/api/messages/',
         'https://dev.intelehealth.org:3004/api/support/',
         'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
-        'https://dev.intelehealth.org:3000/api/getToken'
+        'https://dev.intelehealth.org:3000/api/getToken',
+        'https://dev.intelehealth.org/pl/'
       ]
     }),
     NgxPermissionsModule.forRoot({

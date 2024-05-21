@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
@@ -14,26 +15,11 @@ export class ReportListComponent {
       id: 1,
       name: 'List of Visits between two dates',
       buttonName: "Create Report"
-    },
-    {
-      id: 2,
-      name: 'Visit Details with Textual Clinical Note and Data Segregation',
-      buttonName: "Create Report"
-    },
-    {
-      id: 3,
-      name: 'Individual Client Report Part 1',
-      buttonName: "Create Report"
-    },
-    {
-      id: 4,
-      name: 'Village Level Report',
-      buttonName: "Create Report"
     }
   ];
 
   displayedColumns: string[] = ['name', 'buttonName'];
-  constructor(private modalService: CoreService) { }
+  constructor(private modalService: CoreService, private router: Router) { }
 
   createReport(element) {
     let data = {
@@ -44,14 +30,6 @@ export class ReportListComponent {
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };
-
-    if (element.id === 4) {
-      let body = {
-        reportId: element.id,
-        selectedData: ''
-      }
-      this.fileDownloadDialog(body);
-    } else {
       this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
         if (res) {
           let body = {
@@ -61,7 +39,6 @@ export class ReportListComponent {
           this.fileDownloadDialog(body);
         }
       });
-    }
   }
   
   fileDownloadDialog(body: { reportId: any; selectedData: any; }) {
@@ -75,7 +52,10 @@ export class ReportListComponent {
   }
 
   reportSuccess() {
-    this.modalService.openReportSuccessDialog().subscribe(() => {
+    this.modalService.openReportSuccessDialog().subscribe((result) => {
+      if (result === 'admin') {
+        this.router.navigate(['/admin/actions']);
+      }
     });
   }
 
