@@ -35,18 +35,11 @@
                             <input type="text" maxlength="7" [(ngModel)]="themeConfigData.primary_color" (change)="onColorChange($event.target?.value,'primary_color')" class="form-control" placeholder="{{'Enter HEX code for primary color' | translate}}">
                             <span class="colorpicker-parent">
                                 <input 
+                                    (change)="onColorChange($event.target?.value,'primary_color')"
+                                    type="color"
                                     class="click"
-                                    [ngModel]="themeConfigData.primary_color?'':'-'"
-                                    [(colorPicker)]="themeConfigData.primary_color"
-                                    (colorPickerClose)="onColorChange($event,'primary_color')"
-                                    [style.background]="themeConfigData.primary_color" 
-                                    [cpWidth]="'200px'"
-                                    [cpSaveClickOutside] = "'false'"
-                                    [cpDisableInput]="true"
-                                    [cpAlphaChannel]="'disabled'" 
-                                    [cpOutputFormat]="'hex'"
-                                    [cpPosition]="'top-left'"
-                                    [cpUseRootViewContainer]="true"/>
+                                    [(ngModel)]="themeConfigData.primary_color"
+                                >
                             </span>
                         </div>
                     </div>
@@ -56,18 +49,11 @@
                             <input type="text" [(ngModel)]="themeConfigData.secondary_color" (change)="onColorChange($event.target?.value,'secondary_color')" maxlength="7" class="form-control" placeholder="{{'Enter HEX code for primary color' | translate}}">
                             <span class="colorpicker-parent">
                                 <input 
+                                    (change)="onColorChange($event.target?.value,'secondary_color')"
+                                    type="color"
                                     class="click"
-                                    [ngModel]="themeConfigData.secondary_color?'':'-'"
-                                    [(colorPicker)]="themeConfigData.secondary_color"
-                                    (colorPickerClose)="onColorChange($event,'secondary_color')"
-                                    [style.background]="themeConfigData.secondary_color"
-                                    [cpWidth]="'200px'"
-                                    [cpSaveClickOutside] = "'false'"
-                                    [cpDisableInput]="true"
-                                    [cpAlphaChannel]="'disabled'" 
-                                    [cpOutputFormat]="'hex'"
-                                    [cpPosition]="'top-left'"
-                                    [cpUseRootViewContainer]="true"/>
+                                    [(ngModel)]="themeConfigData.secondary_color"
+                                >
                             </span>
                         </div>
                     </div>
@@ -88,7 +74,7 @@
                         <div class="slide-image-row">
                             <span><b>{{'Text ' + (i+1) | translate}}</b></span>
                         </div>
-                        <input type="text" [(ngModel)]="item.text" maxlength="7" class="form-control image-text" placeholder="{{'Enter Text ' + (i+1) | translate}}">
+                        <input type="text" [(ngModel)]="item.text" maxlength="150" class="form-control image-text" placeholder="{{'Enter Text ' + (i+1) | translate}}">
                     </div>
                     <div class="col-md-12 text-right">
                         <button type="button" class="btn btn-delete-slide" *ngIf="i!==0" (click)="onDeleteSlides(i)"><img class="mr-1 h-75" src="assets/svgs/delete-icon.svg">{{'Delete' | translate}}</button>

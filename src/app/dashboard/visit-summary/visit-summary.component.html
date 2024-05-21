@@ -51,7 +51,7 @@
             </div>
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Age')">
-                <h6 data-test-id="etPatienAge">{{'Age'|translate}}</h6>
+                <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
                 <p data-test-id="etPatient">
                   {{
                     patient?.person.birthdate
@@ -247,143 +247,17 @@
                 </mat-expansion-panel-header>
 
                 <ul class="items-list">
-                  <li>
+                  <li *ngFor="let v of vitals;">
                     <div class="list-item">
-                      <label class="border-0" data-test-id="etHeightVitals">{{'Height (cm)'|translate}}</label>
+                      <label class="border-0" [attr.data-test-id]="v.key">{{v.name|translate}}</label>
                       <div
                         class="list-item-content"
-                        [class.text-muted]="!getObsValue('Height (cm)')"
+                        [class.text-muted]="!getObsValue(v.uuid)"
                         data-test-id="etHeightDataVitals"
                       >
                         {{
-                          getObsValue("Height (cm)")
-                            ? getObsValue("Height (cm)")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etWeightVitals">{{'Weight (kg)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('Weight (kg)')"
-                        data-test-id="etWeightDataVitals"
-                      >
-                        {{
-                          getObsValue("Weight (kg)")
-                            ? getObsValue("Weight (kg)")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etBMIVitals">{{'BMI'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etBMIDataVitals"
-                        [class.text-muted]="
-                          !getObsValue('Height (cm)') ||
-                          !getObsValue('Weight (kg)')
-                        "
-                      >
-                        {{
-                          getObsValue("Height (cm)") &&
-                          getObsValue("Weight (kg)")
-                            ? (getObsValue("Weight (kg)") /
-                                ((getObsValue("Height (cm)") / 100) *
-                                  (getObsValue("Height (cm)") / 100))
-                              | number : "1.2-2")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etBPVitals">{{'BP'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etBPDataVitals"
-                        [class.text-muted]="
-                          !getObsValue('SYSTOLIC BLOOD PRESSURE')
-                        "
-                      >
-                        {{
-                          getObsValue("SYSTOLIC BLOOD PRESSURE")
-                            ? getObsValue("SYSTOLIC BLOOD PRESSURE") +
-                              " / " +
-                              getObsValue("DIASTOLIC BLOOD PRESSURE")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etPulseVitals">{{'Pulse'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etPulseDataVitals"
-                        [class.text-muted]="!getObsValue('Pulse')"
-                      >
-                        {{
-                          getObsValue("Pulse")
-                            ? getObsValue("Pulse")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etTempVitals">{{'Temperature (F)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etTempDataVitals"
-                        [class.text-muted]="!getObsValue('TEMPERATURE (C)')"
-                      >
-                        {{
-                          getObsValue("TEMPERATURE (C)")
-                            ? ((getObsValue("TEMPERATURE (C)") * 9) / 5 + 32
-                              | number : "0.2-2")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etSpO2Vitals">{{'SpO2'|translate}} (%)</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etSpO2DataVitals"
-                        [class.text-muted]="
-                          !getObsValue('BLOOD OXYGEN SATURATION')
-                        "
-                      >
-                        {{
-                          getObsValue("BLOOD OXYGEN SATURATION")
-                            ? getObsValue("BLOOD OXYGEN SATURATION")
-                            : ('No information'|translate)
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label data-test-id="etRespRateVitals">{{'Respiratory Rate'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        data-test-id="etRespRateDataVitals"
-                        [class.text-muted]="!getObsValue('Respiratory rate')"
-                      >
-                        {{
-                          getObsValue("Respiratory rate")
-                            ? getObsValue("Respiratory rate")
+                          getObsValue(v.uuid)
+                            ? getObsValue(v.uuid)
                             : ('No information'|translate)
                         }}
                       </div>
@@ -760,7 +634,7 @@
                     >
                       <img
                         src="{{
-                          baseUrl +
+                          baseURL +
                             '/personimage/' +
                             element?.doctor?.person_uuid
                         }}"

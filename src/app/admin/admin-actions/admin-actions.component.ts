@@ -46,7 +46,7 @@ export class AdminActionsComponent implements OnInit {
       title: "Patient Vitals",
       desc: "Manage fields to be shown under patient vitals",
       icon: "assets/svgs/patient-vitals.svg",
-      path: "admin/config/patien-vitals",
+      path: "admin/actions/patient-vitals",
       isLocalPath: true
     },
     {

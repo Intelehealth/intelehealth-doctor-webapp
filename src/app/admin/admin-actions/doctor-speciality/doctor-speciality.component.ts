@@ -23,7 +23,7 @@ export class DoctorSpecialityComponent implements OnInit {
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private configServce: ConfigService,
+    private configService: ConfigService,
     private toastr: ToastrService
   ) { }
 
@@ -38,7 +38,7 @@ export class DoctorSpecialityComponent implements OnInit {
   * @return {void}
   */
   getDoctorSpecialities(): void {
-    this.configServce.getDoctorSpecialities().subscribe(res=>{
+    this.configService.getDoctorSpecialities().subscribe(res=>{
       this.specialityData = res.specializations;
       this.dataSource = new MatTableDataSource(this.specialityData);
       this.dataSource.paginator = this.paginator;
@@ -54,7 +54,7 @@ export class DoctorSpecialityComponent implements OnInit {
   * @return {void}
   */
   updateStatus(id: number, status: boolean): void {
-    this.configServce.updateSpecialityStatus(id, status).subscribe(res => {
+    this.configService.updateSpecialityStatus(id, status).subscribe(res => {
       this.toastr.success("Doctor Speciality has been successfully updated", "Update successful!");
       this.getDoctorSpecialities();
     }, err => {
@@ -67,7 +67,7 @@ export class DoctorSpecialityComponent implements OnInit {
   * @return {void}
   */
   onPublish(): void {
-    this.configServce.publishConfig().subscribe(res => {
+    this.configService.publishConfig().subscribe(res => {
       this.toastr.success("Doctor Speciality changes published successfully!", "Changes published!");
     });
   }
