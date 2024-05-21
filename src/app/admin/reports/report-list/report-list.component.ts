@@ -13,7 +13,7 @@ export class ReportListComponent {
   reports = [
     {
       id: 1,
-      name: 'List of Visits between two dates',
+      name: 'List of Patients between two dates',
       buttonName: "Create Report"
     }
   ];
