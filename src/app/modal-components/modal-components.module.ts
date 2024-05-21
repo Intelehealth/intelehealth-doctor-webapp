@@ -41,6 +41,11 @@ import { RaiseTicketComponent } from './raise-ticket/raise-ticket.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropComponent } from './image-crop/image-crop.component';
 import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
+import { ReportGeneratorComponent } from './report-generator/report-generator.component';
+import { FileDownloadComponent } from './file-download/file-download.component';
+import { ReportErrorComponent } from './report-error/report-error.component';
+import { ReportSuccessComponent } from './report-success/report-success.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
     declarations: [
@@ -71,7 +76,11 @@ import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
         ConfirmOpenmrsIdComponent,
         RaiseTicketComponent,
         ImageCropComponent,
-        VcallOverlayComponent
+        VcallOverlayComponent,
+        ReportGeneratorComponent,
+        FileDownloadComponent,
+        ReportErrorComponent,
+        ReportSuccessComponent
     ],
     imports: [
         CommonModule,
@@ -89,8 +98,9 @@ import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
         NgSelectModule,
         SignaturePadModule,
         ImageCropperModule,
-        SharedModule
+        SharedModule,
+        MatProgressBarModule
     ],
-    exports: [ViewVisitPrescriptionComponent]
+    exports: [ViewVisitPrescriptionComponent],
 })
 export class ModalComponentsModule { }

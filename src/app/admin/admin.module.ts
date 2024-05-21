@@ -36,6 +36,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PartnerLabelComponent } from './admin-actions/partner-label/partner-label.component';
 import { FileUploadComponent } from '../core/components/file-upload/file-upload.component';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReportListComponent } from './reports/report-list/report-list.component';
+import { ReportsComponent } from './reports/reports.component';
 import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
 
 // AoT requires an exported function for factories
@@ -89,7 +92,11 @@ const routes: Routes = [
             component: AdminActionsComponent
           }
         ]
-      }
+      },
+      {
+        path: 'report',
+        component: ReportsComponent
+      },
     ]
   }
 ];
@@ -105,6 +112,8 @@ const routes: Routes = [
     PatientRegistrationComponent,
     PartnerLabelComponent,
     FileUploadComponent,
+    ReportsComponent,
+    ReportListComponent,
     PatientVitalsComponent
   ],
   imports: [
@@ -143,6 +152,7 @@ const routes: Routes = [
       }
     }),
     MomentModule,
+    NgbNavModule,
     SharedModule
   ],
   providers: [
