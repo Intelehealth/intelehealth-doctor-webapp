@@ -27,7 +27,7 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
-import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 class PickDateAdapter extends NativeDateAdapter {
@@ -78,7 +78,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   minDate = new Date();
   selectedTabIndex = 0;
   facilities: DataItemModel[] = facility.facilities
-  specializations: DataItemModel[] = specialization.specializations
+  specializations: SpecializationModel[] = [];
   refer_specializations: DataItemModel[] = refer_specialization.refer_specializations
   refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
   strengthList: DataItemModel[] = strength.strengthList
@@ -173,7 +173,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.vitals = [...this.appConfigService.patient_vitals];
-    
+    this.specializations = [...this.appConfigService.specialization];
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
     this.referSpecialityForm = new FormGroup({
