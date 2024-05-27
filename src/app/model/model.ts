@@ -609,3 +609,11 @@ export interface VitalModel {
   uuid: string,
   is_mandatory: boolean
 }
+
+export interface PatientVisitSummaryModel {
+  id?: number,
+  name: string,
+  is_enabled: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+}

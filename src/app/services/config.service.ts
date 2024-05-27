@@ -195,6 +195,26 @@ export class ConfigService {
     const url = `${this.baseURL}/vitals/updateIsMandatory/${id}`;
     return this.http.put(url, { is_mandatory });
   }
+
+  /**
+  * Get patient visit summary sections
+  * @return {Observable<any>}
+  */
+  getPatientVisitSummarySections(): Observable<any> {
+    const url = `${this.baseURL}/pvs/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update patient visit summary enabled status
+  * @param {boolean} id - id of section
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientVisitSummaryStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/pvs/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
 }
 
 
