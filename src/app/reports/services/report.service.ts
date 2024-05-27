@@ -25,5 +25,14 @@ export class ReoportService {
         `${environment.reportURL}/bs/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
     }
 
+    if (body.reportId === 4) {
+      return this.http.get(
+        `${environment.reportURL}/vlr`, { reportProgress: true, observe: "events" });
+    }
+
+    if (body.reportId === 5) {
+      return this.http.get(
+        `${environment.reportURL}/lcrep`, { reportProgress: true, observe: "events" });
+    }
   }
 }
