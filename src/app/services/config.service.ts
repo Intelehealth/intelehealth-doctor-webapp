@@ -216,14 +216,34 @@ export class ConfigService {
     return this.http.put(url, { is_enabled });
   }
 
-   /**
+  /**
   * Update feature enabled status
   * @param {boolean} id - id of vital
   * @param {boolean} is_enabled - enabled status true/false
   * @return {Observable<any>}
   */
-   updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+  updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/feature/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /*
+  * Get patient visit summary sections
+  * @return {Observable<any>}
+  */
+  getPatientVisitSummarySections(): Observable<any> {
+    const url = `${this.baseURL}/pvs/all`;
+    return this.http.get(url);
+  }
+
+  /*
+  * Update patient visit summary enabled status
+  * @param {boolean} id - id of section
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientVisitSummaryStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/pvs/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
 }

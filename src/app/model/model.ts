@@ -630,3 +630,10 @@ export interface WebRTCConfigModel {
   chat: boolean;
   video_call: boolean;
 }
+export interface PatientVisitSummaryModel {
+  id?: number,
+  name: string,
+  is_enabled: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+}

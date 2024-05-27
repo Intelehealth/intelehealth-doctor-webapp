@@ -77,6 +77,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/webrtc",
       isLocalPath: true
     },
+    {
+      title: "Patient Visit Summary",
+      desc: "Manage data capturing fields on visit summary",
+      icon: "assets/svgs/patient-visit-summary.svg",
+      path: "admin/actions/patient-visit-summary",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,
