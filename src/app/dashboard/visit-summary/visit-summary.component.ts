@@ -253,7 +253,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkOpenChatBoxFlag() {
-    if (this.openChatFlag) {
+    if (this.openChatFlag && this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
       setTimeout(() => {
         this.startChat();
       }, 1000);

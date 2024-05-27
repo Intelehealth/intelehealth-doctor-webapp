@@ -40,6 +40,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportsComponent } from './reports/reports.component';
 import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
+import { WebrtcComponent } from './admin-actions/webrtc/webrtc.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -88,6 +89,10 @@ const routes: Routes = [
             component: PatientVitalsComponent
           },
           {
+            path: 'webrtc',
+            component: WebrtcComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -114,7 +119,8 @@ const routes: Routes = [
     FileUploadComponent,
     ReportsComponent,
     ReportListComponent,
-    PatientVitalsComponent
+    PatientVitalsComponent,
+    WebrtcComponent
   ],
   imports: [
     CommonModule,

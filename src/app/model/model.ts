@@ -1,3 +1,10 @@
+export interface BaseModel {
+  createdAt?: string,
+  id: number,
+  is_enabled: boolean,
+  name: string,
+  updatedAt?: string
+}
 export interface LoginResponseModel {
   authenticated: boolean,
   sessionId: string,
@@ -608,4 +615,18 @@ export interface VitalModel {
   key: string,
   uuid: string,
   is_mandatory: boolean
+}
+
+export interface FeatureModel extends BaseModel {}
+export interface WebrtcModel extends BaseModel {
+  key?: string
+}
+export interface WebrtcDataModel {
+  webrtc_section: FeatureModel,
+  webrtc: WebrtcModel[]
+}
+
+export interface WebRTCConfigModel {
+  chat: boolean;
+  video_call: boolean;
 }

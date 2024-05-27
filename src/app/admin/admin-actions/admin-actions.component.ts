@@ -70,6 +70,13 @@ export class AdminActionsComponent implements OnInit {
       path: this.baseURLLegacy + "/admin/users/users.list",
       isLocalPath: false
     },
+    {
+      title: "WebRTC",
+      desc: "Manage fields to be shown during patient registration",
+      icon: "assets/svgs/patient-reg.svg",
+      path: "admin/actions/webrtc",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,

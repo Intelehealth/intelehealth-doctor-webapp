@@ -195,6 +195,37 @@ export class ConfigService {
     const url = `${this.baseURL}/vitals/updateIsMandatory/${id}`;
     return this.http.put(url, { is_mandatory });
   }
+
+  /**
+  * Get Webrtc
+  * @return {Observable<any>}
+  */
+  getWebrtcs(): Observable<any> {
+    const url = `${this.baseURL}/webrtc/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update webrtc enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateWebrtcEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/webrtc/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+   /**
+  * Update feature enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+   updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/feature/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
 }
 
 
