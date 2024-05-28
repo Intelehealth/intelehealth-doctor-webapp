@@ -436,6 +436,19 @@ body.font-lato td {
   background-color: var(--color-darkBlue) !important;
 }
 
+.pretty.p-switch.light-green .state label:after {
+  background-color: var(--color-green) !important;
+}
+
+.pretty.p-switch.light-green.p-fill input:checked~.state:before {
+  border-color: var(--color-green);
+  background-color: var(--color-green) !important;
+}
+
+.pretty.p-switch.light-red .state label:after {
+  background-color: var(--color-lightRed) !important;
+}
+
 .mat-checkbox-checked .mat-checkbox-background,
 .mat-checkbox-indeterminate .mat-checkbox-background {
   background-color: #0fd197 !important;

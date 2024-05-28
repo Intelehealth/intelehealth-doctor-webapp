@@ -40,6 +40,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportsComponent } from './reports/reports.component';
 import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
+import { WebrtcComponent } from './admin-actions/webrtc/webrtc.component';
 import { PatientVisitSummaryComponent } from './admin-actions/patient-visit-summary/patient-visit-summary.component';
 
 // AoT requires an exported function for factories
@@ -89,6 +90,10 @@ const routes: Routes = [
             component: PatientVitalsComponent
           },
           {
+            path: 'webrtc',
+            component: WebrtcComponent
+          },
+          {
             path: 'patient-visit-summary',
             component: PatientVisitSummaryComponent
           },
@@ -120,6 +125,7 @@ const routes: Routes = [
     ReportsComponent,
     ReportListComponent,
     PatientVitalsComponent,
+    WebrtcComponent,
     PatientVisitSummaryComponent
   ],
   imports: [

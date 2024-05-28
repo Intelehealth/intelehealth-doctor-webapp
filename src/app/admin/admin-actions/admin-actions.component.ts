@@ -71,6 +71,13 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: false
     },
     {
+      title: "WebRTC",
+      desc: "Manage fields to be shown during patient registration",
+      icon: "assets/svgs/patient-reg.svg",
+      path: "admin/actions/webrtc",
+      isLocalPath: true
+    },
+    {
       title: "Patient Visit Summary",
       desc: "Manage data capturing fields on visit summary",
       icon: "assets/svgs/patient-visit-summary.svg",
