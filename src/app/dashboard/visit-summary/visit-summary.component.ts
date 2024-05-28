@@ -137,6 +137,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
 
+  hasChatEnabled: boolean = false;
+  hasVideoEnabled: boolean = false;
+  hasWebRTCEnabled: boolean = false;
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -235,6 +239,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.diagnosisSubject = new BehaviorSubject<any[]>([]);
     this.diagnosis$ = this.diagnosisSubject.asObservable();
+
+    this.hasWebRTCEnabled = this.appConfigService?.webrtc_section;
+    this.hasChatEnabled = this.appConfigService?.webrtc?.chat;
+    this.hasVideoEnabled = this.appConfigService?.webrtc?.video_call;
+    
   }
 
   ngOnInit(): void {
@@ -253,7 +262,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkOpenChatBoxFlag() {
-    if (this.openChatFlag && this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
+    if (this.openChatFlag && this.hasWebRTCEnabled && this.hasChatEnabled) {
       setTimeout(() => {
         this.startChat();
       }, 1000);
