@@ -50,7 +50,7 @@ export class ReportListComponent {
       confirmBtnText: 'Generate Report'
     };
 
-    if (element.id === 4 || element.id === 5) {
+    if (element.id === 5) {
       let body = {
         reportId: element.id,
         selectedData: ''

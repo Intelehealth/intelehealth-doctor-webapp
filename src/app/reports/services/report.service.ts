@@ -27,7 +27,7 @@ export class ReoportService {
 
     if (body.reportId === 4) {
       return this.http.get(
-        `${environment.reportURL}/vlr`, { reportProgress: true, observe: "events" });
+        `${environment.reportURL}/vlrv/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 5) {
