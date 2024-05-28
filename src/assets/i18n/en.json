@@ -5954,5 +5954,7 @@
   "Covid follow up": "Covid follow up",
   "Long Covid": "Long Covid",
   "Covid complications": "Covid complications",
-  "Pictures":"Pictures"
+  "Pictures":"Pictures",
+  "Enable/Disable WebRTC": "Enable/Disable WebRTC",
+  "WebRTC": "WebRTC"
 }
