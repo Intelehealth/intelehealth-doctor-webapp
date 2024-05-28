@@ -1964,7 +1964,7 @@
   </div>
 </div>
 
-<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && appConfigService?.webrtc_section">
-  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall" *ngIf="appConfigService?.webrtc?.video_call"/>
-  <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat" *ngIf="appConfigService?.webrtc?.chat"/>
+<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled">
+  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall" *ngIf="hasVideoEnabled"/>
+  <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat" *ngIf="hasChatEnabled"/>
 </div>

@@ -12,7 +12,6 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
-import { promise } from 'protractor';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
@@ -41,6 +40,9 @@ export class ViewVisitSummaryComponent implements OnInit {
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
+  hasChatEnabled: boolean = false;
+  hasVideoEnabled: boolean = false;
+  hasWebRTCEnabled: boolean = false; 
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -54,6 +56,9 @@ export class ViewVisitSummaryComponent implements OnInit {
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
       this.vitals = [...this.appConfigService.patient_vitals];
+      this.hasWebRTCEnabled = appConfigService?.webrtc_section;
+      this.hasChatEnabled = appConfigService?.webrtc?.chat;
+      this.hasVideoEnabled = appConfigService?.webrtc?.video_call;
     }
 
   ngOnInit(): void {
