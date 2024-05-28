@@ -80,7 +80,7 @@ export class AdminActionsComponent implements OnInit {
     {
       title: "WebRTC",
       desc: "Manage WebRTC functionality",
-      icon: "assets/svgs/patient-reg.svg",
+      icon: "assets/svgs/webrtc.svg",
       path: "admin/actions/webrtc",
       isLocalPath: true
     }
