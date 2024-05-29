@@ -120,8 +120,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.adminUnread = res;
     });
 
-    this.getSubscription();
-    this.getNotificationStatus();
+    if(this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
+      this.getSubscription();
+      this.getNotificationStatus();
+    }
 
     this.profilePic = this.baseUrl + '/personimage/' + this.provider?.person.uuid;
     this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img => {
