@@ -39,7 +39,7 @@ export class FindPatientComponent implements OnInit {
       ]);
       this.dialog.close();
     } else {
-      this.snackbar.open("Visit Not Found for this patient", null, { duration: 2000 });
+      this.snackbar.open("Visit not found for this patient", null, { duration: 2000 });
     }
     });
   }
