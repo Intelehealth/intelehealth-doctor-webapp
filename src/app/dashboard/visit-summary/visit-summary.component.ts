@@ -27,7 +27,7 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
-import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 class PickDateAdapter extends NativeDateAdapter {
@@ -136,6 +136,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
+  patientVisitSummary: PatientVisitSummaryConfigModel;
 
   hasChatEnabled: boolean = false;
   hasVideoEnabled: boolean = false;
@@ -178,6 +179,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.vitals = [...this.appConfigService.patient_vitals];
     this.specializations = [...this.appConfigService.specialization];
+    this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
     this.referSpecialityForm = new FormGroup({
@@ -347,7 +349,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
             }
-            this.getAdditionalNote(visit.attributes);
+            if (this.patientVisitSummary.notes_section) {
+              this.getAdditionalNote(visit.attributes);
+            }
             this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -355,7 +359,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getPhysicalExamination(visit.encounters);
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
-            this.getVisitAdditionalDocs(visit);
+            if (this.patientVisitSummary.attachment_section) {
+              this.getVisitAdditionalDocs(visit);
+            }
           }
           this.checkOpenChatBoxFlag();
         });
