@@ -19,6 +19,8 @@ export class PatientVitalsComponent implements OnInit {
   vitalsData : PatientVitalModel[];
   bmiEnabled : boolean = false;
   whrEnabled : boolean = false; 
+  sectionEnabled : boolean;
+  sectionData: {id:number, is_enabled:boolean};
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -39,6 +41,8 @@ export class PatientVitalsComponent implements OnInit {
   getPatientVitals(): void {
     this.configService.getPatientVitals().subscribe((res: any)=>{
       this.vitalsData = res.patient_vitals;
+      this.sectionData = res?.patient_vitals_section;
+      this.sectionEnabled = this.sectionData?.is_enabled;
       this.bmiEnabled = this.vitalsData.find((e:PatientVitalModel) => e.name == 'BMI')?.is_enabled;
       this.whrEnabled = this.vitalsData.find((e:PatientVitalModel) => e.name == 'Waist to Hip Ratio (WHR)')?.is_enabled;
       this.dataSource = new MatTableDataSource(this.vitalsData);
@@ -83,6 +87,19 @@ export class PatientVitalsComponent implements OnInit {
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
       this.toastr.success("Patient vitals changes published successfully!", "Changes published!");
+    });
+  }
+
+  /**
+  * Update Webrtc status.
+  * @return {void}
+  */
+  updateFeatureStatus(id: number, status: boolean): void {
+    this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
+      this.toastr.success("Patient Vitals has been successfully updated", "Update successful!");
+      this.getPatientVitals();
+    }, err => {
+      this.getPatientVitals();
     });
   }
 }
