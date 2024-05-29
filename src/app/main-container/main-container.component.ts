@@ -22,7 +22,7 @@ import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-tic
 import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
-import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
+import { ApiResponseModel, BreadcrumbModel, PatientModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
 
 @Component({
@@ -60,6 +60,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   profilePicSubscription;
   logoImageURL: string = '';
   thumbnailLogoURL: string = '';
+  pvs: PatientVisitSummaryConfigModel;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -82,6 +83,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
     this.routeUrl = this.breadcrumbs[0]?.url;
+    this.pvs = { ...this.appConfigService.patient_visit_summary };
   }
 
   ngOnInit(): void {
