@@ -23,12 +23,14 @@
             <span>{{'Messages' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemAppointments">
-          <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAppointments">
-            <img src="assets/svgs/menu-video.svg" alt="">
-            <span>{{'Appointment' | translate}}</span>
-          </a>
-        </li>
+        <ng-container *ngIf="pvs.appointment_button">
+          <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemAppointments">
+            <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAppointments">
+              <img src="assets/svgs/menu-video.svg" alt="">
+              <span>{{'Appointment' | translate}}</span>
+            </a>
+          </li>
+        </ng-container>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemCalendar">
           <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active" data-test-id="linkCalendar">
             <img src="assets/svgs/menu-calendar.svg" alt="">

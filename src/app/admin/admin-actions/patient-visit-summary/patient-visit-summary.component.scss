@@ -119,6 +119,11 @@ th:last-child {
         flex-direction: column !important;
         align-items: end !important;
     }
+
+    .red-pill {
+        margin-top: .5rem !important;
+        font-size: small;
+    }
 }
 
 .tooltip-box {
@@ -131,11 +136,6 @@ th:last-child {
         bottom: 0;
         left: 0;
         right: 0;
-    }
-
-    .red-pill {
-        margin-top: .5rem !important;
-        font-size: small;
     }
 }
 

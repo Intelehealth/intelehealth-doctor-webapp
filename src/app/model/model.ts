@@ -222,7 +222,7 @@ export interface AppointmentModel {
   slotDuration: any,
   slotDurationUnit: string,
   slotJsDate: string,
-  slotTime: string|SlotModel,
+  slotTime: string | SlotModel,
   speciality: string,
   status: string,
   type: string,
@@ -410,7 +410,7 @@ export interface ObsModel {
       uuid?: string
     }
   }
-  comment?:string
+  comment?: string
 }
 
 export interface ScheduleModel {
@@ -617,7 +617,7 @@ export interface VitalModel {
   is_mandatory: boolean
 }
 
-export interface FeatureModel extends BaseModel {}
+export interface FeatureModel extends BaseModel { }
 export interface WebrtcModel extends BaseModel {
   key?: string
 }
@@ -630,10 +630,21 @@ export interface WebRTCConfigModel {
   chat: boolean;
   video_call: boolean;
 }
+
 export interface PatientVisitSummaryModel {
   id?: number,
   name: string,
   is_enabled: boolean,
   createdAt?: string,
   updatedAt?: string,
+}
+
+export interface PatientVisitSummaryConfigModel {
+  appointment_button: boolean
+  attachment_section: boolean
+  doctor_specialty_section: boolean
+  facility_to_visit_section: boolean
+  notes_section: boolean
+  priority_visit_section: boolean
+  severity_of_case_section: boolean
 }

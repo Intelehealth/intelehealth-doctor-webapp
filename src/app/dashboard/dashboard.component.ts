@@ -14,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, checkIfDateOldThanOneDay } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
+import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
 
 @Component({
@@ -74,6 +74,7 @@ export class DashboardComponent implements OnInit {
   pageSize4:number = 5;
 
   patientRegFields: string[] = [];
+  pvs: PatientVisitSummaryConfigModel;
 
   @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
   @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
@@ -96,7 +97,8 @@ export class DashboardComponent implements OnInit {
     private appConfigService: AppConfigService) { 
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
-      }); 
+      });
+      this.pvs = { ...this.appConfigService.patient_visit_summary }; 
       this.displayedColumns1 = this.displayedColumns1.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns2 = this.displayedColumns2.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns3 = this.displayedColumns3.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
@@ -113,9 +115,13 @@ export class DashboardComponent implements OnInit {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      this.getAppointments();
+      if (this.pvs.appointment_button) {
+        this.getAppointments();
+      }
       this.getAwaitingVisits(1);
-      this.getPriorityVisits(1);
+      if (this.pvs.priority_visit_section) {
+        this.getPriorityVisits(1);
+      }
       this.getInProgressVisits(1);
     }
 

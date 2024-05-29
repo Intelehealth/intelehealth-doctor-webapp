@@ -460,7 +460,7 @@
                 </ng-container>
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true" class="bg-gray" data-test-id="matExpAdditionalNotes">
+              <mat-expansion-panel [expanded]="true" class="bg-gray" data-test-id="matExpAdditionalNotes" *ngIf="patientVisitSummary.notes_section">
                 <mat-expansion-panel-header data-test-id="matExpHeaderAdditionalNotes">
                   <mat-panel-title>
                     <div class="intel-accordion-title">
@@ -482,7 +482,7 @@
                 </ul>
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true" data-test-id="matExpAdditionalDoc">
+              <mat-expansion-panel [expanded]="true" data-test-id="matExpAdditionalDoc" *ngIf="patientVisitSummary.attachment_section">
                 <mat-expansion-panel-header data-test-id="matExpHeaderAdditionalDoc">
                   <mat-panel-title>
                     <div class="intel-accordion-title">
