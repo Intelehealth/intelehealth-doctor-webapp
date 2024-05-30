@@ -71,7 +71,7 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="(managerRoleAccess || visitNotePresent || isSevikaVisit) && disabledBtn">
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess || visitNotePresent || isSevikaVisit || isNcdSevikaVisit">
       Start Visit Note
     </button>
   </div>
