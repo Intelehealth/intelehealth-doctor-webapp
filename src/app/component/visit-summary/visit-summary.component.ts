@@ -33,6 +33,7 @@ export class VisitSummaryComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   isSevikaVisit = false;
+  isNcdSevikaVisit = false;
   isSameProvider = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
@@ -93,7 +94,8 @@ export class VisitSummaryComponent implements OnInit {
     this.visitService.fetchVisitDetails(this.visitUuid).subscribe((visitDetails) => {
       this.visit = visitDetails;
       if (Array.isArray(visitDetails.attributes)) {
-        this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value === 'Specialist doctor not needed')
+        this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value === 'Specialist doctor not needed');
+        this.isNcdSevikaVisit = Boolean(visitDetails.attributes.find(atr => atr.display.includes('isNcdSevikaVisit'))?.value);
       }
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null) {
