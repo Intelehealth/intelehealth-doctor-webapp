@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { PatientVitalModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-patient-vitals',
@@ -30,8 +32,8 @@ export class PatientVitalsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.getPatientVitals();
   }
 
   /**
@@ -51,7 +53,7 @@ export class PatientVitalsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.getPatientVitals();
   }
 
   /**
