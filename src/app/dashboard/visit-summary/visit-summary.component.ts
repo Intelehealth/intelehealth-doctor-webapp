@@ -141,6 +141,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   hasChatEnabled: boolean = false;
   hasVideoEnabled: boolean = false;
   hasWebRTCEnabled: boolean = false;
+  hasVitalsEnabled: boolean = false;
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -245,6 +246,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.hasWebRTCEnabled = this.appConfigService?.webrtc_section;
     this.hasChatEnabled = this.appConfigService?.webrtc?.chat;
     this.hasVideoEnabled = this.appConfigService?.webrtc?.video_call;
+    this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     
   }
 

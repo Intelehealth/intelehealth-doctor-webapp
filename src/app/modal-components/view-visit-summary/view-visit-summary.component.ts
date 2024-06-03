@@ -40,6 +40,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
+  hasVitalsEnabled: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -53,6 +54,7 @@ export class ViewVisitSummaryComponent implements OnInit {
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
       this.vitals = [...this.appConfigService.patient_vitals];
+      this.hasVitalsEnabled = this.appConfigService.patient_vitals_section;
     }
 
   ngOnInit(): void {
@@ -643,6 +645,7 @@ export class ViewVisitSummaryComponent implements OnInit {
               [
                 {
                   colSpan: 4,
+                  sectionName: 'vitals',
                   table: {
                     widths: [30, '*'],
                     headerRows: 1,
@@ -801,6 +804,10 @@ export class ViewVisitSummaryComponent implements OnInit {
         font: 'DmSans'
       }
     };
+    pdfObj.content[0].table.body = pdfObj.content[0].table.body.filter((section:any)=>{
+      if(section[0].sectionName === 'vitals' && !this.hasVitalsEnabled) return false;
+      return true;
+    });
     pdfMake.createPdf(pdfObj).download('e-visit-summary');
   }
 

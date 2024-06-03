@@ -8,7 +8,7 @@
                         <h6 class="mb-0">{{'Patient Vitals' | translate}}</h6>
                         <div class="msg">
                             <span class="mr-3">{{'Enable/Disable Patient Vitals' | translate}}</span>
-                            <div class="pretty p-switch p-fill">
+                            <div class="pretty p-switch p-fill light-green light-red">
                                 <input type="checkbox" [(ngModel)]="sectionEnabled" (change)="updateFeatureStatus(sectionData?.id, $event.target.checked)"/>
                                 <div class="state">
                                     <label></label>
@@ -97,10 +97,8 @@
                             <tr mat-row [ngClass]="!sectionEnabled ? 'text-greyout' : ''" *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
                     </div>
-                    <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-                        aria-label="Select page of periodic elements"></mat-paginator>
-                    <button type="button" class="btn-block mt-3" (click)="onPublish()"
-                        data-test-id="btnAddMindmap">{{'Publish' | translate}}</button>
+                    <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"></mat-paginator>
+                    <button type="button" class="btn-block mt-3" (click)="onPublish()">{{'Publish' | translate}}</button>
                 </div>
             </div>
         </div>

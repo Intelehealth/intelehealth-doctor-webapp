@@ -19,6 +19,7 @@ export class AppConfigService {
   public webrtc_section: boolean;
   public webrtc: WebRTCConfigModel;
   public patient_visit_summary: PatientVisitSummaryConfigModel;
+  public patient_vitals_section: boolean;
 
   constructor(private http: HttpClient) { }
 

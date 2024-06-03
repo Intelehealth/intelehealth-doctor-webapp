@@ -236,7 +236,7 @@
                 </ul>
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true" class="bg-gray" data-test-id="matExpVitals">
+              <mat-expansion-panel [expanded]="true" class="bg-gray" data-test-id="matExpVitals" *ngIf="hasVitalsEnabled">
                 <mat-expansion-panel-header data-test-id="matExpHeaderVitals">
                   <mat-panel-title>
                     <div class="intel-accordion-title">
