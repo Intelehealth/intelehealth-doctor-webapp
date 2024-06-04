@@ -828,10 +828,8 @@ th.mat-header-cell:last-child {
     top: 30px !important;
   }
 
-  .telephone-number{
-    position: relative !important;
-    right: 0px !important;
-    left: 0px !important;
+  .contact-info{
+    display: unset !important;
   }
 }
 
@@ -874,7 +872,8 @@ th.mat-header-cell:last-child {
   flex-wrap: wrap;
 }
 
-.telephone-number{
-  position: absolute;
-  right: 80px;
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
