@@ -62,7 +62,7 @@
               </div>
               <div class="patient-info-item" *ngIf="checkPatientRegField('Village/Town/City') || checkPatientRegField('Corresponding Address 1') || checkPatientRegField('Corresponding Address 2')">
                 <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
-                <p data-test-id="etPatient">{{ checkPatientRegField('Village/Town/City') ? patient?.person.preferredAddress.cityVillage.replace(':',' : ') : ''}}</p>
+                <p data-test-id="etPatient">{{ checkPatientRegField('Village/Town/City') ? patient?.person?.preferredAddress?.cityVillage?.replace(':',' : ') : ''}}</p>
                 <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1  && checkPatientRegField('Corresponding Address 1') ?? ''}} {{ patient?.person?.preferredAddress?.address2 && checkPatientRegField('Corresponding Address 2')? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
               </div>
             </div>
