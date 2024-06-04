@@ -568,6 +568,7 @@ export interface MobileAppLanguageModel {
   id: number,
   isActive: boolean,
   name: string,
+  en_name: string,
   updatedAt: string
   isDefault: boolean
 }
