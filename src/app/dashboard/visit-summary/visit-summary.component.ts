@@ -143,6 +143,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   hasWebRTCEnabled: boolean = false;
   hasVitalsEnabled: boolean = false;
 
+  collapsed: boolean = true;
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -1772,4 +1774,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   checkPatientRegField(fieldName): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
+
+  collapsedButton() {
+    this.collapsed = !this.collapsed
+  }
+
+  getUrl(): string {
+    return `assets/svgs/Vector${this.collapsed ? '-top' : '-bottom'}.svg`;
+  }
+
 }
