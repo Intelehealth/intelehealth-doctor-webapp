@@ -5,12 +5,15 @@ import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
-import { VcComponent } from "../vc/vc.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { DatePipe } from '@angular/common';
+import { VideoCallComponent } from "../../modal-components/video-call/video-call.component";
+import { CoreService } from "src/app/services/core.service";
+import { SocketService } from "src/app/services/socket.service";
+import { ToastrService } from "ngx-toastr";
+import { ChatComponent } from "../chat/chat.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -29,6 +32,7 @@ export class VisitSummaryComponent implements OnInit {
   visitCompletePresent = false;
   isVisitSummaryChanged: boolean = false
   isVisitEnded:boolean = false;
+  openChat:boolean = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -39,6 +43,12 @@ export class VisitSummaryComponent implements OnInit {
     : "../../../assets/svgs/video-w.svg";
   isManagerRole: boolean = false;
   onSubmit = false;
+  visit: any = null;
+  dialogRef1: MatDialogRef<ChatComponent>;
+  dialogRef2: MatDialogRef<VideoCallComponent>;
+  isCalling: boolean = false;
+  isSameProvider: boolean = false;
+  chatBoxRef: any;
 
   constructor(
     private service: EncounterService,
@@ -48,9 +58,11 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private pushNotificationService: PushNotificationsService,
-    private dialog: MatDialog,
     private dialogService: ConfirmDialogService,
     private diagnosisService: DiagnosisService,
+    private cs: CoreService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -70,6 +82,7 @@ export class VisitSummaryComponent implements OnInit {
       .subscribe((visitDetails) => {
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
+            this.setSameProvider(visit)
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;
             this.show = true;
@@ -97,6 +110,8 @@ export class VisitSummaryComponent implements OnInit {
             this.isVisitEnded = true;
           }
         });
+        this.visit = visitDetails;
+        this.checkOpenChatBoxFlag();
       });
   }
 
@@ -107,12 +122,14 @@ export class VisitSummaryComponent implements OnInit {
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
     const attributes = providerDetails.attributes;
+    this.visitNotePresent = true;
     if (userDetails && providerDetails) {
       this.setSpiner = true;
       this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
         let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
         if (visitNote) {
           this.setSpiner = false;
+          this.visitNotePresent = true;
           this.snackbar.open("Another doctor is viewing this case", null, {
             duration: 4000,
           });
@@ -227,15 +244,69 @@ export class VisitSummaryComponent implements OnInit {
     const dialogRef = this.dialogService.openConfirmDialog("Confirm the strong 3G internet connection to make this call")
       .afterClosed().subscribe(res => {
         if (res) {
-          this.dialog.open(VcComponent, {
-            id: 'video-call',
-            disableClose: true,
-            data: {
-              patientUuid: this.patientUuid,
-            },
+          const userDetails = getFromStorage('user');
+          // const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getFromStorage('patientVisitProvider')?.provider?.uuid);
+          // if (!hw) {
+          //   this.toastr.error("Please try again later.", "Health Worker is offline.");
+          //   return;
+          // }
+          this.cs.openVideoCallModal({
+            patientId: this.patientUuid,
+            visitId: this.visitUuid,
+            connectToDrId: userDetails?.uuid,
+            patientName: this.visit?.patient?.person?.display,
+            patientPersonUuid: this.visit?.patient?.person?.uuid,
+            patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+            initiator: 'dr',
+            drPersonUuid: this.doctorDetails?.person.uuid,
+            patientAge: this.visit?.patient?.person?.age,
+            patientGender: this.visit?.patient?.person?.gender
           });
         }
       });
+  }
+
+  /**
+  * Start chat with HW/patient
+  * @return {void}
+  */
+  startChat() {
+    if (this.dialogRef1) {
+      this.dialogRef1.close();
+      this.isCalling = false;
+      return;
+    }      
+    this.isCalling = true;
+    this.dialogRef1 = this.cs.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.person?.uuid,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
+    });
+
+    this.dialogRef1.afterClosed().subscribe((res) => {
+      this.dialogRef1 = undefined;
+      this.isCalling = false;
+    });
+  }
+
+
+  /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
+  getPatientIdentifier(identifierType: string): string {
+    let identifier: string = '';
+    if (this.visitService.patient) {
+      this.visitService.patient.identifiers.forEach((idf: any) => {
+        if (idf.identifierType.display === identifierType) {
+          identifier = idf.identifier;
+        }
+      });
+    }
+    return identifier;
   }
 
   private checkProviderRole() {
@@ -296,6 +367,7 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
       } else {
+        this.visitNotePresent = false;
         this.snackbar.open(`Visit Note Not Created`, null, {
           duration: 4000,
         });
@@ -322,5 +394,28 @@ export class VisitSummaryComponent implements OnInit {
           this.isVisitSummaryChanged = true;
         }
       });
+  }
+
+  setSameProvider(visit: any) {
+    let localProvider = getFromStorage("provider");
+    if (localProvider !== null && localProvider.uuid && visit?.encounterProviders?.length > 0) {
+        const encounterProvider = visit.encounterProviders[0];
+        const provider = encounterProvider.provider;
+        if (provider) {
+          this.isSameProvider = localProvider.uuid === provider.uuid
+        }
+    }
+  }
+
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      this.startChat();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.dialogRef1) this.dialogRef1.close();
+    if (this.chatBoxRef) this.chatBoxRef.close();
   }
 }

@@ -1,151 +1,169 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { ChatService } from "src/app/services/chat.service";
-import { SocketService } from "src/app/services/socket.service";
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
+import { ChatService } from 'src/app/services/chat.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
+import { environment } from 'src/environments/environment';
+declare var getFromStorage: any;
 
-declare const getFromStorage, navigator: any;
 @Component({
-  selector: "app-chat",
-  templateUrl: "./chat.component.html",
-  styleUrls: ["./chat.component.css"],
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  @ViewChild("chatInput") chatInput: ElementRef;
-  @ViewChild("chatBox") chatBox: ElementRef;
 
-  classFlag = false;
-  chats = [];
-  isUser;
-  user_messages;
-  message;
-  patientId = null;
-  visitId = null;
-  loading = true;
-  isOnline = navigator.onLine;
+  message: string;
+  messageList: any = [];
+  hwName: any;
+  isAttachment = false;
+  baseUrl: string = environment.baseURL;
+  defaultImage = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage = 'assets/images/pdf-icon.png';
+  sending = false;
+  MESSAGE_LIMIT = 1000;
 
   constructor(
-    private chatService: ChatService,
-    private route: ActivatedRoute,
-    private socket: SocketService
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<ChatComponent>,
+    private chatSvc: ChatService,
+    private socketSvc: SocketService,
+    private webrtcSvc: WebrtcService,
+    private toastr: ToastrService
+  ) { }
 
-  @HostListener("window:online", ["$event"])
-  online() {
-    console.log("online");
-    this.isOnline = true;
-  }
-  @HostListener("window:offline", ["$event"])
-  offline() {
-    console.log("offline");
-    this.isOnline = false;
-  }
-
-  ngOnInit(): void {
-    this.patientId = this.route.snapshot.paramMap.get("patient_id");
-    this.visitId = this.route.snapshot.paramMap.get("visit_id");
-    localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
-    this.initSocket();
-    this.chatService.popUpCloseEmitter.subscribe((data: any) => {
-      if (data && data.type === "videoCall") this.initSocket();
+  async ngOnInit() {
+    const patientVisitProvider = getFromStorage("patientVisitProvider");
+    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
+    this.hwName = patientVisitProvider?.display?.split(":")?.[0];
+    if (this.data.patientId && this.data.visitId) {
+      this.getMessagesAndCheckRead();
+    }
+    this.socketSvc.initSocket(true);
+    this.socketSvc.updateMessage = true;
+    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+      if (this.socketSvc.updateMessage) {
+        this.readMessages(data.id);
+      }
     });
-  }
-
-  initSocket(force = true) {
-    this.updateMessages();
-    this.socket.initSocket(force);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.updateMessages();
-      this.playNotify();
+    this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
+      this.getMessages();
     });
-  }
 
-  get chatElem() {
-    return this.chatInput.nativeElement;
-  }
-
-  get patientVisitProvider() {
-    return getFromStorage("patientVisitProvider");
+    this.socketSvc.onEvent("isread").subscribe((data) => {
+      this.getMessages();
+    });
   }
 
   get toUser() {
-    return this.patientVisitProvider.provider.uuid;
+    const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
+    return this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
   }
 
-  sendMessage(event) {
-    if (this.toUser && this.patientId && this.chatElem.value) {
-      this.loading = true;
-      this.chatService
-        .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
-          visitId: this.visitId,
-          patientName: localStorage.patientName,
-        })
+  ngOnDestroy() {
+    this.dialogRef.close();
+    this.socketSvc.updateMessage = false;
+  }
+
+  getMessagesAndCheckRead(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
+    this.chatSvc
+      .getPatientMessages(toUser, patientId, fromUser, visitId)
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+          const msg = this.messageList[0];
+          if (msg && !msg?.isRead && msg?.fromUser !== this.fromUser) {
+            this.readMessages(this.messageList[0].id);
+          }
+        },
+      });
+  }
+
+  getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
+    this.chatSvc
+      .getPatientMessages(toUser, patientId, fromUser, visitId)
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+        },
+      });
+  }
+
+  async sendMessage() {
+    // await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
+
+    if (this.message) {
+      if (this.msgCharCount > this.MESSAGE_LIMIT) {
+        this.toastr.error("Please try again later.", "Message length should not exceed 1000.");
+        return
+      }
+
+      const payload = {
+        visitId: this.data.visitId,
+        patientName: this.data.patientName,
+        hwName: this.hwName,
+        type: this.isAttachment ? 'attachment' : 'text',
+        openMrsId: this.data.patientOpenMrsId
+      };
+      this.sending = true;
+      this.chatSvc
+        .sendMessage(this.toUser, this.data.patientId, this.message, payload)
         .subscribe({
           next: (res) => {
-            this.updateMessages();
+            this.isAttachment = false;
+            this.getMessages();
+            setTimeout(() => { this.sending = false; }, 500);
           },
           error: () => {
-            this.loading = false;
+            this.isAttachment = false;
           },
           complete: () => {
-            this.loading = false;
-          },
+            this.isAttachment = false;
+          }
         });
+      this.message = "";
     }
-    this.chatElem.value = "";
   }
 
-  updateMessages() {
-    this.chatService.getPatientMessages(this.toUser, this.patientId).subscribe({
-      next: (res: { data }) => {
-        this.chats = res.data;
-        this.loading = false;
-        this.scroll();
-      },
-      error: (err) => {
-        console.log("err:>>>> ", err);
-        this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
+  readMessages(messageId) {
+    this.chatSvc.readMessageById(messageId).subscribe({
+      next: (res) => {
+        this.getMessages();
       },
     });
   }
 
-  onPressEnter(e) {
-    if (e?.target?.value && e?.key === "Enter") {
-      this.sendMessage(e);
-    }
+  get fromUser() {
+    return JSON.parse(localStorage.user).uuid;
   }
 
-  chatLaunch() {
-    this.classFlag = true;
-    this.initSocket();
-  }
-  chatClose() {
-    this.classFlag = false;
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
   }
 
-  scroll() {
-    setTimeout(() => {
-      this.chatBox.nativeElement.scroll(0, 99999999);
-    }, 500);
+  isPdf(url) {
+    return url.includes('.pdf');
   }
 
-  get userUuid() {
-    return this.chatService.user.uuid;
+  uploadFile(files) {
+    // this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
+    //   next: (res: any) => {
+    //     this.isAttachment = true;
+
+    //     this.message = res.data;
+    //     this.sendMessage();
+    //   }
+    // });
   }
 
-  get userName() {
-    return this.chatService.user.display;
+  setImage(src) {
+    // this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
-  playNotify() {
-    new Audio("assets/notification.mp3").play();
+
+  get msgCharCount() {
+    return this.message?.length || 0
   }
+
 }

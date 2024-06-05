@@ -313,7 +313,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
           if (res) {
             const payload = {
               "id": schedule.appointmentId,
-              "visitUuid": schedule.visitUuid
+              "visitUuid": schedule.visitUuid,
+              hwUUID: this.userId
             };
             this.appointmentService
               .cancelAppointment(payload)
