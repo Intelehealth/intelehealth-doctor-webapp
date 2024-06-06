@@ -26,7 +26,7 @@
       <div class="intel-card">
         <div class="card-body">
           <div class="row patient-info-wrapper" *ngIf="patient">
-            <div class="col-md-4 patient-info-section p-3">
+            <div class="col-md-3 patient-info-section p-3">
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
@@ -65,6 +65,12 @@
                 <p data-test-id="etPatient">{{ checkPatientRegField('Village/Town/City') ? patient?.person.preferredAddress.cityVillage.replace(':',' : ') : ''}}</p>
                 <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1  && checkPatientRegField('Corresponding Address 1') ?? ''}} {{ patient?.person?.preferredAddress?.address2 && checkPatientRegField('Corresponding Address 2')? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
               </div> -->
+            </div>
+            <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+              <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Date of Birth')">
+                <h6 data-test-id="etPatientAge">{{'Date of Birth'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
+              </div>
             </div>
             <!-- <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Occupation')">
@@ -105,6 +111,48 @@
                 </div>
               </div>
             </div>
+
+            <!-- <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+              <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Date of Birth')">
+                <h6 data-test-id="etPatientAge">{{'Date of Birth'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Guardian Type') && getPersonAttributeValue('Caste') !== 'NA'">
+              <div class="patient-info-item mb-3">
+                <h6 data-test-id="etPatient">{{'Guardian Type' | translate}}</h6>
+                <p data-test-id="etPatient">{{ 'Father' }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Guardian Name')">
+              <div class="patient-info-item mb-3">
+                <h6 data-test-id="etPatient">{{'Guardian Name' | translate}}</h6>
+                <p data-test-id="etPatient">{{ 'kumar' }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Emergency Contact Name')">
+              <div class="patient-info-item mb-3">
+                <h6 data-test-id="etPatient">{{'Emergency Contact Name' | translate}}</h6>
+                <p data-test-id="etPatient">{{ getPersonAttributeValue('Telephone Number') }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Emergency Contact Number')">
+              <div class="patient-info-item mb-3">
+                <h6 data-test-id="etPatient">{{'Emergency Contact Number' | translate}}</h6>
+                <p data-test-id="etPatient">{{ getPersonAttributeValue('Telephone Number') }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Contact Type')">
+              <div class="patient-info-item mb-3">
+                <h6 data-test-id="etPatient">{{'Contact Type' | translate}}</h6>
+                <p data-test-id="etPatient">{{ 'Indian' }}</p>
+              </div>
+            </div> -->
           </div>
 
           <button (click)="collapsedButton()" class="btn">
@@ -155,6 +203,13 @@
                     <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country }}</p>
                   </div>
                 </div>
+
+                <!-- <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Postal Code')">
+                  <div class="patient-info-item mb-3">
+                    <h6 data-test-id="etPatient">{{'Postal Code' | translate}}</h6>
+                    <p data-test-id="etPatient">{{ '201203' }}</p>
+                  </div>
+                </div> -->
               </div>
             </mat-tab>
 
@@ -185,6 +240,13 @@
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'Economic Category' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Economic Status') }}</p>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Social Category') && getPersonAttributeValue('Caste') !== 'NA'">
+                  <div class="patient-info-item mb-3">
+                    <h6 data-test-id="etPatient">{{'Social Category' | translate}}</h6>
+                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Caste') }}</p>
                   </div>
                 </div>
               </div>
