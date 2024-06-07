@@ -1,5 +1,6 @@
 import { EventEmitter } from "@angular/core";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
+import {} from 'jasmine';
 import { of } from "rxjs";
 
 const translateService = jasmine.createSpyObj<TranslateService>('translateService', ['use','instant', 'get']);
