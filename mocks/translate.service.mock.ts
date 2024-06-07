@@ -1,3 +1,5 @@
+/// <reference types="jasmine" />
+
 import { EventEmitter } from "@angular/core";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { of } from "rxjs";

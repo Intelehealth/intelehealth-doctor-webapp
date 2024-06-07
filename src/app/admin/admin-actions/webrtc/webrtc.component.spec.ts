@@ -2,18 +2,18 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WebrtcComponent } from './webrtc.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ConfigService } from 'src/app/services/config.service';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ToastrModule } from 'ngx-toastr';
 import { HttpLoaderFactory } from '../../admin.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { mockTranslateService } from 'src/mocks/translate.service';
-import { mockPageTitleService } from 'src/mocks/page.service';
 import { MatTableModule } from '@angular/material/table';
 import { By } from '@angular/platform-browser';
+import { ConfigService } from 'src/app/services/config.service';
+import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { mockTranslateService } from 'mocks/translate.service.mock';
+import { mockPageTitleService } from 'mocks/page.service.mock';
 
 const mockResponse = {
   webrtc: {
