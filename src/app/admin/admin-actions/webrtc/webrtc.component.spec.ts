@@ -11,9 +11,9 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { By } from '@angular/platform-browser';
 import { ConfigService } from 'src/app/services/config.service';
-import { mockTranslateService } from 'src/mocks/translate.service.mock';
-import { mockPageTitleService } from 'src/mocks/page.service.mock';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { mockTranslateService } from 'mocks/translate.service.mock';
+import { mockPageTitleService } from 'mocks/page.service.mock';
 
 const mockResponse = {
   webrtc: {
