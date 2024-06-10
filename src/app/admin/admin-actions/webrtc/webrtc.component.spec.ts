@@ -10,47 +10,26 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { By } from '@angular/platform-browser';
-import { ConfigService } from 'src/app/services/config.service';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
-import { mockTranslateService } from 'mocks/translate.service.mock';
-import { mockPageTitleService } from 'mocks/page.service.mock';
-
-const mockResponse = {
-  webrtc: {
-    webrtc_section: {
-      id: 1,
-      name: 'webrtc_section',
-      is_enabled: true
-    },
-    webrtc: [{
-      id: 1,
-      is_enabled: true,
-      name: 'Chat',
-      key: 'chat'
-    }, {
-      id: 2,
-      is_enabled: true,
-      name: 'Video Call',
-      key: 'video_call'
-    }]
-  }
-}
-const configService = jasmine.createSpyObj<ConfigService>('configService', ['getWebrtcs', 'updateWebrtcEnabledStatus'])
-const mockConfigService = {
-  'getWebrtcs': configService.getWebrtcs.and.returnValue(of(mockResponse)),
-  'updateWebrtcEnabledStatus': configService.updateWebrtcEnabledStatus.withArgs(1, false).and.returnValue(of(mockResponse))
-}
+import { mockTranslateService } from 'mocks/services/translate.service.mock';
+import { mockPageTitleService } from 'mocks/services/page.service.mock';
+import { configService as mockConfigService } from 'mocks/services/config.service.mock';
+import { ConfigService } from 'src/app/services/config.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { mockWebrtcResponse } from 'mocks/data/webrtc';
 
 describe('WebrtcComponent', () => {
   let component: WebrtcComponent;
   let fixture: ComponentFixture<WebrtcComponent>;
 
-  beforeEach(() => {
+  beforeEach(() => {    
     TestBed.configureTestingModule({
       declarations: [WebrtcComponent],
       imports: [
-        HttpClientModule,
+        HttpClientTestingModule,
         MatPaginatorModule,
+        BrowserAnimationsModule,
         MatTableModule,
         TranslateModule.forRoot({
           loader: {
@@ -84,27 +63,54 @@ describe('WebrtcComponent', () => {
 
   it('should call the getWebrtcs method', () => {
     expect(mockConfigService.getWebrtcs).toHaveBeenCalled();
-    expect(component.webrtcData).toEqual(mockResponse.webrtc)
+    expect(component.webrtcData).toEqual(mockWebrtcResponse.webrtc)
     expect(component.webrtcData?.webrtc_section?.is_enabled).toEqual(true)
   });
 
   it('should call the updateStatus method', () => {
-    spyOn(component, 'updateStatus');
-    const updateResponse = { ...mockResponse }
+    const updateResponse = { ...mockWebrtcResponse }
     updateResponse.webrtc.webrtc[0].is_enabled = false;
-    mockConfigService.getWebrtcs.and.returnValue(of(mockResponse))
+    
+    mockConfigService.getWebrtcs.and.returnValue(of(mockWebrtcResponse))
+    mockConfigService.updateWebrtcEnabledStatus.and.returnValue(of({}))
+    
     fixture.detectChanges();
+    
     const toggleCheckbox = fixture.debugElement.query(By.css('.card-body .pretty.p-switch input[type="checkbox"]'));
+   
     toggleCheckbox.triggerEventHandler('change', {
       "target": {
         'checked': false
       }
     })
-    fixture.detectChanges();
+    
     expect(toggleCheckbox).toBeDefined();
-    expect(component.updateStatus).toHaveBeenCalled();
-    // expect(mockConfigService.updateWebrtcEnabledStatus).toHaveBeenCalled();
+     
+    expect(mockConfigService.updateWebrtcEnabledStatus).toHaveBeenCalled();
     expect(component.webrtcData?.webrtc?.[0]?.is_enabled).toEqual(false)
-    expect(component.webrtcData).toEqual(mockResponse.webrtc)
+    expect(component.webrtcData).toEqual(mockWebrtcResponse.webrtc)
+  });
+
+  it('should call the updateFeatureStatus method', () => {
+    const updateResponse = { ...mockWebrtcResponse }
+    updateResponse.webrtc.webrtc_section.is_enabled = false;
+    
+    mockConfigService.getWebrtcs.and.returnValue(of(mockWebrtcResponse))
+    mockConfigService.updateFeatureEnabledStatus.and.returnValue(of({}))
+    
+    fixture.detectChanges();
+    
+    const toggleCheckbox = fixture.debugElement.query(By.css('.pretty.p-switch input[type="checkbox"]'));
+    
+    toggleCheckbox.triggerEventHandler('change', {
+      "target": {
+        'checked': false
+      }
+    })
+    
+    expect(toggleCheckbox).toBeDefined();
+    
+    expect(mockConfigService.updateFeatureEnabledStatus).toHaveBeenCalled();
+    expect(component.webrtcData?.webrtc_section?.is_enabled).toEqual(false)
   });
 });
