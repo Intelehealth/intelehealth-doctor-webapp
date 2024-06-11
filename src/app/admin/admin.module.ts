@@ -42,6 +42,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
 import { WebrtcComponent } from './admin-actions/webrtc/webrtc.component';
 import { PatientVisitSummaryComponent } from './admin-actions/patient-visit-summary/patient-visit-summary.component';
+import { AbhaComponent } from './admin-actions/abha/abha.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -98,6 +99,10 @@ const routes: Routes = [
             component: PatientVisitSummaryComponent
           },
           {
+            path: 'abha',
+            component: AbhaComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -126,7 +131,8 @@ const routes: Routes = [
     ReportListComponent,
     PatientVitalsComponent,
     WebrtcComponent,
-    PatientVisitSummaryComponent
+    PatientVisitSummaryComponent,
+    AbhaComponent
   ],
   imports: [
     CommonModule,
