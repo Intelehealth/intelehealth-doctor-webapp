@@ -1,78 +1,40 @@
-# IntelehealthUi
+# Mysql-5.7.29
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.2.
+#Remove previous versions:
 
-## Getting Started
+sudo apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-*
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+sudo rm -rf /etc/mysql /var/lib/mysql
 
-### Prerequisites
-Node.js
-   ```
-   https://nodejs.org/en/
-   ```
-   
-    
-### Installing
-A step by step series of examples that tell you how to get a development environment running
-1. Clone or download this repository
-2. Install all the dependencies.
-```
-"npm install"
-```    
-3. Start the server
-```
-"ng serve"
-```
+sudo apt-get autoremove
 
-4. Open in browser
-```
- "localhost:4200"
-```
+sudo apt-get autoclean
 
-## Built With
 
-* [Angular](https://angular.io/) - Angular Framework
-* [Angular Material](https://material.angular.io/) - Designing
-* [BootStrap](https://getbootstrap.com/) - Table, Cards and other UI design
+# Download
 
-## Commeting Message (Examples)
-1.Commit message with description and change in body
-```
-fix: allow provided config object to extend other configs
-```
-2.Commit message with scope
-```
-feat(lang): add language data
-```
-3.Commit message with optional ! to draw attention to breaking change
-```
-revert!: drop Node 8 from testing matrix
-```
+git clone https://github.com/Fahad4654/Mysql-5.7.29.git
 
-## .env (Create .env in the root folder and use below environment keys)
 
-```
-PRODUCTION=false
-BASE=XXXXX
-BASE_URL=XXXXX
-BASE_URL_CORD_APP=XXXXX
-BASE_URL_LEGACY=XXXXX
-MIND_MAP_URL=XXXXX
-NOTIFICATION_URL=XXXXX
-SOCKET_URL=XXXXX
-CAPTCHA_SITE_KEY=XXXXX
-WEB_RTC_SDK_SERVER_URL=XXXXX
-WEB_RTC_TOKEN_SERVER_URL=XXXXX
-SITE_KEY=XXXXX
-EXTERNAL_PRESCRIPTION_CRED=XXXXX
-VAPID_PUBLIC_KEY=XXXXX
-AUTH_GATE_WAY_URL=XXXXX
-FIREBASE_API_KEY=XXXXX
-FIREBASE_AUTH_DOMAIN=XXXXX
-FIREBASE_PROJECT_ID=XXXXX
-FIREBASE_STORAGE_BUCKET=XXXXX
-FIREBASE_MESSAGING_SENDER_ID=XXXXX
-FIREBASE_APP_ID=XXXXX
-SHOW_CAPTCHA=true/false
-```
+# Install (the order of these commands matters!)
+
+sudo apt install libaio1 libmecab2 python3 libjson-perl
+
+sudo dpkg -i mysql-common_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i libmysqlclient20_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i libmysqlclient-dev_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i libmysqld-dev_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i mysql-community-source_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i mysql-community-client_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i mysql-client_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i mysql-community-server_5.7.29-1ubuntu18.04_amd64.deb
+
+sudo dpkg -i mysql-server_5.7.29-1ubuntu18.04_amd64.deb
+
