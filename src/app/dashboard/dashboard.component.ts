@@ -52,6 +52,11 @@ export class DashboardComponent implements OnInit {
   @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
   @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
 
+  @ViewChild('appointmentPanel', { read: ElementRef }) appointmentPanel: ElementRef;
+  @ViewChild('priorityPanel', { read: ElementRef }) priorityPanel: ElementRef;
+  @ViewChild('awaitingPanel', { read: ElementRef }) awaitingPanel: ElementRef;
+  @ViewChild('inProgressPanel', { read: ElementRef }) inProgressPanel: ElementRef;
+
   offset: number = environment.recordsPerPage;
   awatingRecordsFetched: number = 0;
   pageEvent1: PageEvent;
@@ -548,4 +553,8 @@ export class DashboardComponent implements OnInit {
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
+  scrollToPanel(panelId: string) {
+    const panel = this[panelId].nativeElement;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
 }
