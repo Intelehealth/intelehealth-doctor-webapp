@@ -46,6 +46,10 @@ export class ReportListComponent {
       title: element.name,
       field1: 'Start date',
       field2: 'End date',
+      field3: 'State',
+      field4: 'District',
+      field5: 'Sanch',
+      field6: 'Village',
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };

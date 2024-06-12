@@ -33,7 +33,7 @@
       .input-field-group {
         display: flex;
         flex-direction: column;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
 
         label {
           font-size: 16px;
@@ -42,8 +42,8 @@
         }
 
         input {
-          padding: 14px 16px;
-          width: 100%;
+          //padding: 14px 16px;
+          width: 200px;
           height: 48px;
           background: #B2AFBE33;
           border: 1px solid rgba(178, 175, 190, 0.2);
@@ -56,6 +56,46 @@
           border: none;
           background: transparent;
           cursor: pointer;
+        }
+
+        .multiselect {
+          width: 200px;
+          border-radius: 8px;
+          background: rgba(178, 175, 190, 0.2);
+          border: 1px solid rgba(178, 175, 190, 0.2);
+          border-radius: 8px;
+          outline: none;
+        }
+
+
+        .multiselect-dropdown .dropdown-list {
+          position: fixed;
+          width: fit-content;
+        }
+
+        .multiselect-dropdown .dropdown-btn {
+          display: inline-block;
+          border: 0px solid #B0ADBE;
+          width: 100%;
+          padding: 6px 12px;
+          text-align: left;
+          vertical-align: middle;
+          cursor: pointer;
+          background-image: none;
+          color: #B0ADBE;
+        }
+        .multiselect-dropdown .dropdown-list li h5 {
+          font-size: 16px;
+        }
+        .create-report-modal .modal-body .report-form .input-field-group .multiselect-dropdown .dropdown-btn .selected-item-container .selected-item {
+          border: 1px solid #2E1E91;
+          margin-right: 4px;
+          margin-bottom: 4px;
+          background-color: #2E1E91;
+          padding: 0 5px;
+          color: #fff;
+          border-radius: 2px;
+          float: left;
         }
       }
 
