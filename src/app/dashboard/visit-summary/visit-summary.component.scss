@@ -85,6 +85,13 @@
         font-size: 16px;
         line-height: 150%;
       }
+
+      a {
+        color: #1B163A;
+        text-decoration: underline;
+        font-size: 18px;
+        cursor: default;
+      }
     }
 
   }
@@ -115,7 +122,7 @@
   .mat-tab-body-wrapper {
     .mat-tab-body {
       .mat-tab-body-content {
-        padding: 24px;
+        padding: 16px;
       }
     }
   }
@@ -158,8 +165,9 @@
 
   .mat-expansion-panel {
     background: #FFFFFF;
-    box-shadow: none !important;
+    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);;
     border-radius: 12px !important;
+    margin-bottom: 24px;
   }
 
   .mat-expansion-panel.bg-gray {
@@ -203,8 +211,8 @@
     // align-items: center;
 
     label {
-      width: 25%;
-      min-width: 25%;
+      width: 35%;
+      min-width: 35%;
       margin-bottom: 0px;
       padding: 5px 0px;
     }

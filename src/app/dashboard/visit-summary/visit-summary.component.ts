@@ -213,6 +213,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   referSpecialityForm: FormGroup;
   provider: any;
   showAll: boolean = true;
+  showConsutation: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
   addMoreNote: boolean = false;
@@ -1985,7 +1986,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.encounterService.updateObs({
               value: JSON.stringify(res),
               comment: res.data?.model
-            }, this.diagnosisSuggestionsObsUuid).subscribe(response => {});
+            }, this.diagnosisSuggestionsObsUuid).subscribe(response => {
+              this.toastr.success("Diagnosis suggestions from AI-Assistant Sanjaya has been updated successfully.", "Updated AI Diagnosis");
+            });
           } else {
             this.updateAIDiagnosis();
           }

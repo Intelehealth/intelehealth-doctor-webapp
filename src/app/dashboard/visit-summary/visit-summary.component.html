@@ -84,16 +84,88 @@
               </div>
             </div>
           </div>
+          <div class="row patient-info-wrapper">
+            <div class="col-md-12 patient-info-section p-3">
+              <div class="patient-info-item d-flex justify-content-between align-items-center">
+                <a href="jaavscript:void(0)">Consultation Details</a>
+                <div class="text-right">
+                  <button class="text-muted" *ngIf="!showConsutation" mat-button (click)="showConsutation = !showConsutation">
+                    <span>View more</span>
+                    <mat-icon>expand_more</mat-icon>
+                  </button>
+                  <button class="text-muted" *ngIf="showConsutation" mat-button (click)="showConsutation = !showConsutation">
+                    <span>View less</span>
+                    <mat-icon>expand_less</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row patient-info-wrapper" *ngIf="showConsutation">
+            <div class="col-md-3 patient-info-section border-0 p-3">
+              <div class="patient-info-item mb-3">
+                <h6>Visit ID</h6>
+                <p>{{
+                  visit?.uuid
+                  ? (replaceWithStar(visit?.uuid) | uppercase)
+                  : ""
+                  }}</p>
+              </div>
+              <div class="patient-info-item">
+                <h6>Visit Created</h6>
+                <p>{{ visit?.startDatetime | date : "dd MMM, yyyy" }}</p>
+              </div>
+            </div>
+            <div class="col-md-3 patient-info-section border-0 p-3">
+              <div class="patient-info-item mb-3">
+                <h6>Appointment on</h6>
+                <p>
+                  <span [class.text-muted]="!visitAppointment">{{
+                    visitAppointment
+                    ? (visitAppointment | date : "dd MMM, yyyy")
+                    : "No appointment"
+                    }}</span>
+                </p>
+              </div>
+              <div class="patient-info-item">
+                <h6>Location</h6>
+                <p>{{ clinicName | titlecase }}</p>
+              </div>
+            </div>
+            <div class="col-md-3 patient-info-section border-0 p-3">
+              <div class="patient-info-item">
+                <h6>Status</h6>
+                <p>
+                  <span [ngClass]="{
+                  'text-important-red':
+                    visitStatus == 'Priority Visit',
+                  'text-important-green':
+                    [
+                      'Awaiting Visit',
+                      'In-progress Visit',
+                      'Completed Visit',
+                      'Ended Visit'
+                    ].indexOf(visitStatus) != -1
+                  }">{{ visitStatus }}</span>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-3 patient-info-section border-0 p-3">
+              <div class="patient-info-item">
+                <h6>Provided by</h6>
+                <p><span><b>Nurse : {{ providerName }}</b></span></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="col-md-12 p-0 mb-5">
-      <div class="intel-card">
-        <mat-tab-group class="visit-summary-tab-group" mat-align-tabs="start" [disableRipple]="true"
+      <mat-tab-group class="visit-summary-tab-group" mat-align-tabs="start" [disableRipple]="true"
           (selectedIndexChange)="onTabChange($event)">
           <mat-tab label="Current visit summary">
-            <div class="text-right">
+            <!-- <div class="text-right">
               <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll = !showAll">
                 <span class="text-muted">Show all</span>
                 <mat-icon>expand_more</mat-icon>
@@ -102,593 +174,518 @@
                 <span class="text-muted">Hide all</span>
                 <mat-icon>expand_less</mat-icon>
               </button>
-            </div>
-            <mat-accordion class="intel-accordion-con" multi>
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/consultation-details.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Consultation details</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ul class="items-list">
-                  <li>
-                    <div class="list-item">
-                      <label>Visit ID</label>
-                      <div class="list-item-content">
-                        {{
-                        visit?.uuid
-                        ? (replaceWithStar(visit?.uuid) | uppercase)
-                        : ""
-                        }}
+            </div> -->
+            <div class="intel-card mb-4">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center cheif-complaint-wrapper p-0">
+                  <h6 class="mb-0">Chief Complaint</h6>
+                  <div class="d-flex align-items-center">
+                    <div class="complaint-chips">
+                      <div class="chip-item" *ngFor="let c of cheifComplaints">
+                        {{ c }}
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Visit created</label>
-                      <div class="list-item-content">
-                        {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Appointment on</label>
-                      <div class="list-item-content">
-                        <span [class.text-muted]="!visitAppointment">{{
-                          visitAppointment
-                          ? (visitAppointment | date : "dd MMM, yyyy")
-                          : "No appointment"
-                          }}</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Status</label>
-                      <div class="list-item-content">
-                        <span [ngClass]="{
-                            'text-important-red':
-                              visitStatus == 'Priority Visit',
-                            'text-important-green':
-                              [
-                                'Awaiting Visit',
-                                'In-progress Visit',
-                                'Completed Visit',
-                                'Ended Visit'
-                              ].indexOf(visitStatus) != -1
-                          }">{{ visitStatus }}</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Location</label>
-                      <div class="list-item-content">
-                        {{ clinicName | titlecase }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Provided by</label>
-                      <div class="list-item-content">
-                        <div class="visit-provider-con">
-                          <span><b>Nurse : {{ providerName }}</b></span>
-                          <!-- <div class="d-flex">
-                            <img class="mx-3" src="assets/svgs/dot.svg" />
-                            <a
-                              href="javascript:void(0)"
-                              class="icon-btn"
-                              (click)="startChat()"
-                            >
-                              <img src="assets/svgs/msg.svg" alt="" />
-                            </a>
-                            <a
-                              href="javascript:void(0)"
-                              class="icon-btn"
-                              (click)="startCall()"
-                            >
-                              <img src="assets/svgs/phone-circle.svg" alt="" />
-                            </a>
-                          </div>
-                          <span class="text-muted"
-                            >Click here to connent with CHW</span
-                          > -->
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/vitals.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Vitals</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ul class="items-list">
-                  <li>
-                    <div class="list-item">
-                      <label>Height (cm)</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)')">
-                        {{
-                        getObsValue("Height (cm)")
-                        ? getObsValue("Height (cm)")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Weight (kg)</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
-                        {{
-                        getObsValue("Weight (kg)")
-                        ? getObsValue("Weight (kg)")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>BMI</label>
-                      <div class="list-item-content" [class.text-muted]="
-                          !getObsValue('Height (cm)') ||
-                          !getObsValue('Weight (kg)')
-                        ">
-                        {{
-                        getObsValue("Height (cm)") &&
-                        getObsValue("Weight (kg)")
-                        ? (getObsValue("Weight (kg)") /
-                        ((getObsValue("Height (cm)") / 100) *
-                        (getObsValue("Height (cm)") / 100))
-                        | number : "1.2-2")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>BP</label>
-                      <div class="list-item-content" [class.text-muted]="
-                          !getObsValue('SYSTOLIC BLOOD PRESSURE')
-                        ">
-                        {{
-                        getObsValue("SYSTOLIC BLOOD PRESSURE")
-                        ? getObsValue("SYSTOLIC BLOOD PRESSURE") +
-                        " / " +
-                        getObsValue("DIASTOLIC BLOOD PRESSURE")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Pulse</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('Pulse')">
-                        {{
-                        getObsValue("Pulse")
-                        ? getObsValue("Pulse")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Temprature (F)</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('TEMPERATURE (C)')">
-                        {{
-                        getObsValue("TEMPERATURE (C)")
-                        ? ((getObsValue("TEMPERATURE (C)") * 9) / 5 + 32
-                        | number : "0.2-2")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>SpO2 (%)</label>
-                      <div class="list-item-content" [class.text-muted]="
-                          !getObsValue('BLOOD OXYGEN SATURATION')
-                        ">
-                        {{
-                        getObsValue("BLOOD OXYGEN SATURATION")
-                        ? getObsValue("BLOOD OXYGEN SATURATION")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>Respiratory Rate</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('Respiratory rate')">
-                        {{
-                        getObsValue("Respiratory rate")
-                        ? getObsValue("Respiratory rate")
-                        : "No information"
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/check-up-reason.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Check-up reason</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <div class="cheif-complaint-wrapper">
-                  <h6>Chief Complaint</h6>
-                  <div class="complaint-chips">
-                    <div class="chip-item" *ngFor="let c of cheifComplaints">
-                      {{ c }}
-                    </div>
-                  </div>
-                  <div class="check-up-reason-con">
-                    <ng-container *ngFor="let ckr of checkUpReasonData">
-                      <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title }}</h6>
-                        <ul class="items-list pt-0">
-                          <li *ngFor="let ckri of ckr.data">
-                            <div class="list-item">
-                              <label>{{ ckri.key }}</label>
-                              <div class="list-item-content" [class.text-muted]="!ckri.value">
-                                {{ ckri.value ? ckri.value : "" }}
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </ng-container>
-                      <ng-container *ngIf="ckr.title == 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title }}</h6>
-                        <ul class="items-list pt-0">
-                          <li *ngFor="let ckri of ckr.data">
-                            <div class="list-item-col">
-                              <label>{{ ckri.key }}</label>
-                              <div class="list-item-content" [class.text-muted]="!ckri.value">
-                                {{ ckri.value ? ckri.value : "" }}
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </ng-container>
-                    </ng-container>
                   </div>
                 </div>
-              </mat-expansion-panel>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
 
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/physical-examination.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Physical examination</h6>
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/check-up-reason.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">History of Presenting Illness</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <div class="cheif-complaint-wrapper">
+                      <div class="check-up-reason-con">
+                        <ng-container *ngFor="let ckr of checkUpReasonData">
+                          <ng-container *ngIf="ckr.title != 'Associated symptoms'">
+                            <h6 class="my-3">{{ ckr.title }}</h6>
+                            <ul class="items-list pt-0">
+                              <li *ngFor="let ckri of ckr.data">
+                                <div class="list-item">
+                                  <label>{{ ckri.key }}</label>
+                                  <div class="list-item-content" [class.text-muted]="!ckri.value">
+                                    {{ ckri.value ? ckri.value : "" }}
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </ng-container>
+                          <ng-container *ngIf="ckr.title == 'Associated symptoms'">
+                            <h6 class="my-3">{{ ckr.title }}</h6>
+                            <ul class="items-list pt-0">
+                              <li *ngFor="let ckri of ckr.data">
+                                <div class="list-item-col">
+                                  <label>{{ ckri.key }}</label>
+                                  <div class="list-item-content" [class.text-muted]="!ckri.value">
+                                    {{ ckri.value ? ckri.value : "" }}
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </ng-container>
+                        </ng-container>
+                      </div>
                     </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
+                  </mat-expansion-panel>
+                </mat-accordion>
 
-                <ng-container *ngFor="let pe of physicalExaminationData">
-                  <div class="cheif-complaint-wrapper">
-                    <ng-container *ngIf="pe.title != 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title }}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let pei of pe.data">
-                          <div class="list-item">
-                            <label>{{ pei.key }}</label>
-                            <div class="list-item-content" [class.text-muted]="!pei.value">
-                              {{ pei.value ? pei.value : "None" }}
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/medical-history.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Medical history</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <ng-container *ngFor="let ph of patientHistoryData">
+                      <div class="cheif-complaint-wrapper">
+                        <h6 class="my-3">{{ ph.title }}</h6>
+                        <ul class="items-list pt-0">
+                          <li *ngFor="let phi of ph.data">
+                            <div class="list-item">
+                              <label>{{ phi.key }}</label>
+                              <div class="list-item-content" [class.text-muted]="!phi.value">
+                                {{ phi.value ? phi.value : "None" }}
+                              </div>
                             </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </ng-container>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/patient-interaction-green.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Patient interaction</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <form [formGroup]="patientInteractionForm" (ngSubmit)="savePatientInteraction()">
+                      <ul class="items-list">
+                        <li>
+                          <div class="row">
+                            <label class="col-sm-3 col-form-label">Connect with patient</label>
+                            <div class="col-sm-9 d-flex align-items-center" *ngIf="
+                                              getPersonAttributeValue('Telephone Number') != 'NA';
+                                              else noContactDetails
+                                            ">
+                              <div class="d-flex">
+                                <a href="tel:{{
+                                                  getPersonAttributeValue('Telephone Number')
+                                                }}" target="_blank" class="icon-btn m-0 mr-2">
+                                  <img src="assets/svgs/phone-green.svg" alt="" />
+                                </a>
+                                <a href="{{ getWhatsAppLink() }}" target="_blank" class="icon-btn m-0 mr-2">
+                                  <img src="assets/svgs/whatsapp-green.svg" alt="" />
+                                </a>
+                              </div>
+                              <span class="text-muted">Click here to connect with the patient</span>
+                            </div>
+                            <ng-template #noContactDetails>
+                              <div class="col-sm-9 d-flex align-items-center">
+                                <span class="text-muted">Patient Mobile number is not available</span>
+                              </div>
+                            </ng-template>
                           </div>
                         </li>
-                        <li *ngIf="eyeImages.length">
-                          <div class="list-item">
-                            <label>Eye images</label>
-                            <div class="list-item-content">
-                              <div class="eye-images-con">
-                                <div class="eye-item" *ngFor="let e of eyeImages; let x = index">
-                                  <img [src]="e.src" alt="" />
-                                  <div class="cover" (click)="previewEyeImages(x)">
-                                    <img src="assets/svgs/maximize.svg" alt="" />
-                                  </div>
+                        <li>
+                          <div class="row">
+                            <label class="col-sm-3 col-form-label">Have you spoken with the patient directly?</label>
+                            <div class="col-sm-9 d-flex align-items-center">
+                              <div class="pretty p-default p-round">
+                                <input type="radio" [value]="'Yes'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
+                                <div class="state p-success">
+                                  <label>Yes</label>
+                                </div>
+                              </div>
+                              <div class="pretty p-default p-round">
+                                <input type="radio" [value]="'No'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
+                                <div class="state p-success">
+                                  <label>No</label>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </li>
                       </ul>
-                    </ng-container>
-                    <ng-container *ngIf="pe.title == 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title }}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let pei of pe.data">
-                          {{ pei.key }}
-                        </li>
-                      </ul>
-                    </ng-container>
-                  </div>
-                </ng-container>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/medical-history.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Medical history</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ng-container *ngFor="let ph of patientHistoryData">
-                  <div class="cheif-complaint-wrapper">
-                    <h6 class="my-3">{{ ph.title }}</h6>
-                    <ul class="items-list pt-0">
-                      <li *ngFor="let phi of ph.data">
-                        <div class="list-item">
-                          <label>{{ phi.key }}</label>
-                          <div class="list-item-content" [class.text-muted]="!phi.value">
-                            {{ phi.value ? phi.value : "None" }}
-                          </div>
+                    </form>
+                    <form [formGroup]="patientInteractionNotesForm" *ngIf="patientInteractionForm.value.spoken === 'Yes'" (ngSubmit)="updateAIDiagnosis()">
+                      <h3 class="mt-3 mb-0 font-weight-bold">Notes*</h3>
+                      <p>Please write detailed notes from your conversation with the patient for your AI-Assistant Sanjaya.
+                      </p>
+                      <p class="font-weight-bold">Notes about chief complaint</p>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter notes about cheif complaint" formControlName="chiefComplaintNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
+                        <div *ngIf="submittedPatientInteractionNotes && pifn.chiefComplaintNotes.errors">
+                          <small class="text-danger" *ngIf="pifn.chiefComplaintNotes.errors.required">Enter notes about cheif complaint</small>
                         </div>
-                      </li>
-                    </ul>
-                  </div>
-                </ng-container>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/additional-documents.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Additional documents</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ng-container *ngIf="additionalDocs.length; else noAdditionaDocs">
-                  <div class="additional-doc-container">
-                    <div class="doc-item" *ngFor="let d of additionalDocs; let x = index">
-                      <img [src]="d.src" alt="" />
-                      <div class="cover" (click)="previewDocImages(x)">
-                        <img src="assets/svgs/maximize.svg" alt="" />
                       </div>
-                    </div>
-                    <!-- <div class="doc-item">
-                      <div class="other-doc">
-                        <img src="assets/svgs/pdf-doc.svg" alt="">
-                        <span>Blood test report.pdf</span>
-                      </div>
-                    </div> -->
-                  </div>
-                </ng-container>
-
-                <ng-template #noAdditionaDocs>
-                  <div class="no-docs">No additional docs available!</div>
-                </ng-template>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/diagnosis-green.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Diagnosis</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <h3 class="mt-3 mb-0 font-weight-bold">Provisional Diagnosis*</h3>
-                <p>Please rely on your medical judgment while entering the diagnosis or selecting from the AI-Assistant
-                  Sanjaya's list of differential diagnoses.</p>
-                <form [formGroup]="aiDiagnosisForm">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter provisional diagnosis" formControlName="provisionalDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedAiDiagnosisForm && aidf.provisionalDiagnosis.errors">
-                      <small class="text-danger" *ngIf="aidf.provisionalDiagnosis.errors.required">Enter provisional diagnosis</small>
-                    </div>
-                  </div>
-                  <h3 class="mt-3 mb-0 font-weight-bold">Diagnosis suggestions from AI-Assistant Sanjaya</h3>
-                  <p>Listed according to their likelihood from highest to lowest.</p>
-                  <p class="font-weight-bold">Diagnosis</p>
-                  <div class="row">
-                    <div class="col-md-6 d-flex flex-column">
-                      <ng-container *ngFor="let s of diagnosisSuggestions; let i=index;">
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                          <p>{{s.rank}}. {{s.name}} <span (click)="viewDiagnosisDetail(s)" style="cursor: pointer;"><img src="assets/svgs/info-grey.svg" alt="info" width="16px"></span></p>
-                          <div class="pretty p-default p-round my-3">
-                            <input type="radio" [value]="s.name" formControlName="diagnosisSuggestions" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
-                            <div class="state p-success">
-                              <label></label>
-                            </div>
-                          </div>
+                      <div class="row" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded">
+                        <div class="col-md-12 text-right">
+                          <button type="submit" class="gray-btn">Update AI Diagnosis</button>
                         </div>
-                      </ng-container>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-5">
-                      <h3 class="mt-3 font-weight-bold">Secondary Diagnosis*</h3>
-                    </div>
-                    <div class="col-md-7">
-                      <div class="py-4">
+                      </div>
+                      <p class="font-weight-bold">Secondary Diagnosis Notes</p>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter secondary diagnosis notes" formControlName="secondaryDiagnosisNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
+                        <!-- <div *ngIf="submitted && f1.secondaryDiagnosisNotes.errors">
+                          <small class="error-msg" *ngIf="f1.secondaryDiagnosisNotes.errors.required">Enter first name</small>
+                        </div> -->
+                      </div>
+                    </form>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <mat-accordion class="intel-accordion-con" multi *ngIf="!visitNotePresent && !visitEnded && !visitCompleted">
+                  <mat-expansion-panel [expanded]="!visitNotePresent">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <div class="intel-accordion-title">
+                        <img src="assets/svgs/refer-specialist.svg" alt="" width="44px" />
+                        <h6 class="mb-0 ml-2">Refer to specialist</h6>
+                      </div>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+    
+                  <form [formGroup]="referSpecialityForm" (ngSubmit)="referSpecialist()" class="refer-form">
+                    <div class="form-group row">
+                      <label for="refer" class="col-sm-3 col-form-label">Refer to another speciality</label>
+                      <div class="col-sm-9 d-flex align-items-center">
                         <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'Yes'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
+                          <input type="radio" [value]="true" formControlName="refer" />
                           <div class="state p-success">
                             <label>Yes</label>
                           </div>
                         </div>
                         <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'No'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
+                          <input type="radio" [value]="false" formControlName="refer" />
                           <div class="state p-success">
                             <label>No</label>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="form-group" *ngIf="aiDiagnosisForm.value.secondaryDiagnosisStatus == 'Yes'">
-                    <input type="text" class="form-control" placeholder="Enter secondary diagnosis" formControlName="secondaryDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedAiDiagnosisForm && aidf.secondaryDiagnosis.errors">
-                      <small class="error-msg" *ngIf="aidf.secondaryDiagnosis.errors.required">Enter secondary diagnosis</small>
-                    </div>
-                  </div>
-                </form>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="!visitNotePresent" class="bg-gray"
-                *ngIf="!visitNotePresent && !visitEnded && !visitCompleted">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/refer-specialist.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Refer to specialist</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <form [formGroup]="referSpecialityForm" (ngSubmit)="referSpecialist()" class="refer-form">
-                  <div class="form-group row">
-                    <label for="refer" class="col-sm-3 col-form-label">Refer to another speciality</label>
-                    <div class="col-sm-9 d-flex align-items-center">
-                      <div class="pretty p-default p-round">
-                        <input type="radio" [value]="true" formControlName="refer" />
-                        <div class="state p-success">
-                          <label>Yes</label>
+                    <ng-container *ngIf="referSpecialityForm.value.refer">
+                      <div class="form-group row">
+                        <label for="refer" class="col-sm-3 col-form-label">Specialization</label>
+                        <div class="col-sm-3">
+                          <ng-select appendTo=".visit-summary-tab-group" class="visit-select"
+                            formControlName="specialization" [items]="specializations" bindLabel="name" bindValue="name"
+                            [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                          </ng-select>
                         </div>
                       </div>
-                      <div class="pretty p-default p-round">
-                        <input type="radio" [value]="false" formControlName="refer" />
-                        <div class="state p-success">
-                          <label>No</label>
+                      <div class="form-group">
+                        <button type="submit" class="next-btn">Re-assign</button>
+                      </div>
+                    </ng-container>
+                  </form>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+              <div class="col-md-6">
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/vitals.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Vitals</h6>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  <ng-container *ngIf="referSpecialityForm.value.refer">
-                    <div class="form-group row">
-                      <label for="refer" class="col-sm-3 col-form-label">Specialization</label>
-                      <div class="col-sm-3">
-                        <ng-select appendTo=".visit-summary-tab-group" class="visit-select"
-                          formControlName="specialization" [items]="specializations" bindLabel="name" bindValue="name"
-                          [clearable]="false" [searchable]="true" placeholder="Select specialization">
-                        </ng-select>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <button type="submit" class="next-btn">Re-assign</button>
-                    </div>
-                  </ng-container>
-                </form>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/patient-interaction-green.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Patient interaction</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <form [formGroup]="patientInteractionForm" (ngSubmit)="savePatientInteraction()">
-                  <ul class="items-list">
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Connect with patient</label>
-                        <div class="col-sm-9 d-flex align-items-center" *ngIf="
-                                          getPersonAttributeValue('Telephone Number') != 'NA';
-                                          else noContactDetails
-                                        ">
-                          <div class="d-flex">
-                            <a href="tel:{{
-                                              getPersonAttributeValue('Telephone Number')
-                                            }}" target="_blank" class="icon-btn m-0 mr-2">
-                              <img src="assets/svgs/phone-green.svg" alt="" />
-                            </a>
-                            <a href="{{ getWhatsAppLink() }}" target="_blank" class="icon-btn m-0 mr-2">
-                              <img src="assets/svgs/whatsapp-green.svg" alt="" />
-                            </a>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <ul class="items-list">
+                      <li>
+                        <div class="list-item">
+                          <label>Height (cm)</label>
+                          <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)')">
+                            {{
+                            getObsValue("Height (cm)")
+                            ? getObsValue("Height (cm)")
+                            : "No information"
+                            }}
                           </div>
-                          <span class="text-muted">Click here to connect with the patient</span>
                         </div>
-                        <ng-template #noContactDetails>
-                          <div class="col-sm-9 d-flex align-items-center">
-                            <span class="text-muted">Patient Mobile number is not available</span>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>Weight (kg)</label>
+                          <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
+                            {{
+                            getObsValue("Weight (kg)")
+                            ? getObsValue("Weight (kg)")
+                            : "No information"
+                            }}
                           </div>
-                        </ng-template>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>BMI</label>
+                          <div class="list-item-content" [class.text-muted]="
+                              !getObsValue('Height (cm)') ||
+                              !getObsValue('Weight (kg)')
+                            ">
+                            {{
+                            getObsValue("Height (cm)") &&
+                            getObsValue("Weight (kg)")
+                            ? (getObsValue("Weight (kg)") /
+                            ((getObsValue("Height (cm)") / 100) *
+                            (getObsValue("Height (cm)") / 100))
+                            | number : "1.2-2")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>BP</label>
+                          <div class="list-item-content" [class.text-muted]="
+                              !getObsValue('SYSTOLIC BLOOD PRESSURE')
+                            ">
+                            {{
+                            getObsValue("SYSTOLIC BLOOD PRESSURE")
+                            ? getObsValue("SYSTOLIC BLOOD PRESSURE") +
+                            " / " +
+                            getObsValue("DIASTOLIC BLOOD PRESSURE")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>Pulse</label>
+                          <div class="list-item-content" [class.text-muted]="!getObsValue('Pulse')">
+                            {{
+                            getObsValue("Pulse")
+                            ? getObsValue("Pulse")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>Temprature (F)</label>
+                          <div class="list-item-content" [class.text-muted]="!getObsValue('TEMPERATURE (C)')">
+                            {{
+                            getObsValue("TEMPERATURE (C)")
+                            ? ((getObsValue("TEMPERATURE (C)") * 9) / 5 + 32
+                            | number : "0.2-2")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>SpO2 (%)</label>
+                          <div class="list-item-content" [class.text-muted]="
+                              !getObsValue('BLOOD OXYGEN SATURATION')
+                            ">
+                            {{
+                            getObsValue("BLOOD OXYGEN SATURATION")
+                            ? getObsValue("BLOOD OXYGEN SATURATION")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="list-item">
+                          <label>Respiratory Rate</label>
+                          <div class="list-item-content" [class.text-muted]="!getObsValue('Respiratory rate')">
+                            {{
+                            getObsValue("Respiratory rate")
+                            ? getObsValue("Respiratory rate")
+                            : "No information"
+                            }}
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/physical-examination.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Physical examination</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <ng-container *ngFor="let pe of physicalExaminationData">
+                      <div class="cheif-complaint-wrapper">
+                        <ng-container *ngIf="pe.title != 'Abdomen'">
+                          <h6 class="my-3">{{ pe.title }}</h6>
+                          <ul class="items-list pt-0">
+                            <li *ngFor="let pei of pe.data">
+                              <div class="list-item">
+                                <label>{{ pei.key }}</label>
+                                <div class="list-item-content" [class.text-muted]="!pei.value">
+                                  {{ pei.value ? pei.value : "None" }}
+                                </div>
+                              </div>
+                            </li>
+                            <li *ngIf="eyeImages.length">
+                              <div class="list-item">
+                                <label>Eye images</label>
+                                <div class="list-item-content">
+                                  <div class="eye-images-con">
+                                    <div class="eye-item" *ngFor="let e of eyeImages; let x = index">
+                                      <img [src]="e.src" alt="" />
+                                      <div class="cover" (click)="previewEyeImages(x)">
+                                        <img src="assets/svgs/maximize.svg" alt="" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </ng-container>
+                        <ng-container *ngIf="pe.title == 'Abdomen'">
+                          <h6 class="my-3">{{ pe.title }}</h6>
+                          <ul class="items-list pt-0">
+                            <li *ngFor="let pei of pe.data">
+                              {{ pei.key }}
+                            </li>
+                          </ul>
+                        </ng-container>
                       </div>
-                    </li>
-                    <li>
+                    </ng-container>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/additional-documents.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Additional documents</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <ng-container *ngIf="additionalDocs.length; else noAdditionaDocs">
+                      <div class="additional-doc-container">
+                        <div class="doc-item" *ngFor="let d of additionalDocs; let x = index">
+                          <img [src]="d.src" alt="" />
+                          <div class="cover" (click)="previewDocImages(x)">
+                            <img src="assets/svgs/maximize.svg" alt="" />
+                          </div>
+                        </div>
+                        <!-- <div class="doc-item">
+                          <div class="other-doc">
+                            <img src="assets/svgs/pdf-doc.svg" alt="">
+                            <span>Blood test report.pdf</span>
+                          </div>
+                        </div> -->
+                      </div>
+                    </ng-container>
+    
+                    <ng-template #noAdditionaDocs>
+                      <div class="no-docs">No additional docs available!</div>
+                    </ng-template>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <mat-accordion class="intel-accordion-con" multi>
+                  <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="intel-accordion-title">
+                          <img src="assets/svgs/diagnosis-green.svg" alt="" width="44px" />
+                          <h6 class="mb-0 ml-2">Diagnosis</h6>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <h3 class="mt-3 mb-0 font-weight-bold">Provisional Diagnosis*</h3>
+                    <p>Please rely on your medical judgment while entering the diagnosis or selecting from the AI-Assistant
+                      Sanjaya's list of differential diagnoses.</p>
+                    <form [formGroup]="aiDiagnosisForm">
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter provisional diagnosis" formControlName="provisionalDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
+                        <div *ngIf="submittedAiDiagnosisForm && aidf.provisionalDiagnosis.errors">
+                          <small class="text-danger" *ngIf="aidf.provisionalDiagnosis.errors.required">Enter provisional diagnosis</small>
+                        </div>
+                      </div>
+                      <h3 class="mt-3 mb-0 font-weight-bold">Diagnosis suggestions from AI-Assistant Sanjaya</h3>
+                      <p>Listed according to their likelihood from highest to lowest.</p>
+                      <p class="font-weight-bold">Diagnosis</p>
                       <div class="row">
-                        <label class="col-sm-3 col-form-label">Have you spoken with the patient directly?</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Yes'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
-                            <div class="state p-success">
-                              <label>Yes</label>
+                        <div class="col-md-6 d-flex flex-column">
+                          <ng-container *ngFor="let s of diagnosisSuggestions; let i=index;">
+                            <div class="d-flex flex-row justify-content-between align-items-center">
+                              <p>{{s.rank}}. {{s.name}} <span (click)="viewDiagnosisDetail(s)" style="cursor: pointer;"><img src="assets/svgs/info-grey.svg" alt="info" width="16px"></span></p>
+                              <div class="pretty p-default p-round my-3">
+                                <input type="radio" [value]="s.name" formControlName="diagnosisSuggestions" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
+                                <div class="state p-success">
+                                  <label></label>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-5">
+                          <h3 class="mt-3 font-weight-bold">Secondary Diagnosis*</h3>
+                        </div>
+                        <div class="col-md-7">
+                          <div class="py-4">
+                            <div class="pretty p-default p-round">
+                              <input type="radio" [value]="'Yes'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
+                              <div class="state p-success">
+                                <label>Yes</label>
+                              </div>
+                            </div>
+                            <div class="pretty p-default p-round">
+                              <input type="radio" [value]="'No'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
+                              <div class="state p-success">
+                                <label>No</label>
+                              </div>
                             </div>
                           </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'No'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
-                            <div class="state p-success">
-                              <label>No</label>
-                            </div>
-                          </div>
                         </div>
                       </div>
-                    </li>
-                  </ul>
-                </form>
-                <form [formGroup]="patientInteractionNotesForm" *ngIf="patientInteractionForm.value.spoken === 'Yes'" (ngSubmit)="updateAIDiagnosis()">
-                  <h3 class="mt-3 mb-0 font-weight-bold">Notes*</h3>
-                  <p>Please write detailed notes from your conversation with the patient for your AI-Assistant Sanjaya.
-                  </p>
-                  <p class="font-weight-bold">Notes about chief complaint</p>
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter notes about cheif complaint" formControlName="chiefComplaintNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedPatientInteractionNotes && pifn.chiefComplaintNotes.errors">
-                      <small class="text-danger" *ngIf="pifn.chiefComplaintNotes.errors.required">Enter notes about cheif complaint</small>
-                    </div>
-                  </div>
-                  <div class="row" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded">
-                    <div class="col-md-12 text-right">
-                      <button type="submit" class="gray-btn">Update AI Diagnosis</button>
-                    </div>
-                  </div>
-                  <p class="font-weight-bold">Secondary Diagnosis Notes</p>
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter secondary diagnosis notes" formControlName="secondaryDiagnosisNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <!-- <div *ngIf="submitted && f1.secondaryDiagnosisNotes.errors">
-                      <small class="error-msg" *ngIf="f1.secondaryDiagnosisNotes.errors.required">Enter first name</small>
-                    </div> -->
-                  </div>
-                </form>
-              </mat-expansion-panel>
-            </mat-accordion>
+                      <div class="form-group" *ngIf="aiDiagnosisForm.value.secondaryDiagnosisStatus == 'Yes'">
+                        <input type="text" class="form-control" placeholder="Enter secondary diagnosis" formControlName="secondaryDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
+                        <div *ngIf="submittedAiDiagnosisForm && aidf.secondaryDiagnosis.errors">
+                          <small class="error-msg" *ngIf="aidf.secondaryDiagnosis.errors.required">Enter secondary diagnosis</small>
+                        </div>
+                      </div>
+                    </form>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </div>
           </mat-tab>
 
           <mat-tab label="Past visit history">
@@ -798,7 +795,6 @@
             </div>
           </mat-tab>
         </mat-tab-group>
-      </div>
     </div>
 
     <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
@@ -1017,10 +1013,9 @@
     </div>
 
     <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0">
-      <div class="intel-card">
-        <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
           <mat-accordion class="intel-accordion-con" multi>
-
             <mat-expansion-panel [expanded]="true" #panel3 hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -1031,7 +1026,7 @@
                 </mat-panel-title>
                 <mat-icon>{{ panel3.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
-
+    
               <ul class="items-list" *ngIf="notes.length">
                 <li *ngFor="let n of notes; let i = index">
                   <div class="d-flex justify-content-between align-items-center">
@@ -1072,8 +1067,65 @@
                 </ng-container>
               </form>
             </mat-expansion-panel>
-
-            <mat-expansion-panel [expanded]="true" #panel4 hideToggle class="bg-gray overflow-show">
+          </mat-accordion>
+        </div>
+        <div class="col-md-6">
+          <mat-accordion class="intel-accordion-con" multi>
+            <mat-expansion-panel [expanded]="true" #panel6 hideToggle class="overflow-show">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/test.svg" alt="" width="44px" />
+                    <h6 class="mb-0 ml-2">Test</h6>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+    
+              <ul class="items-list" *ngIf="tests.length">
+                <li *ngFor="let t of tests; let i = index">
+                  <div class="d-flex justify-content-between">
+                    <span>{{ t.value }}</span>
+                    <button mat-icon-button (click)="deleteTest(i, t.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
+                      <img src="assets/svgs/delete-icon.svg" alt="" />
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noTests>
+                <div class="no-docs text-center font-weight-bold">
+                  No tests added!
+                </div>
+              </ng-template>
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+                <div class="form-group mt-3" *ngIf="addMoreTest">
+                  <button type="button" class="add-more-btn" (click)="toggleTest()">
+                    <img src="assets/svgs/plus-circle.svg" alt="" />
+                    <span class="ml-2">Add more test</span>
+                  </button>
+                </div>
+                <form class="mt-3" [formGroup]="addTestForm" (ngSubmit)="addTest()" *ngIf="!addMoreTest">
+                  <div class="form-group">
+                    <label for="note"><b>Test</b></label>
+                    <input type="text" class="form-control" formControlName="test" placeholder="Type here"
+                      [ngbTypeahead]="search2" />
+                  </div>
+                  <div class="form-group">
+                    <button type="button" class="white-btn mr-2" (click)="toggleTest()">
+                      Cancel
+                    </button>
+                    <button type="submit" class="gray-btn" [disabled]="addTestForm.invalid">
+                      Add test
+                    </button>
+                  </div>
+                </form>
+              </ng-container>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+        <div class="col-md-12">
+          <mat-accordion class="intel-accordion-con" multi>
+            <mat-expansion-panel [expanded]="true" #panel4 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1083,7 +1135,7 @@
                 </mat-panel-title>
                 <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
-
+    
               <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
                 <div class="table-responsive medication-con">
                   <table class="table">
@@ -1203,7 +1255,7 @@
                   </table>
                 </div>
               </form>
-
+    
               <h6 class="list-header mt-3 mb-2">Additional instructions</h6>
               <ng-container *ngIf="additionalInstructions.length">
                 <ul class="items-list">
@@ -1218,7 +1270,7 @@
                   </li>
                 </ul>
               </ng-container>
-
+    
               <ng-template #noAdditionalInstructions>
                 <div class="no-docs text-center font-weight-bold">
                   No additional instructions added!
@@ -1248,7 +1300,8 @@
                 </form>
               </ng-container>
             </mat-expansion-panel>
-
+          </mat-accordion>
+          <mat-accordion class="intel-accordion-con" multi>
             <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -1259,7 +1312,7 @@
                 </mat-panel-title>
                 <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
-
+    
               <ul class="items-list" *ngIf="advices.length">
                 <li *ngFor="let ad of advices; let i = index">
                   <div class="d-flex justify-content-between">
@@ -1300,58 +1353,10 @@
                 </form>
               </ng-container>
             </mat-expansion-panel>
-
-            <mat-expansion-panel [expanded]="true" #panel6 hideToggle class="bg-gray overflow-show">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/test.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Test</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <ul class="items-list" *ngIf="tests.length">
-                <li *ngFor="let t of tests; let i = index">
-                  <div class="d-flex justify-content-between">
-                    <span>{{ t.value }}</span>
-                    <button mat-icon-button (click)="deleteTest(i, t.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
-                      <img src="assets/svgs/delete-icon.svg" alt="" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
-              <ng-template #noTests>
-                <div class="no-docs text-center font-weight-bold">
-                  No tests added!
-                </div>
-              </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                <div class="form-group mt-3" *ngIf="addMoreTest">
-                  <button type="button" class="add-more-btn" (click)="toggleTest()">
-                    <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">Add more test</span>
-                  </button>
-                </div>
-                <form class="mt-3" [formGroup]="addTestForm" (ngSubmit)="addTest()" *ngIf="!addMoreTest">
-                  <div class="form-group">
-                    <label for="note"><b>Test</b></label>
-                    <input type="text" class="form-control" formControlName="test" placeholder="Type here"
-                      [ngbTypeahead]="search2" />
-                  </div>
-                  <div class="form-group">
-                    <button type="button" class="white-btn mr-2" (click)="toggleTest()">
-                      Cancel
-                    </button>
-                    <button type="submit" class="gray-btn" [disabled]="addTestForm.invalid">
-                      Add test
-                    </button>
-                  </div>
-                </form>
-              </ng-container>
-            </mat-expansion-panel>
-
+          </mat-accordion>
+        </div>
+        <div class="col-md-6">
+          <mat-accordion class="intel-accordion-con" multi>
             <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -1362,7 +1367,7 @@
                 </mat-panel-title>
                 <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
-
+    
               <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
                 <div class="table-responsive scrollable-box">
                   <table class="table">
@@ -1436,8 +1441,11 @@
                 </div>
               </form>
             </mat-expansion-panel>
-
-            <mat-expansion-panel [expanded]="true" #panel8 hideToggle class="bg-gray">
+          </mat-accordion>
+        </div>
+        <div class="col-md-6">
+          <mat-accordion class="intel-accordion-con" multi>
+            <mat-expansion-panel [expanded]="true" #panel8 hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1447,7 +1455,7 @@
                 </mat-panel-title>
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
-
+    
               <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
                 <ul class="items-list">
                   <li>
@@ -1525,7 +1533,7 @@
                   </button>
                 </div>
               </form>
-
+    
               <div class="table-responsive" *ngIf="followUpForm.value.present">
                 <table class="table">
                   <thead>
