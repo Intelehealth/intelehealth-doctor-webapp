@@ -127,8 +127,8 @@ export class ConfigService {
   * @param {FormData} formData - form data
   * @return {Observable<any>}
   */
-  uploadImage(url: string, method: string,formData: FormData): Observable<any> {
-    if(method === 'POST')
+  uploadImage(url: string, method: string, formData: FormData): Observable<any> {
+    if (method === 'POST')
       return this.http.post(url, formData);
     else
       return this.http.put(url, formData);
@@ -140,7 +140,7 @@ export class ConfigService {
   * @return {Observable<any>}
   */
   downloadImage(url: string): Observable<any> {
-      return this.http.get(url,{responseType:'blob'});
+    return this.http.get(url, { responseType: 'blob' });
   }
 
   /**
@@ -149,8 +149,8 @@ export class ConfigService {
   * @param {string} filePath - file path
   * @return {Observable<any>}
   */
-  deleteImage(url: string, filePath:string): Observable<any> {
-    return this.http.delete(url,{body:{filePath}});
+  deleteImage(url: string, filePath: string): Observable<any> {
+    return this.http.delete(url, { body: { filePath } });
   }
 
 
@@ -160,9 +160,9 @@ export class ConfigService {
   * @param {string} filePath - file path
   * @return {Observable<any>}
   */
-  updateImagesWithText(data:any): Observable<any> {
+  updateImagesWithText(data: any): Observable<any> {
     const url = `${this.baseURL}/theme_config/updateImagesText`;
-    return this.http.put(url,data);
+    return this.http.put(url, data);
   }
 
   /**
@@ -214,6 +214,15 @@ export class ConfigService {
   updateWebrtcEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/webrtc/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Get Features
+  * @return {Observable<any>}
+  */
+  getFeatures(): Observable<any> {
+    const url = `${this.baseURL}/feature/all`;
+    return this.http.get(url);
   }
 
   /**

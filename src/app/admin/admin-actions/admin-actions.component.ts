@@ -83,13 +83,19 @@ export class AdminActionsComponent implements OnInit {
       icon: "assets/svgs/webrtc.svg",
       path: "admin/actions/webrtc",
       isLocalPath: true
+    },
+    {
+      title: "ABHA ID",
+      desc: "Manage Abha ID functionality",
+      icon: "assets/svgs/abha.svg",
+      path: "admin/actions/abha",
+      isLocalPath: true
     }
   ];
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
