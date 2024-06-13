@@ -1,4 +1,5 @@
 export interface BaseModel {
+  key?: string,
   createdAt?: string,
   id: number,
   is_enabled: boolean,
@@ -568,6 +569,7 @@ export interface MobileAppLanguageModel {
   id: number,
   isActive: boolean,
   name: string,
+  en_name: string,
   updatedAt: string
   isDefault: boolean
 }
@@ -617,10 +619,8 @@ export interface VitalModel {
   is_mandatory: boolean
 }
 
-export interface FeatureModel extends BaseModel { }
-export interface WebrtcModel extends BaseModel {
-  key?: string
-}
+export interface FeatureModel extends BaseModel {}
+export interface WebrtcModel extends BaseModel {}
 export interface WebrtcDataModel {
   webrtc_section: FeatureModel,
   webrtc: WebrtcModel[]
