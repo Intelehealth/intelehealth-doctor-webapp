@@ -1,8 +1,9 @@
 export interface BaseModel {
-  createdAt?: string,
-  id: number,
-  is_enabled: boolean,
-  name: string,
+  key?: string
+  createdAt?: string
+  id: number
+  is_enabled: boolean
+  name: string
   updatedAt?: string
 }
 export interface LoginResponseModel {
@@ -618,10 +619,8 @@ export interface VitalModel {
   is_mandatory: boolean
 }
 
-export interface FeatureModel extends BaseModel { }
-export interface WebrtcModel extends BaseModel {
-  key?: string
-}
+export interface FeatureModel extends BaseModel {}
+export interface WebrtcModel extends BaseModel {}
 export interface WebrtcDataModel {
   webrtc_section: FeatureModel,
   webrtc: WebrtcModel[]
