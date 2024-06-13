@@ -64,6 +64,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   logoImageURL: string;
   vitals: VitalModel[] = [];
+  hasVitalsEnabled: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -77,6 +78,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
       this.vitals = [...this.appConfigService.patient_vitals]; 
+      this.hasVitalsEnabled = this.appConfigService.patient_vitals_section;
     }
 
   ngOnInit(): void {
@@ -533,7 +535,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
-    pdfMake.createPdf({
+    const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 40 ],
@@ -706,6 +708,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   colSpan: 4,
+                  sectionName:'vitals',
                   table: {
                     widths: [30, '*'],
                     headerRows: 1,
@@ -991,12 +994,17 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           fontSize: 12,
           bold: true,
           margin: [0, 5, 0, 10]
-        },
+        }
       },
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-prescription');
+    };
+    pdfObj.content[0].table.body = pdfObj.content[0].table.body.filter((section:any)=>{
+      if(section[0].sectionName === 'vitals' && !this.hasVitalsEnabled) return false;
+      return true;
+    });
+    pdfMake.createPdf(pdfObj).download('e-prescription');
   }
 
   /**
