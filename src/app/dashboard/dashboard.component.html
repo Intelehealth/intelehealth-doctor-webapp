@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col p-1" *ngIf="pvs.appointment_button">
+    <div class="col p-1" *ngIf="pvs.appointment_button" (click)="scrollToPanel('anchor-appointment')">
       <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
         <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" />
         <div class="chip-info">
@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <div class="col p-1" *ngIf="pvs.priority_visit_section">
+    <div class="col p-1" *ngIf="pvs.priority_visit_section" (click)="scrollToPanel('anchor-priority')">
       <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
         <div class="chip-info">
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="col p-1">
+    <div class="col p-1" (click)="scrollToPanel('anchor-awaiting')">
       <div class="chip-item chip-item-green" title="{{'Awaiting visits' | translate}}">
         <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" />
         <div class="chip-info">
@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div class="col p-1">
+    <div class="col p-1" (click)="scrollToPanel('anchor-inprogress')">
       <div class="chip-item chip-item-green" title="{{'In-progress visits' | translate}}">
         <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
         <div class="chip-info">
@@ -48,6 +48,7 @@
         <mat-expansion-panel [expanded]="true" data-test-id="matExpAppointment" *ngIf="pvs.appointment_button">
           <mat-expansion-panel-header data-test-id="matExpHeaderAppointment">
             <mat-panel-title>
+              <div id="anchor-appointment" class="anchor-con"></div>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
@@ -134,6 +135,7 @@
         <mat-expansion-panel [expanded]="true" data-test-id="matExpPriority" *ngIf="pvs.priority_visit_section">
           <mat-expansion-panel-header data-test-id="matExpHeaderPriority">
             <mat-panel-title>
+              <div id="anchor-priority" class="anchor-con"></div>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/red-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
@@ -217,6 +219,7 @@
         <mat-expansion-panel [expanded]="true" data-test-id="matExpAwaiting">
           <mat-expansion-panel-header data-test-id="matExpHeaderAwaiting">
             <mat-panel-title>
+              <div id="anchor-awaiting" class="anchor-con"></div>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/green-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
@@ -300,6 +303,7 @@
         <mat-expansion-panel [expanded]="true" data-test-id="matExpInprogress">
           <mat-expansion-panel-header data-test-id="matExpHeaderInprogress">
             <mat-panel-title>
+              <div id="anchor-inprogress" class="anchor-con"></div>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/pen-board.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>

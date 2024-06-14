@@ -548,4 +548,8 @@ export class DashboardComponent implements OnInit {
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
+  scrollToPanel(panelId: string) {
+    const element = document.getElementById(panelId);
+    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }

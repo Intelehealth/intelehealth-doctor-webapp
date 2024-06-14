@@ -8,6 +8,7 @@
   align-items: center;
   padding: 16px;
   background: red;
+  cursor: pointer;
 
   .chip-img {
     width: 44px;
@@ -190,6 +191,12 @@ th:last-child {
   }
 }
 
+.anchor-con {
+  position: absolute;
+  top: -120px;
+  left: 0;
+}
+
 @media (max-width: 768px) {
   .input-group {
     width: 100%;
@@ -208,4 +215,8 @@ th:last-child {
   .info-icon{
     display: none;
   }
+
+  .anchor-con {
+    top: -100px;
+  }  
 }
