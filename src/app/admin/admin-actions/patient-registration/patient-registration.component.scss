@@ -101,6 +101,17 @@
     font-weight: bold;
   }
 
+  .sectionStatus{
+    padding:15px;
+    color: gray;
+  }
+
+  .text-greyout{
+    .mat-cell{
+      opacity: 0.60;    
+    }
+  }
+
   @media (max-width: 768px) {
     .card-header-actions {
       .btn {
