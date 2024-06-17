@@ -180,7 +180,7 @@ export class PatientRegistrationComponent {
   */
   updateFeatureStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Vitals has been successfully updated", "Update successful!");
+      this.toastr.success("Patient Registration has been successfully updated", "Update successful!");
       this.getAllFields();
     }, err => {
       this.getAllFields();
