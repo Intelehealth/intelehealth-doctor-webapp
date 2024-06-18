@@ -133,7 +133,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       }, 1500);
       this.interval2 = setInterval(() => {
         this.socketService.emitEvent(notifications.GET_DOCTOR_UNREAD_COUNT, this.user?.uuid);
-      }, 30000);
+      }, 60000);
     }
 
     if(this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
