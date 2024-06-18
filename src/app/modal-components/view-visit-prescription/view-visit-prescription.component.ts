@@ -65,6 +65,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   logoImageURL: string;
   vitals: VitalModel[] = [];
   hasVitalsEnabled: boolean = false;
+  hasPatientOtherEnabled: boolean = false;
+  hasPatientAddressEnabled: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -79,6 +81,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       });
       this.vitals = [...this.appConfigService.patient_vitals]; 
       this.hasVitalsEnabled = this.appConfigService.patient_vitals_section;
+      this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
+      this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
     }
 
   ngOnInit(): void {
@@ -1147,7 +1151,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
 
       case 'Address':
-          if(this.checkPatientRegField('Village/Town/City') || this.checkPatientRegField('Corresponding Address 1') || this.checkPatientRegField('Corresponding Address 2')){
+          if(this.hasPatientAddressEnabled && (this.checkPatientRegField('Village/Town/City') || this.checkPatientRegField('Corresponding Address 1') || this.checkPatientRegField('Corresponding Address 2'))){
             let strAddress = this.checkPatientRegField('Village/Town/City') ? this.patient?.person?.preferredAddress?.cityVillage?.replace(':',' : ') : '';
             strAddress += this.patient?.person?.preferredAddress?.address1  && this.checkPatientRegField('Corresponding Address 1') ? ' ' + this.patient?.person?.preferredAddress?.address1 : '';
             strAddress += this.patient?.person?.preferredAddress?.address2  && this.checkPatientRegField('Corresponding Address 2') ? ' ' + this.patient?.person?.preferredAddress?.address2 : '';
@@ -1156,13 +1160,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           break;
 
       case 'Occupation':
-        if(this.checkPatientRegField('Occupation')){
+        if(this.hasPatientOtherEnabled && this.checkPatientRegField('Occupation')){
           fieldArray = [{text: 'Occupation', style: 'subheader'},`${this.getPersonAttributeValue('occupation')}`];
         }
         break;
 
       case 'National ID':
-        if(this.checkPatientRegField('National ID')){
+        if(this.hasPatientOtherEnabled && this.checkPatientRegField('National ID')){
           fieldArray = [{text: 'National ID', style: 'subheader'},`${this.getPersonAttributeValue('NationalID')}`];
         }
         break;

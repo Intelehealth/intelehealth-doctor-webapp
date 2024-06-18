@@ -41,6 +41,8 @@ export class ViewVisitSummaryComponent implements OnInit {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   hasVitalsEnabled: boolean = false;
+  hasPatientOtherEnabled: boolean = false;
+  hasPatientAddressEnabled: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -55,6 +57,8 @@ export class ViewVisitSummaryComponent implements OnInit {
       });
       this.vitals = [...this.appConfigService.patient_vitals];
       this.hasVitalsEnabled = this.appConfigService.patient_vitals_section;
+      this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
+      this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
     }
 
   ngOnInit(): void {
