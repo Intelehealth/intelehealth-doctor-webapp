@@ -20,7 +20,7 @@
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemMessages">
           <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkMessages">
             <img src="assets/svgs/menu-message.svg" alt="">
-            <span>{{'Messages' | translate}}</span>
+            <span>{{'Messages' | translate}} <div class="dot" *ngIf="drUnread">{{drUnread}}</div></span>
           </a>
         </li>
         <ng-container *ngIf="pvs.appointment_button">
