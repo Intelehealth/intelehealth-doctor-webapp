@@ -63,19 +63,19 @@
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item" *ngIf="checkPatientRegField('Village/Town/City') || checkPatientRegField('Corresponding Address 1') || checkPatientRegField('Corresponding Address 2')">
+          <div class="patient-info-item" *ngIf="hasPatientAddressEnabled && (checkPatientRegField('Village/Town/City') || checkPatientRegField('Corresponding Address 1') || checkPatientRegField('Corresponding Address 2'))">
             <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
             <p data-test-id="etPatient">{{ checkPatientRegField('Village/Town/City') ? patient?.person.preferredAddress.cityVillage.replace(':',' : ') : ''}}</p>
             <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1  && checkPatientRegField('Corresponding Address 1') ?? ''}} {{ patient?.person?.preferredAddress?.address2 && checkPatientRegField('Corresponding Address 2')? ', ' + patient?.person?.preferredAddress?.address2 : ''}} &nbsp;</p>
           </div>
-          <div class="patient-info-item" *ngIf="checkPatientRegField('Occupation')">
+          <div class="patient-info-item" *ngIf="hasPatientOtherEnabled && checkPatientRegField('Occupation')">
             <h6>{{'Occupation'|translate}}</h6>
             <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
          
         </div>
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('National ID')">
+          <div class="patient-info-item mb-3" *ngIf="hasPatientOtherEnabled && checkPatientRegField('National ID')">
             <h6>{{'National ID'|translate}}</h6>
             <p>{{ getPersonAttributeValue("NationalID") }}</p>
           </div>
