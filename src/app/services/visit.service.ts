@@ -244,13 +244,11 @@ export class VisitService {
   }
 
   /**
-  * Post visit data to abdm
-  * @param {string} visitId - Visit uuid
-  * @param {any} json - Attribute payload
-  * @return {Observable<any>}
-  */
-  postVisitToABDM(json): Observable<any> {
-    // const url = `${this.baseURLAbha}/abha/generate-link-token`;
+   * Post visit data to abdm
+   * @param {any} json - Attribute payload
+   * @return {Observable<any>}
+   */
+  postVisitToABDM(json: any): Observable<any> {
     const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
   }

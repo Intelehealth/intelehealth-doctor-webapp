@@ -23,14 +23,17 @@ export const mockWebrtcResponse: { webrtc: WebrtcDataModel } = {
 
 export const mockFeatureResponse: FeatureModel[] = [{
     id: 1,
-    name: 'webrtc_section',
+    name: 'WebRTC',
+    key: "webrtc_section",
     is_enabled: true
 }, {
     id: 2,
-    name: 'patient_vitals_section',
+    name: 'Patient Vitals',
+    key: "patient_vitals_section",
     is_enabled: true
 }, {
     id: 3,
-    name: 'abha_section',
+    name: 'Abha Id',
+    key: "abha_section",
     is_enabled: true
 }]
