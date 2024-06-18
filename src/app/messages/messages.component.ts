@@ -50,8 +50,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.socketSvc.initSocket(true);
     this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
-      this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
-      this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messageList = data.allMessages?.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messageList = data.allMessages?.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
@@ -95,9 +95,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
     this.getMessages();
-    if (this.selectedConversation?.fromUser !== this.fromUser) {
+    // if (this.selectedConversation?.fromUser !== this.fromUser) {
       this.readMessages(this.selectedConversation?.id);
-    }
+    // }
+    this.selectedConversation.count = 0;
   }
 
   /**

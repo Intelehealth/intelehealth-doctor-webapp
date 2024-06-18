@@ -134,7 +134,7 @@
           </button>
 
           <mat-tab-group class="signature-tab-group" mat-align-tabs="start" *ngIf="collapsed">
-            <mat-tab label="{{'Address'| translate}}">
+            <mat-tab label="{{'Address'| translate}}" *ngIf="hasPatientAddressEnabled">
               <div class="rows patient-info-wrapper">
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="(checkPatientRegField('Village/Town/City') || checkPatientRegField('Corresponding Address 1')) && patient?.person?.preferredAddress?.address1">
@@ -185,7 +185,7 @@
               </div>
             </mat-tab>
 
-            <mat-tab label="{{'Other' | translate}}">
+            <mat-tab label="{{'Other' | translate}}" *ngIf="hasPatientOtherEnabled">
               <div class="rows patient-info-wrapper">
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Occupation') && getPersonAttributeValue('occupation') !== 'NA'">
                   <div class="patient-info-item mb-3">

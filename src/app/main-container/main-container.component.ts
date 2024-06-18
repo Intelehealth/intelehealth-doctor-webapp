@@ -21,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-ticket.component';
 import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
-import { languages, doctorDetails } from 'src/config/constant';
+import { languages, doctorDetails, notifications } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
 
@@ -46,6 +46,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   sidebarClosed = false;
   subscription: Subscription;
   subscription1: Subscription;
+  subscription2: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: BreadcrumbModel[];
   @ViewChild('drawer') drawer: MatDrawer;
@@ -53,8 +54,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   dialogRef2: MatDialogRef<RaiseTicketComponent>;
   routeUrl = '';
   adminUnread = 0;
+  drUnread = 0;
   notificationEnabled = false;
-  interval;
+  interval: any;
+  interval2: any;
   snoozed: any = '';
   profilePic: string;
   profilePicSubscription;
@@ -119,6 +122,19 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.subscription1 = this.socketService.adminUnread.subscribe(res => {
       this.adminUnread = res;
     });
+
+    this.subscription2 = this.socketService.drUnread.subscribe(res => {
+      this.drUnread = res;
+    });
+
+    if (getCacheData(false, doctorDetails.ROLE) === 'doctor') {
+      setTimeout(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_UNREAD_COUNT, this.user?.uuid);
+      }, 1500);
+      this.interval2 = setInterval(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_UNREAD_COUNT, this.user?.uuid);
+      }, 60000);
+    }
 
     if(this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
       this.getSubscription();
@@ -449,6 +465,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -458,6 +475,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
     if (this.dialogRef2) {
       this.dialogRef2.close();
+    }
+    if (this.interval2) {
+      clearInterval(this.interval);
     }
   }
 }

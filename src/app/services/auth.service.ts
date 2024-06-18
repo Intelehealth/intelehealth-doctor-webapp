@@ -148,6 +148,7 @@ export class AuthService {
       deleteCacheData(doctorDetails.USER);
       deleteCacheData(doctorDetails.PROVIDER);
       deleteCacheData(doctorDetails.DOCTOR_NAME);
+      deleteCacheData(doctorDetails.ROLE);
       deleteCacheData('xsddsdass');
       deleteCacheData('token');
       deleteCacheData('socketQuery');
