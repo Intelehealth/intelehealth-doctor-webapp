@@ -63,6 +63,7 @@
                                 ? '('+(conversation.openMrsId | uppercase)+')'
                                 : ""
                             }}
+                            <span class="badge badge-success" *ngIf="conversation?.count">{{conversation?.count}}</span>
                           </h6> 
                           <p>{{ conversation.message }}</p>
                         </div>

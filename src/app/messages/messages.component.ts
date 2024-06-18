@@ -95,9 +95,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
     this.getMessages();
-    if (this.selectedConversation?.fromUser !== this.fromUser) {
+    // if (this.selectedConversation?.fromUser !== this.fromUser) {
       this.readMessages(this.selectedConversation?.id);
-    }
+    // }
+    this.selectedConversation.count = 0;
   }
 
   /**
