@@ -132,7 +132,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   openChatFlag: boolean = false;
 
-  isAbhaDetails: boolean = false;
 
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];

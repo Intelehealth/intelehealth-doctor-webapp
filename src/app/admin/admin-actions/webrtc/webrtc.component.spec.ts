@@ -68,8 +68,7 @@ describe('WebrtcComponent', () => {
   });
 
   it('should call the updateStatus method', () => {
-    const updateResponse = { ...mockWebrtcResponse }
-    updateResponse.webrtc.webrtc[0].is_enabled = false;
+    mockWebrtcResponse.webrtc.webrtc[0].is_enabled = false;
     
     mockConfigService.getWebrtcs.and.returnValue(of(mockWebrtcResponse))
     mockConfigService.updateWebrtcEnabledStatus.and.returnValue(of({}))
@@ -92,9 +91,8 @@ describe('WebrtcComponent', () => {
   });
 
   it('should call the updateFeatureStatus method', () => {
-    const updateResponse = { ...mockWebrtcResponse }
-    updateResponse.webrtc.webrtc_section.is_enabled = false;
     
+    mockWebrtcResponse.webrtc.webrtc_section.is_enabled = false; 
     mockConfigService.getWebrtcs.and.returnValue(of(mockWebrtcResponse))
     mockConfigService.updateFeatureEnabledStatus.and.returnValue(of({}))
     
