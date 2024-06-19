@@ -110,11 +110,12 @@
                       [items]="visits"
                       bindLabel="createdAt"
                       bindValue="visitId"
-                      [(ngModel)]="visitId"
+                      [ngModel]="visitId"
                       [clearable]="false"
                       [searchable]="false"
                       placeholder="Select visit"
                       data-test-id="selectVisit"
+                      (ngModelChange)="onVisitChange($event)"
                     >
                       <ng-template ng-label-tmp let-item="item">
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
