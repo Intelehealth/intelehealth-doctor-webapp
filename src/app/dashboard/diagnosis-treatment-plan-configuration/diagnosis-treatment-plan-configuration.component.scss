@@ -1,0 +1,81 @@
+.table tr td, .table tr th {
+    vertical-align: middle;
+}
+
+.error-msg {
+    color: red;
+}
+
+.form-group {
+    label {
+        font-size: 14px;
+        color: #1B163A;
+        font-weight: bold;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .link {
+            a {
+                // text-decoration: underline;
+                font-size: 14px;
+                color: #7F7B92;
+                font-weight: normal;
+            }
+        }
+    }
+
+    .next-btn {
+        height: 56px;
+        background: #2E1E91;
+        border-radius: 8px;
+        font-size: 18px;
+        color: #FFFFFF;
+        position: relative;
+        min-width: 206px;
+    }
+}
+
+.form-control {
+    padding: 14px 16px;
+    background: #FAF9FF;
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    height: 48px;
+    font-size: 16px;
+    color: #1B163A;
+}
+
+textarea.form-control {
+    height: fit-content;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+
+.action-btn {
+    padding: 8px 24px;
+    min-width: 119px;
+    height: 48px;
+    background: #FFFFFF;
+    border: 1px solid #EFE8FF;
+    border-radius: 8px;
+    font-size: 18px;
+    line-height: 150%;
+    color: #2E1E91;
+    font-weight: bold;
+}
+
+.action-btn.blue-btn {
+    background: #2E1E91;
+    border: 1px solid #2E1E91;
+    color: #FFFFFF;
+}
+
+.action-btn.red-btn {
+    background: #EA315B;
+    border: 1px solid #EA315B;
+    color: #FFFFFF;
+}

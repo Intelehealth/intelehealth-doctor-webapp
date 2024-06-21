@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -77,6 +77,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
   conceptDDx = 'bc48889e-b461-4e5e-98d1-31eb9dd6160e';
+  conceptAiDiagnosisSuggestions ="d29d33c8-9307-4d7a-b0c6-38d6d80e60f4";
+  conceptAiTreatmentPlan = "9c55ff9e-8f35-4b3d-8e37-abb73f1701d9";
+  conceptChiefComplaintNotes = "589f6615-48c7-4ca8-9b8f-9f8c6daacb9f";
+  conceptSecondaryDiagnosisNotes = "c3db7e59-7433-4eb0-b1cc-2e342c534b34";
 
   baseURL = environment.baseURL;
   additionalDocs: any = [];
@@ -247,6 +251,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   ddxPresent: any = false;
   ddxForm: FormGroup;
 
+  aiDiagnosisPresent: any = false;
+  diagnosisSuggestions: any[] = [];
+  diagnosisSuggestionsObsUuid: string;
+  treatmentPlan: any;
+
+  submittedPatientInteraction: boolean = false;
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -309,12 +320,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.patientInteractionForm = new FormGroup({
       uuid: new FormControl(null),
       present: new FormControl(false, [Validators.required]),
-      spoken: new FormControl(null, [Validators.required])
+      spoken: new FormControl(null, [Validators.required]),
+      chiefComplaintNotes: new FormControl(null)
     });
 
     this.diagnosisForm = new FormGroup({
-      // present: new FormControl(false, [Validators.required]),
-      // diagnosisIdentified: new FormControl('No', [Validators.required]),
+      present: new FormControl(false, [Validators.required]),
+      diagnosisIdentified: new FormControl(null, [Validators.required]),
       diagnosisName: new FormControl(null, Validators.required),
       diagnosisType: new FormControl(null, Validators.required),
       diagnosisStatus: new FormControl(null, Validators.required)
@@ -380,6 +392,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  get pif() { return this.patientInteractionForm.controls; }
+
   formControlValueChanges() {
     this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
       if (val) {
@@ -387,26 +401,26 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       }
     });
 
-    // this.diagnosisForm.get('diagnosisIdentified').valueChanges.subscribe((val: any) => {
-    //   if (val == 'Yes') {
-    //     this.diagnosisForm.get('diagnosisName').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisType').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-    //   } else {
-    //     this.diagnosisForm.get('diagnosisName').setValue(null);
-    //     this.diagnosisForm.get('diagnosisName').clearValidators();
-    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisType').setValue(null);
-    //     this.diagnosisForm.get('diagnosisType').clearValidators();
-    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisStatus').setValue(null);
-    //     this.diagnosisForm.get('diagnosisStatus').clearValidators();
-    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-    //   }
-    // });
+    this.diagnosisForm.get('diagnosisIdentified').valueChanges.subscribe((val: any) => {
+      if (val == 'Yes') {
+        this.diagnosisForm.get('diagnosisName').setValidators(Validators.required);
+        this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisType').setValidators(Validators.required);
+        this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
+        this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
+      } else {
+        this.diagnosisForm.get('diagnosisName').setValue(null);
+        this.diagnosisForm.get('diagnosisName').clearValidators();
+        this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisType').setValue(null);
+        this.diagnosisForm.get('diagnosisType').clearValidators();
+        this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisStatus').setValue(null);
+        this.diagnosisForm.get('diagnosisStatus').clearValidators();
+        this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
+      }
+    });
 
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
       if (val == 'Yes') {
@@ -438,6 +452,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.ddxForm.get('customInput').updateValueAndValidity();
       }
     });
+
+    this.patientInteractionForm.get('spoken').valueChanges.subscribe((val: any) => {
+      if (val == 'Yes') {
+        this.patientInteractionForm.get('chiefComplaintNotes').setValidators(Validators.required);
+        this.patientInteractionForm.get('chiefComplaintNotes').updateValueAndValidity();
+      } else {
+        this.patientInteractionForm.get('chiefComplaintNotes').setValue(null);
+        this.patientInteractionForm.get('chiefComplaintNotes').clearValidators();
+        this.patientInteractionForm.get('chiefComplaintNotes').updateValueAndValidity();
+      }
+    });
   }
 
   getVisit(uuid: string) {
@@ -457,6 +482,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || visit.stopDatetime;
             // check if visit note exists for this visit
             this.ddxPresent = this.checkIfEncounterExists(visit.encounters, 'Differential Diagnosis');
+            // check if visit note exists for this visit
+            this.aiDiagnosisPresent = this.checkIfEncounterExists(visit.encounters, 'AI Diagnosis and Treatment Plan');
             // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
@@ -475,6 +502,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              if (this.aiDiagnosisPresent) {
+                this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAiDiagnosisSuggestions).subscribe((response: any) => {
+                  response.results.forEach((obs: any) => {
+                    if (obs.encounter.visit.uuid === this.visit.uuid) {
+                      // const result = (JSON.parse(obs.value)?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+                      // this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+                      this.diagnosisSuggestions = JSON.parse(obs.value)?.data.choices[0]?.message.content.split('\n');
+                      this.diagnosisSuggestionsObsUuid = obs.uuid;
+                    }
+                  });
+                });
+                this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAiTreatmentPlan).subscribe((response: any) => {
+                  response.results.forEach((obs: any) => {
+                    if (obs.encounter.visit.uuid === this.visit.uuid) {
+                      const result = (JSON.parse(obs.value)?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+                      this.treatmentPlan = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
+                    }
+                  });
+                });
+              } else {
+                setTimeout(() => {
+                  this.getDiagnosisSuggestions();
+                }, 3000);
+              }
             }
             this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
@@ -484,35 +535,35 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
-            if (this.ddxPresent) {
-              if (this.username == 'doctorai') {
-                this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDDx).subscribe((response: any) => {
-                  response.results.forEach((obs: any) => {
-                    if (obs.encounter.visit.uuid === this.visit.uuid) {
-                      this.ddx = {
-                        maxCols: 1,
-                        data: [],
-                        model: null
-                      };
-                      let maxCol = 1;
-                      const rows = obs?.value.split('\n');
-                      rows.forEach(r => {
-                        const cols = r.split('|');
-                        if(cols.length > maxCol) maxCol = cols.length;
-                        this.ddx.data.push(cols);
-                      });
-                      this.ddx.maxCols = maxCol;
-                      this.ddx.model = obs?.value.comment
-                      console.log(this.ddx);
-                    }
-                  });
-                });
-              }
-            } else {
-              setTimeout(() => {
-                this.getDDx();
-              }, 3000);
-            }
+            // if (this.ddxPresent) {
+            //   if (this.username == 'doctorai') {
+            //     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDDx).subscribe((response: any) => {
+            //       response.results.forEach((obs: any) => {
+            //         if (obs.encounter.visit.uuid === this.visit.uuid) {
+            //           this.ddx = {
+            //             maxCols: 1,
+            //             data: [],
+            //             model: null
+            //           };
+            //           let maxCol = 1;
+            //           const rows = obs?.value.split('\n');
+            //           rows.forEach(r => {
+            //             const cols = r.split('|');
+            //             if(cols.length > maxCol) maxCol = cols.length;
+            //             this.ddx.data.push(cols);
+            //           });
+            //           this.ddx.maxCols = maxCol;
+            //           this.ddx.model = obs?.value.comment
+            //           console.log(this.ddx);
+            //         }
+            //       });
+            //     });
+            //   }
+            // } else {
+            //   setTimeout(() => {
+            //     this.getDDx();
+            //   }, 3000);
+            // }
           }
         });
       }
@@ -940,7 +991,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         },
       ],
       visit: this.visit.uuid,
-      encounterDatetime: new Date(Date.now() - 30000),
+      encounterDatetime: new Date(Date.now() - 30000)
     };
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
@@ -949,17 +1000,26 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-
   checkIfPatientInteractionPresent(attributes: any) {
     attributes.forEach((attr: any) => {
       if (attr.attributeType.display == 'Patient Interaction') {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
     });
+
+    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptChiefComplaintNotes).subscribe((response: any) => {
+      response.results.forEach((obs: any) => {
+        if (obs.encounter.visit.uuid === this.visit.uuid) {
+          this.patientInteractionForm.patchValue({
+            chiefComplaintNotes: obs.value
+          });
+        }
+      });
+    });
   }
 
-
   savePatientInteraction() {
+    this.submittedPatientInteraction = true;
     if (this.patientInteractionForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
@@ -967,8 +1027,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       .subscribe((res: any) => {
         if (res) {
           this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
+          this.encounterService.postObs({
+            concept: this.conceptChiefComplaintNotes,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: this.patientInteractionForm.value.chiefComplaintNotes,
+            encounter: this.visitNotePresent.uuid
+          }).subscribe((result: any) => {
+            if (result) {
+              this.updateAIDiagnosis();
+            }
+          });
         }
-      })
+      });
+    
   }
 
   deletePatientInteraction() {
@@ -983,23 +1055,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkIfDiagnosisPresent() {
-    this.existingDiagnosis = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          this.existingDiagnosis.push({
-            diagnosisName: obs.value.split(':')[0].trim(),
-            diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
-            uuid: obs.uuid
+          let identified = obs.value === 'DIAGNOSIS NOT IDENTIFIED' ? false : true;
+          this.diagnosisForm.patchValue({
+            present: true,
+            diagnosisIdentified: identified ? 'Yes' : 'No',
+            diagnosisName: identified ? obs.value.split(':')[0].trim(): null,
+            diagnosisType: identified ? obs.value.split(':')[1].split('&')[0].trim() : null,
+            diagnosisStatus: identified ? obs.value.split(':')[1].split('&')[1].trim(): null
           });
-          // this.diagnosisForm.patchValue({
-          //   present: true,
-          //   diagnosisIdentified: 'Yes',
-          //   diagnosisName: obs.value.split(':')[0].trim(),
-          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
-          // });
+          this.diagnosisForm.get('diagnosisName')?.disable();
         }
       });
     });
@@ -1040,13 +1107,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: this.conceptDiagnosis,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
+      value: this.diagnosisForm.value.diagnosisIdentified === 'Yes' ? `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`: 'DIAGNOSIS NOT IDENTIFIED',
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {
-        // this.diagnosisForm.patchValue({ present: true });
+        this.diagnosisForm.patchValue({ present: true });
         this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
-        this.diagnosisForm.reset();
+        // this.diagnosisForm.reset();
+        this.getTreatmentPlan(res.value);
       }
     });
   }
@@ -1603,62 +1671,137 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.currentComplaint && this.username == 'doctorai') {
       // this.coreService.openConfirmationDialog({ confirmationMsg: "Do you want to proceed?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(response => {
       //   if (response) {
-          let vital = '';
-          let ckr = '';
-          let phyEx = '';
-          let medHy = '';
+      let vital = '';
+      let ckr = '';
+      let phyEx = '';
+      let medHy = '';
 
-          for (let v = 0; v < this.vitalObs.length; v++) {
-            vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
+      for (let v = 0; v < this.vitalObs.length; v++) {
+        vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
+      }
+
+      for (let c = 0; c < this.checkUpReasonData.length; c++) {
+        ckr += `${this.checkUpReasonData[c].title}\n`;
+        for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
+          ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value : ''}\n`
+        }
+      }
+
+      for (let p = 0; p < this.physicalExaminationData.length; p++) {
+        phyEx += `${this.physicalExaminationData[p].title}\n`;
+        if (this.physicalExaminationData[p].title != 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value : 'None'}\n`
           }
-
-          for (let c = 0; c < this.checkUpReasonData.length; c++) {
-            ckr += `${this.checkUpReasonData[c].title}\n`;
-            for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
-              ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value: ''}\n`
-            }
+        }
+        if (this.physicalExaminationData[p].title == 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
           }
+        }
+      }
 
-          for (let p = 0; p < this.physicalExaminationData.length; p++) {
-            phyEx += `${this.physicalExaminationData[p].title}\n`;
-            if (this.physicalExaminationData[p].title != 'Abdomen') {
-              for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
-                phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value: 'None'}\n`
-              }
-            }
-            if (this.physicalExaminationData[p].title == 'Abdomen') {
-              for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
-                phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
-              }
-            }
+      for (let c = 0; c < this.patientHistoryData.length; c++) {
+        medHy += `${this.patientHistoryData[c].title}\n`;
+        for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
+          medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value : 'None'}\n`
+        }
+      }
+
+      this.visitService.chatGPTCompletionDDx(`Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nAge: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nVitals:\n${vital}\nChief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Physical Examination\n${phyEx}Medical History\n\n${medHy}`, this.ddxForm.value.inputtype, this.ddxForm.value.customInput).subscribe((res: any) => {
+        this.ddx = {
+          maxCols: 1,
+          data: [],
+          model: null
+        };
+        let maxCol = 1;
+        const rows = res?.data.output.choices[0]?.message.content.split('\n');
+        rows.forEach(r => {
+          const cols = r.split('|');
+          if (cols.length > maxCol) maxCol = cols.length;
+          this.ddx.data.push(cols);
+        });
+        this.ddx.maxCols = maxCol;
+        this.ddx.model = res?.data.model;
+        console.log(this.ddx);
+        this.encounterService.postEncounter({
+          patient: this.visit.patient.uuid,
+          encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
+          encounterProviders: [
+            {
+              provider: this.provider.uuid,
+              encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+            },
+          ],
+          visit: this.visit.uuid,
+          encounterDatetime: new Date(Date.now() - 30000),
+          obs: [
+            {
+              concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
+              value: res?.data.output.choices[0]?.message.content,
+              comment: res?.data.model
+            },
+          ]
+        }).subscribe((post) => {
+          console.log('DDx pushed to the observation....');
+          this.ddxPresent = true;
+        });
+      });
+      // }
+      // });
+    }
+  }
+
+  getDiagnosisSuggestions() {
+    if (this.currentComplaint) {
+      let vital = '';
+      let ckr = '';
+      let phyEx = '';
+      let medHy = '';
+
+      for (let v = 0; v < this.vitalObs.length; v++) {
+        vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
+      }
+
+      for (let c = 0; c < this.checkUpReasonData.length; c++) {
+        ckr += `${this.checkUpReasonData[c].title}\n`;
+        for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
+          ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value : ''}\n`
+        }
+      }
+
+      for (let p = 0; p < this.physicalExaminationData.length; p++) {
+        phyEx += `${this.physicalExaminationData[p].title}\n`;
+        if (this.physicalExaminationData[p].title != 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value : 'None'}\n`
           }
-
-          for (let c = 0; c < this.patientHistoryData.length; c++) {
-            medHy += `${this.patientHistoryData[c].title}\n`;
-            for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
-              medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value: 'None'}\n`
-            }
+        }
+        if (this.physicalExaminationData[p].title == 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
           }
+        }
+      }
 
-          this.visitService.chatGPTCompletionDDx(`Gender: ${this.patient?.person.gender == 'M'? 'Male':'Female'}\nAge: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nVitals:\n${vital}\nChief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Physical Examination\n${phyEx}Medical History\n\n${medHy}`, this.ddxForm.value.inputtype, this.ddxForm.value.customInput).subscribe((res: any) => {
-            this.ddx = {
-              maxCols: 1,
-              data: [],
-              model: null
-            };
-            let maxCol = 1;
-            const rows = res?.data.output.choices[0]?.message.content.split('\n');
-            rows.forEach(r => {
-              const cols = r.split('|');
-              if(cols.length > maxCol) maxCol = cols.length;
-              this.ddx.data.push(cols);
-            });
-            this.ddx.maxCols = maxCol;
-            this.ddx.model = res?.data.model;
-            console.log(this.ddx);
+      for (let c = 0; c < this.patientHistoryData.length; c++) {
+        medHy += `${this.patientHistoryData[c].title}\n`;
+        for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
+          medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value : 'None'}\n`
+        }
+      }
+
+      this.visitService.getDiagnosisSuggestions(
+        `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`
+      ).subscribe((res: any) => {
+        try {
+          // const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          // if (result) {
+            // this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+            this.diagnosisSuggestions = res?.data.choices[0]?.message.content.split('\n');
             this.encounterService.postEncounter({
               patient: this.visit.patient.uuid,
-              encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
+              encounterType: "0a1863c0-5747-43ff-b125-45dd1e7ab6dd", //AI diagnosis and treatment plan encounter type uuid
               encounterProviders: [
                 {
                   provider: this.provider.uuid,
@@ -1669,18 +1812,167 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               encounterDatetime: new Date(Date.now() - 30000),
               obs: [
                 {
-                  concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
-                  value: res?.data.output.choices[0]?.message.content,
+                  concept: this.conceptAiDiagnosisSuggestions, // AI Diagnosis concept uuid
+                  value: JSON.stringify(res),
                   comment: res?.data.model
                 },
               ]
             }).subscribe((post) => {
-              console.log('DDx pushed to the observation....');
-              this.ddxPresent = true;
+              this.aiDiagnosisPresent = post;
+              this.diagnosisSuggestionsObsUuid = post?.obs[0].uuid;
             });
-          });
-        // }
-      // });
+          // } else {
+          //   this.getDiagnosisSuggestions();
+          // }
+        } catch (error: any) {
+          this.getDiagnosisSuggestions();          
+        }
+      }, (err: any) => {
+        this.getDiagnosisSuggestions();
+      });
+    }
+  }
+
+  viewDiagnosisDetail(data: any) {
+    this.coreService.openDiagnosisDetailModal(data).subscribe(res => {});
+  }
+
+  updateAIDiagnosis() {
+    if (this.patientInteractionForm.invalid) {
+      return;
+    }
+    if (this.currentComplaint) {
+      let vital = '';
+      let ckr = '';
+      let phyEx = '';
+      let medHy = '';
+
+      for (let v = 0; v < this.vitalObs.length; v++) {
+        vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
+      }
+
+      for (let c = 0; c < this.checkUpReasonData.length; c++) {
+        ckr += `${this.checkUpReasonData[c].title}\n`;
+        for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
+          ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value : ''}\n`
+        }
+      }
+
+      for (let p = 0; p < this.physicalExaminationData.length; p++) {
+        phyEx += `${this.physicalExaminationData[p].title}\n`;
+        if (this.physicalExaminationData[p].title != 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value : 'None'}\n`
+          }
+        }
+        if (this.physicalExaminationData[p].title == 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
+          }
+        }
+      }
+
+      for (let c = 0; c < this.patientHistoryData.length; c++) {
+        medHy += `${this.patientHistoryData[c].title}\n`;
+        for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
+          medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value : 'None'}\n`
+        }
+      }
+      this.visitService.getUpdatedDiagnosisSuggestions(
+        `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`,
+        this.patientInteractionForm.value.chiefComplaintNotes
+      ).subscribe((res: any) => {
+        try {
+          // const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          // if (result) {
+            // this.diagnosisSuggestions = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim()).diagnosis;
+            this.diagnosisSuggestions = res?.data.choices[0]?.message.content.split('\n');
+            // Update AI DIAGNOSIS SUGGESTIONS observation
+            this.encounterService.updateObs({
+              value: JSON.stringify(res),
+              comment: res.data?.model
+            }, this.diagnosisSuggestionsObsUuid).subscribe(response => {});
+          // } else {
+          //   this.updateAIDiagnosis();
+          // }
+        } catch (error: any) {
+          this.updateAIDiagnosis();
+        }
+      }, (err: any) => {
+        this.updateAIDiagnosis();
+      });
+    }
+  }
+
+  getTreatmentPlan(finalDiagnosis: string) {
+    if (this.currentComplaint) {
+      let vital = '';
+      let ckr = '';
+      let phyEx = '';
+      let medHy = '';
+
+      for (let v = 0; v < this.vitalObs.length; v++) {
+        vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
+      }
+
+      for (let c = 0; c < this.checkUpReasonData.length; c++) {
+        ckr += `${this.checkUpReasonData[c].title}\n`;
+        for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
+          ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value : ''}\n`
+        }
+      }
+
+      for (let p = 0; p < this.physicalExaminationData.length; p++) {
+        phyEx += `${this.physicalExaminationData[p].title}\n`;
+        if (this.physicalExaminationData[p].title != 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value : 'None'}\n`
+          }
+        }
+        if (this.physicalExaminationData[p].title == 'Abdomen') {
+          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+            phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
+          }
+        }
+      }
+
+      for (let c = 0; c < this.patientHistoryData.length; c++) {
+        medHy += `${this.patientHistoryData[c].title}\n`;
+        for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
+          medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value : 'None'}\n`
+        }
+      }
+
+      this.visitService.getTreatmentPlan(
+        `Patient Gender: ${this.patient?.person.gender == 'M' ? 'Male' : 'Female'}\nPatient Age: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nPatient Vitals:\n${vital}\nPatient Chief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Patient Physical Examination\n${phyEx}Patient Medical History\n\n${medHy}`,
+        finalDiagnosis
+      ).subscribe((res: any) => {
+        try {
+          const result = (res?.data.choices[0]?.message.content.trim()).match(/```json((.|[\n\r])*)```/);
+          if (result) {
+            this.treatmentPlan = JSON.parse(result[0].replace('```json','').replace('``json','').replace('```','').replace('``','').trim());
+            this.encounterService.postObs({
+              concept: this.conceptAiTreatmentPlan,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: JSON.stringify(res),
+              comment: res?.data.model,
+              encounter: this.aiDiagnosisPresent.uuid
+            }).subscribe((obs) => {
+              this.getVisit(this.visit.uuid);
+            });
+          } else {
+            console.log('Not a match');
+            this.getTreatmentPlan(finalDiagnosis);
+          }
+        } catch (error: any) {
+          console.log('Not a valid json');
+          this.getTreatmentPlan(finalDiagnosis);
+        }
+      }, (err: any) => {
+        console.log('Api error');
+        this.getTreatmentPlan(finalDiagnosis);
+      });
     }
   }
 

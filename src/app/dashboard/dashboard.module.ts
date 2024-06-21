@@ -26,6 +26,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { GptInputComponent } from './gpt-input/gpt-input.component';
+import { DiagnosisTreatmentPlanConfigurationComponent } from './diagnosis-treatment-plan-configuration/diagnosis-treatment-plan-configuration.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { GptInputComponent } from './gpt-input/gpt-input.component';
     VisitSummaryComponent,
     ChangePasswordComponent,
     HwProfileComponent,
-    GptInputComponent
+    GptInputComponent,
+    DiagnosisTreatmentPlanConfigurationComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,13 @@
+.modal-title-con {
+    position: relative;
+}
+
+.modal-title-con::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    height: 1px;
+    left: 0px;
+    right: 0px;
+    background: #EFE8FF;
+}

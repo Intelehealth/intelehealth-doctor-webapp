@@ -739,7 +739,37 @@ body.font-lato td {
     }
   }
 
-  .card-header::after {
+  .card-header-2 {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    font-size: 18px;
+    line-height: 150%;
+    font-weight: bold;
+    color: #1B163A;
+    background: none;
+    border: none;
+    position: relative;
+    flex-wrap: wrap;
+
+    h6 {
+      font-size: 18px;
+      line-height: 150%;
+      font-weight: bold;
+    }
+
+    p {
+      margin-bottom: 0;
+      font-weight: normal;
+      font-size: 14px;
+    }
+
+    .card-header-actions {
+      margin-left: auto;
+    }
+  }
+
+  .card-header::after, .card-header-2::after {
     content: '';
     position: absolute;
     bottom: 0px;
@@ -780,6 +810,11 @@ body.font-lato td {
 
 .intel-horz-card.disabled {
   opacity: 0.5;
+}
+
+.intel-card.card-blue {
+  background: #F7F7F7 !important;
+  box-shadow: none !important;
 }
 
 .intel-blue-btn {

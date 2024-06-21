@@ -197,6 +197,10 @@
     margin-bottom: 5px;
   }
 
+  li::marker {
+    font-weight: bold;
+  }
+
   li .list-item {
     display: flex;
     flex-wrap: nowrap;
@@ -419,6 +423,7 @@
     color: #FFFFFF;
     position: relative;
     padding: 10px 16px;
+    line-height: 150%;
   }
 
   .white-btn {
@@ -430,6 +435,7 @@
     font-weight: bold;
     border: 1px solid #EFE8FF;
     padding: 10px 16px;
+    line-height: 150%;
   }
 
   .gray-btn {
@@ -441,6 +447,7 @@
     font-weight: bold;
     border: 1px solid #EFE8FF;
     padding: 10px 16px;
+    line-height: 150%;
   }
 
   .blue-btn:disabled,
@@ -557,6 +564,19 @@ textarea.form-control {
   font-size: 18px;
   line-height: 150%;
   color: #FFFFFF;
+}
+
+.gray-btn {
+  padding: 14px 24px;
+  background: #EFE8FF;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-family: DM Sans;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  color: #2E1E91;
 }
 
 .blue-btn:disabled {
@@ -793,6 +813,14 @@ th.mat-header-cell:last-child {
 
   .col-form-label {
     font-weight: bold;
+  }
+
+  .intel-accordion-con .mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    height: fit-content !important;
+  }
+
+  .intel-accordion-title {
+    flex-wrap: nowrap !important;
   }
 }
 

@@ -165,4 +165,48 @@ export class VisitService {
   deleteGptModel(id: number): Observable<any> {
     return this.http.delete(`${environment.mindmapURL}/openai/deleteModel/${id}`);
   }
+
+  getChatGptModels(): Observable<any> {
+    return this.http.get(`${environment.mindmapURL}/openai/chatGptModels`);
+    return this.http.get(`http://localhost:3004/api/openai/chatGptModels`);
+  }
+
+  setAsDefaultModelChatGpt(id: number): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/setAsDefaultModelChatGpt`, { id });
+    return this.http.post(`http://localhost:3004/api/openai/setAsDefaultModelChatGpt`, { id });
+  }
+
+  updateModelChatGpt(model: any): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/updateChatGptModel`, model);
+    return this.http.post(`http://localhost:3004/api/openai/updateChatGptModel`, model);
+  }
+
+  getChatGptPrompts(): Observable<any> {
+    return this.http.get(`${environment.mindmapURL}/openai/chatGptPrompts`);
+    return this.http.get(`http://localhost:3004/api/openai/chatGptPrompts`);
+  }
+
+  updateChatGptPrompts(prompts: any): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/updateChatGptPrompts`, prompts);
+    return this.http.post(`http://localhost:3004/api/openai/updateChatGptPrompts`, prompts);
+  }
+
+  getDiagnosisSuggestions(caseInformation: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/getDiagnosisSuggestions2`, { payload: caseInformation });
+    return this.http.post(`${environment.mindmapURL}/openai/getDiagnosisSuggestions`, { payload: caseInformation });
+    return this.http.post(`http://localhost:3004/api/openai/getDiagnosisSuggestions`, { payload: caseInformation });
+    return this.http.post(`http://localhost:3004/api/openai/getDiagnosisSuggestions2`, { payload: caseInformation });
+  }
+
+  getUpdatedDiagnosisSuggestions(caseInformation: string, additionalNotes: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/getUpdatedDiagnosisSuggestions2`, { caseInformation, additionalNotes });
+    return this.http.post(`${environment.mindmapURL}/openai/getUpdatedDiagnosisSuggestions`, { caseInformation, additionalNotes });
+    return this.http.post(`http://localhost:3004/api/openai/getUpdatedDiagnosisSuggestions`, { caseInformation, additionalNotes });
+    return this.http.post(`http://localhost:3004/api/openai/getUpdatedDiagnosisSuggestions2`, { caseInformation, additionalNotes });
+  }
+
+  getTreatmentPlan(caseInformation: string, finalDiagnosis: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/getDiagnosticTestAndTreatmentPlan`, { caseInformation, finalDiagnosis });
+    return this.http.post(`http://localhost:3004/api/openai/getDiagnosticTestAndTreatmentPlan`, { caseInformation, finalDiagnosis });
+  }
 }
