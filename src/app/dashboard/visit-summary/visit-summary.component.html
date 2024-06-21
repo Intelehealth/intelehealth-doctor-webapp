@@ -491,76 +491,7 @@
                 </ng-template>
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/diagnosis-green.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Diagnosis</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <h3 class="mt-3 mb-0 font-weight-bold">Provisional Diagnosis*</h3>
-                <p>Please rely on your medical judgment while entering the diagnosis or selecting from the AI-Assistant
-                  Sanjaya's list of differential diagnoses.</p>
-                <form [formGroup]="aiDiagnosisForm">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter provisional diagnosis" formControlName="provisionalDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedAiDiagnosisForm && aidf.provisionalDiagnosis.errors">
-                      <small class="text-danger" *ngIf="aidf.provisionalDiagnosis.errors.required">Enter provisional diagnosis</small>
-                    </div>
-                  </div>
-                  <h3 class="mt-3 mb-0 font-weight-bold">Diagnosis suggestions from AI-Assistant Sanjaya</h3>
-                  <p>Listed according to their likelihood from highest to lowest.</p>
-                  <p class="font-weight-bold">Diagnosis</p>
-                  <div class="row">
-                    <div class="col-md-6 d-flex flex-column">
-                      <ng-container *ngFor="let s of diagnosisSuggestions; let i=index;">
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                          <p>{{s.rank}}. {{s.name}} <span (click)="viewDiagnosisDetail(s)" style="cursor: pointer;"><img src="assets/svgs/info-grey.svg" alt="info" width="16px"></span></p>
-                          <div class="pretty p-default p-round my-3">
-                            <input type="radio" [value]="s.name" formControlName="diagnosisSuggestions" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
-                            <div class="state p-success">
-                              <label></label>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-5">
-                      <h3 class="mt-3 font-weight-bold">Secondary Diagnosis*</h3>
-                    </div>
-                    <div class="col-md-7">
-                      <div class="py-4">
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'Yes'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
-                          <div class="state p-success">
-                            <label>Yes</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'No'" formControlName="secondaryDiagnosisStatus" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded">
-                          <div class="state p-success">
-                            <label>No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group" *ngIf="aiDiagnosisForm.value.secondaryDiagnosisStatus == 'Yes'">
-                    <input type="text" class="form-control" placeholder="Enter secondary diagnosis" formControlName="secondaryDiagnosis" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedAiDiagnosisForm && aidf.secondaryDiagnosis.errors">
-                      <small class="error-msg" *ngIf="aidf.secondaryDiagnosis.errors.required">Enter secondary diagnosis</small>
-                    </div>
-                  </div>
-                </form>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="!visitNotePresent" class="bg-gray"
-                *ngIf="!visitNotePresent && !visitEnded && !visitCompleted">
+              <mat-expansion-panel [expanded]="!visitNotePresent" *ngIf="!visitNotePresent && !visitEnded && !visitCompleted">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     <div class="intel-accordion-title">
@@ -602,90 +533,6 @@
                       <button type="submit" class="next-btn">Re-assign</button>
                     </div>
                   </ng-container>
-                </form>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/patient-interaction-green.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Patient interaction</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <form [formGroup]="patientInteractionForm" (ngSubmit)="savePatientInteraction()">
-                  <ul class="items-list">
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Connect with patient</label>
-                        <div class="col-sm-9 d-flex align-items-center" *ngIf="
-                                          getPersonAttributeValue('Telephone Number') != 'NA';
-                                          else noContactDetails
-                                        ">
-                          <div class="d-flex">
-                            <a href="tel:{{
-                                              getPersonAttributeValue('Telephone Number')
-                                            }}" target="_blank" class="icon-btn m-0 mr-2">
-                              <img src="assets/svgs/phone-green.svg" alt="" />
-                            </a>
-                            <a href="{{ getWhatsAppLink() }}" target="_blank" class="icon-btn m-0 mr-2">
-                              <img src="assets/svgs/whatsapp-green.svg" alt="" />
-                            </a>
-                          </div>
-                          <span class="text-muted">Click here to connect with the patient</span>
-                        </div>
-                        <ng-template #noContactDetails>
-                          <div class="col-sm-9 d-flex align-items-center">
-                            <span class="text-muted">Patient Mobile number is not available</span>
-                          </div>
-                        </ng-template>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Have you spoken with the patient directly?</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Yes'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
-                            <div class="state p-success">
-                              <label>Yes</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'No'" formControlName="spoken" [attr.disabled]="visitNotePresent || visitCompleted || visitEnded"/>
-                            <div class="state p-success">
-                              <label>No</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </form>
-                <form [formGroup]="patientInteractionNotesForm" *ngIf="patientInteractionForm.value.spoken === 'Yes'" (ngSubmit)="updateAIDiagnosis()">
-                  <h3 class="mt-3 mb-0 font-weight-bold">Notes*</h3>
-                  <p>Please write detailed notes from your conversation with the patient for your AI-Assistant Sanjaya.
-                  </p>
-                  <p class="font-weight-bold">Notes about chief complaint</p>
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter notes about cheif complaint" formControlName="chiefComplaintNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <div *ngIf="submittedPatientInteractionNotes && pifn.chiefComplaintNotes.errors">
-                      <small class="text-danger" *ngIf="pifn.chiefComplaintNotes.errors.required">Enter notes about cheif complaint</small>
-                    </div>
-                  </div>
-                  <div class="row" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded">
-                    <div class="col-md-12 text-right">
-                      <button type="submit" class="gray-btn">Update AI Diagnosis</button>
-                    </div>
-                  </div>
-                  <p class="font-weight-bold">Secondary Diagnosis Notes</p>
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter secondary diagnosis notes" formControlName="secondaryDiagnosisNotes" [readOnly]="visitNotePresent || visitCompleted || visitEnded">
-                    <!-- <div *ngIf="submitted && f1.secondaryDiagnosisNotes.errors">
-                      <small class="error-msg" *ngIf="f1.secondaryDiagnosisNotes.errors.required">Enter first name</small>
-                    </div> -->
-                  </div>
                 </form>
               </mat-expansion-panel>
             </mat-accordion>
@@ -859,7 +706,8 @@
                   <tr>
                     <th *ngFor="let h of ddx.data[0]"
                       [attr.colspan]="ddx.data[0].length == 1 && ddx.maxCols > ddx.data[0].length ? ddx.maxCols : 1">
-                      {{h}}</th>
+                      {{h}}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -903,78 +751,333 @@
       </button>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0 && treatmentPlan">
-      <div class="card intel-card">
-        <div class="card-header-2">
-          <div class="d-flex flex-row">
-            <img class="mr-2" src="assets/svgs/llm.svg" alt="">
-            <h6 class="mb-0">LLM Generated Treatment Plan</h6>
-          </div>
-          <p><span class="text-danger">Note:</span> This information is AI generated. Please rely on your medical
-            judgement while referring to it.</p>
-        </div>
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0">
+      <div class="intel-card">
         <div class="card-body">
-          <div class="card intel-card card-blue mb-3">
-            <div class="card-body">
-              <h3 class="font-weight-bold">Diagnostic Tests</h3>
+          <mat-accordion class="intel-accordion-con" multi>
+
+            <mat-expansion-panel [expanded]="true" #panel1 hideToggle>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img
+                      src="assets/svgs/patient-interaction.svg"
+                      alt=""
+                      width="44px"
+                    />
+                    <h6 class="mb-0 ml-2">Patient interaction</h6>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panel1.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+
+              <form
+                [formGroup]="patientInteractionForm"
+                (ngSubmit)="savePatientInteraction()"
+              >
+                <ul class="items-list">
+                  <li>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label"
+                        >Connect with patient</label
+                      >
+                      <div
+                        class="col-sm-9 d-flex align-items-center"
+                        *ngIf="
+                          getPersonAttributeValue('Telephone Number') != 'NA';
+                          else noContactDetails
+                        "
+                      >
+                        <div class="d-flex">
+                          <a
+                            href="tel:{{
+                              getPersonAttributeValue('Telephone Number')
+                            }}"
+                            target="_blank"
+                            class="icon-btn m-0 mr-2"
+                          >
+                            <img src="assets/svgs/phone-green.svg" alt="" />
+                          </a>
+                          <a
+                            href="{{ getWhatsAppLink() }}"
+                            target="_blank"
+                            class="icon-btn m-0 mr-2"
+                          >
+                            <img src="assets/svgs/whatsapp-green.svg" alt="" />
+                          </a>
+                        </div>
+                        <span class="text-muted"
+                          >Click here to connent with the patient</span
+                        >
+                      </div>
+                      <ng-template #noContactDetails>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <span class="text-muted"
+                            >Patient Mobile number is not available</span
+                          >
+                        </div>
+                      </ng-template>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label"
+                        >Have you spoken with the patient directly?</label
+                      >
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            [value]="'Yes'"
+                            formControlName="spoken"
+                            [attr.disabled]="patientInteractionForm.value.present || visitCompleted || visitEnded"
+                          />
+                          <div class="state p-success">
+                            <label>Yes</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            [value]="'No'"
+                            formControlName="spoken"
+                            [attr.disabled]="patientInteractionForm.value.present || visitCompleted || visitEnded"
+                          />
+                          <div class="state p-success">
+                            <label>No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <ng-container *ngIf="patientInteractionForm.value.spoken === 'Yes'">
+                  <h3 class="mt-3 mb-0 font-weight-bold">Notes*</h3>
+                  <p>Please enter any notes from your conversation with the patient.</p>
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter notes about cheif complaint" formControlName="chiefComplaintNotes" [readOnly]="patientInteractionForm.value.present">
+                    <div *ngIf="submittedPatientInteraction && pif.chiefComplaintNotes.errors">
+                      <small class="text-danger" *ngIf="pif.chiefComplaintNotes.errors.required">Enter notes about cheif complaint</small>
+                    </div>
+                  </div>
+                </ng-container>
+                <div
+                  class="form-group mb-0 mt-3"
+                  *ngIf="
+                    isVisitNoteProvider &&
+                    !visitEnded &&
+                    !patientInteractionForm.value.present
+                  "
+                >
+                  <button
+                    type="submit"
+                    class="gray-btn"
+                    [disabled]="patientInteractionForm.invalid"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="true" #panel2 hideToggle class="bg-gray">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
+                    <div class="d-flex flex-column">
+                      <h6 class="mb-1 ml-2">Ayu suggested diagnosis</h6>
+                      <p class="mb-0 ml-2"><span class="text-danger">Note:</span> This information is AI generated. Please rely on your medical
+                        judgement while referring to it.</p>
+                    </div>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+              <table class="ddx-table mt-3">
+                <tbody>
+                  <ng-container *ngFor="let d of diagnosisSuggestions; let i=index;">
+                    <tr>
+                      <td>{{d}}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+              <!-- <p class="mt-3">Based on the presenting complaints and physical examination findings provided, the following are the top 5 differential disgnosis, ranked by likelihood:</p>
+              <ol class="items-list pt-0">
+                <li *ngFor="let ds of diagnosisSuggestions;">
+                  <h3 class="font-weight-bold mb-0">{{ds.name}}</h3>
+                </li>
+              </ol>
+              <p class="mt-3">Let's dive into each diagnosis:</p>
+              <ol class="items-list pt-0">
+                <li *ngFor="let ds of diagnosisSuggestions;">
+                  <h3 class="font-weight-bold mb-0">{{ds.name}} :</h3>
+                  <p>{{ds.description}}</p>
+                </li>
+              </ol> -->
+              <hr class="mb-0"/>
+              <form
+                  [formGroup]="diagnosisForm"
+                  (ngSubmit)="saveDiagnosis()"
+                  *ngIf="!addMoreDiagnosis"
+                >
+                  <ul class="items-list">
+                    <li>
+                      <div class="row">
+                        <label class="col-sm-3 col-form-label">Do you have enough information for diagnosis?</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input
+                              type="radio"
+                              [value]="'Yes'"
+                              formControlName="diagnosisIdentified"
+                              [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                            />
+                            <div class="state p-success">
+                              <label>Yes</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input
+                              type="radio"
+                              [value]="'No'"
+                              formControlName="diagnosisIdentified"
+                              [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                            />
+                            <div class="state p-success">
+                              <label>No</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <ng-container *ngIf="diagnosisForm.value.diagnosisIdentified ==='Yes'">
+                      <li>
+                        <div class="row">
+                          <label
+                            for="select-diagnosis"
+                            class="col-sm-3 col-form-label"
+                            >Select or enter diagnosis</label
+                          >
+                          <div class="col-sm-6">
+                            <ng-select
+                              class="visit-select custom"
+                              formControlName="diagnosisName"
+                              (search)="onKeyUp($event)"
+                              [items]="diagnosis$ | async"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="true"
+                              [searchable]="true"
+                              placeholder="Select or enter diagnosis"
+                              [addTag]="true"
+                            >
+                            </ng-select>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="row">
+                          <label class="col-sm-3 col-form-label"
+                            >Diagnosis type</label
+                          >
+                          <div class="col-sm-9 d-flex align-items-center">
+                            <div class="pretty p-default p-round">
+                              <input
+                                type="radio"
+                                [value]="'Primary'"
+                                formControlName="diagnosisType"
+                                [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                              />
+                              <div class="state p-success">
+                                <label>Primary</label>
+                              </div>
+                            </div>
+                            <div class="pretty p-default p-round">
+                              <input
+                                type="radio"
+                                [value]="'Secondary'"
+                                formControlName="diagnosisType"
+                                [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                              />
+                              <div class="state p-success">
+                                <label>Secondary</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="row">
+                          <label class="col-sm-3 col-form-label">Select</label>
+                          <div class="col-sm-9 d-flex align-items-center">
+                            <div class="pretty p-default p-round">
+                              <input
+                                type="radio"
+                                [value]="'Provisional'"
+                                formControlName="diagnosisStatus"
+                                [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                              />
+                              <div class="state p-success">
+                                <label>Provisional</label>
+                              </div>
+                            </div>
+                            <div class="pretty p-default p-round">
+                              <input
+                                type="radio"
+                                [value]="'Confirmed'"
+                                formControlName="diagnosisStatus"
+                                [attr.disabled]="diagnosisForm.value.present || visitCompleted || visitEnded"
+                              />
+                              <div class="state p-success">
+                                <label>Confirmed</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ng-container>
+                  </ul>
+                  <div class="form-group mb-0" *ngIf="!diagnosisForm.value.present && !visitCompleted && !visitEnded">
+                    <button
+                      type="submit"
+                      class="gray-btn"
+                      [disabled]="diagnosisForm.invalid"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </form>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="true" #panel9 hideToggle *ngIf="treatmentPlan">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/llm-blue.svg" alt="" width="44px" />
+                    <div class="d-flex flex-column">
+                      <h6 class="mb-1 ml-2">Ayu suggested treatment plan</h6>
+                      <p class="mb-0 ml-2"><span class="text-danger">Note:</span> This information is AI generated. Please rely on your medical
+                        judgement while referring to it.</p>
+                    </div>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panel9.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+
+              <h3 class="font-weight-bold mt-3">Diagnostic Tests</h3>
               <ul class="items-list pt-0">
                 <li *ngFor="let dt of treatmentPlan.diagnostic_tests;">
                   <div class="list-item">
-                    <label>{{dt.test_name}}</label>
+                    <label class="font-weight-bold">{{dt.test_name}}</label>
                     <div class="list-item-content">
                       {{dt.test_need}}
                     </div>
                   </div>
+                  <hr/>
                 </li>
-                <!-- <li>
-                  <div class="list-item">
-                    <label>Complete Blood Count (CBC)</label>
-                    <div class="list-item-content">
-                      To check for elevated white blood cells indicating infection.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>Blood Cultures</label>
-                    <div class="list-item-content">
-                      While not listed, if possible, should be done to identify the causative organism, especially in
-                      the context of systemic signs of infection like fever and tachycardia.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>Imaging</label>
-                    <div class="list-item-content">
-                      Although not available at the clinic, referral for a CT scan of the neck with contrast is crucial
-                      to delineate the extent of the infection, presence of any abscess that may require drainage, and
-                      involvement of airway structures. This is particularly important for planning management in cases
-                      of Ludwig's Angina and deep neck infections.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>Urea, Creatinine, Electrolytes</label>
-                    <div class="list-item-content">
-                      To assess renal function, which can be affected by severe infection and dehydration.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item">
-                    <label>C-Reactive Protein (CRP) or Erythrocyte Sedimentation Rate (ESR)</label>
-                    <div class="list-item-content">
-                      If available, to assess the severity of inflammation, although not listed in the available tests.
-                    </div>
-                  </div>
-                </li> -->
               </ul>
-            </div>
-          </div>
-          <div class="card intel-card card-blue">
-            <div class="card-body">
               <h3 class="font-weight-bold">Management and Referral</h3>
               <ul class="items-list pt-0">
                 <li *ngFor="let tp of treatmentPlan.treatment_plan">
@@ -984,44 +1087,10 @@
                     </div>
                   </div>
                 </li>
-                <!-- <li>
-                  <div class="list-item-col">
-                    <div class="list-item-content">
-                      Immediate empirical antibiotic therapy is warranted, targeting anaerobic and aerobic organisms,
-                      typically with a combination such as ampicillin-sulbactam or clindamycin plus a third-generation
-                      cephalosporin, considering the patient's lack of drug allergies.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item-col">
-                    <div class="list-item-content">
-                      Secure the airway. Given the difficulty with breathing and potential for airway compromise,
-                      preparation for emergency airway management is critical.
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="list-item-col">
-                    <div class="list-item-content">
-                      Urgent referral to a higher-level center is necessary for imaging, potential surgical intervention
-                      (e.g., incision and drainage of any abscess), and advanced airway management capabilities.
-                    </div>
-                  </div>
-                </li> -->
               </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </mat-expansion-panel>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0">
-      <div class="intel-card">
-        <div class="card-body">
-          <mat-accordion class="intel-accordion-con" multi>
-
-            <mat-expansion-panel [expanded]="true" #panel3 hideToggle>
+            <mat-expansion-panel [expanded]="true" #panel3 hideToggle class="bg-gray overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1073,7 +1142,7 @@
               </form>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="true" #panel4 hideToggle class="bg-gray overflow-show">
+            <mat-expansion-panel [expanded]="true" #panel4 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1249,7 +1318,7 @@
               </ng-container>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show">
+            <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="bg-gray overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1301,7 +1370,7 @@
               </ng-container>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="true" #panel6 hideToggle class="bg-gray overflow-show">
+            <mat-expansion-panel [expanded]="true" #panel6 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1352,7 +1421,7 @@
               </ng-container>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show">
+            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="bg-gray overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1437,7 +1506,7 @@
               </form>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="true" #panel8 hideToggle class="bg-gray">
+            <mat-expansion-panel [expanded]="true" #panel8 hideToggle class="overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">

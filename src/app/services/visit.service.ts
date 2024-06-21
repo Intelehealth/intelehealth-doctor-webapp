@@ -192,13 +192,17 @@ export class VisitService {
   }
 
   getDiagnosisSuggestions(caseInformation: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/getDiagnosisSuggestions2`, { payload: caseInformation });
     return this.http.post(`${environment.mindmapURL}/openai/getDiagnosisSuggestions`, { payload: caseInformation });
     return this.http.post(`http://localhost:3004/api/openai/getDiagnosisSuggestions`, { payload: caseInformation });
+    return this.http.post(`http://localhost:3004/api/openai/getDiagnosisSuggestions2`, { payload: caseInformation });
   }
 
   getUpdatedDiagnosisSuggestions(caseInformation: string, additionalNotes: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/getUpdatedDiagnosisSuggestions2`, { caseInformation, additionalNotes });
     return this.http.post(`${environment.mindmapURL}/openai/getUpdatedDiagnosisSuggestions`, { caseInformation, additionalNotes });
     return this.http.post(`http://localhost:3004/api/openai/getUpdatedDiagnosisSuggestions`, { caseInformation, additionalNotes });
+    return this.http.post(`http://localhost:3004/api/openai/getUpdatedDiagnosisSuggestions2`, { caseInformation, additionalNotes });
   }
 
   getTreatmentPlan(caseInformation: string, finalDiagnosis: string) {
