@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute } from "@angular/router";
 
@@ -8,6 +8,7 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./past-visits.component.css"],
 })
 export class PastVisitsComponent implements OnInit {
+  @Input() isNcdSevikaVisit : boolean
   recentVisit: any = [];
   observation: {};
   visitStatus: String;
@@ -34,7 +35,7 @@ export class PastVisitsComponent implements OnInit {
                   for (let i = 1; i < currentComplaint.length; i++) {
                     const obs1 = currentComplaint[i].split("<");
                     if (!obs1[0].match("Associated symptoms")) {
-                      b = b + " | " + obs1[0];
+                      b = b + " | " +  (this.isNcdSevikaVisit &&  i === 1 ? "NCD - "+obs1[0] : obs1[0]);
                       this.recentVisit.observation = b;
                     }
                   }

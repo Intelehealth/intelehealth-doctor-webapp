@@ -18,6 +18,8 @@ import { FileDownloadComponent } from './modals/file-download/file-download.comp
 import { ReportGeneratorComponent } from './modals/report-generator/report-generator.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReoportService } from './services/report.service';
+import { MatSelectModule } from '@angular/material/select';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 
@@ -43,6 +45,8 @@ import { ReoportService } from './services/report.service';
     MatButtonModule,
     NgbNavModule,
     MatProgressBarModule,
+    MatSelectModule,
+    NgMultiSelectDropDownModule
   ],
   providers: [
     ModalService,

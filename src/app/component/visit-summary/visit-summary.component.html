@@ -9,7 +9,7 @@
   </mat-card>
   <br>
   <mat-card>
-    <app-past-visits></app-past-visits>
+    <app-past-visits [isNcdSevikaVisit]="isNcdSevikaVisit"></app-past-visits>
   </mat-card>
   <br>
   <mat-card>
@@ -20,26 +20,26 @@
     <app-presenting-complaints></app-presenting-complaints>
   </mat-card>
   <br>
-  <mat-card>
+  <mat-card *ngIf="!isNcdSevikaVisit">
     <app-family-history></app-family-history>
   </mat-card>
-  <br>
-  <mat-card>
+  <span *ngIf="!isNcdSevikaVisit"><br></span>
+  <mat-card *ngIf="!isNcdSevikaVisit">
     <app-past-medical-history></app-past-medical-history>
   </mat-card>
-  <br>
-  <mat-card>
+  <span *ngIf="!isNcdSevikaVisit"><br></span>
+  <mat-card *ngIf="!isNcdSevikaVisit">
     <app-vital></app-vital>
   </mat-card>
-  <br>
-  <mat-card>
+  <span *ngIf="!isNcdSevikaVisit"><br></span>
+  <mat-card *ngIf="!isNcdSevikaVisit">
     <app-on-examination></app-on-examination>
   </mat-card>
-  <br>
-  <mat-card>
+  <span *ngIf="!isNcdSevikaVisit"><br></span>
+  <mat-card *ngIf="!isNcdSevikaVisit">
     <app-physical-examination></app-physical-examination>
   </mat-card>
-  <br>
+  <span *ngIf="!isNcdSevikaVisit"><br></span>
   <mat-card>
     <app-additional-documents></app-additional-documents>
   </mat-card>
@@ -71,7 +71,8 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="(managerRoleAccess || visitNotePresent || isSevikaVisit) && disabledBtn">
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"
+      [disabled]="managerRoleAccess || visitNotePresent || isSevikaVisit || isNcdSevikaVisit">
       Start Visit Note
     </button>
   </div>
@@ -122,7 +123,8 @@ require by speaking with the patient directly.  -->
 
     <div class="text-center" *ngIf="!visitCompletePresent">
       <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-        [disabled]="(visitCompletePresent || isVisitSummaryChanged || isSevikaVisit || requiredNotFilled || managerRoleAccess) && disabledSignBtn">Sign and Submit</button>
+        [disabled]="(visitCompletePresent || isVisitSummaryChanged || isSevikaVisit || requiredNotFilled || managerRoleAccess) && disabledSignBtn">Sign
+        and Submit</button>
     </div>
   </div>
 </div>

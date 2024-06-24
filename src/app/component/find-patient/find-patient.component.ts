@@ -1,6 +1,7 @@
 import { VisitService } from "./../../services/visit.service";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 
 @Component({
@@ -15,7 +16,8 @@ export class FindPatientComponent implements OnInit {
     public dialog: MatDialogRef<FindPatientComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private service: VisitService,
-    private router: Router
+    private router: Router,
+    private snackbar: MatSnackBar,
   ) {}
 
   ngOnInit() {
@@ -29,12 +31,16 @@ export class FindPatientComponent implements OnInit {
 
   find(uuid) {
     this.service.recentVisits(uuid).subscribe((response) => {
+      if(response.results?.length > 0){
       this.router.navigate([
         "/visitSummary",
         response.results[0].patient.uuid,
         response.results[0].uuid,
       ]);
       this.dialog.close();
+    } else {
+      this.snackbar.open("Visit not found for this patient", null, { duration: 2000 });
+    }
     });
   }
 }
