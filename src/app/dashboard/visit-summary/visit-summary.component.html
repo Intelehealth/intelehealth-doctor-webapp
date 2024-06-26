@@ -1099,6 +1099,7 @@
                         >
                         <div class="col-sm-3">
                           <ng-select
+                            appendTo=".visit-summary-tab-group"
                             class="visit-select custom"
                             formControlName="diagnosisName"
                             (search)="onKeyUp($event)"
@@ -1399,7 +1400,7 @@
                           </td>
                           <td>
                             <ng-select
-                              appendTo=".medication-con"
+                              appendTo=".visit-summary-tab-group"
                               formControlName="timing"
                               class="visit-select custom"
                               [items]="timingList"
