@@ -115,6 +115,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   addTestForm: FormGroup;
   addReferralForm: FormGroup;
   followUpForm: FormGroup;
+  followUpDatetime: string;
 
   displayedColumns: string[] = ['action', 'created_on', 'consulted_by', 'cheif_complaint', 'summary', 'prescription', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
@@ -1461,6 +1462,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           } else {
             wantFollowUp = 'No';
           }
+          this.followUpDatetime = obs.value;
           this.followUpForm.patchValue({
             present: true,
             wantFollowUp,
@@ -1498,6 +1500,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.encounterService.postObs(body).subscribe((res: ObsModel) => {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
+        this.followUpDatetime = res.value;
       }
     });
   }
@@ -1509,6 +1512,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   deleteFollowUp() {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
       this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null });
+      this.followUpDatetime = null;
     });
   }
 
@@ -1733,10 +1737,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   notifyHwForAvailablePrescription(): void {
     const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
-
+    const openMRSID = this.getPatientIdentifier("OpenMRS ID");
     const payload = {
       title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
-      body: "Click notification to see!"
+      body: "Click notification to see!",
+      data: {
+        patientName: this.patient.person.preferredName,
+        patientUuid: this.patient.uuid,
+        patientOpenMrsId: openMRSID,
+        visitUuid: this.visit.uuid,
+        followupDatetime: this.followUpDatetime
+      }
     }
     this.mindmapService.notifyApp(hwUuid, payload).subscribe();
   }
