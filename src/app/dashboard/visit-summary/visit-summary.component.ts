@@ -1742,7 +1742,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
       body: "Click notification to see!",
       data: {
-        patientName: this.patient.person.preferredName,
+        patientFirstName: this.patient.person.preferredName.givenName ?? '',
+        patientMiddleName: this.patient.person.preferredName.middleName ?? '',
+        patientLastName: this.patient.person.preferredName.familyName ?? '',
         patientUuid: this.patient.uuid,
         patientOpenMrsId: openMRSID,
         visitUuid: this.visit.uuid,
