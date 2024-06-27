@@ -46,6 +46,7 @@ import { FileDownloadComponent } from './file-download/file-download.component';
 import { ReportErrorComponent } from './report-error/report-error.component';
 import { ReportSuccessComponent } from './report-success/report-success.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
     declarations: [
@@ -99,7 +100,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         SignaturePadModule,
         ImageCropperModule,
         SharedModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatTabsModule
     ],
     exports: [ViewVisitPrescriptionComponent],
 })
