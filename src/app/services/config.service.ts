@@ -262,8 +262,7 @@ export class ConfigService {
   * @return {Observable<any>}
   */
   getUsers(): Observable<any> {
-    //const url = `${environment.baseURL}/user?q=&v=custom:(uuid,username,dateCreated,person:(uuid,display,personName),roles:(uuid,display,name))`;
-    const url = `${this.baseURLAuth}/users`;
+    const url = `${this.baseURLAuth.replace("v2","auth")}users`;
     return this.http.get(url);
   }
 }

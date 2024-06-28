@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,9 +17,10 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./user-creation.component.scss']
 })
 export class UserCreationComponent {
-  displayedColumns : string[] = ['id', 'name', 'creation_date', 'role', 'username', 'edit', 'delete'];
+  displayedColumns : string[] = ['id', 'person_name', 'creation_date', 'role', 'username', 'edit', 'delete'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   usersData : UserModel[];
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
 
@@ -43,14 +45,21 @@ export class UserCreationComponent {
   */
   getUsers(): void {
     this.configService.getUsers().subscribe(res=>{
-      this.usersData = res.data.filter(e=>e.roles.length === 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length);
+      this.usersData = res.data.filter(e=>e.roles.length === 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
+        obj.person_name = obj.person.display + ( obj.person.gender ? "(" + obj.person.gender + ")" : "" );
+        obj.role = this.getRole(obj.roles);
+        return obj;
+      });
+      console.log(this.usersData);
       this.dataSource = new MatTableDataSource(this.usersData);
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   /**
