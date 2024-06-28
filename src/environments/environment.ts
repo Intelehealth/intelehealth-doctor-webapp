@@ -4,16 +4,17 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://as.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://as.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://as.intelehealth.org/openmrs",
-  mindmapURL: "https://as.intelehealth.org:3004/api",
-  notificationURL: "https://as.intelehealth.org:3004/notification",
-  socketURL: "https://as.intelehealth.org:3004",
-  version: "NAS-v1.2.9",
+  baseURL: "https://astesting.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://astesting.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://astesting.intelehealth.org/openmrs",
+  mindmapURL: "https://astesting.intelehealth.org:3004/api",
+  notificationURL: "https://astesting.intelehealth.org:3004/notification",
+  socketURL: "https://astesting.intelehealth.org:3004",
+  version: "NAS-v1.2.10",
   versionCode: "26",
+  webrtcSdkServerUrl: "wss://astesting.intelehealth.org:9090",
+  webrtcTokenServerUrl: "https://astesting.intelehealth.org:3000/"
 };
-
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

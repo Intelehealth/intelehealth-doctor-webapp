@@ -89,8 +89,10 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { PatientDetailsComponent } from './component/visit-summary/reassign-speciality/patient-details/patient-details.component';
+import { VideoCallComponent } from "./modal-components/video-call/video-call.component";
 
-
+import { ToastrModule } from "ngx-toastr";
+import { MomentModule } from "ngx-moment";
 
 @NgModule({
   declarations: [
@@ -135,7 +137,8 @@ import { PatientDetailsComponent } from './component/visit-summary/reassign-spec
     ConfirmDialogComponent,
     AppointmentViewComponent,
     AppointmentScheduleComponent,
-    PatientDetailsComponent
+    PatientDetailsComponent,
+    VideoCallComponent
   ],
 
   imports: [
@@ -167,6 +170,7 @@ import { PatientDetailsComponent } from './component/visit-summary/reassign-spec
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    MomentModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
@@ -191,13 +195,19 @@ import { PatientDetailsComponent } from './component/visit-summary/reassign-spec
       { path: '**', component: Page404Component },
     ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+    ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
+    }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
     }),
   ],
   providers: [

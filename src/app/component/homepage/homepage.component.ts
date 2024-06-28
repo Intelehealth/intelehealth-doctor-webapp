@@ -1,9 +1,8 @@
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
 import * as moment from "moment";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
@@ -26,7 +25,7 @@ export interface VisitData {
   templateUrl: "./homepage.component.html",
   styleUrls: ["./homepage.component.css"],
 })
-export class HomepageComponent implements OnInit, OnDestroy {
+export class HomepageComponent implements OnInit {
   value: any = {};
   flagPatientNo = 0;
   activePatient = 0;
@@ -49,7 +48,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private service: VisitService,
     private snackbar: MatSnackBar,
-    private socket: SocketService,
     private helper: HelperService,
     private cdr: ChangeDetectorRef
   ) { }
@@ -84,20 +82,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
     } else {
       this.authService.logout();
     }
-    this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
-      this.playNotify();
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.socket.socket && this.socket.socket.close)
-      this.socket.socket.close();
   }
 
   getVisitCounts(speciality) {
@@ -140,9 +124,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.service.getVisits(query, false).subscribe(
       (response) => {
         response.results.forEach((item) => {
-          var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
-          if (i <= -1) {
-            this.allVisits.push(item);
+          if(item.patient.identifiers.length) {
+            var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
+            if (i <= -1) {
+              this.allVisits.push(item);
+            }
           }
         });
         this.allVisits.forEach((active) => {

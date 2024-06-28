@@ -11,6 +11,7 @@
         "ignoreVary": true
       },
       "urls": [
+        "/custom-service-worker.js",
         "/favicon.ico",
         "/index.html",
         "/main.4b80b242d64c10cac35e.js",

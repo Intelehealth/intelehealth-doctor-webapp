@@ -44,9 +44,15 @@
               "src/manifest.webmanifest",
               "src/ngsw-worker.js",
               "src/ngsw.json",
-              "src/js/util.js"
+              "src/js/util.js",
+              "src/custom-service-worker.js"
             ],
-            "styles": ["src/styles.css", "node_modules/intro.js/introjs.css"],
+            "styles": [
+              "src/styles.scss", 
+              "src/assets/scss/toastr.css",
+              "node_modules/intro.js/introjs.css",
+              "src/assets/scss/main.scss"
+              ],
             "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"],
             "aot": false,
             "vendorChunk": true,
