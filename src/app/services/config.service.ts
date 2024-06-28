@@ -8,6 +8,7 @@ import { environment } from "../../environments/environment";
 })
 export class ConfigService {
   private baseURL = environment.configURL;
+  private baseURLAuth = environment.authGatwayURL;
 
   constructor(private http: HttpClient) { }
 
@@ -254,6 +255,15 @@ export class ConfigService {
   updatePatientVisitSummaryStatus(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/pvs/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Get users
+  * @return {Observable<any>}
+  */
+  getUsers(): Observable<any> {
+    const url = `${this.baseURLAuth.replace("v2","auth")}users`;
+    return this.http.get(url);
   }
 }
 

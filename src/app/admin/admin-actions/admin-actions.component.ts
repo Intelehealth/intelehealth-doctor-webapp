@@ -67,8 +67,8 @@ export class AdminActionsComponent implements OnInit {
       title: "User Creation",
       desc: "Create New User",
       icon: "assets/svgs/user-creation.svg",
-      path: this.baseURLLegacy + "/admin/users/users.list",
-      isLocalPath: false
+      path: "admin/actions/user-creation",
+      isLocalPath: true
     },
     {
       title: "Patient Visit Summary",

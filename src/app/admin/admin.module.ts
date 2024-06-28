@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AyuComponent } from './ayu/ayu.component';
 import { NgSelectModule } from "@ng-select/ng-select";
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -36,13 +36,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PartnerLabelComponent } from './admin-actions/partner-label/partner-label.component';
 import { FileUploadComponent } from '../core/components/file-upload/file-upload.component';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportsComponent } from './reports/reports.component';
 import { PatientVitalsComponent } from './admin-actions/patient-vitals/patient-vitals.component';
 import { WebrtcComponent } from './admin-actions/webrtc/webrtc.component';
 import { PatientVisitSummaryComponent } from './admin-actions/patient-visit-summary/patient-visit-summary.component';
 import { AbhaComponent } from './admin-actions/abha/abha.component';
+import { UserCreationComponent } from './admin-actions/user-creation/user-creation.component';
+import { AddUserComponent } from './admin-actions/user-creation/add-user/add-user.component';
+import { Ng2TelInputModule } from 'ng2-tel-input';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -103,6 +107,19 @@ const routes: Routes = [
             component: AbhaComponent
           },
           {
+            path: 'user-creation',
+            children: [
+              {
+                path: '',
+                component: UserCreationComponent
+              },
+              {
+                path: 'add',
+                component: AddUserComponent
+              }
+            ]
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -132,7 +149,9 @@ const routes: Routes = [
     PatientVitalsComponent,
     WebrtcComponent,
     PatientVisitSummaryComponent,
-    AbhaComponent
+    AbhaComponent,
+    UserCreationComponent,
+    AddUserComponent
   ],
   imports: [
     CommonModule,
@@ -143,6 +162,7 @@ const routes: Routes = [
     MatButtonModule,
     NgSelectModule,
     FormsModule,
+    ReactiveFormsModule,
     MatPaginatorModule,
     MatCardModule,
     MatTableModule,
@@ -156,6 +176,9 @@ const routes: Routes = [
     MatSelectModule,
     MatIconModule,
     MatFormFieldModule,
+    Ng2TelInputModule,
+    NgxDropzoneModule,
+    NgbTypeaheadModule,
     MatProgressBarModule,
     NgxPermissionsModule.forChild({
       permissionsIsolate: false,

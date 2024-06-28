@@ -28,7 +28,8 @@ export interface UserModel {
     uuid: string
   },
   roles: RolesModel[],
-  privileges: PrivilegesModel[]
+  privileges: PrivilegesModel[],
+  dateCreated? : string
 }
 
 export interface RolesModel {
