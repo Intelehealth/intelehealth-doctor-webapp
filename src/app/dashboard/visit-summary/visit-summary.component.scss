@@ -874,7 +874,5 @@ th.mat-header-cell:last-child {
 
 .contact-info {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: -6px;
+  flex-direction: column;
 }
