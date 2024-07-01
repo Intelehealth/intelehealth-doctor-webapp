@@ -47,6 +47,7 @@ import { UserCreationComponent } from './admin-actions/user-creation/user-creati
 import { AddUserComponent } from './admin-actions/user-creation/add-user/add-user.component';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -115,6 +116,10 @@ const routes: Routes = [
               },
               {
                 path: 'add',
+                component: AddUserComponent
+              },
+              {
+                path: 'edit/:uuid',
                 component: AddUserComponent
               }
             ]
@@ -194,7 +199,8 @@ const routes: Routes = [
     }),
     MomentModule,
     NgbNavModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },

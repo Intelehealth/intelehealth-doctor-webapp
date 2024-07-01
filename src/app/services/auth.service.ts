@@ -19,7 +19,7 @@ import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, Req
 })
 export class AuthService {
 
-  private gatewayURL = environment.authGatwayURL;
+  private gatewayURL = environment.authGatwayURL.replace('/v2', '');
   private baseUrl = environment.baseURL;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
@@ -109,8 +109,7 @@ export class AuthService {
   * @return {Observable<any>}
   */
   getAuthToken(username: string, password: string): Observable<any> {
-    const url = this.gatewayURL.replace('/v2', '');
-    return this.http.post(`${url}auth/login`, { username, password }).pipe(
+    return this.http.post(`${this.gatewayURL}auth/login`, { username, password }).pipe(
       map((res: AuthGatewayLoginResponseModel) => {
         setCacheData('token', res.token);
         return res;
@@ -132,7 +131,7 @@ export class AuthService {
   * @return {Observable<any>}
   */
   getProvider(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,preferredName),attributes)`);
+    return this.http.get(`${this.gatewayURL}auth/provider/${userId}`);
   }
 
   /**
@@ -388,5 +387,50 @@ export class AuthService {
   */
   snoozeNotification(snooze_for: string, user_uuid: string): Observable<any> {
     return this.http.put(`${environment.mindmapURL}/mindmap/snooze_notification/${user_uuid}`, { snooze_for });
+  }
+
+  /**
+  * Get users
+  * @return {Observable<any>}
+  */
+  getUsers(): Observable<any> {
+    const url = `${this.gatewayURL}auth/users`;
+    return this.http.get(url);
+  }
+
+  /**
+  * validate username
+  * @return {Observable<any>}
+  */
+  validateUser(username): Observable<any> {
+    const url = `${this.gatewayURL}auth/validateUser`;
+    return this.http.post(url,{username});
+  }
+
+  /**
+  * Get User Details
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  getUser(user_uuid: string): Observable<any> {
+    return this.http.get(`${this.gatewayURL}auth/user/${user_uuid}`);
+  }
+
+  /**
+  * Get Provider Details
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  setProvider(user_uuid: string, data: any): Observable<any> {
+    return this.http.post(`${this.gatewayURL}auth/user/${user_uuid}`,data);
+  }
+
+  /**
+  * Get Provider Details
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  createUser(data: any): Observable<any> {
+    return this.http.post(`${this.gatewayURL}auth/createUser`,data);
   }
 }

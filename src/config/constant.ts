@@ -59,7 +59,8 @@ export const doctorDetails = {
     WORK_EXPERIENCE:'workExperience',
     WORK_EXPERIENCE_DETAILS:'workExperienceDetails',
     WHATS_APP_NUMBER:'whatsAppNumber',
-    ROLE: 'user_role'
+    ROLE: 'user_role',
+    USER_NAME: 'username'
 }
 
 export const facility = {

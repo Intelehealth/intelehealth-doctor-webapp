@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { RolesModel, UserModel } from 'src/app/model/model';
-import { ConfigService } from 'src/app/services/config.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 
@@ -27,7 +27,7 @@ export class UserCreationComponent {
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private configService: ConfigService,
+    private authService: AuthService,
     private toastr: ToastrService,
     private router: Router
   ) { }
@@ -44,13 +44,12 @@ export class UserCreationComponent {
   * @return {void}
   */
   getUsers(): void {
-    this.configService.getUsers().subscribe(res=>{
+    this.authService.getUsers().subscribe(res=>{
       this.usersData = res.data.filter(e=>e.roles.length === 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
         obj.person_name = obj.person.display + ( obj.person.gender ? "(" + obj.person.gender + ")" : "" );
         obj.role = this.getRole(obj.roles);
         return obj;
       });
-      console.log(this.usersData);
       this.dataSource = new MatTableDataSource(this.usersData);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
