@@ -25,6 +25,8 @@ export class AddUserComponent {
   submitted: boolean = false;
   uuid: string = "";
   providerUuid: string = "";
+  providerAttrData: any = [];
+  controlsArray: string[] = [];
 
   constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private toastr: ToastrService, private router: Router){
     this.activatedRoute.params.subscribe(paramsId => {
@@ -68,21 +70,12 @@ export class AddUserComponent {
         this.authService.getProvider(this.uuid).subscribe(provider=>{
           let currentProvider = provider.results.pop();
           this.providerUuid = currentProvider.uuid;
+          this.controlsArray = Object.keys(this.personalInfoForm.controls);
           this.personalInfoForm.controls['emailId'].setAsyncValidators([ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, this.providerUuid)]);
           currentProvider.attributes.forEach(attr=>{
-            switch (attr.attributeType.display) {
-              case 'phoneNumber':
-                this.personalInfoForm.controls["phoneNumber"].setValue(attr.value);
-                break;
-              case 'emailId':
-                this.personalInfoForm.controls["emailId"].setValue(attr.value);
-                break;
-              case 'countryCode':
-                this.personalInfoForm.controls["countryCode"].setValue(attr.value);
-                break;
-            
-              default:
-                break;
+            if(this.controlsArray.includes(attr.attributeType.display)){
+              this.providerAttrData.push({uuid:attr.uuid, key: attr.attributeType.display, value: attr.value});
+              this.personalInfoForm.controls[attr.attributeType.display].setValue(attr.value);
             }
           })
         });
@@ -182,6 +175,17 @@ export class AddUserComponent {
     this.submitted = true;
     if(this.personalInfoForm.valid){
       if(this.uuid){
+        let payload = [];
+        this.providerAttrData.forEach(data=>{
+          let controlName = data.key;
+          if(this.controlsArray.includes(controlName)){
+            payload.push({uuid:data.uuid, value:this.personalInfoForm.controls[controlName].value});
+          }
+        });
+        this.authService.setProvider(this.providerUuid,payload).subscribe(res=>{
+            this.toastr.success("User has been successfully updated", "Update successful");
+            this.router.navigate(["admin/actions/user-creation"]);
+        })
       } else {
         this.authService.createUser(this.personalInfoForm.value).subscribe(res=>{
           if(res.status){
