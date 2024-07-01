@@ -7,14 +7,14 @@
             <h6 class="mb-0">{{'User Creation' | translate}}</h6>
           </div>
           <div class="card-body">
-            <form [formGroup]="personalInfoForm" (ngSubmit)="goToNextStep()">
+            <form [formGroup]="personalInfoForm" (ngSubmit)="save()">
                 <div class="d-flex align-items-center mb-3">
                   <h6 class="mb-0 grid-title">{{'Create New User' | translate}}</h6>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-4">
                     <label for="givenName">{{'First name' | translate}} *</label>
-                    <input type="text" maxlength="20" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
+                    <input type="text" maxlength="20" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName" >
                     <div *ngIf="submitted && f1.givenName.errors">
                       <small class="error-msg" *ngIf="f1.givenName.errors.required">{{'Enter first name' | translate}}</small>
                       <small class="error-msg" *ngIf="f1.givenName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -22,7 +22,7 @@
                   </div>
                   <div class="form-group col-md-4">
                     <label for="middleName">{{'Middle name' | translate}}</label>
-                    <input type="text" maxlength="20" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
+                    <input type="text" maxlength="20" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName" >
                     <div *ngIf="submitted && f1.middleName.errors">
                       <!-- <small class="error-msg" *ngIf="f1.middleName.errors.required">{{'Enter middle name' | translate}}</small> -->
                       <small class="error-msg" *ngIf="f1.middleName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -30,7 +30,7 @@
                   </div>
                   <div class="form-group col-md-4">
                     <label for="familyName">{{'Last name' | translate}} *</label>
-                    <input type="text" maxlength="20" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
+                    <input type="text" maxlength="20" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName" >
                     <div *ngIf="submitted && f1.familyName.errors">
                       <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter last name'| translate}}</small>
                       <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only'| translate}}</small>
@@ -42,19 +42,19 @@
                     <label for="gender">{{'Gender'| translate}} *</label>
                     <div class="py-2">
                       <div class="pretty p-default p-round">
-                        <input type="radio" value="M"  formControlName="gender" data-test-id="rdGenderMale">
+                        <input type="radio" value="M"  formControlName="gender" data-test-id="rdGenderMale" >
                         <div class="state p-success">
                             <label>{{'Male'| translate}}</label>
                         </div>
                         </div>
                         <div class="pretty p-default p-round">
-                            <input type="radio" value="F"  formControlName="gender" data-test-id="rdGenderFemale">
+                            <input type="radio" value="F"  formControlName="gender" data-test-id="rdGenderFemale" >
                             <div class="state p-success">
                                 <label>{{'Female'| translate}}</label>
                             </div>
                         </div>
                         <div class="pretty p-default p-round">
-                            <input type="radio" value="U"  formControlName="gender" data-test-id="rdGenderOther">
+                            <input type="radio" value="U"  formControlName="gender" data-test-id="rdGenderOther" >
                             <div class="state p-success">
                                 <label>{{'Other'| translate}}</label>
                             </div>
@@ -65,13 +65,13 @@
                     <label for="gender">{{'Role'| translate}} *</label>
                     <div class="py-2">
                       <div class="pretty p-default p-round">
-                        <input type="radio" value="HW"  formControlName="role">
+                        <input type="radio" value="nurse"  formControlName="role" >
                         <div class="state p-success">
                             <label>{{'HW'| translate}}</label>
                         </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="Doctor"  formControlName="role" data-test-id="rdGenderFemale">
+                          <input type="radio" value="doctor"  formControlName="role" data-test-id="rdGenderFemale" >
                           <div class="state p-success">
                               <label>{{'Doctor'| translate}}</label>
                           </div>
@@ -130,27 +130,35 @@
                   <h6 class="mb-0 grid-title">{{'Account Details' | translate}}</h6>
                 </div>
                 <div class="form-row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6 email-field">
                     <label for="username">{{'Username' | translate}} *</label>
-                    <input type="text" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}">
+                    <input type="text" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}" >
+                    <div class="check" *ngIf="!this.uuid">
+                      <mat-spinner diameter="20" *ngIf="f1.username?.pending"></mat-spinner>
+                      <mat-icon class="success" *ngIf="!f1?.username?.errors && !f1.username?.pending">done_all</mat-icon>
+                      <mat-icon class="error" *ngIf="f1?.username?.errors?.alreadyExists && !f1.username?.pending">error_outline</mat-icon>
+                    </div>
                     <div *ngIf="submitted && f1.username.errors">
                       <small class="error-msg" *ngIf="f1.username.errors.required">{{'Enter username' | translate}}</small>
-                      <small class="error-msg" *ngIf="f1.username.errors.pattern">{{'Enter alphabates only' | translate}}</small>
+                      <small class="error-msg" *ngIf="f1.username.errors.pattern">{{'Enter Alphanumric charactors only' | translate}}</small>
+                    </div>
+                    <div *ngIf="f1.username.errors">
+                      <small class="error-msg" *ngIf="f1.username.errors?.alreadyExists">{{'Username already exists. Please enter another Username.'| translate}}</small>
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="!this.uuid">
                     <label for="password">{{'Password' | translate}} *</label>
-                    <input type="password" maxlength="20" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}">
+                    <input type="password" maxlength="20" minlength="8" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}">
                     <div *ngIf="submitted && f1.password.errors">
-                      <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter password'| translate}}</small>
-                      <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only'| translate}}</small>
+                      <small class="error-msg" *ngIf="f1.password.errors.required">{{'Enter password'| translate}}</small>
+                      <small class="error-msg" *ngIf="f1.password.errors.pattern">{{'Enter Alphanumric charactors only'| translate}}</small>
                     </div>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-12 text-right">
                     <button type="submit" class="btn next-btn" data-test-id="btnNext">
-                      {{'Create User'| translate}}
+                      {{(uuid ? 'Update' : 'Create') + ' User'| translate}}
                     </button>
                   </div>
                 </div>
