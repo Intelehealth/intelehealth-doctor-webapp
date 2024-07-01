@@ -45,7 +45,7 @@ export class UserCreationComponent {
   */
   getUsers(): void {
     this.authService.getUsers().subscribe(res=>{
-      this.usersData = res.data.filter(e=>e.roles.length === 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
+      this.usersData = res.data.filter(e=>e.roles.length <= 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
         obj.person_name = obj.person.display + ( obj.person.gender ? " (" + obj.person.gender + ")" : "" );
         obj.role = this.getRole(obj.roles);
         return obj;

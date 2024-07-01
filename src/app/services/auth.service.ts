@@ -417,12 +417,13 @@ export class AuthService {
   }
 
   /**
-  * Get Provider Details
-  * @param {string} user_uuid - User uuid
+  * Set Provider Details
+  * @param {string} uuid - User uuid
+  * @param {any} data - Payload
   * @return {Observable<any>}
   */
-  setProvider(user_uuid: string, data: any): Observable<any> {
-    return this.http.post(`${this.gatewayURL}auth/user/${user_uuid}`,data);
+  setProvider(uuid: string, data: any): Observable<any> {
+    return this.http.post(`${this.gatewayURL}auth/provider/${uuid}`,data);
   }
 
   /**
