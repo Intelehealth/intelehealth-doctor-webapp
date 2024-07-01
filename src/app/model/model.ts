@@ -344,7 +344,11 @@ export interface PatientModel {
     preferredAddress?: {
       address2: string,
       address1: string,
-      cityVillage?: string
+      cityVillage?: string,
+      countyDistrict?: string,
+      stateProvince?: string,
+      country?: string,
+      postalCode?: string
     }
     preferredName?: {
       givenName?: string,
