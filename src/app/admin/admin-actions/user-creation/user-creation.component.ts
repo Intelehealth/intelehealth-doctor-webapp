@@ -17,7 +17,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./user-creation.component.scss']
 })
 export class UserCreationComponent {
-  displayedColumns : string[] = ['id', 'person_name', 'creation_date', 'role', 'username', 'edit', 'delete'];
+  displayedColumns : string[] = ['id', 'person_name', 'dateCreated', 'role', 'username', 'edit', 'delete'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -46,7 +46,7 @@ export class UserCreationComponent {
   getUsers(): void {
     this.authService.getUsers().subscribe(res=>{
       this.usersData = res.data.filter(e=>e.roles.length === 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
-        obj.person_name = obj.person.display + ( obj.person.gender ? "(" + obj.person.gender + ")" : "" );
+        obj.person_name = obj.person.display + ( obj.person.gender ? " (" + obj.person.gender + ")" : "" );
         obj.role = this.getRole(obj.roles);
         return obj;
       });
