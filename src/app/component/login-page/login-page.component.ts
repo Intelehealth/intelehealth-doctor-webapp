@@ -52,6 +52,7 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
+          this.authService.getAuthToken(value.username,value.password).subscribe();
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               this.authService.setToken(response.user.sessionId);

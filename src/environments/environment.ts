@@ -10,6 +10,7 @@ export const environment = {
   mindmapURL: "https://astesting.intelehealth.org:3004/api",
   notificationURL: "https://astesting.intelehealth.org:3004/notification",
   socketURL: "https://astesting.intelehealth.org:3004",
+  gatewayURL: "https://astesting.intelehealth.org:3030/",
   version: "NAS-v1.2.10",
   versionCode: "26",
   webrtcSdkServerUrl: "wss://astesting.intelehealth.org:9090",
