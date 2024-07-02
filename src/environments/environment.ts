@@ -17,6 +17,7 @@ export const environment = {
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   webrtcSdkServerUrl: "wss://devezazi.intelehealth.org:9090",
   webrtcTokenServerUrl: 'https://devezazi.intelehealth.org:3000/',
+  gatewayURL: "https://devezazi.intelehealth.org:3030/",
   recordsPerPage: 50
 };
 

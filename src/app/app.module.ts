@@ -15,6 +15,7 @@ import { MainContainerComponent } from './main-container/main-container.componen
 // Package Import
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { CookieService } from 'ngx-cookie-service';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { ToastrModule } from "ngx-toastr";
@@ -48,9 +49,9 @@ import { environment } from "../environments/environment";
 import { AppRoutingModule } from './app-routing.module';
 import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
+import { JwtInterceptor } from "./interceptors/jwt.interceptor";
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { SharedModule } from "./shared.module";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { PwaService } from "./services/pwa.service";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 
@@ -133,6 +134,11 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
     {
       provide: HTTP_INTERCEPTORS,
       useClass: NetworkInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
       multi: true,
     },
     {

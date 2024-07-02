@@ -8,7 +8,7 @@ import { catchError, map, mergeMap } from "rxjs/operators";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
-declare var deleteFromStorage: any;
+declare var deleteFromStorage: any, getFromStorage:any, saveToStorage:any;
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 
@@ -282,5 +282,25 @@ export class AuthService {
 
   snoozeNotification(snooze_for: string, user_uuid: string) {
     return this.http.put(`${environment.mindmapURL}/mindmap/snooze_notification/${user_uuid}`, { snooze_for });
+  }
+
+  get authToken() {
+    return getFromStorage('token', false) || '';
+  }
+
+  /**
+    * Get auth token from auth gateway
+    * @param {string} username - Username
+    * @param {string} password - Password
+    * @return {Observable<any>}
+    */
+  getAuthToken(username: string, password: string): Observable<any> {
+    const url = environment.gatewayURL;
+    return this.http.post(`${url}auth/login`, { username, password }).pipe(
+      map((res: any) => {
+        saveToStorage('token', res.token, false);
+        return res;
+      })
+    );
   }
 }

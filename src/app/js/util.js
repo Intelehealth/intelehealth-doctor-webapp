@@ -1,15 +1,21 @@
-const saveToStorage = (name, value) => {
-  try {
-    localStorage.setItem(name, JSON.stringify(value));
-  } catch (error) { }
+const saveToStorage = (name, value, stringify=true) => {
+    if(stringify){
+        localStorage.setItem(name, JSON.stringify(value));
+    } else {
+        localStorage.setItem(name, value);
+    }
 }
 
-const getFromStorage = (name) => {
-  try {
-    return JSON.parse(localStorage.getItem(name));
-  } catch (error) {
-    return null;
-  }
+const getFromStorage = (name, parse=true) => {
+    try {
+        if(parse){
+            return JSON.parse(localStorage.getItem(name));
+        }else{
+            return localStorage.getItem(name);
+        }
+    } catch (error) {
+        return null;        
+    }
 }
 
 const deleteFromStorage = (name) => {
