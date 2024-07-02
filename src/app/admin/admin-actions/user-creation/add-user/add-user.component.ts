@@ -41,10 +41,10 @@ export class AddUserComponent implements OnInit, OnDestroy{
           gender: new FormControl('M', [Validators.required]),
           role: new FormControl('doctor', [Validators.required]),
           countryCode: new FormControl('+91'),
-          phoneNumber: new FormControl('', [Validators.required]),
-          emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
-          username: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%]*$/)], [ProviderAttributeValidator.usernameValidator(this.authService)]),
-          password: new FormControl('', [Validators.required]),
+          phoneNumber: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(15)]),
+          emailId: new FormControl('', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
+          username: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`% ]*$/), Validators.minLength(3), Validators.maxLength(20)], [ProviderAttributeValidator.usernameValidator(this.authService)]),
+          password: new FormControl('', [Validators.required, Validators.pattern(/^[^~!^&*(){}[\]|<>"\\\/\-+_=;':,.?`% ]*$/), Validators.minLength(8), Validators.maxLength(20)]),
         });
         
     });
