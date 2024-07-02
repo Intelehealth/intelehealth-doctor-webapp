@@ -9,7 +9,7 @@
           <div class="card-body">
             <form [formGroup]="personalInfoForm" (ngSubmit)="save()">
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 grid-title">{{'Create New User' | translate}}</h6>
+                  <h6 class="mb-0 grid-title">{{(uuid ? 'Update' : 'Create New') +  ' User' | translate}}</h6>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-4">
@@ -93,14 +93,15 @@
                       placeholder="Enter Mobile Number"
                       class="form-control"
                       formControlName="phoneNumber"
-                      onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+                      onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" maxlength="15"/>
                     <div class="check">
                       <mat-spinner diameter="20" *ngIf="checkingPhoneValidity"></mat-spinner>
                       <mat-icon class="success" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && phoneValid && !checkingPhoneValidity">done_all</mat-icon>
                       <mat-icon class="error" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid && !checkingPhoneValidity">error_outline</mat-icon>
                     </div>
-                    <div *ngIf="submitted && f1.phoneNumber.errors">
+                    <div *ngIf="submitted && f1.phoneNumber.errors" class="d-flex flex-column">
                       <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">{{'Enter phone number'| translate}}</small>
+                      <small class="error-msg" *ngIf="f1.phoneNumber.errors.maxlength">{{'Maximum 20 numbers allowed' | translate}}</small>
                     </div>
                     <div *ngIf="submitted && !f1?.phoneNumber?.errors && !phoneNumberValid">
                       <small class="error-msg">{{'Enter valid phone number'| translate}}</small>
@@ -111,7 +112,7 @@
                   </div>
                   <div class="form-group col-md-6 email-field">
                     <label for="emailId">{{'Email ID'| translate}} *</label>
-                    <input type="email" class="form-control" formControlName="emailId" placeholder="{{'Enter email'| translate}}" data-test-id="etEmail">
+                    <input type="email" maxlength="50" class="form-control" formControlName="emailId" placeholder="{{'Enter email'| translate}}" data-test-id="etEmail">
                     <div class="check">
                       <mat-spinner diameter="20" *ngIf="f1.emailId?.pending"></mat-spinner>
                       <mat-icon class="success" *ngIf="!f1?.emailId?.errors && !f1.emailId?.pending">done_all</mat-icon>
@@ -132,14 +133,16 @@
                 <div class="form-row">
                   <div class="form-group col-md-6 email-field">
                     <label for="username">{{'Username' | translate}} *</label>
-                    <input type="text" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}" >
+                    <input type="text" minlength="3" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}" >
                     <div class="check" *ngIf="!this.uuid">
                       <mat-spinner diameter="20" *ngIf="f1.username?.pending"></mat-spinner>
                       <mat-icon class="success" *ngIf="!f1?.username?.errors && !f1.username?.pending">done_all</mat-icon>
                       <mat-icon class="error" *ngIf="f1?.username?.errors?.alreadyExists && !f1.username?.pending">error_outline</mat-icon>
                     </div>
-                    <div *ngIf="submitted && f1.username.errors">
+                    <div *ngIf="submitted && f1.username.errors" class="d-flex flex-column">
                       <small class="error-msg" *ngIf="f1.username.errors.required">{{'Enter username' | translate}}</small>
+                      <small class="error-msg" *ngIf="f1.username.errors.minlength">{{'Minimum 3 charactors required' | translate}}</small>
+                      <small class="error-msg" *ngIf="f1.username.errors.maxlength">{{'Maximum 20 charactors allowed' | translate}}</small>
                       <small class="error-msg" *ngIf="f1.username.errors.pattern">{{'Enter Alphanumric charactors only' | translate}}</small>
                     </div>
                     <div *ngIf="f1.username.errors">
@@ -149,9 +152,11 @@
                   <div class="form-group col-md-6" *ngIf="!this.uuid">
                     <label for="password">{{'Password' | translate}} *</label>
                     <input type="password" maxlength="20" minlength="8" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}">
-                    <div *ngIf="submitted && f1.password.errors">
+                    <div *ngIf="submitted && f1.password.errors" class="d-flex flex-column">
                       <small class="error-msg" *ngIf="f1.password.errors.required">{{'Enter password'| translate}}</small>
-                      <small class="error-msg" *ngIf="f1.password.errors.pattern">{{'Enter Alphanumric charactors only'| translate}}</small>
+                      <small class="error-msg" *ngIf="f1.password.errors.minlength">{{'Minimum 8 charactors required' | translate}}</small>
+                      <small class="error-msg" *ngIf="f1.password.errors.maxlength">{{'Maximum 20 charactors allowed' | translate}}</small>
+                      <small class="error-msg" *ngIf="f1.password.errors.pattern">{{'Invalid Password'| translate}}</small>
                     </div>
                   </div>
                 </div>
