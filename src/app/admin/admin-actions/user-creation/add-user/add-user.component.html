@@ -162,7 +162,7 @@
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-12 text-right">
-                    <button type="submit" class="btn next-btn" data-test-id="btnNext">
+                    <button type="submit" class="btn next-btn" data-test-id="btnNext" [disabled]="checkingPhoneValidity">
                       {{(uuid ? 'Update' : 'Create') + ' User'| translate}}
                     </button>
                   </div>
