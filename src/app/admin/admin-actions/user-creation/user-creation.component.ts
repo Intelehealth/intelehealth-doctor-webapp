@@ -37,7 +37,7 @@ export class UserCreationComponent {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data, filter: string) => (data?.person_name && data?.person_name.toLowerCase().indexOf(filter) != -1) || (data?.username && data?.username?.toLowerCase().indexOf(filter) != -1) || (data?.role && data?.role.toLowerCase().indexOf(filter) != -1);
     this.getUsers();
   }
 
@@ -52,7 +52,7 @@ export class UserCreationComponent {
         obj.role = this.getRole(obj.roles);
         return obj;
       });
-      this.dataSource = new MatTableDataSource(this.usersData);
+      this.dataSource.data = [...this.usersData];
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
