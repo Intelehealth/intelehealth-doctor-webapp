@@ -444,4 +444,13 @@ export class AuthService {
   resetUserPassword(user_uuid: string, data: any): Observable<any> {
     return this.http.post(`${this.gatewayURL}auth/user/reset-password/${user_uuid}`,data);
   }
+
+  /**
+  * Delete user
+  * @param {string} uuid - User uuid
+  * @return {Observable<any>}
+  */
+  deleteUser(uuid: string): Observable<any> {
+    return this.http.delete(`${this.gatewayURL}auth/user/${uuid}`);
+  }
 }

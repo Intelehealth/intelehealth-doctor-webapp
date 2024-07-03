@@ -91,6 +91,22 @@ export class UserCreationComponent {
     this.paginator.firstPage();
   }
 
+  /**
+  * Delete User
+  * @param {string} uuid - User uuid
+  * @return {void}
+  */
+  deleteUser(uuid: string): void {
+    this.modalService.openConfirmationDialog({ confirmationMsg: 'Are you sure you want to delete the user?', confirmBtnText: 'Confirm', cancelBtnText: 'Cancel' }).afterClosed().subscribe(res => {
+      if (res) {
+        this.authService.deleteUser(uuid).subscribe(result => {
+          this.toastr.success('User has been successfully deleted', 'User Deleted');
+          this.getUsers();
+        });
+      }
+    });
+  }
+
   getRole(roles: RolesModel[]): string{
     return roles.filter(r=>r.display.includes("Doctor")).length ? "Doctor" : "HW";
   }
