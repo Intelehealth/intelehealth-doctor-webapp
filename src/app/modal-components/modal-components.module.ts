@@ -47,6 +47,7 @@ import { ReportErrorComponent } from './report-error/report-error.component';
 import { ReportSuccessComponent } from './report-success/report-success.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 @NgModule({
     declarations: [
@@ -81,7 +82,8 @@ import { MatTabsModule } from '@angular/material/tabs';
         ReportGeneratorComponent,
         FileDownloadComponent,
         ReportErrorComponent,
-        ReportSuccessComponent
+        ReportSuccessComponent,
+        PasswordResetComponent
     ],
     imports: [
         CommonModule,

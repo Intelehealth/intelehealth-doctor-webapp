@@ -434,4 +434,14 @@ export class AuthService {
   createUser(data: any): Observable<any> {
     return this.http.post(`${this.gatewayURL}auth/createUser`,data);
   }
+
+  /**
+  * Rest User Password
+  * @param {string} user_uuid - User uuid
+  * @param {any} data - password & confirm password
+  * @return {Observable<any>}
+  */
+  resetUserPassword(user_uuid: string, data: any): Observable<any> {
+    return this.http.post(`${this.gatewayURL}auth/user/reset-password/${user_uuid}`,data);
+  }
 }

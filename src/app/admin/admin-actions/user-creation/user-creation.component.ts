@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { RolesModel, UserModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
+import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 
@@ -17,7 +18,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./user-creation.component.scss']
 })
 export class UserCreationComponent {
-  displayedColumns : string[] = ['id', 'person_name', 'dateCreated', 'role', 'username', 'edit', 'delete'];
+  displayedColumns : string[] = ['id', 'person_name', 'dateCreated', 'role', 'username', 'reset_password', 'edit', 'delete'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -29,7 +30,8 @@ export class UserCreationComponent {
     private translateService: TranslateService,
     private authService: AuthService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private modalService: CoreService
   ) { }
 
   ngOnInit(): void {
@@ -91,6 +93,14 @@ export class UserCreationComponent {
 
   getRole(roles: RolesModel[]): string{
     return roles.filter(r=>r.display.includes("Doctor")).length ? "Doctor" : "HW";
+  }
+
+  openResetPasswordDialog(uuid:string):void{
+    this.modalService.openPasswordResetModal({uuid}).subscribe((result) => {
+      if(result){
+        this.toastr.success("Password has been successfully reset", "Reset Password");      
+      }
+    });
   }
 }
 
