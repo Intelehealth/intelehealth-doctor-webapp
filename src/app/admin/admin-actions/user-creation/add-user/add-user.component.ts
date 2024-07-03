@@ -91,6 +91,8 @@ export class AddUserComponent implements OnInit, OnDestroy{
               this.personalInfoForm.get(attr.attributeType.display).setValue(attr.value);
             }
           })
+          this.phoneNumberValid = true;
+          this.validateProviderAttribute(doctorDetails.PHONE_NUMBER);
         });
       })
     } else {
@@ -186,7 +188,7 @@ export class AddUserComponent implements OnInit, OnDestroy{
   */
   save(){
     this.submitted = true;
-    if(this.personalInfoForm.valid){
+    if(this.personalInfoForm.valid && this.phoneValid){
       if(this.uuid){
         let payload = [];
         this.providerAttrData.forEach(data=>{
