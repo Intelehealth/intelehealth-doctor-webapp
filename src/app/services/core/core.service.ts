@@ -18,6 +18,7 @@ import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-cr
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { PasswordResetComponent } from 'src/app/modal-components/password-reset/password-reset.component';
 import { RaiseTicketComponent } from 'src/app/modal-components/raise-ticket/raise-ticket.component';
 import { ReportErrorComponent } from 'src/app/modal-components/report-error/report-error.component';
 import { ReportGeneratorComponent } from 'src/app/modal-components/report-generator/report-generator.component';
@@ -353,5 +354,14 @@ export class CoreService {
       reader.onloadend = () => resolve(reader.result);
       reader.readAsDataURL(blob);
     });
+  }
+
+  /**
+  * Open password reset modal
+  * @return {Observable<any>} - Dialog result
+  */
+  openPasswordResetModal(data): Observable<any> {
+    const dialogRef = this.dialog.open(PasswordResetComponent, { panelClass: 'modal-md', hasBackdrop: true, disableClose: true, data });
+    return dialogRef.afterClosed();
   }
 }
