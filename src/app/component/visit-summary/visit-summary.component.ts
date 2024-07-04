@@ -173,11 +173,13 @@ export class VisitSummaryComponent implements OnInit {
       if (userDetails && providerDetails) {
         this.visitNotePresent = true;
         this.setSpiner = true;
-        this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+        this.visitService.getVisitEncounters(visitUuid).subscribe((visitDetails) => {
           this.isSameProvider = true;
           let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
           if (visitNote) {
-            this.diagnosisService.isSameDoctor();
+            this.snackbar.open("Another doctor is viewing this case", null, {
+              duration: 4000,
+            });
             this.visitNotePresent = true;
             this.setSpiner = false;
           } else {
@@ -229,7 +231,10 @@ export class VisitSummaryComponent implements OnInit {
       this.doctorDetails = providerDetails;
       this.getDoctorValue();
       const providerUuid = providerDetails.uuid;
-      if (this.diagnosisService.isSameDoctor()) {
+      this.visitService.getVisitEncounters(visitUuid).subscribe((visitDetails) => {
+        this.isSameProvider = true;
+        let visitComplete = visitDetails.encounters.find((visit) => (visit.display.match("Visit Complete") !== null));
+        if (!visitComplete && this.diagnosisService.isSameDoctor()) {
         this.setSpiner = true;
         this.disabledSignBtn = true;
         this.service.signRequest(providerUuid).subscribe({
@@ -282,8 +287,13 @@ export class VisitSummaryComponent implements OnInit {
             this.disabledSignBtn = false;
           }
         });
+      } else {
+        this.snackbar.open("Another doctor is viewing this case", null, {
+          duration: 4000,
+        });
       }
-    } else {
+    });
+   } else {
       this.authService.logout();
     }
   }
