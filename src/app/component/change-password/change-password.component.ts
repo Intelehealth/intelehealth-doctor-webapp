@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { MustMatch } from './password.validator';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -14,10 +14,10 @@ declare var getFromStorage: any
 })
 export class ChangePasswordComponent implements OnInit {
   baseURL = environment.baseURL;
-  changePasswordForm: FormGroup;
+  changePasswordForm: UntypedFormGroup;
   userUuid: string;
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private http: HttpClient,
     private dialogRef: MatDialogRef<ChangePasswordComponent>,
     private pushNotificationsService: PushNotificationsService,

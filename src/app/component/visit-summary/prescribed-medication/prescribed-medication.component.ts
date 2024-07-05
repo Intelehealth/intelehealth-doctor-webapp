@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { DiagnosisService } from '../../../services/diagnosis.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
 import { TranslationService } from 'src/app/services/translation.service';
@@ -61,18 +61,18 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   interval: any;
 
-  medForm = new FormGroup({
-    med: new FormControl('', [Validators.required]),
-    dose: new FormControl('', Validators.min(0)),
-    unit: new FormControl('', [Validators.required]),
-    amount: new FormControl('', Validators.min(1)),
-    unitType: new FormControl('', [Validators.required]),
-    frequency: new FormControl('', [Validators.required]),
-    route: new FormControl('', [Validators.required]),
-    reason: new FormControl(''),
-    duration: new FormControl('', Validators.min(1)),
-    durationUnit: new FormControl('', [Validators.required]),
-    additional: new FormControl('')
+  medForm = new UntypedFormGroup({
+    med: new UntypedFormControl('', [Validators.required]),
+    dose: new UntypedFormControl('', Validators.min(0)),
+    unit: new UntypedFormControl('', [Validators.required]),
+    amount: new UntypedFormControl('', Validators.min(1)),
+    unitType: new UntypedFormControl('', [Validators.required]),
+    frequency: new UntypedFormControl('', [Validators.required]),
+    route: new UntypedFormControl('', [Validators.required]),
+    reason: new UntypedFormControl(''),
+    duration: new UntypedFormControl('', Validators.min(1)),
+    durationUnit: new UntypedFormControl('', [Validators.required]),
+    additional: new UntypedFormControl('')
   });
 
   constructor(private service: EncounterService,
@@ -242,7 +242,7 @@ export class PrescribedMedicationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.visitSvc.lockMedicineAidOrder.unsubscribe();
+    // this.visitSvc.lockMedicineAidOrder.unsubscribe();
     this.eventsSubscription?.unsubscribe();
     if(this.interval) clearInterval(this.interval);
   }

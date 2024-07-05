@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
@@ -46,8 +46,8 @@ export class AdditionalCommentComponent implements OnInit, OnDestroy {
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   interval: any;
 
-  commentForm = new FormGroup({
-    comment: new FormControl('', [Validators.required])
+  commentForm = new UntypedFormGroup({
+    comment: new UntypedFormControl('', [Validators.required])
   });
 
   constructor(private service: EncounterService,

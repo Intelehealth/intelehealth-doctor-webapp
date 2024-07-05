@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, Input } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
@@ -43,8 +43,8 @@ export class ReassignSpecialityComponent implements OnInit {
   ];
   errorText: string;
 
-  updateSpeciality = new FormGroup({
-    specialization: new FormControl("", Validators.required),
+  updateSpeciality = new UntypedFormGroup({
+    specialization: new UntypedFormControl("", Validators.required),
   });
 
   visitSpecialityAttribute: any;

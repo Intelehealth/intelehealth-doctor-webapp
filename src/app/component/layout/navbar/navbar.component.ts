@@ -11,7 +11,7 @@ import {
 import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../../change-password/change-password.component";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
@@ -66,8 +66,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly VapidKEY =
     "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54"
 
-  searchForm = new FormGroup({
-    findInput: new FormControl("", [Validators.required]),
+  searchForm = new UntypedFormGroup({
+    findInput: new UntypedFormControl("", [Validators.required]),
   });
 
   @Output() messageEvent = new EventEmitter<string>();

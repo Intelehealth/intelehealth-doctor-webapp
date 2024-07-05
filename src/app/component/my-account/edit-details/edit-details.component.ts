@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
@@ -39,27 +39,27 @@ export class EditDetailsComponent implements OnInit {
   district = [];
   village = [];
 
-  editForm = new FormGroup({
-    gender: new FormControl(this.data.person ? this.data.person.gender : null),
-    phoneNumber: new FormControl(
+  editForm = new UntypedFormGroup({
+    gender: new UntypedFormControl(this.data.person ? this.data.person.gender : null),
+    phoneNumber: new UntypedFormControl(
       this.data.phoneNumber ? this.data.phoneNumber.value : null
     ),
-    whatsapp: new FormControl(
+    whatsapp: new UntypedFormControl(
       this.data.whatsapp ? this.data.whatsapp.value : null
     ),
-    emailId: new FormControl(
+    emailId: new UntypedFormControl(
       this.data.emailId ? this.data.emailId.value : null
     ),
-    qualification: new FormControl(
+    qualification: new UntypedFormControl(
       this.data.qualification ? this.data.qualification.value : null
     ),
-    specialization: new FormControl(
+    specialization: new UntypedFormControl(
       this.data.specialization ? this.data.specialization.value : null
     ),
-    state: new FormControl(null),
-    district: new FormControl(null),
-    village: new FormControl(null),
-    registrationNumber: new FormControl(
+    state: new UntypedFormControl(null),
+    district: new UntypedFormControl(null),
+    village: new UntypedFormControl(null),
+    registrationNumber: new UntypedFormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
     ),
   });

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angu
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
@@ -47,10 +47,10 @@ private eventsSubscription: Subscription;
 @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 interval: any;
 
-diagnosisForm = new FormGroup({
-  text: new FormControl('', [Validators.required]),
-  type: new FormControl('', [Validators.required]),
-  confirm: new FormControl('', [Validators.required])
+diagnosisForm = new UntypedFormGroup({
+  text: new UntypedFormControl('', [Validators.required]),
+  type: new UntypedFormControl('', [Validators.required]),
+  confirm: new UntypedFormControl('', [Validators.required])
 });
 
   constructor(

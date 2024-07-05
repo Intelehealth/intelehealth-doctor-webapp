@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import * as moment from 'moment';
@@ -47,9 +47,9 @@ export class FollowUpComponent implements OnInit, OnDestroy {
   @Input() events: Observable<void>;
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  followForm = new FormGroup({
-    date: new FormControl('', [Validators.required]),
-    advice: new FormControl('')
+  followForm = new UntypedFormGroup({
+    date: new UntypedFormControl('', [Validators.required]),
+    advice: new UntypedFormControl('')
   });
 
   constructor(private service: EncounterService,

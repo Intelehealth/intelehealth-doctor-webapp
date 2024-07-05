@@ -31,7 +31,6 @@
               "src/ngsw.json",
               "src/js/util.js"
             ],
-            "extractCss": true,
             "styles": [
               "src/toastr.css",
               "src/styles.css",
@@ -127,13 +126,6 @@
               "src/js/util.js"
             ]
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
-          }
         }
       }
     },
@@ -153,18 +145,10 @@
               "devServerTarget": "intelehealth-ui:serve:production"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
-          }
         }
       }
     }
   },
-  "defaultProject": "intelehealth-ui",
   "cli": {
     "analytics": false
   }

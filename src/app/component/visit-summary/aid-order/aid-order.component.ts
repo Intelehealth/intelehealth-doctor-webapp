@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -78,7 +78,7 @@ export class AidOrderComponent implements OnInit, OnDestroy {
       ar: 'آحرون'
     }
   ];
-  aidOrderForm: FormGroup;
+  aidOrderForm: UntypedFormGroup;
   conceptAidOrder: string = 'a9f7d0af-7be9-47c2-bde4-fce5eff4503f';
   conceptType1: string = '27247234-e4aa-4139-a34c-c0494e40719b';
   conceptType2: string = 'f6cddc5b-974a-419d-a4d5-6a56df3ffb1f';
@@ -128,29 +128,29 @@ export class AidOrderComponent implements OnInit, OnDestroy {
     private sessionSvc: SessionService,
     public visitSvc: VisitService
   ) {
-    this.aidOrderForm = new FormGroup({
-      type1: new FormControl(null),
-      type1Uuid: new FormControl(null),
-      type1CreatorUuid: new FormControl(null),
-      type1Other: new FormControl(null),
-      type1Obs: new FormControl(null),
-      type2: new FormControl(null),
-      type2Uuid: new FormControl(null),
-      type2CreatorUuid: new FormControl(null),
-      type2Other: new FormControl(null),
-      type2Obs: new FormControl(null),
-      type3: new FormControl(null),
-      type3Uuid: new FormControl(null),
-      type3CreatorUuid: new FormControl(null),
-      type3Obs: new FormControl(null),
-      type4: new FormControl(null),
-      type4Uuid: new FormControl(null),
-      type4CreatorUuid: new FormControl(null),
-      type4Obs: new FormControl(null),
-      type5: new FormControl(null),
-      type5Uuid: new FormControl(null),
-      type5CreatorUuid: new FormControl(null),
-      type5Obs: new FormControl(null),
+    this.aidOrderForm = new UntypedFormGroup({
+      type1: new UntypedFormControl(null),
+      type1Uuid: new UntypedFormControl(null),
+      type1CreatorUuid: new UntypedFormControl(null),
+      type1Other: new UntypedFormControl(null),
+      type1Obs: new UntypedFormControl(null),
+      type2: new UntypedFormControl(null),
+      type2Uuid: new UntypedFormControl(null),
+      type2CreatorUuid: new UntypedFormControl(null),
+      type2Other: new UntypedFormControl(null),
+      type2Obs: new UntypedFormControl(null),
+      type3: new UntypedFormControl(null),
+      type3Uuid: new UntypedFormControl(null),
+      type3CreatorUuid: new UntypedFormControl(null),
+      type3Obs: new UntypedFormControl(null),
+      type4: new UntypedFormControl(null),
+      type4Uuid: new UntypedFormControl(null),
+      type4CreatorUuid: new UntypedFormControl(null),
+      type4Obs: new UntypedFormControl(null),
+      type5: new UntypedFormControl(null),
+      type5Uuid: new UntypedFormControl(null),
+      type5CreatorUuid: new UntypedFormControl(null),
+      type5Obs: new UntypedFormControl(null),
     });
   }
 

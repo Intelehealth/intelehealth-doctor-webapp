@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewEncapsulation, OnDestroy, Output, EventEm
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
@@ -51,8 +51,8 @@ export class AdviceComponent implements OnInit, OnDestroy {
   @Output() editedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   interval: any;
 
-  adviceForm = new FormGroup({
-    advice: new FormControl('', [Validators.required])
+  adviceForm = new UntypedFormGroup({
+    advice: new UntypedFormControl('', [Validators.required])
   });
 
   constructor(private service: EncounterService,

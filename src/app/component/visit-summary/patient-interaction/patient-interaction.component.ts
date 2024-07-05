@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
@@ -61,8 +61,8 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
   visitId: string;
   adviceObs: any = [];
 
-  interaction = new FormGroup({
-    interaction: new FormControl("", [Validators.required]),
+  interaction = new UntypedFormGroup({
+    interaction: new UntypedFormControl("", [Validators.required]),
   });
 
   private eventsSubscription: Subscription;
