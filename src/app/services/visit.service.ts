@@ -64,6 +64,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
+  getVisitEncounters(uuid): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+     const url = `${this.baseURL}/visit/${uuid}?v=custom:(uuid,encounters:(display,encounterDatetime),stopDatetime)`;
+    return this.http.get(url);
+  }
+
   getAttribute(visitId): Observable<any> {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.get(url);
