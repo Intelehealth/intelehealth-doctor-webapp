@@ -112,6 +112,7 @@ import { HwAssessmentComponent } from './component/visit-summary/hw-assessment/h
 import { CanDeactivateGuard } from './can-deactivate.guard';
 import { ConfirmationDialogComponent } from './component/visit-summary/confirmation-dialog/confirmation-dialog.component';
 import { CustomAlertComponent } from './component/visit-summary/custom-alert/custom-alert.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -181,6 +182,7 @@ registerLocaleData(localeAr);
   ],
 
   imports: [
+    NgSelectModule,
     BrowserModule,
     CommonModule,
     FormsModule,

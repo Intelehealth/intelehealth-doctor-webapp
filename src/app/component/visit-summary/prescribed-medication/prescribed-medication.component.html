@@ -3,40 +3,131 @@
   <hr>
   <div>
     <form [formGroup]="medForm">
-      <mat-form-field class="w-100" id="medication-form">
+      <!-- <mat-form-field class="w-100" id="medication-form">
         <input matInput placeholder="{{'Medication'|translate}}" (keydown)="add = true"
-          [ngbTypeahead]="searchPrescription" formControlName="med">
-      </mat-form-field>
-      <div *ngIf="add">
+          [ngbTypeahead]="searchPrescription" formControlName="med" (selectItem)="onSelectMedicine($event)">
+      </mat-form-field> -->
+      <ng-select
+        class="visit-select custom"
+        formControlName="medObj"
+        bindLabel="name"
+        [clearable]="false"
+        [searchable]="true"
+        placeholder="{{'Medication'|translate}}"
+        [editableSearchTerm]="true"
+        [addTag]="true">
+        <ng-option *ngFor="let m of autoFillMedicines" [value]="m">
+          {{m.name}} {{m.strength}} {{m.strengthUnit}}
+        </ng-option>
+        <ng-template ng-label-tmp let-item="item">
+          {{item.name ? item.name : item.label }}
+        </ng-template>
+      </ng-select>
+      <div>
         <div class="form-row">
           <div class="col">
-            <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control"
-              placeholder="{{'Strength'|translate}}" formControlName="dose">
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Form'|translate}}" formControlName="unit"> -->
+              <ng-select
+                class="visit-select custom"
+                formControlName="form"
+                bindLabel="name"
+                bindValue="name"
+                [clearable]="false"
+                [searchable]="true"
+                placeholder="{{'Form'|translate}}"
+                [addTag]="addStrengthTag.bind(this)">
+                <ng-option *ngFor="let s of formList" [value]="s.name">
+                  {{s.name}}
+                </ng-option>
+              </ng-select>
           </div>
           <div class="col">
-            <input type="text" class="form-control" [ngbTypeahead]="searchDose"
-              placeholder="{{'Units (eg: mg)'|translate}}" formControlName="unit">
+            <mat-form-field class="w-100" id="medication-form">
+              <input matInput class="in-put" type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" placeholder="{{'Strength'|translate}}" formControlName="dose">
+            </mat-form-field>
+            <!-- <input matInput type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control"
+              placeholder="{{'Strength'|translate}}" formControlName="dose"> -->
           </div>
           <div class="col">
-            <input type="number" min="1" class="form-control" placeholder="{{'Amount'|translate}}"
-              formControlName="amount">
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Units (eg: mg)'|translate}}" formControlName="unit"> -->
+              <ng-select
+                class="visit-select custom"
+                formControlName="unit"
+                bindLabel="name"
+                bindValue="name"
+                [clearable]="false"
+                [searchable]="true"
+                placeholder="{{'Strength Unit'|translate}}"
+                [addTag]="addStrengthTag.bind(this)">
+                <ng-option *ngFor="let s of strengthList" [value]="s.name">
+                  {{s.name}}
+                </ng-option>
+              </ng-select>
           </div>
           <div class="col">
-            <input type="text" class="form-control" [ngbTypeahead]="searchDose"
-              placeholder="{{'Unit ( pill,  capsule, etc...)'|translate}}" formControlName="unitType">
+            <mat-form-field class="w-100" id="medication-form">
+              <input matInput class="in-put" type="number" min="1" placeholder="{{'Dose'|translate}}" formControlName="amount">
+            </mat-form-field>
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Unit ( pill,  capsule, etc...)'|translate}}" formControlName="unitType"> -->
           </div>
           <div class="col">
-            <input type="text" class="form-control" [ngbTypeahead]="searchFrequency"
-              placeholder="{{'Frequency'| translate}}" formControlName="frequency">
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Unit ( pill,  capsule, etc...)'|translate}}" formControlName="unitType"> -->
+              <ng-select
+                class="visit-select custom"
+                formControlName="unitType"
+                bindLabel="name"
+                bindValue="name"
+                [clearable]="false"
+                [searchable]="true"
+                placeholder="{{'Dose unit '|translate}}"
+                [addTag]="addStrengthTag.bind(this)">
+                <ng-option *ngFor="let s of doseUnit" [value]="s.name">
+                  {{s.name}}
+                </ng-option>
+              </ng-select>
           </div>
           <div class="col">
-            <input type="text" class="form-control" [ngbTypeahead]="searchAdministration"
-              placeholder="{{'Route'|translate}}" formControlName="route">
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchFrequency"
+              placeholder="{{'Frequency'| translate}}" formControlName="frequency"> -->
+              <ng-select
+                class="visit-select custom"
+                formControlName="frequency"
+                bindLabel="name"
+                bindValue="name"
+                [clearable]="false"
+                [searchable]="true"
+                placeholder="{{'Frequency'| translate}}"
+                [addTag]="addStrengthTag.bind(this)">
+                <ng-option *ngFor="let s of frequencyList" [value]="s.name">
+                  {{s.name}}
+                </ng-option>
+              </ng-select>
           </div>
         </div>
         <br>
-        <div>{{'As needed'|translate}}</div>
+        <!-- <div>{{'As needed'|translate}}</div> -->
         <div class="form-row">
+          <div class="col">
+            <!-- <input type="text" class="form-control" [ngbTypeahead]="searchAdministration"
+              placeholder="{{'Route'|translate}}" formControlName="route"> -->
+              <ng-select
+                class="visit-select custom"
+                formControlName="route"
+                bindLabel="name"
+                bindValue="name"
+                [clearable]="false"
+                [searchable]="true"
+                placeholder="{{'Route'|translate}}"
+                [addTag]="addStrengthTag.bind(this)">
+                <ng-option *ngFor="let s of routeList" [value]="s.name">
+                  {{s.name}}
+                </ng-option>
+              </ng-select>
+          </div>
           <div class="col">
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">{{'Duration'|translate}}</span>
@@ -64,6 +155,22 @@
         <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
           formControlName="additional"></textarea>
         <br>
+        <table class="table table-borderless table-sm">
+          <tbody>
+              <tr>
+                  <th class="tr-label" scope="row">{{'Smallest package:'|translate}}</th>
+                  <td><input type="text" class="form-controls" placeholder="{{'Smallest package'|translate}}" formControlName="smallestPackage"></td>
+              </tr>
+              <tr>
+                  <th class="tr-label" scope="row">{{'Count Of packages:'|translate}}</th>
+                  <td><input type="text" class="form-controls" placeholder="{{'Count Of packages'|translate}}" formControlName="countOfPackages"></td>
+              </tr>
+              <tr>
+                  <th class="tr-label" scope="row">{{'Price:'|translate}}</th>
+                  <td><input type="text" class="form-controls" placeholder="{{'Price'|translate}}" formControlName="price"></td>
+              </tr>
+          </tbody>
+        </table>
         <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Meds'|translate}}</button>
       </div>
     </form>
