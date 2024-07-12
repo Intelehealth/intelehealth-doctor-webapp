@@ -12,6 +12,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { DOCUMENT } from "@angular/common";
 import { TranslationService } from "src/app/services/translation.service";
 import { environment } from "src/environments/environment";
+import { clearAllCache, setCacheData } from "src/app/utils/utility-functions";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -41,6 +42,7 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    clearAllCache()
     if(localStorage.getItem('selectedLanguage')) {
       this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
     } else {
@@ -71,36 +73,42 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
-          this.sessionService.provider(response.user.uuid).subscribe(
-            (provider) => {
-              this.authService.sendToken(response.user.sessionId);
-              saveToStorage("user", response.user);
+          this.authService.setToken(response.user.sessionId);
+          this.authService.getAuthToken(value.username, value.password).subscribe({
+            next: ((resp: any) => {
+              setCacheData('token', resp?.token);
+              this.sessionService.provider(response.user.uuid).subscribe(
+                (provider) => {
+                  this.authService.sendToken(response.user.sessionId);
+                  saveToStorage("user", response.user);
 
-              this.pushNotificationsService
-                .getUserSettings(response.user.uuid)
-                .subscribe((response) => {
-                  if (response["data"].isChange == 0) {
-                    this.dialog.open(ChangePasswordComponent, {
-                      width: "500px",
-                      data: { isChange: false },
+                  this.pushNotificationsService
+                    .getUserSettings(response.user.uuid)
+                    .subscribe((response) => {
+                      if (response["data"].isChange == 0) {
+                        this.dialog.open(ChangePasswordComponent, {
+                          width: "500px",
+                          data: { isChange: false },
+                        });
+                      }
                     });
-                  }
-                });
 
-              if (provider.results[0].attributes.length === 0) {
-                this.router.navigate(["/myAccount"]);
-              } else {
-                this.router.navigate(["/home"]);
-              }
-              this.translate.get('messages.welcome').subscribe((res: string) => {
-                this.snackbar.open(`${res} ${provider.results[0].person.display}`,null, {duration: 2000});
-              });
-              saveToStorage("doctorName", provider.results[0].person.display);
-            },
-            (error) => {
-              this.router.navigate(["home"]);
-            }
-          );
+                  if (provider.results[0].attributes.length === 0) {
+                    this.router.navigate(["/myAccount"]);
+                  } else {
+                    this.router.navigate(["/home"]);
+                  }
+                  this.translate.get('messages.welcome').subscribe((res: string) => {
+                    this.snackbar.open(`${res} ${provider.results[0].person.display}`,null, {duration: 2000});
+                  });
+                  saveToStorage("doctorName", provider.results[0].person.display);
+                },
+                (error) => {
+                  this.router.navigate(["home"]);
+                }
+              );
+            })
+          });
         } else {
           this.translate.get('messages.loginError').subscribe((res: string) => {
             this.snackbar.open(res, null, {duration: 4000});
