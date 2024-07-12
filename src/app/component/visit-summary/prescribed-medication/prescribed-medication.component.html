@@ -15,7 +15,8 @@
         [searchable]="true"
         placeholder="{{'Medication'|translate}}"
         [editableSearchTerm]="true"
-        [addTag]="true">
+        [addTag]="true"
+        addTagText="{{'Add item'|translate}}">
         <ng-option *ngFor="let m of autoFillMedicines" [value]="m">
           {{m.name}} {{m.strength}} {{m.strengthUnit}}
         </ng-option>
@@ -36,7 +37,8 @@
                 [clearable]="false"
                 [searchable]="true"
                 placeholder="{{'Form'|translate}}"
-                [addTag]="addStrengthTag.bind(this)">
+                [addTag]="addStrengthTag.bind(this)"
+                addTagText="{{'Add item'|translate}}">
                 <ng-option *ngFor="let s of formList" [value]="s.name">
                   {{s.name}}
                 </ng-option>
@@ -59,8 +61,9 @@
                 bindValue="name"
                 [clearable]="false"
                 [searchable]="true"
-                placeholder="{{'Strength Unit'|translate}}"
-                [addTag]="addStrengthTag.bind(this)">
+                placeholder="{{'Strength unit'|translate}}"
+                [addTag]="addStrengthTag.bind(this)"
+                addTagText="{{'Add item'|translate}}">
                 <ng-option *ngFor="let s of strengthList" [value]="s.name">
                   {{s.name}}
                 </ng-option>
@@ -83,8 +86,9 @@
                 bindValue="name"
                 [clearable]="false"
                 [searchable]="true"
-                placeholder="{{'Dose unit '|translate}}"
-                [addTag]="addStrengthTag.bind(this)">
+                placeholder="{{'Dose unit'|translate}}"
+                [addTag]="addStrengthTag.bind(this)"
+                addTagText="{{'Add item'|translate}}">
                 <ng-option *ngFor="let s of doseUnit" [value]="s.name">
                   {{s.name}}
                 </ng-option>
@@ -101,7 +105,8 @@
                 [clearable]="false"
                 [searchable]="true"
                 placeholder="{{'Frequency'| translate}}"
-                [addTag]="addStrengthTag.bind(this)">
+                [addTag]="addStrengthTag.bind(this)"
+                addTagText="{{'Add item'|translate}}">
                 <ng-option *ngFor="let s of frequencyList" [value]="s.name">
                   {{s.name}}
                 </ng-option>
@@ -122,7 +127,8 @@
                 [clearable]="false"
                 [searchable]="true"
                 placeholder="{{'Route'|translate}}"
-                [addTag]="addStrengthTag.bind(this)">
+                [addTag]="addStrengthTag.bind(this)"
+                addTagText="{{'Add item'|translate}}">
                 <ng-option *ngFor="let s of routeList" [value]="s.name">
                   {{s.name}}
                 </ng-option>
@@ -158,15 +164,15 @@
         <table class="table table-borderless table-sm">
           <tbody>
               <tr>
-                  <th class="tr-label" scope="row">{{'Smallest package:'|translate}}</th>
+                  <th class="tr-label" scope="row">{{'Smallest package'|translate}}:</th>
                   <td><input type="text" class="form-controls" placeholder="{{'Smallest package'|translate}}" formControlName="smallestPackage"></td>
               </tr>
               <tr>
-                  <th class="tr-label" scope="row">{{'Count Of packages:'|translate}}</th>
+                  <th class="tr-label" scope="row">{{'Count Of packages'|translate}}:</th>
                   <td><input type="text" class="form-controls" placeholder="{{'Count Of packages'|translate}}" formControlName="countOfPackages"></td>
               </tr>
               <tr>
-                  <th class="tr-label" scope="row">{{'Price:'|translate}}</th>
+                  <th class="tr-label" scope="row">{{'Price'|translate}}:</th>
                   <td><input type="text" class="form-controls" placeholder="{{'Price'|translate}}" formControlName="price"></td>
               </tr>
           </tbody>
