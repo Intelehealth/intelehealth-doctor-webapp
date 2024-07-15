@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { tr } from 'date-fns/locale';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { AddTicketComponent } from 'src/app/modal-components/add-ticket/add-ticket.component';
 import { AppointmentDetailMonthComponent } from 'src/app/modal-components/appointment-detail-month/appointment-detail-month.component';
 import { AppointmentDetailComponent } from 'src/app/modal-components/appointment-detail/appointment-detail.component';
 import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/cancel-appointment-confirm/cancel-appointment-confirm.component';
@@ -362,6 +363,15 @@ export class CoreService {
   */
   openPasswordResetModal(data): Observable<any> {
     const dialogRef = this.dialog.open(PasswordResetComponent, { panelClass: 'modal-md', hasBackdrop: true, disableClose: true, data });
+    return dialogRef.afterClosed();
+  }
+
+  /**
+  * Open add ticket modal
+  * @return {Observable<any>} - Dialog result
+  */
+  openAddTicketModal(): Observable<any> {
+    const dialogRef = this.dialog.open(AddTicketComponent, { panelClass: 'modal-md', hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
 }
