@@ -48,6 +48,7 @@ import { ReportSuccessComponent } from './report-success/report-success.componen
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { AddTicketComponent } from './add-ticket/add-ticket.component';
 
 @NgModule({
     declarations: [
@@ -83,7 +84,8 @@ import { PasswordResetComponent } from './password-reset/password-reset.componen
         FileDownloadComponent,
         ReportErrorComponent,
         ReportSuccessComponent,
-        PasswordResetComponent
+        PasswordResetComponent,
+        AddTicketComponent
     ],
     imports: [
         CommonModule,

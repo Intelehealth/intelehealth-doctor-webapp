@@ -177,7 +177,7 @@
     </div>
     <div class="main-container" [class.pb-0]="this.routeUrl?.includes('messages')||this.routeUrl?.includes('support')">
       <router-outlet></router-outlet>
-      <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
+      <!-- <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
         <div class="menu-item">
           <span>{{'Raise a Ticket'| translate}}</span>
           <button class="help-btn-2 mr-1" type="button" (click)="openRaiseTicketModal()" data-test-id="btnToggleTicket">
@@ -190,7 +190,7 @@
             <img src="assets/svgs/send_circle_icon.svg" alt="" width="45px" height="45px">
           </button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </mat-drawer-container>

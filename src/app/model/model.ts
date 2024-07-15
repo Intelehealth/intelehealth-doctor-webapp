@@ -654,3 +654,21 @@ export interface PatientVisitSummaryConfigModel {
   priority_visit_section: boolean
   severity_of_case_section: boolean
 }
+
+export interface PagerdutyList {
+  currentPage: number,
+  tickets: PagerdutyModel[],
+  totalItems: number,
+  totalPages: number,
+  openItems?: number
+}
+
+export interface PagerdutyModel{
+  id: number,
+  incident_key: string,
+  title: string,
+  priority: string,
+  status: string,
+  createdAt: string,
+  updatedAt: string
+}
