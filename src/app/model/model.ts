@@ -672,3 +672,7 @@ export interface PagerdutyModel{
   createdAt: string,
   updatedAt: string
 }
+
+export interface PagerDutyDetail {
+  incident: PagerdutyModel
+}
