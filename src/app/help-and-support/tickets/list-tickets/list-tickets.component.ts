@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { PagerdutyList } from 'src/app/model/model';
+import { PagerdutyList, PagerdutyModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import { PagerdutyService } from 'src/app/services/pagerduty.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -21,7 +21,7 @@ export class ListTicketsComponent {
   dataSource = new MatTableDataSource<any>();
   @ViewChild('ticketPaginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  ticketData: any;
+  ticketData: PagerdutyModel[] = [];
   totalData: number;
   pageIndex: number = 0;
   pageSize: number = 5;
@@ -37,35 +37,11 @@ export class ListTicketsComponent {
 
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
+    this.getAllTickets();
   }
-
-  
-  // getTickets(): void {
-  //   this.paginator.page
-  //     .pipe(
-  //       startWith({}),
-  //       switchMap(() => {
-  //         return this.getTableData(
-  //           this.paginator.pageIndex + 1,
-  //           this.paginator.pageSize
-  //         ).pipe(catchError(() => observableOf(null)));
-  //       }),
-  //       map((ticketData:any) => {
-  //         if (ticketData == null) return [];
-  //         this.totalData = ticketData.total;
-  //         console.log(ticketData);
-  //         return ticketData.data;
-  //       })
-  //     )
-  //     .subscribe((ticketData) => {
-  //       this.ticketData = ticketData;
-  //       this.dataSource = new MatTableDataSource(this.ticketData);
-  //     });
-  // }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.getAllTickets();
   }
 
   /**
@@ -79,6 +55,7 @@ export class ListTicketsComponent {
       this.pageIndex = res.currentPage - 1;
       this.totalData = res.totalItems;
       this.openTicketsCount = res.openItems ? res.openItems : 0;
+      this.dataSource.sort = this.sort;
     })
   }
 
