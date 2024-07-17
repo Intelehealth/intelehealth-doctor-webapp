@@ -666,6 +666,7 @@ export interface PagerdutyList {
 export interface PagerdutyModel{
   id: number,
   incident_key: string,
+  incident_id: string,
   title: string,
   priority: string,
   status: string,

@@ -15,7 +15,7 @@ export class AddTicketComponent {
   private dialogRef: MatDialogRef<AddTicketComponent>,
   private pagerdutyService: PagerdutyService) { 
     this.addTicketForm = new FormGroup({
-      title: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      title: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
       priority: new FormControl('low', [Validators.required])
     });
