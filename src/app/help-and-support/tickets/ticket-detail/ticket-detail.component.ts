@@ -37,7 +37,6 @@ export class TicketDetailComponent {
   getTicket(id: string): void{
     this.pagerdutyService.getTicket(id).subscribe((res:PagerDutyDetail)=>{
       this.ticketData = res?.incident;
-      console.log("this.ticketData", this.ticketData)
     })
   }
 }
