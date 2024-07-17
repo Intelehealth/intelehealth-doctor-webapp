@@ -4,7 +4,7 @@
       <div class="card intel-card">
         <div class="card-header">
             <div class="grid-title">
-              <span>{{ticketData?.jira_ticket_id}}</span>
+              <span>{{ticketData?.jira_ticket_id ?? ticketData?.external_references?.[0]?.external_id}}</span>
               <h6 class="mb-0">{{ticketData?.title | translate}}</h6>
             </div>
         </div>
