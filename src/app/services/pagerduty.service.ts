@@ -20,4 +20,9 @@ export class PagerdutyService {
     const url = `${this.baseURL}/createTicket`;
     return this.http.post(url,data);
   }
+
+  getTicket(id: string) {
+    const url = `${this.baseURL}/getTicket/${id}`;
+    return this.http.get(url);
+  }
 }

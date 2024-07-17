@@ -23,6 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { SharedModule } from '../shared.module';
+import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -32,7 +33,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
 @NgModule({
   declarations: [
     HelpAndSupportComponent,
-    ListTicketsComponent
+    ListTicketsComponent,
+    TicketDetailComponent
   ],
   imports: [
     CommonModule,

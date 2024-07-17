@@ -20,6 +20,7 @@ import { CommonModule } from '@angular/common';
 import { CoreService } from 'src/app/services/core/core.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ListTicketsComponent } from './list-tickets.component';
 
 describe('ListTicketsComponent', () => {
   let component: ListTicketsComponent;
@@ -68,7 +69,7 @@ describe('ListTicketsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
+  
   it('should call the getTickets method', () => {
     expect(mockPagerdutyService.getAllTickets).toHaveBeenCalled();
     expect(component.ticketData).toEqual(mockPagerdutyList.tickets);

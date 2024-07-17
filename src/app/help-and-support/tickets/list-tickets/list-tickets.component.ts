@@ -33,6 +33,7 @@ export class ListTicketsComponent {
     private pagerdutyService: PagerdutyService,
     private modalService: CoreService,
     private toastr: ToastrService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {

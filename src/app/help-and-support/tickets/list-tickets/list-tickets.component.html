@@ -59,7 +59,7 @@
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let element;" class="text-center">
-                      <button class="action-btn view-ticket blue-btn" type="button">{{'View Ticket' | translate}}</button>
+                      <button class="action-btn view-ticket blue-btn" type="button" routerLink="/help/ticket/{{element.incident_id}}">{{'View Ticket' | translate}}</button>
                   </td>
                 </ng-container>
   
