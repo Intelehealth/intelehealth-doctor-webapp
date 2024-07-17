@@ -12,7 +12,7 @@
           <div class="created_at">{{ticketData?.created_at | date:'d MMM, y'}}</div>
           <div class="key-value">
             <div class="key">{{'Description'| translate}}</div>
-            <div class="value">{{ticketData?.description}}</div>
+            <div class="value">{{ticketData?.body?.details ?? 'N/A'}}</div>
           </div>
           <div class="key-value">
             <div class="key">{{'Last Updated' | translate }}:</div>

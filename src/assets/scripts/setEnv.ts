@@ -79,8 +79,7 @@ const environmentFileContent = `
     showCaptcha: ${showCaptcha},
     recordsPerPage: 1000,
     abhaEnabled: ${process.env.ABHA_ENABLED},
-    configPublicURL: '${process.env.CONFIG_PUBLIC_URL}',
-    pagerdutyURL: '${process.env.PAGER_DUTY_URL}'
+    configPublicURL: '${process.env.CONFIG_PUBLIC_URL}'
   };
 `;
 
