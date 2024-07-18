@@ -71,6 +71,10 @@ export class TablesComponent implements OnInit {
       this.sort.sort(({}) as MatSortable);
       this.dataSource.sort = this.sort;
     }
+    if(this.tableFor === "waitingVisit"){
+      this.displayColumns.splice(2, 0, "followUp");
+    }
+
     this.helper.refreshTable.subscribe(() => {
       this.refresh();
     });

@@ -34,7 +34,7 @@
     "html2canvas": "^1.0.0-rc.7",
     "intro.js": "^2.9.3",
     "jspdf": "^2.5.1",
-    "livekit-client": "2.1.0",
+    "livekit-client": "1.15.13",
     "moment": "^2.24.0",
     "ngx-cookie-service": "^2.1.0",
     "ngx-moment": "^6.0.2",

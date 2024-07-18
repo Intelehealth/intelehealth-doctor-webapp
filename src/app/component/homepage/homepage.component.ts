@@ -293,6 +293,12 @@ export class HomepageComponent implements OnInit {
     value.lastSeen = active.encounters[0]?.encounterDatetime;
     value.date =  moment(followUpDate, "DD-MM-YYYY").format("DD-MMM-YYYY");
     value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
+    value.isFollowUp = false;
+    const vstAdultinitial = active.encounters.find(enc => enc.display.includes("ADULTINITIAL"));
+    if (Array.isArray(vstAdultinitial?.obs)) {
+      const complntObs = vstAdultinitial.obs.find(o => o?.display?.includes?.("CURRENT COMPLAINT"));
+      value.isFollowUp = complntObs?.value?.toLowerCase?.()?.includes?.("follow up");
+    }
     return value;
   }
 
@@ -328,7 +334,6 @@ export class HomepageComponent implements OnInit {
     this.followUpVisitNo = 0;
     this.service.getFollowupVisits().subscribe(
       (response) => {
-        console.log("response.results",response.data)
         response.data.forEach((visit) => {
         let v = this.assignValueToVisit(visit);  
         let found = this.followUpVisit.find(c => c.id === v.id);

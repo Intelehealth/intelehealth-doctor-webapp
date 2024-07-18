@@ -20,6 +20,22 @@
       <td mat-cell *matCellDef="let row">{{ row?.name }}</td>
     </ng-container>
 
+    <!-- Follow up Column -->
+    <ng-container matColumnDef="followUp">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient Type</th>
+      <td mat-cell *matCellDef="let row">
+        <div
+          class="badge badge-pill"
+          [ngClass]="{
+            'badge-danger': row?.isFollowUp,
+            'badge-success': !row?.isFollowUp
+          }"
+        >
+          {{ row?.isFollowUp ? 'Follow up' : 'New' }}
+        </div>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="telephone">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone No</th>
       <td mat-cell *matCellDef="let row">{{ row?.telephone }}</td>
