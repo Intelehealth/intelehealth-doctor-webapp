@@ -9,10 +9,17 @@ const routes: Routes = [
     component: HelpAndSupportComponent,
   },
   {
-    path: 'ticket/:id', component: TicketDetailComponent,
+    path: 'ticket/:id',
+    component: TicketDetailComponent,
     data: {
-      breadcrumb: 'Ticket',
-    },
+      breadcrumb: [{
+        label: 'Ticket',
+        url: 'help',
+      }, {
+        label: ':id',
+        url: ''
+      }]
+    }
   }
 ];
 
