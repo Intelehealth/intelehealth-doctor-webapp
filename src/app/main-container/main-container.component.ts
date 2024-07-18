@@ -323,7 +323,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   */
   buildBreadCrumb(route: ActivatedRoute, url: string = '', breadcrumbs: BreadcrumbModel[] = []): BreadcrumbModel[] {
     // If no routeConfig is avalailable we are on the root path
-    const label = route.routeConfig && route.routeConfig.data ? route.routeConfig.data.breadcrumb : '';
+    const breadcrumbArr = route.routeConfig && route.routeConfig.data ? route.routeConfig.data.breadcrumb : ''
     let path = route.routeConfig && route.routeConfig.data ? route.routeConfig.path : '';
     // If the route is dynamic route such as ':id', remove it
     const lastRoutePart = path.split('/').pop();
@@ -337,19 +337,46 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     // In the routeConfig the complete path is not available,
     // so we rebuild it each time
     const nextUrl = path ? `${url}/${path}` : url;
-
+    const label = breadcrumbArr && typeof breadcrumbArr == 'string' ? breadcrumbArr : '';
+    
     const breadcrumb: BreadcrumbModel = {
-        label: label.startsWith(':') && !!rs ? rs.params[label?.split(':')[1]] : label,
-        url: nextUrl,
+      label: label,
+      url: nextUrl,
     };
     // Only adding route with non-empty label
     const newBreadcrumbs = breadcrumb.label ? [ ...breadcrumbs, breadcrumb ] : [ ...breadcrumbs];
+
+    if(breadcrumbArr && typeof breadcrumbArr !== 'string') {
+      this.createBreadcrumFromArr(breadcrumbArr, newBreadcrumbs, rs)
+    }
+    
     if (route.firstChild) {
         // If we are not on our current path yet,
         // there will be more children to look after, to build our breadcumb
         return this.buildBreadCrumb(route.firstChild, nextUrl, newBreadcrumbs);
     }
     return newBreadcrumbs;
+  }
+
+  createBreadcrumFromArr(breadcrumbArr: BreadcrumbModel[], newBreadcrumbs: BreadcrumbModel[], rs: ActivatedRouteSnapshot) {
+    breadcrumbArr.forEach((breadcrumb: any) => {
+      if(!breadcrumb?.label?.trim()) return;
+
+      if (breadcrumb?.url?.startsWith(':id') && !!rs) {
+        const paramName = breadcrumb?.url.split(':')[1];
+        breadcrumb.url = breadcrumb.replace(breadcrumb.url, rs.params[paramName]);
+      }
+      let label = breadcrumb?.label;
+      if (label?.startsWith(':') && !!rs) {
+        label = rs.params[label?.split(':')[1]]
+      }
+      if(!label) return;
+
+      newBreadcrumbs.push({
+        label: label,
+        url: breadcrumb.url,
+      })
+    })
   }
 
   /**

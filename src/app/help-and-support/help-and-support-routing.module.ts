@@ -12,7 +12,13 @@ const routes: Routes = [
     path: 'ticket/:id',
     component: TicketDetailComponent,
     data: {
-      breadcrumb: ':id',
+      breadcrumb: [{
+        label: 'Ticket',
+        url: 'help',
+      }, {
+        label: ':id',
+        url: ''
+      }]
     }
   }
 ];
