@@ -9,10 +9,11 @@ const routes: Routes = [
     component: HelpAndSupportComponent,
   },
   {
-    path: 'ticket/:id', component: TicketDetailComponent,
+    path: 'ticket/:id',
+    component: TicketDetailComponent,
     data: {
-      breadcrumb: 'Ticket',
-    },
+      breadcrumb: ':id',
+    }
   }
 ];
 

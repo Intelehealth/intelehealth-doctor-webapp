@@ -339,7 +339,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     const nextUrl = path ? `${url}/${path}` : url;
 
     const breadcrumb: BreadcrumbModel = {
-        label: label,
+        label: label.startsWith(':') && !!rs ? rs.params[label?.split(':')[1]] : label,
         url: nextUrl,
     };
     // Only adding route with non-empty label
