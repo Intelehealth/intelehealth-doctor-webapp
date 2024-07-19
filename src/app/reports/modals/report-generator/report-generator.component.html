@@ -19,7 +19,7 @@
         </div>
       </div>
 
-      <div *ngIf="data.reportId === 1 || data.reportId === 3 || data.reportId === 4" class="row">
+      <div *ngIf="data.reportId !== 5" class="row">
         <div class="input-field-group" style="padding-left:15px;">
           <label>{{data.field3}}</label>
           <ng-multiselect-dropdown class="multiselect dropdown-list" [placeholder]="'Select State'"
@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <div *ngIf="data.reportId ===1 || data.reportId === 3 || data.reportId === 4" class="row">
+      <div *ngIf="data.reportId !== 5" class="row">
         <div class="input-field-group" style="padding-left:15px;">
           <label>{{data.field5}}</label>
           <ng-multiselect-dropdown class="multiselect dropdown-list" [disabled]="!isSanch"
@@ -55,7 +55,7 @@
         </div>
       </div>
 
-      <div *ngIf="data.reportId ===1" class="row">
+      <div *ngIf="data.reportId !== 3 && data.reportId !== 4" class="row">
         <div class="input-field-group" style="padding-left:15px;">
           <label>Speciality</label>
           <ng-multiselect-dropdown class="multiselect" 
