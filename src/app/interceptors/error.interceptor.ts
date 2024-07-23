@@ -12,6 +12,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
       if ([401, 403].indexOf(err.status) != -1) {
+        this.toastr.error(err);
         this.authService.logout();
       }
 
@@ -22,7 +23,6 @@ export class ErrorInterceptor implements HttpInterceptor {
       if (error == 'OK') {
         return throwError(error);
       }
-      this.toastr.error(error);
       return throwError(error);
     }))
   }
