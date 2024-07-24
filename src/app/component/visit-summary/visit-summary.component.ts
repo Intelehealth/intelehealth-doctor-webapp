@@ -182,7 +182,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
     if (!this.visitNotePresent) {
-      this.visitNotePresent = true;
+      // this.visitNotePresent = true;
       const userDetails = getFromStorage("user");
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
@@ -235,7 +235,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             });
             return dialogRef.afterClosed();
           } else {
-            this.visitNotePresent = false;
+            // this.visitNotePresent = false;
             this.translationService.getTranslation(`Visit Note Not Created`);
           }
         });
