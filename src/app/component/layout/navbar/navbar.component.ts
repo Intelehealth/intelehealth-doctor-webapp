@@ -64,7 +64,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-    "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54"
+    "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54" // training server
+    // "BMGYasq0YzQ4B9RmKuaMJY3hWcOmN-3BMZfy4e9jXXUp8w7tcoNikwXAkS86Eb9nWANm_gU7CyOaVD9zMZ0QU2w" // production server
 
   searchForm = new UntypedFormGroup({
     findInput: new UntypedFormControl("", [Validators.required]),

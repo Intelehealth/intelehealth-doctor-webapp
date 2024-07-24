@@ -164,7 +164,7 @@ export class PatientInteractionComponent implements OnInit, OnDestroy {
     }
     const value = this.tempmsg[0].value;
     const providerDetails = getFromStorage("provider");
-    this.diagnosisService.getTranslationData();
+    // this.diagnosisService.getTranslationData();
     if (this.diagnosisService.isEncounterProvider()) {
       const json = {
         attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
