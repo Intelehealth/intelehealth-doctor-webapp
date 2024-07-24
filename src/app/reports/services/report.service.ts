@@ -23,12 +23,12 @@ export class ReoportService {
 
     if (body.reportId === 3) {
       return this.http.get(
-        `${environment.reportURL}/bs/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+        `${environment.reportURL}/bs/${body.selectedData.value.field1}/${body.selectedData.value.field2}/${body.selectedData.filter.villageId}/${body.selectedData.filter.stateId}/${body.selectedData.filter.districtId}/${body.selectedData.filter.sanchId}`, { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 4) {
       return this.http.get(
-        `${environment.reportURL}/vlrv/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+        `${environment.reportURL}/vlrv/${body.selectedData.value.field1}/${body.selectedData.value.field2}/${body.selectedData.filter.villageId}/${body.selectedData.filter.stateId}/${body.selectedData.filter.districtId}/${body.selectedData.filter.sanchId}`, { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 5) {
