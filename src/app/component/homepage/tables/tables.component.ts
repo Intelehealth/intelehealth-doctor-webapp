@@ -73,6 +73,7 @@ export class TablesComponent implements OnInit {
     }
     if(this.tableFor === "waitingVisit"){
       this.displayColumns.splice(2, 0, "followUp");
+      this.displayColumns.splice(8, 0, "timeOfUpload");
     }
 
     this.helper.refreshTable.subscribe(() => {

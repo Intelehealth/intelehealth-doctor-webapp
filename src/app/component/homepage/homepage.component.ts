@@ -273,6 +273,11 @@ export class HomepageComponent implements OnInit {
     );
     return phoneObj ? phoneObj.value : "NA";
   }
+
+  getAttibuteValue(attrs, attr) {
+    let value = attrs.find(({ display = "" }) => display.includes(attr))?.value;
+    return value ? value:'NA';
+  }
   assignValueToProperty(active, encounter, followUpDate?) {
     let value:any= {}
     value.visitId = active.uuid;
@@ -299,6 +304,7 @@ export class HomepageComponent implements OnInit {
       const complntObs = vstAdultinitial.obs.find(o => o?.display?.includes?.("CURRENT COMPLAINT"));
       value.isFollowUp = complntObs?.value?.toLowerCase?.()?.includes?.("follow up");
     }
+    value.timeOfUpload = this.getAttibuteValue(active.attributes, "TIME_OF_UPLOAD_BUTTON_CLICK");
     return value;
   }
 

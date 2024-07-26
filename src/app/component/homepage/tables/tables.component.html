@@ -105,6 +105,13 @@
       <td mat-cell *matCellDef="let row">{{ row?.provider }}</td>
     </ng-container>
 
+    <!-- timeOfUpload column -->
+    <ng-container matColumnDef="timeOfUpload">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Time of upload</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row?.timeOfUpload | date: "dd-MMM-yyyy hh:MM a" }}
+      </td>
+    </ng-container>
 
     <!-- lastSeen column -->
     <ng-container matColumnDef="lastSeen">
