@@ -26,6 +26,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
   };
   visitId: string = null;
+  linkType: string = null;
   hash: string = null;
   accessToken: string = null;
   visit: VisitModel;
@@ -47,10 +48,11 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.hash = this.route.snapshot.paramMap.get('hash');
 
-    const { accessToken, visitId } = window.history.state;
+    const { accessToken, visitId, linkType } = window.history.state;
     if (accessToken) {
       this.accessToken = accessToken;
       this.visitId = visitId;
+      this.linkType = linkType;
     }
 
     if (!this.accessToken) {
@@ -79,6 +81,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
       next: (res: ApiResponseModel) => {
         if (res.success) {
           this.visitId = res.data.link.replace('/i/', '');
+          this.linkType = res.data.type;
           this.fetchVisitPatient();
         } else {
           this.router.navigate(['/']);
@@ -108,7 +111,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
                 this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} successfully!`, 'OTP Sent');
                 this.router.navigate(['/session/verify-otp'], {
                   state: {
-                    verificationFor: 'presctiption-verification',
+                    verificationFor: this.linkType,
                     via: 'phone',
                     val: patientPhoneNumber?.value,
                     visitId: this.visitId
