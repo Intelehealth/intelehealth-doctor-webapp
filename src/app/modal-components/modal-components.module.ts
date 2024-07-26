@@ -101,6 +101,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         SharedModule,
         MatProgressBarModule
     ],
-    exports: [ViewVisitPrescriptionComponent],
+    exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
 })
 export class ModalComponentsModule { }
