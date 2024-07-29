@@ -112,7 +112,7 @@ export class PrescribedTestComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+       // this.diagnosisService.isVisitSummaryChanged = true;
         this.tests.push({ uuid: resp.uuid, value: value });
       });
     }

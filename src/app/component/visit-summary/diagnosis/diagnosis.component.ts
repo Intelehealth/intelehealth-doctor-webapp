@@ -98,7 +98,6 @@ export class DiagnosisComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
         this.diagnosisList = [];
         this.diagnosis.push({ uuid: resp.uuid, value: json.value });
         this.checkDiagnosis();
@@ -108,9 +107,9 @@ export class DiagnosisComponent implements OnInit {
 
   checkDiagnosis() {
     if (this.diagnosis.length) {
-      this.diagnosisService.diagnosisExists = true;
+      this.diagnosisService.isVisitSummaryChanged = true;
     } else {
-      this.diagnosisService.diagnosisExists = false;
+      this.diagnosisService.isVisitSummaryChanged = false;
     }
   }
 
