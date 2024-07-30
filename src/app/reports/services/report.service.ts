@@ -18,7 +18,7 @@ export class ReoportService {
 
     if (body.reportId === 2) {
       return this.http.get(
-        `${environment.reportURL}/vl2/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+        `${environment.reportURL}/vl2/${body.selectedData.value.field1}/${body.selectedData.value.field2}/${body.selectedData.filter.villageId}/${body.selectedData.filter.stateId}/${body.selectedData.filter.districtId}/${body.selectedData.filter.sanchId}/${body.selectedData.filter.speciality}`, { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 3) {
