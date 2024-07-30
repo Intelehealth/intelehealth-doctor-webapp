@@ -27,11 +27,12 @@ declare var getEncounterUUID: any;
 })
 export class AdditionalCommentComponent implements OnInit {
 @Input() isManagerRole : boolean;
+@Input() conceptId : string = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+@Input() title : string = 'Notes';
 comment: any = [];
 encounterUuid: string;
 patientId: string;
 visitUuid: string;
-conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   commentForm = new FormGroup ({
     comment: new FormControl('', [Validators.required])
@@ -44,7 +45,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptComment)
+    this.diagnosisService.getObs(this.patientId, this.conceptId)
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
@@ -61,7 +62,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: this.conceptComment,
+        concept: this.conceptId,
         person: this.patientId,
         obsDatetime: date,
         value: value,
