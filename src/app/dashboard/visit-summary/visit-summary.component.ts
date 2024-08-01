@@ -1716,16 +1716,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
    * Get Abha numner / Abha address from patient
    */
   getAbhaDetails(_patient: PatientModel): void {
-    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier
+    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier;
     this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    this.patient.person.abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
   }
 
   updateAbhaDetails(encounterUUID): void {
     let mobileNumber = this.getPersonAttributeValue('Telephone Number');
     mobileNumber = mobileNumber != 'NA' ? mobileNumber: undefined
-    const openMRSID = this.getPatientIdentifier("OpenMRS ID");
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
-    const abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
+    const abhaAddress = this.patient?.person?.abhaAddress;
     if (environment.abhaEnabled && (abhaNumber || abhaAddress || mobileNumber)) {
       // Added call to generate linking token and add isABDMLink attribute 
       this.visitService.postAttribute(this.visit.uuid,
@@ -1733,7 +1734,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
           value: false,
         }).subscribe(() => {
-          const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
           const openMRSID = this.getPatientIdentifier("OpenMRS ID")
           this.visitService.postVisitToABDM({
             openMRSID: openMRSID,
