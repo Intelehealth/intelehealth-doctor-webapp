@@ -12,7 +12,6 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
-import { promise } from 'protractor';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({

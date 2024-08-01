@@ -102,6 +102,14 @@
                   </a>
                 </p>
               </div>
+              <div class="patient-info-item" *ngIf="patient?.person?.abhaNumber">
+                <h6 data-test-id="etPatient">{{'ABHA Number'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person?.abhaNumber ?? 'N/A' }}</p>
+              </div>
+              <div class="patient-info-item" *ngIf="patient?.person?.abhaAddress">
+                <h6 data-test-id="etPatient">{{'ABHA Address'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person?.abhaAddress ?? 'N/A' }}</p>
+              </div>
             </div>
           </div>
         </div>
