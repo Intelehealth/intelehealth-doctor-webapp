@@ -19,7 +19,8 @@ export class MainComponent implements OnInit {
   specialization;
   newVisits;
   visitNote;
-  readonly VapidKEY = 'BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg';
+  readonly VapidKEY = 'BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54'; // training server
+  // readonly VapidKEY = "BMGYasq0YzQ4B9RmKuaMJY3hWcOmN-3BMZfy4e9jXXUp8w7tcoNikwXAkS86Eb9nWANm_gU7CyOaVD9zMZ0QU2w"; // production server
   constructor(
     public authService: AuthService,
     public sessionService: SessionService,
