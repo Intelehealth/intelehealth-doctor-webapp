@@ -1719,7 +1719,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier;
     this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
-    this.patient.person.abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
+    const abhaAddress = this.patient?.person?.abhaAddress ?? abhaNumber;
+    this.patient.person.abhaAddress = abhaAddress;
+    if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
+      this.patient.person.abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`;
+    }
   }
 
   updateAbhaDetails(encounterUUID): void {
