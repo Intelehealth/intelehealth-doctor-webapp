@@ -122,7 +122,7 @@ require by speaking with the patient directly.  -->
     </ng-container>
 
     <div class="text-center" *ngIf="!visitCompletePresent">
-      <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
+      <button (click)="signandsubmit()" id="sign-button" mat-raised-button color="primary"
         [disabled]="(visitCompletePresent || isVisitSummaryChanged || isSevikaVisit || requiredNotFilled || managerRoleAccess) && disabledSignBtn">Sign
         and Submit</button>
     </div>

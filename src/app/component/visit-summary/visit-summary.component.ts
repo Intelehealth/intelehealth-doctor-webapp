@@ -54,7 +54,7 @@ export class VisitSummaryComponent implements OnInit {
   videoIcon = "assets/svgs/video-w.svg";
   chatBoxRef: any;
   disabledVisitNoteBtn: boolean = false;
-  disabledSignBtn: boolean = false;
+  disabledSignBtn: boolean = true;
 
   constructor(
     private service: EncounterService,
@@ -143,9 +143,6 @@ export class VisitSummaryComponent implements OnInit {
     return !this.diagnosisService.isVisitSummaryChanged;
   }
 
-  get requiredNotFilled() {
-    return !this.diagnosisService.diagnosisExists;
-  }
 
   setSameProvider(visit: any) {
     let localProvider = localStorage.getItem("provider");
@@ -194,13 +191,6 @@ export class VisitSummaryComponent implements OnInit {
       }
     }
   }
-
-  sign() {
-    if (!this.disabledSignBtn) {
-      this.signandsubmit();
-    }
-  }
-
 
   notifyHwForAvailablePrescription() {
     const hwUuid = getCacheData('patientVisitProvider', true)?.provider?.uuid;

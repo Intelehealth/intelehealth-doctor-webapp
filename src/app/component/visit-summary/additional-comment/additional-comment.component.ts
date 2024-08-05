@@ -87,7 +87,7 @@ export class AdditionalCommentComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+       // this.diagnosisService.isVisitSummaryChanged = true;
         this.comment.push({ uuid: resp.uuid, value: value });
       });
     }
