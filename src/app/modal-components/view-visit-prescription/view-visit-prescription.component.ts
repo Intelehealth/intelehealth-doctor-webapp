@@ -991,9 +991,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           margin: [0, 10, 0, 10]
         },
         subheader: {
-          fontSize: 10,
+          fontSize: 12,
           bold: true,
-          color: 'blue',
           margin: [0, 2, 0, 2],
         },
         subsubheader: {
@@ -1165,7 +1164,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           [
             {
               colSpan: 4,
-              text: `[ Personal Information ]`,
+              text: `Personal Information`,
               style: 'subheader'
             },
             '',
@@ -1248,7 +1247,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       data.table.body.push([
         {
           colSpan: 4,
-          text: `[ Address ]`,
+          text: `Address`,
           style: 'subheader'
         },
         '',
@@ -1323,7 +1322,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       data.table.body.push([
         {
           colSpan: 4,
-          text: `[ Other Information ]`,
+          text: `Other Information`,
           style: 'subheader'
         },
         '',
