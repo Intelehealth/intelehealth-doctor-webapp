@@ -4,13 +4,13 @@
 <form [formGroup]='diagnosisForm'>
     <mat-form-field class="example-full-width" id="dropdown-diagnosis">
         <input matInput placeholder="Diagnosis" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
-        <mat-autocomplete #auto="matAutocomplete">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
-          <span>{{state.code}} </span>
-          <span> <b>{{state.name}}</b></span>
+          <span>{{state?.code}} </span>
+          <span> <b>{{state?.name}}</b></span>
       </mat-option>
     </mat-autocomplete>
-    </mat-form-field>
+  </mat-form-field>
     <div id="primary-confirm">
     <section>
     <mat-radio-group aria-label="Select an option" formControlName="type">
@@ -25,8 +25,11 @@
       </mat-radio-group>
     </section>
     </div>
+    <mat-form-field *ngIf="showOthers" class="example-full-width" id="dropdown-diagnosis-text">
+      <input matInput placeholder="Please specify the diagnosis" formControlName="text">
+    </mat-form-field>
    <br>
-  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid || isManagerRole'>Add Diagnosis</button>
+  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid || isManagerRole || isDisabled'>Add Diagnosis</button>
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">

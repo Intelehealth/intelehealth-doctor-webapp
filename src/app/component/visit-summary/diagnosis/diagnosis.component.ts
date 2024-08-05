@@ -33,6 +33,8 @@ conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
 patientId: string;
 visitUuid: string;
 encounterUuid: string;
+isDisabled = false;
+showOthers = false;
 
 diagnosisForm = new FormGroup({
   text: new FormControl('', [Validators.required]),
@@ -58,11 +60,20 @@ diagnosisForm = new FormGroup({
   }
 
   search(event) {
-    console.log('event: ', event);
+    this.resetIfInvalid();
     this.diagnosisService.getDiagnosisList(event.target.value)
     .subscribe(response => {
       this.diagnosisList = response;
     });
+  }
+
+  selected($event){
+    this.showOthers = $event.option.value === 'Others';
+    this.isDisabled = false;
+  }
+
+  resetIfInvalid() {
+    this.isDisabled = true;
   }
 
   onSubmit() {

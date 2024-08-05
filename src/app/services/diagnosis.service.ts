@@ -51,6 +51,7 @@ export class DiagnosisService {
             }
           });
         });
+        this.diagnosisArray.push({name: 'Others', code: ''});
         return this.diagnosisArray;
       })
     );
