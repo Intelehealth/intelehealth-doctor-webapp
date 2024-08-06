@@ -49,6 +49,7 @@ export class VisitSummaryComponent implements OnInit {
   isCalling: boolean = false;
   isSameProvider: boolean = false;
   chatBoxRef: any;
+  hasNotes: boolean = false;
 
   constructor(
     private service: EncounterService,
@@ -377,6 +378,10 @@ export class VisitSummaryComponent implements OnInit {
 
   getIsDataPresent() {
     this.checkMadnatoryTabs();
+  }
+
+  onNotesUpdate(notes:[]){
+    this.hasNotes = notes.length > 0;
   }
 
   checkMadnatoryTabs() {

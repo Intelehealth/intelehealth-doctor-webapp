@@ -101,7 +101,7 @@
             </mat-card>
             <br>
             <mat-card>
-                  <app-additional-comment [isManagerRole]="isManagerRole"></app-additional-comment>
+                  <app-additional-comment [isManagerRole]="isManagerRole" (notesChange)="onNotesUpdate($event)"></app-additional-comment>
             </mat-card>
             <br>
             <mat-card>
@@ -122,7 +122,7 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent || isVisitSummaryChanged || isManagerRole || onSubmit || isVisitEnded">Sign
+                        [disabled]="visitCompletePresent || isVisitSummaryChanged || isManagerRole || onSubmit || isVisitEnded || !hasNotes">Sign
                         and Submit</button>
             </div>
       </div>

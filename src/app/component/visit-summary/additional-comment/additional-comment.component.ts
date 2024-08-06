@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -33,6 +33,7 @@ comment: any = [];
 encounterUuid: string;
 patientId: string;
 visitUuid: string;
+@Output() notesChange: EventEmitter<any> = new EventEmitter();
 
   commentForm = new FormGroup ({
     comment: new FormControl('', [Validators.required])
@@ -51,6 +52,7 @@ visitUuid: string;
         if (obs.encounter.visit.uuid === this.visitUuid) {
           this.comment.push(obs);
         }
+        this.emitNotes();
       });
     });
   }
@@ -71,6 +73,7 @@ visitUuid: string;
       this.service.postObs(json)
       .subscribe(resp => {
       this.comment.push({uuid: resp.uuid, value: value});
+      this.emitNotes();
     });
   }
 }
@@ -81,7 +84,14 @@ visitUuid: string;
       this.diagnosisService.deleteObs(uuid)
       .subscribe(() => {
         this.comment.splice(i, 1);
+        this.emitNotes();
       });
+    }
+  }
+
+  emitNotes(){
+    if(this.title === 'Notes'){
+      this.notesChange.emit(this.comment);
     }
   }
 }

@@ -68,6 +68,8 @@ export class AuthService {
         deleteFromStorage("JSESSIONID");
         deleteFromStorage("token");
         this.cookieService.deleteAll();
+        this.cookieService.deleteAll('/');
+        this.cookieService.deleteAll('/openmrs');
         this.myRoute.navigate(["/login"]);
       });
     });
