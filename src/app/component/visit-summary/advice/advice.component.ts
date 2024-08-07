@@ -29,9 +29,10 @@ declare var getEncounterUUID: any;
 })
 export class AdviceComponent implements OnInit {
   @Input() isManagerRole : boolean;
+  @Input() title : string = 'Advice';
   advice: any = [];
   advices: any = [];
-  conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
+  @Input() conceptId = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   encounterUuid: string;
   visitUuid: string;
   patientId: string;
@@ -55,16 +56,18 @@ export class AdviceComponent implements OnInit {
 
   ngOnInit() {
     const adviceUuid = '0308000d-77a2-46e0-a6fa-a8c1dcbc3141';
-    this.diagnosisService.concept(adviceUuid)
+    if(this.title === 'Advice') {
+      this.diagnosisService.concept(adviceUuid)
       .subscribe(res => {
         const result = res.answers;
         result.forEach(ans => {
           this.advices.push(ans.display);
         });
       });
+    }
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
+    this.diagnosisService.getObs(this.patientId, this.conceptId)
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
@@ -83,7 +86,7 @@ export class AdviceComponent implements OnInit {
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: this.conceptAdvice,
+        concept: this.conceptId,
         person: this.patientId,
         obsDatetime: date,
         value: value,
