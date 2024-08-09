@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
@@ -13,14 +13,17 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-view-visit-summary',
   templateUrl: './view-visit-summary.component.html',
   styleUrls: ['./view-visit-summary.component.scss']
 })
-export class ViewVisitSummaryComponent implements OnInit {
-
+export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
+  @Input() isDownloadVisitSummary: boolean = false;
+  @Input() visitId: string;
+  @Input() download: Observable<any>;
   visit: VisitModel;
   patient: PatientModel;
   baseUrl: string = environment.baseURL;
@@ -41,6 +44,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   hasVitalsEnabled: boolean = false;
+  eventsSubscription: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -58,7 +62,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    this.getVisit(this.data.uuid);
+    this.getVisit(this.isDownloadVisitSummary ? this.visitId : this.data.uuid);
     pdfMake.fonts = {
       DmSans: {
         normal: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Regular.ttf`,
@@ -67,6 +71,11 @@ export class ViewVisitSummaryComponent implements OnInit {
         bolditalics: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
       }
     };
+    this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadVisitSummary(); } });
+  }
+
+  ngOnDestroy() {
+    this.eventsSubscription?.unsubscribe();
   }
 
   /**
