@@ -107,6 +107,6 @@ import { AddTicketComponent } from './add-ticket/add-ticket.component';
         MatProgressBarModule,
         MatTabsModule
     ],
-    exports: [ViewVisitPrescriptionComponent],
+    exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
 })
 export class ModalComponentsModule { }
