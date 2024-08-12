@@ -229,8 +229,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getCompletedVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}`);
+  getCompletedVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**

@@ -46,6 +46,7 @@ export class DashboardComponent implements OnInit {
   priorityVisitsCount: number = 0;
   awaitingVisitsCount: number = 0;
   inprogressVisitsCount: number = 0;
+  completedVisitsCount: number = 0;
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('appointmentPaginator') appointmentPaginator: MatPaginator;
@@ -125,9 +126,23 @@ export class DashboardComponent implements OnInit {
         this.getPriorityVisits(1);
       }
       this.getInProgressVisits(1);
+
+      this.getCompletedVisitsCount();
     }
 
     this.socket.initSocket(true);
+  }
+
+  /**
+   * Get completed visits count
+   * @return {void}
+   */
+  getCompletedVisitsCount() {
+    this.visitService.getCompletedVisits(this.specialization, 1, true).subscribe((res: ApiResponseModel) => {
+      if (res.success) {
+        this.completedVisitsCount = res.totalCount;
+      }
+    });
   }
 
   /**
