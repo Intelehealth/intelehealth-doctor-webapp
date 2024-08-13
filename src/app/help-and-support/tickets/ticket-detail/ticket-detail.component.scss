@@ -43,9 +43,29 @@
   }
 }
 
+.card-header-actions {
+  .btn {
+    height: 50px;
+    background: var(--color-darkBlue);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-white);
+    position: relative;
+    min-width: 100px;
+  }
+}
+
 @media (max-width: 600px) {
   .key-value {
       grid-template-columns: 1fr;
+  }
+
+  .card-header-actions{
+    margin-top: 10px;
+    width: 100%;
+    .btn {
+      width: 100%;
+    }
   }
 }
 
