@@ -125,7 +125,8 @@ export class DashboardComponent implements OnInit {
       }
       this.getInProgressVisits(1);
 
-      this.getCompletedVisitsCount();
+      if (this.pvs?.completed_visit_section)
+        this.getCompletedVisitsCount();
     }
 
     this.socket.initSocket(true);
@@ -135,8 +136,8 @@ export class DashboardComponent implements OnInit {
    * Get completed visits count
    * @return {void}
    */
-  getCompletedVisitsCount() {
-    this.visitService.getCompletedVisits(this.specialization, 1, true).subscribe((res: ApiResponseModel) => {
+  getCompletedVisitsCount(page: number = 1) {
+    this.visitService.getCompletedVisits(this.specialization, page, true).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.completedVisitsCount = res.totalCount;
       }
