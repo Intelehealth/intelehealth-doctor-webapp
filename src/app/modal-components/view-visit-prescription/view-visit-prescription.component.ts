@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
-import { precription, logo } from "../../utils/base64"
+import { precription, logo as logoImg } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
@@ -107,6 +107,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+            // check if abha number / abha address exists for this patient
+            this.getAbhaDetails(patient)
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
@@ -656,6 +658,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         [ 
                           ...this.getPatientRegFieldsForPDF('National ID'),
                           ...this.getPatientRegFieldsForPDF('Phone Number'),
+                          ...this.getPatientRegFieldsForPDF('Abha Address'),
+                          ...this.getPatientRegFieldsForPDF('Abha Number'),
                           , {text: ' ', style: 'subheader'}, {text: ' '}
                         ]
                       ],
@@ -965,7 +969,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           layout: 'noBorders'
         }
       ],
-      images: {...precription, ...logo},
+      images: {...precription, ...logoImg},
       styles: {
         header: {
           fontSize: 14,
@@ -1093,13 +1097,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   toObjectUrl(url: string) {
     return fetch(url)
         .then((response) => {
-          return response.blob();
+          if(response?.status === 200) {
+            return response.blob();
+          }
+          return null;
         })
         .then(blob => {
           return new Promise((resolve, _) => {
               if (!blob) { resolve(''); }
               const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
+              reader.onloadend = () => {
+                resolve(reader.result);
+              }
               reader.readAsDataURL(blob);
           });
         });
@@ -1164,7 +1173,36 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           fieldArray = [{text: 'Contact no.', style: 'subheader'},`${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`];
         }
         break;
+      case 'Abha Address':
+        let abhaAddress = this.getPatientIdentifier('Abha Address') ?? this.getPatientIdentifier('Abha Number');
+        if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
+          abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`
+        }
+        if (abhaAddress) {
+          fieldArray = [{ text: 'ABHA Address', style: 'subheader' }, `${abhaAddress}`];
+        }
+        break;
+      case 'Abha Number':
+        const abhaNumber = this.getPatientIdentifier('Abha Number');
+        if (abhaNumber) {
+          fieldArray = [{ text: 'ABHA Number', style: 'subheader' }, `${abhaNumber}`];
+        }
+        break;
     }
     return fieldArray;
+  }
+
+  /**
+   * Get Abha numner / Abha address from patient
+   */
+  getAbhaDetails(_patient: PatientModel): void {
+    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier;
+    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    const abhaAddress = this.patient?.person?.abhaAddress ?? abhaNumber;
+    this.patient.person.abhaAddress = abhaAddress;
+    if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
+      this.patient.person.abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`;
+    }
   }
 }
