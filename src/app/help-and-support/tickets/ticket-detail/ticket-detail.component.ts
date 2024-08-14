@@ -55,9 +55,9 @@ export class TicketDetailComponent {
     afterClosed().subscribe((res: boolean) => {
       if(res){
         let ticketObj = {
-          title : this.ticketData.title,
+          title : "Re - "+this.ticketData.title,
           priority: this.ticketData.priority,
-          description: this.ticketData.jira_ticket_url ? (this.ticketData.jira_ticket_url + " \n " + this.ticketData.description) : this.ticketData.description
+          description: this.ticketData.description
         }
         this.pagerdutyService.createTicket(ticketObj).subscribe((res)=>{
           this.toastr.success('Ticket has been Reopened successfully!', 'Ticket Reopened');
