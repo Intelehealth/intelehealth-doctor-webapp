@@ -393,6 +393,12 @@
 
         </mat-expansion-panel>
 
+        <ng-container *ngIf="pvs.completed_visit_section">
+          <app-completed-visits [completedVisitsCount]="completedVisitsCount"
+            [patientRegFields]="patientRegFields"
+            ></app-completed-visits>
+        </ng-container>
+
       </mat-accordion>
     </div>
   </div>

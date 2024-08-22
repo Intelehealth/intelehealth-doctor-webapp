@@ -16,6 +16,7 @@ import { getCacheData, checkIfDateOldThanOneDay } from '../utils/utility-functio
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
+import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,6 +41,7 @@ export class DashboardComponent implements OnInit {
   priorityVisits: CustomVisitModel[] = [];
   awaitingVisits: CustomVisitModel[] = [];
   inProgressVisits: CustomVisitModel[] = [];
+  completedVisits: CustomVisitModel[] = [];
 
   specialization: string = '';
   priorityVisitsCount: number = 0;
@@ -74,17 +76,24 @@ export class DashboardComponent implements OnInit {
   pageIndex4:number = 0;
   pageSize4:number = 5;
 
+  completedRecordsFetched: number = 0;
+  pageEvent5: PageEvent;
+  pageIndex5:number = 0;
+  pageSize5:number = 5;
+
   patientRegFields: string[] = [];
   pvs: PatientVisitSummaryConfigModel;
 
   @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
   @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
   @ViewChild('tempPaginator3') tempPaginator3: MatPaginator;
-
+  
   @ViewChild('apSearchInput', { static: true }) apSearchElement: ElementRef;
   @ViewChild('prSearchInput', { static: true }) prSearchElement: ElementRef;
   @ViewChild('awSearchInput', { static: true }) awSearchElement: ElementRef;
   @ViewChild('ipSearchInput', { static: true }) ipSearchElement: ElementRef;
+
+  @ViewChild(CompletedVisitsComponent) completedVisitsComponent: CompletedVisitsComponent;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -126,20 +135,45 @@ export class DashboardComponent implements OnInit {
       this.getInProgressVisits(1);
 
       if (this.pvs?.completed_visit_section)
-        this.getCompletedVisitsCount();
+        this.getCompletedVisits();
     }
 
     this.socket.initSocket(true);
+  }
+
+  get tempPaginator4() {
+    return this.completedVisitsComponent?.paginator;
+  };
+
+  get dataSource5(){
+    return this.completedVisitsComponent?.tblDataSource;
   }
 
   /**
    * Get completed visits count
    * @return {void}
    */
-  getCompletedVisitsCount(page: number = 1) {
-    this.visitService.getCompletedVisits(this.specialization, page, true).subscribe((res: ApiResponseModel) => {
+  getCompletedVisits(page: number = 1) {
+    this.visitService.getCompletedVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.completedVisitsCount = res.totalCount;
+        this.completedRecordsFetched += this.offset;
+        for (let i = 0; i < res.data.length; i++) {
+          let visit = res.data[i];
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          visit.completed = this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+          this.completedVisits.push(visit);
+        }
+        this.dataSource5.data = [...this.completedVisits];
+        if (page == 1) {
+          this.dataSource5.paginator = this.tempPaginator4;
+          this.dataSource5.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator4.length = this.completedVisits.length;
+          this.tempPaginator4.nextPage();
+        }
       }
     });
   }
