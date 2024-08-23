@@ -79,12 +79,20 @@
             <h6>{{'National ID'|translate}}</h6>
             <p>{{ getPersonAttributeValue("NationalID") }}</p>
           </div>
-          <div class="patient-info-item" *ngIf="checkPatientRegField('Phone Number')">
+          <div class="patient-info-item mb-3" *ngIf="checkPatientRegField('Phone Number')">
             <h6>{{'Contact no.'|translate}}</h6>
             <p>
               <img src="assets/svgs/phone-black.svg" alt="" />
               {{ getPersonAttributeValue("Telephone Number") }}
             </p>
+          </div>
+          <div class="patient-info-item" *ngIf="patient?.person?.abhaNumber">
+            <h6 data-test-id="etPatient">{{'ABHA Number'|translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person?.abhaNumber ?? 'N/A' }}</p>
+          </div>
+          <div class="patient-info-item" *ngIf="patient?.person?.abhaAddress">
+            <h6 data-test-id="etPatient">{{'ABHA Address'|translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person?.abhaAddress ?? 'N/A' }}</p>
           </div>
         </div>
       </div>
