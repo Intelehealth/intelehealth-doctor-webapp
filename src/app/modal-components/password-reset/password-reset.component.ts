@@ -18,7 +18,7 @@ export class PasswordResetComponent {
   private authService: AuthService,
   private toastr: ToastrService) { 
     this.passwordResetForm = new FormGroup({
-      newPassword: new FormControl('', [Validators.required, Validators.pattern(/^[^~!^&*(){}[\]|<>"\\\/\-+_=;':,.?`% ]*$/), Validators.minLength(8), Validators.maxLength(20)]),
+      newPassword: new FormControl('', [Validators.required, Validators.pattern(/^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\D*\d).$/), Validators.minLength(8), Validators.maxLength(20)]),
       confirmNewPassword: new FormControl('', [Validators.required])
     });
     this.uuid = data.uuid;
