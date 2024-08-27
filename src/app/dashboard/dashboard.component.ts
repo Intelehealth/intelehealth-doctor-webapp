@@ -18,6 +18,7 @@ import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsMode
 import { AppConfigService } from '../services/app-config.service';
 import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
 import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
+import { MindmapService } from '../services/mindmap.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -108,6 +109,7 @@ export class DashboardComponent implements OnInit {
     private coreService: CoreService,
     private toastr: ToastrService,
     private translateService: TranslateService,
+    private mindmapService: MindmapService,
     private appConfigService: AppConfigService) { 
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
@@ -550,6 +552,7 @@ export class DashboardComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
                 const message = res.message;
                 if (res.status) {
+                  this.mindmapService.notifyHwForRescheduleAppointment(appointment)
                   this.getAppointments();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {

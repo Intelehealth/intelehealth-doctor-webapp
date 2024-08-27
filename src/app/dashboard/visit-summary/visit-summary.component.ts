@@ -1501,6 +1501,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
         this.followUpDatetime = res.value;
+        this.notifyHwForAvailablePrescription(`Folloup date time added for ${this.visit?.patient?.person?.display || 'Patient'}`, 'followup')
       }
     });
   }
@@ -1735,12 +1736,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * Send notification to health worker for available prescription
   * @returns {void}
   */
-  notifyHwForAvailablePrescription(): void {
+  notifyHwForAvailablePrescription(title = null, type = null): void {
     const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
     const openMRSID = this.getPatientIdentifier("OpenMRS ID");
     const payload = {
-      title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
+      title: title || `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
       body: "Click notification to see!",
+      type: type,
       data: {
         patientFirstName: this.patient.person.preferredName.givenName ?? '',
         patientMiddleName: this.patient.person.preferredName.middleName ?? '',
