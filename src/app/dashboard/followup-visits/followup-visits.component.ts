@@ -4,19 +4,20 @@ import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-completed-visits',
-  templateUrl: './completed-visits.component.html',
-  styleUrls: ['./completed-visits.component.scss']
+  selector: 'app-followup-visits',
+  templateUrl: './followup-visits.component.html',
+  styleUrls: ['./followup-visits.component.scss']
 })
-export class CompletedVisitsComponent {
-  @Input() completedVisitsCount: number = 0;
+export class FollowupVisitsComponent {
+  [x: string]: any;
+  @Input() visitCount: number = 0;
   @Input() patientRegFields: string[] = [];
   @ViewChild('ipSearchInput', { static: true }) public ipSearchElement: ElementRef;
 
   @ViewChild('tempPaginator') public paginator: MatPaginator;
 
   baseUrl: string = environment.baseURL;
-  displayedColumns: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_completed'];
+  displayedColumns: string[] = ['name', 'age', 'location', 'followup_date'];
   tblDataSource: any = new MatTableDataSource<any>([]);
 
   checkPatientRegField(fieldName): boolean {

@@ -17,6 +17,7 @@ import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
 import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
+import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,12 +43,14 @@ export class DashboardComponent implements OnInit {
   awaitingVisits: CustomVisitModel[] = [];
   inProgressVisits: CustomVisitModel[] = [];
   completedVisits: CustomVisitModel[] = [];
+  followUpVisits: CustomVisitModel[] = [];
 
   specialization: string = '';
   priorityVisitsCount: number = 0;
   awaitingVisitsCount: number = 0;
   inprogressVisitsCount: number = 0;
   completedVisitsCount: number = 0;
+  followUpVisitsCount: number = 0;
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('appointmentPaginator') appointmentPaginator: MatPaginator;
@@ -94,6 +97,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('ipSearchInput', { static: true }) ipSearchElement: ElementRef;
 
   @ViewChild(CompletedVisitsComponent) completedVisitsComponent: CompletedVisitsComponent;
+  @ViewChild(FollowupVisitsComponent) followUpVisitsComponent: FollowupVisitsComponent;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -136,6 +140,9 @@ export class DashboardComponent implements OnInit {
 
       if (this.pvs?.completed_visit_section)
         this.getCompletedVisits();
+
+      if (this.pvs?.follow_up_visit_section)
+        this.getFollowUpVisit();
     }
 
     this.socket.initSocket(true);
@@ -145,9 +152,51 @@ export class DashboardComponent implements OnInit {
     return this.completedVisitsComponent?.paginator;
   };
 
+  get tempPaginator5() {
+    return this.followUpVisitsComponent?.paginator;
+  };
+
   get dataSource5(){
     return this.completedVisitsComponent?.tblDataSource;
   }
+
+  get dataSource6(){
+    return this.followUpVisitsComponent?.tblDataSource;
+  }
+
+  /**
+  * Get follow-up visits for a logged-in doctor
+  * @return {void}
+  */
+  getFollowUpVisit(page: number = 1) {
+    this.visitService.getFollowUpVisits(this.specialization).subscribe({
+      next: (res: ApiResponseModel) => {
+        if (res.success) {
+          this.followUpVisitsCount = res.totalCount;
+          this.completedRecordsFetched += this.offset;
+          for (let i = 0; i < res.data.length; i++) {
+            let visit = res.data[i];
+            if (visit?.encounters?.length) {
+              visit.cheif_complaint = this.getCheifComplaint(visit);
+              visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+              visit.person.age = this.calculateAge(visit.person.birthdate);
+              visit.completed = this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+              visit.followUp = this.getEncounterObs(visit.encounters, visitTypes.VISIT_NOTE, 163345/*Follow-up*/)?.value_text;
+              this.followUpVisits.push(visit);
+            }
+          }
+          this.dataSource6.data = [...this.followUpVisits];
+          if (page == 1) {
+            this.dataSource6.paginator = this.tempPaginator5;
+            this.dataSource6.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          } else {
+            this.tempPaginator5.length = this.followUpVisits.length;
+            this.tempPaginator5.nextPage();
+          }
+        }
+      }
+    });
+    }
 
   /**
    * Get completed visits count
@@ -389,6 +438,23 @@ export class DashboardComponent implements OnInit {
     return created_at;
   }
 
+
+  /**
+  * Get encounter datetime for a given encounter type
+  * @param {CustomVisitModel} visit - Visit
+  * @param {string} encounterName - Encounter type
+  * @return {string} - Encounter datetime
+  */
+  getEncounterObs(encounters: CustomEncounterModel[] , encounterName: string, conceptId: number) {
+    let obs;
+    encounters.forEach((encounter: CustomEncounterModel) => {
+      if (encounter.type?.name === encounterName) {
+        obs = encounter?.obs?.find((o: CustomObsModel) => o.concept_id == conceptId);
+      }
+    });
+    return obs;
+  }
+
   /**
   * Retreive the chief complaints for the visit
   * @param {CustomVisitModel} visit - Visit
@@ -601,5 +667,13 @@ export class DashboardComponent implements OnInit {
   scrollToPanel(panelId: string) {
     const element = document.getElementById(panelId);
     element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /**
+  * Get provider uuid from localstorage provider
+  * @return {string} - Provider uuid
+  */
+  get providerId(): string {
+    return getCacheData(true, doctorDetails.PROVIDER).uuid;
   }
 }

@@ -32,6 +32,7 @@ import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
 import { OpenChatComponent } from './open-chat/open-chat.component';
 import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
+import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -47,7 +48,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ChangePasswordComponent,
     HwProfileComponent,
     OpenChatComponent,
-    CompletedVisitsComponent
+    CompletedVisitsComponent,
+    FollowupVisitsComponent
   ],
   imports: [
     CommonModule,
