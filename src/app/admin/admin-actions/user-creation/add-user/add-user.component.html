@@ -152,11 +152,11 @@
                   <div class="form-group col-md-6" *ngIf="!this.uuid">
                     <label for="password">{{'Password' | translate}} *</label>
                     <input type="password" maxlength="20" minlength="8" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}">
+                    <app-password-strength-meter [showDetails]="f1.password.dirty && submitted && f1.password.errors?.pattern" [password]="f1.password.value"></app-password-strength-meter>
                     <div *ngIf="submitted && f1.password.errors" class="d-flex flex-column">
                       <small class="error-msg" *ngIf="f1.password.errors.required">{{'Enter password'| translate}}</small>
                       <small class="error-msg" *ngIf="f1.password.errors.minlength">{{'Minimum 8 charactors required' | translate}}</small>
                       <small class="error-msg" *ngIf="f1.password.errors.maxlength">{{'Maximum 20 charactors allowed' | translate}}</small>
-                      <small class="error-msg" *ngIf="f1.password.errors.pattern">{{'Invalid Password'| translate}}</small>
                     </div>
                   </div>
                 </div>

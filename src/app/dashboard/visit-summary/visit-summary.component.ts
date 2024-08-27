@@ -454,7 +454,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getObsValue(uuid: string): any {
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
-    return v?.value ? v.value : null;
+    return v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
   }
 
   /**

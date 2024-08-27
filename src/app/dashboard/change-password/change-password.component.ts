@@ -35,7 +35,7 @@ export class ChangePasswordComponent implements OnInit {
   ) {
     this.resetPasswordForm = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      password: new FormControl('', [Validators.required, Validators.pattern(/^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\D*\d).$/), Validators.minLength(8)]),
       confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
     });
   }
