@@ -44,7 +44,7 @@ export class AddUserComponent implements OnInit, OnDestroy{
           phoneNumber: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(15)]),
           emailId: new FormControl('', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
           username: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`% ]*$/), Validators.minLength(3), Validators.maxLength(20)], [ProviderAttributeValidator.usernameValidator(this.authService)]),
-          password: new FormControl('', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/), Validators.minLength(8), Validators.maxLength(20)]),
+          password: new FormControl('', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/), Validators.minLength(8), Validators.maxLength(20)]),
         });
         
     });
