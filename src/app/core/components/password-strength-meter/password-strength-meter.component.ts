@@ -22,7 +22,7 @@ export class PasswordStrengthMeterComponent implements OnChanges{
   checkPasswordStrength() {
     this.level = 0;
     if(/.{4,}/.test(this.password)) this.level++;
-    if(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/.test(this.password)) this.level++;
+    if(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d@#$!%*?&]{6,}$/.test(this.password)) this.level++;
     if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/.test(this.password)) this.level++;
     if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{12,}$/.test(this.password)) this.level++;
   }
