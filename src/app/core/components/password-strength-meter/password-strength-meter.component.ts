@@ -20,20 +20,10 @@ export class PasswordStrengthMeterComponent implements OnChanges{
   * @return {number} - Strength level between 1 to 4
   */
   checkPasswordStrength() {
-    const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})');
-    const mediumPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
-    const fairPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})');
-    const lowPassword = new RegExp('(?=.*[a-z])(?=.*[0-9])(?=.{4,})');
-    if (strongPassword.test(this.password)) {
-      this.level = 4;
-    } else if (mediumPassword.test(this.password)) {
-      this.level = 3;
-    } else if (fairPassword.test(this.password)) {
-      this.level = 2;
-    } else if(lowPassword.test(this.password)) {
-      this.level = 1
-    } else {
-      this.level = 0;
-    }
+    this.level = 0;
+    if(/.{4,}/.test(this.password)) this.level++;
+    if(/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/.test(this.password)) this.level++;
+    if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/.test(this.password)) this.level++;
+    if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{12,}$/.test(this.password)) this.level++;
   }
 }
