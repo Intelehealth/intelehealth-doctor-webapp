@@ -54,7 +54,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.readMessages(data.id);
       }
       this.conversations.forEach(con=>{
-        if(data.visitId === con.visitId){
+        if(data.patientId === con.patientId){
           if(!isChatOpened) con.count++;
           con.message = data.message;
         }
