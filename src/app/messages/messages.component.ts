@@ -185,7 +185,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
       this.chatSvc
         .sendMessage(
-          this.selectedConversation?.toUser,
+          (this.selectedConversation?.toUser === this.fromUser ? this.selectedConversation?.fromUser : this.selectedConversation?.toUser),
           this.selectedConversation?.patientId,
           this.message,
           payload
