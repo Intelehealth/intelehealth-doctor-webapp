@@ -11,8 +11,8 @@ export const environment = {
   notificationURL: "https://astesting.intelehealth.org:3004/notification",
   socketURL: "https://astesting.intelehealth.org:3004",
   gatewayURL: "https://astesting.intelehealth.org:3030/",
-  version: "NAS-v1.2.10",
-  versionCode: "26",
+  version: "NAS-v1.3.1",
+  versionCode: "28",
   webrtcSdkServerUrl: "wss://astesting.intelehealth.org:9090",
   webrtcTokenServerUrl: "https://astesting.intelehealth.org:3000/"
 };

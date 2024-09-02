@@ -9,6 +9,6 @@ export const environment = {
   gatewayURL: `${window.location.protocol}//${window.location.hostname}:3030/`,
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
-  version: "NAS-v1.3.0",
-  versionCode: "27"
+  version: "NAS-v1.3.1",
+  versionCode: "28"
 };

@@ -25,8 +25,8 @@
       </mat-radio-group>
     </section>
     </div>
-    <mat-form-field *ngIf="showOthers" class="example-full-width" id="dropdown-diagnosis-text">
-      <input matInput placeholder="Please specify the diagnosis" formControlName="text">
+    <mat-form-field *ngIf="showOthers" class="w-100" id="dropdown-diagnosis-text">
+      <input matInput placeholder="Please specify the diagnosis*" formControlName="comments" (keyup)="commentChange($event)">
     </mat-form-field>
    <br>
   <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid || isManagerRole || isDisabled'>Add Diagnosis</button>

@@ -39,7 +39,8 @@ showOthers = false;
 diagnosisForm = new FormGroup({
   text: new FormControl('', [Validators.required]),
   type: new FormControl('', [Validators.required]),
-  confirm: new FormControl('', [Validators.required])
+  confirm: new FormControl('', [Validators.required]),
+  comments: new FormControl(''),
 });
 
   constructor(private service: EncounterService,
@@ -69,7 +70,27 @@ diagnosisForm = new FormGroup({
 
   selected($event){
     this.showOthers = $event.option.value === 'Others';
-    this.isDisabled = false;
+    if(this.showOthers){
+      this.ctrl.comments.setValidators([Validators.required, Validators.minLength(3)]);
+      this.isDisabled = true;
+    } else {
+      this.ctrl.comments.clearValidators();
+      this.ctrl.comments.setValue('');
+      this.isDisabled = false;
+    }
+    this.ctrl.comments.updateValueAndValidity();
+  }
+
+  get ctrl(){
+    return this.diagnosisForm.controls;
+  }
+
+  get val() {
+    return this.diagnosisForm.value;
+  }
+
+  commentChange(event) {
+    this.isDisabled = this.val.comments.length < 3;
   }
 
   resetIfInvalid() {
@@ -85,13 +106,14 @@ diagnosisForm = new FormGroup({
         concept: this.conceptDiagnosis,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.text}:${value.type} & ${value.confirm}`,
+        value: `${this.showOthers ? this.val.comments : value.text}:${value.type} & ${value.confirm}`,
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
         this.diagnosisList = [];
         this.diagnosis.push({uuid: resp.uuid, value: json.value});
+        this.showOthers = false;
       });
     }
   }
