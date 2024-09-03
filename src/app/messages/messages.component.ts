@@ -34,6 +34,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   pdfDefaultImage: string = 'assets/images/pdf-icon.png';
   subscription1: Subscription;
   subscription2: Subscription;
+  subscription3: Subscription;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -62,6 +63,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
 
     this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
+      this.getMessages();
+    });
+
+    this.subscription3 = this.socketSvc.onEvent('msg_delivered').subscribe((data) => {
       this.getMessages();
     });
   }
@@ -101,10 +106,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
   conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
-    this.getMessages();
-    // if (this.selectedConversation?.fromUser !== this.fromUser) {
-    this.readMessages(this.selectedConversation?.id);
-    // }
+    if (this.selectedConversation?.fromUser !== this.fromUser) {
+      this.readMessages(this.selectedConversation?.id);
+    } else {
+      this.getMessages();
+    }
     this.selectedConversation.count = 0;
   }
 
@@ -250,6 +256,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();
     this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
   }
 
 }
