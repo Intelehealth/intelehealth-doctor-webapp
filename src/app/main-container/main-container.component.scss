@@ -145,7 +145,7 @@
 }
 
 .menu-items-wrapper.collapsed .sidenav-logo {
-  padding: 30px 25px !important;
+  padding: 30px 20px !important;
 }
 
 .menu-items-wrapper.collapsed .admin-nav .nav-item .nav-item-link {
@@ -200,6 +200,11 @@
       }
     }
   }
+
+  .m-img {
+    border-radius: 2px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  }  
 
   .admin-nav {
     width: 100%;

@@ -492,7 +492,7 @@ export class ViewVisitSummaryComponent implements OnInit {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Visit Summary',
+                  text: 'Ekal Arogya e-Visit Summary',
                   alignment: 'center',
                   style: 'header'
                 },

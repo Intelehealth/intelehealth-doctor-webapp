@@ -528,7 +528,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       header: {
         columns: [
           { text: ''},
-          { image: 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
+          { image: 'logo', width: 50, height: 50, alignment: 'center', margin: [0, 0, 275, 0] }
         ]
       },
       footer: (currentPage, pageCount) => {
@@ -549,7 +549,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: 'Ekal Arogya e-Prescription',
                   alignment: 'center',
                   style: 'header'
                 },
