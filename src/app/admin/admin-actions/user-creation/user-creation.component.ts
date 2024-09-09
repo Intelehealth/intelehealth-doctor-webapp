@@ -47,7 +47,7 @@ export class UserCreationComponent {
   */
   getUsers(): void {
     this.authService.getUsers().subscribe(res=>{
-      this.usersData = res.data.filter(e=>e.roles.length <= 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse"].includes(r.display)).length).map((obj:any)=>{
+      this.usersData = res.data.filter(e=>e.roles.length <= 2 && e.roles.filter(r=>["Organizational: Doctor","Organizational: Nurse","Organizational:MCC"].includes(r.display)).length).map((obj:any)=>{
         obj.person_name = obj.person.display + ( obj.person.gender ? " (" + obj.person.gender.replace("U","O") + ")" : "" );
         obj.role = this.getRole(obj.roles);
         return obj;
@@ -108,7 +108,7 @@ export class UserCreationComponent {
   }
 
   getRole(roles: RolesModel[]): string{
-    return roles.filter(r=>r.display.includes("Doctor")).length ? "Doctor" : "HW";
+    return roles.filter(r=>r.display.includes("Doctor")).length ? "Doctor" : (roles.filter(r=>r.display.includes("MCC")).length ? "MCC" : "HW");
   }
 
   openResetPasswordDialog(uuid:string):void{
