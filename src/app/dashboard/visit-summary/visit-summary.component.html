@@ -868,7 +868,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
       <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote">
         {{'Start visit note'|translate}}
       </button>
@@ -1007,6 +1007,7 @@
                         <td>{{ patientInteractionForm.value.spoken }}</td>
                         <td class="pr-0">
                           <button
+                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                             type="button"
                             mat-icon-button
                             class="float-right"
@@ -1056,7 +1057,7 @@
                         <td>{{ d.diagnosisName }}</td>
                         <td>{{ d.diagnosisType }}</td>
                         <td>{{ d.diagnosisStatus }}</td>
-                        <td class="pr-0">
+                        <td class="pr-0" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
                           <button
                             mat-icon-button
                             class="float-right"
@@ -1331,7 +1332,7 @@
                           <td>{{ m.days }}</td>
                           <td>{{ m.timing }}</td>
                           <td>{{ m.remark }}</td>
-                          <td class="pr-0">
+                          <td class="pr-0" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
                             <button
                               type="button"
                               mat-icon-button
@@ -1558,6 +1559,7 @@
                       (click)="deleteAdvice(i, ad.uuid)"
                       data-test-id="{{'btnDeleteAdviceVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
+                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
                     </button>
@@ -1569,7 +1571,7 @@
                   {{'No advices added!'|translate}}
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
                 <div class="form-group mt-3" *ngIf="addMoreAdvice">
                   <button
                     type="button"
@@ -1641,6 +1643,7 @@
                   <div class="d-flex justify-content-between">
                     <span>{{ t.value }}</span>
                     <button
+                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                       mat-icon-button
                       (click)="deleteTest(i, t.uuid)"
                       data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
@@ -1656,7 +1659,7 @@
                   {{'No tests added!'|translate}}
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
                 <div class="form-group mt-3" *ngIf="addMoreTest">
                   <button
                     type="button"
@@ -1744,6 +1747,7 @@
                           <td>{{ r.reason }}</td>
                           <td class="pr-0">
                             <button
+                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                               type="button"
                               class="float-right"
                               mat-icon-button
@@ -1763,7 +1767,7 @@
                           </td>
                         </tr>
                       </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
                         <tr *ngIf="addMoreReferral">
                           <td colspan="6" class="px-0">
                             <div class="form-group mb-0">
@@ -1897,7 +1901,7 @@
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
-              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
+              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
                 <ul class="items-list">
                   <li>
                     <div class="row">
@@ -2049,6 +2053,7 @@
                       <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
                       <td class="pr-0">
                         <button
+                          [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                           type="button"
                           class="float-right"
                           mat-icon-button
@@ -2071,6 +2076,7 @@
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
       <button
+        [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
         type="button"
         class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"

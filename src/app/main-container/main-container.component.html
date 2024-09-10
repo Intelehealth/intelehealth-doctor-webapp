@@ -17,7 +17,7 @@
             <span>{{'Dashboard' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemMessages">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE', 'ORGANIZATIONAL:MCC']" (click)="toggleSidebar()" data-test-id="listItemMessages">
           <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkMessages">
             <img src="assets/svgs/menu-message.svg" alt="">
             <span>{{'Messages' | translate}} <div class="dot" *ngIf="drUnread">{{drUnread}}</div></span>
@@ -31,8 +31,14 @@
             </a>
           </li>
         </ng-container>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemCalendar">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE', 'ORGANIZATIONAL:MCC']" (click)="toggleSidebar()" data-test-id="listItemCalendar">
           <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active" data-test-id="linkCalendar">
+            <img src="assets/svgs/menu-calendar.svg" alt="">
+            <span>{{'Calendar' | translate}}</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL:MCC']" (click)="toggleSidebar()" data-test-id="listItemCalendar">
+          <a class="nav-item-link" routerLink="/calendar/view-calendar" routerLinkActive="active" data-test-id="linkCalendar">
             <img src="assets/svgs/menu-calendar.svg" alt="">
             <span>{{'Calendar' | translate}}</span>
           </a>
