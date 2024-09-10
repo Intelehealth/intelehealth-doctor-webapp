@@ -1,4 +1,3 @@
-import { SessionService } from "./session.service";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
@@ -11,7 +10,7 @@ import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
-import { doctorDetails, visitTypes } from "src/config/constant";
+import { doctorDetails } from "src/config/constant";
 import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
 
 @Injectable({
@@ -29,8 +28,6 @@ export class AuthService {
   public rememberMe: boolean = false;
 
   constructor(
-    private myRoute: Router,
-    private sessionService: SessionService,
     private cookieService: CookieService,
     private http: HttpClient,
     private router: Router,
