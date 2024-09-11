@@ -105,7 +105,9 @@ export class VisitSummaryComponent implements OnInit {
             visit.display.includes("ADULTINITIAL") |
             visit.display.includes("Vitals")
           ) {
-            saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
+            if(visit.display.includes("ADULTINITIAL")){
+              saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
+            }
           }
           if (visitDetails.stopDatetime !== null) {
             this.isVisitEnded = true;
