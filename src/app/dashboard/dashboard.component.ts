@@ -87,6 +87,7 @@ export class DashboardComponent implements OnInit {
 
   patientRegFields: string[] = [];
   pvs: PatientVisitSummaryConfigModel;
+  isMCCUser: boolean = false;
 
   @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
   @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
@@ -110,7 +111,8 @@ export class DashboardComponent implements OnInit {
     private toastr: ToastrService,
     private translateService: TranslateService,
     private mindmapService: MindmapService,
-    private appConfigService: AppConfigService) { 
+    private appConfigService: AppConfigService) {
+      this.isMCCUser = getCacheData(false, doctorDetails.ROLE) === 'mcc'; 
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
@@ -131,7 +133,7 @@ export class DashboardComponent implements OnInit {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      if (this.pvs.appointment_button) {
+      if (this.pvs.appointment_button && !this.isMCCUser) {
         this.getAppointments();
       }
       this.getAwaitingVisits(1);
