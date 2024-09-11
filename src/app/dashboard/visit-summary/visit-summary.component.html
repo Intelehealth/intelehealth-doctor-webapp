@@ -1014,6 +1014,7 @@
                             *ngIf="isVisitNoteProvider && !visitEnded"
                             (click)="deletePatientInteraction()"
                             data-test-id="btnDeletePatientInteraction"
+                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                           >
                             <img src="assets/svgs/delete-icon.svg" alt="" />
                           </button>
@@ -1648,6 +1649,7 @@
                       (click)="deleteTest(i, t.uuid)"
                       data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
+                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
                     </button>
@@ -1754,6 +1756,7 @@
                               (click)="deleteReferral(i, r.uuid)"
                               data-test-id="{{'btnDeleteReferralVisitSummary'+i}}"
                               *ngIf="isVisitNoteProvider && !visitEnded"
+                              [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                             >
                               <img src="assets/svgs/delete-icon.svg" alt="" />
                             </button>
@@ -2060,6 +2063,7 @@
                           (click)="deleteFollowUp()"
                           data-test-id="btnDeleteFollowUp"
                           *ngIf="isVisitNoteProvider && !visitEnded"
+                          [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                         >
                           <img src="assets/svgs/delete-icon.svg" alt="" />
                         </button>
@@ -2082,6 +2086,7 @@
         (click)="sharePrescription()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
         data-test-id="btnSharePrescription"
+        [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
       >
         {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
       </button>
@@ -2098,7 +2103,7 @@
   </div>
 </div>
 
-<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled">
+<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
   <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall" *ngIf="hasVideoEnabled"/>
   <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat" *ngIf="hasChatEnabled"/>
 </div>
