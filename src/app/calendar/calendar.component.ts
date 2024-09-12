@@ -15,6 +15,7 @@ import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentDetailResponseModel, AppointmentModel, CustomEncounterModel, EncounterModel, FollowUpModel, HwModel, ProviderAttributeModel, ProviderModel, RescheduleAppointmentModalResponseModel, ScheduleModel, ScheduleSlotModel, UserModel } from '../model/model';
 import { MindmapService } from '../services/mindmap.service';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-calendar',
@@ -45,7 +46,8 @@ export class CalendarComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private mindmapService: MindmapService,
-    private translateService:TranslateService
+    private translateService:TranslateService,
+    private roleService: NgxRolesService
   ) { }
 
   ngOnInit(): void {
@@ -83,7 +85,8 @@ export class CalendarComponent implements OnInit {
   * @return {void}
   */
   getAppointments(from: string, to: string) {
-    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, from, to)
+    const isMCCUser = !!this.roleService.getRole('ORGANIZATIONAL:MCC');
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, from, to, isMCCUser ? this.getSpeciality(): null )
       .subscribe((res: ApiResponseModel) => {
         let appointmentsdata: AppointmentModel[] = res.data;
         appointmentsdata.forEach((appointment: AppointmentModel) => {
