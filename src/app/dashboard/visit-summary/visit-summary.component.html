@@ -868,8 +868,8 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
-      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
+      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']" >
         {{'Start visit note'|translate}}
       </button>
     </div>
@@ -1007,14 +1007,12 @@
                         <td>{{ patientInteractionForm.value.spoken }}</td>
                         <td class="pr-0">
                           <button
-                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                             type="button"
                             mat-icon-button
                             class="float-right"
                             *ngIf="isVisitNoteProvider && !visitEnded"
                             (click)="deletePatientInteraction()"
                             data-test-id="btnDeletePatientInteraction"
-                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                           >
                             <img src="assets/svgs/delete-icon.svg" alt="" />
                           </button>
@@ -1058,7 +1056,7 @@
                         <td>{{ d.diagnosisName }}</td>
                         <td>{{ d.diagnosisType }}</td>
                         <td>{{ d.diagnosisStatus }}</td>
-                        <td class="pr-0" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
+                        <td class="pr-0">
                           <button
                             mat-icon-button
                             class="float-right"
@@ -1333,7 +1331,7 @@
                           <td>{{ m.days }}</td>
                           <td>{{ m.timing }}</td>
                           <td>{{ m.remark }}</td>
-                          <td class="pr-0" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
+                          <td class="pr-0">
                             <button
                               type="button"
                               mat-icon-button
@@ -1560,7 +1558,6 @@
                       (click)="deleteAdvice(i, ad.uuid)"
                       data-test-id="{{'btnDeleteAdviceVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
-                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
                     </button>
@@ -1572,7 +1569,7 @@
                   {{'No advices added!'|translate}}
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group mt-3" *ngIf="addMoreAdvice">
                   <button
                     type="button"
@@ -1644,12 +1641,10 @@
                   <div class="d-flex justify-content-between">
                     <span>{{ t.value }}</span>
                     <button
-                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                       mat-icon-button
                       (click)="deleteTest(i, t.uuid)"
                       data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
-                      [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
                     </button>
@@ -1661,7 +1656,7 @@
                   {{'No tests added!'|translate}}
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group mt-3" *ngIf="addMoreTest">
                   <button
                     type="button"
@@ -1749,14 +1744,12 @@
                           <td>{{ r.reason }}</td>
                           <td class="pr-0">
                             <button
-                            [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                               type="button"
                               class="float-right"
                               mat-icon-button
                               (click)="deleteReferral(i, r.uuid)"
                               data-test-id="{{'btnDeleteReferralVisitSummary'+i}}"
                               *ngIf="isVisitNoteProvider && !visitEnded"
-                              [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                             >
                               <img src="assets/svgs/delete-icon.svg" alt="" />
                             </button>
@@ -1770,7 +1763,7 @@
                           </td>
                         </tr>
                       </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
+                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreReferral">
                           <td colspan="6" class="px-0">
                             <div class="form-group mb-0">
@@ -1904,7 +1897,7 @@
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
-              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
+              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
                 <ul class="items-list">
                   <li>
                     <div class="row">
@@ -2056,14 +2049,12 @@
                       <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
                       <td class="pr-0">
                         <button
-                          [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                           type="button"
                           class="float-right"
                           mat-icon-button
                           (click)="deleteFollowUp()"
                           data-test-id="btnDeleteFollowUp"
                           *ngIf="isVisitNoteProvider && !visitEnded"
-                          [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
                         >
                           <img src="assets/svgs/delete-icon.svg" alt="" />
                         </button>
@@ -2080,13 +2071,11 @@
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
       <button
-        [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
         type="button"
         class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
         data-test-id="btnSharePrescription"
-        [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']"
       >
         {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
       </button>
@@ -2103,7 +2092,7 @@
   </div>
 </div>
 
-<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled" [ngxPermissionsExcept]="['ORGANIZATIONAL:MCC']">
+<div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled">
   <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall" *ngIf="hasVideoEnabled"/>
   <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat" *ngIf="hasChatEnabled"/>
 </div>
