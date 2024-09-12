@@ -1,6 +1,5 @@
 <div class="container-fluid">
   <div class="row">
-    <template *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
       <div class="col p-1" *ngIf="pvs.appointment_button" (click)="scrollToPanel('anchor-appointment')">
         <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
           <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" />
@@ -10,7 +9,6 @@
           </div>
         </div>
       </div>
-    </template>
     <div class="col p-1" *ngIf="pvs.priority_visit_section" (click)="scrollToPanel('anchor-priority')">
       <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
@@ -65,7 +63,6 @@
       </div>
       <mat-accordion class="intel-accordion-con" multi data-test-id="matAccDashboard">
 
-        <template *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
           <mat-expansion-panel [expanded]="true" data-test-id="matExpAppointment" *ngIf="pvs.appointment_button">
             <mat-expansion-panel-header data-test-id="matExpHeaderAppointment">
               <mat-panel-title>
@@ -152,7 +149,6 @@
               </mat-paginator>
             </div>
           </mat-expansion-panel>
-        </template>
 
         <mat-expansion-panel [expanded]="true" data-test-id="matExpPriority" *ngIf="pvs.priority_visit_section">
           <mat-expansion-panel-header data-test-id="matExpHeaderPriority">
