@@ -1501,7 +1501,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
         this.followUpDatetime = res.value;
-        this.notifyHwForAvailablePrescription(`Folloup date time added for ${this.visit?.patient?.person?.display || 'Patient'}`, 'followup')
+        if(this.visitNotePresent)
+          this.notifyHwForAvailablePrescription(`Folloup date time added for ${this.visit?.patient?.person?.display || 'Patient'}`, 'followup')
       }
     });
   }
