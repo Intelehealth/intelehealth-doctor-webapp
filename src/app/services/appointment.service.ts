@@ -88,11 +88,12 @@ export class AppointmentService {
   * Get scheduled months
   * @param {string} userUuid - User uuid
   * @param {string} year - Year
+  * @param {string} speciality - Speciality
   * @return {Observable<any>}
   */
-  getScheduledMonths(userUuid, year) {
+  getScheduledMonths(userUuid, year, speciality = null) {
     return this.http.get(
-      `${this.baseURL}/appointment/getScheduledMonths/${userUuid}?year=${year}`
+      `${this.baseURL}/appointment/getScheduledMonths/${userUuid}?year=${year}` + (speciality && `&speciality=${speciality}`) 
     );
   }
 
