@@ -19,6 +19,7 @@ import { AppConfigService } from '../services/app-config.service';
 import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
 import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
 import { MindmapService } from '../services/mindmap.service';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-dashboard',
@@ -111,12 +112,14 @@ export class DashboardComponent implements OnInit {
     private toastr: ToastrService,
     private translateService: TranslateService,
     private mindmapService: MindmapService,
-    private appConfigService: AppConfigService) {
-      this.isMCCUser = getCacheData(false, doctorDetails.ROLE) === 'mcc'; 
+    private appConfigService: AppConfigService,
+    private rolesService: NgxRolesService) {
+      this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
       this.pvs = { ...this.appConfigService.patient_visit_summary }; 
+      this.pvs.appointment_button = this.pvs.appointment_button && !this.isMCCUser
       this.displayedColumns1 = this.displayedColumns1.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns2 = this.displayedColumns2.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns3 = this.displayedColumns3.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
