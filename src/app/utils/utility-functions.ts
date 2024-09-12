@@ -1,5 +1,6 @@
 import { visitTypes } from "src/config/constant";
 import * as moment from 'moment';
+import { ProviderAttributeModel } from "../model/model";
 
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
@@ -75,4 +76,20 @@ export function checkIfDateOldThanOneDay(data: string) {
   */
 export function compare(a: number | string, b: number | string, isAsc: boolean) {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
+
+/**
+* Get speciality
+* @param {ProviderAttributeModel[]} attr - Array of provider attributes
+* @return {string} - Speciality
+*/
+export function getSpecialization(attr: ProviderAttributeModel[] = []): string {
+  let specialization = '';
+  for (const a of attr) {
+    if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
+      specialization = a.value;
+      break;
+    }
+  }
+  return specialization;
 }
