@@ -119,7 +119,7 @@ export class DashboardComponent implements OnInit {
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
       this.pvs = { ...this.appConfigService.patient_visit_summary }; 
-      this.pvs.appointment_button = this.pvs.appointment_button && !this.isMCCUser
+      this.pvs.appointment_button = this.pvs.appointment_button && !this.isMCCUser;
       this.displayedColumns1 = this.displayedColumns1.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns2 = this.displayedColumns2.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
       this.displayedColumns3 = this.displayedColumns3.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
