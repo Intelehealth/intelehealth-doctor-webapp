@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddLicenseKeyComponent } from './add-license-key/add-license-key.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -108,5 +108,6 @@ import { AddTicketComponent } from './add-ticket/add-ticket.component';
         MatTabsModule
     ],
     exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class ModalComponentsModule { }
