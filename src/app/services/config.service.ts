@@ -197,6 +197,37 @@ export class ConfigService {
   }
 
   /**
+  * Get diagnostics
+  * @return {Observable<any>}
+  */
+  getDiagnostics(): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update diagnostic enabled status
+  * @param {boolean} id - id of diagnostic
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateDiagnosticEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Update diagnostic mandatory status
+  * @param {boolean} id - id of diagnostic
+  * @param {boolean} is_mandatory - mandatory status true/false
+  * @return {Observable<any>}
+  */
+  updateDiagnosticMandatoryStatus(id: number, is_mandatory: boolean): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/updateIsMandatory/${id}`;
+    return this.http.put(url, { is_mandatory });
+  }
+
+  /**
   * Get Webrtc
   * @return {Observable<any>}
   */

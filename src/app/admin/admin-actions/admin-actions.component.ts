@@ -50,6 +50,13 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
+      title: "Patient Diagnostics",
+      desc: "Manage fields to be shown under patient diagnostics",
+      icon: "assets/svgs/patient-diagnosis.svg",
+      path: "admin/actions/patient-diagnostics",
+      isLocalPath: true
+    },
+    {
       title: "Patient Registration",
       desc: "Manage fields to be shown during patient registration",
       icon: "assets/svgs/patient-reg.svg",

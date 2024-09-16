@@ -618,6 +618,16 @@ export interface PatientVitalModel {
   is_enabled: boolean,
 }
 
+export interface PatientDiagnosticModel {
+  id?: number,
+  name: string,
+  key: string;
+  createdAt?: string,
+  updatedAt?: string
+  is_mandatory: boolean,
+  is_enabled: boolean,
+}
+
 export interface VitalModel {
   name: string,
   key: string,
