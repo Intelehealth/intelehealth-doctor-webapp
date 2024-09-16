@@ -48,6 +48,7 @@ import { AddUserComponent } from './admin-actions/user-creation/add-user/add-use
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PatientDiagnosticsComponent } from './admin-actions/patient-diagnostics/patient-diagnostics.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -94,6 +95,10 @@ const routes: Routes = [
           {
             path: 'patient-vitals',
             component: PatientVitalsComponent
+          },
+          {
+            path: 'patient-diagnostics',
+            component: PatientDiagnosticsComponent
           },
           {
             path: 'webrtc',
@@ -156,7 +161,8 @@ const routes: Routes = [
     PatientVisitSummaryComponent,
     AbhaComponent,
     UserCreationComponent,
-    AddUserComponent
+    AddUserComponent,
+    PatientDiagnosticsComponent
   ],
   imports: [
     CommonModule,
