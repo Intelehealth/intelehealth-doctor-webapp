@@ -387,6 +387,62 @@
                       </div>
                     </div>
                   </li>
+                  <li *ngIf='getObsValue("HGB")'>
+                    <div class="list-item">
+                      <label data-test-id="etHGBVitals">{{'Hemoglobin'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        data-test-id="etHGBVitals"
+                        [class.text-muted]="!getObsValue('HGB')"
+                      >
+                        {{
+                          getObsValue("HGB")
+                        }}
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf='getObsValue("Blood group")'>
+                    <div class="list-item">
+                      <label data-test-id="etBloodGroupVitals">{{'Blood Group'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        data-test-id="etBloodGroupVitals"
+                        [class.text-muted]="!getObsValue('Blood group')"
+                      >
+                        {{
+                          getObsValue("Blood group")
+                        }}
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf='getObsValue("sugar fasting")'>
+                    <div class="list-item">
+                      <label data-test-id="etSugarFastingVitals">{{'Sugar Level(Fasting)'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        data-test-id="etSugarFastingVitals"
+                        [class.text-muted]="!getObsValue('sugar fasting')"
+                      >
+                        {{
+                          getObsValue("sugar fasting")
+                        }}
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf='getObsValue("sugar random")'>
+                    <div class="list-item">
+                      <label data-test-id="etSugarRandomVitals">{{'Sugar Level - Random'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        data-test-id="etSugarRandomVitals"
+                        [class.text-muted]="!getObsValue('sugar random')"
+                      >
+                        {{
+                          getObsValue("sugar random")
+                        }}
+                      </div>
+                    </div>
+                  </li>
                 </ul>
               </mat-expansion-panel>
 
