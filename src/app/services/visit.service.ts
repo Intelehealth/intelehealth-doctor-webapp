@@ -161,7 +161,7 @@ export class VisitService {
   * @param {string} msg - Message to be sent
   * @return {Observable<any>}
   */
-  getWhatsappLink(whatsapp: string, msg: string) {
+  getWhatsappLink(whatsapp: string, msg: string = `Hello I'm calling for consultation`) {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;

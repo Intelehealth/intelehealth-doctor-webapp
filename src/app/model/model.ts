@@ -237,6 +237,7 @@ export interface AppointmentModel {
   cheif_complaint?: string[],
   starts_in?: string,
   appointmentId?: number
+  telephone?: string
 }
 
 export interface CustomVisitModel {
@@ -256,6 +257,7 @@ export interface CustomVisitModel {
     birthdate?: string,
     gender?: string,
     uuid?: string
+    person_attribute?: any[]
   }
 }
 

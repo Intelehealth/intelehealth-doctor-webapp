@@ -24,7 +24,7 @@ export class AppointmentsComponent implements OnInit {
 
   items = ["Appointments"];
   expandedIndex = 0;
-  displayedColumns: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
+  displayedColumns: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'telephone', 'actions'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   isLoaded: boolean = false;
@@ -73,6 +73,7 @@ export class AppointmentsComponent implements OnInit {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
               appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person)
               this.appointments.push(appointment);
             }
           }
@@ -216,5 +217,17 @@ export class AppointmentsComponent implements OnInit {
 
   checkPatientRegField(fieldName): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
+
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink(telephoneNumber: string): string {
+    return this.visitService.getWhatsappLink(telephoneNumber);
+  }
+  
+  getTelephoneNumber(person: AppointmentModel['visit']['person']) {
+    return person?.person_attribute.find((v: { person_attribute_type_id: number; }) => v.person_attribute_type_id == 8)?.value;
   }
 }
