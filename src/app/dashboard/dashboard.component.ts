@@ -29,7 +29,7 @@ import { NgxRolesService } from 'ngx-permissions';
 export class DashboardComponent implements OnInit {
 
   showAll: boolean = true;
-  displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
+  displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'telephone','actions'];
   displayedColumns2: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
   displayedColumns3: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
   displayedColumns4: string[] = ['name', 'age', 'location', 'cheif_complaint', 'prescription_started'];
@@ -116,7 +116,7 @@ export class DashboardComponent implements OnInit {
     private rolesService: NgxRolesService) {
       this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
-        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; })=>e.is_enabled).map((e: { name: any; })=>e.name));
       });
       this.pvs = { ...this.appConfigService.patient_visit_summary }; 
       this.pvs.appointment_button = this.pvs.appointment_button && !this.isMCCUser;
@@ -195,7 +195,7 @@ export class DashboardComponent implements OnInit {
           this.dataSource6.data = [...this.followUpVisits];
           if (page == 1) {
             this.dataSource6.paginator = this.tempPaginator5;
-            this.dataSource6.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+            this.dataSource6.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
           } else {
             this.tempPaginator5.length = this.followUpVisits.length;
             this.tempPaginator5.nextPage();
@@ -225,7 +225,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource5.data = [...this.completedVisits];
         if (page == 1) {
           this.dataSource5.paginator = this.tempPaginator4;
-          this.dataSource5.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource5.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator4.length = this.completedVisits.length;
           this.tempPaginator4.nextPage();
@@ -417,6 +417,7 @@ export class DashboardComponent implements OnInit {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
               appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person)
               this.appointments.push(appointment);
             }
           }
@@ -453,7 +454,7 @@ export class DashboardComponent implements OnInit {
   * @return {string} - Encounter datetime
   */
   getEncounterObs(encounters: CustomEncounterModel[] , encounterName: string, conceptId: number) {
-    let obs;
+    let obs: CustomObsModel;
     encounters.forEach((encounter: CustomEncounterModel) => {
       if (encounter.type?.name === encounterName) {
         obs = encounter?.obs?.find((o: CustomObsModel) => o.concept_id == conceptId);
@@ -668,7 +669,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  checkPatientRegField(fieldName): boolean{
+  checkPatientRegField(fieldName: string): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
@@ -683,5 +684,16 @@ export class DashboardComponent implements OnInit {
   */
   get providerId(): string {
     return getCacheData(true, doctorDetails.PROVIDER).uuid;
+  } 
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink(telephoneNumber: string): string {
+    return this.visitService.getWhatsappLink(telephoneNumber);
+  }
+
+  getTelephoneNumber(person: AppointmentModel['visit']['person']): any {
+    return person?.person_attribute.find((v: { person_attribute_type_id: number; }) => v.person_attribute_type_id == 8)?.value;
   }
 }
