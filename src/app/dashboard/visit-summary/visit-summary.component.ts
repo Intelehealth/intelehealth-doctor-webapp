@@ -130,6 +130,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isCalling: boolean = false;
 
   openChatFlag: boolean = false;
+  collapsed: boolean = true;
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -332,6 +333,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
+            this.getLocationAndSetSanch();
           }
           this.checkOpenChatBoxFlag();
         });
@@ -1106,9 +1108,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           if (obs.value.includes(':')) {
             this.medicines.push({
               drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
+              strength: obs.value?.split(':')[1]?.split(',')[0],
+              days: obs.value?.split(":")[1].split(",")[2].split("for")[1],
+              timing: obs.value?.split(":")[1].split(",")[1],
               remark: obs.value?.split(':')[4],
               uuid: obs.uuid
             });
@@ -1698,5 +1700,38 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       body: "Click notification to see!"
     }
     this.mindmapService.notifyApp(hwUuid, payload).subscribe();
+  }
+
+  collapsedButton() {
+    this.collapsed = !this.collapsed
+  }
+
+  getUrl(): string {
+    return `assets/svgs/Vector${this.collapsed ? '-top' : '-bottom'}.svg`;
+  }
+
+ /**
+  * Send notification to health worker for available prescription
+  * @returns {void}
+  */
+  getLocationAndSetSanch() {
+    this.visitService.getLocations().subscribe((res: any) => {
+      const state = res.states.find(state => state?.name === this.patient?.person.preferredAddress.stateProvince);
+      if (state) {
+        let districtName = '-', sanchName='-';
+        state.districts.forEach(district => {
+          district.sanchs
+            .forEach(sanch => {
+              const village = sanch.villages.find(vilg => vilg.name === this.patient?.person.preferredAddress?.cityVillage);
+              if (village) {
+                sanchName = sanch.name;
+                districtName = district.name;
+              }
+            });
+        });
+        this.patient["person"]["preferredAddress"]["countyDistrict"]= districtName;
+        this.patient["person"]["preferredAddress"]["sanch"]= sanchName;
+      }
+    })
   }
 }

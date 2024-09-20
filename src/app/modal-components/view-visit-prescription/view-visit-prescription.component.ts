@@ -106,6 +106,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.getLocationAndSetSanch();
             }
             this.getCheckUpReason(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -235,10 +236,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (obs.value.includes(':')) {
             this.medicines.push({
               drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
-              remark: obs.value?.split(':')[4],
+              strength: obs.value?.split(':')[1]?.split(',')[0],
+              days: obs.value?.split(":")[1].split(",")[2].split("for")[1],
+              timing: obs.value?.split(":")[1].split(",")[1],
+              remark: '-',
               uuid: obs.uuid
             });
           } else {
@@ -534,7 +535,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage, pageCount) => {
         return {
           columns: [
-            { text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 5, 5, 5] },
+            { text: 'Copyright ©2023 Ekal Arogya, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 5, 5, 5] },
             { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
@@ -571,7 +572,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         },
                         [
                           {
-                            text: `${this.patient?.person.display}`,
+                            text: `${this.patient?.person.display.toLocaleUpperCase()}`,
                             bold: true,
                             margin: [10, 10, 0, 5],
                           }
@@ -581,96 +582,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   },
                   layout: 'noBorders'
                 },
-                {
-                  table: {
-                    widths: ['100%'],
-                    body: [
-                      [
-                        [
-                          {text: 'Gender', style: 'subheader'},
-                          `${ (this.patient?.person.gender) === 'M' ? 'Male' : (this.patient?.person.gender) === 'F' ? 'Female' : 'Other'}`,
-                          {text: 'Age', style: 'subheader', margin:[0, 5, 0, 0]},
-                          `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
-                        ]
-                      ]
-                    ]
-                  },
-                  layout: {
-                    vLineWidth: function (i, node) {
-                      if (i === 0) {
-                        return 1;
-                      }
-                      return 0;
-                    },
-                    hLineWidth: function (i, node) {
-                      return 0;
-                    },
-                    vLineColor: function (i) {
-                      return "lightgray";
-                    },
-                  }
-                },
-                {
-                  table: {
-                    widths: ['100%'],
-                    body: [
-                      [
-                        [
-                          {text: 'Address', style: 'subheader'},
-                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`,
-
-                          {text: 'Occupation', style: 'subheader'},
-                          `${this.getPersonAttributeValue('occupation')}`,
-                        ]
-                      ]
-                    ]
-                  },
-                  layout: {
-                    vLineWidth: function (i, node) {
-                      if (i === 0) {
-                        return 1;
-                      }
-                      return 0;
-                    },
-                    hLineWidth: function (i, node) {
-                      return 0;
-                    },
-                    vLineColor: function (i) {
-                      return "lightgray";
-                    },
-                  }
-                },
-                {
-                  table: {
-                    widths: ['100%'],
-                    body: [
-                      [ 
-                        [ 
-                          {text: 'National ID', style: 'subheader'},
-                          `${this.getPersonAttributeValue('NationalID')}`,
-
-                          {text: 'Contact no.', style: 'subheader'},
-                          `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`
-                          , {text: ' ', style: 'subheader'}, {text: ' '}
-                        ]
-                      ],
-                    ]
-                  },
-                  layout: {
-                    vLineWidth: function (i, node) {
-                      if (i === 0) {
-                        return 1;
-                      }
-                      return 0;
-                    },
-                    hLineWidth: function (i, node) {
-                      return 0;
-                    },
-                    vLineColor: function (i) {
-                      return "lightgray";
-                    },
-                  }
-                }
+              ],
+              [
+                this.getPersonalInfo()
+              ],
+              [
+                this.getAddress()
+              ],
+              [
+                this.getOtherInfo()
               ],
               [
                 {
@@ -947,7 +867,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   stack: [
                     { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
                     { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
-                    { text: `${this.consultedDoctor?.typeOfProfession}`},
+                    { text: `${this.consultedDoctor?.qualification}`},
                     { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
                   ]
                 },
@@ -1133,5 +1053,250 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       }
     });
     return val;
+  }
+
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink() {
+    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(doctorDetails.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
+  }
+
+  /**
+  * Send notification to health worker for available prescription
+  * @returns {void}
+  */
+  getLocationAndSetSanch() {
+    this.visitService.getLocations().subscribe((res: any) => {
+      const state = res.states.find(state => state?.name === this.patient?.person.preferredAddress.stateProvince);
+      if (state) {
+        let districtName = '-', sanchName='-';
+        state.districts.forEach(district => {
+          district.sanchs
+            .forEach(sanch => {
+              const village = sanch.villages.find(vilg => vilg.name === this.patient?.person.preferredAddress?.cityVillage);
+              if (village) {
+                sanchName = sanch.name;
+                districtName = district.name;
+              }
+            });
+        });
+        this.patient["person"]["preferredAddress"]["countyDistrict"]= districtName;
+        this.patient["person"]["preferredAddress"]["sanch"]= sanchName;
+      }
+    })
+  }
+
+  getPersonalInfo() {
+    const data = {
+      colSpan: 4,
+      layout: 'noBorders',
+      table: {
+        widths: ['*','*','*','*'],
+        body: [
+          [
+            {
+              colSpan: 4,
+              text: `Personal Information`,
+              style: 'subheader'
+            },
+            '',
+            '',
+            ''
+          ]
+        ]
+      }
+    };
+
+    let other = [];
+    if(this.patient?.person.gender) {
+      other.push({ 
+        stack: [
+          { text: 'Gender', style: 'subsubheader' },
+          { text: this.patient?.person.gender == 'M' ? 'Male' : 'Female', style: 'pval' }
+        ] 
+      });
+    }
+    if(this.patient?.person.age) {
+      other.push({ 
+        stack: [
+          { text: 'Age', style: 'subsubheader' },
+          { text: this.patient?.person.age, style: 'pval' }
+        ] 
+      });
+    }
+    if(this.patient?.person.birthdate) {
+      other.push({ 
+        stack: [
+          { text: 'Date of Birth', style: 'subsubheader' },
+          { text: new Date(this.patient?.person.birthdate).toDateString(), style: 'pval' }
+        ] 
+      });
+    }
+    if(this.getPersonAttributeValue('Telephone Number')) {
+      other.push({ 
+        stack: [
+          { text: 'Phone Number', style: 'subsubheader' },
+          { text: this.getPersonAttributeValue('Telephone Number'), style: 'pval' }
+        ] 
+      });
+    }
+    const chunkSize = 4;
+    for (let i = 0; i < other.length; i += chunkSize) {
+      const chunk = other.slice(i, i + chunkSize);
+      if (chunk.length == chunkSize) {
+        data.table.body.push([...chunk]);
+      } else {
+        for (let x = chunk.length; x < chunkSize; x++) {
+          chunk[x] = '';
+        }
+        data.table.body.push([...chunk]);
+      }
+    }
+
+    return data;
+  }
+
+  getAddress() {
+    console.log("patient", this.patient)
+    const data = {
+      colSpan: 4,
+      layout: 'noBorders',
+      table: {
+        widths: ['*','*','*','*'],
+        body: []
+      }
+    };
+      data.table.body.push([
+        {
+          colSpan: 4,
+          text: `Address`,
+          style: 'subheader'
+        },
+        '',
+        '',
+        ''
+      ]);
+      let other = [];
+     if(this.patient?.person?.preferredAddress?.country) {
+        other.push({ 
+          stack: [
+            { text: 'Country', style: 'subsubheader' },
+            { text: (this.patient?.person?.preferredAddress?.country)? (this.patient?.person?.preferredAddress?.country) : '-', style: 'pval' }
+          ] 
+        });
+      } 
+      if(this.patient?.person?.preferredAddress?.stateProvince) {
+        other.push({ 
+          stack: [
+            { text: 'State', style: 'subsubheader' },
+            { text: (this.patient?.person?.preferredAddress?.stateProvince) ? this.patient?.person?.preferredAddress?.stateProvince : '-', style: 'pval' }
+          ] 
+        });
+      }
+      if(this.patient?.person?.preferredAddress?.countyDistrict) {
+        other.push({ 
+          stack: [
+            { text: 'District', style: 'subsubheader' },
+            { text: (this.patient?.person?.preferredAddress?.countyDistrict)? this.patient?.person?.preferredAddress?.countyDistrict:'-', style: 'pval' }
+          ] 
+        });
+      } 
+      if(this.patient?.person?.preferredAddress?.sanch) {
+        other.push({ 
+          stack: [
+            { text: 'Sanch', style: 'subsubheader' },
+            { text: (this.patient?.person?.preferredAddress?.sanch) ? this.patient?.person?.preferredAddress?.sanch :'-', style: 'pval' }
+          ] 
+        });
+      } 
+      if(this.patient?.person?.preferredAddress?.cityVillage) {
+        other.push({ 
+          stack: [
+            { text: 'Village', style: 'subsubheader' },
+            { text: (this.patient?.person?.preferredAddress?.cityVillage) ? this.patient?.person?.preferredAddress?.cityVillage : '-', style: 'pval' }
+          ] 
+        });
+      }
+      const chunkSize = 4;
+      for (let i = 0; i < other.length; i += chunkSize) {
+          const chunk = other.slice(i, i + chunkSize);
+          if (chunk.length == chunkSize) {
+            data.table.body.push([...chunk]);
+          } else {
+            for (let x = chunk.length; x < chunkSize; x++) {
+              chunk[x] = '';
+            }
+            data.table.body.push([...chunk]);
+          }
+      }
+    return data;
+  }
+
+  getOtherInfo() {
+    const data = {
+      colSpan: 4,
+      layout: 'noBorders',
+      table: {
+        widths: ['*','*','*','*'],
+        body: []
+      }
+    };
+      data.table.body.push([
+        {
+          colSpan: 4,
+          text: `Other Information`,
+          style: 'subheader'
+        },
+        '',
+        '',
+        ''
+      ]);
+      let other = [];
+      if(this.getPersonAttributeValue('occupation')) {
+        other.push({ 
+          stack: [
+            { text: 'Occupation', style: 'subsubheader' },
+            { text: this.getPersonAttributeValue('occupation'), style: 'pval' }
+          ] 
+        });
+      }
+      if(this.getPersonAttributeValue('Education Level')) {
+        other.push({ 
+          stack: [
+            { text: 'Education', style: 'subsubheader' },
+            { text: this.getPersonAttributeValue('Education Level'), style: 'pval' }
+          ] 
+        });
+      }
+      if(this.getPersonAttributeValue('NationalID')) {
+        other.push({ 
+          stack: [
+            { text: 'National ID', style: 'subsubheader' },
+            { text: this.getPersonAttributeValue('NationalID'), style: 'pval' }
+          ] 
+        });
+      } if(this.getPersonAttributeValue('Economic Status')) {
+        other.push({ 
+          stack: [
+            { text: 'Economic Category', style: 'subsubheader' },
+            { text: this.getPersonAttributeValue('Economic Status'), style: 'pval' }
+          ] 
+        });
+      }
+      const chunkSize = 4;
+      for (let i = 0; i < other.length; i += chunkSize) {
+          const chunk = other.slice(i, i + chunkSize);
+          if (chunk.length == chunkSize) {
+            data.table.body.push([...chunk]);
+          } else {
+            for (let x = chunk.length; x < chunkSize; x++) {
+              chunk[x] = '';
+            }
+            data.table.body.push([...chunk]);
+          }
+      }
+    return data;
   }
 }

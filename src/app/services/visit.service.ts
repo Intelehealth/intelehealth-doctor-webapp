@@ -148,7 +148,7 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  patientInfo(id, v = 'custom:(identifiers,person:(uuid,display,gender,birthdate,age,preferredAddress:(cityVillage,address1,address2),attributes:(value,attributeType:(display))))'): Observable<any> {
+  patientInfo(id, v = 'custom:(identifiers,person:(uuid,names,display,gender,birthdate,age,preferredAddress:(cityVillage,stateProvince,address1,address2),attributes:(value,attributeType:(display))))'): Observable<any> {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=${v}`;
     return this.http.get(url);
@@ -240,5 +240,13 @@ export class VisitService {
   */
   getEndedVisits(speciality: string, page: number = 1): Observable<any> {
     return this.http.get(`${this.baseURLMindmap}/openmrs/getEndedVisits?speciality=${speciality}&page=${page}`);
+  }
+
+   /**
+  * Get Locations
+  * @return {Observable<any>}
+  */
+   getLocations(): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getLocations`);
   }
 }

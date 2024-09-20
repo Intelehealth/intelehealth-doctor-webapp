@@ -331,9 +331,17 @@ export interface PatientModel {
     display?: string,
     gender?: string,
     attributes?: PersonAttributeModel[],
+    names ?: string[],
     preferredAddress?: {
-      cityVillage?: string
-    }
+      address2: string,
+      address1: string,
+      cityVillage?: string,
+      stateProvince?:string,
+      sanch?: string,
+      countyDistrict ?: string,
+      country?: string,
+      postalCode?: string
+     }
   }
 }
 

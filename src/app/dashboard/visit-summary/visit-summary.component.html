@@ -40,40 +40,30 @@
                 </div>
                 <div class="ml-3">
                   <h6 data-test-id="etPatientName">
-                    {{ patient?.person.display }} ({{ (patient?.person.gender | translate) }})
+                    <span>{{ patient?.person?.names[0]?.givenName }}</span>
+                    <span *ngIf="patient?.person?.names[0]?.middleName">{{ ' ' + patient?.person?.names[0]?.middleName }}</span>
+                    <span>{{ ' ' + patient?.person?.names[0]?.familyName }}</span>
+                    <span>{{ " (" + (patient?.person.gender | translate) + ") "}}</span>
                   </h6>
                   <p data-test-id="etPatienOpenMRSId">{{ getPatientIdentifier("OpenMRS ID") }}</p>
                 </div>
               </div>
+            </div>
 
-            </div>
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatienAge">{{'Age'|translate}}</h6>
-                <p data-test-id="etPatient">
-                  {{
-                    patient?.person.birthdate
-                      ? getAge(patient?.person.birthdate)
-                      : patient?.person.age
-                  }}
-                </p>
-              </div>
-              <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
-                <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
-                <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
+                <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
               </div>
             </div>
+
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatient">{{'Occupation'|translate}}</h6>
-                <p data-test-id="etPatient">{{ getPersonAttributeValue("occupation") }}</p>
-              </div>
-              <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'National ID'|translate}}</h6>
-                <p data-test-id="etPatient">{{ getPersonAttributeValue("NationalID") }}</p>
+                <h6 data-test-id="etPatientAge">{{'Date of Birth'|translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
               </div>
             </div>
+
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Contact no.'| translate}}</h6>
@@ -103,6 +93,82 @@
             </div>
           </div>
         </div>
+        <button (click)="collapsedButton()" class="btn">
+          <img [src]="getUrl()" alt="">
+        </button>
+
+        <mat-tab-group class="patient-tab-group" mat-align-tabs="start" *ngIf="collapsed">
+          <mat-tab label="{{'Address'| translate}}">
+            <div class="rows patient-info-wrapper">
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Country' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'State' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.stateProvince }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'District' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.countyDistrict }}</p>
+                </div>
+              </div>
+              
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Sanch' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.sanch}}</p>
+                </div>
+              </div>
+              
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Village' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage }}</p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="{{'Other' | translate}}">
+            <div class="rows patient-info-wrapper">
+              <div class="col-md-3 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Occupation' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('occupation') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Education' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('Education Level') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3" *ngIf="getPersonAttributeValue('NationalID') !== 'NA'">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'National ID' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('NationalID') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3" *ngIf="getPersonAttributeValue('Economic Status') !== 'NA'">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Economic Category' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('Economic Status') }}</p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
 

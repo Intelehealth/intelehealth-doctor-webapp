@@ -41,6 +41,7 @@ import { RaiseTicketComponent } from './raise-ticket/raise-ticket.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropComponent } from './image-crop/image-crop.component';
 import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
     declarations: [
@@ -80,6 +81,7 @@ import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
         ReactiveFormsModule,
         MatIconModule,
         MatButtonModule,
+        MatTabsModule,
         NgxDropzoneModule,
         MomentModule,
         MatListModule,

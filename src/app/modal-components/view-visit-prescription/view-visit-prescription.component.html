@@ -21,7 +21,7 @@
 <mat-dialog-content>
   <div class="main-content">
     <div class="container-fluid">
-      <div class="row patient-info-wrapper">
+      <div class="rows patient-info-wrapper">
         <div class="col-md-3 patient-info-section p-3" *ngIf="patient">
           <div class="patient-img-item mb-2">
             <div class="patient-img">
@@ -35,7 +35,10 @@
             </div>
             <div class="ml-3">
               <h6>
-                {{ patient?.person.display }}
+                <span>{{ patient?.person?.names[0]?.givenName }}</span>
+                <span *ngIf="patient?.person?.names[0]?.middleName">{{ ' ' + patient?.person?.names[0]?.middleName }}</span>
+                <span>{{ ' ' + patient?.person?.names[0]?.familyName }}</span>
+                <span>{{ " (" + (patient?.person.gender | translate) + ") "}}</span>
               </h6>
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
@@ -43,50 +46,119 @@
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>{{'Gender'|translate}}</h6>
-            <p>
-              {{  (patient?.person.gender) === 'M' ? ('Male'| translate ) : (patient?.person.gender) === 'F' ? ('Female'| translate) : 
-              ('Other'| translate)}}
-            </p>
-          </div>
-          <div class="patient-info-item">
-            <h6>{{'Age'|translate}}</h6>
-            <p>
-              {{
-              patient?.person.birthdate
-              ? getAge(patient?.person.birthdate)
-              : patient?.person.age
-              }}
-            </p>
+            <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
           </div>
         </div>
+
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>{{"Address"|translate}}</h6>
-            <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
-            <p>{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ?
-              ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
+            <h6 data-test-id="etPatientAge">{{'Date of Birth'|translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
           </div>
-          <div class="patient-info-item">
-            <h6>{{'Occupation'|translate}}</h6>
-            <p>{{ getPersonAttributeValue("occupation") }}</p>
-          </div>
-         
         </div>
+
         <div class="col-md-3 patient-info-section p-3">
-          <div class="patient-info-item mb-3">
-            <h6>{{'National ID'|translate}}</h6>
-            <p>{{ getPersonAttributeValue("NationalID") }}</p>
-          </div>
           <div class="patient-info-item">
-            <h6>{{'Contact no.'|translate}}</h6>
-            <p>
-              <img src="assets/svgs/phone-black.svg" alt="" />
+            <h6 data-test-id="etPatient">{{'Contact no.'| translate}}</h6>
+            <p data-test-id="etWhatsApp" *ngIf="getPersonAttributeValue('Telephone Number') === 'NA'">
+               {{ getPersonAttributeValue("Telephone Number") }}
+            </p>
+            <p data-test-id="etPhoneNumber" *ngIf="getPersonAttributeValue('Telephone Number') !== 'NA'">
               {{ getPersonAttributeValue("Telephone Number") }}
+              <a
+                href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
+                target="_blank"
+                class="icon-btn"
+                data-test-id="linkPhoneNumber"
+              >
+                <img src="assets/svgs/phone-circle.svg" alt="" />
+              </a>
+              <a
+                href="{{ getWhatsAppLink() }}"
+                target="_blank"
+                class="icon-btn"
+                data-test-id="linkWhatsApp"
+              >
+                <img src="assets/svgs/whatsapp-icon.svg" alt="" />
+              </a>
             </p>
           </div>
         </div>
-      </div>
+        <mat-tab-group class="col-md-12 patient-tab-group" mat-align-tabs="start">
+          <mat-tab label="{{'Address'| translate}}">
+            <div class="rows patient-info-wrapper">
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Country' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'State' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.stateProvince }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'District' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.countyDistrict }}</p>
+                </div>
+              </div>
+              
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Sanch' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.sanch}}</p>
+                </div>
+              </div>
+              
+              <div class="col-md-2 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Village' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage }}</p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="{{'Other' | translate}}">
+            <div class="rows patient-info-wrapper">
+              <div class="col-md-3 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Occupation' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('occupation') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Education' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('Education Level') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3" *ngIf="getPersonAttributeValue('NationalID') !== 'NA'">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'National ID' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('NationalID') }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-3 patient-info-section p-3" *ngIf="getPersonAttributeValue('Economic Status') !== 'NA'">
+                <div class="patient-info-item mb-3">
+                  <h6 data-test-id="etPatient">{{'Economic Category' | translate}}</h6>
+                  <p data-test-id="etPatient">{{ getPersonAttributeValue('Economic Status') }}</p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>  
+
       <div class="row">
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
