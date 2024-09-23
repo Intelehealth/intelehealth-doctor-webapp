@@ -690,7 +690,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @return {any} - Value for a given attribute type
   */
   getPersonAttributeValue(attrType: string) {
-    let val = this.translateService.instant('NA');
+    let val = 'NA';
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
         if (attrType === attr.attributeType.display) {
@@ -1501,7 +1501,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
         this.followUpDatetime = res.value;
-        if(this.visitNotePresent)
+        if(this.visitCompleted)
           this.notifyHwForAvailablePrescription(`Folloup date time added for ${this.visit?.patient?.person?.display || 'Patient'}`, 'followup')
       }
     });

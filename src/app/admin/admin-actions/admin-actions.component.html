@@ -10,11 +10,11 @@
                                     <img class="chip-img" src="{{item.icon}}" alt="" />
                                     <div class="chip-info">
                                         <h6>{{ item.title | translate}}</h6>
-                                        <span>{{ item.desc }}</span>
+                                        <span>{{ item.desc | translate}}</span>
                                     </div>
                                 </div>
                                 <div class="chip-action">
-                                    <button type="button" (click)="onModifyClick(item)" class="btn"> Modify </button>
+                                    <button type="button" (click)="onModifyClick(item)" class="btn">{{ "Modify" | translate }}</button>
                                 </div>
                             </div>
                         </div>

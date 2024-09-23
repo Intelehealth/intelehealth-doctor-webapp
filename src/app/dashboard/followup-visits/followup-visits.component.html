@@ -5,11 +5,11 @@
         <div class="intel-accordion-title">
           <img src="assets/svgs/diagnosis.svg" alt="" width="44px">
           <h6 class="mb-0 ml-2">
-            {{ 'Follow Up visits' | translate }} ({{ visitCount ? visitCount : 0 }})
+            {{ 'Follow Up Visits' | translate }} ({{ visitCount ? visitCount : 0 }})
           </h6>
           <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{ 'Visits going through the consultation' | translate }}" matTooltipPosition="right" data-test-id="matIcoHelpfollow up">help_outline</mat-icon>
           <div class="input-group search-bar ml-auto d-flex" (click)="$event.stopPropagation();">
-            <input type="text" #ipSearchInput class="form-control" placeholder="Search follow up visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchfollow upDashboard">
+            <input type="text" #ipSearchInput class="form-control" placeholder="{{ 'Search Follow Up Visits' | translate }}" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchfollow upDashboard">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon1" *ngIf="!tblDataSource.filter">
                 <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">

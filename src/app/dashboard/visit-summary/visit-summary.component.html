@@ -58,14 +58,14 @@
 
             <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
               <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatientAge">{{'Date of Birth'|translate}}</h6>
+                <h6 data-test-id="etPatientAge">{{'Date of birth'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
               </div>
             </div>
 
             <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Phone Number') && getPersonAttributeValue('Telephone Number') !== 'NA'">
               <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'Contact no:'| translate}}</h6>
+                <h6 data-test-id="etPatient">{{'Contact no.'| translate}}</h6>
                 <div class="contact-info">
                   <p data-test-id="etPhoneNumber">
                     {{ getPersonAttributeValue("Telephone Number") }}
@@ -2077,7 +2077,7 @@
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
         data-test-id="btnSharePrescription"
       >
-        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
+        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
       </button>
       <button
         type="button"
@@ -2086,7 +2086,7 @@
         *ngIf="visitNotePresent && visitCompleted"
         data-test-id="btnViewPrescription"
         >
-        {{'View prescription'|translate}}
+        {{'View Prescription'|translate}}
       </button>
     </div>
   </div>

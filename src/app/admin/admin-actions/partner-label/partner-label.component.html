@@ -5,7 +5,7 @@
           <div class="card-header">
             <img class="mr-2" src="assets/svgs/partner-label.svg" alt="" height="44px">
             <div>
-                <h6 class="mb-0">{{'Partner White Label' | translate}}</h6>
+                <h6 class="mb-0">{{'Partner White Labelling' | translate}}</h6>
                 <a class="user-manual-link">{{'View User Manual' | translate}}</a>
             </div>
             <div class="card-header-actions">
@@ -32,7 +32,7 @@
                     <div class="col-md-6">
                         <span><b>{{'Primary Color' | translate}}</b></span>
                         <div class="color-details">
-                            <input type="text" maxlength="7" [(ngModel)]="themeConfigData.primary_color" (change)="onColorChange($event.target?.value,'primary_color')" class="form-control" placeholder="{{'Enter HEX code for primary color' | translate}}">
+                            <input type="text" maxlength="7" [(ngModel)]="themeConfigData.primary_color" (change)="onColorChange($event.target?.value,'primary_color')" class="form-control" placeholder="{{'Enter HEX code for'|translate}} {{'Primary Color' | translate}}">
                             <span class="colorpicker-parent">
                                 <input 
                                     (change)="onColorChange($event.target?.value,'primary_color')"
@@ -46,7 +46,7 @@
                     <div class="col-md-6">
                         <span><b>{{'Secondary Color' | translate}}</b></span>
                         <div class="color-details">
-                            <input type="text" [(ngModel)]="themeConfigData.secondary_color" (change)="onColorChange($event.target?.value,'secondary_color')" maxlength="7" class="form-control" placeholder="{{'Enter HEX code for primary color' | translate}}">
+                            <input type="text" [(ngModel)]="themeConfigData.secondary_color" (change)="onColorChange($event.target?.value,'secondary_color')" maxlength="7" class="form-control" placeholder="{{'Enter HEX code for'|translate}} {{'Secondary Color' | translate}}">
                             <span class="colorpicker-parent">
                                 <input 
                                     (change)="onColorChange($event.target?.value,'secondary_color')"
@@ -62,7 +62,7 @@
             <div class="mat-elevation-z8 section">
                 <div class="mb-4">
                     <h6 class="section-logo mb-2">{{'Images and Text' | translate}}</h6>
-                    <span class="images-msg">{{'*Minimum of one and a maximum of three images and texts allowed.' | translate}}</span>
+                    <span class="images-msg">*{{'Minimum of one and a maximum of three images and texts allowed.' | translate}}</span>
                 </div>
                 
                 <div class="row" *ngFor="let item of themeConfigData.images_with_text; index as i;">
@@ -74,7 +74,7 @@
                         <div class="slide-image-row">
                             <span><b>{{'Text ' + (i+1) | translate}}</b></span>
                         </div>
-                        <input type="text" [(ngModel)]="item.text" maxlength="150" class="form-control image-text" placeholder="{{'Enter Text ' + (i+1) | translate}}">
+                        <input type="text" [(ngModel)]="item.text" maxlength="150" class="form-control image-text" placeholder="{{'Enter Text'|translate}} {{(i+1)}}">
                     </div>
                     <div class="col-md-12 text-right">
                         <button type="button" class="btn btn-delete-slide" *ngIf="i!==0" (click)="onDeleteSlides(i)"><img class="mr-1 h-75" src="assets/svgs/delete-icon.svg">{{'Delete' | translate}}</button>

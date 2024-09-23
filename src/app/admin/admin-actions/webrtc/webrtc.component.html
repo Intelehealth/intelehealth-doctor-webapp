@@ -8,7 +8,7 @@
               <h6 class="mb-0">
                 <span>{{'WebRTC' | translate}}</span>
                 <div class="sub-title">
-                  <span class="label">{{'Enable/Disable WebRTC' | translate }}</span>
+                  <span class="label">{{'Enable/Disable' | translate}} {{'WebRTC' | translate }}</span>
                   <div class="pretty p-switch light-green light-red p-fill">
                     <input type="checkbox" [checked]="webrtcData?.webrtc_section?.is_enabled" (change)="updateFeatureStatus(webrtcData?.webrtc_section?.id, $event.target.checked)" data-test-id="checkboxMindmapToggleStatus"/>
                     <div class="state">

@@ -7,7 +7,7 @@
                     <div>
                         <h6 class="mb-0">{{'Patient Diagnostics' | translate}}</h6>
                         <div class="msg">
-                            <span class="mr-3">{{'Enable/Disable Patient Diagnostics' | translate}}</span>
+                            <span class="mr-3">{{'Enable/Disable' | translate}} {{'Patient Diagnostics' | translate}}</span>
                             <div class="pretty p-switch p-fill light-green light-red">
                                 <input type="checkbox" [(ngModel)]="sectionEnabled" (change)="updateFeatureStatus(sectionData?.id, $event.target.checked)"/>
                                 <div class="state">

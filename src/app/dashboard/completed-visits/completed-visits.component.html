@@ -5,11 +5,11 @@
         <div class="intel-accordion-title">
           <img src="assets/svgs/completed.svg" alt="" width="44px">
           <h6 class="mb-0 ml-2">
-            {{ 'Completed visits' | translate }} ({{ completedVisitsCount ? completedVisitsCount : 0 }})
+            {{ 'Completed Visits' | translate }} ({{ completedVisitsCount ? completedVisitsCount : 0 }})
           </h6>
           <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{ 'Visits going through the consultation' | translate }}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
           <div class="input-group search-bar ml-auto d-flex" (click)="$event.stopPropagation();">
-            <input type="text" #ipSearchInput class="form-control" placeholder="Search completed visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchCompletedDashboard">
+            <input type="text" #ipSearchInput class="form-control" placeholder="{{ 'Search Completed Visits' | translate }}" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchCompletedDashboard">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon1" *ngIf="!tblDataSource.filter">
                 <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
