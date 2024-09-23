@@ -29,14 +29,14 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: false
     },
     {
-      title: "Doctor Speciality",
+      title: "Doctor Specialities",
       desc: "Manage Doctor Specialties",
       icon: "assets/svgs/doctor-speciality.svg",
       path: "admin/actions/doctor-specialties",
       isLocalPath: true
     },
     {
-      title: "Mobile App Language",
+      title: "Mobile App Languages",
       desc: "Manage Mobile App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
       path: "admin/actions/mobile-app-languages",

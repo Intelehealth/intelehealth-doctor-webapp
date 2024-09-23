@@ -6,7 +6,7 @@
                 <img class="mr-2" src="assets/svgs/ticket-icon.svg" alt="" height="44px">
                 <div>
                     <h6 class="mb-0">{{'Tickets' | translate}}</h6>
-                    <span class="open-tickets">{{'('+openTicketsCount+' Open tickets)' | translate}}</span>
+                    <span class="open-tickets">{{"("+openTicketsCount+" " }}{{'Open Tickets' | translate}} {{")"}}</span>
                 </div>
                 <div class="card-header-actions">
                   <button type="button" class="btn" (click)="createTicket()" data-test-id="btnAddMindmap">{{'Create Ticket' | translate}}</button>
@@ -43,7 +43,7 @@
                 <ng-container matColumnDef="priority">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Priority'| translate}} </th>
                     <td mat-cell *matCellDef="let element;">
-                        <button class="action-btn priority" [ngClass]="element.priority" type="button">{{ element.priority | translate | titlecase}}</button>
+                        <button class="action-btn priority" [ngClass]="element.priority" type="button">{{ element.priority | titlecase | translate}}</button>
                     </td>
                 </ng-container>
 
