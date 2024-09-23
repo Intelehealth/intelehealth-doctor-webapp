@@ -198,7 +198,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       spoken: new FormControl(null, [Validators.required])
     });
 
-    if(true){
+    if(this.appConfigService.patient_visit_summary.hw_interaction){
       this.patientInteractionForm.addControl('hwIntUuid', new FormControl(""));
       this.patientInteractionForm.addControl('hwPresent', new FormControl(false, [Validators.required]));
       this.patientInteractionForm.addControl('hwSpoken', new FormControl("", [Validators.required]));
@@ -952,17 +952,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       });
     }
 
-    if(!this.patientInteractionForm.value.hwPresent){
-      const payload = {
-        attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
-        value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, Comment: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
-      };
-      this.visitService.postAttribute(this.visit.uuid, payload)
-      .subscribe((res: VisitAttributeModel) => {
-        if (res) {
-          this.patientInteractionForm.patchValue({ hwPresent: true, hwIntUuid: res.uuid, hwSpoken: res.value });
-        }
-      });
+    if(this.appConfigService?.patient_visit_summary?.hw_interaction){
+      if(!this.patientInteractionForm.value.hwPresent){
+        const payload = {
+          attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
+          value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, Comment: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
+        };
+        this.visitService.postAttribute(this.visit.uuid, payload)
+        .subscribe((res: VisitAttributeModel) => {
+          if (res) {
+            this.patientInteractionForm.patchValue({ hwPresent: true, hwIntUuid: res.uuid, hwSpoken: res.value });
+          }
+        });
+      }
     }
   };
 
