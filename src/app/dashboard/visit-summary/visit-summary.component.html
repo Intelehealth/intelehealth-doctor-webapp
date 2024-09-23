@@ -975,7 +975,7 @@
                     </div>
                   </li>
 
-                  <li *ngIf="!patientInteractionForm.value.hwPresent">
+                  <li *ngIf="!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
                         >{{'Have you spoken with the healthcare worker directly?'|translate}}*</label
@@ -1007,7 +1007,7 @@
                     </div>
                   </li>
                 </ul>
-                <div *ngIf="!patientInteractionForm.value.hwPresent" class="form-group">
+                <div *ngIf="!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction" class="form-group">
                   <label for="note"
                     ><b>{{'Comment'|translate}}&nbsp;</b>
                     </label
@@ -1026,7 +1026,7 @@
                     isVisitNoteProvider &&
                     !visitEnded &&
                     (!patientInteractionForm.value.present ||
-                    !patientInteractionForm.value.hwPresent)
+                    (!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction))
                   "
                 >
                   <button
@@ -1064,7 +1064,7 @@
                           </button>
                         </td>
                       </tr>
-                      <tr *ngIf="patientInteractionForm.value.hwPresent">
+                      <tr *ngIf="patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
                         <td>{{'Spoken with the healthcare worker directly?'|translate}}</td>
                         <td>{{ patientInteractionForm.value.hwSpoken }}</td>
                         <td class="pr-0">

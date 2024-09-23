@@ -667,6 +667,7 @@ export interface PatientVisitSummaryConfigModel {
   severity_of_case_section: boolean
   completed_visit_section: boolean
   follow_up_visit_section: boolean
+  hw_interaction: boolean
 }
 
 export interface PagerdutyList {
