@@ -974,13 +974,59 @@
                       </div>
                     </div>
                   </li>
+
+                  <li *ngIf="!patientInteractionForm.value.hwPresent">
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label"
+                        >{{'Have you spoken with the healthcare worker directly?'|translate}}*</label
+                      >
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            value="{{'Yes' | translate}}"
+                            formControlName="hwSpoken"
+                            data-test-id="hwRadioSpokenYes"
+                          />
+                          <div class="state p-success">
+                            <label>{{'Yes'|translate}}</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            value="{{'No' | translate}}"
+                            formControlName="hwSpoken"
+                            data-test-id="hwRadioSpokenNo"
+                          />
+                          <div class="state p-success">
+                            <label>{{'No'|translate}}</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
                 </ul>
+                <div *ngIf="!patientInteractionForm.value.hwPresent" class="form-group">
+                  <label for="note"
+                    ><b>{{'Comment'|translate}}&nbsp;</b>
+                    </label
+                  >
+                  <textarea
+                    class="form-control"
+                    rows="3"
+                    placeholder="{{'Type here'|translate}}"
+                    formControlName="comment"
+                    data-test-id="hwComment"
+                  ></textarea>
+                </div>
                 <div
                   class="form-group mb-0 mt-3"
                   *ngIf="
                     isVisitNoteProvider &&
                     !visitEnded &&
-                    !patientInteractionForm.value.present
+                    (!patientInteractionForm.value.present ||
+                    !patientInteractionForm.value.hwPresent)
                   "
                 >
                   <button
@@ -992,7 +1038,7 @@
                     {{'Save'|translate}}
                   </button>
                 </div>
-                <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
+                <div class="table-responsive" *ngIf="patientInteractionForm.value.present || patientInteractionForm.value.hwPresent">
                   <table class="table" aria-describedby="">
                     <thead>
                       <tr>
@@ -1002,7 +1048,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr *ngIf="patientInteractionForm.value.present">
                         <td>{{'Spoken with the patient directly?'|translate}}</td>
                         <td>{{ patientInteractionForm.value.spoken }}</td>
                         <td class="pr-0">
@@ -1013,6 +1059,22 @@
                             *ngIf="isVisitNoteProvider && !visitEnded"
                             (click)="deletePatientInteraction()"
                             data-test-id="btnDeletePatientInteraction"
+                          >
+                            <img src="assets/svgs/delete-icon.svg" alt="" />
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="patientInteractionForm.value.hwPresent">
+                        <td>{{'Spoken with the healthcare worker directly?'|translate}}</td>
+                        <td>{{ patientInteractionForm.value.hwSpoken }}</td>
+                        <td class="pr-0">
+                          <button
+                            type="button"
+                            mat-icon-button
+                            class="float-right"
+                            *ngIf="isVisitNoteProvider && !visitEnded"
+                            (click)="deleteHWInteraction()"
+                            data-test-id="btnDeleteHWtInteraction"
                           >
                             <img src="assets/svgs/delete-icon.svg" alt="" />
                           </button>

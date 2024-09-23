@@ -21,6 +21,7 @@ export const visitTypes = {
     PRIORITY_VISIT:'Priority Visit',
     AWAITING_VISIT:'Awaiting Visit',
     PATIENT_INTERACTION:'Patient Interaction',
+    HW_INTERACTION:'HW Interaction',
     GENERAL_PHYSICIAN:'General Physician',
     ADULTINITIAL:'ADULTINITIAL',
     ASSOCIATED_SYMPTOMS:'Associated symptoms',
