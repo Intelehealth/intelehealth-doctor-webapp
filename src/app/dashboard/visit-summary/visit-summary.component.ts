@@ -198,6 +198,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       spoken: new FormControl(null, [Validators.required])
     });
 
+    if(true){
+      this.patientInteractionForm.addControl('hwIntUuid', new FormControl(""));
+      this.patientInteractionForm.addControl('hwPresent', new FormControl(false, [Validators.required]));
+      this.patientInteractionForm.addControl('hwSpoken', new FormControl("", [Validators.required]));
+      this.patientInteractionForm.addControl('comment', new FormControl(""));
+    }
+
     this.diagnosisForm = new FormGroup({
       diagnosisName: new FormControl(null, Validators.required),
       diagnosisType: new FormControl(null, Validators.required),
@@ -909,6 +916,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION) {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
+      if (attr.attributeType.display === visitTypes.HW_INTERACTION) {
+        this.patientInteractionForm.patchValue({ hwPresent: true, hwSpoken: attr.value, hwIntUuid: attr.uuid });
+      }
     });
   }
 
@@ -933,12 +943,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.patientInteractionForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
-    this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
+    if(!this.patientInteractionForm.value.present){
+      this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
       .subscribe((res: VisitAttributeModel) => {
         if (res) {
           this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
         }
       });
+    }
+
+    if(!this.patientInteractionForm.value.hwPresent){
+      const payload = {
+        attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
+        value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, Comment: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
+      };
+      this.visitService.postAttribute(this.visit.uuid, payload)
+      .subscribe((res: VisitAttributeModel) => {
+        if (res) {
+          this.patientInteractionForm.patchValue({ hwPresent: true, hwIntUuid: res.uuid, hwSpoken: res.value });
+        }
+      });
+    }
   };
 
   /**
@@ -947,7 +972,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   deletePatientInteraction() {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe(() => {
-      this.patientInteractionForm.patchValue({ present: false, spoken: null, uuid: null });
+      this.patientInteractionForm.patchValue({ present:false, spoken: null, uuid: null });
+    });
+  }
+
+  /**
+  * Delete HW interaction visit attribute
+  * @returns {void}
+  */
+  deleteHWInteraction() {
+    this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.hwIntUuid).subscribe(() => {
+      this.patientInteractionForm.patchValue({ hwPresent:false, hwSpoken: null, hwIntUuid: null, comment: "" });
     });
   }
 
