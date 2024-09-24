@@ -202,7 +202,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.patientInteractionForm.addControl('hwIntUuid', new FormControl(""));
       this.patientInteractionForm.addControl('hwPresent', new FormControl(false, [Validators.required]));
       this.patientInteractionForm.addControl('hwSpoken', new FormControl("", [Validators.required]));
-      this.patientInteractionForm.addControl('comment', new FormControl(""));
+      this.patientInteractionForm.addControl('comment', new FormControl("",[Validators.required]));
     }
 
     this.diagnosisForm = new FormGroup({
