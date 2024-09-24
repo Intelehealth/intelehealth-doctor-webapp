@@ -23,6 +23,7 @@ import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
+import { MonitoringService } from '../services/monitoring.service';
 
 @Component({
   selector: 'app-main-container',
@@ -70,7 +71,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private socketService: SocketService,
     private _swPush: SwPush,
     private translateService: TranslateService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    public monitor: MonitoringService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -80,6 +82,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
+   
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
@@ -118,6 +121,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img => {
       this.profilePic = img;
     });
+
+    const duration = 1000 * 60 * 15; // hearbeat in every 15 mins
+    setInterval(() => {
+      this.createUpdateStatus();
+    }, duration);
+    setTimeout(() => {
+      this.createUpdateStatus();
+    }, 1000);
   }
 
   /**
@@ -254,6 +265,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Are you sure you want to logout?', cancelBtnText: 'No', confirmBtnText: 'Yes' }).afterClosed().subscribe(res => {
       if (res) {
         this.authService.logOut();
+        this.createUpdateStatus("inactive");
       }
     });
   }
@@ -434,6 +446,24 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   resetSearch() {
     this.searchForm.patchValue({ keyword: ''});
   }
+
+  createUpdateStatus(status = "active") {
+    let user = getCacheData(true, doctorDetails.USER);
+    const roles = user["roles"];
+    var isDoctor = false;
+    roles?.forEach((role) => {
+      if (role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97") {
+        isDoctor = true;
+      }
+    });
+    const payload = {
+      userUuid: user?.uuid,
+      status,
+      name: user?.person?.display || user?.display,
+    };
+    if (isDoctor) this.monitor.createUpdateStatus(payload).subscribe();
+  }
+
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
