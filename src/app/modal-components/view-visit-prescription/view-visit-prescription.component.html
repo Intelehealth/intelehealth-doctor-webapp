@@ -332,6 +332,38 @@
                     </div>
                   </div>
                 </li>
+                <li>
+                  <div class="list-item">
+                    <label>{{'Hemoglobin'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('HGB')">
+                      {{(getObsValue('HGB'))?getObsValue('HGB'):'No information' | translate}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>{{'Blood group'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('Blood group')">
+                      {{(getObsValue('Blood group'))?getObsValue('Blood group'):'No information' | translate}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>{{'Sugar Level(Fasting)'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('sugar fasting')">
+                      {{(getObsValue('sugar fasting'))?getObsValue('sugar fasting'):'No information' | translate}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>{{'Sugar Level - Random'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('sugar random')">
+                      {{(getObsValue('sugar random'))?getObsValue('sugar random'):'No information' | translate}}
+                    </div>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>

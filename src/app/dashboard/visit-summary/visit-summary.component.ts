@@ -1729,6 +1729,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               }
             });
         });
+        this.patient["person"]["preferredAddress"]["country"]= 'India';
         this.patient["person"]["preferredAddress"]["countyDistrict"]= districtName;
         this.patient["person"]["preferredAddress"]["sanch"]= sanchName;
       }

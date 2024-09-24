@@ -992,7 +992,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         }
         break;
       case visitTypes.VITALS:
-        let weightValue, heightValue, bmi, bp, pulse, temperature, spO2, respRate;
+        let weightValue, heightValue, bmi, bp, pulse, temperature, spO2, respRate, hgb,bloodg, sugarF, sugarR;
         heightValue = this.getObsValue('Height (cm)') ? this.getObsValue('Height (cm)') : `No information`;
         weightValue = this.getObsValue('Weight (kg)') ? this.getObsValue('Weight (kg)') : 'No information';
         bmi = (this.getObsValue('Height (cm)') && this.getObsValue('Weight (kg)')) ? Number(weightValue / ((heightValue / 100) * (heightValue / 100))).toFixed(2)
@@ -1003,6 +1003,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           Number(this.getObsValue('TEMPERATURE (C)') * 9 / 5 + 32).toFixed(2) : `No information`;
         spO2 = this.getObsValue('BLOOD OXYGEN SATURATION') ? this.getObsValue('BLOOD OXYGEN SATURATION') : 'No information';
         respRate = this.getObsValue('Respiratory rate') ? this.getObsValue('Respiratory rate') : 'No information';
+        hgb = this.getObsValue("HGB")? this.getObsValue('HGB') : 'No information';
+        bloodg = this.getObsValue("Blood group") ?  this.getObsValue("Blood group") : 'No information';
+        sugarF = this. getObsValue("sugar fasting") ? this. getObsValue("sugar fasting") :'No information'
+        sugarR = this. getObsValue("sugar random") ? this. getObsValue("sugar random") :'No information'
         records.push({ text: [{ text: `Height (cm) : `, bold: true }, `${heightValue}`], margin: [0, 5, 0, 5] });
         records.push({ text: [{ text: `Weight (kg) : `, bold: true }, `${weightValue}`], margin: [0, 5, 0, 5] });
         records.push({ text: [{ text: `BMI : `, bold: true }, `${bmi}`], margin: [0, 5, 0, 5] });
@@ -1011,6 +1015,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         records.push({ text: [{ text: `Temperature (F) : `, bold: true }, `${temperature}`], margin: [0, 5, 0, 5] });
         records.push({ text: [{ text: `SpO2 : `, bold: true }, `${spO2}`], margin: [0, 5, 0, 5] });
         records.push({ text: [{ text: `Respiratory Rate : `, bold: true }, `${respRate}`], margin: [0, 5, 0, 5]});
+        records.push({ text: [{ text: `Hemoglobin : `, bold: true }, `${hgb}`], margin: [0, 5, 0, 5]});
+        records.push({ text: [{ text: `Blood Group : `, bold: true }, `${bloodg}`], margin: [0, 5, 0, 5]});
+        records.push({ text: [{ text: `Sugar Level(Fasting): `, bold: true }, `${sugarF}`], margin: [0, 5, 0, 5]});
+        records.push({ text: [{ text: `Sugar Level - Random : `, bold: true }, `${sugarR}`], margin: [0, 5, 0, 5]});
         break;
     }
     return records;
@@ -1082,6 +1090,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               }
             });
         });
+        this.patient["person"]["preferredAddress"]["country"]= 'India';
         this.patient["person"]["preferredAddress"]["countyDistrict"]= districtName;
         this.patient["person"]["preferredAddress"]["sanch"]= sanchName;
       }
