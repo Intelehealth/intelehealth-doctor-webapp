@@ -520,12 +520,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
-
-    pdfMake.createPdf({
+    const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
-      pageMargins: [ 20, 50, 20, 20 ],
-      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      pageMargins: [ 20, 50, 20, 40 ],
+     // watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
           { text: ''},
@@ -535,8 +534,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage, pageCount) => {
         return {
           columns: [
-            { text: 'Copyright ©2023 Ekal Arogya, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 5, 5, 5] },
-            { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
+            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
+            { text: '\n\n'+currentPage.toString() + ' of ' + pageCount, width:"7%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
       },
@@ -560,6 +559,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               ],
               [
                 {
+                  colSpan: 4,
                   table: {
                     widths: ['auto', '*'],
                     body: [
@@ -582,6 +582,88 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   },
                   layout: 'noBorders'
                 },
+                // {
+                //   table: {
+                //     widths: ['100%'],
+                //     body: [
+                //       [
+                //         [
+                //           ...this.getPatientRegFieldsForPDF('Gender'),
+                //           ...this.getPatientRegFieldsForPDF('Age'),
+                //         ]
+                //       ]
+                //     ]
+                //   },
+                //   layout: {
+                //     vLineWidth: function (i, node) {
+                //       if (i === 0) {
+                //         return 1;
+                //       }
+                //       return 0;
+                //     },
+                //     hLineWidth: function (i, node) {
+                //       return 0;
+                //     },
+                //     vLineColor: function (i) {
+                //       return "lightgray";
+                //     },
+                //   }
+                // },
+                // {
+                //   table: {
+                //     widths: ['100%'],
+                //     body: [
+                //       [
+                //         [
+                //           ...this.getPatientRegFieldsForPDF('Address'),
+                //           ...this.getPatientRegFieldsForPDF('Occupation')
+                //         ]
+                //       ]
+                //     ]
+                //   },
+                //   layout: {
+                //     vLineWidth: function (i, node) {
+                //       if (i === 0) {
+                //         return 1;
+                //       }
+                //       return 0;
+                //     },
+                //     hLineWidth: function (i, node) {
+                //       return 0;
+                //     },
+                //     vLineColor: function (i) {
+                //       return "lightgray";
+                //     },
+                //   }
+                // },
+                // {
+                //   table: {
+                //     widths: ['100%'],
+                //     body: [
+                //       [ 
+                //         [ 
+                //           ...this.getPatientRegFieldsForPDF('National ID'),
+                //           ...this.getPatientRegFieldsForPDF('Phone Number'),
+                //           , {text: ' ', style: 'subheader'}, {text: ' '}
+                //         ]
+                //       ],
+                //     ]
+                //   },
+                //   layout: {
+                //     vLineWidth: function (i, node) {
+                //       if (i === 0) {
+                //         return 1;
+                //       }
+                //       return 0;
+                //     },
+                //     hLineWidth: function (i, node) {
+                //       return 0;
+                //     },
+                //     vLineColor: function (i) {
+                //       return "lightgray";
+                //     },
+                //   }
+                // }
               ],
               [
                 this.getPersonalInfo()
@@ -621,6 +703,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   colSpan: 4,
+                  sectionName:'vitals',
                   table: {
                     widths: [30, '*'],
                     headerRows: 1,
@@ -874,7 +957,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 '',
                 '',
                 ''
-              ],
+              ]
             ]
           },
           layout: 'noBorders'
@@ -889,9 +972,17 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         },
         subheader: {
           fontSize: 12,
-          bold: false,
-          margin: [0, 5, 0, 5],
-          color: 'var(--color-gray)'
+          bold: true,
+          margin: [0, 2, 0, 2],
+        },
+        subsubheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 2, 0, 2]
+        },
+        pval: {
+          fontSize: 10,
+          margin: [0, 2, 0, 2]
         },
         tableExample: {
           margin: [0, 5, 0, 5],
@@ -906,12 +997,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           fontSize: 12,
           bold: true,
           margin: [0, 5, 0, 10]
-        },
+        }
       },
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-prescription');
+    };
+    pdfMake.createPdf(pdfObj).download('e-prescription');
   }
 
   /**
@@ -1168,7 +1260,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getAddress() {
-    console.log("patient", this.patient)
     const data = {
       colSpan: 4,
       layout: 'noBorders',
@@ -1272,6 +1363,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         });
       }
       if(this.getPersonAttributeValue('Education Level')) {
+        if (this.getPersonAttributeValue('Education Level') !== 'NA') 
         other.push({ 
           stack: [
             { text: 'Education', style: 'subsubheader' },
@@ -1280,13 +1372,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         });
       }
       if(this.getPersonAttributeValue('NationalID')) {
-        other.push({ 
+        if (this.getPersonAttributeValue('NationalID') !== 'NA') 
+          other.push({ 
           stack: [
             { text: 'National ID', style: 'subsubheader' },
             { text: this.getPersonAttributeValue('NationalID'), style: 'pval' }
           ] 
         });
       } if(this.getPersonAttributeValue('Economic Status')) {
+        if (this.getPersonAttributeValue('Economic Status') !== 'NA') 
         other.push({ 
           stack: [
             { text: 'Economic Category', style: 'subsubheader' },
