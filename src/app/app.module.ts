@@ -63,6 +63,7 @@ import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
 import { AppConfigService } from "./services/app-config.service";
+import { SidebarMenuListComponent } from "./main-container/sidebar-menu-list/sidebar-menu-list.component";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -96,7 +97,8 @@ registerLocaleData(localeEn);
   declarations: [
     AppComponent,
     TestComponent,
-    MainContainerComponent
+    MainContainerComponent,
+    SidebarMenuListComponent
   ],
 
   imports: [

@@ -23,6 +23,7 @@ export class AppConfigService {
   public patient_reg_other: boolean;
   public patient_reg_address: boolean;
   public abha_section: boolean;
+  public sidebar_menus: any;
 
   constructor(private http: HttpClient) { }
 
