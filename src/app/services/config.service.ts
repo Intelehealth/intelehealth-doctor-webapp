@@ -286,6 +286,26 @@ export class ConfigService {
     const url = `${this.baseURL}/pvs/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
+
+  /*
+  * Get Sidebar Menu Config
+  * @return {Observable<any>}
+  */
+  getSidebarMenuConfig(): Observable<any> {
+    const url = `${this.baseURL}/sidebar-menu/all`;
+    return this.http.get(url);
+  }
+
+  /*
+  * Update Sidebar Menu Config enabled status
+  * @param {boolean} id - id of Sidebar Menu
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateSidebarMenuConfig(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/sidebar-menu/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
 }
 
 

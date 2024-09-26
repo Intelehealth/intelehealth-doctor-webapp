@@ -692,3 +692,13 @@ export interface PagerdutyModel{
 export interface PagerDutyDetail {
   incident: PagerdutyModel
 }
+
+export interface MenuConfig {
+  createdAt?: string,
+  id: number,
+  is_enabled: boolean,
+  name: string,
+  key: string,
+  updatedAt?: string
+  is_locked: boolean
+}

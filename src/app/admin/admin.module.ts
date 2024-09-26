@@ -49,6 +49,7 @@ import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PatientDiagnosticsComponent } from './admin-actions/patient-diagnostics/patient-diagnostics.component';
+import { MenuConfigComponent } from './admin-actions/menu-config/menu-config.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -113,6 +114,10 @@ const routes: Routes = [
             component: AbhaComponent
           },
           {
+            path: 'menu-config',
+            component: MenuConfigComponent
+          },
+          {
             path: 'user-creation',
             children: [
               {
@@ -162,7 +167,8 @@ const routes: Routes = [
     AbhaComponent,
     UserCreationComponent,
     AddUserComponent,
-    PatientDiagnosticsComponent
+    PatientDiagnosticsComponent,
+    MenuConfigComponent
   ],
   imports: [
     CommonModule,
