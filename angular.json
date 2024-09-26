@@ -157,6 +157,39 @@
           }
         }
       }
+    },
+    "ih-chat": {
+      "projectType": "library",
+      "root": "projects/ih-chat",
+      "sourceRoot": "projects/ih-chat/src",
+      "prefix": "ih-chat",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ih-chat/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ih-chat/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ih-chat/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ih-chat/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

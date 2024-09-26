@@ -4,6 +4,11 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "paths": {
+      "ih-chat": [
+        "dist/ih-chat"
+      ]
+    },
     "declaration": false,
     "module": "esnext",
     "moduleResolution": "node",

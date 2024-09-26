@@ -50,3 +50,5 @@ src/environments/*
 .scannerwork/*
 .vscode
 .vs
+
+**/node_modules
