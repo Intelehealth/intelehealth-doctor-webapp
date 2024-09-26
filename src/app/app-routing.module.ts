@@ -13,7 +13,7 @@ const canActivateMenu = (menu: string | number) => {
   const isAdmin = !!roleService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR');
   if(!sidebar_menus || isAdmin) return true;
 
-  if(sidebar_menus && !sidebar_menus[menu].is_enabled) {
+  if(sidebar_menus && !sidebar_menus[menu]) {
     router?.navigateByUrl('/dashboard');
     return false
   }
