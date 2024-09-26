@@ -97,6 +97,13 @@ export class AdminActionsComponent implements OnInit {
       icon: "assets/svgs/abha.svg",
       path: "admin/actions/abha",
       isLocalPath: true
+    },
+    {
+      title: "Sidebar Menu Configuration",
+      desc: "Manage Sidebar Menu",
+      icon: "assets/svgs/sidebar-circle.png",
+      path: "admin/actions/menu-config",
+      isLocalPath: true
     }
   ];
   constructor(
