@@ -512,9 +512,9 @@ export class DashboardComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return `${minutes} ${this.translateService.instant("Minutes ago")}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours} ${this.translateService.instant("Hours ago")}`;
   }
 
   /**
