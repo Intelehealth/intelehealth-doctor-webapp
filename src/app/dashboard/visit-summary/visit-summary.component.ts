@@ -956,7 +956,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if(!this.patientInteractionForm.value.hwPresent){
         const payload = {
           attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
-          value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, Comment: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
+          value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, ${this.translateService.instant("Comment")}: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
         };
         this.visitService.postAttribute(this.visit.uuid, payload)
         .subscribe((res: VisitAttributeModel) => {

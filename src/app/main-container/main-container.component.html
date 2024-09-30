@@ -98,17 +98,17 @@
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu">
                   <ng-container *ngIf="notificationEnabled && !snoozed">
-                    <button mat-menu-item (click)="snoozeNotification('30m')">Snooze for 30 Minutes</button>
-                    <button mat-menu-item (click)="snoozeNotification('1h')">Snooze for 1 Hour</button>
-                    <button mat-menu-item (click)="snoozeNotification('2h')">Snooze for 2 Hours</button>
-                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                    <button mat-menu-item (click)="snoozeNotification('30m')">{{ "Snooze for 30 Minutes" | translate }}</button>
+                    <button mat-menu-item (click)="snoozeNotification('1h')">{{ "Snooze for 1 Hour" | translate }}</button>
+                    <button mat-menu-item (click)="snoozeNotification('2h')">{{ "Snooze for 2 Hours" | translate }}</button>
+                    <button mat-menu-item (click)="toggleNotification()">{{ "Turn Off" | translate }}</button>
                   </ng-container>
                   <ng-container *ngIf="notificationEnabled && snoozed">
-                    <button mat-menu-item (click)="snoozeNotification('off')">Awake notification</button>
-                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                    <button mat-menu-item (click)="snoozeNotification('off')">{{ "Awake notification" | translate }}</button>
+                    <button mat-menu-item (click)="toggleNotification()">{{ "Turn Off" | translate }}</button>
                   </ng-container>
                   <ng-container *ngIf="!notificationEnabled">
-                    <button mat-menu-item (click)="toggleNotification()">Turn On</button>
+                    <button mat-menu-item (click)="toggleNotification()">{{ "Turn On" | translate }}</button>
                   </ng-container>
                 </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
