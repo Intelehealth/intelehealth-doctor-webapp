@@ -6067,5 +6067,14 @@
   "Login Failed!": "Login Failed!",
   "Couldn't find you, credentials provided are wrong." : "Couldn't find you, credentials provided are wrong.",
   "Update successful!": "Update successful!",
-  "Doctor Speciality has been successfully updated": "Doctor Speciality has been successfully updated"
+  "Doctor Speciality has been successfully updated": "Doctor Speciality has been successfully updated",
+  "Doctor": "Doctor",
+  "HW": "HW",
+  "Username already exists. Please enter another Username." : "Username already exists. Please enter another Username.",
+  "Enter Alphanumric charactors only": "Enter Alphanumric charactors only",
+  "Enter password": "Enter password",
+  "Minimum 8 charactors required":"Minimum 8 charactors required",
+  "Minimum 3 charactors required":"Minimum 3 charactors required",
+  "Maximum 20 charactors allowed":"Maximum 20 charactors allowed",
+  "Doctors Mapped": "Doctors Mapped"
 }

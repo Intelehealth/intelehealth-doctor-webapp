@@ -6069,5 +6069,14 @@
   "Login Failed!": "Ошибка входа!",
   "Couldn't find you, credentials provided are wrong." : "Не удалось вас найти, предоставлены неверные учетные данные.",
   "Update successful!": "Обновление успешно!",
-  "Doctor Speciality has been successfully updated": "Специальность «Доктор» успешно обновлена."
+  "Doctor Speciality has been successfully updated": "Специальность «Доктор» успешно обновлена.",
+  "Doctor": "Доктор",
+  "HW": "Медицинский работник",
+  "Username already exists. Please enter another Username." : "Имя пользователя уже существует. Пожалуйста, введите другое имя пользователя.",
+  "Enter Alphanumric charactors only": "Введите только буквенно-цифровые символы",
+  "Enter password": "Введите пароль",
+  "Minimum 8 charactors required":"Требуется минимум 8 символов",
+  "Minimum 3 charactors required":"Требуется минимум 3 символов",
+  "Maximum 20 charactors allowed":"Разрешено максимум 20 символов",
+  "Doctors Mapped": "Врачи нанесли на карту"
 }
