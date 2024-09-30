@@ -3,14 +3,14 @@
     <div class="card intel-card">
       <div class="card-header">
         <img class="mr-2" src="assets/svgs/report-header.svg" alt="" height="44px">
-        <h6 class="mb-0">Report</h6>
+        <h6 class="mb-0">{{ 'Report' | translate }}</h6>
       </div>
       <div class="card-body">
         <div class="mat-elevation-z8">
           <table mat-table [dataSource]="reports">
             <ng-container matColumnDef="name">
               <td mat-cell [attr.colspan]="3" *matCellDef="let element">
-                <img src="assets/svgs/file.svg" alt=""> &nbsp; {{element.name}}
+                <img src="assets/svgs/file.svg" alt=""> &nbsp; {{element.name | translate}}
               </td>
             </ng-container>
 
@@ -19,7 +19,7 @@
               <td mat-cell *matCellDef="let element">
                 <button #btnCreateReport mat-raised-button color="primary" (click)="createReport(element)"
                   data-test-id="btnCreateReport">
-                  {{element.buttonName}}
+                  {{element.buttonName | translate}}
                 </button>
               </td>
             </ng-container>

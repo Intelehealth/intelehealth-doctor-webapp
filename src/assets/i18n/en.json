@@ -6076,5 +6076,7 @@
   "Minimum 8 charactors required":"Minimum 8 charactors required",
   "Minimum 3 charactors required":"Minimum 3 charactors required",
   "Maximum 20 charactors allowed":"Maximum 20 charactors allowed",
-  "Doctors Mapped": "Doctors Mapped"
+  "Doctors Mapped": "Doctors Mapped",
+  "List of Patients between two dates": "List of Patients between two dates",
+  "Create Report": "Create Report"
 }
