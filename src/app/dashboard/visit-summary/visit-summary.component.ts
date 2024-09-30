@@ -1546,7 +1546,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   this.visitCompleted = true;
                   this.notifyHwForAvailablePrescription();
                   this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
-                  this.updateAbhaDetails(post.uuid);
+                  // this.updateAbhaDetails(post.uuid); //Commented this feature is not required in BMGF and the configuration is not added for ABDM in BMGF
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (linkSvcRes: ApiResponseModel) => {
                       const link = linkSvcRes.data.hash;
