@@ -77,7 +77,7 @@
             <span>{{'User Creation' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemReport">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'PROJECT MANAGER', 'REPORTING MODULE']" (click)="toggleSidebar()" data-test-id="listItemReport">
           <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank" data-test-id="linkReport">
             <img src="assets/svgs/report.svg" alt="">
             <span>{{'Report' | translate}}</span>
