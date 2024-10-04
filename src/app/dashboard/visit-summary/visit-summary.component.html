@@ -988,7 +988,7 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
-      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote">
+       <button type="button" *ngxPermissionsExcept="['PROJECT MANAGER']"  class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote">
         {{'Start visit note'|translate}}
       </button>
     </div>
@@ -2188,7 +2188,8 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
-      <button
+      <span *ngxPermissionsExcept="['PROJECT MANAGER']" >
+        <button
         type="button"
         class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
@@ -2206,6 +2207,7 @@
         >
         {{'View prescription'|translate}}
       </button>
+      </span>
     </div>
   </div>
 </div>
