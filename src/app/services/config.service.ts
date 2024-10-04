@@ -306,6 +306,39 @@ export class ConfigService {
     const url = `${this.baseURL}/sidebar-menu/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
+
+
+  /**
+  * Get patient visit section
+  * @return {Observable<any>}
+  */
+  getPatientVisitSections(): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update Patient Visit Sections status
+  * @param {boolean} id - id of section
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePVSEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  
+  /**
+  * Update Patient Visit Sections
+  * @param {boolean} id - id of section
+  * @param {any} name - update name
+  * @return {Observable<any>}
+  */
+  updatePVSName(id: number, name: any): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/updateName/${id}`;
+    return this.http.put(url, { name });
+  }
 }
 
 

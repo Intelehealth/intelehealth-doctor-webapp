@@ -702,3 +702,14 @@ export interface MenuConfig {
   updatedAt?: string
   is_locked: boolean
 }
+
+export interface PatientVisitSection {
+  id: number;
+  is_enabled: boolean;
+  is_locked: boolean;
+  is_editable: boolean;
+  name: string;
+  key: string;
+  updatedAt?: string;
+  createdAt?: string
+}
