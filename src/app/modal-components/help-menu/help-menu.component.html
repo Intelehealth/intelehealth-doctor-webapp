@@ -19,7 +19,7 @@
     <li class="chat-item left">Hey! I am unable send prescriptions</li> -->
     <ng-container *ngFor="let m of messages; let first = first">
       <li class="chat-item read-status" [class.text-left]="m?.from === 'System Administrator'">
-        <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
+        <span class="mr-1">{{m.createdAt | amDateFormat : "DD-MM-YYYY LT"}}</span>
         <ng-container *ngIf="first && m?.from === user?.uuid">
           <ng-container *ngIf="m.isRead">
             <img src="assets/svgs/read-status.svg" alt="" width="12px"> Read

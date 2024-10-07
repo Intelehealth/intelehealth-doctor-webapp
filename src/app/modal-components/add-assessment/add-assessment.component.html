@@ -1,0 +1,61 @@
+<div class="add-plan-modal">
+  <div class="modal-title" mat-dialog-title>
+    <h6 class="mb-0 justify-self-center">ASSESSMENT</h6>
+    <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/Close.svg" alt=""></button>
+  </div>
+  <div class="modal-body" mat-dialog-content>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12 p-0">
+          <form [formGroup]="addForm" (ngSubmit)="add()">
+            <div class="section-item">
+              <ng-container formArrayName="assessment">
+                <ng-container *ngFor="let fca of fa.controls; let i = index; let last = last">
+                  <ng-container [formGroupName]="i">
+                    <ng-container *ngIf="!fca.value.isDeleted">
+                      <div class="form-row mt-2">
+                        <div class="form-group col-md-11">
+                          <input class="form-control" type="text" formControlName="assessmentValue" placeholder="Enter assessment">
+                          <div *ngIf="submitted && fa.controls[i].controls.assessmentValue.errors">
+                            <small class="error-msg" *ngIf="fa.controls[i].controls.assessmentValue.errors.required">Enter assessment</small>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1" *ngIf="fca.value.canEdit">
+                          <button mat-button type="button" class="delete-btn" (click)="removeAssessment(i)">
+                            <img src="assets/svgs/delete-icon.svg" alt="">
+                          </button>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <button class="confirm-btn mt-2" type="button" (click)="addAssessment()">Add</button>
+                </div>
+              </div>
+            </div>
+            <div class="section-item" *ngIf="pastAssessment.length">
+              <ul class="items-list">
+                <li *ngFor="let a of pastAssessment; let i = index;">
+                  <div class="list-item">
+                    <label class="border-0">{{a.assessmentValue}}</label>
+                    <div class="list-item-content">
+                      {{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                    </div>
+                  </div>
+                  <mat-divider></mat-divider>
+                </li>
+              </ul>
+            </div>
+            <div class="d-flex justify-content-center py-2">
+              <button class="cancel-btn mr-2" type="button" (click)="close(false)">Cancel</button>
+              <button class="confirm-btn" type="submit">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

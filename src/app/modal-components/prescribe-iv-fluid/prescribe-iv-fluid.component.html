@@ -1,0 +1,115 @@
+<div class="add-plan-modal">
+  <div class="modal-title" mat-dialog-title>
+    <h6 class="mb-0 justify-self-center">IV FLUIDS</h6>
+    <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/Close.svg" alt=""></button>
+  </div>
+  <div class="modal-body" mat-dialog-content>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12 p-0">
+          <form [formGroup]="addForm" (ngSubmit)="add()">
+            <div class="section-item">
+              <ng-container formArrayName="iv">
+                <ng-container *ngFor="let fcm of fiv.controls; let i = index; let last = last">
+                  <ng-container [formGroupName]="i">
+                    <ng-container *ngIf="!fcm.value.isDeleted">
+                      <div class="form-row mt-2">
+                        <div class="form-group col-md-3">
+                          <label for="typeOfMedicine">Type of IV Fluid*</label>
+                          <ng-select
+                            class="visit-select"
+                            formControlName="type"
+                            bindLabel="name"
+                            bindValue="name"
+                            [clearable]="false"
+                            [searchable]="true"
+                            placeholder="Select type"
+                            [readonly]="!fcm.value.canEdit">
+                            <ng-option *ngFor="let t of typeList" [value]="t.name">
+                              {{t.name}}
+                            </ng-option>
+                          </ng-select>
+                          <div *ngIf="submitted && fiv.controls[i]?.controls?.type?.errors">
+                            <small class="error-msg" *ngIf="fiv.controls[i]?.controls?.type?.errors.required">Enter type</small>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="fcm.value.type == 'Other'">
+                          <label for="dosage">Other IV Type*</label>
+                          <input type="text" class="form-control" placeholder="Enter other type" formControlName="otherType" [readonly]="!fcm.value.canEdit">
+                          <div *ngIf="submitted && fiv.controls[i].controls.otherType.errors">
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.otherType.errors.required">Enter other type</small>
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.otherType.errors.maxlength">Other type should be less than 15 characters</small>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label for="dosage">IV Infusion Rate (drops/minute)*</label>
+                          <input type="number" class="form-control" placeholder="Enter infusion rate" formControlName="infusionRate" [readonly]="!fcm.value.canEdit">
+                          <div *ngIf="submitted && fiv.controls[i].controls.infusionRate.errors">
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.required">Enter infusion rate</small>
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.maxlength">Infusion rate should be less than 3 characters</small>
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.min || fiv.controls[i].controls.infusionRate.errors.max">Infusion rate should be between 5 to 60</small>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                          <label for="dosage">Infusion Status*</label>
+                          <ng-select
+                            class="visit-select"
+                            formControlName="infusionStatus"
+                            bindLabel="name"
+                            bindValue="name"
+                            [clearable]="false"
+                            [searchable]="true"
+                            placeholder="Select infusion status"
+                            [readonly]="!fcm.value.canEdit">
+                            <ng-option *ngFor="let d of infusionStatusList" [value]="d.name">
+                              {{d.name}}
+                            </ng-option>
+                          </ng-select>
+                          <div *ngIf="submitted && fiv.controls[i].controls.infusionStatus.errors">
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionStatus.errors.required">Select infusion status</small>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1" *ngIf="fcm.value.canEdit">
+                          <label for="deleteBtn">.</label>
+                          <button mat-button type="button" class="delete-btn" (click)="removeIVFluid(i)">
+                            <img src="assets/svgs/delete-icon.svg" alt="">
+                          </button>
+                        </div>
+                      </div>
+                      <ng-container *ngIf="!last">
+                        <mat-divider></mat-divider>
+                        <mat-divider></mat-divider>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <button class="confirm-btn mt-2" type="button" (click)="addIVFluid()">Prescribe New</button>
+                </div>
+              </div>
+            </div>
+            <div class="section-item" *ngIf="prescribedIV.length">
+              <ul class="items-list">
+                <li *ngFor="let piv of prescribedIV; let i = index;">
+                  <div class="list-item">
+                    <label class="border-0">{{piv.infusionStatus|uppercase}} IV - {{piv.type}} {{piv.otherType}} ({{piv.infusionRate}} drops/minute)</label>
+                    <div class="list-item-content">
+                      {{piv.initial}} ({{piv.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                    </div>
+                  </div>
+                  <mat-divider></mat-divider>
+                </li>
+              </ul>
+            </div>
+            <div class="d-flex justify-content-center py-2">
+              <button class="cancel-btn mr-2" type="button" (click)="close(false)">Cancel</button>
+              <button class="confirm-btn" type="submit">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

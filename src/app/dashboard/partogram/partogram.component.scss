@@ -85,7 +85,7 @@
   .value-item.note {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    max-height: 250px;
+    max-height: 350px;
     border-radius: 0px;
     word-break: break-word;
 
@@ -108,6 +108,16 @@
 .table-bordered th,
 .table-bordered td.bld {
   border-left-style: dotted;
+}
+
+.table-bordered th,
+.table-bordered td.brn {
+  border-right-style: none;
+}
+
+.table-bordered th,
+.table-bordered td.bln {
+  border-left-style: none;
 }
 
 .table-bordered th,
@@ -413,5 +423,83 @@ th:last-child {
     span {
       text-wrap: nowrap;
     }
+  }
+}
+
+.intel-accordion-con {
+  .mat-expansion-panel {
+    background: var(--color-white);
+    box-shadow: none!important;
+    border-radius: 12px!important;
+
+    .intel-accordion-title h6 {
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+    }
+  }
+  .mat-expansion-panel.bg-gray {
+    background: #FAF9FF;
+  }
+}
+
+
+.items-list {
+  font-size: 16px;
+  padding: 24px 0 0 24px;
+  margin-bottom: 0;
+
+  li {
+    margin-bottom: 5px;
+
+    .list-item {
+      display: flex;
+      flex-wrap: nowrap;
+
+      label {
+        flex-grow: 1;
+        margin-bottom: 0;
+        padding: 5px 0;
+      }
+
+      .list-item-content {
+        padding: 5px 0;
+        font-size: 12px;
+        font-weight: bold;
+        color: #007bff;
+        text-wrap: nowrap;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .intel-accordion-con .mat-expansion-panel {
+    padding: 10px!important;
+    margin-bottom: 10px!important;
+  }
+
+  .intel-accordion-title {
+      flex-wrap: nowrap!important;
+  }
+
+  .items-list {
+    list-style-type: none;
+    padding: 5px 0 0 !important;
+  }
+
+  .items-list li .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .items-list li .list-item label, .items-list li .list-item-col label {
+    width: 100%;
+    border-top: 1px solid rgba(178,175,190,.2);
+    margin-top: 0.5rem;
   }
 }

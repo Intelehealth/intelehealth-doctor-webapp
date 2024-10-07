@@ -1,0 +1,207 @@
+.add-plan-modal {
+  font-family: DM Sans;
+
+  .modal-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    width: 100%;
+    height: 70px;
+    background: #FFFFFF;
+
+    h6 {
+      font-weight: bold;
+      font-size: 20px;
+      color: #1B163A;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+    }
+  }
+
+  .modal-body {
+    padding: 24px;
+    max-height: 80vh !important;
+
+    .section-item {
+      padding: 13px 20px;
+      background: #F7F7FA;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.cancel-btn {
+  padding: 8px 24px;
+  min-width: 119px;
+  height: 48px;
+  background: #FFFFFF;
+  border: 1px solid #EFE8FF;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 150%;
+  color: #2E1E91;
+  font-weight: bold;
+}
+
+.confirm-btn {
+  padding: 8px 24px;
+  min-width: 119px;
+  height: 48px;
+  background: #2E1E91;
+  border: 1px solid #2E1E91;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.form-group {
+  label {
+    font-size: 14px;
+    color: #1B163A;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .error-msg {
+    color: red;
+  }
+}
+
+.form-control {
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: #1B163A;
+}
+
+textarea.form-control {
+  height: fit-content;
+  // padding: 0px;
+  // background: transparent;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.pretty .state label {
+  font-weight: normal !important;
+}
+
+.pretty.p-image .state img {
+  transform: none;
+}
+
+.delete-btn {
+  background: #FFFFFF;
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FF475D;
+  height: 48px;
+}
+
+::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
+.ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
+  background: var(--color-white);
+  min-width: 120px;
+}
+
+::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
+::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
+  height: 48px;
+  width: 100%;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+
+  // .ng-value-container {
+  //   position: relative;
+  // }
+
+  .ng-value-container .ng-input {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ng-clear-wrapper {
+    display: none;
+  }
+}
+
+.items-list {
+  font-size: 16px;
+  padding: 0px 16px 0 24px;
+  margin-bottom: 0;
+  max-height: 200px;
+  overflow-y: auto;
+
+  li {
+    margin-bottom: 5px;
+
+    .list-item {
+      display: flex;
+      flex-wrap: nowrap;
+
+      label {
+        flex-grow: 1;
+        margin-bottom: 0;
+        padding: 5px 0;
+      }
+
+      .list-item-content {
+        padding: 5px 0;
+        font-size: 12px;
+        font-weight: bold;
+        color: #007bff;
+        text-wrap: nowrap;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .items-list {
+    list-style-type: none;
+    padding: 5px 0 0 !important;
+  }
+
+  .items-list li .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .items-list li .list-item label, .items-list li .list-item-col label {
+    width: 100%;
+    border-top: 1px solid rgba(178,175,190,.2);
+    margin-top: 0.5rem;
+  }
+}

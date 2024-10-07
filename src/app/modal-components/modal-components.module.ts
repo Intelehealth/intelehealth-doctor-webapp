@@ -28,6 +28,13 @@ import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-
 import { AddPlanAssessmentComponent } from './add-plan-assessment/add-plan-assessment.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { PrescribeMedicationComponent } from './prescribe-medication/prescribe-medication.component';
+import { PrescribeIvFluidComponent } from './prescribe-iv-fluid/prescribe-iv-fluid.component';
+import { PrescribeOxytocinComponent } from './prescribe-oxytocin/prescribe-oxytocin.component';
+import { PrescribePlanComponent } from './prescribe-plan/prescribe-plan.component';
+import { AddAssessmentComponent } from './add-assessment/add-assessment.component';
+import { ViewPlanComponent } from './view-plan/view-plan.component';
+import { ViewAsssessmentComponent } from './view-asssessment/view-asssessment.component';
 
 @NgModule({
     declarations: [
@@ -44,7 +51,14 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
         ImagesPreviewComponent,
         PwaPromptComponent,
         ConfirmOpenmrsIdComponent,
-        AddPlanAssessmentComponent
+        AddPlanAssessmentComponent,
+        PrescribeMedicationComponent,
+        PrescribeIvFluidComponent,
+        PrescribeOxytocinComponent,
+        PrescribePlanComponent,
+        AddAssessmentComponent,
+        ViewPlanComponent,
+        ViewAsssessmentComponent
     ],
     imports: [
         CommonModule,

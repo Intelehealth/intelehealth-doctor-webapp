@@ -78,7 +78,7 @@
                       ">
                       <li class="chat-status" [class.right]="item?.from === 'System Administrator'">
                         <span class="mr-1">{{
-                          item.createdAt | amDateFormat : "LT"
+                          item.createdAt | amDateFormat : "DD-MM-YYYY LT"
                           }}</span>
                         <ng-container *ngIf="
                             first && item?.from === 'System Administrator'

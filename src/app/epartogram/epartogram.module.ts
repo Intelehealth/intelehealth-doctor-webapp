@@ -7,6 +7,7 @@ import { SharedModule } from '../shared.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
     SharedModule,
     MatTableModule,
     MatPaginatorModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule
   ]
 })
 export class EpartogramModule { }

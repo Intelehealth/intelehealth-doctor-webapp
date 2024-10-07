@@ -12,7 +12,7 @@ import {
   RoomConnectOptions,
   RoomEvent,
   Track,
-  VideoPresets,
+  VideoPresets43,
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
@@ -70,7 +70,6 @@ export class WebrtcService {
     handleConnect = this.noop,
     handleLocalTrackUnpublished = this.handleLocalTrackUnpublished,
     handleLocalTrackPublished = this.attachLocalVideo.bind(this),
-    autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
     handleTrackMuted = this.noop,
@@ -80,7 +79,6 @@ export class WebrtcService {
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
-      return;
     }
 
     this.localElement = localElement;
@@ -91,12 +89,7 @@ export class WebrtcService {
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: {
-          aspectRatio: 1.7777777777777777,
-          frameRate: 15,
-          height: 160,
-          width: 90
-        },
+        resolution: VideoPresets43.h540,
       },
       audioCaptureDefaults: {
         echoCancellation: true,
@@ -110,17 +103,20 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
       .on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakerChange)
       .on(RoomEvent.Connected, handleConnect)
+      .on(RoomEvent.Connected, async () => {
+        try {
+          await this.room.localParticipant.enableCameraAndMicrophone()
+        } catch (error) {
+          location.reload();
+        }
+      })
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
       .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
-      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-      .on(RoomEvent.SignalConnected, async () => {
-        await this.room.localParticipant.enableCameraAndMicrophone();
-      });
-    // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
+      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted);
     await this.room.connect(this.url, this.token);
   }
 
@@ -178,10 +174,15 @@ export class WebrtcService {
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
     if (track?.detach) track?.detach();
+    if (track?.audioTrack?.stop) {
+      track.audioTrack.stop();
+    }
+    if (track?.videoTrack?.stop) {
+      track.videoTrack.stop();
+    }
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
-    console.log('speakers: ', speakers);
     // show UI indicators when participant is speaking
   }
 
@@ -204,7 +205,6 @@ export class WebrtcService {
 
 
   handleDisconnect() {
-    console.log('disconnected from room');
     this.room.disconnect(true);
     this.callConnected = false;
     this.localContainer.innerHTML = '';
@@ -212,9 +212,22 @@ export class WebrtcService {
   }
 
   async disconnect(stopTracks = true) {
-    const cam = this.room.localParticipant.getTrack(Track.Source.Camera);
-    const mic = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    /**
+    * Fail safe timeout to resolve issue of using camera after disconnect
+    */
+    setTimeout(() => {
+      this.room.disconnect(stopTracks);
+    }, 0);
     this.room.disconnect(stopTracks);
+    const cam: any = this.room.localParticipant.getTrack(Track.Source.Camera);
+    if (cam) {
+      this.room.localParticipant.unpublishTrack(cam, true);
+    }
+
+    const mic: any = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    if (mic) {
+      this.room.localParticipant.unpublishTrack(mic, true);
+    }
   }
 
   get remoteContainer() {

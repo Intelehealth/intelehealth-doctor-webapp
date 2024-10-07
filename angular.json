@@ -35,6 +35,7 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
+              "src/custom-service-worker.js",
               "src/ngsw-worker.js",
               "src/ngsw.json",
               "src/js/util.js"

@@ -1,0 +1,35 @@
+<div class="add-plan-modal">
+  <div class="modal-title" mat-dialog-title>
+    <h6 class="mb-0 justify-self-center">ASSESSMENT [Stage {{data?.stage}}] [ Hour {{data?.hour}}]</h6>
+    <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/Close.svg" alt=""></button>
+  </div>
+  <div class="modal-body" mat-dialog-content>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12 p-0">
+          <div class="section-item">
+            <ng-container *ngIf="assessment.length">
+              <div class="form-group row mb-0">
+                <label for="gender" class="col-sm-12 col-form-label">ASSESSMENT</label>
+              </div>
+              <ul class="items-list">
+                <li *ngFor="let a of assessment; let i = index;">
+                  <div class="list-item">
+                    <label class="border-0">{{a.assessmentValue}}</label>
+                    <div class="list-item-content">
+                      {{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                    </div>
+                  </div>
+                  <mat-divider></mat-divider>
+                </li>
+              </ul>
+            </ng-container>
+          </div>
+          <div class="d-flex justify-content-center py-2">
+            <button class="confirm-btn" type="button" (click)="close(false)">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
