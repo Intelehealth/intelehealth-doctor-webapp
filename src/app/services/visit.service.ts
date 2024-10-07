@@ -149,7 +149,7 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  patientInfo(id, v = 'custom:(identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2),attributes:(value,attributeType:(display))))'): Observable<any> {
+  patientInfo(id, v = 'custom:(uuid,attributes,identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))'): Observable<any> {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=${v}`;
     return this.http.get(url);
@@ -161,7 +161,7 @@ export class VisitService {
   * @param {string} msg - Message to be sent
   * @return {Observable<any>}
   */
-  getWhatsappLink(whatsapp: string, msg: string) {
+  getWhatsappLink(whatsapp: string, msg: string = `Hello I'm calling for consultation`) {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
@@ -229,9 +229,19 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getCompletedVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}`);
+  getCompletedVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
+
+ /**
+  * Get follow up visits
+  * @param {string} speciality - Visit speciality
+  * @param {number} page - Page number
+  * @return {Observable<any>}
+  */
+ getFollowUpVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+  return this.http.get(`${this.baseURLMindmap}/openmrs/getFollowUpVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
+ }
 
   /**
   * Get ended visits
@@ -244,13 +254,11 @@ export class VisitService {
   }
 
   /**
-  * Post visit data to abdm
-  * @param {string} visitId - Visit uuid
-  * @param {any} json - Attribute payload
-  * @return {Observable<any>}
-  */
-  postVisitToABDM(json): Observable<any> {
-    // const url = `${this.baseURLAbha}/abha/generate-link-token`;
+   * Post visit data to abdm
+   * @param {any} json - Attribute payload
+   * @return {Observable<any>}
+   */
+  postVisitToABDM(json: any): Observable<any> {
     const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
   }

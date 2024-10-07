@@ -29,14 +29,14 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: false
     },
     {
-      title: "Doctor Speciality",
+      title: "Doctor Specialities",
       desc: "Manage Doctor Specialties",
       icon: "assets/svgs/doctor-speciality.svg",
       path: "admin/actions/doctor-specialties",
       isLocalPath: true
     },
     {
-      title: "Mobile App Language",
+      title: "Mobile App Languages",
       desc: "Manage Mobile App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
       path: "admin/actions/mobile-app-languages",
@@ -46,7 +46,14 @@ export class AdminActionsComponent implements OnInit {
       title: "Patient Vitals",
       desc: "Manage fields to be shown under patient vitals",
       icon: "assets/svgs/patient-vitals.svg",
-      path: "admin/config/patien-vitals",
+      path: "admin/actions/patient-vitals",
+      isLocalPath: true
+    },
+    {
+      title: "Patient Diagnostics",
+      desc: "Manage fields to be shown under patient diagnostics",
+      icon: "assets/svgs/patient-diagnosis.svg",
+      path: "admin/actions/patient-diagnostics",
       isLocalPath: true
     },
     {
@@ -60,22 +67,49 @@ export class AdminActionsComponent implements OnInit {
       title: "Partner White Labelling",
       desc: "Upload partner logo and manage color theme",
       icon: "assets/svgs/partner-label.svg",
-      path: "admin/config/patien-vitals",
+      path: "admin/actions/partner-label",
       isLocalPath: true
     },
     {
       title: "User Creation",
       desc: "Create New User",
       icon: "assets/svgs/user-creation.svg",
-      path: this.baseURLLegacy + "/admin/users/users.list",
-      isLocalPath: false
+      path: "admin/actions/user-creation",
+      isLocalPath: true
     },
+    {
+      title: "Patient Visit Summary",
+      desc: "Manage data capturing fields on visit summary",
+      icon: "assets/svgs/patient-visit-summary.svg",
+      path: "admin/actions/patient-visit-summary",
+      isLocalPath: true
+    },
+    {
+      title: "WebRTC",
+      desc: "Manage WebRTC functionality",
+      icon: "assets/svgs/webrtc.svg",
+      path: "admin/actions/webrtc",
+      isLocalPath: true
+    },
+    {
+      title: "ABHA ID",
+      desc: "Manage Abha ID functionality",
+      icon: "assets/svgs/abha.svg",
+      path: "admin/actions/abha",
+      isLocalPath: true
+    },
+    {
+      title: "Sidebar Menu Configuration",
+      desc: "Manage Sidebar Menu",
+      icon: "assets/svgs/sidebar-circle.png",
+      path: "admin/actions/menu-config",
+      isLocalPath: true
+    }
   ];
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {

@@ -56,6 +56,7 @@ const environmentFileContent = `
     baseURLCoreApp: '${process.env.BASE_URL_CORD_APP}',
     baseURLLegacy: '${process.env.BASE_URL_LEGACY}',
     mindmapURL: '${process.env.MIND_MAP_URL}',
+    pagerdutyURL: '${process.env.PAGERDUTY_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
@@ -77,7 +78,8 @@ const environmentFileContent = `
     authGatwayURL: '${process.env.AUTH_GATE_WAY_URL}',
     showCaptcha: ${showCaptcha},
     recordsPerPage: 1000,
-    abhaEnabled: ${process.env.ABHA_ENABLED}
+    abhaEnabled: ${process.env.ABHA_ENABLED},
+    configPublicURL: '${process.env.CONFIG_PUBLIC_URL}'
   };
 `;
 

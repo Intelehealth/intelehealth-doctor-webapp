@@ -33,11 +33,13 @@ export class PatientRegistrationComponent {
                   {colName:"is_enabled",label:"Active"},
                   {colName:"is_mandatory",label:"Mandatory Fields"},
                 ];
+  sectionEnabled: boolean = false;
+  allSectionData: any = {};
 
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private configServce: ConfigService,
+    private configService: ConfigService,
     private toastr: ToastrService
   ) { }
 
@@ -62,8 +64,11 @@ export class PatientRegistrationComponent {
   * @return {void}
   */
   getAllFields(): void {
-    this.configServce.getPatientRegistrationFields().subscribe(res=>{
+    this.configService.getPatientRegistrationFields().subscribe(res=>{
       this.patientFieldsData = res.patient_registration;
+      this.allSectionData['personal'] = { id:0 , is_enabled:true };
+      this.allSectionData['address'] = res.patient_registration_address;
+      this.allSectionData['other'] = res.patient_registration_other;
       this.sortDataAndUpdate();
     }, err => {
       
@@ -75,7 +80,7 @@ export class PatientRegistrationComponent {
   * @return {void}
   */
   updateStatus(id: number, status: boolean): void {
-    this.configServce.updatePatientRegistrationStatus(id, status).subscribe(res => {
+    this.configService.updatePatientRegistrationStatus(id, status).subscribe(res => {
       this.toastr.success("Patient Registration has been successfully updated","Update successful!");
       this.getAllFields();
     }, err => {
@@ -88,7 +93,7 @@ export class PatientRegistrationComponent {
   * @return {void}
   */
   updateMandatoryStatus(id: number, status: boolean): void {
-    this.configServce.updatePatientRegistrationMandatoryStatus(id, status).subscribe(res => {
+    this.configService.updatePatientRegistrationMandatoryStatus(id, status).subscribe(res => {
       this.toastr.success("Patient Registration has been successfully updated","Update successful!");
       this.getAllFields();
     }, err => {
@@ -101,7 +106,7 @@ export class PatientRegistrationComponent {
   * @return {void}
   */
   updateEditStatus(id: number, status: boolean): void {
-    this.configServce.updatePatientRegistrationEditableStatus(id, status).subscribe(res => {
+    this.configService.updatePatientRegistrationEditableStatus(id, status).subscribe(res => {
       this.toastr.success("Patient Registration has been successfully updated","Update successful!");
       this.getAllFields();
     }, err => {
@@ -114,7 +119,7 @@ export class PatientRegistrationComponent {
   * @return {void}
   */
   onPublish(): void {
-    this.configServce.publishConfig().subscribe(res => {
+    this.configService.publishConfig().subscribe(res => {
       this.toastr.success("Patient Registration changes published successfully!", "Changes published!");
     });
   }
@@ -129,6 +134,7 @@ export class PatientRegistrationComponent {
   sortData(sortOption) {
     const currTabName = this.tabList[this.currentTabIndex].toLocaleLowerCase();
     const data = this.patientFieldsData[currTabName]?.slice();
+    this.sectionEnabled = this.allSectionData[currTabName].is_enabled;
     if (!sortOption) {
       this.sortedData = data;
       this.sortOptions.forEach(e=>e['direction']=null);
@@ -165,6 +171,19 @@ export class PatientRegistrationComponent {
         default:
           return 0;
       }
+    });
+  }
+
+  /**
+  * Update Patient registartion status.
+  * @return {void}
+  */
+  updateFeatureStatus(id: number, status: boolean): void {
+    this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
+      this.toastr.success("Patient Registration has been successfully updated", "Update successful!");
+      this.getAllFields();
+    }, err => {
+      this.getAllFields();
     });
   }
 }

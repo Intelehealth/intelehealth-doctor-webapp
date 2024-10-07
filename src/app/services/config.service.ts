@@ -111,4 +111,234 @@ export class ConfigService {
     const url = `${this.baseURL}/pr/updateIsEditable/${id}`;
     return this.http.put(url, { is_editable });
   }
+
+  /**
+  * Get Theme config
+  * @return {Observable<any>}
+  */
+  getThemeConfig(): Observable<any> {
+    const url = `${this.baseURL}/theme_config/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Upload Image
+  * @param {string} url - api URL
+  * @param {FormData} formData - form data
+  * @return {Observable<any>}
+  */
+  uploadImage(url: string, method: string, formData: FormData): Observable<any> {
+    if (method === 'POST')
+      return this.http.post(url, formData);
+    else
+      return this.http.put(url, formData);
+  }
+
+  /**
+  * Donwload File
+  * @param {string} url - api URL
+  * @return {Observable<any>}
+  */
+  downloadImage(url: string): Observable<any> {
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  /**
+  * Delete Image
+  * @param {string} url - api URL
+  * @param {string} filePath - file path
+  * @return {Observable<any>}
+  */
+  deleteImage(url: string, filePath: string): Observable<any> {
+    return this.http.delete(url, { body: { filePath } });
+  }
+
+
+  /**
+  * Delete Image
+  * @param {string} url - api URL
+  * @param {string} filePath - file path
+  * @return {Observable<any>}
+  */
+  updateImagesWithText(data: any): Observable<any> {
+    const url = `${this.baseURL}/theme_config/updateImagesText`;
+    return this.http.put(url, data);
+  }
+
+  /**
+  * Get patient vitals
+  * @return {Observable<any>}
+  */
+  getPatientVitals(): Observable<any> {
+    const url = `${this.baseURL}/vitals/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update patient vital enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateVitalEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/vitals/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Update patient vital enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_mandatory - mandatory status true/false
+  * @return {Observable<any>}
+  */
+  updateVitalMandatoryStatus(id: number, is_mandatory: boolean): Observable<any> {
+    const url = `${this.baseURL}/vitals/updateIsMandatory/${id}`;
+    return this.http.put(url, { is_mandatory });
+  }
+
+  /**
+  * Get diagnostics
+  * @return {Observable<any>}
+  */
+  getDiagnostics(): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update diagnostic enabled status
+  * @param {boolean} id - id of diagnostic
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateDiagnosticEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Update diagnostic mandatory status
+  * @param {boolean} id - id of diagnostic
+  * @param {boolean} is_mandatory - mandatory status true/false
+  * @return {Observable<any>}
+  */
+  updateDiagnosticMandatoryStatus(id: number, is_mandatory: boolean): Observable<any> {
+    const url = `${this.baseURL}/diagnostics/updateIsMandatory/${id}`;
+    return this.http.put(url, { is_mandatory });
+  }
+
+  /**
+  * Get Webrtc
+  * @return {Observable<any>}
+  */
+  getWebrtcs(): Observable<any> {
+    const url = `${this.baseURL}/webrtc/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update webrtc enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateWebrtcEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/webrtc/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Get Features
+  * @return {Observable<any>}
+  */
+  getFeatures(): Observable<any> {
+    const url = `${this.baseURL}/feature/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update feature enabled status
+  * @param {boolean} id - id of vital
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/feature/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /*
+  * Get patient visit summary sections
+  * @return {Observable<any>}
+  */
+  getPatientVisitSummarySections(): Observable<any> {
+    const url = `${this.baseURL}/pvs/all`;
+    return this.http.get(url);
+  }
+
+  /*
+  * Update patient visit summary enabled status
+  * @param {boolean} id - id of section
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePatientVisitSummaryStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/pvs/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /*
+  * Get Sidebar Menu Config
+  * @return {Observable<any>}
+  */
+  getSidebarMenuConfig(): Observable<any> {
+    const url = `${this.baseURL}/sidebar-menu/all`;
+    return this.http.get(url);
+  }
+
+  /*
+  * Update Sidebar Menu Config enabled status
+  * @param {boolean} id - id of Sidebar Menu
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updateSidebarMenuConfig(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/sidebar-menu/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+
+  /**
+  * Get patient visit section
+  * @return {Observable<any>}
+  */
+  getPatientVisitSections(): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/all`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Update Patient Visit Sections status
+  * @param {boolean} id - id of section
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePVSEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  
+  /**
+  * Update Patient Visit Sections
+  * @param {boolean} id - id of section
+  * @param {any} name - update name
+  * @return {Observable<any>}
+  */
+  updatePVSName(id: number, name: any): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/updateName/${id}`;
+    return this.http.put(url, { name });
+  }
 }
+
+

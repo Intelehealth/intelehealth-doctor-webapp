@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
-import { LanguageModel, PatientRegistrationFieldsConfigModel, SpecializationModel } from '../model/model';
+import { LanguageModel, PatientRegistrationFieldsConfigModel, VitalModel, SpecializationModel, WebRTCConfigModel, PatientVisitSummaryConfigModel } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,16 @@ export class AppConfigService {
   public specialization: SpecializationModel[];
   public language: LanguageModel[];
   public patient_registration: PatientRegistrationFieldsConfigModel;
+  public theme_config: any[];
+  public patient_vitals: VitalModel[];
+  public webrtc_section: boolean;
+  public webrtc: WebRTCConfigModel;
+  public patient_visit_summary: PatientVisitSummaryConfigModel;
+  public patient_vitals_section: boolean;
+  public patient_reg_other: boolean;
+  public patient_reg_address: boolean;
+  public abha_section: boolean;
+  public sidebar_menus: any;
 
   constructor(private http: HttpClient) { }
 
