@@ -130,11 +130,11 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://dev.intelehealth.org:3004/api/messages/',
-        'https://dev.intelehealth.org:3004/api/support/',
-        'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
-        'https://dev.intelehealth.org:3000/api/getToken',
-        'https://dev.intelehealth.org/pl/'
+        'https://muhs.intelehealth.org:3004/api/messages/',
+        'https://muhs.intelehealth.org:3004/api/support/',
+        'https://muhs.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://muhs.intelehealth.org:3000/api/getToken',
+        'https://muhs.intelehealth.org/pl/'
       ]
     }),
     NgxPermissionsModule.forRoot({
