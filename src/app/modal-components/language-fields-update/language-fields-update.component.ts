@@ -93,7 +93,6 @@ export class LanguageFieldUpdate implements OnInit {
   * @return {void}
   */
   handleCancel(): void {
-    console.log("filed")
     this.dialogRef.close();
   }
 
