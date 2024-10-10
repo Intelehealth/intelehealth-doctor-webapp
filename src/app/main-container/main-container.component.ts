@@ -89,7 +89,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.routeUrl = this.breadcrumbs[0]?.url;
     this.pvs = { ...this.appConfigService.patient_visit_summary };
     this.sidebarMenus = this.appConfigService.sidebar_menus
-    console.log("this.sidebarMenus", this.sidebarMenus)
   }
 
   ngOnInit(): void {
