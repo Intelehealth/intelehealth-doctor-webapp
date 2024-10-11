@@ -710,6 +710,7 @@ export interface PatientVisitSection {
   is_editable: boolean;
   name: string;
   key: string;
+  order: number;
   updatedAt?: string;
   createdAt?: string
 }

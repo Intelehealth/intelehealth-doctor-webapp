@@ -27,7 +27,7 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
-import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 class PickDateAdapter extends NativeDateAdapter {
@@ -137,6 +137,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   patientVisitSummary: PatientVisitSummaryConfigModel;
+  pvsConfigs: PatientVisitSection[] = [];
 
   hasChatEnabled: boolean = false;
   hasVideoEnabled: boolean = false;
@@ -260,6 +261,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
+
+    this.pvsConfigs = this.appConfigService.patient_visit_sections;
 
   }
 

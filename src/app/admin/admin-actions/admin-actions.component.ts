@@ -104,6 +104,13 @@ export class AdminActionsComponent implements OnInit {
       icon: "assets/svgs/sidebar-circle.png",
       path: "admin/actions/menu-config",
       isLocalPath: true
+    },
+    {
+      title: "Patient Visit Section Configuretion",
+      desc: "Patient Visit Section Configuretion",
+      icon: "assets/svgs/patient-visit-summary.svg",
+      path: "admin/actions/patient-visit-section",
+      isLocalPath: true
     }
   ];
   constructor(

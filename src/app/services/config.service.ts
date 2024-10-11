@@ -330,7 +330,7 @@ export class ConfigService {
 
   
   /**
-  * Update Patient Visit Sections
+  * Update Patient Visit Sections Name
   * @param {boolean} id - id of section
   * @param {any} name - update name
   * @return {Observable<any>}
@@ -338,6 +338,16 @@ export class ConfigService {
   updatePVSName(id: number, name: any): Observable<any> {
     const url = `${this.baseURL}/patient-visit-sections/updateName/${id}`;
     return this.http.put(url, { name });
+  }
+
+   /**
+  * Update Patient Visit Sections Order
+  * @param {any} newOrder - update newOrder
+  * @return {Observable<any>}
+  */
+   updatePVSOrder(newOrder: any): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/update-order`;
+    return this.http.put(url, { order: newOrder });
   }
 }
 
