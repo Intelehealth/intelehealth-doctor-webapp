@@ -626,7 +626,7 @@
                         <td> {{ followUp.wantFollowUp }}</td>
                         <td> {{ followUp.followUpDate ? (followUp.followUpDate|date : "mediumDate") : '-' }}</td>
                         <td> {{ followUp.followUpTime ? followUp.followUpTime : '-' }}</td>
-                        <td> {{ followUp.followUpReason ?  followUp.followUpReason : '-' }}</td>
+                        <td> {{ followUp.followUpReason ? followUp.followUpReason : '-' }}</td>
                       </tr>
                     </ng-container>
                     <ng-template #noFollowUp>
@@ -640,9 +640,9 @@
                 </table>
               </div>
             </div>
-            </div>
-            </div>
+          </div>
         </div>
+      </div>
 
       <div *ngIf="isDownloadPrescription" class="signature w-100">
         <div class="text-right my-4">

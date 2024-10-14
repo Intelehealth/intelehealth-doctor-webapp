@@ -709,7 +709,9 @@ export interface PatientVisitSection {
   is_locked: boolean;
   is_editable: boolean;
   name: string;
+  lang: string;
   key: string;
+  order: number;
   updatedAt?: string;
   createdAt?: string
 }
