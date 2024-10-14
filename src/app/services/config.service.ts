@@ -166,6 +166,17 @@ export class ConfigService {
   }
 
   /**
+  * Update help tour config
+  * @param {string} url - api URL
+  * @param {string} config - help tour config in string
+  * @return {Observable<any>}
+  */
+  updateHelpTour(help_tour_config: string): Observable<any> {
+    const url = `${this.baseURL}/theme_config/updateHelpTour`;
+    return this.http.put(url, {help_tour_config});
+  }
+
+  /**
   * Get patient vitals
   * @return {Observable<any>}
   */
