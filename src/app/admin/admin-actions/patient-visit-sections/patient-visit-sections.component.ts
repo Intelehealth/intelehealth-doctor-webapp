@@ -42,13 +42,7 @@ export class PatientVisitSectionsComponent {
   */
   getPatientVisitSections(): void {
     this.configService.getPatientVisitSections().subscribe((res: any)=>{
-      this.sectionDatas = res.patient_visit_sections?.map((pvs: PatientVisitSection) => {
-        return {
-          ...pvs,
-          langNames: pvs?.name,
-          name: pvs?.name[getCacheData(false, languages.SELECTED_LANGUAGE) ?? 'en']
-        }
-      })
+      this.sectionDatas = res.patient_visit_sections;
       this.dataSource = new MatTableDataSource(this.sectionDatas);
     });
   }
@@ -106,11 +100,11 @@ export class PatientVisitSectionsComponent {
     });
   }
 
-  openDialog(element: { id: any; langNames: any; }) {
+  openDialog(element: { id: any; lang: any; }) {
     const id = element?.id;
     const data = { 
-      fieldName: 'name', // Example data to pass
-      fieldValue:  element?.langNames
+      fieldName: 'lang', // Example data to pass
+      fieldValue:  element?.lang
     };
     const dialogRef = this.coreServce.openLanguageFieldModal({ data });
 

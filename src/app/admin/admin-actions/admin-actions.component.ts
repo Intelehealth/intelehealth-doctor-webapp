@@ -124,7 +124,7 @@ export class AdminActionsComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
   }
 
-  onModifyClick(item){
+  onModifyClick(item: { isLocalPath: any; path: string | URL; }){
     if(item.isLocalPath)
       this.router.navigate([item.path]);
     else

@@ -40,11 +40,12 @@ export class AppConfigService {
   }
 
   setPatientVisitSections(data: any) {
-    data.patient_visit_sections = (data?.patient_visit_sections ?? []).map((pvs: PatientVisitSection) => {
-      return {
-        ...pvs,
-        name: JSON.parse(pvs.name),
-      }
-    })
+    data.patient_visit_sections = (data?.patient_visit_sections ?? [])
+      .map((pvs: PatientVisitSection) => {
+        return {
+          ...pvs,
+          lang: pvs.lang ? (typeof pvs.lang === 'object' ? pvs.lang : JSON.parse(pvs.lang)) : null,
+        }
+      })
   }
 }
