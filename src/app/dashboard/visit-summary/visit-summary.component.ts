@@ -1862,4 +1862,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+  * Retrieve the appropriate language value from an element.
+  * @param {any} element - An object containing `lang` and `name`.
+  * @return {string} - The value in the selected language or the first available one.
+  * Defaults to `element.name` if no language value is found.
+  */
+  getLanguageValue(element: any) {
+    const selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
+    
+    // Check if the selected language has a value
+    if (element.lang[selectedLanguage] && element.lang[selectedLanguage].trim() !== "") {
+      return element.lang[selectedLanguage];
+    }
+  
+    // If English is empty, find the first available non-empty language value
+    for (let language in element.lang) {
+      if (element.lang[language] && element.lang[language].trim() !== "") {
+        return element.lang[language];
+      }
+    }
+  
+    return element.name;
+  }
+
 }

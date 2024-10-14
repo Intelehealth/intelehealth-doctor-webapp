@@ -318,7 +318,7 @@
               <ul class="items-list">
                 <li *ngFor="let v of vitals;">
                   <div class="list-item">
-                    <label>{{v.name|translate}}</label>
+                    <label>{{v.lang !== null ? getLanguageValue(v) : (v.name | translate)}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue(v.uuid)">
                       {{(getObsValue(v.uuid))?getObsValue(v.uuid):'No information' | translate}}
                     </div>

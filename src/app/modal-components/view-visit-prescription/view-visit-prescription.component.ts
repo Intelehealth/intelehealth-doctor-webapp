@@ -9,12 +9,13 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { doctorDetails, visitTypes } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription, logo } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { style } from '@angular/animations';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-view-visit-prescription',
@@ -1109,8 +1110,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
       case visitTypes.VITALS:
         this.vitals.forEach((v: VitalModel) => {
-          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.uuid) ? this.getObsValue(v.uuid) : `No information`}`], margin: [0, 5, 0, 5] });
-        });
+          records.push({ text: [{ text: `${v.lang !== null ? this.getLanguageValue(v) : v.name } : `, bold: true }, `${this.getObsValue(v.uuid) ? this.getObsValue(v.uuid) : `No information`}`], margin: [0, 5, 0, 5] });        });
         break;
     }
     return records;
@@ -1377,4 +1377,29 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
     return data;
   }
+
+/**
+  * Retrieve the appropriate language value from an element.
+  * @param {any} element - An object containing `lang` and `name`.
+  * @return {string} - The value in the selected language or the first available one.
+  * Defaults to `element.name` if no language value is found.
+  */
+getLanguageValue(element: any) {
+  const selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
+  
+  // Check if the selected language has a value
+  if (element.lang[selectedLanguage] && element.lang[selectedLanguage].trim() !== "") {
+    return element.lang[selectedLanguage];
+  }
+
+  // If English is empty, find the first available non-empty language value
+  for (let language in element.lang) {
+    if (element.lang[language] && element.lang[language].trim() !== "") {
+      return element.lang[language];
+    }
+  }
+
+  return element.name;
+}
+
 }

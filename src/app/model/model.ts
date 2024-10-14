@@ -634,7 +634,8 @@ export interface VitalModel {
   name: string,
   key: string,
   uuid: string,
-  is_mandatory: boolean
+  is_mandatory: boolean,
+  lang: object;
 }
 
 export interface FeatureModel extends BaseModel {}
