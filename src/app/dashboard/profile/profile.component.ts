@@ -94,23 +94,39 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   languages: DataItemModel[] = [
     {
       id: 1,
-      name: 'English'
+      name: 'Assamese'
     },
     {
       id: 2,
-      name: 'Hindi'
+      name: 'Bengali'
     },
     {
       id: 3,
-      name: 'Tamil'
+      name: 'English'
     },
     {
       id: 4,
-      name: 'Gujrathi'
+      name: 'Gujrati'
     },
     {
       id: 5,
-      name: 'Bangla'
+      name: 'Hindi'
+    },
+    {
+      id: 6,
+      name: 'Kannada'
+    },
+    {
+      id: 7,
+      name: 'Marathi'
+    },
+    {
+      id: 8,
+      name: 'Odiya'
+    },
+    {
+      id: 9,
+      name: 'Tamil'
     }
   ];
 
@@ -137,18 +153,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       id: 1,
       name: 'General Physician'
-    },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
-      id: 3,
-      name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
     }
   ];
 
@@ -200,7 +204,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
-      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      middleName: new FormControl(''),
       familyName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),

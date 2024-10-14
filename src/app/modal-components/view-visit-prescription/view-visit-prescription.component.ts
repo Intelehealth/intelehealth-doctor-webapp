@@ -233,13 +233,22 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':')) {
+          if (obs.value.includes(',')) {
             this.medicines.push({
               drug: obs.value?.split(':')[0],
               strength: obs.value?.split(':')[1]?.split(',')[0],
-              days: obs.value?.split(":")[1].split(",")[2].split("for")[1],
-              timing: obs.value?.split(":")[1].split(",")[1],
-              remark: '-',
+              days: obs.value?.split(":")[1]?.split(",")[2]?.split("for")[1],
+              timing: obs.value?.split(":")[1]?.split(",")[1],
+              remark: obs.value?.split(':')[4],
+              uuid: obs.uuid
+            });
+          } else if (obs.value.includes(':')) {
+            this.medicines.push({
+              drug: obs.value?.split(':')[0],
+              strength: obs.value?.split(':')[1],
+              days: obs.value?.split(':')[2],
+              timing: obs.value?.split(':')[3],
+              remark: obs.value?.split(':')[4],
               uuid: obs.uuid
             });
           } else {
@@ -1174,7 +1183,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         let districtName = '-', sanchName='-';
         state.districts.forEach(district => {
           district.sanchs
-            .forEach(sanch => {
+            ?.forEach(sanch => {
               const village = sanch.villages.find(vilg => vilg.name === this.patient?.person.preferredAddress?.cityVillage);
               if (village) {
                 sanchName = sanch.name;
