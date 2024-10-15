@@ -197,6 +197,18 @@ export class ConfigService {
   }
 
   /**
+  * Update patient vital name
+  * @param {boolean} id - id of vital
+  * @param {any} lang - update vital name
+  * @return {Observable<any>}
+  */
+  updateVitalName(id: number, lang: any): Observable<any> {
+    const url = `${this.baseURL}/vitals/updateVitalName/${id}`;
+    return this.http.put(url, { lang });
+  }
+
+
+  /**
   * Update patient vital enabled status
   * @param {boolean} id - id of vital
   * @param {boolean} is_mandatory - mandatory status true/false
