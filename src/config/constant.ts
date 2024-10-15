@@ -77,34 +77,22 @@ export const specialization = {
     {
         id: 1,
         name: 'General Physician'
-    },
-    {
-        id: 2,
-        name: 'Dermatologist'
-    },
-    {
-        id: 3,
-        name: 'Gynecologist'
-    },
-    {
-        id: 4,
-        name: 'Pediatrician'
     }
   ]
 };
 
 export const refer_specialization = {
   refer_specializations :[
-    { id: 1, name : 'CHO'},
-    { id: 2, name : 'MO'},
+    // { id: 1, name : 'CHO'},
+    // { id: 2, name : 'MO'},
     { id: 3, name : 'General Physician'},
-    { id: 4, name : 'Obstetrician & Gynecologist'},
-    { id: 5, name : 'Pediatrician'},
-    { id: 6, name : 'General Surgeon'},
-    { id: 7, name : 'Dermatologist'},
-    { id: 8, name : 'ENT Specialist'},
-    { id: 9, name : 'Eye Specialist'},
-    { id: 10, name : 'Dental Surgeon'},
+    // { id: 4, name : 'Obstetrician & Gynecologist'},
+    // { id: 5, name : 'Pediatrician'},
+    // { id: 6, name : 'General Surgeon'},
+    // { id: 7, name : 'Dermatologist'},
+    // { id: 8, name : 'ENT Specialist'},
+    // { id: 9, name : 'Eye Specialist'},
+    // { id: 10, name : 'Dental Surgeon'},
   ]
 };
 
