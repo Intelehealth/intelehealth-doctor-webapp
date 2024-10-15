@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { PatientVitalModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { CoreService } from 'src/app/services/core/core.service';
 
@@ -139,20 +139,6 @@ export class PatientVitalsComponent implements OnInit {
     * Defaults to `element.name` if no language value is found.
     */
     getLanguageValue(element: any) {
-      const selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
-      
-      // Check if the selected language has a value
-      if (element.lang[selectedLanguage] && element.lang[selectedLanguage].trim() !== "") {
-        return element.lang[selectedLanguage];
-      }
-    
-      // If English is empty, find the first available non-empty language value
-      for (let language in element.lang) {
-        if (element.lang[language] && element.lang[language].trim() !== "") {
-          return element.lang[language];
-        }
-      }
-    
-      return element.name;
+      return getFieldValueByLanguage(element)
     }
 }

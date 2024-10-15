@@ -24,8 +24,8 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
+import { deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData } from 'src/app/utils/utility-functions';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -1868,22 +1868,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @return {string} - The value in the selected language or the first available one.
   * Defaults to `element.name` if no language value is found.
   */
-  getLanguageValue(element: any) {
-    const selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
-    
-    // Check if the selected language has a value
-    if (element.lang[selectedLanguage] && element.lang[selectedLanguage].trim() !== "") {
-      return element.lang[selectedLanguage];
-    }
-  
-    // If English is empty, find the first available non-empty language value
-    for (let language in element.lang) {
-      if (element.lang[language] && element.lang[language].trim() !== "") {
-        return element.lang[language];
-      }
-    }
-  
-    return element.name;
+  getLanguageValue(element: any): string {
+    return getFieldValueByLanguage(element)
   }
 
 }

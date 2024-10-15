@@ -1,42 +1,34 @@
 export const VISIT_SECTIONS = {
     "additional_documents": {
         logo: "assets/svgs/additional-documents.svg",
-        default: "",
         key: "additional_documents"
     },
     "additional_notes": {
         logo: "assets/svgs/note-icon-green.svg",
-        default: "",
         key: "additional_notes"
     },
     "check_up_reason": {
         logo: "assets/svgs/check-up-reason.svg",
-        default: "",
         key: "check_up_reason"
     },
     "consultation_details": {
         logo: "assets/svgs/consultation-details.svg",
-        default: "Consultation details",
         key: "consultation_details"
     },
     "medical_history": {
         logo: "assets/svgs/medical-history.svg",
-        default: "",
         key: "medical_history"
     },
     "physical_examination": {
         logo: "assets/svgs/physical-examination.svg",
-        default: "",
         key: "physical_examination"
     },
     "refer_to_specialist": {
         logo: "assets/svgs/refer-specialist.svg",
-        default: "",
         key: "refer_to_specialist"
     },
     "vitals": {
         logo: "assets/svgs/vitals.svg",
-        default: "Vitals",
         key: "vitals"
     }
 }
