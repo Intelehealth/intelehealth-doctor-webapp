@@ -106,8 +106,8 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
-      title: "Patient Visit Section Configuretion",
-      desc: "Patient Visit Section Configuretion",
+      title: "Patient Visit Section Configuration",
+      desc: "Patient Visit Section Configuration",
       icon: "assets/svgs/patient-visit-summary.svg",
       path: "admin/actions/patient-visit-section",
       isLocalPath: true

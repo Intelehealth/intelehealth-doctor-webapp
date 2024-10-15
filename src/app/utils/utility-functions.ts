@@ -1,4 +1,4 @@
-import { visitTypes } from "src/config/constant";
+import { languages, visitTypes } from "src/config/constant";
 import * as moment from 'moment';
 import { ProviderAttributeModel } from "../model/model";
 
@@ -92,4 +92,38 @@ export function getSpecialization(attr: ProviderAttributeModel[] = []): string {
     }
   }
   return specialization;
+}
+
+/**
+* Retrieve the appropriate language value from an element.
+* @param {any} element - An object containing `lang` and `name`.
+* @return {string} - The value in the selected language or the first available one.
+* Defaults to `element.name` if no language value is found.
+*/
+interface ElementLang {
+  [key: string]: string; // Represents language code to string mappings
+}
+
+interface Element {
+  lang: ElementLang;
+  name: string;
+}
+
+export function getFieldValueByLanguage(element: Element | null | undefined): string {
+  const selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE) as string;
+
+  // Check if selected language exists in the lang object and is not empty
+  if (element?.lang?.[selectedLanguage]?.trim()) {
+    return element.lang[selectedLanguage].trim();
+  }
+
+  // Return the first non-empty language value
+  for (const langValue of Object.values(element?.lang || {})) {
+    if (langValue.trim()) {
+      return langValue.trim();
+    }
+  }
+
+  // Fallback to element.name if no valid language value found or element is invalid
+  return element?.name || "";
 }
