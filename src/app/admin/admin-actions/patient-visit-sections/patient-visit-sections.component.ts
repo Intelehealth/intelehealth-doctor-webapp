@@ -76,15 +76,27 @@ export class PatientVisitSectionsComponent {
 
   drop(event: CdkDragDrop<PatientVisitSection[]>) {
     const previousIndex = this.dataSource.data.findIndex(row => row === event.item.data);
+
+    // Make a copy of the original data before reordering (only if needed later)
     this.originalItems = [...this.dataSource.data];
-    moveItemInArray(this.dataSource.data,previousIndex, event.currentIndex);
-    const newOrder = this.dataSource.data.map((item, index) => ({
+
+    // Move the item within the array
+    moveItemInArray(this.dataSource.data, previousIndex, event.currentIndex);
+
+    // Create new orders and update the data in one step
+    const newOrders = this.dataSource.data.map((item, index) => ({
       id: item.id,
       order: index + 1 // Assuming order starts at 1
     }));
 
+    // Update the dataSource data with the new order
+    this.dataSource.data = newOrders.map(orderItem => ({
+      ...this.dataSource.data.find(item => item.id === orderItem.id),
+      order: orderItem.order
+    }));
+
     // Update the order in the database
-    this.updateOrder(newOrder);
+    this.updateOrder(newOrders);
   }
 
    // Function to update order in the database

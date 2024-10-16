@@ -7,6 +7,11 @@
   table {
     width: 100%;
     font-family: DM Sans;
+
+    tr.mat-row {
+      cursor: move;
+    }
+    
   }
 
   th.mat-header-cell {
