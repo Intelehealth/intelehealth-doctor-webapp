@@ -79,7 +79,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{'Visit Ended'|translate}} </th>
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'compEnded'+j">
                   <div class="green-pill">
-                    <img src="assets/svgs/green-pad.svg" alt="">
+                    <img *ngIf="element?.visit_ended !== '-'" src="assets/svgs/green-pad.svg" alt="">
                     <span class="ml-2">{{element?.visit_ended}}</span>
                   </div>
                 </td>

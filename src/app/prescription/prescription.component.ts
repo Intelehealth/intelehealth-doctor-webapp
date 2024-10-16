@@ -57,7 +57,7 @@ export class PrescriptionComponent implements OnInit {
           if (pesenc) {
             visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime.replace('Z','+0530'));
           } else {
-            visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped.replace('Z','+0530'));
+            visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped?.replace('Z','+0530'));
           }
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
@@ -196,7 +196,7 @@ export class PrescriptionComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return  minutes !== 0 ? `${minutes} minutes ago` : "-" ;
     }
     return `${hours} hrs ago`;
   }
