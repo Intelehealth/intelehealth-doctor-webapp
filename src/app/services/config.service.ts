@@ -372,6 +372,19 @@ export class ConfigService {
     const url = `${this.baseURL}/patient-visit-sections/update-order`;
     return this.http.put(url, { order: newOrder });
   }
+
+  /**
+  * Update Patient Visit Sub Sections status
+  * @param {boolean} id - id of section
+  * @param {string} sub_section - sub section name
+  * @param {boolean} is_enabled - enabled status true/false
+  * @return {Observable<any>}
+  */
+  updatePVSSEnabledStatus(id: number, sub_section: string, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/patient-visit-sections/updateSubSectionIsEnabled/${id}`;
+    return this.http.put(url, { sub_section, is_enabled });
+  }
+  
 }
 
 
