@@ -16,7 +16,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./patient-visit-sections.component.scss']
 })
 export class PatientVisitSectionsComponent {
-  displayedColumns : string[] = ['id', 'name', 'order', 'updatedAt', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'order', 'updatedAt', 'is_enabled', 'sub_sections'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatTable) table: MatTable<any>;
 
@@ -118,6 +118,19 @@ export class PatientVisitSectionsComponent {
         dialogRef.close();
         this.toastr.error(error?.message);
       })
+    });
+  }
+
+  openSubSectionDialog(element: { id: any, sub_sections: any }) {
+    const id = element?.id;
+    const data = { 
+      id: id,
+      sub_sections:  element?.sub_sections
+    };
+    this.coreServce.openPatientVisitSubSectionModel({ data }).afterClosed().subscribe(res => {
+      if (res) {
+        this.getPatientVisitSections();
+      }
     });
   }
 }

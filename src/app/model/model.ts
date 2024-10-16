@@ -713,6 +713,7 @@ export interface PatientVisitSection {
   lang: string;
   key: string;
   order: number;
+  sub_sections?: any;
   updatedAt?: string;
   createdAt?: string
 }
