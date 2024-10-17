@@ -35,4 +35,12 @@ export class AppConfigService {
       });
     return promise;
   }
+
+  public get tourConfig(){
+    try {
+      return JSON.parse(this.theme_config.find((config: any) => config.key === 'help_tour_config').value);
+    } catch (error) {
+      return null;
+    }
+  }
 }

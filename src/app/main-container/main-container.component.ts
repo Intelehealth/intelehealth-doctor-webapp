@@ -24,6 +24,7 @@ import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails, notifications } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
+import { HelpTourService } from '../services/help-tour.service';
 
 @Component({
   selector: 'app-main-container',
@@ -79,7 +80,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private _swPush: SwPush,
     private translateService: TranslateService,
     private profileService: ProfileService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    public tourSvc: HelpTourService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
