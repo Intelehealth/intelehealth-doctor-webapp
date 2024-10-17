@@ -38,16 +38,19 @@ export class HelpTourService {
       autoScrollSmooth: false
     });
 
-    tour.onFinish(() => {
-      tour.exit();
+    const close = () => {
       tour.deleteFinishedTour();
       this.tourIsActive = false;
       document.querySelector('.help-tour-backdrop')?.remove?.();
       document.querySelector('.tg-dialog')?.remove?.();
-    });
+    };
+
+    tour.onFinish(close);
+
+    tour.onAfterExit(close);
 
     setTimeout(() => {
       tour.start();
-    }, 1500);
+    }, 0);
   };
 }
