@@ -96,7 +96,7 @@
                       (ng2TelOutput)="getNumber($event, 'phoneNumber')"
                       (intlTelInputObject)="telInputObject($event, 'phoneNumber')"
                       (countryChange)="onCountryChange($event, 'phoneNumber')"
-                      placeholder="Enter Mobile Number"
+                      placeholder="{{ 'Enter Mobile Number' | translate }}"
                       class="form-control"
                       formControlName="phoneNumber"
                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" maxlength="15"/>

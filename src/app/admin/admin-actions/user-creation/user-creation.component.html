@@ -13,7 +13,7 @@
             <div class="d-flex align-items-center mb-3">
               <h6 class="mb-0 grid-title">{{'List of Users' | translate}}</h6>
               <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                <input type="text" #searchInput class="form-control" placeholder="Search for users" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
+                <input type="text" #searchInput class="form-control" placeholder="{{ 'Search for users' | translate }}" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource.filter">
                     <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">

@@ -27,6 +27,8 @@ import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAt
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
+const tabs = ['Draw', 'Generate', 'Upload'];
+
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
   display: {
@@ -282,7 +284,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.personalInfoForm.get(doctorDetails.SIGNATURE_TYPE).valueChanges.subscribe(val => {
-      const tabs = ['Draw', 'Generate', 'Upload'];
       if (val) {
         this.signatureType = val;
         if (val === 'Generate') {
@@ -626,8 +627,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   */
   signatureTabChanged(event) {
     this.selectedSignatureTabIndex = event.index;
-    this.signatureType = event.tab.textLabel;
-    this.personalInfoForm.patchValue({ signatureType: event.tab.textLabel });
+    this.signatureType = tabs[event.index];
+    this.personalInfoForm.patchValue({ signatureType: this.signatureType });
   }
 
   /**

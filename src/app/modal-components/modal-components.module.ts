@@ -49,6 +49,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { AddTicketComponent } from './add-ticket/add-ticket.component';
+import { LanguageFieldUpdate } from './language-fields-update/language-fields-update.component';
+import { SubSectionsComponent } from './sub-sections/sub-sections.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
     declarations: [
@@ -85,7 +88,9 @@ import { AddTicketComponent } from './add-ticket/add-ticket.component';
         ReportErrorComponent,
         ReportSuccessComponent,
         PasswordResetComponent,
-        AddTicketComponent
+        AddTicketComponent,
+        LanguageFieldUpdate,
+        SubSectionsComponent
     ],
     imports: [
         CommonModule,
@@ -105,7 +110,8 @@ import { AddTicketComponent } from './add-ticket/add-ticket.component';
         ImageCropperModule,
         SharedModule,
         MatProgressBarModule,
-        MatTabsModule
+        MatTabsModule,
+        MatTableModule
     ],
     exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
     schemas: [NO_ERRORS_SCHEMA]

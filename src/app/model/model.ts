@@ -634,7 +634,8 @@ export interface VitalModel {
   name: string,
   key: string,
   uuid: string,
-  is_mandatory: boolean
+  is_mandatory: boolean,
+  lang: object;
 }
 
 export interface FeatureModel extends BaseModel {}
@@ -691,4 +692,28 @@ export interface PagerdutyModel{
 
 export interface PagerDutyDetail {
   incident: PagerdutyModel
+}
+
+export interface MenuConfig {
+  createdAt?: string,
+  id: number,
+  is_enabled: boolean,
+  name: string,
+  key: string,
+  updatedAt?: string
+  is_locked: boolean
+}
+
+export interface PatientVisitSection {
+  id: number;
+  is_enabled: boolean;
+  is_locked: boolean;
+  is_editable: boolean;
+  name: string;
+  lang: string;
+  key: string;
+  order: number;
+  sub_sections?: any;
+  updatedAt?: string;
+  createdAt?: string
 }
