@@ -63,19 +63,19 @@ export const checkIsEnabled = (
             break;
 
         case VISIT_SECTIONS['consultation_details'].key:
-            is_enabled = is_enabled && !!attachment_section;
+            is_enabled = is_enabled;
             break;
         
         case VISIT_SECTIONS['check_up_reason'].key:
-            is_enabled = is_enabled && !!attachment_section;
+            is_enabled = is_enabled;
             break;
 
         case VISIT_SECTIONS['medical_history'].key:
-            is_enabled = is_enabled && !!attachment_section;
+            is_enabled = is_enabled;
             break;
 
         case VISIT_SECTIONS['physical_examination'].key:
-            is_enabled = is_enabled && !!attachment_section;
+            is_enabled = is_enabled;
             break;
     
 
