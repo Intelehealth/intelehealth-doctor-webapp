@@ -14,13 +14,15 @@ export interface TourStep {
   providedIn: 'root'
 })
 export class HelpTourService {
+  tourIsActive = false;
   constructor(
     private appConfigSvc: AppConfigService
   ) { }
 
   initHelpTour(steps: TourStep[] | null= this.appConfigSvc.tourConfig): void {
-    if(!steps || Array.isArray(steps) && steps.length === 0) return;
+    if(this.tourIsActive || !steps || Array.isArray(steps) && steps.length === 0) return;
 
+    this.tourIsActive = true;
     const tour = new TourGuideClient({
       steps,
       showStepProgress: false,
@@ -34,6 +36,14 @@ export class HelpTourService {
       targetPadding: 0,
       autoScrollOffset: 30,
       autoScrollSmooth: false
+    });
+
+    tour.onFinish(() => {
+      tour.exit();
+      tour.deleteFinishedTour();
+      this.tourIsActive = false;
+      document.querySelector('.help-tour-backdrop')?.remove?.();
+      document.querySelector('.tg-dialog')?.remove?.();
     });
 
     setTimeout(() => {
