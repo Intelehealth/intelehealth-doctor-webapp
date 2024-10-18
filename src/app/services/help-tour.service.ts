@@ -26,7 +26,7 @@ export class HelpTourService {
     const tour = new TourGuideClient({
       steps,
       showStepProgress: false,
-      debug: true,
+      debug: false,
       dialogZ: 1100,
       dialogWidth: 300,
       backdropClass: 'help-tour-backdrop',
@@ -35,7 +35,7 @@ export class HelpTourService {
       progressBar:'#0FD197',
       targetPadding: 0,
       autoScrollOffset: 30,
-      autoScrollSmooth: false
+      autoScrollSmooth: false,
     });
 
     const close = () => {
@@ -45,9 +45,11 @@ export class HelpTourService {
       document.querySelector('.tg-dialog')?.remove?.();
     };
 
-    tour.onFinish(close);
-
-    tour.onAfterExit(close);
+    tour.onAfterExit(()=>{
+      this.tourIsActive = false;
+      document.querySelector('.help-tour-backdrop')?.remove?.();
+      document.querySelector('.tg-dialog')?.remove?.();
+    });
 
     setTimeout(() => {
       tour.start();
