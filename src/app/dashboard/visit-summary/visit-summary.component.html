@@ -877,7 +877,7 @@
                       </ng-template>
                     </div>
                   </li>
-                  <li *ngIf="!patientInteractionForm.value.present">
+                  <li *ngIf="isSubSectionEnabled('patient_interaction','Patient') && !patientInteractionForm.value.present">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
                         >{{'Have you spoken with the patient directly?'|translate}}*</label
@@ -909,7 +909,77 @@
                     </div>
                   </li>
 
-                  <li *ngIf="!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
+                  <li *ngIf="isSubSectionEnabled('patient_interaction','Patient') && !patientInteractionForm.value.present">
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">{{ 'Call Status' | translate }}*</label>
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            value="{{ 'Completed' | translate }}"
+                            [attr.data-value]="'Completed'"
+                            formControlName="callStatus"
+                            (change)="onCallStatusChange($event)"
+                            data-test-id="radioCallStatusCompleted"
+                          />
+                          <div class="state p-success">
+                            <label>{{ 'Completed' | translate }}</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            value="{{ 'Reschedule/Repeat Internally' | translate }}"
+                            [attr.data-value]="'Reschedule/Repeat Internally'"
+                            formControlName="callStatus"
+                            (change)="onCallStatusChange($event)"
+                            data-test-id="radioCallStatusReschedule"
+                          />
+                          <div class="state p-success">
+                            <label>{{ 'Reschedule/Repeat Internally' | translate }}</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input
+                            type="radio"
+                            value="{{ 'Close Call without Completion' | translate }}"
+                            [attr.data-value]="'Close Call without Completion'"
+                            formControlName="callStatus"
+                            (change)="onCallStatusChange($event)"
+                            data-test-id="radioCallStatusClose"
+                          />
+                          <div class="state p-success">
+                            <label>{{ 'Close Call without Completion' | translate }}</label>
+                          </div>
+                        </div>
+                  
+                      </div>
+                    </div>
+                  </li>
+                  
+                  <li *ngIf="isSubSectionEnabled('patient_interaction','Patient') && !patientInteractionForm.value.present && (reasonsList.length > 0)">
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">{{ 'Select Reason' | translate }}*</label>
+                      <div class="col-sm-9">
+                        <ng-select
+                          #ngSelectComponent
+                          appendTo=".visit-summary-tab-group"
+                          class="visit-select"
+                          formControlName="reason"
+                          bindLabel="label"
+                          bindValue="label"
+                          placeholder="{{ 'Select a reason' | translate }}"
+                          data-test-id="selectReason"
+                        >
+                          <ng-option *ngFor="let reason of reasonsList" [value]="reason.name">
+                            {{ reason.name | translate }}
+                          </ng-option>
+                        </ng-select>
+                      </div>
+                    </div>
+                  </li>
+                                    
+                  <li *ngIf="isSubSectionEnabled('patient_interaction','HW') && !patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
                         >{{'Have you spoken with the healthcare worker directly?'|translate}}*</label
@@ -941,7 +1011,7 @@
                     </div>
                   </li>
                 </ul>
-                <div *ngIf="!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction" class="form-group">
+                <div *ngIf="isSubSectionEnabled('patient_interaction','HW') && !patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction" class="form-group">
                   <label for="note"
                     ><b>{{'Comment'|translate}}*&nbsp;</b>
                     </label
@@ -960,13 +1030,14 @@
                     isVisitNoteProvider &&
                     !visitEnded &&
                     (!patientInteractionForm.value.present ||
-                    (!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction))
+                    (!patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction)) &&
+                    canShowSaveButton()
                   "
                 >
                   <button
                     type="submit"
                     class="gray-btn"
-                    [disabled]="patientInteractionForm.invalid"
+                    [disabled]="!canSavePatientInteractionForm()"
                     data-test-id="btnSubmitPatientInteraction"
                   >
                     {{'Save'|translate}}
@@ -982,7 +1053,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngIf="patientInteractionForm.value.present">
+                      <tr *ngIf="isSubSectionEnabled('patient_interaction','Patient') && patientInteractionForm.value.present">
                         <td>{{'Spoken with the patient directly?'|translate}}</td>
                         <td>{{ patientInteractionForm.value.spoken }}</td>
                         <td class="pr-0">
@@ -998,7 +1069,7 @@
                           </button>
                         </td>
                       </tr>
-                      <tr *ngIf="patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
+                      <tr *ngIf="isSubSectionEnabled('patient_interaction','HW') && patientInteractionForm.value.hwPresent && appConfigService?.patient_visit_summary?.hw_interaction">
                         <td>{{'Spoken with the healthcare worker directly?'|translate}}</td>
                         <td>{{ patientInteractionForm.value.hwSpoken }}</td>
                         <td class="pr-0">
