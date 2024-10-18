@@ -41,11 +41,19 @@ export class AppConfigService {
 
   setPatientVisitSections(data: any) {
     data.patient_visit_sections = (data?.patient_visit_sections ?? [])
-      .map((pvs: PatientVisitSection) => {
-        return {
-          ...pvs,
-          lang: pvs.lang ? (typeof pvs.lang === 'object' ? pvs.lang : JSON.parse(pvs.lang)) : null,
-        }
-      })
+    .map((pvs: PatientVisitSection) => {
+      return {
+        ...pvs,
+        lang: pvs.lang ? (typeof pvs.lang === 'object' ? pvs.lang : JSON.parse(pvs.lang)) : null,
+      }
+    })
+  }
+
+  public get tourConfig(){
+    try {
+      return JSON.parse(this.theme_config.find((config: any) => config.key === 'help_tour_config').value);
+    } catch (error) {
+      return null;
+    }
   }
 }

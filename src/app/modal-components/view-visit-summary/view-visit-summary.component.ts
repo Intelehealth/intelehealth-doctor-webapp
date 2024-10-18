@@ -69,7 +69,9 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
       this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
       this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
 
-      this.pvsConfigs = this.appConfigService.patient_visit_sections;
+      this.pvsConfigs = this.appConfigService.patient_visit_sections.filter((pvs) =>
+        ![this.pvsConstant.refer_to_specialist.key].includes(pvs.key)
+      );
     }
 
   ngOnInit(): void {
@@ -552,6 +554,19 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
       }
 
       if(is_enabled && pvsConfig.key === this.pvsConstant.check_up_reason.key) {
+        const associatedSymptoms = this.getRecords('associated_symptoms');
+        const associatedSymptomSections = [];
+        if(associatedSymptoms?.length) {
+          associatedSymptomSections.push([{ text: 'Associated symptoms', style: 'subSectionheader', colSpan: 2 }, ''])
+          associatedSymptomSections.push([
+            {
+              colSpan: 2,
+              ul: [
+                ...associatedSymptoms
+              ]
+            }
+          ])    
+        }
         sections.push([
           {
             colSpan: 4,
@@ -562,15 +577,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
               body: [
                 [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Chief complaint', style: 'sectionheader', border: [false, false, false, true] }],
                 ...this.getRecords('symptoms'),
-                [{ text: 'Associated symptoms', style: 'subSectionheader', colSpan: 2 }, ''],
-                [
-                  {
-                    colSpan: 2,
-                    ul: [
-                      ...this.getRecords('associated_symptoms')
-                    ]
-                  }
-                ]
+                ...associatedSymptomSections
               ]
             },
             layout: {
@@ -585,6 +592,21 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
       }
 
       if(is_enabled && pvsConfig.key === this.pvsConstant.physical_examination.key) {
+        const abdomenExamination = this.getRecords('abdomen_examination');
+        const abdomenSection = [];
+
+        if(abdomenExamination?.length) {
+          abdomenSection.push([{ text: 'Abdomen', style: 'subSectionheader', colSpan: 2 }, ''])
+          abdomenSection.push([
+            {
+              colSpan: 2,
+              ul: [
+                ...this.getRecords('abdomen_examination')
+              ]
+            }
+          ])
+        }
+        
         sections.push([
           {
             colSpan: 4,
@@ -594,15 +616,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
               body: [
                 [ {image: 'physicalExamination', width: 25, height: 25, border: [false, false, false, true] }, {text: this.getLanguageValue(pvsConfig), style: 'sectionheader', border: [false, false, false, true] }],
                 ...this.getRecords('physical_examination'),
-                [{ text: 'Abdomen', style: 'subSectionheader', colSpan: 2 }, ''],
-                [
-                  {
-                    colSpan: 2,
-                    ul: [
-                      ...this.getRecords('abdomen_examination')
-                    ]
-                  }
-                ]
+                ...abdomenSection
               ]
             },
             layout: {
@@ -615,7 +629,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
         ])
       }
 
-      if(is_enabled && pvsConfig.key === this.pvsConstant.medical_history.key) {
+      if(is_enabled && pvsConfig.key === this.pvsConstant.medical_history.key && this.patientHistoryData.length) {
         sections.push([
           {
             colSpan: 4,
@@ -637,7 +651,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
         ])
       }
 
-      if(is_enabled && pvsConfig.key === this.pvsConstant.additional_documents.key) {
+      if(is_enabled && pvsConfig.key === this.pvsConstant.additional_documents.key && this.additionalDocs.length) {
         sections.push([
           {
             colSpan: 4,
@@ -670,7 +684,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
       header: {
         columns: [
           { text: ''},
-          { image: 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
+          // { image: 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
         ]
       },
       footer: (currentPage, pageCount) => {
@@ -732,7 +746,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
                           {text: 'Age', style: 'subheader'},
                           `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
                           {text: 'Address', style: 'subheader'},
-                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`
+                          `${this.patient?.person?.preferredAddress?.cityVillage?.replace(':', ' : ') ?? 'None'}`
                         ]
                       ]
                     ]
@@ -808,7 +822,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
                   }
                 }
               ],
-              sections ?? []
+              ...sections
             ]
           },
           layout: 'noBorders'
@@ -1013,7 +1027,9 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   checkIsVisibleSection(pvsConfig: { key: string; is_enabled: boolean; }) {
     return checkIsEnabled(pvsConfig.key, 
       pvsConfig.is_enabled, {
-      hasVitalsEnabled: this.hasVitalsEnabled
+      hasVitalsEnabled: this.hasVitalsEnabled,
+      visitEnded: true,
+      attachment_section: true
     })
   }
 
