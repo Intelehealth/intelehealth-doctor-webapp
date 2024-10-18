@@ -30,6 +30,7 @@ import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -150,6 +151,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   collapsed: boolean = true;
 
+  reasons = {
+    'Completed': [
+      { name: 'Call closed. No further action from TMH team' },
+      { name: 'To Repeat after Radiology/Pathology review (chargeable)' },
+      { name: 'To Send Protocol Letter (chargeable)' }
+    ],
+    'Reschedule/Repeat Internally': [
+      { name: 'Could not connect or Poor Network' },
+      { name: 'Other discipline doctor could not be available' },
+      { name: 'Patient to share Reports/ Scan Images/Video of Investigations' },
+      { name: 'Repeat call with another DMG/Discipline (Non Chargeable)' }
+    ],
+    'Close Call without Completion': [
+      { name: 'Could not connect for attempts on 2 or more different days' },
+      { name: 'Patient Not willing' },
+      { name: 'Not found suitable for Tele-consult' },
+      { name: 'Patient already visited the hospital' }
+    ]
+  };
+
+  @ViewChild(NgSelectComponent) ngSelectComponent: NgSelectComponent;
+  reasonsList: { name: string }[] = [];
+  patientInteraction: PatientVisitSection[] = [];
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -198,14 +223,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.patientInteractionForm = new FormGroup({
       uuid: new FormControl(null),
       present: new FormControl(false, [Validators.required]),
-      spoken: new FormControl(null, [Validators.required])
+      spoken: new FormControl(null, [Validators.required]),
+      reason: new FormControl(null, [Validators.required]),
+      callStatus: new FormControl(null, [Validators.required]),
     });
 
     if(this.appConfigService.patient_visit_summary.hw_interaction){
       this.patientInteractionForm.addControl('hwIntUuid', new FormControl(""));
       this.patientInteractionForm.addControl('hwPresent', new FormControl(false, [Validators.required]));
       this.patientInteractionForm.addControl('hwSpoken', new FormControl("", [Validators.required]));
-      this.patientInteractionForm.addControl('comment', new FormControl("",[Validators.required]));
+      this.patientInteractionForm.addControl('comment', new FormControl("", [Validators.required]));
+      this.patientInteractionForm.addControl('callStatus', new FormControl("", [Validators.required]));
+      this.patientInteractionForm.addControl('reason', new FormControl("", [Validators.required]));
     }
 
     this.diagnosisForm = new FormGroup({
@@ -265,6 +294,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
 
     this.pvsConfigs = this.appConfigService.patient_visit_sections;
+    this.patientInteraction = this.appConfigService.patient_visit_sections;
 
   }
 
@@ -945,20 +975,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   savePatientInteraction(): void {
-    if (this.patientInteractionForm.invalid || !this.isVisitNoteProvider) {
+    if (!this.isVisitNoteProvider) {
       return;
     }
-    if(!this.patientInteractionForm.value.present){
-      this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
+    if(!this.patientInteractionForm.value.present && this.isSubSectionEnabled('patient_interaction','Patient')){
+      const payload = {
+        attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
+        value: this.patientInteractionForm.value.callStatus?.trim().length > 0 ? `${this.patientInteractionForm.value.spoken}, ${this.translateService.instant("Call status")}: ${this.patientInteractionForm.value.callStatus}, ${this.translateService.instant("Reason")}: ${this.patientInteractionForm.value.reason}` :  this.patientInteractionForm.value.spoken,
+      };
+
+      this.visitService.postAttribute(this.visit.uuid, payload)
       .subscribe((res: VisitAttributeModel) => {
         if (res) {
-          this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
+          this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid, spoken: res.value });
         }
       });
     }
 
     if(this.appConfigService?.patient_visit_summary?.hw_interaction){
-      if(!this.patientInteractionForm.value.hwPresent){
+      if(!this.patientInteractionForm.value.hwPresent && this.isSubSectionEnabled('patient_interaction','HW')){
         const payload = {
           attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
           value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, ${this.translateService.instant("Comment")}: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
@@ -979,7 +1014,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   deletePatientInteraction(): void {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe(() => {
-      this.patientInteractionForm.patchValue({ present:false, spoken: null, uuid: null });
+      this.patientInteractionForm.patchValue({ present:false, spoken: null, uuid: null, callStatus: null, reason: null });
     });
   }
 
@@ -1872,4 +1907,54 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return getFieldValueByLanguage(element)
   }
 
+  /**
+   * Handles changes to the call status and updates the reasons list accordingly.
+   * @param {Event} event - The change event from the call status input.
+   * @return {void}
+   */
+  onCallStatusChange(event: Event): void {
+    const status = (event.target as HTMLInputElement).getAttribute('data-value');
+  
+    this.reasonsList = this.reasons[status] || [];
+    this.patientInteractionForm.patchValue({ reason: null });
+  
+    setTimeout(() => this.ngSelectComponent?.open(), 0);
+  }
+
+  /**
+   * @param {string} sectionKey - The key of the section.
+   * @param {string} [subSectionName] - The name of the subsection (optional).
+   * @returns {boolean} - True if the subsection is enabled, false otherwise.
+   */
+  isSubSectionEnabled(sectionKey: string, subSectionName?: string): boolean {
+    const section = this.patientInteraction.find(sec => sec.key === sectionKey);
+    
+    if (!section || !section.is_enabled) return false;
+    if (!subSectionName) return true;
+    
+    const subSection = section.sub_sections?.find(sub => sub.name === subSectionName);
+    return subSection ? subSection.is_enabled : false;
+  }
+
+  /**
+   * @returns {boolean} - True if the form can be saved, false otherwise.
+   */
+  canSavePatientInteractionForm(): boolean {
+    const form = this.patientInteractionForm;
+    const bothTrue = this.isSubSectionEnabled('patient_interaction', 'HW') && this.isSubSectionEnabled('patient_interaction', 'Patient') && !form.value.present && this.appConfigService?.patient_visit_summary?.hw_interaction;
+    const patientInteractionValid = !form.value.present && form.get('spoken')?.valid && form.get('callStatus')?.valid && form.get('reason')?.valid && !bothTrue;
+    const hwInteractionValid = this.appConfigService?.patient_visit_summary?.hw_interaction && form.get('hwSpoken')?.valid && form.get('comment')?.valid && !bothTrue;
+  
+    return bothTrue ? (form.value.spoken && form.value.callStatus && form.value.reason && form.value.hwSpoken && form.value.comment) : patientInteractionValid || hwInteractionValid;
+  }
+
+  /**
+   * @returns {boolean} - True if the save button should be shown, false otherwise.
+   */
+  canShowSaveButton(): boolean {
+    const hwEnabled = this.isSubSectionEnabled('patient_interaction', 'HW');
+    const patientEnabled = this.isSubSectionEnabled('patient_interaction', 'Patient');
+  
+    return (hwEnabled && !patientEnabled && !this.patientInteractionForm.value.hwPresent && this.appConfigService?.patient_visit_summary?.hw_interaction) || (patientEnabled && !hwEnabled && !this.patientInteractionForm.value.present) || (hwEnabled && patientEnabled);
+  }
 }
