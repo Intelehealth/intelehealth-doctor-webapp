@@ -19,7 +19,7 @@ export class HelpTourService {
     private appConfigSvc: AppConfigService
   ) { }
 
-  initHelpTour(steps: TourStep[] | null= this.appConfigSvc.tourConfig): void {
+  initHelpTour(steps: TourStep[] | null= this.appConfigSvc.tourConfig) {
     if(this.tourIsActive || !steps || Array.isArray(steps) && steps.length === 0) return;
 
     this.tourIsActive = true;
@@ -38,13 +38,6 @@ export class HelpTourService {
       autoScrollSmooth: false,
     });
 
-    const close = () => {
-      tour.deleteFinishedTour();
-      this.tourIsActive = false;
-      document.querySelector('.help-tour-backdrop')?.remove?.();
-      document.querySelector('.tg-dialog')?.remove?.();
-    };
-
     tour.onAfterExit(()=>{
       this.tourIsActive = false;
       document.querySelector('.help-tour-backdrop')?.remove?.();
@@ -54,5 +47,7 @@ export class HelpTourService {
     setTimeout(() => {
       tour.start();
     }, 0);
+
+    return tour;
   };
 }
