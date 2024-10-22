@@ -36,7 +36,7 @@
         </div>
       </div>
     </div>
-    <div class="col p-1" *ngIf="pvs.completed_visit_section">
+    <div class="col p-1" *ngIf="pvs.completed_visit_section"  (click)="scrollToPanel('anchor-completed')">
       <div class="chip-item chip-item-green" title="{{'Completed Visits' | translate}}">
         <img class="chip-img" src="assets/svgs/completed.svg" alt="" />
         <div class="chip-info">
@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <div class="col p-1" *ngIf="pvs.follow_up_visit_section">
+    <div class="col p-1" *ngIf="pvs.follow_up_visit_section"  (click)="scrollToPanel('anchor-follow up')">
       <div class="chip-item chip-item-blue" title="{{'Follow Up Visits' | translate}}">
         <img class="chip-img" src="assets/svgs/diagnosis.svg" alt="" />
         <div class="chip-info">
