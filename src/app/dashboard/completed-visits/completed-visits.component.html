@@ -7,7 +7,7 @@
           <h6 class="mb-0 ml-2">
             {{ 'Completed Visits' | translate }} ({{ completedVisitsCount ? completedVisitsCount : 0 }})
           </h6>
-          <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{ 'Visits going through the consultation' | translate }}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
+          <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{ 'Ended visits after prescription' | translate }}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
           <div class="input-group search-bar ml-auto d-flex" (click)="$event.stopPropagation();">
             <input type="text" #ipSearchInput class="form-control" placeholder="{{ 'Search Completed Visits' | translate }}" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchCompletedDashboard">
             <div class="input-group-append">
