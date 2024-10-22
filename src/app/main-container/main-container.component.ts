@@ -20,7 +20,7 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
 import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-ticket.component';
 import { ProfileService } from '../services/profile.service';
-import { getCacheData } from '../utils/utility-functions';
+import { deleteCacheData, getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails, notifications } from 'src/config/constant';
 import { ApiResponseModel, BreadcrumbModel, PatientModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
@@ -149,6 +149,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img => {
       this.profilePic = img;
     });
+    if(getCacheData(false,doctorDetails.IS_NEW_DOCTOR) === getCacheData(true, doctorDetails.USER)?.uuid) {
+      const tour = this.tourSvc.initHelpTour();
+      if(tour){
+        tour.onFinish(() => {
+          deleteCacheData(doctorDetails.IS_NEW_DOCTOR);
+        });
+      }
+    }
   }
 
   /**
