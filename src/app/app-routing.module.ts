@@ -69,7 +69,7 @@ const routes: Routes = [
         data: {
           breadcrumb: 'Appointments'
         },
-        canActivate:[() => canActivateMenu('appointments')],
+        canActivate:[() => canActivateMenu('appointment')],
         loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
       },
       {
