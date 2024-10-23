@@ -1247,7 +1247,7 @@
                               <label>{{'Confirmed'|translate}}</label>
                             </div>
                           </div>
-                          <div class="pretty p-default p-round">
+                          <div *ngIf="appConfigService?.patient_visit_summary?.diagnosis_under_evaluation" class="pretty p-default p-round">
                             <input
                               type="radio"
                               [value]="'Under Evaluation'"
