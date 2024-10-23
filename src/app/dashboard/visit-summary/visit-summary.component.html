@@ -1247,6 +1247,17 @@
                               <label>{{'Confirmed'|translate}}</label>
                             </div>
                           </div>
+                          <div class="pretty p-default p-round">
+                            <input
+                              type="radio"
+                              [value]="'Under Evaluation'"
+                              formControlName="diagnosisStatus"
+                              data-test-id="radioDiagnosisStatusUnderEvaluation"
+                            />
+                            <div class="state p-success">
+                              <label>{{'Under Evaluation'|translate}}</label>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </li>
