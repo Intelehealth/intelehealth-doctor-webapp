@@ -53,11 +53,11 @@ export class PrescriptionComponent implements OnInit {
           let pesenc = this.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY);
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
-          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
+          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime) : null;
           if (pesenc) {
-            visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime.replace('Z','+0530'));
+            visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime);
           } else {
-            visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped?.replace('Z','+0530'));
+            visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped);
           }
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
@@ -93,7 +93,7 @@ export class PrescriptionComponent implements OnInit {
           let vcenc = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
-          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
+          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime) : null;
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
         }
@@ -124,7 +124,7 @@ export class PrescriptionComponent implements OnInit {
     encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
-        created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
+        created_at = this.getCreatedAt(encounter.encounter_datetime);
       }
     });
     return created_at;
@@ -142,9 +142,9 @@ export class PrescriptionComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return  minutes ? `${minutes} minutes ago` : '-';
     }
-    return `${hours} hrs ago`;
+    return hours ? `${hours} hrs ago`: '-';
   }
 
   /**
@@ -198,7 +198,7 @@ export class PrescriptionComponent implements OnInit {
     if (hours < 1) {
       return  minutes !== 0 ? `${minutes} minutes ago` : "-" ;
     }
-    return `${hours} hrs ago`;
+    return hours ? `${hours} hrs ago` : '-';
   }
 
   /**

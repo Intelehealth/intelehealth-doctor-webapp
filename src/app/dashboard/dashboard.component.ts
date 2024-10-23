@@ -239,7 +239,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
@@ -315,7 +315,7 @@ export class DashboardComponent implements OnInit {
     encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
-        created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
+        created_at = this.getCreatedAt(encounter.encounter_datetime);
       }
     });
     return created_at;
