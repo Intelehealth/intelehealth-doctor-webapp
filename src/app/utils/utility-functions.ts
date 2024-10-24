@@ -1,6 +1,7 @@
 import { languages, visitTypes } from "src/config/constant";
 import * as moment from 'moment';
 import { ProviderAttributeModel } from "../model/model";
+import { DecimalPipe } from "@angular/common";
 
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
@@ -126,4 +127,19 @@ export function getFieldValueByLanguage(element: Element | null | undefined): st
 
   // Fallback to element.name if no valid language value found or element is invalid
   return element?.name || "";
+}
+
+export function calculateBMI(vitals: any, vitalObs: any, _locale: string = 'en') {
+  const heightUUID = vitals?.find((v: any) => v.key === 'height_cm')?.uuid;
+  const weightUUID = vitals?.find((v: any) => v.key === 'weight_kg')?.uuid;
+  let height = null, weight = null;
+  if(heightUUID && weightUUID) {
+    height = vitalObs.find((e: { concept: { uuid: any; }; }) => e.concept.uuid === heightUUID)?.value;
+    weight = vitalObs.find((e: { concept: { uuid: any; }; }) => e.concept.uuid === weightUUID)?.value;
+  }
+  if(height && weight) {
+    const decimalPipe = new DecimalPipe(_locale)
+    return decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
+  }  
+  return null;
 }
