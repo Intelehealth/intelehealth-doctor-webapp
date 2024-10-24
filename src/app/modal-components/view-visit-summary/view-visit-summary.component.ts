@@ -14,7 +14,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
-import { DecimalPipe } from '@angular/common';
+import { calculateBMI } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -56,8 +56,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
     private diagnosisService: DiagnosisService,
     private coreService: CoreService,
     private translateService: TranslateService,
-    private appConfigService: AppConfigService,
-    private decimalPipe: DecimalPipe) {
+    private appConfigService: AppConfigService) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
@@ -243,21 +242,12 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @return {any} - Obs value
   */
   getObsValue(uuid: string, key?: string): any {
-    if(key === 'bmi') {
-      const heightUUID = this.vitals?.find((v) => v.key === 'height_cm')?.uuid;
-      const weightUUID = this.vitals?.find((v) => v.key === 'weight_kg')?.uuid;
-      let height = null, weight = null;
-      if(heightUUID && weightUUID) {
-        height = this.vitalObs.find(e => e.concept.uuid === heightUUID)?.value;
-        weight = this.vitalObs.find(e => e.concept.uuid === weightUUID)?.value;
-      }
-      if(height && weight) {
-        return this.decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
-      }  //number : "1.2-2"
-      return null;
-    }
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
-    return v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
+    const value = v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
+    if(!value && key === 'bmi') {
+      return calculateBMI(this.vitals, this.vitalObs);
+    }
+    return value
   }
 
   /**
