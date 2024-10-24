@@ -17,7 +17,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
-import { formatDate } from '@angular/common';
+import { DecimalPipe, formatDate } from '@angular/common';
 import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
@@ -176,7 +176,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
     private mindmapService: MindmapService,
-    private appConfigService: AppConfigService) {
+    private appConfigService: AppConfigService,
+    private decimalPipe: DecimalPipe) {
 
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e => e.is_enabled).map(e => e.name));
@@ -459,7 +460,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} uuid - Vital uuid
   * @return {any} - Obs value
   */
-  getObsValue(uuid: string): any {
+  getObsValue(uuid: string, key?: string): any {
+    if(key === 'bmi') {
+      const heightUUID = this.vitals?.find((v) => v.key === 'height_cm')?.uuid;
+      const weightUUID = this.vitals?.find((v) => v.key === 'weight_kg')?.uuid;
+      let height = null, weight = null;
+      if(heightUUID && weightUUID) {
+        height = this.vitalObs.find(e => e.concept.uuid === heightUUID)?.value;
+        weight = this.vitalObs.find(e => e.concept.uuid === weightUUID)?.value;
+      }
+      if(height && weight) {
+        return this.decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
+      }  //number : "1.2-2"
+      return null;
+    }
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
     return v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
   }

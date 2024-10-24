@@ -6,6 +6,7 @@ import {
   LocationStrategy,
   HashLocationStrategy,
   registerLocaleData,
+  DecimalPipe,
 } from "@angular/common";
 
 import localeRu from '@angular/common/locales/ru';
@@ -187,7 +188,8 @@ registerLocaleData(localeEn);
       useFactory: initializer,
       deps: [PwaService],
       multi: true
-    }
+    },
+    DecimalPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

@@ -14,6 +14,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -55,7 +56,8 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
     private diagnosisService: DiagnosisService,
     private coreService: CoreService,
     private translateService: TranslateService,
-    private appConfigService: AppConfigService) {
+    private appConfigService: AppConfigService,
+    private decimalPipe: DecimalPipe) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
@@ -240,7 +242,20 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} uuid - Vital uuid
   * @return {any} - Obs value
   */
-  getObsValue(uuid: string): any {
+  getObsValue(uuid: string, key?: string): any {
+    if(key === 'bmi') {
+      const heightUUID = this.vitals?.find((v) => v.key === 'height_cm')?.uuid;
+      const weightUUID = this.vitals?.find((v) => v.key === 'weight_kg')?.uuid;
+      let height = null, weight = null;
+      if(heightUUID && weightUUID) {
+        height = this.vitalObs.find(e => e.concept.uuid === heightUUID)?.value;
+        weight = this.vitalObs.find(e => e.concept.uuid === weightUUID)?.value;
+      }
+      if(height && weight) {
+        return this.decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
+      }  //number : "1.2-2"
+      return null;
+    }
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
     return v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
   }
@@ -953,7 +968,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
         break;
       case visitTypes.VITALS:
         this.vitals.forEach((v: VitalModel) => {
-          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.uuid) ? this.getObsValue(v.uuid) : `No information`}`], margin: [0, 5, 0, 5] });
+          records.push({ text: [{ text: `${v.name} : `, bold: true }, `${this.getObsValue(v.uuid, v.key) ? this.getObsValue(v.uuid, v.key) : `No information`}`], margin: [0, 5, 0, 5] });
         });
         break;
       
