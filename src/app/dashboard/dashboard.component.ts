@@ -210,7 +210,7 @@ export class DashboardComponent implements OnInit {
    * @return {void}
    */
   getCompletedVisits(page: number = 1) {
-    this.visitService.getCompletedVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.completedVisitsCount = res.totalCount;
         this.completedRecordsFetched += this.offset;
