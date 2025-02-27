@@ -1,22 +1,26 @@
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-// import { environment } from "src/environments/environment";
+import { Inject, Injectable } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
 })
 export class MindmapService {
-  // private baseURL = environment.mindmapURL;
-
-  constructor(private http: HttpClient) { }
+  private mindmapURL;
+ 
+  constructor(
+    private http: HttpClient,
+    @Inject('environment') environment
+  ) {
+    this.mindmapURL = environment.mindmapURL;
+  }
 
   /**
   * Get mindmap keys
   * @return {Observable<any>}
   */
-  getMindmapKey(baseURL: string): Observable<any> {
-    const url = `${baseURL}/mindmap`;
+  getMindmapKey(): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap`;
     return this.http.get(url);
   }
 
@@ -25,8 +29,8 @@ export class MindmapService {
   * @param {any} value - Payload for post mindmap
   * @return {Observable<any>}
   */
-  postMindmap(baseURL: string, value): Observable<any> {
-    const url = `${baseURL}/mindmap/upload`;
+  postMindmap(value): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/upload`;
     return this.http.post(url, value);
   }
 
@@ -35,8 +39,8 @@ export class MindmapService {
   * @param {string} key - Mindmap key
   * @return {Observable<any>}
   */
-  detailsMindmap(baseURL: string, key): Observable<any> {
-    const url = `${baseURL}/mindmap/details/${key}`;
+  detailsMindmap(key): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/details/${key}`;
     return this.http.get(url);
   }
 
@@ -45,8 +49,8 @@ export class MindmapService {
   * @param {any} payload - Payload for mindmap key to add/update
   * @return {Observable<any>}
   */
-  addUpdateLicenseKey(baseURL: string, payload): Observable<any> {
-    const url = `${baseURL}/mindmap/addUpdatekey`;
+  addUpdateLicenseKey(payload): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/addUpdatekey`;
     return this.http.post(url, payload);
   }
 
@@ -57,8 +61,8 @@ export class MindmapService {
   * @param {string} value - Image base64
   * @return {Observable<any>}
   */
-  updateImage(baseURL: string, key, imageName, value): Observable<any> {
-    const url = `${baseURL}/mindmap/${key}/${imageName}`;
+  updateImage(key, imageName, value): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/${key}/${imageName}`;
     return this.http.put(url, value);
   }
 
@@ -68,8 +72,8 @@ export class MindmapService {
   * @param {any} data - Mindmap data
   * @return {Observable<any>}
   */
-  deleteMindmap(baseURL: string, key, data): Observable<any> {
-    const url = `${baseURL}/mindmap/delete/${key}`;
+  deleteMindmap(key, data): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/delete/${key}`;
     return this.http.post(url, data);
   }
 
@@ -78,8 +82,8 @@ export class MindmapService {
   * @param {any} data - Mindmap data
   * @return {Observable<any>}
   */
-  toggleMindmapStatus(baseURL: string, data: any): Observable<any> {
-    const url = `${baseURL}/mindmap/toggleStatus`;
+  toggleMindmapStatus(data: any): Observable<any> {
+    const url = `${this.mindmapURL}/mindmap/toggleStatus`;
     return this.http.post(url, data);
   }
 
@@ -89,8 +93,8 @@ export class MindmapService {
   * @param {any} payload - Notifaication message
   * @return {Observable<any>}
   */
-  notifyApp(baseURL: string, hwUuid: any, payload: any) : Observable<any>{
-    return this.http.post(`${baseURL}/mindmap/notify-app/${hwUuid}`, payload)
+  notifyApp(hwUuid: any, payload: any) : Observable<any>{
+    return this.http.post(`${this.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
   }
 
 
@@ -98,7 +102,7 @@ export class MindmapService {
   * Send notification to health worker for available prescription
   * @returns {void}
   */
-  notifyHwForRescheduleAppointment(baseURL: string, appointment): void {
+  notifyHwForRescheduleAppointment(appointment): void {
     const hwUuid = appointment?.hwUUID;
     const openMRSID = appointment?.openMrsId;
     const payload = {
@@ -113,6 +117,6 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    this.notifyApp(baseURL, hwUuid, payload).subscribe();
+    this.notifyApp(hwUuid, payload).subscribe();
   }
 }

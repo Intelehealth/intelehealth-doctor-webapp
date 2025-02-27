@@ -245,7 +245,9 @@ export interface AppointmentModel {
   inProgress_visit_type?: any,
   priority_visit_type?: any,
   uuid: string,
-  TMH_patient_id?: any
+  TMH_patient_id?: any,
+  location: string,
+  age: string
 }
 
 export interface CustomVisitModel {

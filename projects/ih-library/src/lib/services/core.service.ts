@@ -1,7 +1,5 @@
-import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { tr } from 'date-fns/locale';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { RescheduleAppointmentConfirmComponent } from '../modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
 import { CancelAppointmentConfirmComponent } from '../modal-components/cancel-appointment-confirm/cancel-appointment-confirm.component';
@@ -19,8 +17,7 @@ export class CoreService {
   * @param {any} data - Dialog data
   * @return {Observable<any>} - Dialog result
   */
-  openConfirmCancelAppointmentModal(mindmapURL:string, data: any): Observable<any> {
-    data["mindmapURL"] = mindmapURL
+  openConfirmCancelAppointmentModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(CancelAppointmentConfirmComponent, { panelClass: "modal-md", data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
@@ -30,8 +27,7 @@ export class CoreService {
   * @param {any} data - Dialog data
   * @return {Observable<any>} - Dialog result
   */
-  openRescheduleAppointmentModal(mindmapURL:string, data: any): Observable<any> {
-    data["mindmapURL"] = mindmapURL
+  openRescheduleAppointmentModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(RescheduleAppointmentComponent, { panelClass: "modal-md", data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }

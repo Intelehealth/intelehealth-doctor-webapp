@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild, Input, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Input, SimpleChanges, ChangeDetectionStrategy, Inject, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../../model/model';
+import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel, PatientVisitSummaryConfigModel } from '../../model/model';
 import { AppointmentService } from '../../services/appointment.service';
 import { VisitService } from '../../services/visit.service';
 import moment from 'moment';
@@ -11,15 +11,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, checkIfDateOldThanOneDay } from '../../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from '../../config/constant';
 import { MindmapService } from '../../services/mindmap.service';
+import { AppConfigService } from '../../services/app-config.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { DomSanitizer } from '@angular/platform-browser';
 import { formatDate } from '@angular/common';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'lib-table-grid',
   templateUrl: './table-grid.component.html',
-  styleUrls: ['./table-grid.component.scss']
+  styleUrls: ['./table-grid.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableGridComponent implements OnInit {
   
@@ -48,8 +51,11 @@ export class TableGridComponent implements OnInit {
   followUpVisits: CustomVisitModel[] = [];
 
   specialization: string = '';
+  @Output() visitsCountDate = new EventEmitter<any>();
   visitsLengthCount: number = 0;
   isFilterApplied = false;
+  pvs: PatientVisitSummaryConfigModel;
+  baseURL: any;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -62,10 +68,13 @@ export class TableGridComponent implements OnInit {
     private toastr: ToastrService,
     private translateService: TranslateService,
     private mindmapService: MindmapService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private appConfigService: AppConfigService,
+    private rolesService: NgxRolesService,
+    @Inject('environment') environment
   ) { 
-      this.filteredDateAndRangeForm = this.createFilteredDateRangeForm();
-      this.displayedColumns = this.displayedColumns.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+    this.baseURL = environment.baseURL;
+    this.filteredDateAndRangeForm = this.createFilteredDateRangeForm();
   }
 
   /**
@@ -81,6 +90,28 @@ export class TableGridComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
+
+    this.appConfigService.load().then(() => {
+    this.displayedColumns = this.displayedColumns.filter(col=>(col!=='age' || this.checkPatientRegField('Age')));
+      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; })=>e.is_enabled).map((e: { name: any; })=>e.name));
+      });
+      this.pvs = { ...this.appConfigService.patient_visit_summary }; 
+      this.pvs.appointment_button = this.pvs.appointment_button;
+      this.displayedColumns = this.displayedColumns.filter(col=> {
+        if(col === 'drName' && !this.isMCCUser) return false;
+        if(col === 'age') return this.checkPatientRegField('Age');
+        return true;
+      });
+
+      if(!this.pvs.awaiting_visits_patient_type_demarcation){
+        this.displayedColumns = this.displayedColumns.filter(col=>(col!=='patient_type'));
+      }
+    }).catch((error) => {
+      console.error('Error loading app config', error);
+    });
+
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
@@ -120,49 +151,6 @@ export class TableGridComponent implements OnInit {
       );
     }
   }
-
-  /**
-   * Get the patient type style
-   * @param type 
-   */
-
-  getPatientTypeStyle(type: string): { color: string; backgroundColor: string } {
-    const typeConfig = this.pluginConfigObs.patientType.find((t: any) => t.key === type);
-    return typeConfig
-      ? typeConfig.style
-      : { color: "#000", backgroundColor: "#ccc" }; // Default fallback styling
-  }
-
-  /**
-   * Get the patient type either new or old 
-   * @param type 
-   */
-  getPatientTypeLabel(type: string): string {
-    const typeConfig = this.pluginConfigObs.patientType.find((t: any) => t.key === type);
-    return typeConfig ? typeConfig.label : "Unknown"; // Default fallback label
-  }
-
-  getVisitTypeStyle(type: string): { color: string; backgroundColor: string } {
-    const visitType = this.pluginConfigObs.visitType.find((v: any) => v.type === type);
-    return visitType?.[type]?.style || { color: "#000", backgroundColor: "#ccc" }; // Default style
-  }
-
-  getVisitTypeLabel(type: string): string {
-    const visitType = this.pluginConfigObs.visitType.find((v: any) => v.type === type);
-    return visitType?.[type]?.label || "Unknown"; // Default label
-  }
-
-  getVisitTypeIcon(type: string): string {
-    const visitType = this.pluginConfigObs.visitType.find((v: any) => v.type === type);
-    return visitType?.[type]?.style?.icon || ""; // Default empty icon
-  }
-
-  formatVisitDate(date: string): string {
-    return date ? formatDate(date, 'dd MMM, yyyy', 'en-US') : '';
-  }
-
-
- 
 
   /**
   * Retreive the chief complaints for the visit
@@ -225,7 +213,7 @@ export class TableGridComponent implements OnInit {
     } else if(appointment.visitStatus == 'Visit In Progress') {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
-      this.coreService.openRescheduleAppointmentModal(this.pluginConfigObs.mindmapURL, appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
         if (res) {
           let newSlot = res;
           this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: boolean) => {
@@ -233,10 +221,10 @@ export class TableGridComponent implements OnInit {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
-              this.appointmentService.rescheduleAppointment(this.pluginConfigObs.mindmapURL, appointment).subscribe((res: ApiResponseModel) => {
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
                 const message = res.message;
                 if (res.status) {
-                  this.mindmapService.notifyHwForRescheduleAppointment(this.pluginConfigObs.mindmapURL, appointment)
+                  this.mindmapService.notifyHwForRescheduleAppointment(appointment);
                   this.getAppointments();
                   this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
@@ -260,7 +248,7 @@ export class TableGridComponent implements OnInit {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
       return;
     }
-    this.coreService.openConfirmCancelAppointmentModal(this.pluginConfigObs?.mindmapURL, appointment).subscribe((res: boolean) => {
+    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
         this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
         this.getAppointments();
@@ -477,9 +465,10 @@ export class TableGridComponent implements OnInit {
   */
   getAppointments() {
     this.appointments = [];
-    this.appointmentService.getUserSlots(this.pluginConfigObs?.mindmapURL, getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.isMCCUser ? this.specialization : null)
       .subscribe((res: ApiResponseModel) => {        
-        this.visitsLengthCount = res.data?.length
+        this.visitsLengthCount = res.data?.length;
+        this.emitVisitsCount(this.visitsLengthCount);
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: AppointmentModel) => {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
@@ -487,8 +476,10 @@ export class TableGridComponent implements OnInit {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
               appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
               appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person);
-              appointment.TMH_patient_id = this.getAttributeData(appointment.visit, "TMH Case Number");
+              appointment.TMH_patient_id = this.getAttributeData(appointment.visit, "TMH Case Number")?.value;
               appointment.uuid = appointment.visitUuid;
+              appointment.location = appointment?.visit?.location?.name;
+              appointment.age = appointment?.patientAge + ' ' + this.translateService.instant('y');
               this.appointments.push(appointment);
             }
           }
@@ -584,18 +575,19 @@ export class TableGridComponent implements OnInit {
   getAwaitingVisits(page: number = 1) {
     if(page == 1) {
       this.awaitingVisits = [];
-      // this.awatingRecordsFetched = 0;
     }    
-    this.visitService.getAwaitingVisits(this.pluginConfigObs?.mindmapURL, this.specialization, page).subscribe((res: ApiResponseModel) => {
+    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
-        this.visitsLengthCount = res.totalCount
-        // this.awatingRecordsFetched += this.offset;
+        this.visitsLengthCount = res.totalCount;
+        this.emitVisitsCount(this.visitsLengthCount);
         for (let i = 0; i < res.data.length; i++) {
           let visit = res.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           visit.patient_type = this.getDemarcation(visit?.encounters);
+          visit.location = visit?.location?.name;
+          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
           this.awaitingVisits.push(visit);
         }
         this.dataSource.data = [...this.awaitingVisits];
@@ -618,20 +610,20 @@ export class TableGridComponent implements OnInit {
   getInProgressVisits(page: number = 1) {
     if(page == 1) {
       this.inProgressVisits = [];
-      // this.inprogressRecordsFetched = 0;
     }
-    this.visitService.getInProgressVisits(this.pluginConfigObs?.mindmapURL, this.specialization, page).subscribe((res: ApiResponseModel) => {
+    this.visitService.getInProgressVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.visitsLengthCount = res.totalCount;
-        // this.inprogressVisitsCount = iv.totalCount;
-        // this.inprogressRecordsFetched += this.offset;
+        this.emitVisitsCount(this.visitsLengthCount);
         for (let i = 0; i < res.data.length; i++) {
           let visit = res.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number");
+          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
+          visit.location = visit?.location?.name;
+          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
           this.inProgressVisits.push(visit);
         }
         this.inProgressVisits.sort((a, b) => {
@@ -688,18 +680,18 @@ export class TableGridComponent implements OnInit {
   getPriorityVisits(page: number = 1) {
     if(page == 1) {
       this.priorityVisits = [];
-      // this.priorityRecordsFetched = 0;
     }
-    this.visitService.getPriorityVisits(this.pluginConfigObs?.mindmapURL, this.specialization, page).subscribe((res: ApiResponseModel) => {
+    this.visitService.getPriorityVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.visitsLengthCount = res.totalCount;
-        // this.priorityVisitsCount = res.totalCount;
-        // this.priorityRecordsFetched += this.offset;
+        this.emitVisitsCount(this.visitsLengthCount);
         for (let i = 0; i < res.data.length; i++) {
           let visit = res.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
+          visit.location = visit?.location?.name;
+          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
           this.priorityVisits.push(visit);
         }
         this.dataSource.data = [...this.priorityVisits];
@@ -719,18 +711,19 @@ export class TableGridComponent implements OnInit {
    * @return {void}
    */
   getCompletedVisits(page: number = 1) {
-    this.visitService.getEndedVisits(this.pluginConfigObs?.mindmapURL, this.specialization, page).subscribe((res: ApiResponseModel) => {
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.visitsLengthCount = res.totalCount;
-        // this.completedVisitsCount = res.totalCount;
-        // this.completedRecordsFetched += this.offset;
+        this.emitVisitsCount(this.visitsLengthCount);
         for (let i = 0; i < res.data.length; i++) {
           let visit = res.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           visit.completed = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
-          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number");
+          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
+          visit.location = visit?.location?.name;
+          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
           this.completedVisits.push(visit);
         }
         this.dataSource.data = [...this.completedVisits];
@@ -745,29 +738,29 @@ export class TableGridComponent implements OnInit {
     });
   }
 
-    /**
+  /**
   * Get follow-up visits for a logged-in doctor
   * @return {void}
   */
   getFollowUpVisit(page: number = 1) {
-    this.visitService.getFollowUpVisits(this.pluginConfigObs?.mindmapURL, this.specialization).subscribe({
+    this.visitService.getFollowUpVisits(this.specialization).subscribe({
       next: (res: ApiResponseModel) => {
         if (res.success) {
-          // this.followUpVisitsCount = 0;
-          // this.completedRecordsFetched += this.offset;
           for (let i = 0; i < res.data.length; i++) {
             let visit = res.data[i];
             if (visit?.encounters?.length) {
-              // this.followUpVisitsCount += 1;
               this.visitsLengthCount += 1;
               visit.cheif_complaint = this.getCheifComplaint(visit);
               visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
               visit.person.age = this.calculateAge(visit.person.birthdate);
               visit.completed = this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
               visit.followUp = this.processFollowUpDate(this.getEncounterObs(visit.encounters, visitTypes.VISIT_NOTE, 163345/*Follow-up*/)?.value_text);
+              visit.location = visit?.location?.name;
+              visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
               this.followUpVisits.push(visit);
             }
           }
+          this.emitVisitsCount(this.visitsLengthCount);
           this.dataSource.data = [...this.followUpVisits];
           if (page == 1) {
             this.dataSource.paginator = this.tempPaginator;
@@ -856,6 +849,18 @@ export class TableGridComponent implements OnInit {
     event.stopPropagation(); // Prevent row navigation
     const whatsappLink = `https://wa.me/${telephone}`;
     window.open(whatsappLink, '_blank', 'noopener,noreferrer');
+  }
+
+  /**
+   * Emits the visits count data with the given table tag name and count
+   * @param {number} visitsCount - The total visits count for the specific table
+   */
+  emitVisitsCount(visitsCount: number): void {
+    const visitsCountData = {
+      tableTagName: this.pluginConfigObs.pluginConfigObsFlag,
+      visitsCount: visitsCount
+    };
+    this.visitsCountDate.emit(visitsCountData);
   }
 }
 

@@ -1,31 +1,37 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
-// import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
-
-  // private baseURL = environment.baseURL; //'https://dev.intelehealth.org/openmrs/ws/rest/v1'
-  // private mindmapURL = environment.mindmapURL;
-  // private baseURLAbha = environment.abhaURL; 
   public isVisitSummaryShow: boolean = false;
   public isHelpButtonShow: boolean = false;
   public triggerAction: Subject<any> = new Subject();
   public chatVisitId: string;
 
-  constructor(private http: HttpClient) { }
+  private baseURL;
+  private mindmapURL;
+  private baseURLAbha;
+
+  constructor(
+    private http: HttpClient,
+    @Inject('environment') environment
+  ) {
+    this.baseURL = environment.baseURL;
+    this.mindmapURL = environment.mindmapURL;
+    this.baseURLAbha = environment.baseURLAbha;
+  }
 
   /**
   * Get visit
   * @param {string} uuid - Visit uuid
   * @return {Observable<any>}
   */
-  getVisit(baseURL: string, uuid): Observable<any> {
+  getVisit(uuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
+    const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
     return this.http.get(url);
   }
 
@@ -34,8 +40,8 @@ export class VisitService {
   * @param {string} id - Patient uuid
   * @return {Observable<any>}
   */
-  recentVisits(baseURL: string, id): Observable<any> {
-    const url = `${baseURL}/visit?patient=${id}&v=full`;
+  recentVisits(id): Observable<any> {
+    const url = `${this.baseURL}/visit?patient=${id}&v=full`;
     return this.http.get(url);
   }
 
@@ -46,12 +52,12 @@ export class VisitService {
   * @return {Observable<any>}
   */
   fetchVisitDetails(
-    baseURL: string, 
+    
     uuid,
     v = "custom:(location:(display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${baseURL}/visit/${uuid}?v=${v}`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -63,14 +69,14 @@ export class VisitService {
   */
   fetchVisitDetails2(
     externalPrescriptionCred: string,
-    baseURL: string, 
+    
     uuid: string,
     v: string = "custom:(location:(display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + externalPrescriptionCred);
-    const url = `${baseURL}/visit/${uuid}?v=${v}`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url, { headers });
   }
 
@@ -80,10 +86,10 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  fetchVisitPatient(externalPrescriptionCred: string, baseURL: string, uuid: string, v: string = "custom:(uuid,patient:(attributes,identifiers:(identifier,identifierType:(name,uuid,display))))"): Observable<any> {
+  fetchVisitPatient(externalPrescriptionCred: string, uuid: string, v: string = "custom:(uuid,patient:(attributes,identifiers:(identifier,identifierType:(name,uuid,display))))"): Observable<any> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + externalPrescriptionCred);
-    const url = `${baseURL}/visit/${uuid}?v=${v}`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url, { headers });
   }
 
@@ -94,12 +100,12 @@ export class VisitService {
   * @return {Observable<any>}
   */
   getVisitDetails(
-    baseURL: string, 
+    
     uuid: string,
     v: string = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,person:(uuid,display,gender,age),attributes))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),person:(display,gender,age)))"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${baseURL}/visit/${uuid}?v=${v}`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -108,8 +114,8 @@ export class VisitService {
   * @param {string} visitId - Visit uuid
   * @return {Observable<any>}
   */
-  getAttribute(baseURL: string, visitId): Observable<any> {
-    const url = `${baseURL}/visit/${visitId}/attribute`;
+  getAttribute(visitId): Observable<any> {
+    const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.get(url);
   }
 
@@ -119,8 +125,8 @@ export class VisitService {
   * @param {any} json - Attribute payload
   * @return {Observable<any>}
   */
-  postAttribute(baseURL: string, visitId, json): Observable<any> {
-    const url = `${baseURL}/visit/${visitId}/attribute`;
+  postAttribute(visitId, json): Observable<any> {
+    const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
 
@@ -131,8 +137,8 @@ export class VisitService {
   * @param {any} json - Attribute payload
   * @return {Observable<any>}
   */
-  updateAttribute(baseURL: string, visitId, attributeUuid, json): Observable<any> {
-    const url = `${baseURL}/visit/${visitId}/attribute/${attributeUuid}`;
+  updateAttribute(visitId, attributeUuid, json): Observable<any> {
+    const url = `${this.baseURL}/visit/${visitId}/attribute/${attributeUuid}`;
     return this.http.post(url, json);
   }
 
@@ -142,8 +148,8 @@ export class VisitService {
   * @param {string} uuid - Visit attribute uuid
   * @return {Observable<any>}
   */
-  deleteAttribute(baseURL: string, visitId, uuid): Observable<any> {
-    const url = `${baseURL}/visit/${visitId}/attribute/${uuid}`;
+  deleteAttribute(visitId, uuid): Observable<any> {
+    const url = `${this.baseURL}/visit/${visitId}/attribute/${uuid}`;
     return this.http.delete(url);
   }
 
@@ -153,9 +159,9 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  patientInfo(baseURL: string, id, v = 'custom:(uuid,attributes,identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))'): Observable<any> {
+  patientInfo(id, v = 'custom:(uuid,attributes,identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))'): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${baseURL}/patient/${id}?v=${v}`;
+    const url = `${this.baseURL}/patient/${id}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -203,8 +209,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getAwaitingVisits(mindmapURL: string, speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${mindmapURL}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}`);
+  getAwaitingVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.mindmapURL}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}`);
   }
 
   /**
@@ -213,8 +219,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getPriorityVisits(mindmapURL: string, speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${mindmapURL}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}`);
+  getPriorityVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.mindmapURL}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}`);
   }
 
   /**
@@ -223,8 +229,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getInProgressVisits(mindmapURL: string, speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${mindmapURL}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}`);
+  getInProgressVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.mindmapURL}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}`);
   }
 
   /**
@@ -233,8 +239,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getCompletedVisits(mindmapURL: string, speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
-    return this.http.get(`${mindmapURL}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
+  getCompletedVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+    return this.http.get(`${this.mindmapURL}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
  /**
@@ -243,8 +249,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
- getFollowUpVisits(mindmapURL: string, speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
-  return this.http.get(`${mindmapURL}/openmrs/getFollowUpVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
+ getFollowUpVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+  return this.http.get(`${this.mindmapURL}/openmrs/getFollowUpVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
  }
 
   /**
@@ -253,8 +259,8 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getEndedVisits(mindmapURL: string, speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${mindmapURL}/openmrs/getEndedVisits?speciality=${speciality}&page=${page}`);
+  getEndedVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.mindmapURL}/openmrs/getEndedVisits?speciality=${speciality}&page=${page}`);
   }
 
   /**
@@ -262,8 +268,8 @@ export class VisitService {
    * @param {any} json - Attribute payload
    * @return {Observable<any>}
    */
-  postVisitToABDM(baseURLAbha: string, json: any): Observable<any> {
-    const url = `${baseURLAbha}/abha/post-care-context`
+  postVisitToABDM(json: any): Observable<any> {
+    const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
   }
 }

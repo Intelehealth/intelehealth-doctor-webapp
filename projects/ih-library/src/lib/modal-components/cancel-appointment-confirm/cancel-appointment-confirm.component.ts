@@ -30,7 +30,7 @@ export class CancelAppointmentConfirmComponent {
       visitUuid: this.data.visitUuid,
       hwUUID: this.userId,
     };
-    this.appointmentService.cancelAppointment(this.data?.mindmapURL, payload).subscribe((res: ApiResponseModel) => {
+    this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
         if (res) {
           if (res.status) {
             this.close(true);

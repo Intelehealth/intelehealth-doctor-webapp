@@ -87,7 +87,7 @@ export class RescheduleAppointmentComponent implements OnInit {
       afternoon: [],
       evening: []
     };
-    this.appointmentService.getAppointmentSlots(this.data?.mindmapURL, moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: ApiResponseModel) => {
+    this.appointmentService.getAppointmentSlots(moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: ApiResponseModel) => {
       this.slots = res.dates;
       this.slots.forEach((slot: SlotModel) => {
         if (moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))) {
