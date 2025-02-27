@@ -144,7 +144,7 @@ export class WebrtcService {
    */
   attachLocalVideo() {
     const camTrack = this.room.localParticipant.getTrackPublication(Track.Source.Camera);
-    console.log("camTrack", camTrack)
+
     if (camTrack?.isSubscribed) {
       const videoElement = camTrack.videoTrack?.attach();
       const localContainer: any = this.localContainer;
@@ -163,7 +163,6 @@ export class WebrtcService {
     if (participant?.identity) {
       this.remoteUser = participant;
     }
-    console.log("track.kind", track.kind)
 
     if (track.kind === Track.Kind.Audio) {
       this.remoteContainer.appendChild(element);
