@@ -62,19 +62,11 @@ export class WebrtcService {
   }
 
   startRecording(name: string, roomId: string, nurseName: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/startRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
-      .pipe(map((res: any) => {
-        console.log("Start Recording----", res)
-        return res;
-      }));
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/startRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`);
   }
 
   stopRecording(name: string, roomId: string, nurseName: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
-      .pipe(map((res: any) => {
-        console.log("Stop Recording----", res)
-        return res;
-      }));
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`);
   }
 
   async createRoomAndConnectCall({
@@ -118,6 +110,14 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
       .on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakerChange)
       .on(RoomEvent.Connected, handleConnect)
+      .on(RoomEvent.Connected, async () => {
+        try {
+          await this.room.localParticipant.enableCameraAndMicrophone()
+        } catch (error) {
+          console.log("error", error)
+          location.reload();
+        }
+      })
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
@@ -144,7 +144,7 @@ export class WebrtcService {
    */
   attachLocalVideo() {
     const camTrack = this.room.localParticipant.getTrackPublication(Track.Source.Camera);
-
+    console.log("camTrack", camTrack)
     if (camTrack?.isSubscribed) {
       const videoElement = camTrack.videoTrack?.attach();
       const localContainer: any = this.localContainer;
@@ -163,6 +163,7 @@ export class WebrtcService {
     if (participant?.identity) {
       this.remoteUser = participant;
     }
+    console.log("track.kind", track.kind)
 
     if (track.kind === Track.Kind.Audio) {
       this.remoteContainer.appendChild(element);
