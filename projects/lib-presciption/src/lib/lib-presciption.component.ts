@@ -11,11 +11,11 @@ import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataMod
 import { checkIsEnabled, VISIT_SECTIONS } from './utils/visit-sections';
 import { TranslateService,TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
-import { calculateBMI, getFieldValueByLanguage, isFeaturePresent } from './utils/utility-functions';
+import { calculateBMI, getFieldValueByLanguage, isFeaturePresent,obsParse } from './utils/utility-functions';
 import { conceptIds, doctorDetails, visitTypes } from './config/constant';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as pdfMake from 'pdfmake/build/pdfmake';
-import { precription,logo } from "./utils/base64"
+import { precription } from "./utils/base64"
 import { Observable, Subscription } from 'rxjs';
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 import { EnvConfigService } from './services/env.service';
@@ -70,6 +70,8 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
   followUp: FollowUpDataModel;
   consultedDoctor: any;
   followUpInstructions: ObsModel[] = [];
+  dignosisSecondary: any = {};
+  referralSecondary: string = "";
 
   conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
   conceptNote = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -79,6 +81,7 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
   conceptReferral = '605b6f15-8f7a-4c45-b06d-14165f6974be';
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
   conceptFollowUpInstruction = conceptIds.conceptFollowUpInstruction;
+  conceptDiscussionSummary: 'b673cd54-a01d-4d8a-9c07-8fb19bf4982c'
 
   signaturePicUrl: string = null;
   signatureFile = null;
@@ -96,6 +99,7 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
   eventsSubscription: any;
   prodBoolean: boolean
   discussionSummary: string = "";
+  checkUpReasonData: any = []
  
   constructor(
      @Inject(MAT_DIALOG_DATA) public data:any,
@@ -145,19 +149,18 @@ ngOnInit(): void {
     console.error("Failed to load AppConfigService:", error);
   });
 
-  
       this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
 
-      // Object.assign(pdfMake, {
-      //   fonts: {
-      //     DmSans: {
-      //       normal: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Regular.ttf`,
-      //       bold: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Bold.ttf`,
-      //       italics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Italic.ttf`,
-      //       bolditalics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
-      //     }
-      //   }
-      // });
+      Object.assign(pdfMake, {
+        fonts: {
+          DmSans: {
+            normal: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Regular.ttf`,
+            bold: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Bold.ttf`,
+            italics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Italic.ttf`,
+            bolditalics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
+          }
+        }
+      });
 
       // pdfMake.fonts = {
       //   DmSans: {
@@ -285,22 +288,25 @@ ngOnInit(): void {
    * @returns {void}
    */
    checkIfDiagnosisPresent() {
-     this.existingDiagnosis = [];
-     this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
-       response.results.forEach((obs: ObsModel) => {
-         if (obs.encounter.visit.uuid === this.visit.uuid) {
-           this.existingDiagnosis.push({
-             diagnosisName: obs.value.split(':')[0].trim(),
-             diagnosisType: obs.value.split(':')[1].split('&')[0]?.trim(),
-             diagnosisStatus: obs.value.split(':')[1].split('&')[1]?.trim(),
-             uuid: obs.uuid,
-             diagnosisTNMStaging: obs.value.split(':')[1]?.split('&')[2]?.trim() !== 'null' ? obs.value.split(':')[1]?.split('&')[2]?.trim() : null,
-           });
-         }
-       });
-     });
-   }
- 
+    this.existingDiagnosis = [];
+    this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
+        if (obs.encounter.visit.uuid === this.visit.uuid) {
+          if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
+            this.dignosisSecondary = obsParse(obs.value)
+          } else {
+            this.existingDiagnosis.push({
+              diagnosisName: obs.value.split(':')[0].trim(),
+              diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
+              diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
+              uuid: obs.uuid
+            });
+          }
+          
+        }
+      });
+    });
+  }
    /**
    * Get notes for the visit
    * @returns {void}
@@ -316,6 +322,20 @@ ngOnInit(): void {
      });
    }
  
+    /**
+  * Get discussion summary present
+  * @returns {void}
+  */
+  checkIfDiscussionSummaryPresent() {
+    this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
+        if (obs.encounter.visit.uuid === this.visit.uuid) {
+          this.discussionSummary = obs.value
+        }
+      });
+    });
+  }
+
    /**
    * Get medicines for the visit
    * @returns {void}
@@ -620,155 +640,125 @@ ngOnInit(): void {
    }
 
 
-// async toObjectUrl(url: string): Promise<string | null> {
-//     try {
-//         const response = await fetch(url, { mode: 'cors' });
-//         if (!response.ok) {
-//             throw new Error(`Failed to fetch image: ${response.statusText}`);
-//         }
-//         const blob = await response.blob();
-//         if (!blob.type.startsWith('image/')) {
-//             throw new Error('Fetched resource is not an image');
-//         }
-//         return new Promise((resolve, reject) => {
-//             const reader = new FileReader();
-//             reader.onloadend = () => resolve(reader.result as string);
-//             reader.onerror = () => reject(new Error('Failed to read image'));
-//             reader.readAsDataURL(blob);
-//         });
-//     } catch (error) {
-//         console.error('Error fetching or processing image:', error);
-//         return null;
-//     }
-// }
-
-
-
    /**
    * Get rows for make pdf doc defination for a given type
    * @param {string} type - row type
    * @return {any} - Rows
    */
    getRecords(type: string) {
-     const records = [];
-     switch (type) {
-       case 'diagnosis':
-         if (this.existingDiagnosis.length) {
-           this.existingDiagnosis.forEach(d => {
-             records.push([d.diagnosisName, (this.isFeatureAvailable('tnmStaging') ? d.diagnosisTNMStaging ?? '-' : []), d.diagnosisType, d.diagnosisStatus]);
-           });
-         } else {
-           records.push([{ text: 'No diagnosis added', colSpan: 3, alignment: 'center' }]);
-         }
-         break;
-       case 'medication':
-         if (this.medicines.length) {
-           this.medicines.forEach(m => {
-             records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
-           });
-         } else {
-           records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
-         }
-         break;
-       case 'additionalInstruction':
-         if (this.additionalInstructions.length) {
-           this.additionalInstructions.forEach(ai => {
-             records.push({ text: ai.value, margin: [0, 5, 0, 5] });
-           });
-         } else {
-           records.push([{ text: 'No additional instructions added'}]);
-         }
-         break;
-       case 'advice':
-         if (this.advices.length) {
-           this.advices.forEach(a => {
-             records.push({ text: a.value, margin: [0, 5, 0, 5] });
-           });
-         } else {
-           records.push([{ text: 'No advices added'}]);
-         }
-         break;
-       case 'test':
-         if (this.tests.length) {
-           this.tests.forEach(t => {
-             records.push({ text: t.value, margin: [0, 5, 0, 5] });
-           });
-         } else {
-           records.push([{ text: 'No tests added'}]);
-         }
-         break;
-       case 'referral':
-         const referralFacility = this.isFeatureAvailable('referralFacility', true)
-         const priorityOfReferral = this.isFeatureAvailable('priorityOfReferral', true)
-         let length = 2;
-         if (this.referrals.length) {
-           this.referrals.forEach(r => {
-             const referral = [r.speciality];
-             if(referralFacility) referral.push(r.facility)
-             if(priorityOfReferral) referral.push(r.priority)
-             referral.push(r.reason? r.reason : '-')
-             records.push(referral);
-             length = referral.length
-           });
-         } else {
-           if(referralFacility) length += 1;
-           if(priorityOfReferral) length += 1;
-           records.push([{ text: 'No referrals added', colSpan: length, alignment: 'center' }]);
-         }
-         break;
-       case 'followUp':
-           if (this.followUp) {
-             records.push([this.followUp.wantFollowUp, (this.isFeatureAvailable('followUpType') ? [this.followUp.followUpType ?? '-'] : []), this.followUp.followUpDate ? moment(this.followUp.followUpDate).format('DD MMM YYYY') : '-', 
-              this.followUp.followUpTime ?? '-', this.followUp.followUpReason ?? '-']);
-           } else {
-             records.push([{ text: 'No follow-up added', colSpan: this.isFeatureAvailable('followUpType') ? 5 : 4, alignment: 'center' }]);
-           }
-           break;
-       case 'cheifComplaint':
-        console.log("cheifComplaints",this.cheifComplaints)
-         if (this.cheifComplaints.length) {
-           this.cheifComplaints.forEach(cc => {
-             records.push({text: [{text: cc, bold: true}, ``], margin: [0, 5, 0, 5]});
-           });
-         }
-         break;
-       case visitTypes.VITALS:
-         this.vitals.forEach((v: VitalModel) => {
-           records.push({ text: [{ text: `${v.lang !== null ? this.getLanguageValue(v) : v.name } : `, bold: true }, `${this.getObsValue(v.uuid, v.key) ? this.getObsValue(v.uuid, v.key) : `No information`}`], margin: [0, 5, 0, 5] });        });
-         break;
-       case 'followUpInstructions':
-         if (this.followUpInstructions) {
-           this.followUpInstructions.forEach(t => {
-             records.push({ text: t.value, margin: [0, 5, 0, 5] });
-           });
-         } else {
-           records.push([{ text: 'No Follow Up Instructions added'}]);
-         }
-         break;
-     }
-     return records;
-   }
-   
+    const records = [];
+    switch (type) {
+      case 'diagnosis':
+        console.log("this.appConfigService.patient_visit_summary?.dp_dignosis_secondary dia",this.appConfigService.patient_visit_summary?.dp_dignosis_secondary)
+        if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
+          records.push([this.dignosisSecondary['diagnosis'],this.dignosisSecondary['type'],this.dignosisSecondary['tnm'],this.dignosisSecondary['otherStaging']]);
+          console.log("record diagnosis",this.dignosisSecondary['diagnosis'],this.dignosisSecondary['type'],this.dignosisSecondary['tnm'],this.dignosisSecondary['otherStaging'])
+        } else if (this.existingDiagnosis.length) {
+          this.existingDiagnosis.forEach(d => {
+            records.push([d.diagnosisName, d.diagnosisType, d.diagnosisStatus]);
+          });
+        } else {
+          records.push([{ text: 'No diagnosis added', colSpan: 3, alignment: 'center' }]);
+        }
+        break;
+      case 'medication':
+        if (this.medicines.length) {
+          this.medicines.forEach(m => {
+            records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
+          });
+        } else {
+          records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
+        }
+        break;
+      case 'additionalInstruction':
+        if (this.additionalInstructions.length) {
+          this.additionalInstructions.forEach(ai => {
+            records.push({ text: ai.value, margin: [0, 5, 0, 5] });
+          });
+        } else if(!this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
+          records.push([{ text: 'No additional instructions added'}]);
+        }
+        break;
+      case 'advice':
+        if (this.advices.length) {
+          this.advices.forEach(a => {
+            records.push({ text: a.value, margin: [0, 5, 0, 5] });
+          });
+        } else {
+          records.push([{ text: 'No advices added'}]);
+        }
+        break;
+      case 'test':
+        if (this.tests.length) {
+          this.tests.forEach(t => {
+            records.push({ text: t.value, margin: [0, 5, 0, 5] });
+          });
+        } else {
+          records.push([{ text: 'No tests added'}]);
+        }
+        break;
+      case 'referral':
+        const referralFacility = this.isFeatureAvailable('referralFacility', true)
+        const priorityOfReferral = this.isFeatureAvailable('priorityOfReferral', true)
+        let length = 2;
+        if(this.appConfigService.patient_visit_summary?.dp_referral_secondary && this.referralSecondary){
+          records.push([{ text: this.referralSecondary, colSpan: length}]);
+        } else if (this.referrals.length) {
+          this.referrals.forEach(r => {
+            const referral = [r.speciality];
+            if(referralFacility) referral.push(r.facility)
+            if(priorityOfReferral) referral.push(r.priority)
+            referral.push(r.reason? r.reason : '-')
+            records.push(referral);
+            length = referral.length
+          });
+        } else {
+          if(referralFacility) length += 1;
+          if(priorityOfReferral) length += 1;
+          records.push([{ text: 'No referrals added', colSpan: length, alignment: 'center' }]);
+        }
+        break;
+      case 'followUp':
+          if (this.followUp) {
+            records.push([this.followUp.wantFollowUp, (this.isFeatureAvailable('followUpType') ? [this.followUp.followUpType ?? '-'] : []), this.followUp.followUpDate ? moment(this.followUp.followUpDate).format('DD MMM YYYY') : '-', 
+             this.followUp.followUpTime ?? '-', this.followUp.followUpReason ?? '-']);
+          } else {
+            records.push([{ text: 'No follow-up added', colSpan: this.isFeatureAvailable('followUpType') ? 5 : 4, alignment: 'center' }]);
+          }
+          break;
+      case 'cheifComplaint':
+        if(this.appConfigService?.patient_visit_summary?.dp_dignosis_secondary && this.checkUpReasonData.length > 0){
+          this.checkUpReasonData[0].data.forEach((cc:any)=>{
+            records.push({text: [{text: cc.key, bold: true}, cc.value.changingThisBreaksApplicationSecurity], margin: [0, 5, 0, 5]});
+          });
+        } else if (this.cheifComplaints.length) {
+          this.cheifComplaints.forEach(cc => {
+            records.push({text: [{text: cc, bold: true}, ``], margin: [0, 5, 0, 5]});
+          });
+        }
+        break;
+      case visitTypes.VITALS:
+        this.vitals.forEach((v: VitalModel) => {
+          records.push({ text: [{ text: `${v.lang !== null ? this.getLanguageValue(v) : v.name } : `, bold: true }, `${this.getObsValue(v.uuid, v.key) ? this.getObsValue(v.uuid, v.key) : `No information`}`], margin: [0, 5, 0, 5] });        });
+        break;
+      case 'followUpInstructions':
+        if (this.followUpInstructions) {
+          this.followUpInstructions.forEach(t => {
+            records.push({ text: t.value, margin: [0, 5, 0, 5] });
+          });
+        } else {
+          records.push([{ text: 'No Follow Up Instructions added'}]);
+        }
+        break;
+    }
+    return records;
+  }
  
    /**
    * Get image from url as a base64
    * @param {string} url - Image url
    * @return {Promise} - Promise containing base64 image
    */
-  //  toObjectUrl(url: string) {
-  //    return fetch(url, { mode: 'cors' })
-  //        .then((response) => {
-  //          return response.blob();
-  //        })
-  //        .then(blob => {
-  //          return new Promise((resolve, _) => {
-  //              if (!blob) { resolve(''); }
-  //              const reader = new FileReader();
-  //              reader.onloadend = () => resolve(reader.result);
-  //              reader.readAsDataURL(blob);
-  //          });
-  //        });
-  //  }
 
   async toObjectUrl(url: string): Promise<string | null> {
     try {
@@ -791,84 +781,6 @@ ngOnInit(): void {
       return null;
     }
   }
-  // toObjectUrl(url: string) {
-  //   console.log("URL on object:", url);
-  
-  //   if (!url || typeof url !== 'string' || !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(url)) {
-  //     console.error("Invalid URL:", url);
-  //     return Promise.resolve('');
-  //   }
-  
-  //   return fetch(url, { mode: 'cors' })
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error(`Image not found: ${url}`);
-  //       }
-  //       return response.blob();
-  //     })
-  //     .then(blob => {
-  //       return new Promise((resolve) => {
-  //         if (!blob || blob.size === 0) {
-  //           resolve('');
-  //         }
-  //         const reader = new FileReader();
-  //         reader.onloadend = () => resolve(reader.result);
-  //         reader.readAsDataURL(blob);
-  //       });
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching image:', error);
-  //       return ''; // Return empty string if image is not found
-  //     });
-  // }
-  
-
-  // toObjectUrl(url: string): Promise<string> {
-  //   console.log("Fetching URL:", url);
-
-  //   return fetch(url)
-  //     .then(response => {
-  //         console.log("Response Status:", response.status, response.statusText);
-  //         console.log("Response Headers:", response.headers);
-
-  //         if (!response.ok) {
-  //             throw new Error(`Failed to fetch: ${response.statusText} (Status: ${response.status})`);
-  //         }
-  //         return response.blob();
-  //     })
-  //     .then(blob => {
-  //         console.log("Blob Type:", blob.type, "Blob Size:", blob.size);
-
-  //         if (blob.size < 100) {
-  //             throw new Error("Invalid image blob received.");
-  //         }
-
-  //         return new Promise<string>((resolve, reject) => {
-  //             const reader = new FileReader();
-
-  //             reader.onloadend = () => {
-  //                 let base64Data = reader.result as string;
-
-  //                 // Ensure the correct MIME type for `pdfmake`
-  //                 if (base64Data.startsWith("data:application/octet-stream")) {
-  //                     base64Data = base64Data.replace("data:application/octet-stream", "data:image/jpeg");
-  //                 }
-
-  //                 console.log("Final Base64 Data:", base64Data.substring(0, 100) + "...");
-  //                 resolve(base64Data);
-  //             };
-
-  //             reader.onerror = () => reject(new Error("Error reading blob"));
-
-  //             reader.readAsDataURL(blob);
-  //         });
-  //     })
-  //     .catch(error => {
-  //         console.error("Error in toObjectUrl:", error);
-  //         return ''; // Returning empty string on error
-  //     });
-  // }
-
   
  
    ngOnDestroy() {
@@ -1354,7 +1266,7 @@ ngOnInit(): void {
     try {
       const docDefinition = await this.generatePdf(); // Get the PDF content
       console.log('Inside the download pdf',docDefinition);
-      pdfMake.createPdf(docDefinition).download('example.pdf'); // Trigger download
+      pdfMake.createPdf(docDefinition).download('prescription.pdf'); // Trigger download
     } catch (error) {
       console.error('Error generating or downloading PDF:', error);
     }
@@ -1600,7 +1512,7 @@ ngOnInit(): void {
                 '',
                 ''
               ],
-              this.getDiagnosis(),
+              // ...this.getDiagnosis(),
               ...this.getDiscussionSummary(),
               [
                 {
@@ -1748,7 +1660,13 @@ ngOnInit(): void {
       //   font: 'DmSans'
       // }
     };
+  
     pdfObj.content[0].table.body = pdfObj.content[0].table.body.filter((section:any)=>{
+
+      if (!section[0] || typeof section[0] !== 'object' || !section[0].sectionName) {
+        return true; // Keep rows that don't have a sectionName
+      }
+
       if(section[0].sectionName === 'vitals' && (!this.hasVitalsEnabled || !vitalsConfig?.is_enabled )) return false;
       if(section[0].sectionName === 'cheifComplaint' && !checkUpReasonConfig?.is_enabled) return false;
       if(section[0].sectionName === 'followUpInstructions' && !this.isFeatureAvailable('follow-up-instruction')) return false;
@@ -1793,7 +1711,20 @@ ngOnInit(): void {
     ]
   }
 
-  getDiagnosis(){
+  getDiagnosis() {
+    // Return an empty array if the condition is not met
+    console.log("this.appConfigService.patient_visit_summary?.dp_dignosis_secondary",this.appConfigService.patient_visit_summary?.dp_dignosis_secondary)
+    console.log("this.getRecords('diagnosis')",this.getRecords('diagnosis'))
+    if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) return [];
+    console.log(" ...this.getRecords", this.getRecords('diagnosis'))
+    console.log(" ...this.getRecords...",  ...this.getRecords('diagnosis').map(row => {
+      // Ensure each row has the correct number of cells
+      const paddedRow = [...row];
+      while (paddedRow.length < (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary ? 4 : 3)) {
+        paddedRow.push({ text: '' }); // Add empty cells if needed
+      }
+      return paddedRow;
+    }))
     return [
       {
         colSpan: 4,
@@ -1801,7 +1732,10 @@ ngOnInit(): void {
           widths: [30, '*'],
           headerRows: 1,
           body: [
-            [ {image: 'diagnosis', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Diagnosis Details', style: 'sectionheader', border: [false, false, false, true] }],
+            [
+              { image: 'diagnosis', width: 25, height: 25, border: [false, false, false, true] },
+              { text: 'Diagnosis Details', style: 'sectionheader', border: [false, false, false, true] }
+            ],
             [
               {
                 colSpan: 2,
@@ -1809,8 +1743,29 @@ ngOnInit(): void {
                   widths: this.appConfigService.patient_visit_summary?.dp_dignosis_secondary ? ['40%', '*', '*', '*'] : ['*', '*', '*'],
                   headerRows: 1,
                   body: [
-                    this.appConfigService.patient_visit_summary?.dp_dignosis_secondary ? [{text: 'Diagnosis', style: 'tableHeader'}, {text: 'Type', style: 'tableHeader'}, {text: 'TNM', style: 'tableHeader'},{text: 'Other Staging', style: 'tableHeader'}] : [{text: 'Diagnosis', style: 'tableHeader'}, {text: 'Type', style: 'tableHeader'}, {text: 'Status', style: 'tableHeader'}],
-                    ...this.getRecords('diagnosis')
+                    // Header Row
+                    this.appConfigService.patient_visit_summary?.dp_dignosis_secondary
+                      ? [
+                          { text: 'Diagnosis', style: 'tableHeader' },
+                          { text: 'Type', style: 'tableHeader' },
+                          { text: 'TNM', style: 'tableHeader' },
+                          { text: 'Other Staging', style: 'tableHeader' }
+                        ]
+                      : [
+                          { text: 'Diagnosis', style: 'tableHeader' },
+                          { text: 'Type', style: 'tableHeader' },
+                          { text: 'Status', style: 'tableHeader' }
+                        ],
+                    // Data Rows
+                   
+                    ...this.getRecords('diagnosis').map(row => {
+                      // Ensure each row has the correct number of cells
+                      const paddedRow = [...row];
+                      while (paddedRow.length < (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary ? 4 : 3)) {
+                        paddedRow.push({ text: '' }); // Add empty cells if needed
+                      }
+                      return paddedRow;
+                    })
                   ]
                 },
                 layout: 'lightHorizontalLines'
@@ -1822,10 +1777,10 @@ ngOnInit(): void {
           defaultBorder: false
         }
       },
-      '',
-      '',
-      ''
-    ]
+      { }, // Replace empty string with valid cell object
+      { }, // Replace empty string with valid cell object
+      { }  // Replace empty string with valid cell object
+    ];
   }
  }
  
