@@ -687,6 +687,8 @@ export interface PatientVisitSummaryConfigModel {
   awaiting_visits_patient_type_demarcation: boolean
   awaiting_visit_section: boolean
   diagnosis_at_secondary_level: boolean
+  dp_discussion_summary: boolean 
+  dp_dignosis_secondary: boolean
 }
 
 export interface PagerdutyList {

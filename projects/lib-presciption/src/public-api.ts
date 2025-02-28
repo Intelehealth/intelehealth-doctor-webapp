@@ -10,4 +10,3 @@ export * from './lib/config/config.token'; // Export the token
 export * from './lib/directives/default-image.directive';
 
 
-// export * from './lib/components/prescription-model/prescription-model.component'

@@ -12,13 +12,9 @@ export class EnvConfigService {
     this.config = envConfig;
   }
 
-  // getConfig(key: string): any {
-  //   return this.config?.[key] || null; //Retrieve the environment variable
-  // }
-
   getConfig(key: string): any {
     if (this.config?.hasOwnProperty(key)) {
-      return this.config[key];  //Directly return the value, even if it's `false`
+      return this.config[key]; 
     }
     return null;
   }
