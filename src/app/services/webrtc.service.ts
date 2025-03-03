@@ -53,7 +53,7 @@ export class WebrtcService {
     }
 
     getToken(name: string, roomId: string, nurseName: string) {
-        return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?ngsw-bypass=true&name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
+        return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
             .pipe(map((res: any) => {
                 this.token = res?.token;
                 this.appToken = res?.appToken;
@@ -88,7 +88,7 @@ export class WebrtcService {
             adaptiveStream: true, /* automatically manage subscribed video quality */
             dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
             videoCaptureDefaults: {
-                resolution: VideoPresets43.h540,
+                resolution: VideoPresets43.h1080,
             },
             audioCaptureDefaults: {
                 echoCancellation: true,
@@ -134,7 +134,7 @@ export class WebrtcService {
      * Assign received streaming video to the passed local video container or id
      */
     attachLocalVideo() {
-        const camTrack = this.room.localParticipant.getTrack(Track.Source.Camera);
+        const camTrack = this.room.localParticipant.getTrackPublication(Track.Source.Camera);
 
         if (camTrack?.isSubscribed) {
             const videoElement = camTrack.videoTrack?.attach();
@@ -219,12 +219,12 @@ export class WebrtcService {
             this.room.disconnect(stopTracks);
         }, 0);
         this.room.disconnect(stopTracks);
-        const cam: any = this.room.localParticipant.getTrack(Track.Source.Camera);
+        const cam: any = this.room.localParticipant.getTrackPublication(Track.Source.Camera);
         if (cam) {
             this.room.localParticipant.unpublishTrack(cam, true);
         }
 
-        const mic: any = this.room.localParticipant.getTrack(Track.Source.Microphone);
+        const mic: any = this.room.localParticipant.getTrackPublication(Track.Source.Microphone);
         if (mic) {
             this.room.localParticipant.unpublishTrack(mic, true);
         }

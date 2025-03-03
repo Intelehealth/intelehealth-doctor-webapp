@@ -8,7 +8,7 @@
     "ng": "ng",
     "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
     "start": "ng serve",
-    "build": "ng build --configuration production",
+    "build": "ng build --configuration production --aot",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -42,7 +42,7 @@
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
     "libphonenumber-js": "^1.10.18",
-    "livekit-client": "^1.15.13",
+    "livekit-client": "^2.0.10",
     "moment": "^2.29.4",
     "ng-otp-input": "^1.8.5",
     "ng2-pdf-viewer": "^9.1.3",

@@ -18,12 +18,12 @@
         messagingSenderId: '246647122371',
         appId: '1:246647122371:web:c45944219d1f37bf30b576',
     },
-    webrtcSdkServerUrl: 'wss://dev.intelehealth.org:9090',
-    webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/',
+    webrtcSdkServerUrl: 'wss://uniceftraining.intelehealth.org:9090',
+    webrtcTokenServerUrl: 'https://uniceftraining.intelehealth.org:3000/',
     siteKey: '6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl',
     externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2VAMTIz',
     vapidPublicKey: 'BCGfng5flfhjlqR_imzFXwHGeEMBA6AzFVAex7sPLDbsMCn_IMKtQmI9TDnmP6raxmPcBcnoKO_AHKaLtctsIjg',
-    authGatwayURL: 'https://dev.intelehealth.org:3030/v2/',
+    authGatwayURL: 'https://uniceftraining.intelehealth.org:3030/v2/',
     showCaptcha: true,
     recordsPerPage: 1000
   };
