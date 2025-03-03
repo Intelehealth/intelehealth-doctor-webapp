@@ -254,7 +254,6 @@ ngOnInit(): void {
          });
        }
      });
-     console.log( "this.cheifComplaints",this.cheifComplaints )
    }
  
    /**
@@ -632,15 +631,6 @@ ngOnInit(): void {
    }
  
    /**
-     * Download prescription
-     * @return {Promise<void>}
-     */
-
-   async downloadPrescription(): Promise<void> {
-   }
-
-
-   /**
    * Get rows for make pdf doc defination for a given type
    * @param {string} type - row type
    * @return {any} - Rows
@@ -649,10 +639,8 @@ ngOnInit(): void {
     const records = [];
     switch (type) {
       case 'diagnosis':
-        console.log("this.appConfigService.patient_visit_summary?.dp_dignosis_secondary dia",this.appConfigService.patient_visit_summary?.dp_dignosis_secondary)
         if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
           records.push([this.dignosisSecondary['diagnosis'],this.dignosisSecondary['type'],this.dignosisSecondary['tnm'],this.dignosisSecondary['otherStaging']]);
-          console.log("record diagnosis",this.dignosisSecondary['diagnosis'],this.dignosisSecondary['type'],this.dignosisSecondary['tnm'],this.dignosisSecondary['otherStaging'])
         } else if (this.existingDiagnosis.length) {
           this.existingDiagnosis.forEach(d => {
             records.push([d.diagnosisName, d.diagnosisType, d.diagnosisStatus]);
@@ -1260,13 +1248,15 @@ ngOnInit(): void {
        return subFields;
      }
    }
+      /**
+     * Download prescription
+     * @return {Promise<void>}
+     */
 
-   async downloadPdf() {
-    console.log('Inside the download pdf');
+   async downloadPrescription() {
     try {
       const docDefinition = await this.generatePdf(); // Get the PDF content
-      console.log('Inside the download pdf',docDefinition);
-      pdfMake.createPdf(docDefinition).download('prescription.pdf'); // Trigger download
+      pdfMake.createPdf(docDefinition).download('e-prescription.pdf'); // Trigger download
     } catch (error) {
       console.error('Error generating or downloading PDF:', error);
     }
@@ -1656,9 +1646,9 @@ ngOnInit(): void {
           margin: [0, 5, 0, 10]
         }
       },
-      // defaultStyle: {
-      //   font: 'DmSans'
-      // }
+      defaultStyle: {
+        font: 'DmSans'
+      }
     };
   
     pdfObj.content[0].table.body = pdfObj.content[0].table.body.filter((section:any)=>{
@@ -1674,7 +1664,6 @@ ngOnInit(): void {
       if(section[0].sectionName === 'advice' && !this.isFeatureAvailable('advice')) return false;
       return true;
     });
-    console.log(pdfObj)
     return pdfObj;
   }
 
@@ -1712,19 +1701,8 @@ ngOnInit(): void {
   }
 
   getDiagnosis() {
-    // Return an empty array if the condition is not met
-    console.log("this.appConfigService.patient_visit_summary?.dp_dignosis_secondary",this.appConfigService.patient_visit_summary?.dp_dignosis_secondary)
-    console.log("this.getRecords('diagnosis')",this.getRecords('diagnosis'))
     if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) return [];
-    console.log(" ...this.getRecords", this.getRecords('diagnosis'))
-    console.log(" ...this.getRecords...",  ...this.getRecords('diagnosis').map(row => {
-      // Ensure each row has the correct number of cells
-      const paddedRow = [...row];
-      while (paddedRow.length < (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary ? 4 : 3)) {
-        paddedRow.push({ text: '' }); // Add empty cells if needed
-      }
-      return paddedRow;
-    }))
+
     return [
       {
         colSpan: 4,
@@ -1777,9 +1755,9 @@ ngOnInit(): void {
           defaultBorder: false
         }
       },
-      { }, // Replace empty string with valid cell object
-      { }, // Replace empty string with valid cell object
-      { }  // Replace empty string with valid cell object
+      { }, 
+      { },
+      { } 
     ];
   }
  }
