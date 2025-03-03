@@ -1512,7 +1512,7 @@ ngOnInit(): void {
                 '',
                 ''
               ],
-              // ...this.getDiagnosis(),
+              this.getDiagnosis(),
               ...this.getDiscussionSummary(),
               [
                 {
