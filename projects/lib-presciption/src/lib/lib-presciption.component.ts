@@ -23,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { DefaultImageDirective } from './directives/default-image.directive';
 
+
 @Component({
   selector: 'lib-presciption',
   standalone: true,
@@ -47,9 +48,7 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
   @Input() download: Observable<any>;
   envProduction: boolean;
   configPublicURL: string 
-  // configPublicURL: string = "https://dev.intelehealth.org:4004/";
-  // baseUrl: string = "https://dev.intelehealth.org/openmrs/ws/rest/v1"
-   baseUrl: string 
+  baseUrl: string 
   logoImageURL: string;
   hwPhoneNo: string;
   visit: VisitModel;
@@ -149,28 +148,19 @@ ngOnInit(): void {
     console.error("Failed to load AppConfigService:", error);
   });
 
-      this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
+  this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
 
-      Object.assign(pdfMake, {
-        fonts: {
-          DmSans: {
-            normal: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Regular.ttf`,
-            bold: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Bold.ttf`,
-            italics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Italic.ttf`,
-            bolditalics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
-          }
-        }
-      });
+  const basePath = `${window.location.origin}${window.location.pathname.includes('intelehealth') ? '/intelehealth' : ''}`;
 
-      // pdfMake.fonts = {
-      //   DmSans: {
-      //     normal: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/fonts/DM_Sans/DMSans-Regular.ttf`,
-      //     bold: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Bold.ttf`,
-      //     italics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-Italic.ttf`,
-      //     bolditalics: `${window.location.origin}${this.envProduction ? '/intelehealth' : ''}../../assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
-      //   }
-      // };
-      this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadPrescription(); } });
+    pdfMake.fonts = {
+      DmSans: {
+        normal: `${basePath}/assets/fonts/DM_Sans/DMSans-Regular.ttf`,
+        bold: `${basePath}/assets/fonts/DM_Sans/DMSans-Bold.ttf`,
+        italics: `${basePath}/assets/fonts/DM_Sans/DMSans-Italic.ttf`,
+        bolditalics: `${basePath}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`
+      }
+    };
+    this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadPrescription(); } });
   }
 
   
@@ -1256,7 +1246,7 @@ ngOnInit(): void {
    async downloadPrescription() {
     try {
       const docDefinition = await this.generatePdf(); // Get the PDF content
-      pdfMake.createPdf(docDefinition).download('e-prescription.pdf'); // Trigger download
+      pdfMake.createPdf(docDefinition).download('e-prescription.pdf'); 
     } catch (error) {
       console.error('Error generating or downloading PDF:', error);
     }
@@ -1615,40 +1605,55 @@ ngOnInit(): void {
         header: {
           fontSize: 14,
           bold: true,
-          margin: [0, 10, 0, 10]
+          margin: [0, 10, 0, 10],
+          font: 'DmSans'
         },
         subheader: {
           fontSize: 12,
           bold: true,
           margin: [0, 2, 0, 2],
+          font: 'DmSans'
         },
         subsubheader: {
           fontSize: 10,
           bold: true,
-          margin: [0, 2, 0, 2]
+          margin: [0, 2, 0, 2],
+          font: 'DmSans'
         },
         pval: {
           fontSize: 10,
-          margin: [0, 2, 0, 2]
+          margin: [0, 2, 0, 2],
+          font: 'DmSans'
         },
         tableExample: {
           margin: [0, 5, 0, 5],
-          fontSize: 12
+          fontSize: 12,
+          font: 'DmSans'
         },
         tableHeader: {
           bold: true,
           fontSize: 12,
-          color: 'black'
+          color: 'black',
+          font: 'DmSans'
         },
         sectionheader: {
           fontSize: 12,
           bold: true,
-          margin: [0, 5, 0, 10]
+          margin: [0, 5, 0, 10],
+          font: 'DmSans'
         }
       },
       defaultStyle: {
-        font: 'DmSans'
-      }
+        font: 'DmSans',
+      },
+      fonts: {
+        DmSans: {
+            normal: 'DmSans-Regular.ttf',
+            bold: 'DmSans-Bold.ttf',
+            italics: 'DmSans-Italic.ttf',
+            bolditalics: 'DmSans-BoldItalic.ttf'
+        }
+    }
     };
   
     pdfObj.content[0].table.body = pdfObj.content[0].table.body.filter((section:any)=>{
