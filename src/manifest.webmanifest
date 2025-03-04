@@ -9,17 +9,17 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "assets/icons/icon-180x180.png",
+      "src": "assets/icons/telemedkg-logo.png",
       "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/icon-192x192.png",
+      "src": "assets/icons/telemedkg-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/icon-512x512.png",
+      "src": "assets/icons/telemedkg-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
