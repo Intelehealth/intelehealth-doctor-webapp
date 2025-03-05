@@ -25,7 +25,7 @@ export class SocketService {
   public incoming;
   public incomingCallData = {};
   public activeUsers: SocketUserModel[] = [];
-  appIcon = "/assets/images/intelehealth-logo-reverse.png";
+  appIcon = "/assets/images/telemedkg-logo2.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;
   closeOverlayTimeout = null;
