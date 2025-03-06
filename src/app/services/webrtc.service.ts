@@ -96,7 +96,10 @@ export class WebrtcService {
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: VideoPresets43.h1080,
+        resolution: {
+          width: 375,
+          height: 793,
+        },
       },
       audioCaptureDefaults: {
         echoCancellation: true,
