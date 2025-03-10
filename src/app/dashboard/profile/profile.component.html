@@ -310,7 +310,7 @@
                         <input type="checkbox" [checked]="item$.selected"/>
                         <div class="state">
                             <img class="image" alt="" src="assets/svgs/checkbox-tick.png">
-                            <label>{{item.name}}</label>
+                            <label>{{ (item.name) | translate }}</label>
                         </div>
                       </div>
                     </ng-template>
