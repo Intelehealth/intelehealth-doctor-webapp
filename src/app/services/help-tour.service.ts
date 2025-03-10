@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TourGuideClient } from '@sjmc11/tourguidejs';
 import { AppConfigService } from './app-config.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface TourStep {
   content: string;
@@ -16,16 +17,37 @@ export interface TourStep {
 export class HelpTourService {
   tourIsActive = false;
   public tour: TourGuideClient | null = null;
+
   constructor(
-    private appConfigSvc: AppConfigService
+    private appConfigSvc: AppConfigService,
+    private translateService: TranslateService
   ) { }
 
   initHelpTour(steps: TourStep[] | null= this.appConfigSvc.tourConfig) {
     if(this.tourIsActive || !steps || Array.isArray(steps) && steps.length === 0) return;
 
+    const currentLang = this.translateService.currentLang || this.translateService.defaultLang || 'ru';
+
+    // Use the steps directly without translation service
+    const translatedSteps = steps.map(step => {
+      if (typeof step.content === 'string') {
+        return {
+          ...step,
+          title: step.title || undefined,
+          content: step.content
+        };
+      }
+      
+      return {
+        ...step,
+        title: step.title?.[currentLang] || step.title?.['en'] || step.title,
+        content: step.content?.[currentLang] || step.content?.['en'] || step.content
+      };
+    });
+
     this.tourIsActive = true;
     this.tour = new TourGuideClient({
-      steps,
+      steps: translatedSteps,
       showStepProgress: false,
       debug: false,
       dialogZ: 1100,
@@ -34,10 +56,13 @@ export class HelpTourService {
       backdropClass: 'help-tour-backdrop',
       exitOnClickOutside: false,
       showStepDots: false,
-      progressBar:'#0FD197',
+      progressBar: '#0FD197',
       targetPadding: 0,
       autoScrollOffset: 30,
       autoScrollSmooth: false,
+      nextLabel: this.translateService.instant('Next'),
+      prevLabel: this.translateService.instant('Back'),
+      finishLabel: this.translateService.instant('Finish')
     });
 
     this.tour.onAfterExit(()=>{
@@ -47,9 +72,24 @@ export class HelpTourService {
     });
 
     this.tour.onAfterStepChange(()=>{
-      const btn = document.getElementById('tg-dialog-next-btn')
+      const btn = document.getElementById('tg-dialog-next-btn');
       if(btn){
-        btn?.textContent?.trim?.() === 'Finish' ? btn.classList.add('btn-finish') : btn.classList.remove('btn-finish');
+        const isLastStep = btn?.textContent?.trim?.() === this.translateService.instant('Finish');
+        if(isLastStep) {
+          btn.classList.add('btn-finish');
+        } else {
+          btn.classList.remove('btn-finish');
+        }
+      }
+    });
+
+    this.translateService.onLangChange.subscribe(() => {
+      if (this.tour) {
+        this.tour.setOptions({
+          nextLabel: this.translateService.instant('Next'),
+          prevLabel: this.translateService.instant('Back'),
+          finishLabel: this.translateService.instant('Finish')
+        });
       }
     });
 

@@ -633,7 +633,7 @@
   "This day is already marked as Day Off":"This day is already marked as Day Off",
   "Already DayOff":"Already DayOff",
   "Setup your calendar":"Setup your calendar",
-  "Please set up your scedule for the month according to your availability":"Please set up your schedule for the month according to your availability",
+  "Please set up your calendar for the month according to your availability":"Please set up your calendar for the month according to your availability",
   "View calendar":"View calendar",
   "Month":"Month",
   "Add more months":"Add more months",
@@ -6119,5 +6119,26 @@
   "Value should be equal or greater than Minimum Length": "Value should be equal or greater than Minimum Length",
   "Save Validations": "Save Validations",
   "Do you feel that this case is fit for another specialist doctor? If yes, refer the case to a suitable specialist doctor from the options given below.": "Do you feel that this case is fit for another specialist doctor? If yes, refer the case to a suitable specialist doctor from the options given below.",
-  "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility."
+  "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility.",
+  "Patient Type": "Patient Type",
+  "Follow Up Date": "Follow Up Date",
+  "Provinces": "Provinces",
+  "Registration address of health facility": "Registration address of health facility",
+  "Cities": "Cities",
+  "Check Up Reason": "Check Up Reason",
+  "What is the reason for this visit?" :"What is the reason for this visit?",
+  "Frequency": "Frequency",
+  "Dermatologist or Skin Specialist":	"Dermatologist or Skin Specialist",
+  "OBGyn Specialist or Gynecologist":	"OBGyn Specialist or Gynecologist",
+  "Endocrinologist":	"Endocrinologist",
+  "Cardiologist":	"Cardiologist",
+  "Emergency Physician or Emergency Medicine Specialist":	"Emergency Physician or Emergency Medicine Specialist",
+  "English": "English",
+  "Hindi": "Hindi",
+  "Tamil": "Tamil",
+  "Gujrathi": "Gujrathi",
+  "Bangla": "Bangla",
+  "Finish": "Finish"
 }
+
+
