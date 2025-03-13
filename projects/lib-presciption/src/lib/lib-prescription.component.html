@@ -415,15 +415,15 @@
                     </div>
                     <ng-container *ngFor="let ckr of checkUpReasonData">
                       <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'" *ngIf="!appConfigService?.patient_visit_summary?.dp_dignosis_secondary">{{ ckr.title }}</h6>
+                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title?.slice(0,3)+'Checkup'" *ngIf="!appConfigService?.patient_visit_summary?.dp_dignosis_secondary">{{ ckr.title }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item">
-                              <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
+                              <label [attr.data-test-id]="'etKey'+ckri.key?.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
                               <div
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
-                                [attr.data-test-id]="'etValue'+ckri.value.changingThisBreaksApplicationSecurity.slice(0,4).trim()+'Checkup'"
+                                [attr.data-test-id]="'etValue'+ckri.value.changingThisBreaksApplicationSecurity?.slice(0,4).trim()+'Checkup'"
                                 [innerHTML]="ckri.value ? ckri.value : ('None' | translate)">
                               </div>
                               <!-- <div
@@ -598,7 +598,7 @@
               <h6>{{'Note'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul *ngIf="notes?.length; else noNotes" class="items-list">
+              <ul *ngIf="notes?.length" class="items-list">
                 <li *ngFor="let n of notes">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>{{ n.value }}</span>

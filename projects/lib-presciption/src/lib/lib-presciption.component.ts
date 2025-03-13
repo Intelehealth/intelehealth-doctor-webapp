@@ -7,7 +7,7 @@ import { ProfileService } from '../lib/services/profile.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from './model/model';
+import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from './model/model';
 import { checkIsEnabled, VISIT_SECTIONS } from './utils/visit-sections';
 import { TranslateService,TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -103,7 +103,7 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
   constructor(
      @Inject(MAT_DIALOG_DATA) public data:any,
       private dialogRef: MatDialogRef<LibPresciptionComponent>,
-      private appConfigService: AppConfigService,
+      public appConfigService: AppConfigService,
       private translateService: TranslateService,
       private visitService: VisitService,
       private diagnosisService: DiagnosisService,
@@ -226,24 +226,55 @@ ngOnInit(): void {
    * @return {void}
    */
    getCheckUpReason(encounters: EncounterModel[]) {
-     this.cheifComplaints = [];
-     encounters.forEach((enc: EncounterModel) => {
-       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
-         enc.obs.forEach((obs: ObsModel) => {
-           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
-             const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
-             for (let i = 0; i < currentComplaint.length; i++) {
-               if (currentComplaint[i] && currentComplaint[i].length > 1) {
-                 const obs1 = currentComplaint[i].split('<');
-                 if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                   this.cheifComplaints.push(obs1[0]);
-                 }
-               }
-             }
-           }
-         });
-       }
-     });
+      this.cheifComplaints = [];
+      this.checkUpReasonData = [];
+      encounters.forEach((enc: EncounterModel) => {
+        if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
+          enc.obs.forEach((obs: ObsModel) => {
+            if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
+              const currentComplaint = this.visitService.getData(obs)?.value.split('<b>');
+              for (let i = 0; i < currentComplaint.length; i++) {
+                if (currentComplaint[i] && currentComplaint[i].length > 1) {
+                  const obs1 = currentComplaint[i].split('<');
+                  if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
+                    this.cheifComplaints.push(obs1[0]);
+                  }
+                  const splitByBr = currentComplaint[i].split('<br/>');
+                  if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
+                    const obj1: PatientHistoryModel = {};
+                    obj1.title = this.translateService.instant(visitTypes.ASSOCIATED_SYMPTOMS);
+                    obj1.data = [];
+                    for (let j = 1; j < splitByBr.length; j = j + 2) {
+                      if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
+                        obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1] });
+                      }
+                    }
+                    this.checkUpReasonData.push(obj1);
+                  } else {
+                    const obj1: PatientHistoryModel = {};
+                    obj1.title = splitByBr[0].replace('</b>:', '');
+                    obj1.data = [];
+                    for (let k = 1; k < splitByBr.length; k++) {
+                      if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
+                        const splitByDash = splitByBr[k].split('-');
+                        const processedStrings = splitByDash?.slice(1, splitByDash.length).join('-').split(".").map(itemList => {
+                          let splitByHyphen = itemList.split(" - ");
+                          let value = splitByHyphen.pop() || "";
+                          splitByHyphen.push(value);
+                          return splitByHyphen.join(" - ");
+                        });
+                        const resultString = processedStrings.join(". ");
+                        obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: resultString });
+                      }
+                    }
+                    this.checkUpReasonData.push(obj1);
+                  }
+                }
+              }
+            }
+          });
+        }
+      });
    }
  
    /**
@@ -392,15 +423,19 @@ ngOnInit(): void {
    */
    checkIfReferralPresent() {
      this.referrals = [];
-     this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptReferral)
-       .subscribe((response: ObsApiResponseModel) => {
-         response.results.forEach((obs: ObsModel) => {
-           const obs_values = obs.value.split(':');
-           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1]?.trim(), priority: obs_values[2]?.trim(), reason: obs_values[3]?.trim()? obs_values[3].trim():'-' });
-           }
-         });
-       });
+    this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptReferral)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            if(this.appConfigService.patient_visit_summary?.dp_referral_secondary)
+              this.referralSecondary = obs.value
+            else if(obs.value.includes(":")) {
+              const obs_values = obs.value.split(':');
+              this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim()? obs_values[3].trim():'-' });
+            }
+          }
+        });
+      });
    }
  
    /**
@@ -856,7 +891,7 @@ ngOnInit(): void {
      });
      const chunkSize = 4;
      for (let i = 0; i < other.length; i += chunkSize) {
-       const chunk = other.slice(i, i + chunkSize);
+       const chunk = other?.slice(i, i + chunkSize);
        if (chunk.length == chunkSize) {
          data.table.body.push([...chunk]);
        } else {
@@ -935,7 +970,7 @@ ngOnInit(): void {
        });
        const chunkSize = 4;
        for (let i = 0; i < other.length; i += chunkSize) {
-           const chunk = other.slice(i, i + chunkSize);
+           const chunk = other?.slice(i, i + chunkSize);
            if (chunk.length == chunkSize) {
              data.table.body.push([...chunk]);
            } else {
@@ -1019,7 +1054,7 @@ ngOnInit(): void {
        });
        const chunkSize = 4;
        for (let i = 0; i < other.length; i += chunkSize) {
-           const chunk = other.slice(i, i + chunkSize);
+           const chunk = other?.slice(i, i + chunkSize);
            if (chunk.length == chunkSize) {
              data.table.body.push([...chunk]);
            } else {
