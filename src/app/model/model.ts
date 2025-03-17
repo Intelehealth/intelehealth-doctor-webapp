@@ -725,3 +725,7 @@ export interface PatientVisitSection {
   updatedAt?: string;
   createdAt?: string
 }
+
+export interface RecordingResponse {
+  recordingId: number;
+}

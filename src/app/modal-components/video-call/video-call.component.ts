@@ -10,7 +10,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, EncounterProviderModel, MessageModel, RecordingResponse } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
@@ -53,6 +53,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   callEndTimeout = null;
   patientRegFields: string[] = [];
   recodingStarted = false;
+  tableId: number;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -220,9 +221,21 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.callConnected = true;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
-    await this.webrtcSvc.startRecording(this.provider?.uuid, this.room, this.nurseId)
+    await this.webrtcSvc.startRecording({
+      doctorName: this.doctorName,
+      roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      chwId: this.nurseId,
+      patientId: this.data?.patientId,
+      nurseName: this.hwName,
+      name: this.provider?.uuid
+    })
       .toPromise()
-      .then(() => this.recodingStarted = true)
+      .then((res: RecordingResponse) => {
+        this.recodingStarted = true
+        this.tableId = res.recordingId
+      })
       .catch(err => {
         console.log("start recoding error", err)
       });
@@ -466,7 +479,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.webrtcSvc.room.disconnect(true);
       if(this.recodingStarted) {
         this.recodingStarted = false;
-        await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
+        await this.webrtcSvc.stopRecording(this.tableId, this.room)
+        // await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
           .toPromise()
           .catch(err => {
             console.log("stop recoding error", err)
