@@ -61,12 +61,12 @@ export class WebrtcService {
       }));
   }
 
-  startRecording(name: string, roomId: string, nurseName: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/startRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`);
+  startRecording(payload) {
+    return this.http.post(`${environment.webrtcTokenServerUrl}api/startRecording`, payload);
   }
 
-  stopRecording(name: string, roomId: string, nurseName: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?name=${name}&roomId=${roomId}&nurseName=${nurseName}`);
+  stopRecording(id: number, roomId: string) {
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`);
   }
 
   async createRoomAndConnectCall({
