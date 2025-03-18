@@ -578,8 +578,8 @@ export class DashboardComponent implements OnInit {
       this.filteredDateAndRangeForm4 = this.createFilteredDateRangeForm();
 
       this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
-      Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
-        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; })=>e.is_enabled).map((e: { name: any; })=>e.name));
+      Object.keys(this.appConfigService.patient_registration).forEach(obj => {
+        this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
       });
       this.pvs = { ...this.appConfigService.patient_visit_summary }; 
       this.pvs.appointment_button = this.pvs.appointment_button;
@@ -1211,7 +1211,9 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  checkPatientRegField(fieldName: string): boolean{
+  checkPatientRegField(fieldName: string): boolean {
+    console.log(this.patientRegFields.indexOf(fieldName) !== -1, fieldName, "===========", this.patientRegFields);
+    
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 

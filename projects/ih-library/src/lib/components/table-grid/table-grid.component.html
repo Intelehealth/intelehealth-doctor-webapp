@@ -96,8 +96,8 @@
           <!-- Patient Name Column -->
           <ng-container *ngIf="column.key === 'patient_name'">
             <div class="d-flex align-items-center">
-              <img *ngIf="element.patientId" src="{{ baseURL + '/personimage/' + element.patientId }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
-              <img *ngIf="pluginConfigObs.pluginConfigObsFlag !== 'Appointment'" src="{{ baseURL + '/personimage/' + element.person.uuid }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
+              <img *ngIf="element.patientId" src="{{ checkPatientRegField('Profile Photo') ? baseURL + '/personimage/' + element.patientId : '' }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
+              <img *ngIf="pluginConfigObs.pluginConfigObsFlag !== 'Appointment'" src="{{ checkPatientRegField('Profile Photo') ? baseURL + '/personimage/' + element.person.uuid : '' }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
               <div class="float-left" 
                 [innerHTML]="renderHtmlContent(column, element)" 
                 [ngClass]="getClasses(column, element)">
