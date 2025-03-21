@@ -106,7 +106,8 @@ export class WebrtcService {
                 try {
                     await this.room.localParticipant.enableCameraAndMicrophone()
                 } catch (error) {
-                    location.reload();
+                    console.log("error", error)
+                    // location.reload();
                 }
             })
             .on(RoomEvent.Disconnected, handleDisconnect)
