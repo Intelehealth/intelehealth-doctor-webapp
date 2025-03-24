@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
 import { Location } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-user',
@@ -30,7 +31,14 @@ export class AddUserComponent implements OnInit, OnDestroy{
   controlsArray: string[] = [];
   subscription1: any;
 
-  constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private toastr: ToastrService, private router: Router, private location: Location){
+  constructor(
+    private authService: AuthService, 
+    private activatedRoute: ActivatedRoute, 
+    private toastr: ToastrService, 
+    private router: Router, 
+    private location: Location,
+    private translateService: TranslateService,
+  ){
     this.activatedRoute.params.subscribe(paramsId => {
         if(paramsId?.uuid){
           this.uuid = paramsId?.uuid
@@ -199,13 +207,13 @@ export class AddUserComponent implements OnInit, OnDestroy{
           }
         });
         this.authService.setProvider(this.providerUuid,payload).subscribe(res=>{
-            this.toastr.success("User has been successfully updated", "Update successful");
+            this.toastr.success(this.translateService.instant("User has been successfully updated"), this.translateService.instant("Update successful"));
             this.router.navigate(["admin/actions/user-creation"]);
         })
       } else {
         this.authService.createUser(this.personalInfoForm.value).subscribe(res=>{
           if(res.status){
-            this.toastr.success("New User has been successfully updated", "Creation successful");
+            this.toastr.success(this.translateService.instant("New User has been successfully updated"), this.translateService.instant("Creation successful"));
             this.router.navigate(["admin/actions/user-creation"]);
           }
         })

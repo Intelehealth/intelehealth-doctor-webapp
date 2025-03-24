@@ -71,7 +71,7 @@
                     </li>
                     <li *ngIf="searchValue && filteredConversations.length == 0">
                       <div class="text-center p-3">
-                          <p>{{ 'No Record Found' }}</p>
+                          <p>{{ 'No Record Found' | translate }}</p>
                       </div>
                     </li>
                   </ul>
@@ -113,7 +113,7 @@
                       [ngModel]="visitId"
                       [clearable]="false"
                       [searchable]="false"
-                      placeholder="Select visit"
+                      placeholder="{{'Select visit'|translate}}"
                       data-test-id="selectVisit"
                       (ngModelChange)="onVisitChange($event)"
                     >
@@ -194,7 +194,7 @@
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="Type here"
+                        placeholder="{{'Type here'|translate}}"
                         [(ngModel)]="message"
                         (keyup.enter)="sendMessage()"
                         data-test-id="etSendMessage1"

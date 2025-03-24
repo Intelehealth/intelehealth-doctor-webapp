@@ -57,7 +57,7 @@ export class MenuConfigComponent {
   updateStatus(id: number, status: boolean): void {
     this.configService.updateSidebarMenuConfig(id, status).subscribe(res => {
       const name = this.menuData?.find((v: MenuConfig) => v.id === id)?.name;
-      this.toastr.success(`${name} has been successfully updated`, "Update successful!");
+      this.toastr.success(`${name} ${this.translateService.instant("has been successfully updated")}`, this.translateService.instant("Update successful!"));
       this.getMenuConfig();
     }, err => {
       this.getMenuConfig();
@@ -70,7 +70,7 @@ export class MenuConfigComponent {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success(`Changes published successfully!`, "Changes published!");
+      this.toastr.success(this.translateService.instant(`Changes published successfully!`), this.translateService.instant("Changes published!"));
     });
   }
 }

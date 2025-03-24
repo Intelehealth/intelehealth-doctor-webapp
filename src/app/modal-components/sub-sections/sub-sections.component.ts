@@ -1,6 +1,7 @@
 import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { ConfigService } from 'src/app/services/config.service';
 
@@ -16,7 +17,7 @@ export class SubSectionsComponent {
   updateFlag = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
-  private dialogRef: MatDialogRef<SubSectionsComponent>, private configService: ConfigService, private toastr: ToastrService) { 
+  private dialogRef: MatDialogRef<SubSectionsComponent>, private configService: ConfigService, private toastr: ToastrService, private translateService: TranslateService) { 
     this.dataSource = new MatTableDataSource(data.sub_sections);
     this.section_id = data.id;
   }
@@ -27,7 +28,7 @@ export class SubSectionsComponent {
   */
   updateStatus(sub_section: string, status: boolean): void {
     this.configService.updatePVSSEnabledStatus(this.section_id, sub_section, status).subscribe(res => {
-      this.toastr.success(`${sub_section} has been successfully updated`, "Update successful!");
+      this.toastr.success(`${sub_section} ${this.translateService.instant("has been successfully updated")}`, this.translateService.instant("Update successful!"));
       this.updateFlag = true;
     });
   }

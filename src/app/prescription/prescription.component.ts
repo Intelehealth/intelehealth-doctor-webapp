@@ -34,6 +34,7 @@ export class PrescriptionComponent implements OnInit {
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   /**

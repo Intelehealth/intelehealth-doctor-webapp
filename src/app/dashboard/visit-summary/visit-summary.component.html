@@ -191,7 +191,7 @@
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Country') && patient?.person?.preferredAddress?.country">
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'Country' | translate}}</h6>
-                    <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country }}</p>
+                    <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country | translate }}</p>
                   </div>
                 </div>
 
@@ -205,21 +205,21 @@
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Provinces') && getPersonAttributeValue('Provinces') !== 'NA'">
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'Provinces' | translate}}</h6>
-                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Provinces') }}</p>
+                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Provinces') | translate }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Registration address of health facility') && getPersonAttributeValue('Registration address of health facility') !== 'NA'">
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'Registration address of health facility' | translate}}</h6>
-                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Registration address of health facility') }}</p>
+                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Registration address of health facility') | translate }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Cities') && getPersonAttributeValue('Cities') !== 'NA'">
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'Cities' | translate}}</h6>
-                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Cities') }}</p>
+                    <p data-test-id="etPatient">{{ getPersonAttributeValue('Cities') | translate }}</p>
                   </div>
                 </div>
               </div>
@@ -452,7 +452,7 @@
                               <div class="list-item">
                                 <label data-test-id="etLocatinConDets">{{'Location'| translate}}</label>
                                 <div class="list-item-content" data-test-id="etLocatinDataConDets">
-                                  {{ clinicName | titlecase }}
+                                  {{ clinicName | translate }}
                                 </div>
                               </div>
                             </li>
@@ -496,43 +496,43 @@
                       <!-- Checkup Reasons -->
                         <ng-container *ngSwitchCase="pvsConstant['check_up_reason'].key">
                           <div class="cheif-complaint-wrapper">
-                            <h6 data-test-id="etChiefComCheckup" *ngIf="cheifComplaints.length">{{'Chief Complaint'|translate}}</h6>
+                            <h6 data-test-id="etChiefComCheckup" *ngIf="cheifComplaints.length">{{'Chief Complaint' | translate}}</h6>
                             <div class="complaint-chips">
                               <div class="chip-item" *ngFor="let c of cheifComplaints" [attr.data-test-id]="'etChiefCom'+c.slice(0,3)+'Checkup'">
-                                {{ c }}
+                                {{ c | translate }}
                               </div>
                             </div>
                             <div class="check-up-reason-con" *ngIf="checkUpReasonData.length">
                               <ng-container *ngFor="let ckr of checkUpReasonData">
                                 <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                                  <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'">{{ ckr.title }}</h6>
+                                  <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'">{{ ckr.title.trim() | translate }}</h6>
                                   <ul class="items-list pt-0">
                                     <li *ngFor="let ckri of ckr.data">
                                       <div class="list-item">
-                                        <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
+                                        <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key.trim() | translate }}</label>
                                         <div
                                           class="list-item-content"
                                           [class.text-muted]="!ckri.value"
                                           [attr.data-test-id]="'etValue'+ckri.value.slice(0,4).trim()+'Checkup'"
                                         >
-                                          {{ ckri.value ? ckri.value : ('None'|translate) }}
+                                          {{ ckri.value ? (ckri.value.trim() | translate) : ('None'|translate) }}
                                         </div>
                                       </div>
                                     </li>
                                   </ul>
                                 </ng-container>
                                 <ng-container *ngIf="ckr.title == 'Associated symptoms'">
-                                  <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'">{{ ckr.title }}</h6>
+                                  <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'">{{ ckr.title.trim() | translate }}</h6>
                                   <ul class="items-list pt-0">
                                     <li *ngFor="let ckri of ckr.data">
                                       <div class="list-item-col">
-                                        <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
+                                        <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key.trim() | translate }}</label>
                                         <div
                                           class="list-item-content"
                                           [class.text-muted]="!ckri.value"
                                           [attr.data-test-id]="'etValue'+ckri.value.slice(0,4).trim()+'Checkup'"
                                         >
-                                          {{ ckri.value ? ckri.value :  ('None'|translate) }}
+                                          {{ ckri.value ? (ckri.value.trim() | translate) :  ('None'|translate) }}
                                         </div>
                                       </div>
                                     </li>
@@ -550,17 +550,17 @@
                           <ng-container *ngFor="let pe of physicalExaminationData">
                             <div class="cheif-complaint-wrapper">
                               <ng-container *ngIf="pe.title != 'Abdomen'">
-                                <h6 class="my-3" [attr.data-test-id]="'etTitle'+pe.title.slice(0,3)+'PhysicalExam'">{{ pe.title }}</h6>
+                                <h6 class="my-3" [attr.data-test-id]="'etTitle'+pe.title.slice(0,3)+'PhysicalExam'">{{ pe.title | translate}}</h6>
                                 <ul class="items-list pt-0">
                                   <li *ngFor="let pei of pe.data">
                                     <div class="list-item">
-                                      <label [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">{{ pei.key }}</label>
+                                      <label [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">{{ pei.key | translate }}</label>
                                       <div
                                         class="list-item-content"
                                         [class.text-muted]="!pei.value"
                                         [attr.data-test-id]="'etValue'+pei.value.slice(0,2).trim()+'PhysicalExam'"
                                       >
-                                        {{ pei.value ? pei.value : ('None'|translate) }}
+                                        {{ pei.value ? (pei.value | translate) : ('None'|translate) }}
                                       </div>
                                     </div>
                                   </li>
@@ -1100,8 +1100,7 @@
                 <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
-              <h4 class="mb-0 mt-3" *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">{{'Diagnosis at
-                Secondary Level'| translate}}
+              <h4 class="mb-0 mt-3" *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">{{'Diagnosis at Secondary Level'| translate}}
               </h4>
               <ul class="items-list pb-4">
                 <li *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">
@@ -1110,7 +1109,7 @@
                   </div>
                 </li>
               </ul>
-              <h4>Diagnosis after telemedicine consultation</h4>
+              <h4>{{"Diagnosis after telemedicine consultation" | translate}}</h4>
 
               <div class="table-responsive">
                 <table class="table" aria-describedby="">
@@ -1126,10 +1125,10 @@
                   <tbody>
                     <ng-container *ngIf="existingDiagnosis.length">
                       <tr *ngFor="let d of existingDiagnosis; let i = index">
-                        <td>{{ d.diagnosisName }}</td>
+                        <td>{{ d.diagnosisName | translate }}</td>
                         <td *ngIf="isFeatureAvailable('tnmStaging')">{{ d.diagnosisTNMStaging ?? '-' }}</td>
-                        <td>{{ d.diagnosisType }}</td>
-                        <td>{{ d.diagnosisStatus }}</td>
+                        <td>{{ d.diagnosisType | translate }}</td>
+                        <td>{{ d.diagnosisStatus | translate }}</td>
                         <td class="pr-0">
                           <button
                             mat-icon-button
@@ -1543,15 +1542,19 @@
                             </td>
                             <td>
                               <ng-select
-                                appendTo=".visit-summary-tab-group"
-                                formControlName="frequency"
-                                class="visit-select custom"
-                                [items]="frequencyList"
-                                [clearable]="false"
-                                [searchable]="true"
-                                [addTag]="true"
-                                placeholder="{{'Select frequency'|translate}}"
-                              >
+                                  appendTo=".visit-summary-tab-group"
+                                  formControlName="frequency"
+                                  class="visit-select custom"
+                                  bindLabel="label"
+                                  bindValue="label"
+                                  [clearable]="false"
+                                  [searchable]="true"
+                                  [addTag]="true"
+                                  placeholder="{{'Select frequency'|translate}}"
+                                >
+                                <ng-option *ngFor="let frequency of frequencyList" [value]="frequency">
+                                  {{ frequency |translate }}
+                                </ng-option>
                               </ng-select>
                             </td>
                             <td colspan="2">
@@ -2067,6 +2070,7 @@
                             [searchable]="true"
                             placeholder="{{'Select time'|translate}}"
                             data-test-id="selectFollowUpTime"
+                            notFoundText="{{'No items found'|translate}}"
                           >
                           </ng-select>
                         </div>

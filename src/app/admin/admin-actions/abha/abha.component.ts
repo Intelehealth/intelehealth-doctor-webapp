@@ -56,7 +56,7 @@ export class AbhaComponent implements OnInit {
   updateStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
       const name = this.abhaData?.find((v: FeatureModel) => v.id === id)?.name;
-      this.toastr.success(`${name} has been successfully updated`, "Update successful!");
+      this.toastr.success(`${name} ${this.translateService.instant("has been successfully updated")}`, this.translateService.instant("Update successful!"));
       this.getAbhas();
     }, err => {
       this.getAbhas();
@@ -70,7 +70,7 @@ export class AbhaComponent implements OnInit {
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
       const name = this.abhaData?.find((v: FeatureModel) => v.key === 'abha_section')?.name;
-      this.toastr.success(`${name} changes published successfully!`, "Changes published!");
+      this.toastr.success(`${name} ${this.translateService.instant("changes published successfully!")}`, this.translateService.instant("Changes published!"));
     });
   }
 }

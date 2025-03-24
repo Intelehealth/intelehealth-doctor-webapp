@@ -124,9 +124,9 @@ export class PartnerLabelComponent implements OnInit{
 
   saveSlides(){
     this.configService.updateImagesWithText({ data: this.themeConfigData.images_with_text }).subscribe(res=>{
-      this.toastr.success("Images & text updated successfully", "Updated Successfully");
+      this.toastr.success(this.translateService.instant("Images & text updated successfully"), this.translateService.instant("Updated Successfully"));
     }, err=>{
-      this.toastr.error("Images & text update failed", "Updated Failed");
+      this.toastr.error(this.translateService.instant("Images & text update failed"), this.translateService.instant("Updated Failed"));
     })
   }
 
@@ -156,7 +156,7 @@ export class PartnerLabelComponent implements OnInit{
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Partner White Labelling has been successfully published", "Publish successfull!");
+      this.toastr.success(this.translateService.instant("Partner White Labelling has been successfully published"), this.translateService.instant("Publish successfull!"));
     });
   }
 
@@ -172,7 +172,7 @@ export class PartnerLabelComponent implements OnInit{
   saveHelpTourConfig(): void {
     if (this.isJsonValid) {
       this.configService.updateHelpTour(JSON.parse(this.themeConfigData.help_tour_config)).subscribe(res => {
-        this.toastr.success("Help Tour Config updated successfully", "Updated Successfully");
+        this.toastr.success(this.translateService.instant("Help Tour Config updated successfully"), this.translateService.instant("Updated Successfully"));
       });
     }
   }

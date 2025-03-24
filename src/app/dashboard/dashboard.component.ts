@@ -22,7 +22,7 @@ import { MindmapService } from '../services/mindmap.service';
 import { NgxRolesService } from 'ngx-permissions';
 import { HelpTourService } from '../services/help-tour.service';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -42,7 +42,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 };
@@ -53,7 +53,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./dashboard.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -229,6 +230,8 @@ export class DashboardComponent implements OnInit {
       this.displayedColumns1 = ['TMH_patient_id', 'name', 'age', 'starts_in', 'actions'];
       this.displayedColumns4 = ['TMH_patient_id', 'name', 'age', 'prescription_started'];
     }
+
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   initHelpTour(){
@@ -285,6 +288,8 @@ export class DashboardComponent implements OnInit {
             }
           }
           this.dataSource6.data = [...this.followUpVisits];
+          console.log(this.dataSource6, "DATA 6");
+          
           if (page == 1) {
             this.dataSource6.paginator = this.tempPaginator5;
             this.dataSource6.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
@@ -666,7 +671,7 @@ export class DashboardComponent implements OnInit {
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
-      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+      this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed'));
     } else if(appointment.visitStatus == 'Visit In Progress') {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
@@ -683,9 +688,9 @@ export class DashboardComponent implements OnInit {
                 if (res.status) {
                   this.mindmapService.notifyHwForRescheduleAppointment(appointment)
                   this.getAppointments();
-                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
+                  this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
-                  this.toastr.success(message, 'Rescheduling failed!');
+                  this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
                 }
               });
             }
@@ -707,7 +712,7 @@ export class DashboardComponent implements OnInit {
     }
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
-        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        this.toastr.success(this.translateService.instant("The Appointment has been successfully canceled."), this.translateService.instant('Canceling successful'));
         this.getAppointments();
       }
     });
@@ -1020,5 +1025,12 @@ export class DashboardComponent implements OnInit {
     if(!flag){
       this.closeMenu();
     }
+  }
+
+  translateArray(complaints: any): string {  
+    if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
+      complaints = complaints[0].split(',').map(item => item.trim());
+    }
+    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
   }
 }

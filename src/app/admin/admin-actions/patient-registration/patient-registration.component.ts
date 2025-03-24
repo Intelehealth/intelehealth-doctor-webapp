@@ -87,7 +87,7 @@ export class PatientRegistrationComponent {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updatePatientRegistrationStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Registration has been successfully updated","Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Registration has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getAllFields();
     }, err => {
       this.getAllFields();
@@ -100,7 +100,7 @@ export class PatientRegistrationComponent {
   */
   updateMandatoryStatus(id: number, status: boolean): void {
     this.configService.updatePatientRegistrationMandatoryStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Registration has been successfully updated","Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Registration has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getAllFields();
     }, err => {
       this.getAllFields();
@@ -113,7 +113,7 @@ export class PatientRegistrationComponent {
   */
   updateEditStatus(id: number, status: boolean): void {
     this.configService.updatePatientRegistrationEditableStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Registration has been successfully updated","Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Registration has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getAllFields();
     }, err => {
       this.getAllFields();
@@ -126,7 +126,7 @@ export class PatientRegistrationComponent {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient Registration changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient Registration changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 
@@ -186,7 +186,7 @@ export class PatientRegistrationComponent {
   */
   updateFeatureStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Registration has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Registration has been successfully updated", "Update successful!"));
       this.getAllFields();
     }, err => {
       this.getAllFields();

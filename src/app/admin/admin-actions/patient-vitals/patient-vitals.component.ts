@@ -64,7 +64,7 @@ export class PatientVitalsComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updateVitalEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient vitals has been successfully updated", "Update successful");
+      this.toastr.success(this.translateService.instant("Patient vitals has been successfully updated"), this.translateService.instant("Update successful"));
       this.getPatientVitals();
     }, err => {
       this.getPatientVitals();
@@ -77,7 +77,7 @@ export class PatientVitalsComponent implements OnInit {
   */
   updateMandatoryStatus(id: number, status: boolean): void {
     this.configService.updateVitalMandatoryStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient vitals has been successfully updated", "Update successful");
+      this.toastr.success(this.translateService.instant("Patient vitals has been successfully updated"), this.translateService.instant("Update successful"));
       this.getPatientVitals();
     }, err => {
       this.getPatientVitals();
@@ -90,7 +90,7 @@ export class PatientVitalsComponent implements OnInit {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient vitals changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient vitals changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 
@@ -100,7 +100,7 @@ export class PatientVitalsComponent implements OnInit {
   */
   updateFeatureStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Vitals has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Vitals has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getPatientVitals();
     }, err => {
       this.getPatientVitals();
@@ -123,7 +123,7 @@ export class PatientVitalsComponent implements OnInit {
       dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
         this.configService.updateVitalName(id, result).subscribe(res => {
           dialogRef.close();
-          this.toastr.success("Patient visit sections name updated successfully!");
+          this.toastr.success(this.translateService.instant("Patient visit sections name updated successfully!"));
           this.getPatientVitals();
         }, (error) => {
           dialogRef.close();

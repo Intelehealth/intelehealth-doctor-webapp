@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
@@ -23,7 +23,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 }
@@ -34,7 +34,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./reschedule-appointment.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
   ]
 })
 export class RescheduleAppointmentComponent implements OnInit {

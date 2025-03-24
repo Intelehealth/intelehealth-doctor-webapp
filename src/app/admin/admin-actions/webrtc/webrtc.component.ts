@@ -55,7 +55,7 @@ export class WebrtcComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updateWebrtcEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Webrtc has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Webrtc has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getWebrtcs();
     }, err => {
       this.getWebrtcs();
@@ -68,7 +68,7 @@ export class WebrtcComponent implements OnInit {
   */
   updateFeatureStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Webrtc has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Webrtc has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getWebrtcs();
     }, err => {
       this.getWebrtcs();
@@ -81,7 +81,7 @@ export class WebrtcComponent implements OnInit {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Webrtc changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Webrtc changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 }

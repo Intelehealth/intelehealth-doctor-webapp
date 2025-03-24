@@ -7,6 +7,7 @@ import { environment } from "src/environments/environment";
 import { getCacheData } from "../utils/utility-functions";
 import { doctorDetails } from "src/config/constant";
 import { ApiResponseModel, MessageModel, UserModel } from "../model/model";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: "root",
@@ -16,7 +17,8 @@ export class ChatService {
   popUpCloseEmitter = new Subject();
   constructor(
     private http: HttpClient,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translateService: TranslateService,
   ) { }
 
   /**
@@ -139,7 +141,7 @@ export class ChatService {
           const pdfCount = messages.reduce((total: number, item: any) => total + ((item.type === 'attachment' && this.isPdf(item.message)) ? 1 : 0), 0)
 
           if (pdfCount >= 2) {
-            this.toastr.warning('PDF upload capacity exceeded, only 2 per chat allowed.');
+            this.toastr.warning(this.translateService.instant('PDF upload capacity exceeded, only 2 per chat allowed.'));
             return of(true);
           }
         } else {
@@ -147,7 +149,7 @@ export class ChatService {
 
 
           if (imageCount >= 5) {
-            this.toastr.warning('Image upload capacity exceeded, only 5 per chat allowed.');
+            this.toastr.warning(this.translateService.instant('Image upload capacity exceeded, only 5 per chat allowed.'));
             return of(true);
           }
         }
@@ -165,7 +167,7 @@ export class ChatService {
         }
 
         case (['application/pdf'].includes(file.type) && (file.size / 1000) > 1000): {
-          this.toastr.warning('File should be less than 500KB.');
+          this.toastr.warning(this.translateService.instant('File should be less than 500KB.'));
           return of(true);
         }
       }

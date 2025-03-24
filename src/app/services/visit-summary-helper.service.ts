@@ -74,20 +74,12 @@ export class VisitSummaryHelperService {
     return getCacheData(true, doctorDetails.USER).username;
   };
 
-  getHours(returnAll = true, date?: string) {
-    const hours = Array.from(
-      {
-        length: 21,
-      },
-      (_, hour) =>
-        moment({
-          hour,
-          minutes: 0,
-        }).format('LT')
-    );
+  getHours(returnAll = true, date: string) {
+    moment.locale(localStorage.getItem('selectedLanguage'));
+    const hours = Array.from({ length: 21 }, (_, hour) => moment({ hour, minutes: 0 }).format('hh:mm A'));
     hours.splice(0, 9);
     if (this.isToday(date) && !returnAll) {
-      const hrs = hours.filter((h) => moment(h, 'LT').isAfter(moment()));
+      const hrs = hours.filter((h) => moment(h, 'hh:mm A').isAfter(moment()));
       return hrs;
     } else {
       return hours;

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { SignaturePad } from 'angular2-signaturepad';
@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { MatTabGroup } from '@angular/material/tabs';
 import { AuthService } from 'src/app/services/auth.service';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -44,7 +44,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 }
@@ -55,8 +55,9 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./profile.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
-  ]
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+  ],
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -202,8 +203,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private translateService: TranslateService,
     private coreService: CoreService,
     private appointmentService: AppointmentService,
-    private appConfigService: AppConfigService) {
-  
+    private appConfigService: AppConfigService
+  ) {
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       middleName: new FormControl('', [Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
@@ -324,12 +325,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appointmentService.checkAppointmentPresent(this.user.uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.specialization).subscribe((res: ApiResponseModel) => {
           if (res.status) {
             if (res.data) {
-              this.toastr.warning("You have some appointments booked for this specialization, please complete them first.", "Can't change specialization!");
+              this.toastr.warning(this.translateService.instant("You have some appointments booked for this specialization, please complete them first."), this.translateService.instant("Can't change specialization!"));
               this.professionalInfoForm.patchValue({ specialization: this.specialization });
             }
           }
         }, (err => {
-          this.toastr.error("Something went wrong.", "Can't change specialization!");
+          this.toastr.error(this.translateService.instant("Something went wrong."), this.translateService.instant("Can't change specialization!"));
           this.professionalInfoForm.patchValue({ specialization: this.specialization });
         }));
       }

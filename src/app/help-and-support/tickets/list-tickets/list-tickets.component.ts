@@ -74,7 +74,7 @@ export class ListTicketsComponent {
     this.modalService.openAddTicketModal().subscribe((result) => {
       if(result){
         this.getAllTickets();
-        this.toastr.success('Ticket has been raised successfully!', 'Ticket raised');      
+        this.toastr.success(this.translateService.instant('Ticket has been raised successfully!'), this.translateService.instant('Ticket raised'));
       }
     });
   }

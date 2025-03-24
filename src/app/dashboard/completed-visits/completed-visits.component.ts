@@ -3,9 +3,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 
 export const PICK_FORMATS = {
@@ -23,7 +24,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 };
@@ -34,7 +35,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./completed-visits.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
   ]
 })
 export class CompletedVisitsComponent {
@@ -57,7 +59,9 @@ export class CompletedVisitsComponent {
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
   isFilterApplied: boolean = false;
   
-  constructor(){
+  constructor(
+    private translateService: TranslateService,
+  ){
     this.filteredDateAndRangeForm = new FormGroup({
       date: new FormControl('', [Validators.required]),
       startDate: new FormControl(null, Validators.required),
@@ -66,6 +70,8 @@ export class CompletedVisitsComponent {
     if(environment.brandName === 'KCDO'){
       this.displayedColumns = ['TMH_patient_id', 'name', 'age', 'visit_completed'];
     }
+    console.log(this.tblDataSource, "COMPLETED VISITS");
+    
   }
 
   checkPatientRegField(fieldName): boolean {
@@ -163,5 +169,12 @@ export class CompletedVisitsComponent {
     if(!flag){
       this.closeMenu();
     }
+  }
+
+  translateArray(complaints: any): string {  
+    if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
+      complaints = complaints[0].split(',').map(item => item.trim());
+    }
+    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
   }
 }

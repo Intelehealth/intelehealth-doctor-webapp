@@ -63,7 +63,7 @@ export class PatientDiagnosticsComponent {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updateDiagnosticEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient diagnostics has been successfully updated", "Update successful");
+      this.toastr.success(this.translateService.instant("Patient diagnostics has been successfully updated"), this.translateService.instant("Update successful"));
       this.getPatientDiagnostics();
     }, err => {
       this.getPatientDiagnostics();
@@ -76,7 +76,7 @@ export class PatientDiagnosticsComponent {
   */
   updateMandatoryStatus(id: number, status: boolean): void {
     this.configService.updateDiagnosticMandatoryStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient diagnostics has been successfully updated", "Update successful");
+      this.toastr.success(this.translateService.instant("Patient diagnostics has been successfully updated"), this.translateService.instant("Update successful"));
       this.getPatientDiagnostics();
     }, err => {
       this.getPatientDiagnostics();
@@ -89,7 +89,7 @@ export class PatientDiagnosticsComponent {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient diagnostics changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient diagnostics changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 
@@ -99,7 +99,7 @@ export class PatientDiagnosticsComponent {
   */
   updateFeatureStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient Diagnostics has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Patient Diagnostics has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getPatientDiagnostics();
     }, err => {
       this.getPatientDiagnostics();

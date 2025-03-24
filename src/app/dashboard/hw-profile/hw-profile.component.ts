@@ -8,7 +8,7 @@ import { ProviderService } from 'src/app/services/provider.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/services/auth.service';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -35,7 +35,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 }
@@ -46,7 +46,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./hw-profile.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
   ]
 })
 export class HwProfileComponent implements OnInit, OnDestroy {
@@ -260,7 +261,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
-        this.toastr.warning('Upload JPG/JPEG format image only.', 'Upload error!');
+        this.toastr.warning(this.translateService.instant('Upload JPG/JPEG format image only.'), this.translateService.instant('Upload error!'));
         return;
       }
       const reader = new FileReader();
@@ -272,7 +273,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           base64EncodedImage: imageBolb[1]
         };
         this.profileService.updateProfileImage(payload).subscribe((res) => {
-          this.toastr.success('Profile picture uploaded successfully!', 'Profile Pic Uploaded');
+          this.toastr.success(this.translateService.instant('Profile picture uploaded successfully!'), this.translateService.instant('Profile Pic Uploaded'));
         });
       };
       reader.readAsDataURL(this.file);
@@ -433,8 +434,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
       if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
-        this.toastr.success('Profile has been updated successfully', 'Profile Updated');
-        this.toastr.warning('Kindly re-login to see updated details', 'Re-login');
+        this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+        this.toastr.warning(this.translateService.instant('Kindly re-login to see updated details'), this.translateService.instant('Re-login'));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
@@ -445,7 +446,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
             const u = getCacheData(true, doctorDetails.USER);
             u.person.display = provider.results[0].person.display;
             setCacheData(doctorDetails.USER, JSON.stringify(u));
-            this.toastr.success('Profile has been updated successfully', 'Profile Updated');
+            this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
           }
         });
       }
