@@ -65,6 +65,7 @@ export class AppointmentsComponent implements OnInit {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
     this.getAppointments();
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   /**
@@ -132,10 +133,10 @@ export class AppointmentsComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };
     if (hours < 1) {
-      if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+      if(minutes < 0) return `${this.translateService.instant("Due")} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      return `${minutes} ${this.translateService.instant("minutes")}`;
     }
-    return `${hours} hrs`;
+    return `${hours} ${this.translateService.instant("hrs")}`;
   }
 
   /**
@@ -247,5 +248,12 @@ export class AppointmentsComponent implements OnInit {
     return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: ProviderAttributeModel) =>
       a.display.includes(doctorDetails.SPECIALIZATION)
     ).value;
+  }
+
+  translateArray(complaints: any): string {  
+    if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
+      complaints = complaints[0].split(',').map(item => item.trim());
+    }
+    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
   }
 }

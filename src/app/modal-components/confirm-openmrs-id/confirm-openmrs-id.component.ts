@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -12,7 +13,9 @@ export class ConfirmOpenmrsIdComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private toastr: ToastrService,
-    private dialogRef: MatDialogRef<ConfirmOpenmrsIdComponent>) { }
+    private dialogRef: MatDialogRef<ConfirmOpenmrsIdComponent>,
+    private translateService: TranslateService,
+  ) { }
 
   /**
   * Close modal
@@ -32,7 +35,7 @@ export class ConfirmOpenmrsIdComponent {
       if (this.openMrsId == this.data) {
         this.close(true);
       } else {
-        this.toastr.warning("Please enter correct OpenMRS ID.", "OpenMRS ID mismatch.");
+        this.toastr.warning(this.translateService.instant("Please enter correct OpenMRS ID."), this.translateService.instant("OpenMRS ID mismatch."));
       }
     }
   }

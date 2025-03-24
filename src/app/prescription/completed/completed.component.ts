@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { CustomVisitModel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from '../../services/app-config.service';
+import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-completed',
@@ -28,7 +30,10 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('compSearchInput', { static: true }) searchElement: ElementRef;
   patientRegFields: string[] = [];
 
-  constructor(private appConfigService: AppConfigService) { 
+  constructor(
+    private appConfigService: AppConfigService,
+    private translateService: TranslateService
+  ) { 
     Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
     }); 
@@ -55,6 +60,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
       this.tempPaginator.length = this.completedVisits.length;
       this.tempPaginator.nextPage();
     }
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   /**
@@ -105,4 +111,10 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
+  translateArray(complaints: any): string {  
+    if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
+      complaints = complaints[0].split(',').map(item => item.trim());
+    }
+    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
+  }
 }

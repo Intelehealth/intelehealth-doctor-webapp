@@ -1,6 +1,6 @@
 import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
-import { MAT_DATE_FORMATS, NativeDateAdapter, DateAdapter } from '@angular/material/core';
+import { MAT_DATE_FORMATS, NativeDateAdapter, DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
@@ -27,9 +27,9 @@ export const PICK_FORMATS = {
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
       if (displayFormat === 'input') {
-          return formatDate(date,'dd MMM, yyyy',this.locale);
+        return formatDate(date,'dd MMM, yyyy',this.locale);
       } else {
-          return date.toDateString();
+        return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
       }
   }
 }
@@ -40,7 +40,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./setup-calendar.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }  
   ]
 })
 export class SetupCalendarComponent implements OnInit {

@@ -56,7 +56,7 @@ export class PatientDetailsComponent {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updateFeatureEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient details have been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Patient details have been successfully updated"), this.translateService.instant("Update successful!"));
       this.getPatientDetailsSections();
     }, err => {
       this.getPatientDetailsSections();
@@ -69,7 +69,7 @@ export class PatientDetailsComponent {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient details changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient details changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 

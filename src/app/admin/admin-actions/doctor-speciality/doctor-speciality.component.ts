@@ -55,7 +55,7 @@ export class DoctorSpecialityComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updateSpecialityStatus(id, status).subscribe(res => {
-      this.toastr.success("Doctor Speciality has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Doctor Speciality has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getDoctorSpecialities();
     }, err => {
       this.getDoctorSpecialities();
@@ -68,7 +68,7 @@ export class DoctorSpecialityComponent implements OnInit {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Doctor Speciality changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Doctor Speciality changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 }

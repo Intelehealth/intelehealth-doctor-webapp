@@ -7,6 +7,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from '../../services/app-config.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-sent',
@@ -110,4 +111,10 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
+  translateArray(complaints: any): string {  
+    if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
+      complaints = complaints[0].split(',').map(item => item.trim());
+    }
+    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
+  }
 }

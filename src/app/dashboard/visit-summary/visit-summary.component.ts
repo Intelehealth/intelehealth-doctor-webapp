@@ -16,7 +16,7 @@ import medicines from '../../core/data/medicines';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -38,7 +38,7 @@ class PickDateAdapter extends NativeDateAdapter {
     if (displayFormat === 'input') {
       return formatDate(date, 'dd MMMM yyyy', this.locale);
     } else {
-      return date.toDateString();
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
     }
   }
 }
@@ -49,7 +49,8 @@ class PickDateAdapter extends NativeDateAdapter {
   styleUrls: ['./visit-summary.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
   ]
 })
 export class VisitSummaryComponent implements OnInit, OnDestroy {
@@ -539,6 +540,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     }
                   }
                   this.checkUpReasonData.push(obj1);
+                  console.log(this.checkUpReasonData, "111111111111111111111111111");
                 } else {
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
@@ -550,6 +552,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     }
                   }
                   this.checkUpReasonData.push(obj1);
+                  console.log(this.checkUpReasonData, "2222222222222222222222222222222222");
+                  
                 }
               }
             }

@@ -780,7 +780,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30, '*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation Details', style: 'sectionheader', border: [false, false, false, true] }],
                       [
                         {
                           colSpan: 2,

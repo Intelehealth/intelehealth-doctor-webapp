@@ -60,7 +60,7 @@ export class TicketDetailComponent {
           description: this.ticketData.description
         }
         this.pagerdutyService.createTicket(ticketObj).subscribe((res)=>{
-          this.toastr.success('Ticket has been Reopened successfully!', 'Ticket Reopened');
+          this.toastr.success(this.translateService.instant('Ticket has been Reopened successfully!'), this.translateService.instant('Ticket Reopened'));
           this.router.navigate(["help"]);
         });
       }

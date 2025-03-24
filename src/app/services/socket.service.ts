@@ -16,6 +16,7 @@ import { doctorDetails } from "src/config/constant";
 import { CoreService } from "./core/core.service";
 import { SocketUserModel } from "../model/model";
 import { notifications } from 'src/config/constant';
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,8 @@ export class SocketService {
     private visitSvc: VisitService,
     private webrtcSvc: WebrtcService,
     private cs: CoreService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -90,7 +92,7 @@ export class SocketService {
     });
 
     this.onEvent("cancel_hw").subscribe((data) => {
-      this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
+      this.toastr.error(this.translateService.instant(`Call Cancelled.`), this.translateService.instant("Health Worker cancelled the call."));
       this.closeVcOverlay();
     });
 

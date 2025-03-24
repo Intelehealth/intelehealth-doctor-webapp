@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { ConfigService } from 'src/app/services/config.service';
 
@@ -48,7 +49,7 @@ export class FileUploadComponent implements OnChanges {
   fileName: string = '';
   isUploadFailed = false;
 
-  constructor(private configService: ConfigService, private toastr: ToastrService){
+  constructor(private configService: ConfigService, private toastr: ToastrService, private translateService:TranslateService){
 
   }
 
@@ -106,13 +107,13 @@ export class FileUploadComponent implements OnChanges {
     }, 500);
     this.configService.uploadImage(url,this.options.requestType, formData).subscribe(res => {
       clearInterval(progressInterval);
-      this.toastr.success("File Uploaded Successfully","Upload successful!");
+      this.toastr.success(this.translateService.instant("File Uploaded Successfully"), this.translateService.instant("Upload successful!"));
       this.uploadProgress = 0;
       this.onFileupload.emit(res);
     }, err => {
       clearInterval(progressInterval);
       this.isUploadFailed = true;
-      this.toastr.error("File Upload Failed","Upload Failed");
+      this.toastr.error(this.translateService.instant("File Upload Failed"), this.translateService.instant("Upload Failed"));
       this.uploadProgress = 0;
     });
 
@@ -139,7 +140,7 @@ export class FileUploadComponent implements OnChanges {
       this.configService.deleteImage(this.options.deleteFileURL,this.filePath).subscribe(res=>{
         this.onFileRemove.emit(res);
       }, err=>{
-        this.toastr.error("Unable to remove the file","Remove failed!");
+        this.toastr.error(this.translateService.instant("Unable to remove the file"), this.translateService.instant("Remove failed!"));
       })
     } else {
       this.onFileRemove.emit({ success : true , filePath : this.filePath});

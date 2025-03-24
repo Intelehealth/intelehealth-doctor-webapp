@@ -55,7 +55,7 @@ export class PatientVisitSummaryComponent implements OnInit {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updatePatientVisitSummaryStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient visit summary has been successfully updated", "Update successful!");
+      this.toastr.success(this.translateService.instant("Patient visit summary has been successfully updated"), this.translateService.instant("Update successful!"));
       this.getPatientVisitSummarySections();
     }, err => {
       this.getPatientVisitSummarySections();
@@ -68,7 +68,7 @@ export class PatientVisitSummaryComponent implements OnInit {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient visit summary changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient visit summary changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 }

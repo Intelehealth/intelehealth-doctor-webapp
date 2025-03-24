@@ -9,6 +9,7 @@ import { Meta } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, PatientModel, PersonAttributeModel, VisitModel } from '../model/model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-prescription-download',
@@ -43,7 +44,8 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private visitService: VisitService,
     private cs: CoreService,
-    private meta: Meta
+    private meta: Meta,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -123,7 +125,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
           if (phoneNumber && phoneNumber.length > 3) {
             this.linkSvc.requestPresctionOtp(this.hash, phoneNumber).subscribe((res: ApiResponseModel) => {
               if (res.success) {
-                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(phoneNumber, 'phone')} successfully!`, 'OTP Sent');
+                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(phoneNumber, 'phone')} successfully!`, this.translateService.instant('OTP Sent'));
                 this.router.navigate(['/session/verify-otp'], {
                   state: {
                     verificationFor: this.linkType,

@@ -57,7 +57,7 @@ export class PatientVisitSectionsComponent {
   */
   updateStatus(id: number, status: boolean): void {
     this.configService.updatePVSEnabledStatus(id, status).subscribe(res => {
-      this.toastr.success("Patient visit sections has been successfully updated", "Update successful");
+      this.toastr.success(this.translateService.instant("Patient visit sections has been successfully updated"), this.translateService.instant("Update successful"));
       this.getPatientVisitSections();
     }, err => {
       this.getPatientVisitSections();
@@ -70,7 +70,7 @@ export class PatientVisitSectionsComponent {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Patient visit sections changes published successfully!", "Changes published!");
+      this.toastr.success(this.translateService.instant("Patient visit sections changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
 
@@ -103,7 +103,7 @@ export class PatientVisitSectionsComponent {
    updateOrder(newOrder: any[]) {
     this.configService.updatePVSOrder(newOrder).subscribe({
       next: (res) => {
-        this.toastr.success("Order updated successfully!");
+        this.toastr.success(this.translateService.instant("Order updated successfully!"));
         this.table.renderRows();
       },
       error: (err) => {
@@ -124,7 +124,7 @@ export class PatientVisitSectionsComponent {
     dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
       this.configService.updatePVSName(id, result).subscribe(res => {
         dialogRef.close();
-        this.toastr.success("Patient visit sections name updated successfully!");
+        this.toastr.success(this.translateService.instant("Patient visit sections name updated successfully!"));
         this.getPatientVisitSections();
       }, (error) => {
         dialogRef.close();

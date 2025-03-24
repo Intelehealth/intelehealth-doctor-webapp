@@ -100,7 +100,7 @@ export class UserCreationComponent {
     this.modalService.openConfirmationDialog({ confirmationMsg: 'Are you sure you want to delete the user?', confirmBtnText: 'Confirm', cancelBtnText: 'Cancel' }).afterClosed().subscribe(res => {
       if (res) {
         this.authService.deleteUser(uuid).subscribe(result => {
-          this.toastr.success('User has been successfully deleted', 'User Deleted');
+          this.toastr.success(this.translateService.instant('User has been successfully deleted'), this.translateService.instant('User Deleted'));
           this.getUsers();
         });
       }
@@ -114,7 +114,7 @@ export class UserCreationComponent {
   openResetPasswordDialog(uuid:string):void{
     this.modalService.openPasswordResetModal({uuid}).subscribe((result) => {
       if(result){
-        this.toastr.success("Password has been successfully reset", "Reset Password");      
+        this.toastr.success(this.translateService.instant("Password has been successfully reset"), this.translateService.instant("Reset Password"));
       }
     });
   }

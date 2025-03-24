@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-raise-ticket',
@@ -18,7 +19,8 @@ export class RaiseTicketComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<RaiseTicketComponent>,
     private supportService: SupportService,
-    private toastr: ToastrService
+    private toastr: ToastrService,    
+    private translateService: TranslateService,
   ) {
     this.raiseTicketForm = new FormGroup({
       title: new FormControl('', [Validators.required]),
@@ -56,7 +58,7 @@ export class RaiseTicketComponent {
     this.supportService.raiseTicket(data).subscribe(res => {
       if (res) {
         this.supportService.storeTicket(getCacheData(true, 'user')?.uuid, res).subscribe(data => {
-          this.toastr.success('Ticket has been raised successfully!', 'Ticket raised');
+          this.toastr.success(this.translateService.instant('Ticket has been raised successfully!'), this.translateService.instant('Ticket raised'));
           this.submitted = false;
           this.close(true);
         });
