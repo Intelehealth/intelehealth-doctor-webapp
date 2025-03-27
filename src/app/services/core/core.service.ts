@@ -158,7 +158,8 @@ export class CoreService {
   * @return {Observable<any>} - Dialog result
   */
   openVisitPrescriptionModal(data: { uuid: string }): Observable<any> {
-    const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    // const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    const dialogRef = this.dialog.open(LibPresciptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
 
