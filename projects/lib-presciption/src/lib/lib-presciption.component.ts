@@ -310,8 +310,6 @@ ngOnInit(): void {
    checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
     this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
-      console.log(response, "response>>>>>>>>>>>");
-      
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
@@ -349,10 +347,8 @@ ngOnInit(): void {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent() {
-    this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
+    this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        console.log(obs, "BJC");
-        
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           this.discussionSummary = obs.value
         }
@@ -664,7 +660,7 @@ ngOnInit(): void {
    * @param {string} type - row type
    * @return {any} - Rows
    */
-   getRecords(type: string) {
+  getRecords(type: string) {
     const records = [];
     switch (type) {
       case 'diagnosis':
@@ -693,6 +689,8 @@ ngOnInit(): void {
             records.push({ text: ai.value, margin: [0, 5, 0, 5] });
           });
         } else if(!this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
+          records.push([{ text: 'No additional instructions added'}]);
+        } else {
           records.push([{ text: 'No additional instructions added'}]);
         }
         break;
@@ -746,7 +744,7 @@ ngOnInit(): void {
       case 'cheifComplaint':
         if(this.appConfigService?.patient_visit_summary?.dp_dignosis_secondary && this.checkUpReasonData.length > 0){
           this.checkUpReasonData[0].data.forEach((cc:any)=>{
-            records.push({text: [{text: cc.key, bold: true}, cc.value.changingThisBreaksApplicationSecurity], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: cc.key + ":", bold: true}, cc.value], margin: [0, 5, 0, 5]});
           });
         } else if (this.cheifComplaints.length) {
           this.cheifComplaints.forEach(cc => {
@@ -1118,8 +1116,16 @@ ngOnInit(): void {
         widths: ['35%', '65%'],
         headerRows: 1,
         body: [
-          [{ text: 'Referral to', style: 'tableHeader' }, { text: 'Referral for (Reason)', style: 'tableHeader' }],
-          ...this.getRecords('referral')
+          // [{ text: 'Referral to', style: 'tableHeader' }, { text: 'Referral for (Reason)', style: 'tableHeader' }],
+          // ...this.getRecords('referral'),
+          [
+            {
+              colSpan: 2,
+              ul: [
+                ...this.getRecords('referral')
+              ]
+            }
+          ]
         ]
       }
     }
@@ -1179,22 +1185,22 @@ ngOnInit(): void {
           widths: [30, '*'],
           headerRows: 1,
           body: [
-            [ {image: 'medication', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Medications Advised', style: 'sectionheader', border: [false, false, false, true] }],
-            [
-              {
-                colSpan: 2,
-                table: {
-                  widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto'],
-                  headerRows: 1,
-                  body: [
-                    [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
-                    ...this.getRecords('medication')
-                  ]
-                },
-                layout: 'lightHorizontalLines'
-              }
-            ],
-            [{ text: 'Additional Instructions:', style: 'sectionheader', colSpan: 2 }, ''],
+            [ {image: 'medication', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Medications', style: 'sectionheader', border: [false, false, false, true] }],
+            // [
+            //   {
+            //     colSpan: 2,
+            //     table: {
+            //       widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto'],
+            //       headerRows: 1,
+            //       body: [
+            //         [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+            //         ...this.getRecords('medication')
+            //       ]
+            //     },
+            //     layout: 'lightHorizontalLines'
+            //   }
+            // ],
+            // [{ text: 'Additional Instructions:', style: 'sectionheader', colSpan: 2 }, ''],
             [
               {
                 colSpan: 2,
@@ -1220,7 +1226,7 @@ ngOnInit(): void {
           widths: [30, '*'],
           headerRows: 1,
           body: [
-            [ {image: 'test', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Investigations Advised', style: 'sectionheader', border: [false, false, false, true] }],
+            [ {image: 'test', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Investigations', style: 'sectionheader', border: [false, false, false, true] }],
             [
               {
                 colSpan: 2,
@@ -1245,13 +1251,14 @@ ngOnInit(): void {
         table: {
           widths: [30, '*'],
           headerRows: 1,
-          body:  [
-            [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Advise', style: 'sectionheader', border: [false, false, false, true] }],
+          body: [
+            [ {image: 'followUp', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Follow Up', style: 'sectionheader', border: [false, false, false, true] }],
             [
               {
                 colSpan: 2,
-                table: this.renderReferralSectionPDF(),
-                layout: 'lightHorizontalLines'
+                ul: [
+                  ...this.getRecords('followUpInstructions')
+                ]
               }
             ]
           ]
@@ -1263,7 +1270,33 @@ ngOnInit(): void {
       '',
       '',
       ''
-    ]];
+    ],
+    // [
+    //   {
+    //     colSpan: 4,
+    //     table: {
+    //       widths: [30, '*'],
+    //       headerRows: 1,
+    //       body:  [
+    //         [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Advise', style: 'sectionheader', border: [false, false, false, true] }],
+    //         [
+    //           {
+    //             colSpan: 2,
+    //             table: this.renderReferralSectionPDF(),
+    //             layout: 'lightHorizontalLines'
+    //           }
+    //         ]
+    //       ]
+    //     },
+    //     layout: {
+    //       defaultBorder: false
+    //     }
+    //   },
+    //   '',
+    //   '',
+    //   ''
+    // ]
+  ];
 
     if(this.isFeatureAvailable('doctor-recommendation')){
       return [
@@ -1274,7 +1307,7 @@ ngOnInit(): void {
               widths: [30, '*','auto','auto'],
               headerRows: 1,
               body: [
-                [ {image: 'advice', width: 25, height: 25, border: [false, false, false, true]  }, {colSpan: 3, text: 'Doctor\'s Recommendation', style: 'sectionheader', border: [false, false, false, true] },'',''],
+                [ {image: 'advice', width: 25, height: 25, border: [false, false, false, true]  }, {colSpan: 3, text: 'Recommendation', style: 'sectionheader', border: [false, false, false, true] },'',''],
                 ...subFields
               ]
             },
@@ -1297,13 +1330,14 @@ ngOnInit(): void {
  */
 
   async downloadPrescription() {
-  try {
-    const docDefinition = await this.generatePdf(); // Get the PDF content
-    pdfMake.createPdf(docDefinition).download('e-prescription.pdf'); 
-  } catch (error) {
-    console.error('Error generating or downloading PDF:', error);
+    try {
+      const docDefinition = await this.generatePdf(); // Get the PDF content
+      pdfMake.createPdf(docDefinition).download('e-prescription.pdf'); 
+    } catch (error) {
+      console.error('Error generating or downloading PDF:', error);
+    }
   }
-  }
+
   async generatePdf() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);

@@ -542,9 +542,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
-              this.checkIfPatientCallDurationPresent(visit.attributes)
-              this.checkIfCallStatusPresent(visit.attributes)
-              this.checkIfDiscussionSummaryPresent()
+              this.checkIfPatientCallDurationPresent(visit.attributes);
+              this.checkIfCallStatusPresent(visit.attributes);
+              this.checkIfDiscussionSummaryPresent();
 
               if(isFeaturePresent('medicationFrequencyList')) this.getFrequencyList();
             }

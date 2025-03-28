@@ -803,13 +803,20 @@
                   </tbody>
                 </table>
               </div>
-              <ul class="items-list" *ngIf="appConfigService?.patient_visit_summary?.dp_referral_secondary">
+              <ul class="items-list" *ngIf="appConfigService?.patient_visit_summary?.dp_referral_secondary && referralSecondary; else noReferralSecondary">
                 <li>
                   <div class="d-flex justify-content-between align-items-center">
                     <span>{{ referralSecondary | translate}}</span>
                   </div>
                 </li>
               </ul>
+              <ng-template #noReferralSecondary>
+                <tr>
+                  <td colspan="5" class="text-center">
+                  {{'No referralSecondary added' | translate}}
+                  </td>
+                </tr>
+              </ng-template>
             </div>
           </div>
         </div>
