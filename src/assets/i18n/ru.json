@@ -6207,5 +6207,12 @@
   "Failed to generate a video call token.":"Не удалось сгенерировать маркер видеовызова.",
   "Health worker not available to pick the call, please try again later.":"Врач недоступен для ответа на звонок, пожалуйста, повторите попытку позже.",
   "Call ended from Health Worker's end.":"Вызов завершен со стороны врача.",
-  "Call rejected by Health Worker":"Вызов отклонен врачом"
+  "Call rejected by Health Worker":"Вызов отклонен врачом",
+  "Expected Date of Delivery (EDD)":	"Предполагаемая дата родов ",
+  "Abdomen (Obstetric) Examination":	"Осмотр живота (Акушерство)",
+  "Other Systems Examination":	"Осмотр других систем",
+  "Obstetric": "Акушерский",
+  "Obstetric History":	"Акушерский анамнез",
+  "Every 30 minutes":	"Каждые 30 минут",
+  "Three times daily":	"Три раза в день"
 }

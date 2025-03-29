@@ -515,7 +515,7 @@
                                           [class.text-muted]="!ckri.value"
                                           [attr.data-test-id]="'etValue'+ckri.value.slice(0,4).trim()+'Checkup'"
                                         >
-                                          {{ ckri.value ? (ckri.value.trim() | translate) : ('None'|translate) }}
+                                          {{ ckri.value ? (ckri.value.trim().replace('.', '') | translate) : ('None'|translate) }}
                                         </div>
                                       </div>
                                     </li>
@@ -592,11 +592,11 @@
                                 </ul>
                               </ng-container>
                               <ng-container *ngIf="pe.title == 'Abdomen'">
-                                <h6 class="my-3" [attr.data-test-id]="'etTitle'+pe.title.slice(0,3)+'PhysicalExam'">{{ pe.title }}</h6>
+                                <h6 class="my-3" [attr.data-test-id]="'etTitle'+pe.title.slice(0,3)+'PhysicalExam'">{{ pe.title | translate }}</h6>
                                 <ul class="items-list pt-0">
                                   <li *ngFor="let pei of pe.data">
                                     <div class="list-item">
-                                      <label [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">{{ pei.key }}</label>
+                                      <label [attr.data-test-id]="'etKey'+pei.key.slice(0,3)+'PhysicalExam'">{{ pei.key | translate }}</label>
                                     </div>
                                   </li>
                                   <li *ngIf="getImagesBySection(pe.title).length">
@@ -636,11 +636,11 @@
                         <ng-container *ngSwitchCase="pvsConstant['medical_history'].key">
                           <ng-container *ngFor="let ph of patientHistoryData">
                             <div class="cheif-complaint-wrapper">
-                              <h6 class="my-3" [attr.data-test-id]="'etTitle'+ph.title.slice(0,3)+'Medicalhis'">{{ ph.title }}</h6>
+                              <h6 class="my-3" [attr.data-test-id]="'etTitle'+ph.title.slice(0,3)+'Medicalhis'">{{ ph.title | translate }}</h6>
                               <ul class="items-list pt-0">
                                 <li *ngFor="let phi of ph.data; let x = index">
                                   <div class="list-item">
-                                    <label [attr.data-test-id]="'etKey'+phi.key.slice(0,3)+'Medicalhis'">{{ phi.key }}</label>
+                                    <label [attr.data-test-id]="'etKey'+phi.key.slice(0,3)+'Medicalhis'">{{ phi.key | translate }}</label>
                                     <div
                                       class="list-item-content"
                                       [class.text-muted]="!phi.value"
@@ -662,7 +662,7 @@
                           <ul class="items-list">
                             <li>
                               <div class="d-flex justify-content-between">
-                                <span>{{ additionalNotes }}</span>
+                                <span>{{ additionalNotes | translate }}</span>
                               </div>
                             </li>
                           </ul>
@@ -818,7 +818,7 @@
                 <ng-container matColumnDef="cheif_complaint">
                   <th mat-header-cell *matHeaderCellDef>{{'Chief Complaint'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.cheif_complaint }}
+                    {{ element.cheif_complaint | translate }}
                   </td>
                 </ng-container>
 
@@ -866,7 +866,7 @@
                   <td mat-cell *matCellDef="let element">
                     <div class="blue-pill" *ngIf="element.prescription_sent">
                       <img src="assets/svgs/pad-4.svg" alt="" />
-                      <span class="ml-1">{{ element.prescription_sent }}</span>
+                      <span class="ml-1">{{ element.prescription_sent | translate }}</span>
                     </div>
                   </td>
                 </ng-container>

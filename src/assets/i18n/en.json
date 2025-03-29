@@ -6228,7 +6228,14 @@
   "Failed to generate a video call token.":"Failed to generate a video call token.",
   "Health worker not available to pick the call, please try again later.":"Health worker not available to pick the call, please try again later.",
   "Call ended from Health Worker's end.":"Call ended from Health Worker's end.",
-  "Call rejected by Health Worker":"Call rejected by Health Worker"
+  "Call rejected by Health Worker":"Call rejected by Health Worker",
+  "Expected Date of Delivery (EDD)": "Expected Date of Delivery (EDD)",
+  "Abdomen (Obstetric) Examination": "Abdomen (Obstetric) Examination",
+  "Other Systems Examination": "Other Systems Examination",
+  "Obstetric": "Obstetric",
+  "Obstetric History": "Obstetric History",
+  "Every 30 minutes": "Every 30 minutes",
+  "Three times daily": "Three times daily"
 }
 
 
