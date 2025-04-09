@@ -85,3 +85,30 @@
     }
   }
 }
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .form-control {
+  width: 100%;
+  padding-right: 40px;
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  background: transparent;
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: var(--color-darkestBlue);
+}
+
+.datepicker-icon {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}

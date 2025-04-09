@@ -7,7 +7,7 @@ import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { PatientVisitSection } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { CoreService } from 'src/app/services/core/core.service';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 
 @Component({
@@ -144,5 +144,9 @@ export class PatientVisitSectionsComponent {
         this.getPatientVisitSections();
       }
     });
+  }
+
+  getLanguageValue(element: any) {
+    return getFieldValueByLanguage(element)
   }
 }

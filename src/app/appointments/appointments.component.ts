@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData, checkIfDateOldThanOneDay} from '../utils/utility-functions';
+import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
@@ -81,7 +81,7 @@ export class AppointmentsComponent implements OnInit {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
-              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
               appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person)
               this.appointments.push(appointment);
             }
@@ -129,14 +129,25 @@ export class AppointmentsComponent implements OnInit {
   checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
-    if(hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm A');
-    };
-    if (hours < 1) {
-      if(minutes < 0) return `${this.translateService.instant("Due")} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} ${this.translateService.instant("minutes")}`;
+    minutes = minutes - (hours * 60);
+    let resString = "";
+    if (hours >= 24) {
+      resString = moment(data).format('DD MMM, YYYY hh:mm A');
+    } else {
+      if (hours > 1) {
+        resString += hours + " " + this.translateService.instant("Hours");
+      } else if(hours === 1) {
+        resString += hours + " " + this.translateService.instant("Hour");
+      }
+      if (minutes < 0) {
+        resString = `${this.translateService.instant('Due')} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      } else if (minutes === 1){
+        resString += " " + minutes + " " + this.translateService.instant("Minute");
+      } else {
+        resString += " " + minutes +  " " + this.translateService.instant("Minutes");
+      }
     }
-    return `${hours} ${this.translateService.instant("hrs")}`;
+    return resString.trim();
   }
 
   /**

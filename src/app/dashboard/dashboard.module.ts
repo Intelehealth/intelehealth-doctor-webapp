@@ -26,8 +26,6 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
 import { OpenChatComponent } from './open-chat/open-chat.component';
@@ -37,10 +35,6 @@ import { NotesComponent } from './visit-summary/notes/notes.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruction/follow-up-instruction.component';
 
-// AoT requires an exported function for factories
-export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
-}
 
 @NgModule({
   declarations: [
@@ -80,13 +74,6 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    }),
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
     }),
     MatProgressSpinnerModule,
     SharedModule

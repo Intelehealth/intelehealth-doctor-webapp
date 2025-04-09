@@ -101,13 +101,17 @@
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
-                            <ng-select formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                            <ng-select formControlName="startMeridiem" class="customSelect2"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              >
+                              <ng-option *ngFor="let clockTimeAmPM of clockTimeAmPM" [value]="clockTimeAmPM.name">
+                                {{ (clockTimeAmPM.name) |translate }}
+                              </ng-option>
                             </ng-select>
                           </div>
                         </td>
@@ -121,13 +125,17 @@
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
-                            <ng-select formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                            <ng-select formControlName="endMeridiem" class="customSelect2"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              >
+                              <ng-option *ngFor="let clockTimeAmPM of clockTimeAmPM" [value]="clockTimeAmPM.name">
+                                {{ (clockTimeAmPM.name) |translate }}
+                              </ng-option>
                             </ng-select>
                           </div>
                         </td>
@@ -184,14 +192,21 @@
                               [searchable]="false"
                               data-test-id="selStartTime">
                             </ng-select>
-                            <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                            <ng-select 
+                              [class.invalid-input]="submitted && t.controls.startMeridiem.errors" 
+                              formControlName="startMeridiem" 
+                              class="customSelect2"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selStartAm&Pm">
+                              data-test-id="selStartAm&Pm"
+                            >
+                              <ng-option *ngFor="let clockTimeAmPM of clockTimeAmPM" [value]="clockTimeAmPM.name">
+                                {{ (clockTimeAmPM.name) |translate }}
+                              </ng-option>
                             </ng-select>
                           </div>
                         </td>
@@ -206,14 +221,21 @@
                               [searchable]="false"
                               data-test-id="selEndTime">
                             </ng-select>
-                            <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                            <ng-select 
+                              [class.invalid-input]="submitted && t.controls.endMeridiem.errors" 
+                              formControlName="endMeridiem" 
+                              class="customSelect2" 
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selEndAm&Pm">
+                              data-test-id="selEndAm&Pm"
+                            >
+                              <ng-option *ngFor="let clockTimeAmPM of clockTimeAmPM" [value]="clockTimeAmPM.name">
+                                {{ (clockTimeAmPM.name) |translate }}
+                              </ng-option>
                             </ng-select>
                           </div>
                         </td>

@@ -1,9 +1,9 @@
 <div class="title-con position-relative" mat-dialog-title>
-  <h6 class="mb-0 text-left">{{ fieldName?.charAt(0)?.toUpperCase() + fieldName?.slice(1)?.toLowerCase() | translate}}
-  </h6>
+  <h6 class="mb-0 text-left">{{ fieldName | titlecase | translate}}</h6>
   <div class="close-btn-con">
-    <button class="modal-close-btn" (click)="handleCancel()" data-test-id="btnClose"><img
-        src="assets/svgs/Close-icon.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="handleCancel()" data-test-id="btnClose">
+      <img src="assets/svgs/Close-icon.svg" alt="">
+    </button>
   </div>
 </div>
 <mat-dialog-content>
@@ -13,9 +13,9 @@
         <div class="form-row" formArrayName="fields">
           <div class="form-group col-md-4" *ngFor="let fields of fields.controls; let i = index" [formGroupName]="i">
             <label for="{{fields.value.language}}">{{fields.value.language | translate}}</label>
-            <input formControlName="value" class="form-control" placeholder="Enter {{ fieldName }} text">
+            <input formControlName="value" class="form-control" placeholder="{{ 'Enter name text' | translate }}">
             <div *ngIf="fields.get('value').invalid && fields.get('value').touched">
-              <small style="color:red">Value is required!</small>
+              <small style="color:red">{{ "Value is required!" | translate }}</small>
             </div>
           </div>
         </div>

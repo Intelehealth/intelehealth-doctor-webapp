@@ -50,7 +50,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
   ]
 })
 export class VisitSummaryComponent implements OnInit, OnDestroy {
@@ -188,8 +188,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
   search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
-  search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
-  search4 = (text$: Observable<string>) => this.mainSearch(text$, this.strengthList.map((val) => val.name));
+  search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => this.translateService.instant(val.name.trim())));
+  search4 = (text$: Observable<string>) => this.mainSearch(text$, this.strengthList.map((val) => this.translateService.instant(val.name)));
   search5 = (text$: Observable<string>) => this.mainSearch(text$, this.daysList.map((val) => val.name));
   search6 = (text$: Observable<string>) => this.mainSearch(text$, this.timingList.map((val) => val.name));
 
@@ -310,7 +310,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
     medicines.forEach(med => {
-      this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
+      this.drugNameList.push({ 'id': med.id, 'name': med.name });
     });
     this.getVisit(id);
     this.formControlValueChanges();
@@ -540,7 +540,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     }
                   }
                   this.checkUpReasonData.push(obj1);
-                  console.log(this.checkUpReasonData, "111111111111111111111111111");
                 } else {
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
@@ -552,8 +551,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     }
                   }
                   this.checkUpReasonData.push(obj1);
-                  console.log(this.checkUpReasonData, "2222222222222222222222222222222222");
-                  
                 }
               }
             }

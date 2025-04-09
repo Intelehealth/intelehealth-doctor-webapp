@@ -27,9 +27,9 @@
                                 <th mat-header-cell *matHeaderCellDef> {{'Section' | translate}} </th>
                                 <td mat-cell *matCellDef="let element">
                                     <div class="priority-v d-flex flex-row align-items-center">
-                                        {{element.name}}
+                                        {{ element.name | translate }}
                                         <div class="red-pill ml-2" *ngIf="element.name === 'Priority Visit Section'">
-                                            <span>{{element.priority_visit_count}} pending visits</span>
+                                            <span>{{element.priority_visit_count}} {{'pending visits'|translate}}</span>
                                         </div>
                                     </div>
                                 </td>

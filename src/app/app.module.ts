@@ -65,6 +65,7 @@ import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
 import { AppConfigService } from "./services/app-config.service";
 import { SidebarMenuListComponent } from "./main-container/sidebar-menu-list/sidebar-menu-list.component";
+import { LOCALE_ID } from '@angular/core';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -191,7 +192,11 @@ registerLocaleData(localeEn);
       deps: [PwaService],
       multi: true
     },
-    DecimalPipe
+    DecimalPipe,
+    { 
+      provide: LOCALE_ID,
+      useValue: getCacheData(false, languages.SELECTED_LANGUAGE)
+    }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

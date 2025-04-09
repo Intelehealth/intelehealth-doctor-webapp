@@ -29,7 +29,7 @@
                                 <th mat-header-cell *matHeaderCellDef> {{'Section Name' | translate}} </th>
                                 <td mat-cell *matCellDef="let element">
                                     <div>
-                                        <span>{{element.name}}</span>
+                                        <span>{{ (element.lang !== null ? getLanguageValue(element) : element.name) | translate }}</span>
                                         <button mat-icon-button
                                             aria-label="Edit sections"
                                             (click)="openDialog(element)">

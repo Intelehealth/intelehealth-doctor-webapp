@@ -131,6 +131,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+            console.log(this.clinicName, "Vishal");
+            
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);

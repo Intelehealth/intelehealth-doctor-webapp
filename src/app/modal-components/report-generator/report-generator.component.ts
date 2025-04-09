@@ -1,11 +1,40 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
+import { formatDate } from '@angular/common';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
+
+export const PICK_FORMATS = {
+  parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
+  display: {
+    dateInput: 'input',
+    monthYearLabel: { year: 'numeric', month: 'short' },
+    dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
+    monthYearA11yLabel: { year: 'numeric', month: 'long' }
+  }
+};
+
+class PickDateAdapter extends NativeDateAdapter {
+  format(date: Date, displayFormat: Object): string {
+    if (displayFormat === 'input') {
+      return formatDate(date, 'dd MMM yyyy', this.locale);
+    } else {
+      return formatDate(date.toDateString(), 'EEE MMM dd yyyy', this.locale);
+    }
+  }
+};
 
 @Component({
   selector: 'app-report-generator',
   templateUrl: './report-generator.component.html',
-  styleUrls: ['./report-generator.component.scss']
+  styleUrls: ['./report-generator.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: PickDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
+  ]
 })
 export class ReportGeneratorComponent {
 

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData, checkIfDateOldThanOneDay, deleteCacheData } from '../utils/utility-functions';
+import { getCacheData, deleteCacheData } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, PatientVisitSummaryConfigModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 import { AppConfigService } from '../services/app-config.service';
@@ -54,7 +54,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -288,8 +288,6 @@ export class DashboardComponent implements OnInit {
             }
           }
           this.dataSource6.data = [...this.followUpVisits];
-          console.log(this.dataSource6, "DATA 6");
-          
           if (page == 1) {
             this.dataSource6.paginator = this.tempPaginator5;
             this.dataSource6.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
@@ -543,7 +541,7 @@ export class DashboardComponent implements OnInit {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
-              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
               appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person)
               appointment.TMH_patient_id = this.getAttributeData(appointment.visit, "TMH Case Number");
               this.appointments.push(appointment);
@@ -1032,5 +1030,29 @@ export class DashboardComponent implements OnInit {
       complaints = complaints[0].split(',').map(item => item.trim());
     }
     return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
+  }
+
+  checkIfDateOldThanOneDay(data: string) {
+    let hours = moment(data).diff(moment(), 'hours');
+    let minutes = moment(data).diff(moment(), 'minutes');
+    minutes = minutes - (hours * 60);
+    let resString = "";
+    if (hours >= 24) {
+      resString = moment(data).format('DD MMM, YYYY hh:mm A');
+    } else {
+      if (hours > 1) {
+        resString += hours + " " + this.translateService.instant("Hours");
+      } else if(hours === 1) {
+        resString += hours + " " + this.translateService.instant("Hour");
+      }
+      if (minutes < 0) {
+        resString = `${this.translateService.instant('Due')} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      } else if (minutes === 1){
+        resString += " " + minutes + " " + this.translateService.instant("Minute");
+      } else {
+        resString += " " + minutes +  " " + this.translateService.instant("Minutes");
+      }
+    }
+    return resString.trim();
   }
 }

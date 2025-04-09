@@ -7,6 +7,8 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } fro
 import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 
 export const PICK_FORMATS = {
@@ -36,7 +38,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
   ]
 })
 export class CompletedVisitsComponent {
@@ -70,8 +72,6 @@ export class CompletedVisitsComponent {
     if(environment.brandName === 'KCDO'){
       this.displayedColumns = ['TMH_patient_id', 'name', 'age', 'visit_completed'];
     }
-    console.log(this.tblDataSource, "COMPLETED VISITS");
-    
   }
 
   checkPatientRegField(fieldName): boolean {

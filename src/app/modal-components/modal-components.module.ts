@@ -53,6 +53,10 @@ import { LanguageFieldUpdate } from './language-fields-update/language-fields-up
 import { SubSectionsComponent } from './sub-sections/sub-sections.component';
 import { MatTableModule } from '@angular/material/table';
 import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
     declarations: [
@@ -113,7 +117,11 @@ import { PatientRegValidationsComponent } from './patient-reg-validations/patien
         SharedModule,
         MatProgressBarModule,
         MatTabsModule,
-        MatTableModule
+        MatTableModule,
+        BrowserModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatNativeDateModule
     ],
     exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
     schemas: [NO_ERRORS_SCHEMA]

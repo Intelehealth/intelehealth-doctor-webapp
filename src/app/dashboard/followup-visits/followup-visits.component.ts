@@ -8,6 +8,8 @@ import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 
 export const PICK_FORMATS = {
@@ -37,7 +39,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
   ]
 })
 export class FollowupVisitsComponent {

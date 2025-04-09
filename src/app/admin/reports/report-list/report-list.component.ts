@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CoreService } from 'src/app/services/core/core.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-report-list',
@@ -13,22 +14,26 @@ export class ReportListComponent {
   reports = [
     {
       id: 1,
-      name: 'List of Patients between two dates',
+      name: this.translateService.instant('List of Patients between two dates'),
       buttonName: "Create Report"
     }
   ];
 
   displayedColumns: string[] = ['name', 'buttonName'];
-  constructor(private modalService: CoreService, private router: Router) { }
+  constructor(
+    private modalService: CoreService, 
+    private router: Router,
+    private translateService: TranslateService
+  ) { }
 
   createReport(element) {
     let data = {
       reportId: element.id,
       title: element.name,
-      field1: 'Start date',
-      field2: 'End date',
-      cancelBtnText: 'Cancel',
-      confirmBtnText: 'Generate Report'
+      field1: this.translateService.instant('Start date'),
+      field2: this.translateService.instant('End date'),
+      cancelBtnText: this.translateService.instant('Cancel'),
+      confirmBtnText: this.translateService.instant('Generate Report')
     };
       this.modalService.openGenerateReportDialog(data).subscribe((res: any) => {
         if (res) {

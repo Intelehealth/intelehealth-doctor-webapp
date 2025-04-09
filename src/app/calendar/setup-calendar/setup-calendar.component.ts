@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { doctorDetails } from 'src/config/constant';
+import { doctorDetails, languages } from 'src/config/constant';
 import { ApiResponseModel, DataItemModel, ProviderAttributeModel, ScheduleModel, ScheduleSlotModel, ScheduledMonthModel } from 'src/app/model/model';
 
 export const PICK_FORMATS = {
@@ -41,7 +41,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }  
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }  
   ]
 })
 export class SetupCalendarComponent implements OnInit {

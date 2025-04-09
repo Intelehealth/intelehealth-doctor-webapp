@@ -128,7 +128,7 @@
 
             <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Corresponding Address 1') && patient?.person?.preferredAddress?.address1">
               <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'Corresponding address 1' | translate}}</h6>
+                <h6 data-test-id="etPatient">{{'Corresponding Address 1' | translate}}</h6>
                 <p data-test-id="etPatient">
                   {{ patient?.person?.preferredAddress?.address1 }}
                 </p>
@@ -399,7 +399,7 @@
                           <div class="list-item">
                             <label>{{'Location'|translate}}</label>
                             <div class="list-item-content">
-                              {{ clinicName | titlecase }}
+                              {{ (clinicName | titlecase) | translate }}
                             </div>
                           </div>
                         </li>
@@ -408,7 +408,7 @@
                             <label>{{'Provided by'|translate}}</label>
                             <div class="list-item-content">
                               <div class="visit-provider-con">
-                                <span>{{ providerName }}</span>
+                                <span>{{ providerName | translate }}</span>
                               </div>
                             </div>
                           </div>
@@ -472,7 +472,7 @@
                     <label>{{'Qualification'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.typeOfProfession : ('NA'|translate)
+                        (consultedDoctor ? consultedDoctor.typeOfProfession : ('NA'|translate)) | translate
                       }}
                     </div>
                   </div>
@@ -482,7 +482,7 @@
                     <label>{{'Speciality'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.specialization : ('NA'|translate)
+                        (consultedDoctor ? consultedDoctor.specialization : ('NA'|translate)) | translate
                       }}
                     </div>
                   </div>
@@ -491,7 +491,7 @@
                   <div class="list-item">
                     <label>{{'Spoken with patient'|translate}}</label>
                     <div class="list-item-content">
-                      {{ spokenWithPatient }}
+                      {{ spokenWithPatient | translate }}
                     </div>
                   </div>
                 </li>
@@ -508,12 +508,11 @@
             </div>
             
             <div class="data-section-content">
-              <h4 class="mb-0 mt-3" *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">{{'Diagnosis at
-                Secondary Level'| translate}}</h4>
+              <h4 class="mb-0 mt-3" *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">{{'Diagnosis at Secondary Level'| translate}}</h4>
               <ul class="items-list">
                 <li *ngIf="patientVisitSummary?.diagnosis_at_secondary_level && diagnosisAtSecondaryLevel">
                   <div class="list-item">
-                    <div class="list-item-content">{{diagnosisAtSecondaryLevel?.display}}</div>
+                    <div class="list-item-content">{{diagnosisAtSecondaryLevel?.display | translate }}</div>
                   </div>
                 </li>
                 <li *ngIf="!isDownloadPrescription">
@@ -525,7 +524,7 @@
                   </div>
                 </li>   
               </ul>
-              <h4>Diagnosis after telemedicine consultation</h4>
+              <h4>{{"Diagnosis after telemedicine consultation" | translate}}</h4>
 
               <div class="table-responsive" *ngIf="existingDiagnosis.length">
                 <table class="table">
@@ -539,10 +538,10 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let d of existingDiagnosis; let i = index">
-                      <td>{{ d.diagnosisName }}</td>
+                      <td>{{ d.diagnosisName | translate }}</td>
                       <td *ngIf="isFeatureAvailable('tnmStaging')">{{ d.diagnosisTNMStaging ?? '-' }}</td>
-                      <td>{{ d.diagnosisType }}</td>
-                      <td>{{ d.diagnosisStatus }}</td>
+                      <td>{{ d.diagnosisType | translate }}</td>
+                      <td>{{ d.diagnosisStatus | translate }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -561,7 +560,7 @@
               <ul *ngIf="notes?.length; else noNotes" class="items-list">
                 <li *ngFor="let n of notes">
                   <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ n.value }}</span>
+                    <span>{{ n.value | translate }}</span>
                   </div>
                 </li>
               </ul>
@@ -581,7 +580,7 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <span>{{ a.value }}</span>
+                    <span>{{ a.value | translate }}</span>
                   </div>
                 </li>
               </ul>
@@ -600,7 +599,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/test.svg" alt="" />
-              <h6>{{'Doctor's Recommendation'|translate}}</h6>
+              <h6>{{"Doctor's Recommendation"|translate}}</h6>
             </div>
             <div class="data-section-content pt-3">
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
@@ -635,12 +634,12 @@
                     <tbody>
                       <ng-container *ngIf="medicines.length; else noMedicines">
                         <tr *ngFor="let m of medicines; let i = index">
-                          <td>{{ m.drug }}</td>
-                          <td>{{ m.strength }}</td>
-                          <td>{{ m.days }}</td>
-                          <td>{{ m.timing }}</td>
-                          <td>{{ m.frequency }}</td>
-                          <td>{{ m.remark }}</td>
+                          <td>{{ m.drug |translate }}</td>
+                          <td>{{ m.strength |translate }}</td>
+                          <td>{{ m.days |translate }}</td>
+                          <td>{{ m.timing |translate }}</td>
+                          <td>{{ m.frequency |translate }}</td>
+                          <td>{{ m.remark |translate }}</td>
                         </tr>
                       </ng-container>
                       <ng-template #noMedicines>
@@ -684,7 +683,7 @@
                     <div
                       class="d-flex justify-content-between align-items-center"
                     >
-                      <span>{{ t.value }}</span>
+                      <span>{{ t.value | translate }}</span>
                     </div>
                   </li>
                 </ul>
@@ -720,10 +719,10 @@
                     <tbody>
                       <ng-container *ngIf="referrals.length; else noReferrals">
                         <tr *ngFor="let r of referrals; let i = index">
-                          <td>{{ r.speciality }}</td>
-                          <td *ngIf="isFeatureAvailable('referralFacility', true)">{{ r.facility }}</td>
-                          <td *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{ r.priority }}</td>
-                          <td>{{ r.reason }}</td>
+                          <td>{{ r.speciality | translate }}</td>
+                          <td *ngIf="isFeatureAvailable('referralFacility', true)">{{ r.facility | translate }}</td>
+                          <td *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{ r.priority | translate }}</td>
+                          <td>{{ r.reason | translate }}</td>
                         </tr>
                       </ng-container>
                       <ng-template #noReferrals>
@@ -755,7 +754,7 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <span>{{ t.value }}</span>
+                    <span>{{ t.value | translate }}</span>
                   </div>
                 </li>
               </ul>
@@ -790,8 +789,8 @@
                   <tbody>
                     <ng-container *ngIf="followUp; else noFollowUp">
                       <tr>
-                        <td> {{ followUp.wantFollowUp }}</td>
-                        <td *ngIf="isFeatureAvailable('followUpType')">{{ followUp.followUpType ? followUp.followUpType : '-' }}</td>
+                        <td> {{ followUp.wantFollowUp | translate }}</td>
+                        <td *ngIf="isFeatureAvailable('followUpType')">{{ followUp.followUpType ? (followUp.followUpType|translate) : '-' }}</td>
                         <td> {{ followUp.followUpDate ? (followUp.followUpDate|date : "mediumDate") : '-' }}</td>
                         <td> {{ followUp.followUpTime ? followUp.followUpTime : '-' }}</td>
                         <td> {{ followUp.followUpReason ? followUp.followUpReason : '-' }}</td>

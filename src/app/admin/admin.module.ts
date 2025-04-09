@@ -21,9 +21,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SupportComponent } from './support/support.component';
 import { MomentModule } from 'ngx-moment';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+// import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+// import { HttpClient } from '@angular/common/http';
+// import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
 import { AdminActionsComponent } from './admin-actions/admin-actions.component';
@@ -58,9 +58,9 @@ import { PatientDetailsComponent } from './admin-actions/patient-details/patient
 
 
 // AoT requires an exported function for factories
-export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
-}
+// export function HttpLoaderFactory(httpClient: HttpClient) {
+//   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+// }
 
 const routes: Routes = [
   {
@@ -218,13 +218,13 @@ const routes: Routes = [
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
+    // TranslateModule.forRoot({
+    //   loader: {
+    //     provide: TranslateLoader,
+    //     useFactory: HttpLoaderFactory,
+    //     deps: [HttpClient]
+    //   }
+    // }),
     MomentModule,
     NgbNavModule,
     SharedModule,

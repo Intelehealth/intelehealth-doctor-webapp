@@ -67,12 +67,12 @@
                 
                 <div class="row" *ngFor="let item of themeConfigData.images_with_text; index as i;">
                     <div class="col-md-6">
-                        <div><span><b>{{'Upload Image ' + (i+1) | translate}}*</b></span></div>
+                        <div><span><b>{{('Upload Image'| translate) + " " + (i+1)}}*</b></span></div>
                         <app-file-upload [options]="slideImageUploadOptions" [filePath]="item.image" (onFileupload)="onSlideUploadImage($event,item)" (onFileRemove)="onSlideImageDelete($event,item)"></app-file-upload>
                     </div>
                     <div class="col-md-6">
                         <div class="slide-image-row">
-                            <span><b>{{'Text ' + (i+1) | translate}}</b></span>
+                            <span><b>{{('Text'| translate) + " " +  (i+1)}}</b></span>
                         </div>
                         <input type="text" [(ngModel)]="item.text" maxlength="150" class="form-control image-text" placeholder="{{'Enter Text'|translate}} {{(i+1)}}">
                     </div>

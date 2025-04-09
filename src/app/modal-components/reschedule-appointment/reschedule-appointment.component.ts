@@ -7,6 +7,8 @@ import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponseModel, RescheduleAppointmentModalResponseModel, ScheduleDataModel, SlotModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -35,7 +37,7 @@ class PickDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: localStorage.getItem("selectedLanguage") || 'en-US' }
+    { provide: MAT_DATE_LOCALE, useValue: getCacheData(false, languages.SELECTED_LANGUAGE) }
   ]
 })
 export class RescheduleAppointmentComponent implements OnInit {

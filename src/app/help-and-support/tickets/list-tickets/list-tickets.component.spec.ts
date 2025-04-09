@@ -20,7 +20,6 @@ import { CommonModule } from '@angular/common';
 import { CoreService } from 'src/app/services/core/core.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ListTicketsComponent } from './list-tickets.component';
 
 describe('ListTicketsComponent', () => {
   let component: ListTicketsComponent;

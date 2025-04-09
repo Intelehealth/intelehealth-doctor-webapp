@@ -12,7 +12,13 @@
       </div>
       <div class="input-field-group">
         <label>{{'Expiry Date' | translate}}</label>
-        <input type="date" [min]="today" formControlName="expiryDate" data-test-id="etExpiryDateAddLicense">
+        <div class="input-wrapper">
+          <input type="text" [min]="today" class="form-control" formControlName="expiryDate" [matDatepicker]="dobdp" placeholder="{{'Select date' | translate}}" aria-label="Date" aria-describedby="basic-addon1" readonly data-test-id="etDate"/>
+          <mat-datepicker #dobdp></mat-datepicker>
+          <mat-datepicker-toggle [for]="dobdp" matSuffix data-test-id="dpDate" class="datepicker-icon">
+            <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+          </mat-datepicker-toggle>
+        </div>
         <small class="text-danger" *ngIf="submitted && f.expiryDate.errors">*{{'Required' | translate}}</small>
       </div>
       <div class="d-flex justify-content-center">
