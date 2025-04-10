@@ -1,19 +1,22 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { Observable, of } from 'rxjs';
 import { EncounterModel, ObsApiResponseModel, ObsModel, VisitModel } from 'src/app/model/model';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { conceptIds } from 'src/config/constant';
+import { autoGrowTextZone, autoGrowAllTextAreaZone } from 'src/app/utils/utility-functions';
+import { tap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-follow-up-instruction',
   templateUrl: './follow-up-instruction.component.html',
   styleUrls: ['./follow-up-instruction.component.scss']
 })
-export class FollowUpInstructionComponent {
-  followUpInstructions: ObsModel[] = [];
+export class FollowUpInstructionComponent{
   @Input() isVisitNoteProvider = false;
   @Input() visitEnded: EncounterModel | string;
   @Input() set visit(_visit: VisitModel) {
@@ -27,7 +30,8 @@ export class FollowUpInstructionComponent {
  
   _visit: VisitModel;
   addInstructionForm: FormGroup = new FormGroup({
-    instructions: new FormControl(null, [Validators.required])
+    uuid: new FormControl(null),
+    instructions: new FormControl(null)
   });
   addMoreInstruction = false;
   conceptId = conceptIds.conceptFollowUpInstruction;
@@ -38,19 +42,15 @@ export class FollowUpInstructionComponent {
     private translateSvc: TranslateService,
     private toastr: ToastrService,
   ) { }
-
-  ngOnInit(): void { }
-
   /**
    * Get followUpInstructions for the visit
    * @returns {void}
    */
   checkIfFollowUpInstructionsPresent(): void {
-    this.followUpInstructions = [];
     this.diagnosisSvc.getObs(this._visit.patient.uuid, this.conceptId).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this._visit.uuid) {
-          this.followUpInstructions.push(obs);
+          this.addInstructionForm.patchValue({uuid: obs.uuid,instructions: obs.value});
         }
       });
     });
@@ -59,47 +59,28 @@ export class FollowUpInstructionComponent {
 
   /**
   * Save addInstruction
-  * @returns {void}
+  * @returns Observable<boolean>
   */
-  addInstructions(): void {
-      if(this.addInstructionForm.invalid) {
-      this.toastr.warning(this.translateSvc.instant('Please enter instructions to add'), this.translateSvc.instant('Invalid Instructions'));
-      return;
+  addInstructions(): Observable<any> {
+    if(this.addInstructionForm.value.uuid){
+      if(this.addInstructionForm.value.instructions && this.addInstructionForm.value.instructions.trim())
+        return this.encounterSvc.updateObs(this.addInstructionForm.value.uuid,{value: this.addInstructionForm.value.instructions})
+      else 
+        return this.diagnosisSvc.deleteObs(this.addInstructionForm.value.uuid).pipe(tap((res)=>this.addInstructionForm.patchValue({ uuid: null})))
+    } else if(this.addInstructionForm.value.instructions) {
+      return this.encounterSvc.postObs({
+        concept: this.conceptId,
+        person: this._visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.addInstructionForm.value.instructions,
+        encounter: this.visitNotePresent.uuid
+      }).pipe(tap((res)=>this.addInstructionForm.patchValue({ uuid: res.uuid})))
+    } else {
+      return of(false)
     }
-    if (this.followUpInstructions.find((o: ObsModel) => o.value === this.addInstructionForm.value.instructions)) {
-      this.toastr.warning(this.translateSvc.instant('Instructions already added, please add another Instructions.'), this.translateSvc.instant('Already Added'));
-      return;
-    }
-    this.encounterSvc.postObs({
-      concept: this.conceptId,
-      person: this._visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addInstructionForm.value.instructions,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: ObsModel) => {
-      this.followUpInstructions.push({ uuid: res.uuid, value: this.addInstructionForm.value.instructions });
-      this.addInstructionForm.reset();
-    });
   }
 
-  /**
-  * Delete Instructions for a given index and uuid
-  * @param {number} index - Index
-  * @param {string} uuid - Note obs uuid
-  * @returns {void}
-  */
-  deleteInstructions(index: number, uuid: string): void {
-    this.diagnosisSvc.deleteObs(uuid).subscribe(() => {
-      this.followUpInstructions.splice(index, 1);
-    });
-  }
-
-  /**
-   * Toggle follow Up Instructions add form, show/hide add more notes button
-   * @returns {void}
-   */
-  toggleInstructions(): void {
-    this.addMoreInstruction = !this.addMoreInstruction;
-    this.addInstructionForm.reset();
+  autoGrowTextZone(e:any){
+    return autoGrowTextZone(e)
   }
 }

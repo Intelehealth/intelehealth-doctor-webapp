@@ -60,10 +60,8 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsAwaiting: any = {
     anchorId: "anchor-awaiting",
     pluginConfigObsFlag: "Awaiting",
-    baseURL: environment.baseURL  ,
-    mindmapURL: environment.mindmapURL,
     tableHeader: "Awaiting visits",
-    tooltipLabel: "General uploaded visits",
+    tooltipLabel: "General Uploaded Visits",
     searchPlaceHolder: "Search Awaiting Visits",
     noRecordFound: "No any awaiting visits.",
     tableHeaderIcon: "assets/svgs/green-profile.svg",
@@ -86,16 +84,16 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> { 
-          return `<span>${element?.person?.age} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.person?.age} ${'y'}</span>`
+        // },
       },
       {
         label: "Location",
         key: "location",
-        formatHtml: (element)=> { 
-          return `<span>${element?.location?.name}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.location?.name}</span>`
+        // },
       },
       {
         label: "Chief Complaint",
@@ -106,12 +104,12 @@ export class DashboardComponent implements OnInit {
         key: "patient_type",
         classList: (element) => {
           if (element?.patient_type?.toLowerCase() === "new") return ["chip", "chip-item-green", "green"];
-          if (element?.patient_type?.toLowerCase() === "followup") return ["chip", "chip-item-blue", "blue"];
+          if (element?.patient_type?.toLowerCase() === "follow-up") return ["chip", "chip-item-blue", "blue"];
           return ["chip"]; // Default fallback class
         },
-        formatHtml: (element) => {
-          return element?.patient_type || "N/A"; // Only return text
-        }
+        // formatHtml: (element) => {
+        //   return element?.patient_type || "N/A"; // Only return text
+        // }
       },
       {
         label: "Visit Uploaded",
@@ -132,8 +130,6 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsPriority: any = {
     anchorId: "anchor-priority",
     pluginConfigObsFlag: "Priority",
-    baseURL: environment.baseURL,
-    mindmapURL: environment.mindmapURL,
     tableHeader: "Priority visits",
     tooltipLabel: "High priority visit",
     searchPlaceHolder: "Search Priority Visits",
@@ -158,16 +154,16 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> { 
-          return `<span>${element?.person?.age} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.person?.age} ${'y'}</span>`
+        // },
       },
       {
         label: "Location",
         key: "location",
-        formatHtml: (element)=> { 
-          return `<span>${element?.location?.name}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.location?.name}</span>`
+        // },
       },
       {
         label: "Chief Complaint",
@@ -192,9 +188,7 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsCompleted: any = {
     anchorId: "anchor-completed",
     pluginConfigObsFlag: "Completed",
-    baseURL: environment.baseURL,
-    mindmapURL: environment.mindmapURL,
-    tableHeader: "Completed visits",
+    tableHeader: "Completed Visits",
     tooltipLabel: "Ended visits after prescription",
     searchPlaceHolder: "Search Completed Visits",
     noRecordFound: "No any completed visits.",
@@ -210,9 +204,9 @@ export class DashboardComponent implements OnInit {
       {
         label:"TMH Patient ID",
         key: "TMH_patient_id",
-        formatHtml: (element)=> {
-          return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
-        },
+        // formatHtml: (element)=> {
+        //   return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
+        // },
       },
       {
         label: "Patient",
@@ -225,16 +219,16 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> { 
-          return `<span>${element?.person?.age} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.person?.age} ${'y'}</span>`
+        // },
       },
       {
         label: "Location",
         key: "location",
-        formatHtml: (element)=> { 
-          return `<span>${element?.location?.name}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.location?.name}</span>`
+        // },
       },
       {
         label: "Chief Complaint",
@@ -259,9 +253,7 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsFollowUp: any = {
     anchorId: "anchor-follow up",
     pluginConfigObsFlag: "FollowUp",
-    baseURL: environment.baseURL,
-    mindmapURL: environment.mindmapURL,
-    tableHeader: "Follow up visits",
+    tableHeader: "Follow Up Visits",
     tooltipLabel: "Ended visits after prescription",
     searchPlaceHolder: "Search Follow Up Visits",
     noRecordFound: "No any follow up visits.",
@@ -285,16 +277,16 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> { 
-          return `<span>${element?.person?.age} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.person?.age} ${'y'}</span>`
+        // },
       },
       {
         label: "Location",
         key: "location",
-        formatHtml: (element)=> { 
-          return `<span>${element?.location?.name}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.location?.name}</span>`
+        // },
       },
       {
         label: "FollowUp Date",
@@ -315,8 +307,6 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsAppointment: any = {
     anchorId: "anchor-appointment",
     pluginConfigObsFlag: "Appointment",
-    baseURL: environment.baseURL,
-    mindmapURL: environment.mindmapURL,
     tableHeader: "Appointments",
     tooltipLabel: "Scheduled appointments",
     searchPlaceHolder: "Search Appointments",
@@ -333,9 +323,9 @@ export class DashboardComponent implements OnInit {
       {
         label:"TMH Patient ID",
         key: "TMH_patient_id",
-        formatHtml: (element)=> {
-          return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
-        },
+        // formatHtml: (element)=> {
+        //   return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
+        // },
       },
       {
         label: "Patient",
@@ -349,9 +339,9 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> { 
-          return `<span>${element?.patientAge} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> { 
+        //   return `<span>${element?.patientAge} ${'y'}</span>`
+        // },
       },
       {
         label: "Starts in",
@@ -367,6 +357,21 @@ export class DashboardComponent implements OnInit {
           return `<span style="color: ${color}; font-weight: ${bold};">${element?.starts_in}</span>`;
         }
       },
+      // {
+      //   label: "Location",
+      //   key: "location",
+      //   // formatHtml: (element)=> { 
+      //   //   return `<span>${element?.visit?.location?.name}</span>`
+      //   // },
+      // },
+      // {
+      //   label: "Chief Complaint",
+      //   key: "cheif_complaint",
+      // },
+      // {
+      //   label: "Doctor",
+      //   key: "drName",
+      // },
       {
         label: "Contact",
         key: "telephone",
@@ -402,12 +407,10 @@ export class DashboardComponent implements OnInit {
   pluginConfigObsInProgress: any = {
     anchorId: "anchor-inprogress",
     pluginConfigObsFlag: "InProgress",
-    baseURL: environment.baseURL,
-    mindmapURL: environment.mindmapURL,
     tableHeader: "In-progress visits",
     tooltipLabel: "Visits going through the consultation",
     searchPlaceHolder: "Search In-progress Visits",
-    noRecordFound: "No any appointments scheduled.",
+    noRecordFound: "No any in-progress visits.",
     tableHeaderIcon: "assets/svgs/pen-board.svg",
     filterObs: {
       filterFlag: true,
@@ -420,9 +423,9 @@ export class DashboardComponent implements OnInit {
       {
         label:"TMH Patient ID",
         key: "TMH_patient_id",
-        formatHtml: (element)=> {
-          return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
-        },
+        // formatHtml: (element)=> {
+        //   return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
+        // },
       },
       {
         label: "Patients",
@@ -436,10 +439,17 @@ export class DashboardComponent implements OnInit {
       {
         label: "Age",
         key: "age",
-        formatHtml: (element)=> {
-          return `<span>${element?.person?.age} ${'y'}</span>`
-        },
+        // formatHtml: (element)=> {
+        //   return `<span>${element?.person?.age} ${'y'}</span>`
+        // },
       },
+      // {
+      //   label: "Location",
+      //   key: "location",
+      //   // formatHtml: (element)=> { 
+      //   //   return `<span>${element?.location?.name}</span>`
+      //   // },
+      // },
       {
         label: "Prescription Started",
         key: "prescription_started",
@@ -482,6 +492,7 @@ export class DashboardComponent implements OnInit {
   inprogressVisitsCount: number = 0;
   completedVisitsCount: number = 0;
   followUpVisitsCount: number = 0;
+  appointmentVisitsCount: number = 0;
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('appointmentPaginator') appointmentPaginator: MatPaginator;
@@ -583,6 +594,31 @@ export class DashboardComponent implements OnInit {
       if(!this.pvs.awaiting_visits_patient_type_demarcation){
         this.displayedColumns3 = this.displayedColumns3.filter(col=>(col!=='patient_type'));
       }
+
+      if(environment.brandName === 'NAS'){
+        this.pluginConfigObsAppointment.tableColumns = this.pluginConfigObsAppointment.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        this.pluginConfigObsPriority.tableColumns = this.pluginConfigObsPriority.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        this.pluginConfigObsAwaiting.tableColumns = this.pluginConfigObsAwaiting.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        this.pluginConfigObsInProgress.tableColumns = this.pluginConfigObsInProgress.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        this.pluginConfigObsCompleted.tableColumns = this.pluginConfigObsCompleted.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        this.pluginConfigObsFollowUp.tableColumns = this.pluginConfigObsFollowUp.tableColumns.filter(col=>col.key !== 'TMH_patient_id');
+        
+        const patientIdColumn = {
+          label: "Patient ID",
+          key: "patient_id",
+          formatHtml: (element)=> `<span>${element?.patient?.identifier ? element?.patient?.identifier : ''}</span>`,
+        };
+        
+        this.pluginConfigObsAppointment.tableColumns.unshift({
+          ...patientIdColumn,
+          formatHtml: (element)=> `<span>${element?.openMrsId ? element?.openMrsId : ''}</span>`
+        });
+        this.pluginConfigObsPriority.tableColumns.unshift(patientIdColumn);
+        this.pluginConfigObsAwaiting.tableColumns.unshift(patientIdColumn);
+        this.pluginConfigObsInProgress.tableColumns.unshift(patientIdColumn);
+        this.pluginConfigObsCompleted.tableColumns.unshift(patientIdColumn);
+        this.pluginConfigObsFollowUp.tableColumns.unshift(patientIdColumn);
+      }
     }
 
   createFilteredDateRangeForm(): FormGroup {
@@ -603,22 +639,22 @@ export class DashboardComponent implements OnInit {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      if (this.pvs.appointment_button) {
-        this.getAppointments();
-      }
-      if(this.pvs.awaiting_visit_section){
-        this.getAwaitingVisits(1);
-      }
-      if (this.pvs.priority_visit_section) {
-        this.getPriorityVisits(1);
-      }
-      this.getInProgressVisits(1);
+      // if (this.pvs.appointment_button) {
+      //   this.getAppointments();
+      // }
+      // if(this.pvs.awaiting_visit_section){
+      //   this.getAwaitingVisits(1);
+      // }
+      // if (this.pvs.priority_visit_section) {
+      //   this.getPriorityVisits(1);
+      // }
+      // this.getInProgressVisits(1);
 
-      if (this.pvs?.completed_visit_section)
-        this.getCompletedVisits();
+      // if (this.pvs?.completed_visit_section)
+      //   this.getCompletedVisits();
 
-      if (this.pvs?.follow_up_visit_section)
-        this.getFollowUpVisit();
+      // if (this.pvs?.follow_up_visit_section)
+      //   this.getFollowUpVisit();
     }
 
     this.socket.initSocket(true);
@@ -1457,4 +1493,32 @@ export class DashboardComponent implements OnInit {
       this.closeMenu();
     }
   }
+
+  // Handle the emitted visits count data from TableGridComponent
+  onVisitsCountDate(visitsCountDate: any): void {
+    switch (visitsCountDate.tableTagName) {
+      case "Appointment":
+        this.appointmentVisitsCount = visitsCountDate.visitsCount;
+        break;
+      case "Awaiting":
+        this.awaitingVisitsCount = visitsCountDate.visitsCount;
+        break;
+      case "Priority":
+        this.priorityVisitsCount = visitsCountDate.visitsCount;
+        break;
+      case "InProgress":
+        this.inprogressVisitsCount = visitsCountDate.visitsCount;
+        break;
+      case "Completed":
+        this.completedVisitsCount = visitsCountDate.visitsCount;
+        break;
+      case "FollowUp":
+        this.followUpVisitsCount = visitsCountDate.visitsCount;
+        break;
+      default:
+        console.warn(`Unrecognized tableTagName: ${visitsCountDate.tableTagName}`);
+        break;
+    }
+  }
+
 }

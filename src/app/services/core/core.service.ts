@@ -40,6 +40,7 @@ import { VcallOverlayComponent } from 'src/app/modal-components/vcall-overlay/vc
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { ViewVisitPrescriptionComponent } from 'src/app/modal-components/view-visit-prescription/view-visit-prescription.component';
 import { ViewVisitSummaryComponent } from 'src/app/modal-components/view-visit-summary/view-visit-summary.component';
+import { LibPresciptionComponent } from 'lib-presciption';
 
 @Injectable({
   providedIn: 'root'

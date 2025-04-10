@@ -532,7 +532,8 @@ export interface DiagnosisModel {
   diagnosisType?: string,
   diagnosisStatus?: string,
   uuid?: string,
-  diagnosisTNMStaging?: string
+  diagnosisCode?: string,
+  isSnomed? : boolean
 }
 
 export interface DocImagesModel {
@@ -684,10 +685,16 @@ export interface PatientVisitSummaryConfigModel {
   severity_of_case_section: boolean
   completed_visit_section: boolean
   follow_up_visit_section: boolean
-  hw_interaction: boolean
   awaiting_visits_patient_type_demarcation: boolean
   awaiting_visit_section: boolean
   diagnosis_at_secondary_level: boolean
+  dp_recommendation_group: boolean
+  dp_call_status: boolean
+  dp_dignosis_secondary: boolean
+  dp_medication_secondary: boolean
+  dp_investigations_secondary: boolean
+  dp_referral_secondary: boolean
+  dp_discussion_summary: boolean  
 }
 
 export interface PagerdutyList {
@@ -758,4 +765,19 @@ export interface PatientVisitDropdownFieldsModel{
   name?:string,
   is_enabled: boolean,
   updatedAt: string
+}
+
+export interface DropdownItemModel {
+  id: number,
+  is_enabled: boolean,
+  key: string,
+  name: string,
+}
+export interface DropdownValuesModel {
+  advice: DropdownItemModel[],
+  diagnosis: DropdownItemModel[],
+  medication: DropdownItemModel[],
+  refer_specialisation: DropdownItemModel[],
+  referral_facility: DropdownItemModel[],
+  test: DropdownItemModel[]
 }

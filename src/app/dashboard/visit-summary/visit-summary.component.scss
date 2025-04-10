@@ -1,3 +1,6 @@
+
+
+
 .appointment-banner {
   display: flex;
   align-items: center;
@@ -152,29 +155,54 @@
 }
 
 .intel-accordion-con {
+  ::ng-deep{ 
+    
+    .mat-expansion-panel{
+      box-shadow: none !important;
+      border-radius: 12px !important;
+      margin-bottom: 0px;
 
-  .mat-expansion-panel.overflow-show {
-    overflow: visible;
-  }
+      .input-group {
+        background: var(--color-offWhite);
+      }
+  
+      .form-control {
+        background: var(--color-offWhite);
+      }
+  
+      textarea.form-control {
+        background: var(--color-offWhite);
+      }
 
-  .mat-expansion-panel {
-    background: var(--color-white);
-    box-shadow: none !important;
-    border-radius: 12px !important;
-  }
-
-  .mat-expansion-panel.bg-gray {
-    background: var(--color-offWhite);
-
-    .input-group {
-      background: var(--color-white);
+      .ng-select-container{
+        background: var(--color-offWhite);
+      }
     }
+  
+    mat-expansion-panel:nth-child(even) {
+      background: var(--color-offWhite) !important;
+      .input-group {
+        background: var(--color-white);
+      }
+  
+      .form-control {
+        background: var(--color-white);
+      }
+  
+      textarea.form-control {
+        background: var(--color-white);
+      }
 
-    .form-control {
-      background: var(--color-white);
+      .ng-select-container{
+        background: var(--color-white);
+      }
     }
-
-    textarea.form-control {
+  
+    .mat-expansion-panel.overflow-show {
+      overflow: visible;
+    }
+  
+    mat-expansion-panel:nth-child(odd) {
       background: var(--color-white);
     }
   }
@@ -211,6 +239,7 @@
 
     .list-item-content {
       padding: 5px 0px;
+      white-space: break-spaces;
     }
   }
 
@@ -507,7 +536,6 @@ textarea.form-control {
 
 ::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
 .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
-  background: var(--color-white);
   min-width: 120px;
 }
 
@@ -900,3 +928,4 @@ th.mat-header-cell:last-child {
 .video-ctrl-btn.red {
   background: var(--color-red);
 }
+

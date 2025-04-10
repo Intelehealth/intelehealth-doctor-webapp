@@ -82,16 +82,17 @@ export class NotesComponent implements OnInit {
       this.toastr.warning(this.translateSvc.instant('Note already added, please add another note.'), this.translateSvc.instant('Already Added'));
       return;
     }
-    this.encounterSvc.postObs({
-      concept: this.conceptId,
-      person: this._visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addNoteForm.value.note,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: ObsModel) => {
-      this.notes.push({ uuid: res.uuid, value: this.addNoteForm.value.note });
-      this.addNoteForm.reset();
-    });
+    this.notes.push({ value: this.addNoteForm.value.note });
+    this.addNoteForm.reset();
+    // this.encounterSvc.postObs({
+    //   concept: this.conceptId,
+    //   person: this._visit.patient.uuid,
+    //   obsDatetime: new Date(),
+    //   value: this.addNoteForm.value.note,
+    //   encounter: this.visitNotePresent.uuid
+    // }).subscribe((res: ObsModel) => {
+      
+    // });
   }
 
   /**

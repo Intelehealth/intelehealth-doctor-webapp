@@ -114,6 +114,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       id: 5,
       name: 'Bangla'
+    },
+    {
+      id: 6,
+      name: 'Marathi'
     }
   ];
 

@@ -48,6 +48,7 @@
     "ih-library": "github:Intelehealth/intelehealth-doctor-webapp-config-table-grid#main",
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
+    "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.1",
     "libphonenumber-js": "^1.10.18",
     "livekit-client": "^2.8.0",
     "moment": "^2.29.4",

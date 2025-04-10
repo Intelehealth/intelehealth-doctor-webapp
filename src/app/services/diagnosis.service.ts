@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -33,8 +33,12 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   deleteObs(uuid): Observable<any> {
-    const url = `${this.baseURL}/obs/${uuid}`;
-    return this.http.delete(url);
+    if(uuid){
+      const url = `${this.baseURL}/obs/${uuid}`;
+      return this.http.delete(url);
+    } else {
+      return of(false)
+    }
   }
 
   /**
