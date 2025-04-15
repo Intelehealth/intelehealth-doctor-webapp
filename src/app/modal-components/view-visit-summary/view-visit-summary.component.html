@@ -48,7 +48,7 @@
         <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.age">
           <div class="patient-info-item mb-3">
             <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
-            <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
+            <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' ' + ('years'|translate) }}</p>
           </div>
         </div>
 

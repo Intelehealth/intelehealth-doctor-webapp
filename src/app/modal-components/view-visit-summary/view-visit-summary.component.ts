@@ -171,16 +171,16 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string) {
-    let years = moment().diff(birthdate, 'years');
-    let months = moment().diff(birthdate, 'months');
-    let days = moment().diff(birthdate, 'days');
+  getAge(birthdate: string): string {
+    const years = moment().diff(birthdate, 'years');
+    const months = moment().diff(birthdate, 'months');
+    const days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant('years')}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant('months')}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant('days')}`;
     }
   }
 

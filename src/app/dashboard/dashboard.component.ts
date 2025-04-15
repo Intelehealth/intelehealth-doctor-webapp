@@ -1029,7 +1029,7 @@ export class DashboardComponent implements OnInit {
     if (complaints.length === 1 && typeof complaints[0] === 'string' && complaints[0].includes(',')) {
       complaints = complaints[0].split(',').map(item => item.trim());
     }
-    return complaints.map(complaint => this.translateService.instant(String(complaint))).join(', ');
+    return complaints.map(complaint => this.translateService.instant(String(complaint.trim()))).join(', ');
   }
 
   checkIfDateOldThanOneDay(data: string) {

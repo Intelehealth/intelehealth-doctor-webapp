@@ -6313,6 +6313,8 @@
   "Remote":	"Дистанционно",
   "Visit Reason":	"Причина визита",
   "Cold":	"Простуда",
+  "cold":	"Простуда",
+  "Others": "Другие",
   "Sneezing":	"Чихание",
   "Fever":	"Лихорадка",
   "SpO2 (%)":	"SpO2 (%)",
@@ -6456,7 +6458,7 @@
   "Nephrologist":	"Нефролог",
   "Medical Oncologist":	"Онколог",
   "Oncosurgeron":	"Онкохирург",
-  "Tropical Medicine Specialist":	"Can we skip it in TeleMedKG",
+  "Tropical Medicine Specialist":	"Специалист по тропической медицине",
   "Infectious Diseases Specialist":	"Инфекционист",
   "Sports Physician":	"ЛФК",
   "Clinical Geneticist":	"Клинический генетик",
@@ -6558,5 +6560,6 @@
   "Generate Report": "Сформировать отчёт",
   "Lang": "Язык",
   "Create New": "Создать новый",
-  "To install this web app on your device tap the Menu button and then 'Add to Home screen' button": "Чтобы установить это веб-приложение на ваше устройство, нажмите кнопку меню, а затем выберите «Добавить на главный экран»"
+  "To install this web app on your device tap the Menu button and then 'Add to Home screen' button": "Чтобы установить это веб-приложение на ваше устройство, нажмите кнопку меню, а затем выберите «Добавить на главный экран»",
+  "Pulmonologist or Chest Physician/Specialist": "Пульмонолог или врач/специалист по заболеваниям грудной клетки"
 }
