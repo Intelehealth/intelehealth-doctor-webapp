@@ -921,10 +921,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return moment(data).format('DD MMM, YYYY');
     }
     if (hours < 1) {
-      if (minutes < 0) { return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`; }
-      return `${minutes} minutes ago`;
+      if (minutes < 0) { return `${this.translateService.instant('Due')} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`; }
+      return `${minutes} ${this.translateService.instant('minutes ago')}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours} ${this.translateService.instant('hrs ago')}`;
   }
 
   /**

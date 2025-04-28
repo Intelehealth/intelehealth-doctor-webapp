@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-prescription',
@@ -22,7 +23,11 @@ export class PrescriptionComponent implements OnInit {
   prescriptionSentCount: number = 0;
   completedVisitsCount: number = 0;
 
-  constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
+  constructor(
+    private pageTitleService: PageTitleService, 
+    private visitService: VisitService,
+    private translateService:TranslateService,
+    ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
@@ -139,13 +144,13 @@ export class PrescriptionComponent implements OnInit {
   getCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
-    if(hours > 24) {
+    if (hours > 24) {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return `${minutes} ${this.translateService.instant("Minutes ago")}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours} ${this.translateService.instant("Hours ago")}`;
   }
 
   /**
@@ -195,11 +200,11 @@ export class PrescriptionComponent implements OnInit {
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
       return moment(data).format('DD MMM, YYYY hh:mm A');
-    };
-    if (hours < 1) {
-      return `${minutes} minutes ago`;
     }
-    return `${hours} hrs ago`;
+    if (hours < 1) {
+      return `${minutes} ${this.translateService.instant('minutes ago')}`;
+    }
+    return `${hours} ${this.translateService.instant('hrs ago')}`;
   }
 
   /**
