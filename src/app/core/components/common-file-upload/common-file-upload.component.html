@@ -1,0 +1,40 @@
+<div class="file-upload-container">
+  <div class="form-group">
+    <label class="file-upload-label">
+      <div class="file-upload-box" [class.uploading]="isUploading">
+        <div class="file-upload-content">
+          <i class="fas" [ngClass]="isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-upload-alt'"></i>
+          <span *ngIf="!selectedFileName">
+            {{ isUploading ? ('Uploading...' | translate) : ('Choose file' | translate) }}
+          </span>
+          <span *ngIf="selectedFileName" class="selected-file">
+            {{ selectedFileName }}
+          </span>
+        </div>
+        <input 
+          type="file" 
+          class="file-input" 
+          [accept]="options.accept"
+          [multiple]="options.multiple"
+          (change)="onFileSelected($event)"
+          [disabled]="isUploading">
+      </div>
+    </label>
+    <div class="file-upload-actions" *ngIf="selectedFileName">
+      <button 
+        type="button" 
+        class="btn btn-sm btn-danger"
+        (click)="clearSelection()"
+        [disabled]="isUploading">
+        <i class="fas fa-times"></i> {{ 'Clear' | translate }}
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-sm btn-primary"
+        (click)="onUploadClick()"
+        [disabled]="isUploading">
+        <i class="fas fa-upload"></i> {{ 'Upload' | translate }}
+      </button>
+    </div>
+  </div>
+</div> 

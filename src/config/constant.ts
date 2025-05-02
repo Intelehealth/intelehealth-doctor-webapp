@@ -227,9 +227,14 @@ export const conceptIds = {
   conceptReferral : '605b6f15-8f7a-4c45-b06d-14165f6974be',
   conceptFollow : 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86',
   conceptDDx : 'bc48889e-b461-4e5e-98d1-31eb9dd6160e',
-  conceptDiagnosisClass : '8d4918b0-c2cc-11de-8d13-0010c6dffd0f'
+  conceptDiagnosisClass : '8d4918b0-c2cc-11de-8d13-0010c6dffd0f',
+  conceptDoctorUploadedDocument : '173ff1b6-8bc0-4d2f-b273-1fcf0c5c9454'
 }
 
 export const WEBRTC = {
   CHAT_TEXT_LIMIT: 1000
+}
+
+export const encounterTypeIds = {
+  START_VISIT_ENCOUNTER_TYPE: 'd7151f82-c1f3-4152-a605-2f9ea7414a79'
 }

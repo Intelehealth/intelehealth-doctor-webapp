@@ -758,7 +758,7 @@
     <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0">
       <div class="intel-card">
         <div class="card-body">
-          <mat-accordion class="intel-accordion-con" multi>
+          <mat-accordion class="intel-accordion-con" multi="true">
             <mat-expansion-panel [expanded]="true" #panel1 hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -1942,6 +1942,77 @@
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel
+              [expanded]="true"
+              #panel9
+              hideToggle
+              class="bg-gray"
+            >
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img
+                      src="assets/svgs/additional-documents.svg"
+                      alt=""
+                      width="44px"
+                    />
+                    <h6 class="mb-0 ml-2">{{'Doctor\'s Addtional Document '| translate}}</h6>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panel9.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+              <div class="row mb-3">
+                <div class="col-sm-12">
+                  <ng-container
+                    *ngIf="doctorUploadedDocs.length; else noDoctorUploadedDocs"
+                  >
+                    <div class="additional-doc-container doctor-uploaded-docs">
+                      <div
+                        class="doc-item"
+                        *ngFor="let d of doctorUploadedDocs; let x = index"
+                      >
+                        <div class="doc-content">
+                          <img
+                            src="assets/svgs/pdf-doc.svg"
+                            alt="PDF"
+                            class="doc-icon"
+                            width="44px"
+                          />
+                          <a 
+                            class="download-link" 
+                            [href]="d.src"
+                            [download]="d.fileName"
+                            target="_blank"
+                            data-test-id="linkDownloadDoc"
+                          >
+                            {{d.fileName}}
+                          </a>
+                        </div>
+                        <span 
+                          *ngIf="!visitEnded && !visitCompleted"
+                          class="delete-btn"
+                          (click)="deleteDoctorUploadedDocument(d.uuid)"
+                          data-test-id="btnDeleteDoc"
+                        >
+                          <img src="assets/svgs/x.svg" alt="Delete" class="doc-icon" />
+                        </span>
+                      </div>
+                    </div>
+                  </ng-container>
+  
+                  <ng-template #noDoctorUploadedDocs>
+                    <div class="form-group" *ngIf="!visitEnded && !visitCompleted">
+                      <app-common-file-upload 
+                        (uploadClicked)="handleUpload($event)"
+                        (uploadError)="handleUploadError($event)">
+                      </app-common-file-upload>
+                    </div>
+                    <div class="no-docs" *ngIf="visitEnded || visitCompleted">{{'No docs available!'|translate}}</div>
+                  </ng-template>
+                </div>
               </div>
             </mat-expansion-panel>
           </mat-accordion>

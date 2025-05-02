@@ -250,7 +250,6 @@ export class VisitService {
   * @return {Observable<any>}
   */
   postVisitToABDM(json): Observable<any> {
-    // const url = `${this.baseURLAbha}/abha/generate-link-token`;
     const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
   }
