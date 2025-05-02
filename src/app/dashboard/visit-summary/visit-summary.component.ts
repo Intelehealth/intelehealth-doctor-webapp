@@ -25,7 +25,7 @@ import { VideoCallComponent } from 'src/app/modal-components/video-call/video-ca
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, encounterTypeIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -66,6 +66,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   patientHistoryData: PatientHistoryModel[] = [];
 
   additionalDocs: DocImagesModel[] = [];
+  doctorUploadedDocs: DocImagesModel[] = [];
   eyeImages: DocImagesModel[] = [];
   notes: ObsModel[] = [];
   medicines: MedicineModel[] = [];
@@ -347,6 +348,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
+            this.getDoctorUploadedDocument(visit);
           }
           this.checkOpenChatBoxFlag();
         });
@@ -586,6 +588,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
+      console.log("response", response, conceptIds.conceptPhysicalExamination);
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
@@ -613,6 +616,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
+      console.log("response", response, conceptIds.conceptAdditionlDocument);
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
@@ -856,7 +860,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   startVisitNote() {
     const json = {
       patient: this.visit.patient.uuid,
-      encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79', // Visit Note encounter
+      encounterType: encounterTypeIds.START_VISIT_ENCOUNTER_TYPE, // Visit Note encounter
       encounterProviders: [
         {
           provider: this.provider.uuid,
@@ -1758,5 +1762,99 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   checkPatientRegField(fieldName): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
+
+  /**
+  * Get doctor uploaded documents
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
+  getDoctorUploadedDocument(visit: VisitModel): void {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptDoctorUploadedDocument).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
+        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+          const data = { 
+            src: `${this.baseURL}/obs/${obs.uuid}/value`, 
+            uuid: obs.uuid,
+            section: obs.concept.display,
+            fileName: obs.display.replace(`${obs.concept.display}: `, '') || 'document.pdf'
+          };
+          this.doctorUploadedDocs.push(data);
+        }
+      });
+    });
+  }
+
+  /**
+   * Delete doctor uploaded document
+   * @param {string} uuid - UUID of the doctor uploaded document
+   * @return {void}
+   */
+  deleteDoctorUploadedDocument(uuid: string): void {
+    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+      this.doctorUploadedDocs = this.doctorUploadedDocs.filter(doc => doc.uuid !== uuid);
+    });
+  }
+
+  /**
+   * Upload doctor additional document to the visit as an attribute
+   * @param {FormData} formData - Form data containing file, name and type
+   * @returns {void}
+   */
+  uploadDoctorAdditionalDocument(formData: FormData): void {
+    formData.append('json', JSON.stringify({
+      "obsDatetime": new Date(Date.now()).toISOString(), 
+      "person": this.visit.patient.uuid, 
+      "concept": conceptIds.conceptDoctorUploadedDocument,
+      "encounter": this.visitNotePresent.uuid
+    }));
+
+    //Doctor Uploaded Documents
+    this.encounterService.postObs(formData).subscribe(
+      response => {
+        console.log("File uploaded successfully", response);
+        const data = { 
+          src: `${this.baseURL}/obs/${response.uuid}/value`, 
+          section: response.concept.display,
+          uuid: response.uuid,
+          fileName: response.display.replace(`${response.concept.display}: `, '') || 'document.pdf'
+        };
+        this.doctorUploadedDocs.push(data);
+      
+        this.toastr.success(this.translateService.instant('File uploaded successfully'));
+      },
+      error => {    
+        console.error("Error uploading file", error);
+        this.toastr.error(this.translateService.instant('Error uploading file'));
+      }
+    );
+  }
+
+  /**
+   * Handle error when uploading file
+   * @param {string} error - Error message from file upload component
+   * @returns {void} 
+   */
+  handleUploadError(error: string): void {
+    this.toastr.error(error);
+  }
+
+  /**
+   * Handle file upload event from file upload component
+   * @param {Object} fileData - File data object containing base64 content, filename and type
+   * @param {string} fileData.base64 - Base64 encoded file content
+   * @param {string} fileData.fileName - Name of uploaded file
+   * @param {string} fileData.fileType - MIME type of uploaded file
+   * @param {File} fileData.file - The actual File object
+   * @returns {void}
+   */
+  handleUpload(fileData: { base64: string; fileName: string; fileType: string; file: File }): void {
+    if (fileData) {
+      const formData = new FormData();
+      formData.append('file', fileData.file);
+      formData.append('name', fileData.fileName);
+     
+      this.uploadDoctorAdditionalDocument(formData);
+    }
   }
 }

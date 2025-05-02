@@ -376,11 +376,12 @@ export interface FollowUpModel {
 
 export interface EncounterModel {
   uuid?: string
-  display?: string,
-  encounterDatetime?: string,
+  display?: string;
+  encounterDatetime?: string;
   encounterProviders?: EncounterProviderModel[],
   encounterType?: {
-    display?: string
+    display?: string;
+    uuid?: string;
   },
   obs: ObsModel[]
 }
@@ -516,7 +517,8 @@ export interface DiagnosisModel {
 export interface DocImagesModel {
   src: string,
   section: string,
-  base64?: string
+  base64?: string,
+  uuid?: string
 }
 
 export interface SocketUserModel {
