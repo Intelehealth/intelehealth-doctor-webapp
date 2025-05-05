@@ -296,3 +296,31 @@
 .prescription-disclaimer{
   font-size: 12px !important;
 }
+
+
+.doctor-uploaded-docs {
+  .doc-item {
+    width: auto;
+    height: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    
+    .doc-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    img {
+      width: 20px;
+      height: 20px;
+      &.doc-icon {
+        filter: invert(50%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+      }
+    }
+  }
+}
