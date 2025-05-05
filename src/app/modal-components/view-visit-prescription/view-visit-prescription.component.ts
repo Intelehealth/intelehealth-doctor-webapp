@@ -278,18 +278,26 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
             this.dignosisSecondary = obsParse(obs.value)
           } else {
-            this.existingDiagnosis.push({
-              diagnosisName: obs.value.split(':')[0].trim(),
-              diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-              diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
-              uuid: obs.uuid
-            });
+            if (obs?.uuid)
+              this.existingDiagnosis.push(this.extractDiagnosisInfo(obs.value, obs.uuid));
           }
-          
         }
       });
     });
   }
+
+  extractDiagnosisInfo(value, uuid) {
+    const parts = value?.split?.('::') || [];
+    const diagnosisParts = parts?.[1]?.split?.(':') || [];
+    const typeStatusParts = diagnosisParts?.[1]?.split?.(' & ') || [];
+    
+    return {
+      diagnosisName: diagnosisParts?.[0]?.trim?.() || '',
+      diagnosisType: typeStatusParts?.[0]?.trim?.() || '',
+      diagnosisStatus: typeStatusParts?.[1]?.trim?.() || '',
+      uuid
+    };
+  };
 
   /**
   * Get notes for the visit

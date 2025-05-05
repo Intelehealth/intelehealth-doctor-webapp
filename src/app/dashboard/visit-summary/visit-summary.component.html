@@ -733,7 +733,7 @@
                                 placeholder="{{'Select specialization'|translate}}"
                                 data-test-id="selectRefer"
                               >
-                              <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
+                              <ng-option *ngFor="let specialization of referSpecializations" [value]="specialization.name">
                                 {{ (specialization.name) |translate }}
                               </ng-option>
                               </ng-select>
@@ -1174,7 +1174,7 @@
                               [clearable]="true"
                               [searchable]="true"
                               placeholder="{{'Select diagnosis'|translate}}"
-                              [addTag]="true"
+                              [addTag]="false"
                               data-test-id="selectDiagnosisName"
                             >
                             </ng-select>
@@ -1600,6 +1600,7 @@
                                     placeholder="{{'Enter drug'|translate}}*"
                                     [ngbTypeahead]="search3"
                                     data-test-id="etDrugName"
+                                    (change)="$event.target.title = $event.target.value"
                                   />
                                 </div>
                               </td>
@@ -1851,7 +1852,7 @@
                                 placeholder="{{'Select specialization'|translate}}*"
                                 data-test-id="selectReferralSpecialityVisitSummary"
                               >
-                              <ng-option *ngFor="let specialization of refer_specializations" [value]="specialization.name">
+                              <ng-option *ngFor="let specialization of referSpecializations" [value]="specialization.name">
                                 {{ (specialization.name) |translate }}
                               </ng-option>
                               </ng-select>
