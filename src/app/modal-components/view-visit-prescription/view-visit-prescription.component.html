@@ -529,9 +529,56 @@
                 </table>
               </div>
             </div>
-            </div>
-            </div>
+          </div>
         </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/additional-documents.svg" alt="" />
+              <h6>{{'Doctor\'s Addtional Document '| translate}}</h6>
+            </div>
+            <div class="data-section-content">
+              <div class="table-responsive">
+                <table class="table">
+                  <tbody>
+                    <ng-container *ngIf="doctorUploadedDocs.length; else noDoctorUploadedDocs">
+                      <tr class="doctor-uploaded-docs" *ngFor="let d of doctorUploadedDocs; let x = index">
+                        <td class="doc-item"> 
+                          <div class="doc-content">
+                            <img
+                              src="assets/svgs/pdf-doc.svg"
+                              alt="PDF"
+                              class="doc-icon"
+                              width="44px"
+                            />
+                            <a 
+                              class="download-link" 
+                              [href]="d.src"
+                              [download]="d.fileName"
+                              target="_blank"
+                              data-test-id="linkDownloadDoc"
+                            >
+                              {{d.fileName}}
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noDoctorUploadedDocs>
+                      <tr >
+                        <td colspan="5" class="text-center">
+                          {{'No doctor uploaded documents available' | translate}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div *ngIf="isDownloadPrescription" class="signature w-100">
         <div class="text-right my-4">

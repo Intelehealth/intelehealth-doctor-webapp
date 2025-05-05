@@ -9,8 +9,8 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { doctorDetails, visitTypes } from 'src/config/constant';
-import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { conceptIds, doctorDetails, visitTypes } from 'src/config/constant';
+import { DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription, logo as logoImg } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -44,6 +44,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   tests: TestModel[] = [];
   referrals: ReferralModel[] = [];
   followUp: FollowUpDataModel;
+  doctorUploadedDocs: DocImagesModel[] = [];
   consultedDoctor: any;
 
   conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
@@ -121,6 +122,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.getDoctorUploadedDocument(visit);
             }
             this.getCheckUpReason(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -952,6 +954,45 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    color: 'blue',
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'additionalDocument', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Doctor\'s Addtional Document', style: 'sectionheader', border: [false, false, false, true] }],
+                      [
+                        {
+                          colSpan: 2,
+                          table: {
+                            widths: ['*'],
+                            headerRows: 1,
+                            body: [
+                              this.doctorUploadedDocs.map(doc => {
+                                return [{
+                                  text: doc.fileName,
+                                  color: 'blue',
+                                  decoration: 'underline',
+                                  link: doc.src
+                                }]
+                              }),
+                            ]
+                          },
+                          layout: 'lightHorizontalLines'
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
                   alignment: 'right',
                   stack: [
                     { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
@@ -1204,5 +1245,26 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
       this.patient.person.abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`;
     }
+  }
+
+  /**
+  * Get doctor uploaded documents
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
+  getDoctorUploadedDocument(visit: VisitModel): void {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptDoctorUploadedDocument).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
+        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+          const data = { 
+            src: `${this.baseURL}/obs/${obs.uuid}/value`, 
+            uuid: obs.uuid,
+            section: obs.concept.display,
+            fileName: obs.display.replace(`${obs.concept.display}: `, '') || 'document.pdf'
+          };
+          this.doctorUploadedDocs.push(data);
+        }
+      });
+    });
   }
 }

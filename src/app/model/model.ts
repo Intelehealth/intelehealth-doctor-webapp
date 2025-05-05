@@ -515,6 +515,7 @@ export interface DiagnosisModel {
 }
 
 export interface DocImagesModel {
+  fileName?: string
   src: string,
   section: string,
   base64?: string,
