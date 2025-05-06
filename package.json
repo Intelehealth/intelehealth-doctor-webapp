@@ -14,7 +14,7 @@
     "e2e": "ng e2e",
     "prepare": "husky install",
     "build-library": "ng build ih-library --configuration production",
-    "build-aiddx": "ng build ih-library --watch",
+    "build-aiddx": "ng build aiddx-library --configuration production",
     "postbuild": "ts-node ./src/assets/scripts/postBuild.ts"
   },
   "lint-staged": {
