@@ -80,6 +80,53 @@ export class AillmddxComponent {
     // }, 3000);
   }
 
+  public getAIDiagnosisWithRetry(notes?: string) {
+    const MAX_RETRIES = 3;
+    let retryCount = 0;
+    const payload = this.ddxSvc.getDDxPayload(this.patientInfo, this.visit, notes);
+
+    const attemptDiagnosis = () => {
+      this.isLoading = true;
+      this.diagnosisList = [];
+
+      this.ddxSvc.getAIDiagnosis(payload).subscribe({
+        next: (data: any) => {
+          if (data?.conclusion) this.conclusion = data?.conclusion;
+          if (data.result.length > 0) {
+            this.noData = false;
+            this.diagnosisList = data.result.map(v => {
+              return {
+                ...v,
+                diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
+                rationale: this.ddxSvc.markdownit(v?.rationale)
+              }
+            });
+          } else {
+            this.noData = true;
+          }
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          retryCount++;
+          if (retryCount < MAX_RETRIES) {
+            console.log(`Retry attempt ${retryCount} for getAIDiagnosis`);
+            setTimeout(() => {
+              attemptDiagnosis();
+            }, 1000);
+          } else {
+            this.hasError = true;
+            this.isLoading = false;
+            console.error('Failed to get AI diagnosis after 3 attempts:', err);
+          }
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    };
+
+    attemptDiagnosis();
+  }
 
   onTryAgain() {
     this.getAIDiagnosis(this.notes);

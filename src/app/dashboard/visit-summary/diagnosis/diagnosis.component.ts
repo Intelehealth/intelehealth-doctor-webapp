@@ -278,10 +278,10 @@ export class DiagnosisComponent implements OnInit {
               this.patientInteractionNotesForm.patchValue({ uuid: obs.uuid, value: obs.value });
             }
           });
-          this.aillmddxComponent.getAIDiagnosis(this.patientInteractionNotesForm.value.value);
+          this.aillmddxComponent.getAIDiagnosisWithRetry(this.patientInteractionNotesForm.value.value);
         },
         error: () => {
-          this.aillmddxComponent.getAIDiagnosis(this.patientInteractionNotesForm.value.value);
+          this.aillmddxComponent.getAIDiagnosisWithRetry(this.patientInteractionNotesForm.value.value);
         }
       });
   }
