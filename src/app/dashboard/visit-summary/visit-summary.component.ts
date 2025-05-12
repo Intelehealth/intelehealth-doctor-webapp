@@ -588,7 +588,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
-      console.log("response", response, conceptIds.conceptPhysicalExamination);
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
@@ -616,7 +615,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
-      console.log("response", response, conceptIds.conceptAdditionlDocument);
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
@@ -1812,7 +1810,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     //Doctor Uploaded Documents
     this.encounterService.postObs(formData).subscribe(
       response => {
-        console.log("File uploaded successfully", response);
         const data = { 
           src: `${this.baseURL}/obs/${response.uuid}/value`, 
           section: response.concept.display,
