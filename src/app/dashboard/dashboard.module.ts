@@ -33,6 +33,9 @@ import { SharedModule } from '../shared.module';
 import { OpenChatComponent } from './open-chat/open-chat.component';
 import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
 import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
+import { DiagnosticReportsComponent } from './diagnostic-reports/diagnostic-reports.component';
+import { AttachmentViewerComponent } from './attachment-viewer/attachment-viewer.component';
+import { VisitExternalFacilitiesComponent } from './visit-summary/visit-external-facilities/visit-external-facilities.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -49,7 +52,10 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     HwProfileComponent,
     OpenChatComponent,
     CompletedVisitsComponent,
-    FollowupVisitsComponent
+    FollowupVisitsComponent,
+    DiagnosticReportsComponent,
+    AttachmentViewerComponent,
+    VisitExternalFacilitiesComponent
   ],
   imports: [
     CommonModule,

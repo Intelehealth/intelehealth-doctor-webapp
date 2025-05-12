@@ -1,34 +1,35 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PageTitleService } from 'src/app/core/page-title/page-title.service';
-import { VisitService } from 'src/app/services/visit.service';
-import { environment } from 'src/environments/environment';
-import * as moment from 'moment';
-import { AppointmentService } from 'src/app/services/appointment.service';
-import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { CoreService } from 'src/app/services/core/core.service';
-import { EncounterService } from 'src/app/services/encounter.service';
-import { MindmapService } from 'src/app/services/mindmap.service';
-import { MatAccordion } from '@angular/material/expansion';
-import medicines from '../../core/data/medicines';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
-import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
-import { LinkService } from 'src/app/services/link.service';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
-import { TranslateService } from '@ngx-translate/core';
-import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
-import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
-import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, UserModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { AppointmentService } from 'src/app/services/appointment.service';
+import { CoreService } from 'src/app/services/core/core.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { EncounterService } from 'src/app/services/encounter.service';
+import { LinkService } from 'src/app/services/link.service';
+import { MindmapService } from 'src/app/services/mindmap.service';
+import { TranslationService } from 'src/app/services/translation.service';
+import { VisitEncounterPatientOrderService } from 'src/app/services/visit-encounter-patient-order.service';
+import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
+import { VisitService } from 'src/app/services/visit.service';
+import { calculateBMI, deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
+import { PICK_FORMATS, conceptIds, days, doctorDetails, facility, languages, refer_prioritie, refer_specialization, strength, timing, visitTypes } from 'src/config/constant';
+import { environment } from 'src/environments/environment';
+import medicines from '../../core/data/medicines';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -111,6 +112,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   addNoteForm: FormGroup;
   addMedicineForm: FormGroup;
   addAdditionalInstructionForm: FormGroup;
+  addExternalAppointmentForm: FormGroup;
   addAdviceForm: FormGroup;
   addTestForm: FormGroup;
   addReferralForm: FormGroup;
@@ -133,6 +135,29 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   openChatFlag: boolean = false;
 
+  referralList: any[] = [];
+  referralFacilityList = [];
+  practitionerList: any[] = [];
+  scheduleList = [];
+  slotList = [];
+  slotListMain = [];
+  scheduleListMain = [];
+  testResultList: any[] = [];
+
+  isMedicationLoading = false;
+  newMedicationSubmitArray: any[] = [];
+  selectedDrug: any = null; // To store the selected drug object
+  drugStrengthUnits: any[] = [];
+  labList: any[] = [];
+  currentVisitLocation = null;
+  isTestLoading = false;
+  newTestSubmitArray: any[] = [];
+
+
+
+
+  externalAppointmentList: any[] = [];
+  addMoreExternalAppointment = false;
 
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
@@ -175,6 +200,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
+    private visitEncounterService: VisitEncounterPatientOrderService,
     private mindmapService: MindmapService,
     private appConfigService: AppConfigService) {
 
@@ -198,11 +224,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       spoken: new FormControl(null, [Validators.required])
     });
 
-    if(this.appConfigService.patient_visit_summary.hw_interaction){
+    if (this.appConfigService.patient_visit_summary.hw_interaction) {
       this.patientInteractionForm.addControl('hwIntUuid', new FormControl(""));
       this.patientInteractionForm.addControl('hwPresent', new FormControl(false, [Validators.required]));
       this.patientInteractionForm.addControl('hwSpoken', new FormControl("", [Validators.required]));
-      this.patientInteractionForm.addControl('comment', new FormControl("",[Validators.required]));
+      this.patientInteractionForm.addControl('comment', new FormControl("", [Validators.required]));
     }
 
     this.diagnosisForm = new FormGroup({
@@ -242,6 +268,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       reason: new FormControl(null)
     });
 
+    this.addExternalAppointmentForm = new FormGroup({
+      facility: new FormControl(null, [Validators.required]),
+      requesterId: new FormControl(null, [Validators.required]),
+      schedule: new FormControl(null, [Validators.required]),
+      slot: new FormControl(null, [Validators.required]),
+    });
+
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl([Validators.required]),
@@ -263,6 +296,61 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+  * Get user from localstorage
+  * @return {UserModel} - User
+  */
+  get user(): UserModel {
+    return getCacheData(true, doctorDetails.USER);
+  }
+
+  searchDrugs = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term) =>
+        term.length < 2
+          ? of([])
+          : this.encounterService.searchMedicine(term).pipe(
+            map((response) => response.results || []),
+            catchError(() => of([]))
+          )
+      )
+    );
+
+  resultFormatter = (result: any) => result.display;
+  inputFormatter = (result: any) => result.display;
+
+  fetchDrugDosingUnits(): void {
+    this.encounterService.getDrugType().subscribe((response: any) => {
+      // console.log(response);
+      this.drugStrengthUnits = response.drugDosingUnits;
+    });
+  }
+
+  fetchTestList(): void {
+    this.encounterService.getTestList().subscribe((response) => {
+      this.testsList = response.answers;
+    });
+  }
+
+
+  fetchTestResultList(patientId: string): void {
+    this.visitEncounterService
+      .getTestResultList(patientId)
+      .subscribe((response) => {
+        this.testResultList = response;
+      });
+  }
+
+  fetchReferralFacilityList(): void {
+    this.visitEncounterService
+      .getReferralFacilityLocation()
+      .subscribe((response) => {
+        this.referralFacilityList = response.results;
+      });
+  }
+
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
@@ -276,8 +364,152 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
+    this.fetchDrugDosingUnits();
+    this.fetchTestList();
+    this.fetchReferralFacilityList();
+
+
+    this.addExternalAppointmentForm
+      .get("facility")
+      ?.valueChanges.subscribe((selectedValue) => {
+        const selectedLocation = this.referralFacilityList.find(
+          (item) => item.display === selectedValue
+        )?.uuid;
+
+        this.practitionerList = [];
+        this.scheduleList = [];
+        this.scheduleListMain = [];
+        this.slotList = [];
+        this.slotListMain = [];
+        this.addExternalAppointmentForm.patchValue({
+          requesterId: null,
+          schedule: null,
+          slot: null,
+        });
+
+        if (selectedLocation) {
+          this.getExternalAppointmentPractitionerList(selectedLocation);
+        }
+      });
+
+    this.addExternalAppointmentForm
+      .get("requesterId")
+      ?.valueChanges.subscribe(() => {
+        const requesterId =
+          this.addExternalAppointmentForm.get("requesterId")?.value;
+        const facility = this.addExternalAppointmentForm.get("facility")?.value;
+
+        const selectedFacility = this.referralFacilityList.find(
+          (item) => item.display === facility
+        )?.uuid;
+
+        this.scheduleList = [];
+        this.scheduleListMain = [];
+        this.slotList = [];
+        this.slotListMain = [];
+        this.addExternalAppointmentForm.patchValue({
+          schedule: null,
+          slot: null,
+        });
+
+        if (selectedFacility && requesterId) {
+          this.visitEncounterService
+            .getExternalAppointmentScheduleList(selectedFacility, requesterId)
+            .subscribe((response) => {
+              function formatDate(isoString: string): string {
+                const date = new Date(isoString);
+
+                const options: Intl.DateTimeFormatOptions = {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                };
+
+                return date
+                  .toLocaleString("en-US", options)
+                  .replace(",", " at");
+              }
+
+              const scheduleData =
+                response?.entry?.map((item) => ({
+                  uuid: item?.resource?.id,
+                  name: `${formatDate(item?.resource?.planningHorizon.start)}`,
+                })) ?? [];
+
+              this.scheduleListMain = response?.entry ?? [];
+              this.scheduleList = scheduleData;
+            });
+        }
+      });
+
+    this.addExternalAppointmentForm
+      .get("schedule")
+      ?.valueChanges.subscribe((scheduleId) => {
+        this.slotList = [];
+        this.slotListMain = [];
+        this.addExternalAppointmentForm.patchValue({
+          slot: null,
+        });
+        const facility = this.addExternalAppointmentForm.get("facility")?.value;
+        const locationId = this.referralFacilityList.find(
+          (item) => item.display === facility
+        )?.uuid;
+        const selectedScheduleDate = this.scheduleListMain
+          .find((item) => item.resource.id === scheduleId)
+          ?.resource?.planningHorizon?.start?.split("T")[0];
+
+        if (scheduleId && locationId && selectedScheduleDate) {
+          this.visitEncounterService
+            .getExternalAppointmentSlotList(
+              scheduleId,
+              locationId,
+              selectedScheduleDate
+            )
+            .subscribe((response) => {
+              function formatTime(isoString: string): string {
+                const date = new Date(isoString);
+
+                const options: Intl.DateTimeFormatOptions = {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true, // Ensures 12-hour format
+                };
+
+                return date.toLocaleTimeString("en-US", options);
+              }
+              this.slotListMain = response?.entry ?? [];
+
+              const slotData =
+                response?.entry?.map((item) => ({
+                  uuid: item?.resource?.id,
+                  name:
+                    `${formatTime(item?.resource?.start)}-` +
+                    `${formatTime(item?.resource?.end)}`,
+                })) ?? [];
+              this.slotList = slotData;
+            });
+        }
+      });
   }
 
+  getExternalAppointmentPractitionerList(locationId: string): void {
+    this.visitEncounterService
+      .getExternalAppointmentPractitionerList(locationId)
+      .subscribe({
+        next: (response) => {
+          const practitionerList = response.entry.map((item) => ({
+            uuid: item?.resource?.id,
+            name: `${item?.resource?.name?.[0]?.family
+              } (${item?.resource?.name?.[0]?.given.join(" ")})`,
+          }));
+          this.practitionerList = practitionerList;
+        },
+        error: (err) => {
+          console.error("Error fetching practitioner list:", err);
+          this.toastr.error("Failed to fetch practitioner list");
+        },
+      });
+  }
   checkOpenChatBoxFlag() {
     if (this.openChatFlag && this.hasWebRTCEnabled && this.hasChatEnabled) {
       setTimeout(() => {
@@ -319,6 +551,81 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  getOrderList() {
+    this.visitEncounterService
+      .fetchAndProcessData(this.visit.patient.uuid, this.visit.uuid)
+      .then((data) => {
+        this.medicines = [];
+        // this.existingDiagnosis = [];
+        if (data?.drugorder) {
+          this.medicines = data.drugorder.map((item) => {
+            const name = item.apiResponse.drug.display;
+            const strength = item.apiResponse?.doseUnits?.uuid;
+            const days = item.apiResponse.duration;
+            const [timing, remark] = item.apiResponse.dosingInstructions
+              .split(":")
+              .map((item) => item.trim());
+            return {
+              drug: name,
+              strength,
+              days,
+              timing,
+              remark,
+              uuid: item.apiResponse.uuid,
+            };
+          });
+        }
+        if (data?.testorder) {
+          this.tests = data.testorder.map((item) => {
+            // const name = item.apiResponse.concept.uuid;
+            // const [type, status] = item.apiResponse.instructions
+            //   .split("&")
+            //   .map((item) => item.trim());
+            return {
+              // diagnosisName: name,
+              // diagnosisType: type,
+              // diagnosisStatus: status,
+              value: item.apiResponse.concept.uuid,
+              uuid: item.apiResponse.uuid,
+            };
+          });
+        }
+      });
+  }
+
+  getReferralList() {
+    this.visitEncounterService
+      .getReferralList(this.visit.patient.uuid)
+      .subscribe({
+        next: (referrals) => {
+          this.referralList = referrals;
+        },
+        error: (err) => {
+          console.error("Error fetching referral list:", err);
+          this.toastr.error("Failed to fetch referral list");
+        },
+      });
+  }
+
+  getExternalAppointsList() {
+    if (Boolean(this.getPatientMPIdentifier())) {
+      this.visitEncounterService
+        .getExternalAppointmentList(
+          this.getPatientMPIdentifier(),
+          this.visit.uuid
+        )
+        .subscribe({
+          next: (externalAppointment) => {
+            this.externalAppointmentList = externalAppointment;
+          },
+          error: (err) => {
+            console.error("Error fetching external appointment list:", err);
+            this.toastr.error("Failed to fetch external appointment list");
+          },
+        });
+    } 
+  }
+
   /**
   * Get visit
   * @param {string} uuid - Visit uuid
@@ -328,6 +635,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
         this.visit = visit;
+        this.fetchTestResultList(visit.patient.uuid);
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
           this.visit['visitUploadTime'] = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'];
         } else if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
@@ -338,7 +646,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
-
+            this.getReferralList();
+            this.getExternalAppointsList();
+            this.getOrderList();
             if (this.appConfigService.abha_section) {
               // check if abha number / abha address exists for this patient
               this.getAbhaDetails(patient)
@@ -440,6 +750,31 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
     return identifier;
   }
+  /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
+  getPatientMPIdentifier(): string {
+    return (
+      this?.visit?.patient?.identifiers?.find(
+        (i: any) => i?.identifierType?.name === "MPI"
+      )?.identifier ?? ""
+    );
+  }
+
+    /**
+   * Get patient identifier for given identifier type
+   * @param {string} identifierType - Identifier type
+   * @return {void}
+   */
+    getPatientOpenMrsIdentifier(): string {
+      return (
+        (this?.visit?.patient?.identifiers as any)
+          ?.filter((i: any) => i?.identifierType?.name !== "MPI")
+          ?.map((i: any) => i.identifier) ?? ""
+      );
+    }
 
   /**
   * Get vital observations from the vital encounter
@@ -461,9 +796,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getObsValue(uuid: string, key?: string): any {
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
-    const value = v?.value ? ( typeof v.value == 'object') ? v.value?.display : v.value : null;
-    if(!value && key === 'bmi') {
-     return calculateBMI(this.vitals, this.vitalObs);
+    const value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
+    if (!value && key === 'bmi') {
+      return calculateBMI(this.vitals, this.vitalObs);
     }
     return value
   }
@@ -630,6 +965,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  onPractitionerChange($event){
+
+    const practitionerUuid = $event;
+    console.log(practitionerUuid);
   }
 
   /**
@@ -947,27 +1288,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.patientInteractionForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
-    if(!this.patientInteractionForm.value.present){
+    if (!this.patientInteractionForm.value.present) {
       this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
-      .subscribe((res: VisitAttributeModel) => {
-        if (res) {
-          this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
-        }
-      });
+        .subscribe((res: VisitAttributeModel) => {
+          if (res) {
+            this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
+          }
+        });
     }
 
-    if(this.appConfigService?.patient_visit_summary?.hw_interaction){
-      if(!this.patientInteractionForm.value.hwPresent){
+    if (this.appConfigService?.patient_visit_summary?.hw_interaction) {
+      if (!this.patientInteractionForm.value.hwPresent) {
         const payload = {
           attributeType: "c3e885bf-6c97-4d27-9171-a7e0c25450e9",
           value: this.patientInteractionForm.value.comment?.trim().length > 0 ? `${this.patientInteractionForm.value.hwSpoken}, ${this.translateService.instant("Comment")}: ${this.patientInteractionForm.value.comment}` : this.patientInteractionForm.value.hwSpoken,
         };
         this.visitService.postAttribute(this.visit.uuid, payload)
-        .subscribe((res: VisitAttributeModel) => {
-          if (res) {
-            this.patientInteractionForm.patchValue({ hwPresent: true, hwIntUuid: res.uuid, hwSpoken: res.value });
-          }
-        });
+          .subscribe((res: VisitAttributeModel) => {
+            if (res) {
+              this.patientInteractionForm.patchValue({ hwPresent: true, hwIntUuid: res.uuid, hwSpoken: res.value });
+            }
+          });
       }
     }
   };
@@ -978,7 +1319,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   deletePatientInteraction() {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe(() => {
-      this.patientInteractionForm.patchValue({ present:false, spoken: null, uuid: null });
+      this.patientInteractionForm.patchValue({ present: false, spoken: null, uuid: null });
     });
   }
 
@@ -988,7 +1329,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   deleteHWInteraction() {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.hwIntUuid).subscribe(() => {
-      this.patientInteractionForm.patchValue({ hwPresent:false, hwSpoken: null, hwIntUuid: null, comment: "" });
+      this.patientInteractionForm.patchValue({ hwPresent: false, hwSpoken: null, hwIntUuid: null, comment: "" });
     });
   }
 
@@ -1062,23 +1403,36 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.diagnosisForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
-    if (this.existingDiagnosis.find(o => o.diagnosisName.toLocaleLowerCase() === this.diagnosisForm.value.diagnosisName.toLocaleLowerCase())) {
-      this.toastr.warning(this.translateService.instant('Diagnosis Already Exist'), this.translateService.instant('Duplicate Diagnosis'));
+    if (
+      this.existingDiagnosis.find(
+        (o) =>
+          o.diagnosisName.toLocaleLowerCase() ===
+          this.diagnosisForm.value.diagnosisName.toLocaleLowerCase()
+      )
+    ) {
+      this.toastr.warning(
+        this.translateService.instant("Diagnosis Already Exist"),
+        this.translateService.instant("Duplicate Diagnosis")
+      );
       return;
     }
-    const diagnosisName = this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ');
-    this.encounterService.postObs({
-      concept: conceptIds.conceptDiagnosis,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: ObsModel) => {
-      if (res) {
-        this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value, diagnosisName: diagnosisName });
-        this.diagnosisForm.reset();
-      }
-    });
+    this.encounterService
+      .postObs({
+        concept: conceptIds.conceptDiagnosis,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
+        encounter: this.visitNotePresent.uuid,
+      })
+      .subscribe((res: ObsModel) => {
+        if (res) {
+          this.existingDiagnosis.push({
+            uuid: res.uuid,
+            ...this.diagnosisForm.value,
+          });
+          this.diagnosisForm.reset();
+        }
+      });
   }
 
   /**
@@ -1091,6 +1445,69 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.existingDiagnosis.splice(index, 1);
     });
+  }
+
+  deleteDeleteOrder(type: string, uuid: string) {
+    const isTemp = uuid.startsWith("TEMP_");
+
+    const deleteItemFromArray = (array: any[], submitArray: any[]) => {
+      // Modify the arrays in place
+      this.updateArray(array, uuid);
+      this.updateArray(submitArray, uuid);
+      this.toastr.success("Deleted successfully");
+    };
+
+    const deleteServiceItem = (array: any[], service: () => void) => {
+      if (array.some((item) => item.uuid === uuid)) {
+        service();
+      }
+    };
+
+    const handleDelete = (
+      array: any[],
+      submitArray: any[],
+      service: () => void
+    ) => {
+      if (isTemp) {
+        deleteItemFromArray(array, submitArray);
+      } else {
+        deleteServiceItem(array, service);
+      }
+    };
+
+    if (type === "medicine") {
+      handleDelete(this.medicines, this.newMedicationSubmitArray, () => {
+        this.visitEncounterService.deleteOrder(uuid).subscribe({
+          next: () => {
+            this.updateArray(this.medicines, uuid);
+            this.toastr.success("Deleted successfully");
+          },
+          error: () => {
+            this.toastr.error("Failed to delete");
+          },
+        });
+      });
+    } else {
+      handleDelete(this.tests, this.newTestSubmitArray, () => {
+        this.visitEncounterService.deleteOrder(uuid).subscribe({
+          next: () => {
+            this.updateArray(this.tests, uuid);
+            this.toastr.success("Deleted successfully");
+          },
+          error: () => {
+            this.toastr.error("Failed to delete");
+          },
+        });
+      });
+    }
+  }
+
+   // Helper function to update arrays in place
+   private updateArray(array: any[], uuid: string) {
+    const index = array.findIndex((item) => item.uuid === uuid);
+    if (index !== -1) {
+      array.splice(index, 1);
+    }
   }
 
   /**
@@ -1172,31 +1589,31 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.addAdditionalInstructionForm.reset();
   }
 
-  /**
+    /**
   * Get medicines for the visit
   * @returns {void}
   */
-  checkIfMedicationPresent() {
-    this.medicines = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
-      response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':')) {
-            this.medicines.push({
-              drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
-              remark: obs.value?.split(':')[4],
-              uuid: obs.uuid
-            });
-          } else {
-            this.additionalInstructions.push(obs);
+    checkIfMedicationPresent() {
+      this.medicines = [];
+      this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter.visit.uuid === this.visit.uuid) {
+            if (obs.value.includes(':')) {
+              this.medicines.push({
+                drug: obs.value?.split(':')[0],
+                strength: obs.value?.split(':')[1],
+                days: obs.value?.split(':')[2],
+                timing: obs.value?.split(':')[3],
+                remark: obs.value?.split(':')[4],
+                uuid: obs.uuid
+              });
+            } else {
+              this.additionalInstructions.push(obs);
+            }
           }
-        }
+        });
       });
-    });
-  }
+    }
 
   /**
   * Save medicine
@@ -1206,19 +1623,112 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addMedicineForm.invalid) {
       return;
     }
-    if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
-      this.toastr.warning(this.translateService.instant('Drug already added, please add another drug.'), this.translateService.instant('Already Added'));
+    if (
+      this.medicines.find((o: MedicineModel) => {
+        return o.drug === this.addMedicineForm.value.drug.display;
+      })
+    ) {
+      this.toastr.warning(
+        this.translateService.instant(
+          "Drug already added, please add another drug."
+        ),
+        this.translateService.instant("Already Added")
+      );
       return;
     }
-    this.encounterService.postObs({
-      concept: conceptIds.conceptMed,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.addMedicineForm.value.drug}:${this.addMedicineForm.value.strength}:${this.addMedicineForm.value.days}:${this.addMedicineForm.value.timing}:${this.addMedicineForm.value.remark}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((response: ObsModel) => {
-      this.medicines.push({ ...this.addMedicineForm.value, uuid: response.uuid });
-      this.addMedicineForm.reset();
+
+    // Get the "provider" data from local storage
+    if (!this.addMedicineForm.value.drug.display) {
+      this.toastr.warning("Please select drug properly");
+    }
+    const currentUserData = localStorage.getItem("currentUser");
+
+    // Parse the JSON string into an object
+    const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+    const tempUUiD = `TEMP_${Math.random()}`;
+
+    const newMedicine = {
+      action: "NEW",
+      patient: this.visit.patient.uuid,
+      type: "drugorder",
+      careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
+      orderer: currentUser?.currentProvider?.uuid,
+      // encounter: null,
+      drug: this.addMedicineForm.value.drug.uuid,
+      // dose: 1.0,
+      doseUnits: this.addMedicineForm.value.strength,
+      asNeeded: false,
+      // asNeededCondition: null,
+      numRefills: 0,
+      quantity: 0,
+      quantityUnits: this.addMedicineForm.value.strength,
+      // quantityUnits: "1513AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      duration: Number(this.addMedicineForm.value.days),
+      durationUnits: "1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      dosingType: "org.openmrs.FreeTextDosingInstructions",
+      dosingInstructions: `${this.addMedicineForm.value.timing}:${this.addMedicineForm.value.remark}`,
+      concept: this.addMedicineForm.value.drug?.concept?.uuid,
+      orderReasonNonCoded: "",
+      uuid: tempUUiD,
+    };
+
+    this.newMedicationSubmitArray.push(newMedicine);
+    const newData = {
+      ...this.addMedicineForm.value,
+      drug: this.addMedicineForm.value.drug.display,
+      uuid: tempUUiD,
+    };
+    this.medicines.push(newData);
+    this.addMedicineForm.reset();
+    // this.encounterService.addMedicine(newPayload).subscribe((response: ObsModel) => {
+    //   this.medicines.push({ ...this.addMedicineForm.value, uuid: response.uuid });
+    //   this.addMedicineForm.reset();
+    // });
+    // this.encounterService.postObs({
+    //   concept: conceptIds.conceptMed,
+    //   person: this.visit.patient.uuid,
+    //   obsDatetime: new Date(),
+    //   value: `${this.addMedicineForm.value.drug}:${this.addMedicineForm.value.strength}:${this.addMedicineForm.value.days}:${this.addMedicineForm.value.timing}:${this.addMedicineForm.value.remark}`,
+    //   encounter: this.visitNotePresent.uuid
+    // }).subscribe((response: ObsModel) => {
+    //   this.medicines.push({ ...this.addMedicineForm.value, uuid: response.uuid });
+    //   this.addMedicineForm.reset();
+    // });
+  }
+
+  submitMedication(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.newMedicationSubmitArray.length > 0) {
+        this.isMedicationLoading = true;
+        const finalValue = {
+          patient: this.visit.patient.uuid,
+          location: this.currentVisitLocation,
+          encounterType: "225a5167-4655-4331-9d1c-7d8824f3b5f1",
+          encounterDatetime: new Date().toISOString(),
+          visit: this.visit.uuid,
+          obs: [],
+          orders: this.newMedicationSubmitArray.map(
+            ({ uuid, ...rest }) => rest
+          ),
+        };
+
+        this.encounterService.addEncounter(finalValue).subscribe({
+          next: () => {
+            this.isMedicationLoading = false;
+            this.newMedicationSubmitArray = [];
+            this.getOrderList();
+            this.toastr.success("Medication saved successfully");
+            resolve(); // Resolve if successful
+          },
+          error: () => {
+            this.isMedicationLoading = false;
+            this.toastr.error("Failed to save medication");
+            reject(new Error("Medication submission failed")); // Reject if failed
+          },
+        });
+      } else {
+        resolve(); // Resolve if no medication to submit
+      }
     });
   }
 
@@ -1394,19 +1904,91 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addTestForm.invalid) {
       return;
     }
-    if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
-      this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
+    if (
+      this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)
+    ) {
+      this.toastr.warning(
+        this.translateService.instant(
+          "Test already added, please add another test."
+        ),
+        this.translateService.instant("Already Added")
+      );
       return;
     }
-    this.encounterService.postObs({
-      concept: conceptIds.conceptTest,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
+
+    const currentUserData = localStorage.getItem("currentUser");
+
+    // Parse the JSON string into an object
+    const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+    const tempUUID = `TEMP_${Math.random()}`;
+    const newPayload = {
+      action: "NEW",
+      type: "testorder",
+      patient: this.visit.patient.uuid,
+      careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
+      orderer: currentUser?.currentProvider?.uuid,
+      // encounter: null,
+      concept: this.addTestForm.value.test,
+      instructions: "",
+      uuid: tempUUID,
+    };
+
+    this.newTestSubmitArray.push(newPayload);
+    this.tests.push({
+      uuid: tempUUID,
       value: this.addTestForm.value.test,
-      encounter: this.visitNotePresent.uuid,
-    }).subscribe((response: ObsModel) => {
-      this.tests.push({ uuid: response.uuid, value: this.addTestForm.value.test });
-      this.addTestForm.reset();
+    });
+    this.addTestForm.reset();
+  }
+
+  async handleSubmit() {
+    try {
+      // Call submitTest and wait for it to finish
+      await this.submitTest();
+
+      // Call submitMedication only if submitTest is successful
+      await this.submitMedication();
+
+      // Call sharePrescription only if submitMedication is successful
+      await this.sharePrescription();
+    } catch (error) {
+      this.toastr.error("An error occurred during the process");
+      console.error(error); // Log the error for debugging
+    }
+  }
+
+  submitTest(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.newTestSubmitArray.length > 0) {
+        this.isTestLoading = true;
+        const finalValue = {
+          patient: this.visit.patient.uuid,
+          location: this.currentVisitLocation,
+          encounterType: "225a5167-4655-4331-9d1c-7d8824f3b5f1",
+          encounterDatetime: new Date().toISOString(),
+          visit: this.visit.uuid,
+          obs: [],
+          orders: this.newTestSubmitArray.map(({ uuid, ...rest }) => rest),
+        };
+        this.encounterService.addEncounter(finalValue).subscribe({
+          next: () => {
+            this.isTestLoading = false;
+            this.newTestSubmitArray = [];
+            this.getOrderList();
+            this.toastr.success("Test saved successfully");
+            resolve();
+            // Handle successful submission (e.g., show a success message or navigate)
+          },
+          error: () => {
+            this.isTestLoading = false;
+            this.toastr.error("Failed to save test");
+            reject(new Error("Failed to save test"));
+            // Handle error (e.g., show an error message)
+          },
+        });
+      } else {
+        resolve(); // Resolve if no tests to submit
+      }
     });
   }
 
@@ -1430,6 +2012,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.addMoreReferral = !this.addMoreReferral;
     this.addReferralForm.reset();
   }
+  toggleExternalAppointment() {
+    this.addMoreExternalAppointment = !this.addMoreExternalAppointment;
+    this.addExternalAppointmentForm.reset();
+  }
 
   /**
   * Get referrals for the visit
@@ -1437,43 +2023,224 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   checkIfReferralPresent() {
     this.referrals = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
-      .subscribe((response: ObsApiResponseModel) => {
-        response.results.forEach((obs: ObsModel) => {
-          const obs_values = obs.value.split(':');
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() ? obs_values[3].trim() : '-' });
-          }
+    if (Boolean(this.getPatientMPIdentifier())) {
+      this.diagnosisService
+        .getReferralOutObs(this.getPatientMPIdentifier(), this.visit.uuid)
+        .subscribe((response) => {
+          this.referrals = response.map((item) => ({
+            uuid: item.uuid,
+            speciality: item.referTo,
+            facility: item.facilityName,
+            priority: item.priorityOfReferral,
+            reason: item.reason,
+          }));
         });
-      });
+    }
   }
 
+
   /**
-  * Save referral
-  * @returns {void}
-  */
+   * Save referral
+   * @returns {void}
+   */
   addReferral() {
     if (this.addReferralForm.invalid) {
       return;
     }
-    if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
-      this.toastr.warning(this.translateService.instant('Referral already added, please add another referral.'), this.translateService.instant('Already Added'));
+    if (
+      this.referrals.find(
+        (o: ReferralModel) =>
+          o.speciality === this.addReferralForm.value.speciality
+      )
+    ) {
+      this.toastr.warning(
+        this.translateService.instant(
+          "Referral already added, please add another referral."
+        ),
+        this.translateService.instant("Already Added")
+      );
       return;
     }
-    const refer_reason = this.addReferralForm.value.reason ? this.addReferralForm.value.reason : '';
-    this.encounterService.postObs({
-      concept: conceptIds.conceptReferral,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
-      encounter: this.visitNotePresent.uuid,
-    }).subscribe((response: ObsModel) => {
-      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility, priority: this.addReferralForm.value.priority_refer, reason: refer_reason });
-      this.addReferralForm.reset();
-      this.addReferralForm.controls.priority_refer.setValue('Elective');
-    });
+
+    const facilities = this.referralFacilityList.find(
+      (i) => i.display === this.addReferralForm.value.facility
+    );
+    const refer_reason = this.addReferralForm.value.reason
+      ? this.addReferralForm.value.reason
+      : "";
+
+    this.encounterService
+      .postObs({
+        concept: conceptIds.conceptReferral,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
+        encounter: this.visitNotePresent.uuid,
+      })
+      .subscribe({
+        next: (firstRes) => {
+          this.encounterService
+            .postReferralOut({
+              facilityName: facilities?.display,
+              facilityUuid: facilities?.uuid,
+              patientId: this.getPatientMPIdentifier(),
+              patientName: this.patient.person.display,
+              referredBy: this.user.person.display,
+              referrerId: this.user.person.uuid,
+              referTo: this.addReferralForm.value.speciality,
+              priorityOfReferral: this.addReferralForm.value.priority_refer,
+              reason: refer_reason,
+              visitId: this.visit.uuid,
+              uuid: firstRes.uuid,
+            })
+            .subscribe({
+              next: () => {
+                this.referrals.push({
+                  uuid: firstRes.uuid,
+                  speciality: this.addReferralForm.value.speciality,
+                  facility: this.addReferralForm.value.facility,
+                  priority: this.addReferralForm.value.priority_refer,
+                  reason: refer_reason,
+                });
+                this.addExternalAppointmentForm.patchValue({
+                  facility: this.addReferralForm.value.facility,
+                });
+
+                this.addReferralForm.reset();
+                this.addReferralForm.controls.priority_refer.setValue("Elective");
+                this.checkIfReferralPresent();
+                this.getReferralList();
+              },
+              error: () => {
+                this.diagnosisService.deleteObs(firstRes.uuid).subscribe({
+                  error: (err) => {
+                    console.error("Error posting external appointment:", err);
+                    this.toastr.error("Failed to create referral out")
+                  },
+                });
+
+              }
+            });
+        }
+      });
   }
 
+  addExternalAppointment() {
+    if (this.addExternalAppointmentForm.invalid) {
+      return;
+    }
+    if (
+      this.referralFacilityList.find(
+        (o: any) => o.display === this.addReferralForm.value.facility
+      )
+    ) {
+      this.toastr.warning(
+        this.translateService.instant(
+          "Referral facility already added, please add another referral facility."
+        ),
+        this.translateService.instant("Already Added")
+      );
+      return;
+    }
+
+    function calculateTimeDifferenceInMinutes(
+      start: string,
+      end: string
+    ): number {
+      // Parse the start and end strings into Date objects
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      // Ensure the inputs are valid dates
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error(
+          "Invalid date format. Please provide valid ISO 8601 date strings."
+        );
+      }
+
+      // Calculate the difference in milliseconds
+      const differenceInMilliseconds = endDate.getTime() - startDate.getTime();
+
+      // Convert the difference from milliseconds to minutes
+      const differenceInMinutes = differenceInMilliseconds / (1000 * 60);
+
+      return differenceInMinutes;
+    }
+
+    const { facility, requesterId, schedule, slot } =
+      this.addExternalAppointmentForm.value;
+
+    const selectedSlot = this.slotListMain.find(
+      (item) => item?.resource?.id === slot
+    );
+    const selectedSlotData = this.slotList.find((item) => item?.uuid === slot);
+    const { start, end } = selectedSlot?.resource;
+
+    const selectedFacility = this.referralFacilityList.find(
+      (item) => item.display === facility
+    );
+
+    const selectedPractitioner = this.practitionerList.find(
+      (item) => item.uuid === requesterId
+    );
+
+    const selectedSchedule = this.scheduleListMain.find(
+      (item) => item?.resource?.id === schedule
+    )?.resource;
+
+    const selectedScheduleDate = this.scheduleList.find(
+      (item) => item?.uuid === schedule
+    );
+    const { serviceCategory, serviceType, specialty } = selectedSchedule;
+
+    const payload = {
+      facilityName: selectedFacility?.display,
+      facilityUuid: selectedFacility?.uuid,
+      practitionerName: selectedPractitioner?.name,
+      appointmentDate: selectedScheduleDate?.name,
+      appointmentTime: selectedSlotData?.name,
+      status: "booked",
+      // "requestId": "ed773b56-a18f-11ef-b864-0242ac120002",
+      requesterId: requesterId,
+      patientUuid: this.getPatientMPIdentifier(),
+      // "patientUuid": this.visit.patient.uuid,
+      patientName: this.patient?.person.display,
+      patientIdentifier: this.getPatientIdentifier("OpenMRS ID"),
+      serviceCategory: serviceCategory?.[0]?.coding?.[0]?.display,
+      serviceType: serviceType?.[0]?.coding?.[0]?.display,
+      specialty: specialty?.[0]?.coding?.[0]?.display,
+      visitId: this.visit.uuid,
+      slot: slot,
+      duration: calculateTimeDifferenceInMinutes(start, end),
+    };
+
+    const {
+      facilityName,
+      practitionerName,
+      appointmentDate,
+      appointmentTime,
+      status,
+    } = payload;
+
+    this.visitEncounterService.postExternalAppointment(payload).subscribe({
+      next: (res) => {
+        this.externalAppointmentList.push({
+          facilityName,
+          practitionerName,
+          appointmentDate,
+          appointmentTime,
+          status,
+          id: res.id,
+        });
+        this.addExternalAppointmentForm.reset();
+        this.toastr.success("External appointment added successfully!");
+      },
+      error: (err) => {
+        console.error("Error posting external appointment:", err);
+        this.toastr.error("Failed to add external appointment");
+      },
+    });
+  }
   /**
   * Delete referral for a given index and uuid
   * @param {number} index - Index
@@ -1481,11 +2248,38 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deleteReferral(index: number, uuid: string) {
-    this.diagnosisService.deleteObs(uuid).subscribe(() => {
-      this.referrals.splice(index, 1);
+    this.diagnosisService.deleteObs(uuid).subscribe({
+      next: () => {
+        this.diagnosisService.deleteCustomReferral(uuid).subscribe(() => {
+          this.referrals.splice(index, 1);
+          this.checkIfReferralPresent();
+          this.getReferralList();
+        });
+      }, error: (err) => {
+        console.error("Error posting external appointment:", err);
+        this.toastr.error("Failed to delete referral out")
+      },
+    });
+
+  }
+  /**
+   * Delete appointment for a given index and uuid
+   * @param {number} index - Index
+   * @param {string} uuid - Referral obs uuid
+   * @returns {void}
+   */
+  deleteAppointment(index: number, uuid: string) {
+    this.diagnosisService.deleteExternalAppointment(uuid).subscribe(() => {
+
+      this.externalAppointmentList.splice(index, 1);
+
+      if (this.referrals && this.referrals[0] && this.referrals[0]) {
+        this.addExternalAppointmentForm.patchValue({
+          facility: this.referrals[0].facility,
+        });
+      }
     });
   }
-
   /**
   * Get followup for the visit
   * @returns {void}
@@ -1542,7 +2336,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
         this.followUpDatetime = res.value;
-        if(this.visitCompleted)
+        if (this.visitCompleted)
           this.notifyHwForAvailablePrescription(`Folloup date time added for ${this.visit?.patient?.person?.display || 'Patient'}`, 'followup')
       }
     });
@@ -1563,110 +2357,278 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * Share prescription
   * @returns {void}
   */
-  sharePrescription() {
-    if (this.existingDiagnosis.length === 0) {
-      this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
-      return false;
-    }
-    if (!this.followUpForm.value.present) {
-      this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
-      return false;
-    }
-    this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
-      if (res) {
-        if (this.isVisitNoteProvider) {
-          if (this.provider.attributes.length) {
-            if (navigator.onLine) {
-              if (!this.visitCompleted) {
-                this.encounterService.postEncounter({
-                  patient: this.visit.patient.uuid,
-                  encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                  encounterProviders: [
-                    {
-                      provider: this.provider.uuid,
-                      encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                    },
-                  ],
-                  visit: this.visit.uuid,
-                  encounterDatetime: new Date(Date.now() - 30000),
-                  obs: [
-                    {
-                      concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                      value: JSON.stringify(this.getDoctorDetails()),
-                    },
-                  ]
-                }).subscribe((post) => {
-                  this.visitCompleted = true;
-                  this.notifyHwForAvailablePrescription();
-                  this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+  // sharePrescription() {
+  //   if (this.existingDiagnosis.length === 0) {
+  //     this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
+  //     return false;
+  //   }
+  //   if (!this.followUpForm.value.present) {
+  //     this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
+  //     return false;
+  //   }
+  //   this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
+  //     if (res) {
+  //       if (this.isVisitNoteProvider) {
+  //         if (this.provider.attributes.length) {
+  //           if (navigator.onLine) {
+  //             if (!this.visitCompleted) {
+  //               this.encounterService.postEncounter({
+  //                 patient: this.visit.patient.uuid,
+  //                 encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+  //                 encounterProviders: [
+  //                   {
+  //                     provider: this.provider.uuid,
+  //                     encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+  //                   },
+  //                 ],
+  //                 visit: this.visit.uuid,
+  //                 encounterDatetime: new Date(Date.now() - 30000),
+  //                 obs: [
+  //                   {
+  //                     concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+  //                     value: JSON.stringify(this.getDoctorDetails()),
+  //                   },
+  //                 ]
+  //               }).subscribe((post) => {
+  //                 this.visitCompleted = true;
+  //                 this.notifyHwForAvailablePrescription();
+  //                 this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
-                  if (this.appConfigService.abha_section) {
-                    this.updateAbhaDetails(post.uuid);
+  //                 if (this.appConfigService.abha_section) {
+  //                   this.updateAbhaDetails(post.uuid);
+  //                 }
+
+  //                 this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+  //                   next: (linkSvcRes: ApiResponseModel) => {
+  //                     const link = linkSvcRes.data.hash;
+  //                     this.visitService.postAttribute(
+  //                       this.visit.uuid,
+  //                       {
+  //                         attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+  //                         value: `/i/${link}`,
+  //                       }).subscribe();
+  //                     this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+  //                       if (result === 'view') {
+  //                         // Open visit summary modal here....
+  //                         this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+  //                       } else if (result === 'dashboard') {
+  //                         this.router.navigate(['/dashboard']);
+  //                       }
+  //                     });
+  //                   },
+  //                   error: (err) => {
+  //                     this.toastr.error(err.message);
+  //                     this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+  //                       if (result === 'view') {
+  //                         // Open visit summary modal here....
+  //                         this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+  //                       } else if (result === 'dashboard') {
+  //                         this.router.navigate(['/dashboard']);
+  //                       }
+  //                     });
+  //                   }
+  //                 });
+  //               });
+  //             } else {
+  //               this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+  //                 if (result === 'view') {
+  //                   // Open visit summary modal here....
+  //                   this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+  //                 } else if (result === 'dashboard') {
+  //                   this.router.navigate(['/dashboard']);
+  //                 }
+  //               });
+  //             }
+  //           } else {
+  //             this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+  //               if (c) {
+  //                 // Do nothing
+  //               }
+  //             });
+  //           }
+  //         } else {
+  //           this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+  //             if (c) {
+  //               this.router.navigate(['/dashboard/profile']);
+  //             }
+  //           });
+  //         }
+  //       } else {
+  //         this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
+  //           if (c) {
+  //             this.router.navigate(['/dashboard']);
+  //           }
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
+
+  sharePrescription(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.existingDiagnosis.length === 0) {
+        this.toastr.warning(
+          this.translateService.instant("Diagnosis not added"),
+          this.translateService.instant("Diagnosis Required")
+        );
+        reject(new Error("Diagnosis not added"));
+        return;
+      }
+      if (!this.followUpForm.value.present) {
+        this.toastr.warning(
+          this.translateService.instant("Follow-up not added"),
+          this.translateService.instant("Follow-up Required")
+        );
+        reject(new Error("Follow-up not added"));
+        return;
+      }
+
+      this.coreService
+        .openSharePrescriptionConfirmModal()
+        .subscribe((res: boolean) => {
+          if (res) {
+            if (this.isVisitNoteProvider) {
+              if (this.provider.attributes.length) {
+                if (navigator.onLine) {
+                  if (!this.visitCompleted) {
+                    this.encounterService
+                      .postEncounter({
+                        patient: this.visit.patient.uuid,
+                        encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e", // visit complete encounter type uuid
+                        encounterProviders: [
+                          {
+                            provider: this.provider.uuid,
+                            encounterRole:
+                              "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+                          },
+                        ],
+                        visit: this.visit.uuid,
+                        encounterDatetime: new Date(Date.now() - 30000),
+                        obs: [
+                          {
+                            concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e", // Doctor details concept uuid
+                            value: JSON.stringify(this.getDoctorDetails()),
+                          },
+                        ],
+                      })
+                      .subscribe({
+                        next: () => {
+                          this.visitCompleted = true;
+                          this.notifyHwForAvailablePrescription();
+                          this.appointmentService
+                            .completeAppointment({ visitUuid: this.visit.uuid })
+                            .subscribe();
+                          this.linkSvc
+                            .shortUrl(`/i/${this.visit.uuid}`)
+                            .subscribe({
+                              next: (linkSvcRes: ApiResponseModel) => {
+                                const link = linkSvcRes.data.hash;
+                                this.visitService
+                                  .postAttribute(this.visit.uuid, {
+                                    attributeType:
+                                      "1e02db7e-e117-4b16-9a1e-6e583c3994da" /** Visit Attribute Type for Prescription Link */,
+                                    value: `/i/${link}`,
+                                  })
+                                  .subscribe();
+                                this.coreService
+                                  .openSharePrescriptionSuccessModal()
+                                  .subscribe((result: string | boolean) => {
+                                    if (result === "view") {
+                                      this.coreService.openVisitPrescriptionModal(
+                                        { uuid: this.visit.uuid }
+                                      );
+                                    } else if (result === "dashboard") {
+                                      this.router.navigate(["/dashboard"]);
+                                    }
+                                    resolve();
+                                  });
+                              },
+                              error: (err) => {
+                                this.toastr.error(err.message);
+                                this.coreService
+                                  .openSharePrescriptionSuccessModal()
+                                  .subscribe((result: string | boolean) => {
+                                    if (result === "view") {
+                                      this.coreService.openVisitPrescriptionModal(
+                                        { uuid: this.visit.uuid }
+                                      );
+                                    } else if (result === "dashboard") {
+                                      this.router.navigate(["/dashboard"]);
+                                    }
+                                    reject(
+                                      new Error(
+                                        "Failed to post encounter: " +
+                                        err.message
+                                      )
+                                    );
+                                  });
+                              },
+                            });
+                        },
+                        error: (err) => {
+                          reject(
+                            new Error(
+                              "Failed to post encounter: " + err.message
+                            )
+                          );
+                        },
+                      });
+                  } else {
+                    this.coreService
+                      .openSharePrescriptionSuccessModal()
+                      .subscribe((result: string | boolean) => {
+                        if (result === "view") {
+                          this.coreService.openVisitPrescriptionModal({
+                            uuid: this.visit.uuid,
+                          });
+                        } else if (result === "dashboard") {
+                          this.router.navigate(["/dashboard"]);
+                        }
+                        resolve();
+                      });
                   }
-
-                  this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                    next: (linkSvcRes: ApiResponseModel) => {
-                      const link = linkSvcRes.data.hash;
-                      this.visitService.postAttribute(
-                        this.visit.uuid,
-                        {
-                          attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                          value: `/i/${link}`,
-                        }).subscribe();
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
-                        }
-                      });
-                    },
-                    error: (err) => {
-                      this.toastr.error(err.message);
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
-                        }
-                      });
-                    }
-                  });
-                });
+                } else {
+                  this.coreService
+                    .openSharePrescriptionErrorModal({
+                      msg: "Unable to send prescription due to poor network connection. Please try again or come back later",
+                      confirmBtnText: "Try again",
+                    })
+                    .subscribe(() => {
+                      reject(new Error("Poor network connection"));
+                    });
+                }
               } else {
-                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                  if (result === 'view') {
-                    // Open visit summary modal here....
-                    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                  } else if (result === 'dashboard') {
-                    this.router.navigate(['/dashboard']);
-                  }
-                });
+                this.coreService
+                  .openSharePrescriptionErrorModal({
+                    msg: "Unable to send prescription since your profile is not complete.",
+                    confirmBtnText: "Go to profile",
+                  })
+                  .subscribe((c: boolean) => {
+                    if (c) {
+                      this.router.navigate(["/dashboard/profile"]);
+                    }
+                    reject(new Error("Profile not complete"));
+                  });
               }
             } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
-                if (c) {
-                  // Do nothing
-                }
-              });
+              this.coreService
+                .openSharePrescriptionErrorModal({
+                  msg: "Unable to send prescription since this visit is already in progress with another doctor.",
+                  confirmBtnText: "Go to dashboard",
+                })
+                .subscribe((c: boolean) => {
+                  if (c) {
+                    this.router.navigate(["/dashboard"]);
+                  }
+                  reject(
+                    new Error("Visit already in progress with another doctor")
+                  );
+                });
             }
           } else {
-            this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
-              if (c) {
-                this.router.navigate(['/dashboard/profile']);
-              }
-            });
+            resolve();
           }
-        } else {
-          this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
-            if (c) {
-              this.router.navigate(['/dashboard']);
-            }
-          });
-        }
-      }
+        });
     });
   }
 
@@ -1695,6 +2657,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       doctorDetails.SIGNATURE_TYPE,
       doctorDetails.SIGNATURE
     ];
+    console.log(this.provider);
     d.name = this.provider.person.display;
     d.uuid = this.provider.uuid;
     attrs.forEach((attr: string) => {
@@ -1715,6 +2678,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.pastVisits = [];
     this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: RecentVisitsApiResponseModel) => {
       const visits = res.results;
+      const data: any = visits.find((item) => item.uuid === this.visit.uuid);
+      if (data && data?.location?.uuid) {
+        this.currentVisitLocation = data?.location?.uuid;
+      }
       if (visits.length > 1) {
         visits.forEach((visit: VisitModel) => {
           if (visit.uuid !== this.visit.uuid) {
@@ -1759,6 +2726,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   openVisitPrescriptionModal(uuid: string) {
     this.coreService.openVisitPrescriptionModal({ uuid });
   }
+
+    /**
+   * Open view visit prescription modal
+   * @returns {void}
+   */
+    openExternalFacilitiesModal() {
+      this.coreService.openExternalFacilitiesModal({ mpiId:this.getPatientMPIdentifier() });
+    }
 
   ngOnDestroy(): void {
     deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);

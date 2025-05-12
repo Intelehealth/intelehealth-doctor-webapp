@@ -15,6 +15,7 @@ import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataMod
 import { precription, logo } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { calculateBMI } from 'src/app/utils/utility-functions';
+import { VisitEncounterPatientOrderService } from 'src/app/services/visit-encounter-patient-order.service';
 
 @Component({
   selector: 'app-view-visit-prescription',
@@ -75,6 +76,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     private visitService: VisitService,
     private profileService: ProfileService,
     private diagnosisService: DiagnosisService,
+    private visitEncounterService: VisitEncounterPatientOrderService,
     private translateService: TranslateService,
     private appConfigService: AppConfigService) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
@@ -100,6 +102,48 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadPrescription(); } });
   }
 
+  getOrderList() {
+    this.visitEncounterService
+      .fetchAndProcessData(this.visit.patient.uuid, this.visit.uuid)
+      .then((data) => {
+        this.medicines = [];
+        // this.existingDiagnosis = [];
+        if (data?.drugorder) {
+          this.medicines = data.drugorder.map((item) => {
+            const name = item.apiResponse.drug.display;
+            const strength = item.apiResponse.doseUnits.display;
+            const days = item.apiResponse.duration;
+            const [timing, remark] = item.apiResponse.dosingInstructions
+              .split(":")
+              .map((item) => item.trim());
+            return {
+              drug: name,
+              strength,
+              days,
+              timing,
+              remark,
+              uuid: item.apiResponse.uuid,
+            };
+          });
+        }
+        if (data?.testorder) {
+          this.tests = data.testorder.map((item) => {
+            // const name = item.apiResponse.concept.uuid;
+            // const [type, status] = item.apiResponse.instructions
+            //   .split("&")
+            //   .map((item) => item.trim());
+            return {
+              // diagnosisName: name,
+              // diagnosisType: type,
+              // diagnosisStatus: status,
+              value: item.apiResponse.concept.display,
+              uuid: item.apiResponse.uuid,
+            };
+          });
+        }
+      });
+  }
+
   /**
   * Get visit
   * @param {string} uuid - Visit uuid
@@ -115,6 +159,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             this.patient = patient;
             this.clinicName = visit.location.display;
             this.getVisitProvider(visit.encounters);
+            this.getOrderList();
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             if (this.visitNotePresent) {

@@ -876,3 +876,18 @@ th.mat-header-cell:last-child {
   display: flex;
   flex-direction: column;
 }
+
+.icon-btn-external-facilities{
+  background: none;
+  outline: none;
+  border: none;
+  color: #0077ff;
+}
+
+.icon-btn-external-facilities:disabled{
+  background: none;
+  outline: none;
+  border: none;
+  color: #2881e7;
+  cursor: not-allowed;
+}

@@ -1,9 +1,9 @@
-import { inject, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { inject, NgModule } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
-import { MainContainerComponent } from './main-container/main-container.component';
-import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard, NgxRolesService } from 'ngx-permissions';
+import { RouteAuthGuard } from './core/guards/route-auth.guard';
+import { MainContainerComponent } from './main-container/main-container.component';
 import { AppConfigService } from './services/app-config.service';
 
 const canActivateMenu = (menu: string | number) => {
@@ -99,7 +99,36 @@ const routes: Routes = [
             redirectTo: '/dashboard'
           }
         }
-      }
+      },
+      {
+        path: 'import-patient',
+        loadChildren: () => import('./admin/import-patient/import-patient.module').then(m => m.ImportPatientModule),
+        canActivate: [NgxPermissionsGuard],
+        data: {
+          breadcrumb: 'Import Patient', permissions: {
+            only: ['ORGANIZATIONAL: SYSTEM ADMINISTRATOR'],
+            redirectTo: '/dashboard'
+          }
+        }
+      },
+      {
+        path: 'sync-module-configuration',
+        loadChildren: () => import('./admin/sync-module-configuration/sync-module-configuration.module').then(m => m.SyncModuleConfigurationModule),
+        canActivate: [NgxPermissionsGuard],
+        data: {
+          breadcrumb: 'Sync module configuration', permissions: {
+            only: ['ORGANIZATIONAL: SYSTEM ADMINISTRATOR'],
+            redirectTo: '/dashboard'
+          }
+        }
+      },
+      {
+        path: 'facility-module-configuration',
+        data: {
+          breadcrumb: 'Facility module configuration'
+        },
+        loadChildren: () => import('./admin/facility-configuration/facility-configuration.module').then(m => m.FacilityConfigurationModule)
+      },
     ]
   },
   {

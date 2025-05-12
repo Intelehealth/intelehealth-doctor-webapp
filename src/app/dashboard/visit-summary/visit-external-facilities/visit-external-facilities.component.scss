@@ -1,0 +1,113 @@
+/* Modal Container */
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: "Arial", sans-serif;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  background: #f8faf8;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-header h1 {
+  font-size: 22px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  cursor: pointer;
+  font-size: 18px;
+  background: none;
+  border: none;
+  color: #555;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
+/* Modal Content */
+.modal-content {
+  overflow: auto;
+  padding: 20px;
+}
+
+/* Expansion Panel */
+.mat-expansion-panel {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
+.mat-expansion-panel-header {
+  background: #f9f9f9;
+  padding: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Panel Content */
+.panel-content {
+  padding: 12px 16px;
+}
+
+/* Table Styling */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.data-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+  color: #444;
+}
+
+.data-table tbody tr:hover {
+  background: #f8f8f8;
+}
+
+/* No Data Message */
+.no-data {
+  text-align: center;
+  font-size: 14px;
+  color: #888;
+  margin-top: 10px;
+}
+.pdf-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.pdf-btn mat-icon {
+  font-size: 32px;
+  color: #d32f2f;
+}

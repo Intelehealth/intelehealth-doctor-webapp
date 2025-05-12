@@ -109,3 +109,27 @@
         <span>{{'Report' | translate}}</span>
     </a>
 </li>
+<!-- <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()"
+    data-test-id="listItemAyu">
+    <a class="nav-item-link" routerLink="import-patient" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyu">
+        <img src="assets/svgs/warning.svg" alt="" />
+        <span>{{ "Import Patient" | translate }}</span>
+    </a>
+</li> -->
+<li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()"
+    data-test-id="listItemAyu">
+    <a class="nav-item-link" routerLink="sync-module-configuration" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyu">
+        <img src="assets/svgs/download-white.svg" alt="" />
+        <span>{{ "Sync module" | translate }}</span>
+    </a>
+</li>
+<li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()"
+    data-test-id="listItemAyu">
+    <a class="nav-item-link" routerLink="facility-module-configuration" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyu">
+        <img src="assets/svgs/menu-treatment.svg" alt="" />
+        <span>{{ "Facility module" | translate }}</span>
+    </a>
+</li>

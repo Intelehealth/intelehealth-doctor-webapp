@@ -1,11 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { Injectable } from '@angular/core';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { Observable } from 'rxjs';
+import { conceptIds, doctorDetails } from 'src/config/constant';
+import { environment } from '../../environments/environment';
 import { getCacheData, getEncounterProviderUUID } from '../utils/utility-functions';
-import { doctorDetails, conceptIds } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +36,25 @@ export class DiagnosisService {
     return this.http.delete(url);
   }
 
+    /**
+* Delete observation
+* @param {string} uuid - Observation uuid
+* @return {Observable<any>}
+*/
+deleteCustomReferral(uuid): Observable<any> {
+  const url = `${this.baseURL}/external-referral/delete-referral-by-uuid/${uuid}`;
+  return this.http.delete(url);
+}
+/**
+* Delete delete external appointment
+* @param {string} uuid - Observation uuid
+* @return {Observable<any>}
+*/
+deleteExternalAppointment(uuid): Observable<any> {
+  const url = `${this.baseURL}/external-appointment/delete-appointment/${uuid}`;
+  return this.http.delete(url);
+}
+
   /**
   * Get observations for a given concept id and patient id
   * @param {string} patientId - Patient uuid
@@ -48,6 +66,16 @@ export class DiagnosisService {
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
+    /**
+  * Get observations for a given concept id and patient id
+  * @param {string} patientId - Patient uuid
+  * @param {string} conceptId - Concept uuid
+  * @return {Observable<any>}
+  */
+    getReferralOutObs(mpiId, visitId): Observable<any> {
+      const url = `${this.baseURL}/external-referral/findReferralByPatientIdAndVisitId/${mpiId}/${visitId}`;
+      return this.http.get(url);
+    }
 
   /**
   * Get diagnosis list

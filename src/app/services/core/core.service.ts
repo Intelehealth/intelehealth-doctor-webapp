@@ -1,8 +1,8 @@
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { tr } from 'date-fns/locale';
 import { Observable } from 'rxjs/internal/Observable';
+import { VisitExternalFacilitiesComponent } from 'src/app/dashboard/visit-summary/visit-external-facilities/visit-external-facilities.component';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
 import { AddTicketComponent } from 'src/app/modal-components/add-ticket/add-ticket.component';
 import { AppointmentDetailMonthComponent } from 'src/app/modal-components/appointment-detail-month/appointment-detail-month.component';
@@ -155,6 +155,16 @@ export class CoreService {
   */
   openVisitPrescriptionModal(data: { uuid: string }): Observable<any> {
     const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    return dialogRef.afterClosed();
+  }
+
+  /**
+  * Open view visit external facilities modal
+  * @param {{ uuid: string }} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
+  openExternalFacilitiesModal(data: { mpiId: string }): Observable<any> {
+    const dialogRef = this.dialog.open(VisitExternalFacilitiesComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
 

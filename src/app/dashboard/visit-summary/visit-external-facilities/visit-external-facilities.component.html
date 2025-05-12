@@ -1,0 +1,108 @@
+<!-- ng g c dashboard/visit-summary/visit-external-facilities -->
+<div class="modal-container">
+  <!-- Modal Header -->
+  <div class="modal-header">
+    <h1>{{ "Healthcare Data from External Facilities" | translate }}</h1>
+    <button mat-icon-button (click)="close(false)" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Modal Content -->
+  <div class="modal-content">
+    <mat-accordion>
+      <!-- Visit History Panel -->
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ "Visit History" | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="panel-content">
+          <ng-container *ngIf="observationRequest.length; else noObservation">
+            <div *ngFor="let section of observationRequest">
+              <div *ngIf="section.data && section.data.length>0">
+                <h2>{{ section.title }}</h2>
+                <ul>
+                  <li *ngFor="let item of section.data">
+                      <ul>
+                          <li *ngFor="let it of item">
+                            {{ it }}
+                          </li>
+                      </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noObservation>
+            <p class="no-data">{{ "No visit history" | translate }}</p>
+          </ng-template>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Medication History Panel -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{
+            "Medication History" | translate
+          }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="panel-content">
+          <table *ngIf="medicalRequest.length" class="data-table">
+            <thead>
+              <tr>
+                <th>{{ "Medication Name" | translate }}</th>
+                <th>{{ "Dosage" | translate }}</th>
+                <th>{{ "Days" | translate }}</th>
+                <th>{{ "Doctor Name" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of medicalRequest">
+                <td>{{ item.medicationName }}</td>
+                <td>{{ item.dosage }}</td>
+                <td>{{ item.days }}</td>
+                <td>{{ item.doctorName }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p *ngIf="!medicalRequest.length" class="no-data">
+            {{ "No medication history" | translate }}
+          </p>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Test History Panel -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ "Test History" | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="panel-content">
+          <table *ngIf="serviceRequest.length" class="data-table">
+            <thead>
+              <tr>
+                <th>{{ "Doctor Name" | translate }}</th>
+                <th>{{ "Test Name" | translate }}</th>
+                <th>{{ "Given Date" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of serviceRequest">
+                <td>{{ item.doctorName }}</td>
+                <td>{{ item.testName }}</td>
+                <td>{{ item.testGivenDate }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p *ngIf="!serviceRequest.length" class="no-data">
+            {{ "No test history" | translate }}
+          </p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button mat-icon-button (click)="generatePDF()" class="pdf-btn">
+      <mat-icon>picture_as_pdf</mat-icon>
+    </button>
+  </div>
+</div>
