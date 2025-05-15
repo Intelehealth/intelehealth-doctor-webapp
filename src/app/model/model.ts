@@ -519,7 +519,8 @@ export interface DocImagesModel {
   src: string,
   section: string,
   base64?: string,
-  uuid?: string
+  uuid?: string,
+  downloadSrc?: string
 }
 
 export interface SocketUserModel {

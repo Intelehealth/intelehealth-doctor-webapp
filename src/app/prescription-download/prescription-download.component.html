@@ -1,4 +1,4 @@
-<div *ngIf="visitId && prescriptionVerified" class="col external-prescription-col">
+<div *ngIf="visitId && prescriptionVerified && !pdfUrl" class="col external-prescription-col">
   <div class="row justify-content-center">
     <div class="text-center">
       <button (click)="download()" type="button" class="blue-btn m-2" data-test-id="btnDownloadPrecription">
@@ -15,4 +15,10 @@
       ></app-view-visit-prescription>
     </page>
   </div>
+</div>
+
+<div *ngIf="pdfUrl">
+  <object [data]="pdfUrl" type="application/pdf" width="100%" height="800px">
+    <p>Your browser does not support PDFs. <a [href]="pdfUrl" target="_blank">Download the PDF</a>.</p>
+  </object>
 </div>

@@ -2006,6 +2006,7 @@
                   <ng-template #noDoctorUploadedDocs>
                     <div class="form-group" *ngIf="!visitEnded && !visitCompleted">
                       <app-common-file-upload 
+                        [options]="fileUploadOptions"
                         (uploadClicked)="handleUpload($event)"
                         (uploadError)="handleUploadError($event)">
                       </app-common-file-upload>

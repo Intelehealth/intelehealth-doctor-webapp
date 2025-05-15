@@ -938,7 +938,6 @@ export class ViewVisitSummaryComponent implements OnInit {
         break;
       
       case 'additionalDocs':
-        console.log(this.additionalDocs)
         if (this.additionalDocs.length) {
           let colsImages = [];
           this.additionalDocs.forEach(img => {
