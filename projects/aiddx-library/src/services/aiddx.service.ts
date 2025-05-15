@@ -107,6 +107,9 @@ ${notes ? `Notes: ${notes}` : ""}`;
 
   markdownit(txt: any) {
     const md = markdownit();
-    return md.renderInline(txt);
+    let formattedText = txt.map(obj => {
+      return Object.entries(obj).map(([key, value]) => `**${key}**: ${value}`).join("\n");
+    }).join("\n\n");
+    return md.renderInline(formattedText);
   }
 }

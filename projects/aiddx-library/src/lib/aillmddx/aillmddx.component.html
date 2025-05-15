@@ -79,12 +79,9 @@
     </div>
 </div>
 
-<!-- <div>
-    <h6 class="fw-bold">Further questions</h6>
-    <div *ngFor="let question of questions; let i = index" class="rationale-item p-3 mb-3">
-        <h6 class="fw-bold">{{ i + 1 }}. {{ question.title }}</h6>
-        <ul>
-            <li *ngFor="let item of question.items">{{ item }}</li>
-        </ul>
+<div class="rationale-container">
+    <h2 class="fw-bold">Further questions</h2>
+    <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
+        <li>{{ question }}</li>
     </div>
-</div> -->
+</div>

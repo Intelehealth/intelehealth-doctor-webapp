@@ -31,6 +31,7 @@ export class AillmddxComponent {
     },
   ];
   diagnosisList: any = []
+  furtherQuestionsList: any = []
   selectedDiagnosis: string[] = [];
 
   constructor(
@@ -43,12 +44,13 @@ export class AillmddxComponent {
     const payload = this.ddxSvc.getDDxPayload(this.patientInfo, this.visit, notes);
     this.isLoading = true;
     this.diagnosisList = [];
+    this.furtherQuestionsList = [];
     this.ddxSvc.getAIDiagnosis(payload).subscribe({
       next: (data: any) => {
         if (data?.conclusion) this.conclusion = data?.conclusion;
-        if (data.result.length > 0) {
+        if (data.result.data.result.length > 0) {
           this.noData = false;
-          this.diagnosisList = data.result.map(v => {
+          this.diagnosisList = data.result.data.result.map(v => {
             return {
               ...v,
               diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
@@ -57,6 +59,12 @@ export class AillmddxComponent {
           });
         } else {
           this.noData = true;
+        }
+        if(data.result.data.further_questions.length > 0) {
+          this.furtherQuestionsList = data.result.data.further_questions.map(q => {
+            const key = Object.keys(q)[0];
+            return q[key];
+          });
         }
       },
       error: (err: any) => {
@@ -88,13 +96,13 @@ export class AillmddxComponent {
     const attemptDiagnosis = () => {
       this.isLoading = true;
       this.diagnosisList = [];
-
+      this.furtherQuestionsList = [];
       this.ddxSvc.getAIDiagnosis(payload).subscribe({
         next: (data: any) => {
           if (data?.conclusion) this.conclusion = data?.conclusion;
-          if (data.result.length > 0) {
+          if (data.result.data.result.length > 0) {
             this.noData = false;
-            this.diagnosisList = data.result.map(v => {
+            this.diagnosisList = data.result.data.result.map(v => {
               return {
                 ...v,
                 diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
@@ -103,6 +111,12 @@ export class AillmddxComponent {
             });
           } else {
             this.noData = true;
+          }
+          if(data.result.data.further_questions.length > 0) {
+            this.furtherQuestionsList = data.result.data.further_questions.map(q => {
+              const key = Object.keys(q)[0];
+              return q[key];
+            });
           }
           this.isLoading = false;
         },
