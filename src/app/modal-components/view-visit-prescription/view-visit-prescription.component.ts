@@ -972,7 +972,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                                   text: doc.fileName,
                                   color: 'blue',
                                   decoration: 'underline',
-                                  link: doc.src
+                                  link: doc.downloadSrc
                                 }]
                               }),
                             ]
@@ -1256,11 +1256,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptDoctorUploadedDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+          const fileName = obs.display.replace(`${obs.concept.display}: `, '') || 'document.pdf';
           const data = { 
-            src: `${this.baseURL}/obs/${obs.uuid}/value`, 
+            src: `${this.baseURL}/obs/${obs.uuid}/value`,
             uuid: obs.uuid,
             section: obs.concept.display,
-            fileName: obs.display.replace(`${obs.concept.display}: `, '') || 'document.pdf'
+            downloadSrc: `${window.location.origin}/#/i/${obs.uuid}?isDoctorPDF=true&fileName=${fileName}`,
+            fileName: fileName
           };
           this.doctorUploadedDocs.push(data);
         }

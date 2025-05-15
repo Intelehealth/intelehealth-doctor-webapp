@@ -50,4 +50,15 @@ export class LinkService {
   verifyPresctionOtp(hash, otp): Observable<any> {
     return this.http.post(`${this.baseURL}/links/verifyOtp`, ({ hash, otp } as any));
   }
+
+  /**
+  * Get shortened link
+  * @param {string} hash - Get original link from hash
+  * @return {Observable<any>}
+  */
+  getDoctorDocument(hash: string): Observable<any> {
+    return this.http.get(`${this.baseURL}/links/getDoctorDocument/${hash}`, {
+      responseType: 'arraybuffer'
+    });
+  }
 }

@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
-import { Meta } from '@angular/platform-browser';
+import { Meta, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, PatientModel, PersonAttributeModel, VisitModel } from '../model/model';
@@ -32,7 +32,9 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   prescriptionVerified = false;
   patient: PatientModel;
   eventsSubject: Subject<any> = new Subject<any>();
-
+  isDoctorPDF: boolean = false;
+  fileName: string = null;
+  pdfUrl: SafeResourceUrl | null = null;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -41,11 +43,14 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private visitService: VisitService,
     private cs: CoreService,
-    private meta: Meta
+    private meta: Meta,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
     this.hash = this.route.snapshot.paramMap.get('hash');
+    this.isDoctorPDF = this.route.snapshot.queryParamMap.has('isDoctorPDF');
+    this.fileName = this.route.snapshot.queryParamMap.get('fileName');
 
     const { accessToken, visitId } = window.history.state;
     if (accessToken) {
@@ -53,11 +58,13 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
       this.visitId = visitId;
     }
 
-    if (!this.accessToken) {
+    if (!this.accessToken && !this.isDoctorPDF) {
       this.getVisitFromHash();
-    } else {
+    } else if (!this.isDoctorPDF) {
       this.prescriptionVerified = true;
       this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
+    } else if (this.isDoctorPDF) {
+      this.downloadWithBasicAuth(this.hash);
     }
   }
 
@@ -142,7 +149,21 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     this.emitEventToChild(true);
   }
 
+  async downloadWithBasicAuth(hash: string) {
+    this.linkSvc.getDoctorDocument(hash).subscribe((response: ArrayBuffer) => {
+      if (!response) {
+        return;
+      }
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    });
+  }
+
   ngOnDestroy(): void {
+    if (this.pdfUrl) {
+      window.URL.revokeObjectURL(this.pdfUrl.toString());
+    }
     this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=1' });
   }
 }

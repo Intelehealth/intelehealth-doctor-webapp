@@ -138,6 +138,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
 
+  fileUploadOptions = {
+    allowedFileTypes: ['.pdf'],
+    maxFileSize: 5 * 1024 * 1024, // 5MB default
+    multiple: false,
+    accept: '.pdf'
+  }
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
