@@ -79,7 +79,7 @@
     </div>
 </div>
 
-<div class="rationale-container">
+<div *ngIf="furtherQuestionsList.length" class="rationale-container">
     <h2 class="fw-bold">Further questions</h2>
     <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
         <li>{{ question }}</li>
