@@ -1261,7 +1261,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             src: `${this.baseURL}/obs/${obs.uuid}/value`,
             uuid: obs.uuid,
             section: obs.concept.display,
-            downloadSrc: `${window.location.origin}/#/i/${obs.uuid}?isDoctorPDF=true&fileName=${fileName}`,
+            downloadSrc: `${window.location.origin}/intelehealth/index.html#/i/${obs.uuid}?isDoctorPDF=true&fileName=${fileName}`,
             fileName: fileName
           };
           this.doctorUploadedDocs.push(data);
