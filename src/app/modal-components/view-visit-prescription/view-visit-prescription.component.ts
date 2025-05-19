@@ -967,7 +967,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths: ['*'],
                             headerRows: 1,
                             body: [
-                              this.doctorUploadedDocs.map(doc => {
+                              ...this.doctorUploadedDocs.map(doc => {
                                 return [{
                                   text: doc.fileName,
                                   color: 'blue',
