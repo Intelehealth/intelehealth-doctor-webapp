@@ -4,12 +4,14 @@ import { AiddxService } from '../services/aiddx.service';
 import { CONFIG_SERVICE, DIAGNOSIS_SERVICE, ENVIRONMENT } from './token';
 import { AillmddxComponent } from '../public-api';
 import { TranslateModule } from '@ngx-translate/core';
+import { AillmtxMedicationComponent } from './aillmtx-medication/aillmtx-medication.component';
 
 
 
 @NgModule({
   declarations: [
-    AillmddxComponent
+    AillmddxComponent,
+    AillmtxMedicationComponent
   ],
   imports: [
     CommonModule,

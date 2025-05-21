@@ -1,0 +1,87 @@
+<ng-container *ngIf="!diagnosisList.length">
+    <div class="d-flex justify-content-center mt-2">
+        <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
+            <ng-container *ngIf="!isLoading && (hasError || noData)">
+                <div class="text-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon mr-2" />
+                    <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span>
+                    <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span>
+                </div>
+                <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
+                    {{'Try again'|translate}}
+                </button>
+            </ng-container>
+
+            <button *ngIf="isLoading" class="stats-loading">
+                <div class="eins"></div>
+                <div class="zwei"></div>
+                <div class="drei"></div>
+            </button>
+
+            <div *ngIf="isLoading" class="mt-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span class="ms-2 loading-text">Please wait while the results are being generated.</span>
+            </div>
+
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="diagnosisList.length" class="mt-2">
+    <p class="note-con ml-2">
+        <span class="note-label">Note:</span>
+        This information is AI generated. Please rely on your medical judgement while referring to it.
+    </p>
+    <div class="intel-accordion-title">
+        <h6 class="mt-1 ml-2 diffrential-diagnosis">Differential Diagnosis</h6>
+    </div>
+    <div class="intel-accordion-title">
+        <p class="text-muted mb-3 diagnosis-list ml-2">
+            Select the diagnosis based on your medical judgement.
+        </p>
+    </div>
+
+    <div class="diagnosis-container p-3">
+        <div *ngFor="let diagnosis of diagnosisList" 
+             class="d-flex align-items-center mb-2"
+             [class.disabled-diagnosis]="isDiagnosisExists(diagnosis.diagnosis)">
+            <input type="checkbox" class="custom-checkbox me-2"
+                [checked]="isDiagnosisSelected(diagnosis.diagnosis)"
+                [disabled]="isDiagnosisExists(diagnosis.diagnosis)"
+                (change)="onAIDiagnosisChange(diagnosis.diagnosis)">
+            <label class="fw-bold" [class.text-muted]="isDiagnosisExists(diagnosis.diagnosis)">
+                {{ diagnosis.diagnosis }}
+                <span class="text-muted ms-2">(likely {{ diagnosis.likelihood }})</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="rationale-container">
+        <h5 class="fw-bold rationale">Rationale</h5>
+        <div *ngFor="let rationale of diagnosisList; let i = index" class="rationale-item p-3 mb-2">
+            <h3 class="fw-bold">
+                {{ i + 1 }}. {{ rationale.diagnosis }}
+                <span class="text-muted small">(likely {{ rationale.likelihood }})</span>
+            </h3>
+            <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
+        </div>
+    </div>
+
+</ng-container>
+
+<div *ngIf="conclusion" class="conclusion-card">
+    <div class="conclusion-header">
+        <h2>Conclusion</h2>
+    </div>
+    <div class="conclusion-body">
+        <p>{{ conclusion }}</p>
+    </div>
+</div>
+
+<div *ngIf="furtherQuestionsList.length" class="rationale-container">
+    <h2 class="fw-bold">Further questions</h2>
+    <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
+        <li>{{ question }}</li>
+    </div>
+</div>

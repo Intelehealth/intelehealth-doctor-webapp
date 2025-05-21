@@ -6,7 +6,7 @@ import markdownit from "markdown-it";
 @Injectable({
   providedIn: "root",
 })
-export class AiddxService {
+export class AiTxService {
   constructor(
     private http: HttpClient,
     @Optional() @Inject(ENVIRONMENT) private env?: any
@@ -16,14 +16,12 @@ export class AiddxService {
     }
   }
 
-  getAIDiagnosis(casehistory: any) {
-    // console.log(casehistory, "Case history");
-    // console.log({ casehistory }, "???????????????");
-    return this.http.post(`${this.env.base}/ddx`, { casehistory });
+  getAIMedicalAdvice(casehistory: any) {
+    return this.http.post(`${this.env.base}/ttxv1`, { casehistory });
   }
 
-  getDDxPayload(patientInfo: any, visit: any, notes?: string) {
-    // console.log(patientInfo, visit, notes);
+  getTxPayload(patientInfo: any, visit: any) {
+    console.log(patientInfo, visit);
     
     const data = this.getDataToExtract(patientInfo, visit);
     const get = (key, fallback = "Null") => data[key] || fallback;
@@ -58,11 +56,8 @@ Family_history: ${this.formatText(famHist?.value || "")}
 
 Medical_history: ${this.formatText(medHist?.value || "")}
 
-${vitals?.length ? vitalPayload : ""}
-
-${notes ? `Notes: ${notes}` : ""}`;
-
-    // console.log(payload, "Payload Vishasl???????????????");
+${vitals?.length ? vitalPayload : ""}`;
+      
     return payload;
   }
 
