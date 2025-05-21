@@ -56,11 +56,14 @@ export class AppointmentService {
   * @param {string} toDate - To date
   * @return {Observable<any>}
   */
-  getUserSlots(userUuid: string, fromDate: string, toDate: string, speciality = null): Observable<any> {
+  getUserSlots(userUuid: string, fromDate: string, toDate: string, speciality = null, pending_visits = null): Observable<any> {
     let url = `${this.baseURL}/appointment/getUserSlots/${userUuid}?fromDate=${fromDate}&toDate=${toDate}`
   
     if(speciality) {
       url += `&speciality=${speciality}`;
+    }
+    if(pending_visits !== null) {
+      url += `&pending_visits=`+pending_visits;
     }
     return this.http.get(url);
   }

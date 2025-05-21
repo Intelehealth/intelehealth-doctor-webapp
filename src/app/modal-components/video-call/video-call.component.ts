@@ -531,11 +531,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {string} - Call duration
   */
   get callDuration() {
-    let duration: any;
-    if (this.callStartedAt) {
-      duration = moment.duration(moment().diff(this.callStartedAt))
-    }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    if (!this.callStartedAt) return '00:00';
+    const duration = moment.duration(moment().diff(this.callStartedAt));
+    const [h, m, s] = [duration.hours(), duration.minutes(), duration.seconds()].map(n => String(n).padStart(2, '0'));
+    return h !== '00' ? `${h}:${m}:${s}` : `${m}:${s}`;
   }
 
   /**

@@ -65,7 +65,7 @@ import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
 import { AppConfigService } from "./services/app-config.service";
 import { SidebarMenuListComponent } from "./main-container/sidebar-menu-list/sidebar-menu-list.component";
-import {LibPresciptionModule} from 'lib-presciption'
+import { LibPresciptionModule } from 'lib-presciption'
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -137,7 +137,31 @@ registerLocaleData(localeEn);
         `${environment.mindmapURL}/auth/validateProviderAttribute`,
         `${environment.webrtcTokenServerUrl}api/getToken`,
         `${environment.base}/pl/`,
-        `${environment.base}/ddx`
+        `${environment.base}/ddx`,
+        `${environment.mindmapURL}/appointment/getScheduledMonths`,
+        `${environment.mindmapURL}/mindmap/getNotificationStatus`,
+        `${environment.mindmapURL}/appointment/getUserSlots`,
+        `${environment.mindmapURL}/openmrs/getPriorityVisits`,
+        `${environment.mindmapURL}/openmrs/getAwaitingVisits`,
+        `${environment.mindmapURL}/openmrs/getInProgressVisits`,
+        `${environment.mindmapURL}/openmrs/getEndedVisits`,
+        `${environment.mindmapURL}/openmrs/getFollowUpVisits`,
+        `${environment.base}/openmrs/ws/rest/v1/personimage`,
+        `${environment.socketURL}/socket.io`,
+        `${environment.base}/intelehealth/ngsw.json`,
+        `${environment.base}/intelehealth/assets/phone.mp3`,
+        `${environment.configURL}/config/getPublishedConfig?ngsw-bypass=true`,
+        `${environment.configURL}/config/getPublishedConfig`,
+        `${environment.notificationURL}/subscribe`,
+        "\\/api\\/config\\/getPublishedConfig(\\?.*)?$",
+        "/\/api\/appointment\/getScheduledMonths\/.*/",
+        "/\/api\/appointment\/getUserSlots\/.*/",
+        "/\/api\/mindmap\/getNotificationStatus\/.*/",
+        "/\/api\/openmrs\/get(Priority|Awaiting|InProgress|Ended|FollowUp)Visits(\?.*)?$/",
+        "/\/openmrs\/ws\/rest\/v1\/personimage\/.*/",
+        "/\/socket\.io$/",
+        "/\/ngsw\.json(\?.*)?$/",
+        "/\/assets\/phone\.mp3$/",
       ]
     }),
     NgxPermissionsModule.forRoot({

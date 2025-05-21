@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
 import { Location } from '@angular/common';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-add-user',
@@ -30,7 +31,7 @@ export class AddUserComponent implements OnInit, OnDestroy{
   controlsArray: string[] = [];
   subscription1: any;
 
-  constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private toastr: ToastrService, private router: Router, private location: Location){
+  constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private toastr: ToastrService, private router: Router, private location: Location, private appConfigService: AppConfigService){
     this.activatedRoute.params.subscribe(paramsId => {
         if(paramsId?.uuid){
           this.uuid = paramsId?.uuid
@@ -61,6 +62,11 @@ export class AddUserComponent implements OnInit, OnDestroy{
         }
       }
     });
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email) {
+      this.phoneNumberValid = true;
+      this.phoneValid = true;
+      this.emailValid = true;
+    }
     this.getUserDetails();
   }
 
@@ -85,7 +91,7 @@ export class AddUserComponent implements OnInit, OnDestroy{
           let currentProvider = provider.results.pop();
           this.providerUuid = currentProvider.uuid;
           this.controlsArray = Object.keys(this.personalInfoForm.controls);
-          this.personalInfoForm.controls['emailId'].setAsyncValidators([ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, this.providerUuid)]);
+          if(!this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email) this.personalInfoForm.controls['emailId'].setAsyncValidators([ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, this.providerUuid)]);
           currentProvider.attributes.forEach(attr=>{
             if(this.controlsArray.includes(attr.attributeType.display)){
               this.providerAttrData.push({uuid:attr.uuid, key: attr.attributeType.display, value: attr.value});
@@ -97,7 +103,7 @@ export class AddUserComponent implements OnInit, OnDestroy{
         });
       })
     } else {
-      this.personalInfoForm.controls['emailId'].setAsyncValidators([ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, "")]);
+      if(!this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email) this.personalInfoForm.controls['emailId'].setAsyncValidators([ProviderAttributeValidator.createValidator(this.authService, doctorDetails.EMAIL_ID, "")]);
     }
   }
   
@@ -168,19 +174,25 @@ export class AddUserComponent implements OnInit, OnDestroy{
   * @return {void}
   */
   validateProviderAttribute(type: string) {
-    this.checkingPhoneValidity = true;
-    this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type],this.providerUuid).subscribe(res => {
-      if (res.success) {
-        if (type === doctorDetails.PHONE_NUMBER) {
-          this.phoneValid = res.data;
-        } else {
-          this.emailValid = res.data;
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email){
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.phoneNumberValid = true;
+    } else {
+      this.checkingPhoneValidity = true;
+      this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type],this.providerUuid).subscribe(res => {
+        if (res.success) {
+          if (type === doctorDetails.PHONE_NUMBER) {
+            this.phoneValid = res.data;
+          } else {
+            this.emailValid = res.data;
+          }
+          setTimeout(() => {
+            this.checkingPhoneValidity = false;
+          }, 500);
         }
-        setTimeout(() => {
-          this.checkingPhoneValidity = false;
-        }, 500);
-      }
-    });
+      });
+    }
   }
 
   /**

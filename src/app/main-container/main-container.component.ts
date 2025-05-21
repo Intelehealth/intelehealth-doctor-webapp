@@ -48,6 +48,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   subscription: Subscription;
   subscription1: Subscription;
   subscription2: Subscription;
+  subscription3: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: BreadcrumbModel[];
   @ViewChild('drawer') drawer: MatDrawer;
@@ -56,9 +57,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   routeUrl = '';
   adminUnread = 0;
   drUnread = 0;
+  doctorAdminUnread = 0;
   notificationEnabled = false;
   interval: any;
   interval2: any;
+  interval3: any;
   snoozed: any = '';
   profilePic: string;
   profilePicSubscription;
@@ -131,6 +134,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.drUnread = res;
     });
 
+    this.subscription3 = this.socketService.doctorAdminUnread.subscribe(res => {
+      this.doctorAdminUnread = res;
+    });
+
     if (getCacheData(false, doctorDetails.ROLE) === 'doctor') {
       setTimeout(() => {
         this.socketService.emitEvent(notifications.GET_DOCTOR_UNREAD_COUNT, this.user?.uuid);
@@ -138,6 +145,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.interval2 = setInterval(() => {
         this.socketService.emitEvent(notifications.GET_DOCTOR_UNREAD_COUNT, this.user?.uuid);
       }, 60000);
+
+      setTimeout(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_ADMIN_UNREAD_COUNT, this.user?.uuid);
+      }, 1000);
+      this.interval3 = setInterval(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_ADMIN_UNREAD_COUNT, this.user?.uuid);
+      }, 30000);
     }
 
     if(this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
@@ -497,6 +511,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
     this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -509,6 +524,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
     if (this.interval2) {
       clearInterval(this.interval);
+    }
+    if (this.interval3) {
+      clearInterval(this.interval3);
     }
     this.tourSvc.closeTour();
   }

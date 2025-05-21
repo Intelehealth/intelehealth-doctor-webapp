@@ -1012,3 +1012,12 @@ th.mat-header-cell:last-child {
     }
   }
 }
+
+.dose-column {
+  width: 180px; // Set your desired width
+  min-width: 150px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

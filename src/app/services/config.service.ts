@@ -457,4 +457,63 @@ export class ConfigService {
     const url = `${this.baseURL}/dropdown/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
+
+  /**
+  * Get patient visit HomeScreen fields
+  * @return {Observable<any>}
+  */
+  getHomeScreenFields(): Observable<any> {
+    const url = `${this.baseURL}/home-screen/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update Patient visit homescreen enabled status
+   * @param {boolean} id - id of speciality
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateHomeScreenEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Update patient vital name
+   * @param {boolean} id - id of vital
+   * @param {any} lang - update vital name
+   * @return {Observable<any>}
+   */
+  updateHomeScreenName(id: number, lang: any): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateHomeScreenName/${id}`;
+    return this.http.put(url, { lang });
+  }
+
+  /**
+ * Get AI LLM
+ * @return {Observable<any>}
+ */
+  getAILLM(): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update AI LLM enabled status
+   * @param {boolean} id - id of vital
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateAILLMEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+  
+  /**
+   * @returns {Observable<any>}
+   */
+  getAILLMByKey(key: String): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/getByKey/${key}`;
+    return this.http.get(url);
+  }
 }

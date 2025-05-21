@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./abha.component.scss']
 })
 export class AbhaComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   abhaData : FeatureModel[];

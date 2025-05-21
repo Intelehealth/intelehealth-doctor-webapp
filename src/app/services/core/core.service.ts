@@ -158,7 +158,9 @@ export class CoreService {
   * @return {Observable<any>} - Dialog result
   */
   openVisitPrescriptionModal(data: { uuid: string }): Observable<any> {
+    // @todo: Move this changes to Prescription lib - https://github.com/Intelehealth/intelehealth-doctor-webapp/commit/31b18dfdaa352338d3ca7a1914c698ca95f174ce
     const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    // const dialogRef = this.dialog.open(LibPresciptionComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
 

@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./patient-visit-summary.component.scss']
 })
 export class PatientVisitSummaryComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   data : PatientVisitSummaryModel[];

@@ -17,7 +17,7 @@ import * as moment from "moment";
   styleUrls: ['./patient-visit-dropdown.component.scss']
 })
 export class PatientVisitDropdownComponent {
-   displayedColumns : string[] = ['id', 'name', 'updatedAt','is_enabled'];
+   displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt','is_enabled'];
     //tabList = ['Advice','Diagnosis', 'Medication','Refer Specialisation','Referral Facility','Test'];
     tabList = ['Advice','Medication','Refer Specialisation','Referral Facility','Test'];
     currentTabIndex = 0; 

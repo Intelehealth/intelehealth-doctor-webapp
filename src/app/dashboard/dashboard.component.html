@@ -1,14 +1,14 @@
 <div class="container-fluid">
   <div id="count-cards" class="row">
-      <div id="appointment" class="col p-1" *ngIf="pvs.appointment_button" (click)="scrollToPanel('anchor-appointment')">
-        <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
-          <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" />
-          <div class="chip-info">
-            <h6>{{appointmentVisitsCount}}</h6>
-            <span>{{'Appointments' | translate}}</span>
-          </div>
+    <div id="appointment" class="col p-1" *ngIf="pvs.appointment_button && brandName !== 'KCDO'" (click)="scrollToPanel('anchor-appointment')">
+      <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
+        <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{appointmentVisitsCount}}</h6>
+          <span>{{'Appointments' | translate}}</span>
         </div>
       </div>
+    </div>
     <div id="priority" class="col p-1" *ngIf="pvs.priority_visit_section" (click)="scrollToPanel('anchor-priority')">
       <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div id="in-progress" class="col p-1" (click)="scrollToPanel('anchor-inprogress')">
+    <div id="in-progress" class="col p-1" (click)="scrollToPanel('anchor-inprogress')" *ngIf="pvs.inprogress_visit_section">
       <div class="chip-item chip-item-green" title="{{'In-progress visits' | translate}}">
         <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
         <div class="chip-info">
@@ -54,6 +54,31 @@
         </div>
       </div>
     </div>
+    <div id="todaysAppointment" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('today')" *ngIf="brandName === 'KCDO'">
+      <div class="chip-item chip-today-apt chip-item-blue" [ngClass]="{'active-card' : currentAppointmentFilter == 'today'}" title="{{'Today\'s Appointments' | translate}}">
+        <div class="chip-info">
+          <h6>{{todayAppointmentFilterCount}}</h6>
+          <span class="chip-info-apt">{{'Today\'s Appointments' | translate}}</span><br/><br/>
+        </div>
+      </div>
+    </div>
+    <div id="upcomingAppointment" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('upcoming')" *ngIf="brandName === 'KCDO'">
+      <div class="chip-item chip-upcoming-apt" [ngClass]="{'active-card' : currentAppointmentFilter == 'upcoming'}" title="{{'Upcoming Appointments' | translate}}">
+        <div class="chip-info">
+          <h6>{{upcomingAppointmentVisitsCount}}</h6>
+          <span class="chip-info-apt">{{'Upcoming Appointments' | translate}}</span><br/>
+          <small>(Case Summary Completed)</small>
+        </div>
+      </div>
+    </div>
+    <div id="pendingVisits" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('pending')" *ngIf="brandName === 'KCDO'">
+      <div class="chip-item chip-pending-apt" [ngClass]="{'active-card' : currentAppointmentFilter == 'pending'}" title="{{'Pending Visits' | translate}}">
+        <div class="chip-info">
+          <h6>{{pendingAppointmentVisitsCount}}</h6>
+          <span class="chip-info-apt">{{'Pending Visits' | translate}}</span><br/><br/>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="row mt-3">
@@ -67,7 +92,7 @@
         <lib-table-grid [pluginConfigObs]="pluginConfigObsAppointment" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.appointment_button" data-test-id="matExpAppointment"></lib-table-grid>
         <lib-table-grid id="matExpPriority" [pluginConfigObs]="pluginConfigObsPriority" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.priority_visit_section" data-test-id="matExpPriority"></lib-table-grid>
         <lib-table-grid id="matExpAwaiting" [pluginConfigObs]="pluginConfigObsAwaiting" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.awaiting_visit_section" data-test-id="matExpAwaiting"></lib-table-grid>
-        <lib-table-grid id="matExpInprogress" [pluginConfigObs]="pluginConfigObsInProgress" (visitsCountDate)="onVisitsCountDate($event)" data-test-id="matExpInprogress"></lib-table-grid>
+        <lib-table-grid id="matExpInprogress" [pluginConfigObs]="pluginConfigObsInProgress" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.inprogress_visit_section" data-test-id="matExpInprogress"></lib-table-grid>
         <lib-table-grid id="matExpCompleted" [pluginConfigObs]="pluginConfigObsCompleted" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.completed_visit_section" data-test-id="matExpCompleted"></lib-table-grid>
         <lib-table-grid id="matExpfollowUp" [pluginConfigObs]="pluginConfigObsFollowUp" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.follow_up_visit_section" data-test-id="matExpfollowUp"></lib-table-grid>
 

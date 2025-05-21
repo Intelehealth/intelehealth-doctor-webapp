@@ -6116,5 +6116,8 @@
   "Value should be equal or greater than Minimum Length": "Value should be equal or greater than Minimum Length",
   "Save Validations": "Save Validations",
   "Do you feel that this case is fit for another specialist doctor? If yes, refer the case to a suitable specialist doctor from the options given below.": "Do you feel that this case is fit for another specialist doctor? If yes, refer the case to a suitable specialist doctor from the options given below.",
-  "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility."
+  "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility.",
+  "Review of Imaging":"Review of Imaging",
+  "Review with Reports":"Review with Reports",
+  "Reschedule Referral":"Referral"
 }

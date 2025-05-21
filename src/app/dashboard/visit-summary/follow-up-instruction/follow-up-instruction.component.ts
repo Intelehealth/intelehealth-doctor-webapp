@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -27,6 +27,7 @@ export class FollowUpInstructionComponent{
   @Input() visitNotePresent: EncounterModel;
   @Input() title: string = 'notes';
   @Input() isMCCUser: boolean = false;
+  @Output() instructionsChanged = new EventEmitter<void>();
  
   _visit: VisitModel;
   addInstructionForm: FormGroup = new FormGroup({
@@ -41,7 +42,12 @@ export class FollowUpInstructionComponent{
     private encounterSvc: EncounterService,
     private translateSvc: TranslateService,
     private toastr: ToastrService,
-  ) { }
+  ) {
+    // Emit change event whenever form value changes
+    this.addInstructionForm.valueChanges.subscribe(() => {
+      this.instructionsChanged.emit();
+    });
+  }
   /**
    * Get followUpInstructions for the visit
    * @returns {void}

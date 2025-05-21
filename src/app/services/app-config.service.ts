@@ -27,6 +27,7 @@ export class AppConfigService {
   public sidebar_menus: { [key: string]: boolean };
   public patient_visit_sections: PatientVisitSection[]
   public dropdown_values: DropdownValuesModel[]
+  public ai_llm_section: boolean;
 
   constructor(private http: HttpClient) { }
 

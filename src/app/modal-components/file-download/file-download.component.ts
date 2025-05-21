@@ -33,8 +33,12 @@ export class FileDownloadComponent implements OnInit {
         this.value += 20;
       }
     }, 500);
-    
+
     if (event.type === HttpEventType.Response) {
+      if(!event?.body?.fname || event?.body?.fname?.toLowerCase()?.includes('error')) {
+        this.close(false);
+        return;  
+      }
       window.location.href = event.body.fname;
       this.close(true);
     }

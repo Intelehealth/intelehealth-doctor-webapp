@@ -266,6 +266,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
+
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email) {
+      this.phoneNumberValid = true;
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.personalInfoForm.get("emailId").clearAsyncValidators();
+    }
   }
 
   ngAfterViewInit() {
@@ -907,19 +914,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   * @return {void}
   */
   validateProviderAttribute(type: string) {
-    this.checkingPhoneValidity = true;
-    this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
-      if (res.success) {
-        if (type === doctorDetails.PHONE_NUMBER) {
-          this.phoneValid = res.data;
-        } else {
-          this.emailValid = res.data;
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email){
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.phoneNumberValid = true;
+    } else {
+      this.checkingPhoneValidity = true;
+      this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
+        if (res.success) {
+          if (type === doctorDetails.PHONE_NUMBER) {
+            this.phoneValid = res.data;
+          } else {
+            this.emailValid = res.data;
+          }
+          setTimeout(() => {
+            this.checkingPhoneValidity = false;
+          }, 500);
         }
-        setTimeout(() => {
-          this.checkingPhoneValidity = false;
-        }, 500);
-      }
-    });
+      });
+    }
+    
   }
 
   ngOnDestroy(): void {

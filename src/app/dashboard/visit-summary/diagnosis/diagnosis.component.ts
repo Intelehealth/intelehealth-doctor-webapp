@@ -56,6 +56,8 @@ export class DiagnosisComponent implements OnInit {
   private dSearchSubject = new Subject<string>();
   private diagnosisSubject = new Subject<any[]>();
 
+  hasAILLMEnabled: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     public appConfigService: AppConfigService,
@@ -70,6 +72,8 @@ export class DiagnosisComponent implements OnInit {
     });
 
     this.diagnosis$ = this.diagnosisSubject.asObservable();
+
+    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
   }
 
   ngOnInit() {
@@ -262,7 +266,7 @@ export class DiagnosisComponent implements OnInit {
   }
 
   saveDDxNotes(): void {
-    this.aillmddxComponent.getAIDiagnosis(this.patientInteractionNotesForm.value.value);
+    this.aillmddxComponent.getAIDiagnosisWithRetry(this.patientInteractionNotesForm.value.value);
   }
 
   /**

@@ -16,6 +16,8 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   message = '';
   subscription1: Subscription;
   subscription2: Subscription;
+  subscription3: Subscription;
+  interval: any;
 
   constructor(private socketService: SocketService, private supportService: SupportService) { }
 
@@ -32,6 +34,15 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
         this.getMessages();
       }
     });
+
+    if (getCacheData(false, doctorDetails.ROLE) === 'doctor') {
+      setTimeout(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_ADMIN_UNREAD_COUNT, this.user?.uuid);
+      }, 1000);
+      this.interval = setInterval(() => {
+        this.socketService.emitEvent(notifications.GET_DOCTOR_ADMIN_UNREAD_COUNT, this.user?.uuid);
+      }, 30000);
+    }
   }
 
   /**
@@ -104,6 +115,9 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();
     this.subscription2?.unsubscribe();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
 }

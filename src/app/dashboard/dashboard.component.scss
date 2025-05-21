@@ -153,3 +153,39 @@ button.mat-button .reset-btn {
   margin-bottom: 8px;
   color: #7F7B92;
 }
+
+.active-card{
+  border: 2px solid !important;
+  border-color: var(--color-darkBlue) !important;
+}
+
+.chip-today-apt{
+  height: 100px;
+}
+
+.chip-upcoming-apt{
+  background: #EAFEF4FF;
+  border-width: 1px;
+  border-color: #22CCB23D;
+  border-style: solid;
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
+  height: 100px;
+
+  small{
+    color: var(--color-gray);
+  }
+}
+
+.chip-pending-apt{
+  background: #FBE9E8FF;
+  border-width: 1px;
+  border-color: #E5784CFF;
+  border-style: solid;
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
+  height: 100px;
+}
+
+.chip-info-apt{
+  font-size: 20px !important;
+  font-weight: bold;
+}

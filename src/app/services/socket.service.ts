@@ -35,6 +35,8 @@ export class SocketService {
   public adminUnread: Observable<any>;
   private drUnreadSubject: BehaviorSubject<any>;
   public drUnread: Observable<any>;
+  private doctorAdminUnreadSubject: BehaviorSubject<any>;
+  public doctorAdminUnread: Observable<any>;
 
   constructor(
     private http: HttpClient,
@@ -48,6 +50,8 @@ export class SocketService {
     this.adminUnread = this.adminUnreadSubject.asObservable();
     this.drUnreadSubject = new BehaviorSubject<any>(0);
     this.drUnread = this.drUnreadSubject.asObservable();
+    this.doctorAdminUnreadSubject = new BehaviorSubject<any>(0);
+    this.doctorAdminUnread = this.doctorAdminUnreadSubject.asObservable();
   }
 
   addCount(count: number) {
@@ -56,6 +60,10 @@ export class SocketService {
 
   addDoctorCount(count: number) {
     this.drUnreadSubject.next(count);
+  }
+
+  addDoctorAdminCount(count: number) {
+    this.doctorAdminUnreadSubject.next(count);
   }
 
   message(roomId, clientId, message): Observable<any> {
@@ -109,6 +117,10 @@ export class SocketService {
 
     this.onEvent(notifications.DOCTOR_UNREAD_COUNT).subscribe((data) => {
       this.addDoctorCount(data);
+    });
+
+    this.onEvent(notifications.DOCTOR_ADMIN_UNREAD_COUNT).subscribe((data) => {
+      this.addDoctorAdminCount(data);
     });
   }
 

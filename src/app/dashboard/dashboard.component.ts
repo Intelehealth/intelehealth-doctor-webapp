@@ -25,6 +25,8 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 export const PICK_FORMATS = {
@@ -107,10 +109,10 @@ export class DashboardComponent implements OnInit {
           if (element?.patient_type?.toLowerCase() === "follow-up") return ["chip", "chip-item-blue", "blue"];
           return ["chip"]; // Default fallback class
         },
-        isSortable: true,
         // formatHtml: (element) => {
         //   return element?.patient_type || "N/A"; // Only return text
         // }
+        isSortable: true,
       },
       {
         label: "Visit Uploaded",
@@ -326,14 +328,14 @@ export class DashboardComponent implements OnInit {
     },
     tableColumns: [
       {
-        label:"TMH Patient ID",
+        label:"Patient ID",
         key: "TMH_patient_id",
         // formatHtml: (element)=> {
         //   return `<span>${element?.TMH_patient_id?.value ? element?.TMH_patient_id?.value : ''}</span>`
         // },
       },
       {
-        label: "Patient",
+        label: "Name",
         key: "patient_name",
         formatHtml: (element)=> { 
           return `
@@ -360,8 +362,7 @@ export class DashboardComponent implements OnInit {
             color = "#0FD197"; bold = "bold"; // green color & bold
           }
           return `<span style="color: ${color}; font-weight: ${bold};">${element?.starts_in}</span>`;
-        },
-        isSortable: true,
+        }
       },
       // {
       //   label: "Location",
@@ -391,6 +392,7 @@ export class DashboardComponent implements OnInit {
         actionButtons: [
           {
             label: "Reschedule",
+            validationRequired: false,
             callBack: (element: any) => this.reschedule(element),
             style: {
               color: "#2e1e91",
@@ -399,6 +401,7 @@ export class DashboardComponent implements OnInit {
           },
           {
             label: "Cancel",
+            validationRequired: false,
             callBack: (element: any) => this.cancel(element),
             style: {
               color: "#ff475d",
@@ -550,6 +553,12 @@ export class DashboardComponent implements OnInit {
   isFilterApplied2 = false;
   isFilterApplied3 = false;
   isFilterApplied4 = false;
+
+  currentAppointmentFilter : string = "today";
+  todayAppointmentFilterCount : number = 0;
+  upcomingAppointmentVisitsCount : number = 0;
+  pendingAppointmentVisitsCount : number = 0;
+  brandName: string = "";
   
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
@@ -626,6 +635,35 @@ export class DashboardComponent implements OnInit {
         this.pluginConfigObsCompleted.tableColumns.unshift(patientIdColumn);
         this.pluginConfigObsFollowUp.tableColumns.unshift(patientIdColumn);
       }
+
+      if(environment.brandName === 'KCDO'){
+        this.pluginConfigObsAppointment.tableColumns = this.pluginConfigObsAppointment.tableColumns.filter(col=>!['age','telephone','starts_in'].includes(col.key));
+        this.pluginConfigObsAppointment.pageSizeOptions = [10];
+        this.pluginConfigObsAppointment.filter = {
+          fromDate: moment().format('DD/MM/YYYY'),
+          toDate: moment().format('DD/MM/YYYY'),
+          pending_visits: false
+        }
+        
+        this.pluginConfigObsAppointment.tableColumns.splice(2, 0, {
+          label: "Type of Case",
+          key: "type_of_case",
+          formatHtml: (element:any) => {
+            return this.findTypeOfCase(element);
+          }
+        });
+
+        this.pluginConfigObsAppointment.tableColumns.splice(3, 0, {
+          label: "Time",
+          key: "time",
+          formatHtml: (element:any) => {
+            return moment(element.slotJsDate).format("hh:mm A");
+          }
+        });
+        this.pluginConfigObsAppointment.tableHeader = "Today's Appointment"
+      }
+
+      this.brandName = environment.brandName;
     }
 
   createFilteredDateRangeForm(): FormGroup {
@@ -645,6 +683,11 @@ export class DashboardComponent implements OnInit {
         this.specialization = this.getSpecialization(provider.attributes);
       } else {
         this.router.navigate(['/dashboard/get-started']);
+      }
+      if(environment.brandName === 'KCDO'){
+        this.getAppointmentCount()
+      } else if (this.pvs.appointment_button) {
+        this.getAppointments();
       }
       // if (this.pvs.appointment_button) {
       //   this.getAppointments();
@@ -1168,7 +1211,7 @@ export class DashboardComponent implements OnInit {
   * @return {void}
   */
   cancel(appointment: AppointmentModel) {
-    if(appointment.visitStatus == 'Visit In Progress') {
+    if(appointment.visitStatus == 'Visit In Progress' && this.currentAppointmentFilter !== "pending") {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
       return;
     }
@@ -1494,6 +1537,7 @@ export class DashboardComponent implements OnInit {
     switch (visitsCountDate.tableTagName) {
       case "Appointment":
         this.appointmentVisitsCount = visitsCountDate.visitsCount;
+        if(environment.brandName === "KCDO") this.getAppointmentCount()
         break;
       case "Awaiting":
         this.awaitingVisitsCount = visitsCountDate.visitsCount;
@@ -1514,6 +1558,186 @@ export class DashboardComponent implements OnInit {
         console.warn(`Unrecognized tableTagName: ${visitsCountDate.tableTagName}`);
         break;
     }
+  }
+
+  changeAppointmentFilter(filterType: string) {
+    if (this.currentAppointmentFilter === filterType) return;
+  
+    const config = this.getAppointmentFilterConfig(filterType);
+    if (!config) return;
+  
+    const updatedCols = this.getAppointmentColumns(filterType);
+  
+    this.pluginConfigObsAppointment = {
+      ...this.pluginConfigObsAppointment,
+      filter: config.filter,
+      tableHeader: config.tableHeader,
+      tableColumns: updatedCols,
+      noRecordFound: config.noRecordFound
+    };
+  
+    this.currentAppointmentFilter = filterType;
+  }
+  
+  private getAppointmentColumns(filterType: string) {
+    const formatDateTime = (element: any) => moment(element.slotJsDate).format("DD/MM/YYYY hh:mm A");
+    const formatTime = (element: any) => moment(element.slotJsDate).format("hh:mm A");
+  
+    const timeOrDateCol = {
+      label: filterType === "today" ? "Time" : "Date & Time",
+      key: filterType === "today" ? "time" : "date_time",
+      formatHtml: filterType === "today" ? formatTime : formatDateTime
+    };
+  
+    const typeOfCaseCol = {
+      label: "Type of Case",
+      key: "type_of_case",
+      formatHtml: (element: any) => this.findTypeOfCase(element)
+    };
+  
+    const reasonCol = {
+      label: "Reason",
+      key: "reason",
+      formatHtml: (element: any) => {
+        try {
+          const attr = element.visit?.attributes?.find(a => a.attribute_type.name === "Call Status");
+          return attr?.value ? JSON.parse(attr.value)?.callStatus || "" : "";
+        } catch {
+          return "";
+        }
+      }
+    };
+  
+    const originalCols = this.pluginConfigObsAppointment.tableColumns;
+  
+    const baseCols = originalCols.filter(
+      col => !["time", "date_time", "type_of_case", "reason", "starts_in", "actions"].includes(col.key)
+    );
+  
+    const actionsCol = originalCols.find(col => col.key === "actions");
+  
+    const dynamicCols = [
+      filterType === "pending" ? reasonCol : typeOfCaseCol,
+      timeOrDateCol
+    ];
+  
+    return [
+      ...baseCols,
+      ...dynamicCols,
+      ...(actionsCol ? [actionsCol] : [])
+    ];
+  }
+  
+  private getAppointmentFilterConfig(filterType: string) {
+    const today = moment().format('DD/MM/YYYY');
+    const oneYearLater = moment().add(1, "year").format('DD/MM/YYYY');
+    const oneYearAgo = moment().add(-1, "year").format('DD/MM/YYYY');
+  
+    const configs = {
+      today: {
+        filter: {
+          fromDate: today,
+          toDate: today,
+          pending_visits: false
+        },
+        tableHeader: "Today's Appointments",
+        noRecordFound: "No any appointments scheduled."
+      },
+      upcoming: {
+        filter: {
+          fromDate: moment().add(1, "day").format('DD/MM/YYYY'),
+          toDate: oneYearLater,
+          pending_visits: false
+        },
+        tableHeader: "Upcoming Appointments",
+        noRecordFound: "No any appointments scheduled."
+      },
+      pending: {
+        filter: {
+          fromDate: oneYearAgo,
+          toDate: oneYearLater,
+          pending_visits: true
+        },
+        tableHeader: "Pending Visits",
+        noRecordFound: "There are no pending visits"
+      }
+    };
+  
+    return configs[filterType];
+  }
+
+  getAppointmentCount() {
+    const uuid = getCacheData(true, doctorDetails.USER).uuid;
+    const spec = this.isMCCUser ? this.specialization : null;
+
+    const todaySlots$ = this.appointmentService.getUserSlots(
+      uuid,
+      moment().format('DD/MM/YYYY'),
+      moment().format('DD/MM/YYYY'),
+      spec,
+      false
+    );
+  
+    const futureSlots$ = this.appointmentService.getUserSlots(
+      uuid,
+      moment().add(1, 'day').format('DD/MM/YYYY'),
+      moment().add(1, 'year').format('DD/MM/YYYY'),
+      spec,
+      false
+    );
+  
+    const allSlots$ = this.appointmentService.getUserSlots(
+      uuid,
+      moment().add(-1, 'year').format('DD/MM/YYYY'),
+      moment().add(1, 'year').format('DD/MM/YYYY'),
+      spec,
+      true
+    );
+  
+    forkJoin([futureSlots$, allSlots$, todaySlots$])
+      .pipe(
+        map(([futureRes, pendingRes, todayRes]) => {
+          const isValidVisit = (obj: any) =>
+            obj.visit &&
+            obj.status === 'booked' &&
+            (obj.visitStatus === 'Awaiting Consult' || obj.visitStatus === 'Visit In Progress');
+  
+          this.upcomingAppointmentVisitsCount = futureRes?.data?.filter(isValidVisit).length || 0;
+          this.pendingAppointmentVisitsCount = pendingRes?.data?.filter(isValidVisit).length || 0;
+          this.todayAppointmentFilterCount = todayRes?.data?.filter(isValidVisit).length || 0;
+        })
+      )
+      .subscribe({
+        next: () => this.setAppointmentCount(),
+        error: (err) => console.error('Error fetching appointment counts:', err)
+      });
+  }
+
+  setAppointmentCount() {
+    const countMap = {
+      today: 'todayAppointmentFilterCount',
+      upcoming: 'upcomingAppointmentVisitsCount',
+      pending: 'pendingAppointmentVisitsCount'
+    };
+  
+    const key = countMap[this.currentAppointmentFilter];
+    if (key) {
+      this[key] = this.appointmentVisitsCount;
+    }
+  }
+
+  findTypeOfCase(element){
+    let encounter = element.visit.encounters.find(enc=>enc.type.name === "ADULTINITIAL")
+    if(encounter){
+      let caseSummary = encounter.obs.find(obs=>obs.value_text?.includes("<b>Case Summary</b>"))
+      if(caseSummary){
+        let arrMatches = caseSummary.value_text?.match("(?<=• Type of Case - )([A-Za-z ]*)")
+        if(arrMatches && arrMatches.length > 0){
+          return arrMatches[0]
+        }
+      }
+    }
+    return "";
   }
 
 }
