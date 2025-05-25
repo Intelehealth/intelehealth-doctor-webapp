@@ -138,6 +138,7 @@ registerLocaleData(localeEn);
         `${environment.webrtcTokenServerUrl}api/getToken`,
         `${environment.base}/pl/`,
         `${environment.base}/ddx`,
+        `${environment.base}/ttxv1`,
         `${environment.mindmapURL}/appointment/getScheduledMonths`,
         `${environment.mindmapURL}/mindmap/getNotificationStatus`,
         `${environment.mindmapURL}/appointment/getUserSlots`,

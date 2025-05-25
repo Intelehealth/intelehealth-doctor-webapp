@@ -17,14 +17,10 @@ export class AiddxService {
   }
 
   getAIDiagnosis(casehistory: any) {
-    // console.log(casehistory, "Case history");
-    // console.log({ casehistory }, "???????????????");
     return this.http.post(`${this.env.base}/ddx`, { casehistory });
   }
 
   getDDxPayload(patientInfo: any, visit: any, notes?: string) {
-    // console.log(patientInfo, visit, notes);
-    
     const data = this.getDataToExtract(patientInfo, visit);
     const get = (key, fallback = "Null") => data[key] || fallback;
 
@@ -62,7 +58,6 @@ ${vitals?.length ? vitalPayload : ""}
 
 ${notes ? `Notes: ${notes}` : ""}`;
 
-    // console.log(payload, "Payload Vishasl???????????????");
     return payload;
   }
 

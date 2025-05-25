@@ -16,12 +16,11 @@ export class AiTxService {
     }
   }
 
-  getAIMedicalAdvice(casehistory: any) {
-    return this.http.post(`${this.env.base}/ttxv1`, { casehistory });
+  getAIMedicalAdvice(casehistory: any, diagnosis: any) {
+    return this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory });
   }
 
   getTxPayload(patientInfo: any, visit: any) {
-    console.log(patientInfo, visit);
     
     const data = this.getDataToExtract(patientInfo, visit);
     const get = (key, fallback = "Null") => data[key] || fallback;

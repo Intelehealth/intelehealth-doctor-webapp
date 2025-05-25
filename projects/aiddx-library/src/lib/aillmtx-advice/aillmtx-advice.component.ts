@@ -2,11 +2,11 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AiTxService } from '../../services/aitx.service';
 
 @Component({
-  selector: 'lib-aillmtx-medication',
-  templateUrl: './aillmtx-medication.component.html',
-  styleUrls: ['./aillmtx-medication.component.scss']
+  selector: 'lib-aillmtx-advice',
+  templateUrl: './aillmtx-advice.component.html',
+  styleUrls: ['./aillmtx-advice.component.scss']
 })
-export class AillmtxMedicationComponent {
+export class AillmtxAdviceComponent {
   @Input() patientInfo: any;
   @Input() visit: any;
   @Input() existingMedication: any[] = [];
