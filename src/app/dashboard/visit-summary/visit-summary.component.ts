@@ -453,7 +453,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
-            const currentComplaint = this.visitService.getData(obs)?.value.split('<b>');
+            const currentComplaint = this.visitService.getData(obs)?.value?.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -502,7 +502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === 'PHYSICAL EXAMINATION') {
-            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value?.replace(new RegExp('<br/>►', 'g'), '')?.split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -547,7 +547,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
-            const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
+            const medicalHistory = this.visitService.getData(obs)?.value?.split('<br/>') ?? [];
             const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
@@ -560,7 +560,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.patientHistoryData.push(obj1);
           }
           if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
-            const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
+            const familyHistory = this.visitService.getData(obs)?.value?.split('<br/>');
             const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
