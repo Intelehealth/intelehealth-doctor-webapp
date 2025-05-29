@@ -9,17 +9,17 @@ import { AiTxService } from '../../services/aitx.service';
 export class AillmtxAdviceComponent {
   @Input() patientInfo: any;
   @Input() visit: any;
-  @Input() existingMedication: any[] = [];
-  @Output() medicationSelected = new EventEmitter<string[]>();
+  @Input() existingAdvice: any[] = [];
+  @Output() adviceSelected = new EventEmitter<string[]>();
   @Input() notesss: string;
   isLoading = false;
   hasError = false;
   noData = false;
   insufficientData = false;
   conclusion: string = '';
-  medicationList: any = []
+  adviceList: any = []
   furtherQuestionsList: any = []
-  selectedMedicine: string[] = [];
+  selectedAdvice: string[] = [];
 
   constructor(
     private TxService: AiTxService,
@@ -27,16 +27,16 @@ export class AillmtxAdviceComponent {
 
   ngOnInit() {}
 
-  public getAIMedicalAdvice(diagnosis?: string) {
+  public getAIAdvice(diagnosis?: string) {
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
     this.isLoading = true;
-    this.medicationList = [];
+    this.adviceList = [];
     this.furtherQuestionsList = [];
     this.TxService.getAIMedicalAdvice(payload, diagnosis).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
-          this.medicationList = data.result.data.result.map(v => {
+          this.adviceList = data.result.data.result.map(v => {
             return {
               ...v,
             }
@@ -55,24 +55,22 @@ export class AillmtxAdviceComponent {
     });
   }
 
-  public getAIMedicalAdviceWithRetry(diagnosis: any) {    
+  public getAIAdviceWithRetry(diagnosis: any) {    
     const MAX_RETRIES = 3;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
     const attemptDiagnosis = () => {
       this.isLoading = true;
-      this.medicationList = [];
+      this.adviceList = [];
       this.furtherQuestionsList = [];
       this.TxService.getAIMedicalAdvice(payload, diagnosis).subscribe({
         next: (data: any) => {
-          if (data.result.medications.length > 0) {
-          console.log(data.result.medications, "ttxv1 response");
+          if (data.result.medical_advice.length > 0) {
             this.noData = false;
-            this.medicationList = data.result.medications.map(v => {
-
+            this.adviceList = data.result.medical_advice.map(v => {
               return {
-                ...v,
+                v
               }
             });
           } else {
@@ -103,37 +101,34 @@ export class AillmtxAdviceComponent {
   }
 
   onTryAgain() {
-    this.getAIMedicalAdvice(this.notesss);
+    this.getAIAdvice(this.notesss);
   }
 
-
-  onAIMedicineChange(event: any) {
-    // console.log("onAIMedicineChange", event, this.selectedMedicine);
-    
-    if (!event) {
-      this.selectedMedicine = [];
-    } else if (Array.isArray(event)) {
-      this.selectedMedicine = [...event];
+  onAIAdviceChange(advice: any) {
+    if (!advice) {
+      this.selectedAdvice = [];
+    } else if (Array.isArray(advice)) {
+      this.selectedAdvice = [...advice];
     } else {
-      const index = this.selectedMedicine.indexOf(event);
-      if (index > -1) {
-        this.selectedMedicine = this.selectedMedicine.filter(d => d !== event);
+      if (typeof advice === 'string') {
+        this.selectedAdvice = this.selectedAdvice.filter(a => a !== advice);
       } else {
-        this.selectedMedicine = [...this.selectedMedicine, event];
+        const index = this.selectedAdvice.indexOf(advice.v);
+        if (index > -1) {
+          this.selectedAdvice = this.selectedAdvice.filter(a => a !== advice.v);
+        } else {
+          this.selectedAdvice = [...this.selectedAdvice, advice.v];
+        }
       }
     }
-    this.medicationSelected.emit([...this.selectedMedicine]);
+    this.adviceSelected.emit([...this.selectedAdvice]);
   }
 
-  isMedicineExists(diagnosis: string): boolean {
-    console.log("existing diagnosis", this.existingMedication, diagnosis);
-    
-    return this.existingMedication.some(d => d.diagnosisName === diagnosis);
+  isAdviceExists(advice: string): boolean {
+    return this.existingAdvice.some(a => a.value === advice);
   }
 
-  isMedicineSelected(diagnosis: string): boolean {
-    // console.log("selected medicine", this.selectedMedicine, diagnosis, this.existingMedication);
-    
-    return this.selectedMedicine.includes(diagnosis) || this.existingMedication.some(d => d?.diagnosisName === diagnosis);
+  isAdviceSelected(advice: any): boolean {
+    return this.selectedAdvice.includes(advice.v) || this.existingAdvice.some(a => a.value === advice.v);
   }
 }

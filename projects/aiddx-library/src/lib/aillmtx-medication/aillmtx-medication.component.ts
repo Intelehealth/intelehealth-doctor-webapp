@@ -19,7 +19,7 @@ export class AillmtxMedicationComponent {
   conclusion: string = '';
   medicationList: any = []
   furtherQuestionsList: any = []
-  selectedMedicine: string[] = [];
+  selectedMedicine: any[] = [];
 
   constructor(
     private TxService: AiTxService,
@@ -27,7 +27,7 @@ export class AillmtxMedicationComponent {
 
   ngOnInit() {}
 
-  public getAIMedicalAdvice(diagnosis?: string) {
+  public getAIMedical(diagnosis?: string) {
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
     this.isLoading = true;
     this.medicationList = [];
@@ -55,7 +55,7 @@ export class AillmtxMedicationComponent {
     });
   }
 
-  public getAIMedicalAdviceWithRetry(diagnosis: any) {    
+  public getAIMedicalWithRetry(diagnosis: any) {    
     const MAX_RETRIES = 3;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
@@ -67,7 +67,6 @@ export class AillmtxMedicationComponent {
       this.TxService.getAIMedicalAdvice(payload, diagnosis).subscribe({
         next: (data: any) => {
           if (data.result.medications.length > 0) {
-          console.log(data.result.medications, "ttxv1 response");
             this.noData = false;
             this.medicationList = data.result.medications.map(v => {
 
@@ -103,37 +102,41 @@ export class AillmtxMedicationComponent {
   }
 
   onTryAgain() {
-    this.getAIMedicalAdvice(this.notesss);
+    this.getAIMedical(this.notesss);
   }
 
 
   onAIMedicineChange(event: any) {
-    // console.log("onAIMedicineChange", event, this.selectedMedicine);
-    
     if (!event) {
       this.selectedMedicine = [];
     } else if (Array.isArray(event)) {
       this.selectedMedicine = [...event];
     } else {
-      const index = this.selectedMedicine.indexOf(event);
+      const index = this.selectedMedicine.findIndex(m => m.name === event.name);
       if (index > -1) {
-        this.selectedMedicine = this.selectedMedicine.filter(d => d !== event);
+        this.selectedMedicine = this.selectedMedicine.filter(m => m.name !== event.name);
       } else {
-        this.selectedMedicine = [...this.selectedMedicine, event];
+        // Structure the medicine data properly
+        const medicineData = {
+          name: event.name,
+          dosage: event.dosage,
+          frequency: event.frequency,
+          duration: event.duration,
+          instructions: event.instructions,
+          uuid: event.uuid,
+          likelihood: event.likelihood
+        };
+        this.selectedMedicine = [...this.selectedMedicine, medicineData];
       }
     }
-    this.medicationSelected.emit([...this.selectedMedicine]);
+    this.medicationSelected.emit(this.selectedMedicine);
   }
 
-  isMedicineExists(diagnosis: string): boolean {
-    console.log("existing diagnosis", this.existingMedication, diagnosis);
-    
-    return this.existingMedication.some(d => d.diagnosisName === diagnosis);
+  isMedicineExists(medicine: string): boolean {
+    return this.existingMedication.some(d => d.drug === medicine);
   }
 
-  isMedicineSelected(diagnosis: string): boolean {
-    // console.log("selected medicine", this.selectedMedicine, diagnosis, this.existingMedication);
-    
-    return this.selectedMedicine.includes(diagnosis) || this.existingMedication.some(d => d?.diagnosisName === diagnosis);
+  isMedicineSelected(medicine: any): boolean {
+    return this.selectedMedicine.some(m => m.name === medicine.name) || this.existingMedication.some(d => d.drug === medicine.name);
   }
 }

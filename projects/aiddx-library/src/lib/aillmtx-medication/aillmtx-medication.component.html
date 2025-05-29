@@ -1,8 +1,18 @@
 <ng-container *ngIf="!medicationList.length">
     <div class="d-flex justify-content-center mt-2">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
+            
+            <div *ngIf="!noData && !existingMedication.length && !isLoading" class="no-data-container text-center">
+                <div class="conclusion-header d-flex flex-column align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
+                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
+                    <h3 class="text-danger">No diagnosis Provided</h3>
+                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Medicines suggestions.</p>
+                </div>
+            </div>
+
             <ng-container *ngIf="!isLoading && (hasError || noData)">
-                <div class="text-danger">
+                <div class="text-danger txt-position">
                     <i class="bi bi-exclamation-triangle-fill"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon mr-2" />
                     <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span>
@@ -30,12 +40,12 @@
 
 <ng-container *ngIf="medicationList.length" class="mt-2">
 
-    <div class="alert">
+    <!-- <div class="alert">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon"/>
         <span class="text-reminder">Reminder:</span>
         Patient is allergic to penicilin. Please prescribe accordingly.
-    </div>
+    </div> -->
 
     <div class="intel-accordion-title">
         <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested medications</h6>
@@ -51,30 +61,30 @@
     </div> -->
 
     <div class="diagnosis-container p-3">
-        <div *ngFor="let diagnosis of medicationList" 
+        <div *ngFor="let medicine of medicationList" 
              class="d-flex align-items-center mb-2"
-             [class.disabled-diagnosis]="isMedicineExists(diagnosis.name)">
+             [class.disabled-diagnosis]="isMedicineExists(medicine.name)">
             <input type="checkbox" class="custom-checkbox me-2"
-                [checked]="isMedicineSelected(diagnosis)"
-                [disabled]="isMedicineExists(diagnosis.name)"
-                (change)="onAIMedicineChange(diagnosis)">
-            <label class="fw-bold" [class.text-muted]="isMedicineExists(diagnosis.name)">
-                {{ diagnosis.name }}
-                <span class="text-muted ms-2">(likely {{ diagnosis.likelihood }})</span>
+                [checked]="isMedicineSelected(medicine)"
+                [disabled]="isMedicineExists(medicine.name)"
+                (change)="onAIMedicineChange(medicine)">
+            <label class="fw-bold" [class.text-muted]="isMedicineExists(medicine.name)">
+                {{ medicine.name }}
+                <span class="text-muted ms-2">(likely {{ medicine.confidence }})</span>
             </label>
         </div>
     </div>
 
-    <!-- <div class="rationale-container">
+    <div class="rationale-container">
         <h5 class="fw-bold rationale">Rationale</h5>
         <div *ngFor="let rationale of medicationList; let i = index" class="rationale-item p-3 mb-2">
             <h3 class="fw-bold">
-                {{ i + 1 }}. {{ rationale.diagnosis }}
-                <span class="text-muted small">(likely {{ rationale.likelihood }})</span>
+                {{ i + 1 }}. {{ rationale.name }}
+                <span class="text-muted small">(likely {{ rationale.confidence }})</span>
             </h3>
             <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
         </div>
-    </div> -->
+    </div>
 
 </ng-container>
 

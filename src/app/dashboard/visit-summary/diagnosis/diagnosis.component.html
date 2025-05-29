@@ -208,7 +208,7 @@
     <mat-panel-title>
       <div class="intel-accordion-title">
         <img src="assets/svgs/medication.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Ayu suggested Medications'|translate}}</h6>
+        <h6 class="mb-0 ml-2">{{'Ayu suggested medications'|translate}}</h6>
       </div>
     </mat-panel-title>
     <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
@@ -222,7 +222,7 @@
             <th scope="col" width="20%">{{'Drug name'|translate}}</th>
             <th scope="col" width="15%" class="dose-column">{{'Dose'|translate}}</th>
             <th scope="col" width="10%">{{'Frequency'|translate}}</th>
-            <th scope="col" width="15%">{{'Duration (number)'|translate}}</th>
+            <th scope="col" width="20%">{{'Duration (number)'|translate}}</th>
             <th scope="col" width="15%">{{'Duration (units)'|translate}}</th>
             <th scope="col" width="25%">{{'Instruction(Remarks)'|translate}}</th>
             <th scope="col"></th>
@@ -285,6 +285,7 @@
                     [ngbTypeahead]="search2"
                     data-test-id="etDrugName"
                     title="{{addMedicineForm.get('drug')?.value}}"
+                    (change)="onMedicineChange($event)"
                   />
                 </div>
               </td>
@@ -353,19 +354,19 @@
                   />
                 </div>
               </td>
-                          
-              
-              
-              <div class="selected-diagnoses mt-1" *ngIf="medicationSelected.length > 0">
-                <span *ngFor="let medicine of medicationSelected" class="selected-item mr-2"
-                  [class.selected-primary]="medicine === medicationSelected[0]">
-                  {{ medicine.drug }}
-                  <button class="remove-icon" mat-icon-button (click)="removeDiagnosis(medicine)">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </span>
-              </div>
-
+            </tr>
+            <tr>
+              <td colspan="7">
+                <div class="selected-diagnoses mt-1" *ngIf="medicationSelected.length > 0">
+                  <span *ngFor="let medicine of medicationSelected" class="selected-item mr-2"
+                    [class.selected-primary]="medicine === medicationSelected[0]">
+                    {{ medicine.name }} - {{ medicine.dosage }} - {{ medicine.frequency }} - {{ medicine.duration.split(' ')[0] }} - {{ medicine.duration.split(' ')[1] }} - {{ medicine.instructions }}
+                    <button class="remove-icon" mat-icon-button (click)="removeMedicine(medicine)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </span>
+                </div>
+              </td>
             </tr>
             <tr *ngIf="!addMoreMedicine && !isMCCUser">
               <td colspan="6" class="border-top-0">
@@ -417,7 +418,7 @@
   </ng-container> -->
 
   <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
-    <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIDiagnosisSelected()"
+    <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
     [existingMedication]="existingMedication"></lib-aillmtx-medication>
   </ng-container>
 </mat-expansion-panel>
@@ -427,7 +428,7 @@
     <mat-panel-title>
       <div class="intel-accordion-title">
         <img src="assets/svgs/advice.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Ayu suggested Advice??????'|translate}}</h6>
+        <h6 class="mb-0 ml-2">{{'Ayu suggested advice'|translate}}</h6>
       </div>
     </mat-panel-title>
     <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
@@ -481,6 +482,15 @@
           [ngbTypeahead]="search1"
           data-test-id="etAdvice"
         />
+        <div class="selected-diagnoses mt-1" *ngIf="selectedAdvices.length > 0">
+          <span *ngFor="let advice of selectedAdvices" class="selected-item mr-2"
+            [class.selected-primary]="advice === selectedAdvices[0]">
+            {{ advice }}
+            <button class="remove-icon" mat-icon-button (click)="removeAdvice(advice)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        </div>
       </div>
       <div class="form-group">
         <button
@@ -504,9 +514,8 @@
   </ng-container>
 
   <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
-    <div>Vishalalalalalsjkjlsdkjsdfjkdfsadf</div>
-    <lib-aillmtx-advice [patientInfo]="patientInfo" [visit]="visit" (adviceSelected)="onAIDiagnosisSelected()"
-      [existingAdvice]="existingAdvice"></lib-aillmtx-advice>
+    <lib-aillmtx-advice [patientInfo]="patientInfo" [visit]="visit" (adviceSelected)="onAIAdviceSelected()"
+      [existingAdvice]="advices"></lib-aillmtx-advice>
   </ng-container>
 
 </mat-expansion-panel>

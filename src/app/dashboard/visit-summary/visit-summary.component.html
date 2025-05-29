@@ -1299,7 +1299,7 @@
               #panel5
               hideToggle
               class="overflow-show"
-              *ngIf="isFeatureAvailable('advice')"
+              *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled"
             >
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -1446,6 +1446,7 @@
                 #panel4
                 hideToggle
                 class=""
+                *ngIf="!hasAILLMEnabled"
                 >
                   <mat-expansion-panel-header>
                     <mat-panel-title>

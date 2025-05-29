@@ -239,3 +239,22 @@
   border-radius: 10px;
   width: 100%;
 }
+
+.txt-position {
+  position: relative;
+  top: 24px;
+}
+
+.conclusion-header {
+  position: relative;
+  bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .erorr-container {
+    height: 180px;
+    background-color: #faf7fc;
+    border-radius: 10px;
+    width: 100%;
+  }
+}
