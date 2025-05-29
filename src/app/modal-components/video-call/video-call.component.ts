@@ -10,7 +10,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, EncounterProviderModel, MessageModel, RecordingResponse } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
@@ -52,6 +52,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   connecting = false;
   callEndTimeout = null;
   patientRegFields: string[] = [];
+  recodingStarted = false;
+  tableId: number;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -183,7 +185,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @param {boolean} val - Dialog result
   * @return {void}
   */
-  onCallConnect() {
+  async onCallConnect(event: any) {
     this.socketSvc.incomingCallData = {
       nurseId: this.nurseId,
       doctorName: this.doctorName,
@@ -215,11 +217,29 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * Handle participant disconnect callback
   * @return {void}
   */
-  handleParticipantConnect() {
+  async handleParticipantConnect(): Promise<void> {
     this.callConnected = true;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
-  }
+    await this.webrtcSvc.startRecording({
+      doctorName: this.doctorName,
+      roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      chwId: this.nurseId,
+      patientId: this.data?.patientId,
+      nurseName: this.hwName,
+      name: this.provider?.uuid
+    })
+      .toPromise()
+      .then((res: RecordingResponse) => {
+        this.recodingStarted = true
+        this.tableId = res.recordingId
+      })
+      .catch(err => {
+        console.log("start recoding error", err)
+      });
+ }
 
   /**
   * Returns call connected or not
@@ -454,9 +474,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   endCallInRoom() {
-    setTimeout(() => {
+    setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
+      if(this.recodingStarted) {
+        this.recodingStarted = false;
+        await this.webrtcSvc.stopRecording(this.tableId, this.room)
+        // await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
+          .toPromise()
+          .catch(err => {
+            console.log("stop recoding error", err)
+          });
+      }
     }, 0);
     this.webrtcSvc.token = '';
     this.webrtcSvc.handleDisconnect();

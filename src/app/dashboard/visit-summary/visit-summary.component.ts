@@ -15,7 +15,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -93,6 +93,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   strengthList: DataItemModel[] = strength.strengthList
   daysList: DataItemModel[] = days.daysList
   durationUnitList: DataItemModel[] = durationUnitList;
+  instructionRemarks:DataItemModel[] =[]; 
   timeList: string[] = [];
   drugNameList: DataItemModel[] = [];
   advicesList: string[] = [];
@@ -240,6 +241,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       map(term => term.length < 1 ? [] : list.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
+  searchInstructionRemark = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term =>
+        term.length < 2 ? of([]) : this.getOptions(term)
+      )
+    );
+  } 
   search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
   search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
   search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
@@ -454,7 +464,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.changesMade = false;
     
     this.getVisit(id);
-    // this.formControlValueChanges();
+    this.getInstructionRemarks();
+    this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
@@ -1941,7 +1952,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime},Remark:${this.followUpForm.value.followUpReason || ''},Type:${this.followUpForm.value.followUpType || ''}`;
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime},Remark:${this.followUpForm.value.followUpReason || ''},Type:${this.followUpForm.value.followUpType || ''}`;
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -1952,7 +1963,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           obsDatetime: new Date(),
           value: value,
           encounter: this.visitNotePresent.uuid
-        }).subscribe ( () => {
+        }).subscribe ( (res) => {
+            this.followUpForm.patchValue({
+            present: true,
+            wantFollowUp: 'Yes',
+            followUpDate : this.followUpForm.value.followUpDate,
+            followUpTime : this.followUpForm.value.followUpTime,
+            followUpReason : this.followUpForm.value.followUpReason,
+            uuid: res.uuid,
+            followUpType : null
+          });
         });
       }
     } else {
@@ -1962,7 +1982,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         obsDatetime: new Date(),
         value: this.followUpForm.value.wantFollowUp,
         encounter: this.visitNotePresent.uuid
-      }).subscribe ( () => {
+      }).subscribe ( (res) => {
+         this.followUpForm.patchValue({
+            present: true,
+            wantFollowUp: 'No',
+            followUpDate : null,
+            followUpTime : null,
+            followUpReason :null,
+            uuid: res.uuid,
+            followUpType : null
+          });
       });
     }
   }
@@ -2531,7 +2560,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       // Handle medicines
       for (const medicine of this.medicines) {
         if (medicine?.uuid) continue;
-
+        this.updateInstructionRemarks(medicine);
         postObsRequests.push(
           this.encounterService.postObs({
             concept: conceptIds.conceptMed,
@@ -2698,6 +2727,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       // Handle medicines if addMedicine is in changedFields
       if (this.changedFields.includes('addMedicine')) {
         for (const medicine of this.medicines) {
+          this.updateInstructionRemarks(medicine);
           if (medicine?.uuid) continue;
           postObsRequests.push(
             this.encounterService.postObs({
@@ -3264,5 +3294,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get visitDemarcation() {
     return this.visitService.getDemarcation(this.visit?.encounters);
+  }
+
+  getInstructionRemarks() {
+    this.instructionRemarks = [];
+    this.visitService.getInstructionRemarks().subscribe((data: DataItemModel[]) => {
+      if (data) {
+        this.instructionRemarks = data;
+      }
+    });
+  }
+
+  updateInstructionRemarks(medicine:MedicineModel) {
+    const exists = this.instructionRemarks.some(item => item.name.trim().toLowerCase() === medicine.instructRemark.trim().toLowerCase());
+    if (!exists) {
+      const newItem = { id: Date.now(), name: medicine.instructRemark };
+      this.visitService.addInstructionRemarks(newItem).subscribe((data: DataItemModel[]) => {
+        if (data) {
+          this.getInstructionRemarks();
+        }
+      });
+    }
+  }
+
+  getOptions(term: string): Observable<string[]> {
+    // This could be an API call
+    let data = this.instructionRemarks.map((val) => val.name);
+    return of(data.filter(v => v.toLowerCase().includes(term.toLowerCase())));
   }
 }

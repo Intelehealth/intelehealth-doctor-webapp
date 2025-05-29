@@ -255,6 +255,22 @@ export class VisitService {
   }
 
   /**
+   * get InstructionRemarks of Medication
+   *  @return {Observable<any>}
+   */
+  getInstructionRemarks() : Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/instructionRemarkList`);
+  }
+
+  /**
+   * Add InstructionRemarks of Medication
+   *  @return {Observable<any>}
+   */
+   addInstructionRemarks(json: Object) : Observable<any>{
+    return this.http.post(`${this.baseURLMindmap}/instructionRemarks`, json);
+   }
+
+  /**
    * Post visit data to abdm
    * @param {any} json - Attribute payload
    * @return {Observable<any>}

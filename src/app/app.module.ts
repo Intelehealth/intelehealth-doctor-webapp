@@ -163,6 +163,8 @@ registerLocaleData(localeEn);
         "/\/socket\.io$/",
         "/\/ngsw\.json(\?.*)?$/",
         "/\/assets\/phone\.mp3$/",
+        `${environment.webrtcTokenServerUrl}api/startRecording`,
+        `${environment.webrtcTokenServerUrl}api/stopRecording`,
       ]
     }),
     NgxPermissionsModule.forRoot({
