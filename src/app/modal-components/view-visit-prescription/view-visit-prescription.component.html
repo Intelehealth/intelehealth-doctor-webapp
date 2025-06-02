@@ -33,7 +33,7 @@
                 data-test-id="imgPersonImage"
               />
             </div>
-            <div class="ml-3">
+            <div class="ml-2">
               <h6 data-test-id="etPatientName">
                 <span>{{ patient?.person?.preferredName?.givenName }}</span>
                 <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
@@ -41,6 +41,7 @@
                 <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ") "}}</span>
               </h6>
               <p data-test-id="etPatienOpenMRSId">{{ getPatientIdentifier("OpenMRS ID") }}</p>
+              <p data-test-id="etPatienOpenMRSId" *ngIf="getPatientIdentifier('MPI')"> {{ getPatientIdentifier("MPI") }} (MPI)</p>
             </div>
           </div>
         </div>

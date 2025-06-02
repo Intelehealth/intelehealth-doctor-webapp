@@ -804,7 +804,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           ul: [
-                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {
+                              text: [
+                                { text: 'Patient ID: ', bold: true },
+                                ` ${this.patient?.identifiers?.[0]?.identifier} (OpenMRS ID)`
+                              ]
+                              .concat(
+                                this.patient?.identifiers?.[1]?.identifier
+                                  ? [`, ${this.patient.identifiers[1].identifier} (MPI)`]
+                                  : []
+                              ),
+                              margin: [0, 5, 0, 5]
+                            },
                             {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
@@ -866,7 +877,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths: ['*', 'auto', 'auto', 'auto', 'auto'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+                              [{text: 'Drug name', style: 'tableHeader'}, {text: 'Type', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
                               ...this.getRecords('medication')
                             ]
                           },
@@ -1172,12 +1183,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           return response.blob();
         })
         .then(blob => {
-          return new Promise((resolve, _) => {
-              if (!blob) { resolve(''); }
+          return new Promise((resolve, reject) => {
+              if (!blob) { resolve(''); return; }
               const reader = new FileReader();
               reader.onloadend = () => resolve(reader.result);
               reader.readAsDataURL(blob);
           });
+        }).catch((error) => {
+          console.error('Failed to fetch and convert to data URL:', error);
+          return ''; // fallback
         });
   }
 
