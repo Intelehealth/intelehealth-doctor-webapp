@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-center mt-2">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
 
-            <div *ngIf="!noData && !existingAdvice.length && !isLoading" class="no-data-container text-center">
+            <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
@@ -18,7 +18,7 @@
                     <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span>
                     <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span>
                 </div>
-                <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
+                <button *ngIf="noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
                     {{'Try again'|translate}}
                 </button>
             </ng-container>
@@ -47,18 +47,18 @@
         Patient is allergic to penicilin. Please prescribe accordingly.
     </div> -->
 
-    <div class="intel-accordion-title">
-        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested medications</h6>
-    </div>
     <p class="note-con ml-2">
         <span class="note-label">Note:</span>
         This information is AI generated. Please rely on your medical judgement while referring to it.
     </p>
-    <!-- <div class="intel-accordion-title">
+    <div class="intel-accordion-title">
+        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested advice</h6>
+    </div>
+    <div class="intel-accordion-title">
         <p class="text-muted mb-3 diagnosis-list ml-2">
-            Select the diagnosis based on your medical judgement.
+            Select the advice based on your medical judgement.
         </p>
-    </div> -->
+    </div>
 
     <div class="diagnosis-container p-3">
         <div *ngFor="let advice of adviceList" 

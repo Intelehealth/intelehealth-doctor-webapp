@@ -2,15 +2,15 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AiTxService } from '../../services/aitx.service';
 
 @Component({
-  selector: 'lib-aillmtx-medication',
-  templateUrl: './aillmtx-medication.component.html',
-  styleUrls: ['./aillmtx-medication.component.scss']
+  selector: 'lib-aillmtx-followup',
+  templateUrl: './aillmtx-followup.component.html',
+  styleUrls: ['./aillmtx-followup.component.scss']
 })
-export class AillmtxMedicationComponent {
+export class AillmtxFollowupComponent {
   @Input() patientInfo: any;
   @Input() visit: any;
-  @Input() existingMedication: any[] = [];
-  @Output() medicationSelected = new EventEmitter<string[]>();
+  @Input() existingFollowUp: any[] = [];
+  @Output() followUpSelected = new EventEmitter<any[]>();
   @Input() diagnosisName: string;
   @Input() notesss: string;
   isLoading = false;
@@ -18,9 +18,9 @@ export class AillmtxMedicationComponent {
   noData = false;
   insufficientData = false;
   conclusion: string = '';
-  medicationList: any = []
+  followUpList: any = []
   furtherQuestionsList: any = []
-  selectedMedicine: any[] = [];
+  selectedFollowUp: any[] = [];
 
   constructor(
     private TxService: AiTxService,
@@ -28,16 +28,16 @@ export class AillmtxMedicationComponent {
 
   ngOnInit() {}
 
-  public getAIMedical(diagnosis?: string) {
+  public getAIFollowUp(diagnosis?: string) {
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
     this.isLoading = true;
-    this.medicationList = [];
+    this.followUpList = [];
     this.furtherQuestionsList = [];
     this.TxService.getAITTx(payload, diagnosis).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
-          this.medicationList = data.result.data.result.map(v => {
+          this.followUpList = data.result.data.result.map(v => {
             return {
               ...v,
             }
@@ -56,26 +56,28 @@ export class AillmtxMedicationComponent {
     });
   }
 
-  public getAIMedicalWithRetry(diagnosis: any) {    
+  public getAIFollowUpWithRetry(diagnosis: any) {    
     const MAX_RETRIES = 3;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
     const attemptDiagnosis = () => {
       this.isLoading = true;
-      this.medicationList = [];
+      this.followUpList = [];
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis).subscribe({
         next: (data: any) => {
-          if (data.result.medications.length > 0) {
+          console.log('AI Follow Up Data:', data.result.follow_up.length > 0, data.result.follow_up.length);
+          
+          if (data.result.follow_up.length > 0) {
             this.noData = false;
-            this.medicationList = data.result.medications.map(v => {
-
+            this.followUpList = data.result.follow_up.map(v => {
               return {
                 ...v,
               }
             });
           } else {
+            console.log('No follow-up data found');
             this.noData = true;
           }
           this.isLoading = false;
@@ -103,39 +105,37 @@ export class AillmtxMedicationComponent {
   }
 
   onTryAgain() {
-    this.getAIMedicalWithRetry(this.diagnosisName);
+    console.log(this.diagnosisName, "Retrying AI Follow Up");
+    this.getAIFollowUpWithRetry(this.diagnosisName);
   }
 
-  onAIMedicineChange(event: any) {
-    if (!event) {
-      this.selectedMedicine = [];
-    } else if (Array.isArray(event)) {
-      this.selectedMedicine = [...event];
+  onAIFollowUpChange(followup: any) {
+    if (!followup) {
+      this.selectedFollowUp = [];
+      this.followUpSelected.emit([]);
     } else {
-      const index = this.selectedMedicine.findIndex(m => m.name === event.name);
+      const index = this.selectedFollowUp.findIndex(f => f.reason_for_follow_up === followup.reason_for_follow_up);
       if (index > -1) {
-        this.selectedMedicine = this.selectedMedicine.filter(m => m.name !== event.name);
+        this.selectedFollowUp = this.selectedFollowUp.filter(f => f.reason_for_follow_up !== followup.reason_for_follow_up);
+        this.followUpSelected.emit([]);
       } else {
-        const medicineData = {
-          name: event.name,
-          dosage: event.dosage,
-          frequency: event.frequency,
-          duration: event.duration,
-          instructions: event.instructions,
-          uuid: event.uuid,
-          likelihood: event.likelihood
+        const followUpData = {
+          reason_for_follow_up: followup.reason_for_follow_up,
+          follow_up_duration: followup.follow_up_duration,
+          follow_up_required: followup.follow_up_required,
         };
-        this.selectedMedicine = [...this.selectedMedicine, medicineData];
+        this.selectedFollowUp = [followUpData];
+        this.followUpSelected.emit(this.selectedFollowUp);
       }
     }
-    this.medicationSelected.emit(this.selectedMedicine);
   }
 
-  isMedicineExists(medicine: string): boolean {
-    return this.existingMedication.some(d => d.drug === medicine);
+  isFollowUpExists(followup: string): boolean {
+    return this.existingFollowUp.some(f => f.followUpReason === followup);
   }
 
-  isMedicineSelected(medicine: any): boolean {
-    return this.selectedMedicine.some(m => m.name === medicine.name) || this.existingMedication.some(d => d.drug === medicine.name);
+  isFollowUpSelected(followup: any): boolean {
+    return this.selectedFollowUp.some(f => f.reason_for_follow_up === followup.reason_for_follow_up) || this.existingFollowUp.some(f => f.followUpReason === followup.reason_for_follow_up);
   }
 }
+

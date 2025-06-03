@@ -16,7 +16,7 @@ export class AiTxService {
     }
   }
 
-  getAIMedicalAdvice(casehistory: any, diagnosis: any) {
+  getAITTx(casehistory: any, diagnosis: any) {
     return this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory });
   }
 
@@ -106,9 +106,18 @@ ${vitals?.length ? vitalPayload : ""}`;
 
   markdownit(txt: any) {
     const md = markdownit();
-    let formattedText = txt.map(obj => {
-      return Object.entries(obj).map(([key, value]) => `**${key}**: ${value}`).join("\n");
-    }).join("\n\n");
+    let formattedText: string;
+    if (typeof txt === 'string') {
+      formattedText = txt;
+    } else if (Array.isArray(txt)) {
+      formattedText = txt.map(obj => {
+        return Object.entries(obj).map(([key, value]) => `**${key}**: ${value}`).join("\n");
+      }).join("\n\n");
+    } else {
+      // Fallback for unexpected input
+      formattedText = String(txt);
+    }
+
     return md.renderInline(formattedText);
   }
 }

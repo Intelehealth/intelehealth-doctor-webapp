@@ -1,4 +1,4 @@
-<ng-container *ngIf="!medicationList.length">
+<ng-container *ngIf="!followUpList.length">
     <div class="d-flex justify-content-center mt-2">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
             
@@ -7,7 +7,7 @@
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
                     <h3 class="text-danger">No diagnosis Provided</h3>
-                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Medicines suggestions.</p>
+                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Follow-up suggestions.</p>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="medicationList.length" class="mt-2">
+<ng-container *ngIf="followUpList.length" class="mt-2">
 
     <!-- <div class="alert">
         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -47,44 +47,45 @@
         Patient is allergic to penicilin. Please prescribe accordingly.
     </div> -->
 
+
     <p class="note-con ml-2">
         <span class="note-label">Note:</span>
         This information is AI generated. Please rely on your medical judgement while referring to it.
     </p>
     <div class="intel-accordion-title">
-        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested medications</h6>
+        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested follow-up</h6>
     </div>
     <div class="intel-accordion-title">
         <p class="text-muted mb-3 diagnosis-list ml-2">
-            Select the medication based on your medical judgement.
+            Select the follow-up based on your medical judgement.
         </p>
     </div>
 
     <div class="diagnosis-container p-3">
-        <div *ngFor="let medicine of medicationList" 
+        <div *ngFor="let followup of followUpList" 
              class="d-flex align-items-center mb-2"
-             [class.disabled-diagnosis]="isMedicineExists(medicine.name)">
+             [class.disabled-diagnosis]="isFollowUpExists(followup.reason_for_follow_up)">
             <input type="checkbox" class="custom-checkbox me-2"
-                [checked]="isMedicineSelected(medicine)"
-                [disabled]="isMedicineExists(medicine.name)"
-                (change)="onAIMedicineChange(medicine)">
-            <label class="fw-bold" [class.text-muted]="isMedicineExists(medicine.name)">
-                {{ medicine.name }}
-                <span class="text-muted ms-2">(likely {{ medicine.confidence }})</span>
+                [checked]="isFollowUpSelected(followup)"
+                [disabled]="isFollowUpExists(followup.reason_for_follow_up)"
+                (change)="onAIFollowUpChange(followup)">
+            <label class="fw-bold" [class.text-muted]="isFollowUpExists(followup.reason_for_follow_up)">
+                {{ followup.follow_up_duration }}, {{ followup.reason_for_follow_up }}
+                <!-- <span class="text-muted ms-2">(likely {{ followup.confidence }})</span> -->
             </label>
         </div>
     </div>
 
-    <div class="rationale-container">
+    <!-- <div class="rationale-container">
         <h5 class="fw-bold rationale">Rationale</h5>
-        <div *ngFor="let rationale of medicationList; let i = index" class="rationale-item p-3 mb-2">
+        <div *ngFor="let rationale of followUpList; let i = index" class="rationale-item p-3 mb-2">
             <h3 class="fw-bold">
-                {{ i + 1 }}. {{ rationale.name }}
+                {{ i + 1 }}. {{ rationale.reason_for_follow_up }}
                 <span class="text-muted small">(likely {{ rationale.confidence }})</span>
             </h3>
             <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
         </div>
-    </div>
+    </div> -->
 
 </ng-container>
 

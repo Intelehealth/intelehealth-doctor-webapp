@@ -2,15 +2,15 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AiTxService } from '../../services/aitx.service';
 
 @Component({
-  selector: 'lib-aillmtx-medication',
-  templateUrl: './aillmtx-medication.component.html',
-  styleUrls: ['./aillmtx-medication.component.scss']
+  selector: 'lib-aillmtx-test',
+  templateUrl: './aillmtx-test.component.html',
+  styleUrls: ['./aillmtx-test.component.scss']
 })
-export class AillmtxMedicationComponent {
+export class AillmtxTestComponent {
   @Input() patientInfo: any;
   @Input() visit: any;
-  @Input() existingMedication: any[] = [];
-  @Output() medicationSelected = new EventEmitter<string[]>();
+  @Input() existingTest: any[] = [];
+  @Output() testSelected = new EventEmitter<string[]>();
   @Input() diagnosisName: string;
   @Input() notesss: string;
   isLoading = false;
@@ -18,9 +18,9 @@ export class AillmtxMedicationComponent {
   noData = false;
   insufficientData = false;
   conclusion: string = '';
-  medicationList: any = []
+  testList: any = []
   furtherQuestionsList: any = []
-  selectedMedicine: any[] = [];
+  selectedTest: string[] = [];
 
   constructor(
     private TxService: AiTxService,
@@ -28,16 +28,16 @@ export class AillmtxMedicationComponent {
 
   ngOnInit() {}
 
-  public getAIMedical(diagnosis?: string) {
+  public getAITest(diagnosis?: string) {
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
     this.isLoading = true;
-    this.medicationList = [];
+    this.testList = [];
     this.furtherQuestionsList = [];
     this.TxService.getAITTx(payload, diagnosis).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
-          this.medicationList = data.result.data.result.map(v => {
+          this.testList = data.result.data.result.map(v => {
             return {
               ...v,
             }
@@ -56,23 +56,28 @@ export class AillmtxMedicationComponent {
     });
   }
 
-  public getAIMedicalWithRetry(diagnosis: any) {    
+  public getAITestWithRetry(diagnosis: any) {    
     const MAX_RETRIES = 3;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
     const attemptDiagnosis = () => {
       this.isLoading = true;
-      this.medicationList = [];
+      this.testList = [];
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis).subscribe({
         next: (data: any) => {
-          if (data.result.medications.length > 0) {
+          if (data.result.tests_to_be_done.length > 0) {
             this.noData = false;
-            this.medicationList = data.result.medications.map(v => {
-
+            this.testList = data.result.tests_to_be_done.map(v => {
+              console.log('Test:', {...v});
+              console.log('Test Reason:', v?.test_reason);
+              
+              console.log(this.TxService.markdownit(v?.test_reason));
+              
               return {
                 ...v,
+                rationale: this.TxService.markdownit(v?.rationale)
               }
             });
           } else {
@@ -103,39 +108,31 @@ export class AillmtxMedicationComponent {
   }
 
   onTryAgain() {
-    this.getAIMedicalWithRetry(this.diagnosisName);
+    this.getAITestWithRetry(this.diagnosisName)
   }
 
-  onAIMedicineChange(event: any) {
-    if (!event) {
-      this.selectedMedicine = [];
-    } else if (Array.isArray(event)) {
-      this.selectedMedicine = [...event];
+  onAITestChange(test: any) {
+    if (!test) {
+      this.selectedTest = [];
+    } else if (Array.isArray(test)) {
+      this.selectedTest = test.map(t => t.test_name || t);
     } else {
-      const index = this.selectedMedicine.findIndex(m => m.name === event.name);
-      if (index > -1) {
-        this.selectedMedicine = this.selectedMedicine.filter(m => m.name !== event.name);
+      const testName = test.test_name || test;
+      if (this.selectedTest.includes(testName)) {
+        this.selectedTest = this.selectedTest.filter(t => t !== testName);
       } else {
-        const medicineData = {
-          name: event.name,
-          dosage: event.dosage,
-          frequency: event.frequency,
-          duration: event.duration,
-          instructions: event.instructions,
-          uuid: event.uuid,
-          likelihood: event.likelihood
-        };
-        this.selectedMedicine = [...this.selectedMedicine, medicineData];
+        this.selectedTest = [...this.selectedTest, testName];
       }
     }
-    this.medicationSelected.emit(this.selectedMedicine);
+    this.testSelected.emit([...this.selectedTest]);
   }
 
-  isMedicineExists(medicine: string): boolean {
-    return this.existingMedication.some(d => d.drug === medicine);
+  isTestExists(test: string): boolean {
+    return this.existingTest.some(a => a.value === test);
   }
 
-  isMedicineSelected(medicine: any): boolean {
-    return this.selectedMedicine.some(m => m.name === medicine.name) || this.existingMedication.some(d => d.drug === medicine.name);
+  isTestSelected(test: any): boolean {
+    const testName = test.test_name || test;
+    return this.selectedTest.includes(testName) || this.existingTest.some(a => a.value === testName);
   }
 }

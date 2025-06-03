@@ -137,6 +137,7 @@
   .white-btn:disabled,
   .gray-btn:disabled {
     opacity: 0.5;
+    margin-bottom: 20px;
   }
 
   .blue-btn:focus,
@@ -279,7 +280,7 @@ textarea.form-control {
 .intel-accordion-title {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 6px;
 
   .ayu-icon {
     width: 44px;

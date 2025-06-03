@@ -11,6 +11,7 @@ export class AillmtxAdviceComponent {
   @Input() visit: any;
   @Input() existingAdvice: any[] = [];
   @Output() adviceSelected = new EventEmitter<string[]>();
+  @Input() diagnosisName: string;
   @Input() notesss: string;
   isLoading = false;
   hasError = false;
@@ -32,7 +33,7 @@ export class AillmtxAdviceComponent {
     this.isLoading = true;
     this.adviceList = [];
     this.furtherQuestionsList = [];
-    this.TxService.getAIMedicalAdvice(payload, diagnosis).subscribe({
+    this.TxService.getAITTx(payload, diagnosis).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
@@ -64,8 +65,9 @@ export class AillmtxAdviceComponent {
       this.isLoading = true;
       this.adviceList = [];
       this.furtherQuestionsList = [];
-      this.TxService.getAIMedicalAdvice(payload, diagnosis).subscribe({
+      this.TxService.getAITTx(payload, diagnosis).subscribe({
         next: (data: any) => {
+          console.log('AI Advice Up Data:', data.result.medical_advice.length > 0, data.result.medical_advice.length);
           if (data.result.medical_advice.length > 0) {
             this.noData = false;
             this.adviceList = data.result.medical_advice.map(v => {
@@ -101,7 +103,8 @@ export class AillmtxAdviceComponent {
   }
 
   onTryAgain() {
-    this.getAIAdvice(this.notesss);
+    console.log(this.diagnosisName, "Retrying AI Follow Up");
+    this.getAIAdviceWithRetry(this.diagnosisName);
   }
 
   onAIAdviceChange(advice: any) {

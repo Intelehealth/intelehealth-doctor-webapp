@@ -9,3 +9,6 @@ export * from './lib/aiddx-library.module';
 export * from './lib/token';
 export * from './lib/aillmtx-medication/aillmtx-medication.component';
 export * from './lib/aillmtx-advice/aillmtx-advice.component';
+export * from './lib/aillmtx-test/aillmtx-test.component';
+export * from './lib/aillmtx-referral/aillmtx-referral.component';
+export * from './lib/aillmtx-followup/aillmtx-followup.component';

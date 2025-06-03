@@ -7,6 +7,9 @@ import { AillmddxComponent } from '../public-api';
 import { TranslateModule } from '@ngx-translate/core';
 import { AillmtxMedicationComponent } from './aillmtx-medication/aillmtx-medication.component';
 import { AillmtxAdviceComponent } from './aillmtx-advice/aillmtx-advice.component';
+import { AillmtxTestComponent } from './aillmtx-test/aillmtx-test.component';
+import { AillmtxFollowupComponent } from './aillmtx-followup/aillmtx-followup.component';
+import { AillmtxReferralComponent } from './aillmtx-referral/aillmtx-referral.component';
 
 
 
@@ -14,7 +17,10 @@ import { AillmtxAdviceComponent } from './aillmtx-advice/aillmtx-advice.componen
   declarations: [
     AillmddxComponent,
     AillmtxMedicationComponent,
-    AillmtxAdviceComponent
+    AillmtxAdviceComponent,
+    AillmtxTestComponent,
+    AillmtxFollowupComponent,
+    AillmtxReferralComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +29,10 @@ import { AillmtxAdviceComponent } from './aillmtx-advice/aillmtx-advice.componen
   exports: [
     AillmddxComponent,
     AillmtxMedicationComponent,
-    AillmtxAdviceComponent
+    AillmtxAdviceComponent,
+    AillmtxTestComponent,
+    AillmtxFollowupComponent,
+    AillmtxReferralComponent
   ],
   providers: [
     { provide: ENVIRONMENT, useValue: {} }, // Default value (overridden by the main app)

@@ -48,7 +48,7 @@ export class AillmddxComponent {
     this.ddxSvc.getAIDiagnosis(payload).subscribe({
       next: (data: any) => {
         if (data?.conclusion) this.conclusion = data?.conclusion;
-        if (data.result.data.result.length > 0) {
+        if (data?.result?.data?.result?.length > 0) {
           this.noData = false;
           this.diagnosisList = data.result.data.result.map(v => {
             return {
@@ -60,7 +60,7 @@ export class AillmddxComponent {
         } else {
           this.noData = true;
         }
-        if(data.result.data.further_questions.length > 0) {
+        if(data?.result?.data?.further_questions?.length > 0) {
           this.furtherQuestionsList = data.result.data.further_questions.map(q => {
             const key = Object.keys(q)[0];
             return q[key];
@@ -100,7 +100,7 @@ export class AillmddxComponent {
       this.ddxSvc.getAIDiagnosis(payload).subscribe({
         next: (data: any) => {
           if (data?.conclusion) this.conclusion = data?.conclusion;
-          if (data.result.data.result.length > 0) {
+          if (data?.result?.data?.result?.length > 0) {
             this.noData = false;
             this.diagnosisList = data.result.data.result.map(v => {
               return {
@@ -109,14 +109,14 @@ export class AillmddxComponent {
                 rationale: this.ddxSvc.markdownit(v?.rationale)
               }
             });
+            if(data?.result?.data?.further_questions?.length > 0) {
+              this.furtherQuestionsList = data.result.data.further_questions.map(q => {
+                const key = Object.keys(q)[0];
+                return q[key];
+              });
+            }
           } else {
             this.noData = true;
-          }
-          if(data.result.data.further_questions.length > 0) {
-            this.furtherQuestionsList = data.result.data.further_questions.map(q => {
-              const key = Object.keys(q)[0];
-              return q[key];
-            });
           }
           this.isLoading = false;
         },
