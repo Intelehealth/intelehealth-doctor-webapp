@@ -88,6 +88,11 @@ th:last-child {
   }
 }
 
+.text-greyout {
+  pointer-events: none;
+  opacity: 0.60;
+}
+
 @media (max-width: 768px) {
   .card-header-actions {
     .btn {
@@ -189,6 +194,34 @@ th:last-child {
     font-size: 14px;
     color: grey;
     font-weight: normal;
+  }
+}
+
+.alert-icon {
+  position: relative;
+  bottom: 2px;
+  right: 6px;
+}
+
+.header-line {
+  height: 1px;
+  background: #EFE8FF;
+  margin: 0 24px;
+}
+
+.text-reminder {
+  color: red !important;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.disclaimer-card {
+  padding: 40px;
+  border-radius: 8px;
+  line-height: 1.5;
+
+  li {
+    font-size: 16px;
   }
 }
 

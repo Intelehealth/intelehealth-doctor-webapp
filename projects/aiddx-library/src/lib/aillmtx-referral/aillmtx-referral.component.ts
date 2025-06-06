@@ -37,12 +37,11 @@ export class AillmtxReferralComponent {
       next: (data: any) => {
         if (data?.result?.referral?.length > 0) {
           this.noData = false;
-          this.referralList = data.result.referral.map((v: any) => ({
-            referral_facility: v.referral_facility,
-            referral_required: v.referral_required,
-            referral_to: v.referral_to,
-            remark: v.remark
-          }));
+          this.referralList = data.result.referral.map((v: any) => {
+            return {
+              ...v,
+            }
+          });
         } else {
           this.noData = true;
         }
@@ -72,12 +71,11 @@ export class AillmtxReferralComponent {
         next: (data: any) => {
           if (data?.result?.referral?.length > 0) {
             this.noData = false;
-            this.referralList = data.result.referral.map((v: any) => ({
-              referral_facility: v.referral_facility,
-              referral_required: v.referral_required,
-              referral_to: v.referral_to,
-              remark: v.remark
-            }));
+            this.referralList = data.result.referral.map((v: any) => {
+              return {
+                ...v,
+              }
+            });
           } else {
             this.noData = true;
           }
@@ -114,28 +112,21 @@ export class AillmtxReferralComponent {
   onAIReferralChange(event: any) {
     if (!event) {
       this.selectedReferral = [];
-      this.referralSelected.emit([]);
-      return;
-    }
-
-    if (Array.isArray(event)) {
+    } else if (Array.isArray(event)) {
       this.selectedReferral = [...event];
-      this.referralSelected.emit(this.selectedReferral);
-      return;
-    }
-
-    const index = this.selectedReferral.findIndex(r => r.referral_to === event.referral_to);
-    
-    if (index > -1) {
-      this.selectedReferral = this.selectedReferral.filter(r => r.referral_to !== event.referral_to);
     } else {
-      const referralData = {
-        referral_facility: event.referral_facility,
-        referral_required: event.referral_required,
-        referral_to: event.referral_to,
-        remark: event.remark
-      };
-      this.selectedReferral = [...this.selectedReferral, referralData];
+      const index = this.selectedReferral.findIndex(r => r.referral_to === event.referral_to);
+      if (index > -1) {
+        this.selectedReferral = this.selectedReferral.filter(r => r.referral_to !== event.referral_to);
+      } else {
+        const referralData = {
+          referral_facility: event.referral_facility,
+          referral_required: event.referral_required,
+          referral_to: event.referral_to,
+          remark: event.remark
+        };
+        this.selectedReferral = [...this.selectedReferral, referralData];
+      }
     }
     this.referralSelected.emit(this.selectedReferral);
   }
@@ -145,6 +136,6 @@ export class AillmtxReferralComponent {
   }
 
   isReferralSelected(referral): boolean {
-    return this.selectedReferral.some(r => r.speciality === referral.referral_to) || this.existingReferral.some(d => d.speciality === referral.referral_to);
+    return this.selectedReferral.some(r => r.referral_to === referral.referral_to) || this.existingReferral.some(d => d.speciality === referral.referral_to);
   }
 }

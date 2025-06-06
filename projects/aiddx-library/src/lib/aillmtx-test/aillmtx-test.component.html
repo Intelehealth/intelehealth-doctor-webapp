@@ -75,16 +75,16 @@
         </div>
     </div>
 
-    <div class="rationale-container">
+    <!-- <div class="rationale-container">
         <h5 class="fw-bold rationale">Rationale</h5>
         <div *ngFor="let rationale of testList; let i = index" class="rationale-item p-3 mb-2">
             <h3 class="fw-bold">
                 {{ i + 1 }}. {{ rationale.test_name }}
-                <!-- <span class="text-muted small">(likely {{ rationale.likelihood }})</span> -->
+                <span class="text-muted small">(likely {{ rationale.likelihood }})</span>
             </h3>
             <p class="rationale-description" [innerHTML]="rationale.test_reason"></p>
         </div>
-    </div>
+    </div> -->
 
 </ng-container>
 

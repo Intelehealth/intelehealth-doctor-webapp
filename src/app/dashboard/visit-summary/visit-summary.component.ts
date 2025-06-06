@@ -256,7 +256,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   search4 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
   search5 = (text$: Observable<string>) => this.mainSearch(text$, this.daysList.map((val) => val.name));
   search6 = (text$: Observable<string>) => this.mainSearch(text$, this.durationUnitList.map((val) => val.name));
-  search7 = (text$: Observable<string>) => this.mainSearch(text$, instructionRemarks.map((val) => val.name));
+  search7 = (text$: Observable<string>) => this.searchInstructionRemark(text$);
 
   // Add this property to the component class
   obsData = {

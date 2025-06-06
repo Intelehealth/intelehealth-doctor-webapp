@@ -67,8 +67,6 @@ export class AillmtxFollowupComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis).subscribe({
         next: (data: any) => {
-          console.log('AI Follow Up Data:', data.result.follow_up.length > 0, data.result.follow_up.length);
-          
           if (data.result.follow_up.length > 0) {
             this.noData = false;
             this.followUpList = data.result.follow_up.map(v => {
@@ -77,7 +75,6 @@ export class AillmtxFollowupComponent {
               }
             });
           } else {
-            console.log('No follow-up data found');
             this.noData = true;
           }
           this.isLoading = false;
@@ -92,6 +89,7 @@ export class AillmtxFollowupComponent {
           } else {
             this.hasError = true;
             this.isLoading = false;
+            this.noData = true;
             console.error('Failed to get AI diagnosis after 3 attempts:', err);
           }
         },
@@ -109,25 +107,25 @@ export class AillmtxFollowupComponent {
     this.getAIFollowUpWithRetry(this.diagnosisName);
   }
 
-  onAIFollowUpChange(followup: any) {
-    if (!followup) {
+  onAIFollowUpChange(event: any) {
+    if (!event) {
       this.selectedFollowUp = [];
-      this.followUpSelected.emit([]);
+    } else if (Array.isArray(event)) {
+      this.selectedFollowUp = [...event];
     } else {
-      const index = this.selectedFollowUp.findIndex(f => f.reason_for_follow_up === followup.reason_for_follow_up);
+      const index = this.selectedFollowUp.findIndex(f => f.reason_for_follow_up === event.reason_for_follow_up);
       if (index > -1) {
-        this.selectedFollowUp = this.selectedFollowUp.filter(f => f.reason_for_follow_up !== followup.reason_for_follow_up);
-        this.followUpSelected.emit([]);
+        this.selectedFollowUp = this.selectedFollowUp.filter(f => f.reason_for_follow_up !== event.reason_for_follow_up);
       } else {
         const followUpData = {
-          reason_for_follow_up: followup.reason_for_follow_up,
-          follow_up_duration: followup.follow_up_duration,
-          follow_up_required: followup.follow_up_required,
+          reason_for_follow_up: event.reason_for_follow_up,
+          follow_up_duration: event.follow_up_duration,
+          follow_up_required: event.follow_up_required,
         };
-        this.selectedFollowUp = [followUpData];
-        this.followUpSelected.emit(this.selectedFollowUp);
+        this.selectedFollowUp = [...this.selectedFollowUp, followUpData];
       }
     }
+    this.followUpSelected.emit(this.selectedFollowUp);
   }
 
   isFollowUpExists(followup: string): boolean {

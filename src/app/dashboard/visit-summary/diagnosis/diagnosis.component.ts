@@ -742,6 +742,9 @@ export class DiagnosisComponent implements OnInit {
   deleteMedicine(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.medicines.splice(index, 1);
+        if (this.aillmtxMedicationComponent) {
+          this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
+        }
     });
   }
 
@@ -794,13 +797,10 @@ export class DiagnosisComponent implements OnInit {
       const advice = this.selectedAdvices[0];
       if (!this.advices.find((o: ObsModel) => o.value === advice)) {
         this.advices.push({ value: advice });
-        // Update existingAdvice when new advice is added
         if (this.aillmtxAdviceComponent) {
           this.aillmtxAdviceComponent.existingAdvice = [...this.advices];
         }
         this.removeAdvice(advice);
-
-        // Add postObs for AI-selected advice
         this.encounterService.postObs({
           concept: conceptIds.conceptAdvice,
           person: this.visit.patient.uuid,
@@ -818,7 +818,6 @@ export class DiagnosisComponent implements OnInit {
       }
       return;
     }
-
     if (this.addAdviceForm.invalid) {
       return;
     }
@@ -852,6 +851,9 @@ export class DiagnosisComponent implements OnInit {
   deleteAdvice(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.advices.splice(index, 1);
+      if (this.aillmtxAdviceComponent) {
+        this.aillmtxAdviceComponent.existingAdvice = [...this.advices];
+      }
     });
   }
 
@@ -956,13 +958,11 @@ export class DiagnosisComponent implements OnInit {
     if (this.addTestForm.invalid) {
       return;
     }
-
     const testValue = this.addTestForm.value.test;
     if (this.tests.find((o: TestModel) => o.value === testValue)) {
       this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       return;
     }
-
     const newTest: TestModel = { value: testValue, uuid: null };
     this.tests.push(newTest);
     this.addTestForm.reset();
@@ -989,6 +989,9 @@ export class DiagnosisComponent implements OnInit {
   deleteTest(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.tests.splice(index, 1);
+      if (this.aillmtxTestComponent) {
+        this.aillmtxTestComponent.existingTest = [...this.tests];
+      }
     });
   }
 
@@ -1125,16 +1128,6 @@ export class DiagnosisComponent implements OnInit {
       if (this.selectedReferrals.length === 0) {
         this.addReferralForm.reset();
         this.addReferralForm.controls.priority_refer.setValue('Elective');
-      } else {
-        const nextReferral = this.selectedReferrals[0] as ReferralModel;
-        if (nextReferral) {
-          this.addReferralForm.patchValue({
-            speciality: nextReferral.speciality,
-            facility: nextReferral.facility,
-            priority_refer: nextReferral.priority || 'Elective',
-            reason: nextReferral.reason
-          });
-        }
       }
     }
   }
@@ -1233,7 +1226,7 @@ export class DiagnosisComponent implements OnInit {
         value: this.followUpForm.value.wantFollowUp,
         encounter: this.visitNotePresent.uuid
       }).subscribe ( (res) => {
-         this.followUpForm.patchValue({
+          this.followUpForm.patchValue({
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
@@ -1242,6 +1235,16 @@ export class DiagnosisComponent implements OnInit {
             uuid: res.uuid,
             followUpType : null
           });
+          if (this.aillmtxFollowupComponent) {
+            this.aillmtxFollowupComponent.existingFollowUp.push({
+              present: true,
+              wantFollowUp: 'No',
+              followUpDate : null,
+              followUpTime : null,
+              followUpReason : null,
+              followUpType : null
+            });
+          }
       });
     }
   }
@@ -1252,39 +1255,39 @@ export class DiagnosisComponent implements OnInit {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      const folloUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
-      this.followUpForm.patchValue(folloUp);
+      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
+      this.followUpForm.patchValue(followUp);
       this.followUpDatetime = null;
       if (this.aillmtxFollowupComponent) {
-        this.aillmtxFollowupComponent.existingFollowUp = [folloUp];
+        this.aillmtxFollowupComponent.existingFollowUp = [];
+        this.aillmtxFollowupComponent.selectedFollowUp = [];
       }
     });
   }
 
   onAIFollowUpSelected(): void {
-    if (this.selectedFollowups && this.selectedFollowups.length > 0) {
-      const selectedFollowUp = this.selectedFollowups[0];
-      if (selectedFollowUp && selectedFollowUp.follow_up_duration && selectedFollowUp.reason_for_follow_up) {
-        const daysToAdd = this.convertDurationToDays(selectedFollowUp.follow_up_duration);
-        if (selectedFollowUp.follow_up_required) {
-          this.followUpForm.patchValue({
-            wantFollowUp: 'Yes',
-            followUpDate: moment().add(daysToAdd, 'days').toDate(),
-            followUpTime: null,
-            followUpReason: selectedFollowUp.reason_for_follow_up
-          });
-        } else {
-          this.followUpForm.patchValue({
-            wantFollowUp: 'No',
-            followUpDate: null,
-            followUpTime: null,
-            followUpReason: null
-          });
+    if(this.aillmtxFollowupComponent.existingFollowUp.length === 0){
+      if (this.selectedFollowups.length > 0) {
+        const selectedFollowUp = this.selectedFollowups[0];
+        if (selectedFollowUp && selectedFollowUp.follow_up_duration && selectedFollowUp.reason_for_follow_up) {
+          const daysToAdd = this.convertDurationToDays(selectedFollowUp.follow_up_duration);
+          if (selectedFollowUp.follow_up_required) {
+            this.followUpForm.patchValue({
+              wantFollowUp: 'Yes',
+              followUpDate: moment().add(daysToAdd, 'days').toDate(),
+              followUpTime: '10:00 AM',
+              followUpReason: selectedFollowUp.reason_for_follow_up
+            });
+          }
         }
+      } else {
+        this.followUpForm.reset();
       }
     } else {
       this.followUpForm.reset();
+      this.toastr.warning(this.translateService.instant('Required delete exit value'), this.translateService.instant('Follow-up Not Added'));
     }
+
   }
 
   convertDurationToDays(durationString) {
@@ -1312,15 +1315,10 @@ export class DiagnosisComponent implements OnInit {
   }
 
   removeFollowUp(follow: string): void {
-    if (this.aillmtxTestComponent) {
+    if (this.aillmtxFollowupComponent) {
       this.aillmtxFollowupComponent.onAIFollowUpChange(follow);
       if (this.selectedFollowups.length === 0) {
         this.followUpForm.reset();
-      } else {
-        const nextTest = this.selectedFollowups[0];
-        if (nextTest) {
-          this.followUpForm.patchValue({ follow: nextTest });
-        }
       }
     }
   }

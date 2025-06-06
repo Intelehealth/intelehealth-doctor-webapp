@@ -90,6 +90,7 @@ export class AillmtxMedicationComponent {
           } else {
             this.hasError = true;
             this.isLoading = false;
+            this.noData = true;
             console.error('Failed to get AI diagnosis after 3 attempts:', err);
           }
         },

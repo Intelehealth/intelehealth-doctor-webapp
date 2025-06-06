@@ -76,7 +76,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedAILLMColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedAILLMColumns"></tr>
+              <tr mat-row [ngClass]="!aiLlmfeatures.is_enabled ? 'text-greyout' : ''" *matRowDef="let row; columns: displayedAILLMColumns"></tr>
             </table>
           </div>
 
@@ -84,6 +84,36 @@
           <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">
             {{ "Publish" | translate }}
           </button>
+        </div>
+        <div class="header-line"></div>
+        <div class="disclaimer-card" [ngClass]="!aiLlmfeatures.is_enabled ? 'text-greyout' : ''">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon" style="width: 30px; height: 30px;"/>
+          <span class="text-reminder">Disclaimer</span>
+          <ul class="disclaimer-list mt-2">
+            <li>
+              <strong>This AI Assistant is a clinical decision support tool intended to assist—not replace—the clinical judgment of qualified healthcare professionals.</strong>
+              It provides guidance based on available medical knowledge, standard clinical protocols, and structured symptom inputs. However, it may not account for all
+              patient-specific factors, comorbidities, recent evidence updates, or the full context of care. Its recommendations should be viewed as supportive—not
+              definitive—especially in complex cases.
+            </li>
+            <li>
+              This tool is designed to support frontline providers, including those working in <strong>low-resource or remote settings</strong>, 
+              by improving access to evidence-based care pathways. <strong>However, it does not substitute for the oversight, contextual knowledge, 
+              and experience of a licensed medical professional. Use of this tool must comply with all applicable national, regional, and facility-level 
+              clinical guidelines and health regulations.</strong> It is the responsibility of the user to validate that the tool’s output aligns with 
+              local protocols and scope-of-practice norms.
+            </li>
+            <li>
+              The AI model powering this assistant operates based on structured data and predefined algorithms. <strong>It does not "understand" 
+              clinical nuance in the way a human does, and it has no awareness of individual patient risk factors unless explicitly entered.</strong> 
+              Limitations include incomplete contextual reasoning and potential bias from training data.
+            </li>
+            <li>
+              This tool is <strong>not intended for emergency use</strong> or autonomous clinical decision-making. Final decisions must always be made by a human provider.
+              By using this assistant, you acknowledge and accept these limitations and agree to use it only as a supplementary aid in patient care.
+            </li>
+          </ul>
         </div>
       </div>
     </div>

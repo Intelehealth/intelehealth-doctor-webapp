@@ -589,7 +589,7 @@
             <span *ngFor="let test of selectedTests" class="selected-item mr-2"
               [class.selected-primary]="test === selectedTests[0]">
               {{ test }}
-              <button class="remove-icon" mat-icon-button (click)="removeTest(advice)">
+              <button class="remove-icon" mat-icon-button (click)="removeTest(test)">
                 <mat-icon>close</mat-icon>
               </button>
             </span>
@@ -793,7 +793,7 @@
                   <span *ngFor="let refer of selectedReferrals" class="selected-item mr-2"
                     [class.selected-primary]="refer === selectedReferrals[0]">
                     {{ refer.referral_to }} - {{ refer.referral_facility }} - {{ refer.remark }}
-                    <button class="remove-icon" mat-icon-button (click)="removeReferral(medicine)">
+                    <button class="remove-icon" mat-icon-button (click)="removeReferral(refer)">
                       <mat-icon>close</mat-icon>
                     </button>
                   </span>
