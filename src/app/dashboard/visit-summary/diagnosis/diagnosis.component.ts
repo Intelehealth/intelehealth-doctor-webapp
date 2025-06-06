@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output } from '@angular/core';
+import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -98,6 +98,12 @@ export class DiagnosisComponent implements OnInit {
   @Input() isVisitNoteProvider: boolean = false;
   @Input() visitEnded: EncounterModel | string;
   @Input() patientInteractionNotesForm: FormGroup;
+  @Output() diagnosisSaved = new EventEmitter<any>();
+  @Output() medicationSaved = new EventEmitter<any>();
+  @Output() adviceSaved = new EventEmitter<any>();
+  @Output() testSaved = new EventEmitter<any>();
+  @Output() referralSaved = new EventEmitter<any>();
+  @Output() followUpSaved = new EventEmitter<any>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -318,8 +324,6 @@ export class DiagnosisComponent implements OnInit {
 
   checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
-    let lastMatchingObs: any = null; // <-- Track the last matching observation
-
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
@@ -333,7 +337,6 @@ export class DiagnosisComponent implements OnInit {
                 diagnosisStatus: obsData.type,
                 uuid: obsData.uuid,
               });
-              lastMatchingObs = obs; // <-- update with last matching
             } else {
               if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) {
                 this.diagnosisService.deleteObs(obs.uuid).subscribe();
@@ -349,21 +352,11 @@ export class DiagnosisComponent implements OnInit {
                   diagnosisStatus: obsValuesOne[1]?.trim(),
                   uuid: obs.uuid,
                 });
-                lastMatchingObs = obs; // <-- update with last matching
               }
             }
           }
         }
       });
-
-      if (lastMatchingObs) {
-        this.diagnosisName = lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim();
-        // this.aillmtxReferralComponent?.getAIReferralWithRetry(lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim());
-        // this.aillmtxMedicationComponent.getAIMedicalWithRetry(lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim()); //// Still work is pending
-        // this.aillmtxAdviceComponent.getAIAdviceWithRetry(lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim()); //// Still work is pending
-        // this.aillmtxTestComponent?.getAITestWithRetry(lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim()); //// Still work is pending
-        // this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(lastMatchingObs?.value.split("::").pop()?.split(":")[0].trim()); //// Still work is pending
-      }
     });
   }
 
@@ -449,39 +442,16 @@ export class DiagnosisComponent implements OnInit {
       this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
       this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
       this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-      this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName); //// ????????
+      this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
       this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
-      
+
       this.diagnosisSubject.next(this.selectedDiagnoses);
-      
-      // Ensure diagnosis type and status are set
-      const diagnosisType = this.diagnosisForm.value.diagnosisType;
-      const diagnosisStatus = this.diagnosisForm.value.diagnosisStatus;
-      
-      this.existingDiagnosis.push({ 
-        ...this.diagnosisForm.value, 
-        diagnosisName: this.diagnosisName,
-        diagnosisType: diagnosisType,
-        diagnosisStatus: diagnosisStatus
-      });
+      this.existingDiagnosis.push({ ...this.diagnosisForm.value, diagnosisName: this.diagnosisName });
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
       this.diagnosisForm.controls.diagnosisType.reset();
       this.diagnosisForm.controls.diagnosisStatus.reset();
-
-      // Add postObs for AI-selected diagnosis
-      this.encounterService.postObs({
-        concept: conceptIds.conceptDiagnosis,
-        person: this.visit.patient.uuid,
-        obsDatetime: new Date(),
-        value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${this.diagnosisName}:${diagnosisType} & ${diagnosisStatus}`,
-        encounter: this.visitNotePresent.uuid
-      }).subscribe((response: ObsModel) => {
-        if (response) {
-          const diagnosis = this.existingDiagnosis[this.existingDiagnosis.length - 1];
-          diagnosis.uuid = response.uuid;
-        }
-      });
+      this.diagnosisSaved.emit(this.existingDiagnosis);
     }
     if (this.diagnosisForm.invalid || !this.isVisitNoteProvider || !this.diagnosisValidated) {
       return;
@@ -490,12 +460,23 @@ export class DiagnosisComponent implements OnInit {
       this.toastr.warning(this.translateService.instant('Diagnosis Already Exist'), this.translateService.instant('Duplicate Diagnosis'));
       return;
     }
+    this.diagnosisName = this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ');
+    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
+    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
+    this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
+    this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
+    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
+
+    this.existingDiagnosis.push({ ...this.diagnosisForm.value, diagnosisName: this.diagnosisName });
+    this.diagnosisForm.reset();
+    this.diagnosisSaved.emit(this.existingDiagnosis);
   }
 
   deleteDiagnosis(index: number, uuid: string): void {
     if (uuid) {
       this.diagnosisService.deleteObs(uuid).subscribe(() => {
         this.existingDiagnosis.splice(index, 1);
+        this.diagnosisSaved.emit(this.existingDiagnosis);
       });
     } else {
       this.existingDiagnosis.splice(index, 1);
@@ -545,8 +526,8 @@ export class DiagnosisComponent implements OnInit {
             drug: nextMedicine.name,
             dose: nextMedicine.dosage,
             frequency: nextMedicine.frequency,
-            durationNo: nextMedicine.duration.split(' ')[0],
-            durationUnit: nextMedicine.duration.split(' ')[1],
+            durationNo: nextMedicine.duration,
+            durationUnit: nextMedicine.duration_unit,
             instructRemark: nextMedicine.instructions
           });
         }
@@ -561,8 +542,8 @@ export class DiagnosisComponent implements OnInit {
         drug: selectedMedicine.name,
         dose: selectedMedicine.dosage,
         frequency: selectedMedicine.frequency,
-        durationNo: selectedMedicine.duration.split(' ')[0],
-        durationUnit: selectedMedicine.duration.split(' ')[1],
+        durationNo: selectedMedicine.duration,
+        durationUnit: selectedMedicine.duration_unit,
         instructRemark: selectedMedicine.instructions
       });
     } else {
@@ -617,8 +598,8 @@ export class DiagnosisComponent implements OnInit {
         drug: medicine.name,
         dose: medicine.dosage,
         frequency: medicine.frequency,
-        durationNo: medicine.duration.split(' ')[0],
-        durationUnit: medicine.duration.split(' ')[1],
+        durationNo: medicine.duration,
+        durationUnit: medicine.duration_unit,
         instructRemark: medicine.instructions,
         uuid: medicine.uuid
       };
@@ -629,19 +610,7 @@ export class DiagnosisComponent implements OnInit {
           this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
         }
         this.removeMedicine(medicine);
-        
-        this.encounterService.postObs({
-          concept: conceptIds.conceptMed,
-          person: this.visit.patient.uuid,
-          obsDatetime: new Date(),
-          value: `${formattedMedicine.drug}:${formattedMedicine.dose}:${formattedMedicine.durationNo}:${formattedMedicine.durationUnit}:${formattedMedicine.instructRemark ?? ''}:${formattedMedicine.frequency ?? ''}`,
-          encounter: this.visitNotePresent.uuid
-        }).subscribe((response: ObsModel) => {
-          if (response) {
-            const medicine = this.medicines[this.medicines.length - 1];
-            medicine.uuid = response.uuid;
-          }
-        });
+        this.medicationSaved.emit(this.medicines);
         
         if (this.selectedMedication.length > 0) {
           const nextMedicine = this.selectedMedication[0];
@@ -650,8 +619,8 @@ export class DiagnosisComponent implements OnInit {
               drug: nextMedicine.name,
               dose: nextMedicine.dosage,
               frequency: nextMedicine.frequency,
-              durationNo: nextMedicine.duration.split(' ')[0],
-              durationUnit: nextMedicine.duration.split(' ')[1],
+              durationNo: nextMedicine.duration,
+              durationUnit: nextMedicine.duration_unit,
               instructRemark: nextMedicine.instructions
             });
 
@@ -679,19 +648,7 @@ export class DiagnosisComponent implements OnInit {
     }
     this.medicines.push({ ...this.addMedicineForm.value });
     this.addMedicineForm.reset();
-
-    this.encounterService.postObs({
-      concept: conceptIds.conceptMed,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.addMedicineForm.value.drug}:${this.addMedicineForm.value.dose}:${this.addMedicineForm.value.durationNo}:${this.addMedicineForm.value.durationUnit}:${this.addMedicineForm.value.instructRemark ?? ''}:${this.addMedicineForm.value.frequency ?? ''}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((response: ObsModel) => {
-      if (response) {
-        const medicine = this.medicines[this.medicines.length - 1];
-        medicine.uuid = response.uuid;
-      }
-    });
+    this.medicationSaved.emit(this.medicines);
   }
   
   checkIfMedicationPresent(): void {
@@ -742,9 +699,10 @@ export class DiagnosisComponent implements OnInit {
   deleteMedicine(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.medicines.splice(index, 1);
-        if (this.aillmtxMedicationComponent) {
-          this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
-        }
+      if (this.aillmtxMedicationComponent) {
+        this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
+      }
+      this.medicationSaved.emit(this.medicines);
     });
   }
 
@@ -801,18 +759,7 @@ export class DiagnosisComponent implements OnInit {
           this.aillmtxAdviceComponent.existingAdvice = [...this.advices];
         }
         this.removeAdvice(advice);
-        this.encounterService.postObs({
-          concept: conceptIds.conceptAdvice,
-          person: this.visit.patient.uuid,
-          obsDatetime: new Date(),
-          value: advice,
-          encounter: this.visitNotePresent.uuid
-        }).subscribe((response: ObsModel) => {
-          if (response) {
-            const advice = this.advices[this.advices.length - 1];
-            advice.uuid = response.uuid;
-          }
-        });
+        this.adviceSaved.emit(this.advices);
       } else {
         this.toastr.warning(this.translateService.instant('Advice already added, please add another advice.'), this.translateService.instant('Already Added'));
       }
@@ -827,19 +774,7 @@ export class DiagnosisComponent implements OnInit {
     }
     this.advices.push({ value: this.addAdviceForm.value.advice });
     this.addAdviceForm.reset();
-
-    this.encounterService.postObs({
-      concept: conceptIds.conceptAdvice,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addAdviceForm.value.advice,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((response: ObsModel) => {
-      if (response) {
-        const advice = this.advices[this.advices.length - 1];
-        advice.uuid = response.uuid;
-      }
-    });
+    this.adviceSaved.emit(this.advices);
   }
 
   /**
@@ -854,6 +789,7 @@ export class DiagnosisComponent implements OnInit {
       if (this.aillmtxAdviceComponent) {
         this.aillmtxAdviceComponent.existingAdvice = [...this.advices];
       }
+      this.adviceSaved.emit(this.advices);
     });
   }
 
@@ -939,17 +875,7 @@ export class DiagnosisComponent implements OnInit {
           this.aillmtxTestComponent.existingTest = [...this.tests];
         }
         this.removeTest(test);
-        this.encounterService.postObs({
-          concept: conceptIds.conceptTest,
-          person: this.visit.patient.uuid,
-          obsDatetime: new Date(),
-          value: test,
-          encounter: this.visitNotePresent.uuid
-        }).subscribe((response: ObsModel) => {
-          if (response) {
-            newTest.uuid = response.uuid;
-          }
-        });
+        this.testSaved.emit(this.tests);
       } else {
         this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       }
@@ -966,18 +892,7 @@ export class DiagnosisComponent implements OnInit {
     const newTest: TestModel = { value: testValue, uuid: null };
     this.tests.push(newTest);
     this.addTestForm.reset();
-
-    this.encounterService.postObs({
-      concept: conceptIds.conceptTest,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: testValue,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((response: ObsModel) => {
-      if (response) {
-        newTest.uuid = response.uuid;
-      }
-    });
+    this.testSaved.emit(this.tests);
   }
 
   /**
@@ -992,6 +907,7 @@ export class DiagnosisComponent implements OnInit {
       if (this.aillmtxTestComponent) {
         this.aillmtxTestComponent.existingTest = [...this.tests];
       }
+      this.testSaved.emit(this.tests);
     });
   }
 
@@ -1056,40 +972,47 @@ export class DiagnosisComponent implements OnInit {
   addReferral(): void {
     if (this.selectedReferrals.length > 0) {
       const selectedReferral = this.selectedReferrals[0] as any;
-      const formValues = { ...this.addReferralForm.value };
-      const refer_reason = formValues.reason ? formValues.reason : '';
+      const refer_reason = selectedReferral.remark ? selectedReferral.remark : '';
+      const formattedReferral = { 
+        speciality: selectedReferral.referral_to, 
+        facility: selectedReferral.referral_facility, 
+        priority: 'Elective', 
+        reason: refer_reason
+      };
 
-      this.referrals.push({ 
-        speciality: formValues.speciality, 
-        facility: formValues.facility, 
-        priority: formValues.priority_refer, 
-        reason: refer_reason 
-      });
-
-      if (this.aillmtxReferralComponent) {
-        this.aillmtxReferralComponent.existingReferral = [...this.referrals];
-      }
-
-      this.addReferralForm.reset();
-      this.addReferralForm.controls.priority_refer.setValue('Elective');
-      this.removeReferral(selectedReferral);
-      this.encounterService.postObs({
-        concept: conceptIds.conceptReferral,
-        person: this.visit.patient.uuid,
-        obsDatetime: new Date(),
-        value: `${formValues.speciality}:${formValues.facility}:${formValues.priority_refer}:${refer_reason}`,
-        encounter: this.visitNotePresent.uuid,
-      }).subscribe((response: ObsModel) => {
-        if (response) {
-          const lastReferral = this.referrals[this.referrals.length - 1];
-          lastReferral.uuid = response.uuid;
+      if(!this.referrals.find((o: ReferralModel) => o.speciality === formattedReferral.speciality)) {
+        this.referrals.push(formattedReferral);
+        if (this.aillmtxReferralComponent) {
+          this.aillmtxReferralComponent.existingReferral = [...this.referrals];
         }
-      });
+        this.addReferralForm.controls.priority_refer.setValue('Elective');
+        this.removeReferral(selectedReferral);
+        this.referralSaved.emit(this.referrals);
+      } else {
+        this.toastr.warning(this.translateService.instant('Referral already added, please add another referral.'), this.translateService.instant('Already Added'));
+      }
+      return;
     }
+
+    if (this.addReferralForm.invalid || !this.isVisitNoteProvider) {
+      return;
+    }
+
     if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
       this.toastr.warning(this.translateService.instant('Referral already added, please add another referral.'), this.translateService.instant('Already Added'));
       return;
     }
+
+    const refer_reason = this.addReferralForm.value.reason ? this.addReferralForm.value.reason : '';
+    this.referrals.push({ 
+      speciality: this.addReferralForm.value.speciality, 
+      facility: this.addReferralForm.value.facility, 
+      priority: this.addReferralForm.value.priority_refer, 
+      reason: refer_reason 
+    });
+    this.addReferralForm.reset();
+    this.addReferralForm.controls.priority_refer.setValue('Elective');
+    this.referralSaved.emit(this.referrals);
   }
 
   /**
@@ -1104,6 +1027,7 @@ export class DiagnosisComponent implements OnInit {
       if (this.aillmtxReferralComponent) {
         this.aillmtxReferralComponent.existingReferral = [...this.referrals];
       }
+      this.referralSaved.emit(this.referrals);
     });
   }
 
@@ -1122,7 +1046,7 @@ export class DiagnosisComponent implements OnInit {
     }
   }
 
-  removeReferral(referral: ReferralModel): void {
+  removeReferral(referral: any): void {
     if (this.aillmtxReferralComponent) {
       this.aillmtxReferralComponent.onAIReferralChange(referral);
       if (this.selectedReferrals.length === 0) {
@@ -1217,6 +1141,7 @@ export class DiagnosisComponent implements OnInit {
             followUpType : null
           });
         });
+        this.followUpSaved.emit(this.followUpForm.value);
       }
     } else {
       this.encounterService.postObs({
@@ -1246,6 +1171,7 @@ export class DiagnosisComponent implements OnInit {
             });
           }
       });
+      this.followUpSaved.emit(this.followUpForm.value);
     }
   }
 
@@ -1262,6 +1188,7 @@ export class DiagnosisComponent implements OnInit {
         this.aillmtxFollowupComponent.existingFollowUp = [];
         this.aillmtxFollowupComponent.selectedFollowUp = [];
       }
+      this.followUpSaved.emit(followUp);
     });
   }
 
@@ -1319,6 +1246,11 @@ export class DiagnosisComponent implements OnInit {
       this.aillmtxFollowupComponent.onAIFollowUpChange(follow);
       if (this.selectedFollowups.length === 0) {
         this.followUpForm.reset();
+        Object.keys(this.followUpForm.controls).forEach(key => {
+          const control = this.followUpForm.get(key);
+          control?.clearValidators();
+          control?.updateValueAndValidity();
+        });
       }
     }
   }

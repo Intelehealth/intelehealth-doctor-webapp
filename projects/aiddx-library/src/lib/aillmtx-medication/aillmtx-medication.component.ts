@@ -122,6 +122,7 @@ export class AillmtxMedicationComponent {
           dosage: event.dosage,
           frequency: event.frequency,
           duration: event.duration,
+          duration_unit: event.duration_unit,
           instructions: event.instructions,
           uuid: event.uuid,
           likelihood: event.likelihood

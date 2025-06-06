@@ -202,6 +202,57 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
         this.ddxCompRef.instance.visitEnded = this.visitEnded;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
+        
+        // Subscribe to diagnosis saved event
+        this.ddxCompRef.instance.diagnosisSaved.subscribe((diagnoses: any[]) => {
+          this.existingDiagnosis = [...diagnoses];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.diagnosis = diagnoses;
+          }
+        });
+        // Subscribe to medication saved event
+        this.ddxCompRef.instance.medicationSaved.subscribe((medicines: any[]) => {
+          this.medicines = [...medicines];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.medicines = medicines;
+          }
+        });
+        // Subscribe to advice saved event
+        this.ddxCompRef.instance.adviceSaved.subscribe((advices: any[]) => {
+          this.advices = [...advices];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.advice = advices;
+          }
+        });
+        // Subscribe to test saved event
+        this.ddxCompRef.instance.testSaved.subscribe((tests: any[]) => {
+          this.tests = [...tests];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.tests = tests;
+          }
+        });
+        // Subscribe to referral saved event
+        this.ddxCompRef.instance.referralSaved.subscribe((referrals: any[]) => {
+          this.referrals = [...referrals];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.referrals = referrals;
+          }
+        });
+        // Subscribe to follow-up saved event
+        this.ddxCompRef.instance.followUpSaved.subscribe((followUp: any) => {
+          if (this.followUpForm) {
+            this.followUpForm.patchValue(followUp);
+          }
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.followUp = followUp;
+          }
+        });
       }
     }, 1000);
   }

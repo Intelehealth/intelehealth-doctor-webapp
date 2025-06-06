@@ -360,7 +360,7 @@
                 <div class="selected-diagnoses mt-1" *ngIf="selectedMedication.length > 0">
                   <span *ngFor="let medicine of selectedMedication" class="selected-item mr-2"
                     [class.selected-primary]="medicine === selectedMedication[0]">
-                    {{ medicine.name }} - {{ medicine.dosage }} - {{ medicine.frequency }} - {{ medicine.duration.split(' ')[0] }} - {{ medicine.duration.split(' ')[1] }} - {{ medicine.instructions }}
+                    {{ medicine.name }} - {{ medicine.dosage }} - {{ medicine.frequency }} - {{ medicine.duration }} - {{ medicine.duration_unit }} - {{ medicine.instructions }}
                     <button class="remove-icon" mat-icon-button (click)="removeMedicine(medicine)">
                       <mat-icon>close</mat-icon>
                     </button>

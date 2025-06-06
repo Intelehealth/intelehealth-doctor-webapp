@@ -88,11 +88,6 @@ th:last-child {
   }
 }
 
-.text-greyout {
-  pointer-events: none;
-  opacity: 0.60;
-}
-
 @media (max-width: 768px) {
   .card-header-actions {
     .btn {
@@ -197,6 +192,11 @@ th:last-child {
   }
 }
 
+.text-greyout {
+  pointer-events: none;
+  opacity: 0.70;
+}
+
 .alert-icon {
   position: relative;
   bottom: 2px;
@@ -219,9 +219,16 @@ th:last-child {
   padding: 40px;
   border-radius: 8px;
   line-height: 1.5;
+  font-family: DM Sans;
 
   li {
     font-size: 16px;
+    letter-spacing: 0.3px;
+  }
+
+  strong {
+    font-weight: 900;
+    letter-spacing: 0.3px;
   }
 }
 
