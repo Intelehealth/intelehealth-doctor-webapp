@@ -10,6 +10,7 @@ import { AillmtxAdviceComponent } from './aillmtx-advice/aillmtx-advice.componen
 import { AillmtxTestComponent } from './aillmtx-test/aillmtx-test.component';
 import { AillmtxFollowupComponent } from './aillmtx-followup/aillmtx-followup.component';
 import { AillmtxReferralComponent } from './aillmtx-referral/aillmtx-referral.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -20,11 +21,12 @@ import { AillmtxReferralComponent } from './aillmtx-referral/aillmtx-referral.co
     AillmtxAdviceComponent,
     AillmtxTestComponent,
     AillmtxFollowupComponent,
-    AillmtxReferralComponent
+    AillmtxReferralComponent,
   ],
   imports: [
     CommonModule,
-    TranslateModule
+    TranslateModule,
+    MatTooltipModule
   ],
   exports: [
     AillmddxComponent,
