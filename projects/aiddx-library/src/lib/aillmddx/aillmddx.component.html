@@ -53,8 +53,8 @@
             {{point[i+1]}}
          </li>
         </ul>   
-         <button class="read-more" matTooltip="{{rationale.rationale}}" matTooltipPosition="below"
-          matTooltipHideDelay="6000"  matTooltipClass="white-tooltip">Read more</button>
+         <button class="read-more" [matMenuTriggerFor]="menu" [ngClass]="{ 'active-btn': isActive && selectedIndex === i}"
+          (mouseenter)="setMenuContent(rationale.rationale);" (click)="isActive= !isActive;  selectedIndex = i">Read more</button>
       </div>
       </div>
     </div>
@@ -69,6 +69,12 @@
   </div>
 </div>
 
+    <!-- Mat Menu -->
+    <mat-menu #menu="matMenu" class="custom-html-menu">
+      <div [innerHTML]="menuContent" style="padding: 10px; max-width: 300px;
+        background: radial-gradient(50% 50% at 50% 50%, rgba(204, 255, 240, 0.06) 0%, rgba(13, 212, 152, 0.06) 100%);
+  border: 1px solid #75DEBE;"></div>
+    </mat-menu>
     <!-- <div class="diagnosis-container p-3">
         <div *ngFor="let diagnosis of diagnosisList" 
              class="d-flex align-items-center mb-2"
@@ -83,7 +89,7 @@
             </label>
         </div>
     </div> -->
-</ng-container>
+  </ng-container>
 
 
 <!-- <div *ngIf="furtherQuestionsList.length" class="rationale-container">

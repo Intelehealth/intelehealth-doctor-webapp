@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AiddxService } from '../../services/aiddx.service';
+import { MatDialog } from '@angular/material/dialog';
 // import { dummyPayload, response } from '../token';
 
 @Component({
@@ -12,12 +13,15 @@ export class AillmddxComponent {
   @Input() visit: any;
   @Input() existingDiagnosis: any[] = [];
   @Output() diagnosisSelected = new EventEmitter<string[]>();
+  @Output() furtherQuestionsListReceived = new EventEmitter<any[]>();
   @Input() notes: string;
   isLoading = false;
   hasError = false;
   noData = false;
   insufficientData = false;
+  isActive = false;
   conclusion: string = '';
+  menuContent: string = '';
   questions = [
     {
       title: 'Key symptoms and their characteristics',
@@ -35,7 +39,7 @@ export class AillmddxComponent {
   selectedDiagnosis: string[] = [];
 
   constructor(
-    private ddxSvc: AiddxService,
+    private ddxSvc: AiddxService, private dialog: MatDialog
   ) { }
 
   ngOnInit() {}
@@ -65,6 +69,7 @@ export class AillmddxComponent {
             const key = Object.keys(q)[0];
             return q[key];
           });
+           this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
         }
       },
       error: (err: any) => {
@@ -114,6 +119,7 @@ export class AillmddxComponent {
                 const key = Object.keys(q)[0];
                 return q[key];
               });
+              this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
             }
           } else {
             this.noData = true;
@@ -169,5 +175,9 @@ export class AillmddxComponent {
 
   isDiagnosisSelected(diagnosis: string): boolean {
     return this.selectedDiagnosis.includes(diagnosis) || this.existingDiagnosis.some(d => d?.diagnosisName === diagnosis);
+  }
+
+  setMenuContent(item: any) {
+    this.menuContent = item;
   }
 }
