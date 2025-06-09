@@ -944,7 +944,7 @@ th.mat-header-cell:last-child {
 }
 
 .notes-section {
-  padding: 24px;
+  padding: 12px;
   background: #E6FFF3;
   border-radius: 12px;
   margin-bottom: 16px;
@@ -963,9 +963,58 @@ th.mat-header-cell:last-child {
     margin-bottom: 16px;
   }
 
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .notes-form {
+      flex: 1;
+    }
+
+    .notes-form label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .notes-form textarea {
+      height: 100px;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .suggestions-box {
+      flex: 1;
+      background-color: white;
+      border: 1px solid #E5FFF3;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: fit-content;
+    }
+
+    .suggestions-box h4 {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .suggestions-box ul {
+      padding-left: 20px;
+      margin: 10px 0 0;
+      font-size: 14px;
+    }
+
+    .suggestions-box li {
+      margin-bottom: 6px;
+    }
+
   .notes-textarea {
     width: 100%;
-    min-height: 120px;
+    min-height: 100px;
     padding: 16px;
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -990,6 +1039,11 @@ th.mat-header-cell:last-child {
       cursor: not-allowed;
     }
   }
+
+   .textarea2 {
+      resize: vertical;
+      height: 200px;
+   }
 
   .save-btn {
     background: #4CAF50;

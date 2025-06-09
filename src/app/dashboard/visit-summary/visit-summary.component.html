@@ -1081,9 +1081,12 @@
                 </li>
               </ul>
               <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'" class="notes-section">
-                <h6 class="notes-label">Notes</h6>
-                <form [formGroup]="patientInteractionNotesForm">
-                  <textarea
+              <div class="top-row">
+                <div class="notes-form">
+                   <h6 class="notes-label">Notes</h6>
+                   <small class="grey-color">Add notes on the interaction to support future reference</small>
+                    <form class="mt-3" [formGroup]="patientInteractionNotesForm">
+                      <textarea
                     formControlName="value"
                     class="notes-textarea"
                     rows="3"
@@ -1093,8 +1096,24 @@
                   ></textarea>
                   <button [disabled]="!patientInteractionNotesForm.value.value" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded" type="submit" (click)="saveDDxNotes()" class="save-btn">Save</button>
                 </form>
+                </div>
+
+                <div class="suggestions-box">
+                  <div style="margin-top: 0;display: flex;justify-content: space-between;">
+                      <h4><img src="assets/svgs/ayu-ddx.svg" alt="" />
+                       Ayu suggested questions</h4> 
+                    <span style="font-size: 12px; color: #888;">Show details</span>
+                  </div>
+                  <ul>
+                    <li>Key symptoms and their characteristics</li>
+                    <li>Could you describe your cough in more detail (e.g., frequency, intensity, timing)?</li>
+                    <li>Have you experienced any recent travel or exposure to sick individuals?</li>
+                    <li>Are there any known allergens or irritants in your environment that could be contributing to your symptoms?</li>
+                  </ul>
+                </div>
               </div>
-            </mat-expansion-panel>  
+            </div>
+          </mat-expansion-panel>  
 
             <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'; else diagnosisTemplate" id="ddxContainer" #lazyDDxContainer></div>
             <ng-template #diagnosisTemplate>
