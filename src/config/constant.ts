@@ -1,6 +1,8 @@
 export const notifications = {
     ADMIN_UNREAD_COUNT:'adminUnreadCount',
     GET_ADMIN_UNREAD_COUNT:'getAdminUnreadCount',
+    DOCTOR_ADMIN_UNREAD_COUNT:'doctorAdminUnreadCount',
+    GET_DOCTOR_ADMIN_UNREAD_COUNT:'getDoctorAdminUnreadCount',
     DOCTOR_UNREAD_COUNT:'drUnreadCount',
     GET_DOCTOR_UNREAD_COUNT:'getDrUnreadCount',
     SUPPORT_MESSAGE:'supportMessage',
