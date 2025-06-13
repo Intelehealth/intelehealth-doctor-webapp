@@ -85,6 +85,22 @@
         font-size: 20px;
         color: var(--color-darkBlue);
       }
+
+      .dot {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+      }
     }
 
     .help-tour-button{
