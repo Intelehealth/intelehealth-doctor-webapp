@@ -966,7 +966,7 @@ th.mat-header-cell:last-child {
     .top-row {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
+      gap: 24px;
     }
 
     .notes-form {
@@ -991,10 +991,10 @@ th.mat-header-cell:last-child {
     .suggestions-box {
       flex: 1;
       background-color: white;
-      border: 1px solid #E5FFF3;
+      border: 1px solid #75DEBE;
       border-radius: 10px;
       padding: 15px;
-      max-height: fit-content;
+      // max-height: fit-content;
     }
 
     .suggestions-box h4 {

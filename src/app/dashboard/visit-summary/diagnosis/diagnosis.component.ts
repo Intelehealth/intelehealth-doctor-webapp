@@ -104,6 +104,7 @@ export class DiagnosisComponent implements OnInit {
   @Output() testSaved = new EventEmitter<any>();
   @Output() referralSaved = new EventEmitter<any>();
   @Output() followUpSaved = new EventEmitter<any>();
+  @Output() furtherQuestionsReceived = new EventEmitter<string[]>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -155,7 +156,8 @@ export class DiagnosisComponent implements OnInit {
   referSpecializations: DropdownItemModel[] = [];
   diagnostics: DiagnosticModel[] = [];
   timeList: string[] = [];
-  
+  minDate = new Date();
+
   constructor(
     private fb: FormBuilder,
     public appConfigService: AppConfigService,
@@ -244,6 +246,13 @@ export class DiagnosisComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this.formControlValueChanges();
+    if (this.hasAILLMEnabled && this.aillmddxComponent) {
+      this.aillmddxComponent.furtherQuestionsListReceived.subscribe((questions: string[]) => {
+        if (questions && questions.length) {
+          this.furtherQuestionsReceived.emit(questions);
+        }
+      });
+    }
   }
 
   ngOnInit() {

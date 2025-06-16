@@ -104,6 +104,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.header = val;
     });
 
+    // Check initial route for visit summary
+    this.routeUrl = this.router.url;
+    if (this.routeUrl.includes('/visit-summary/')) {
+      this.collapsed = true;
+    }
+
     this.breakpointObserver.observe(['(max-width: 768px)']).subscribe((result: BreakpointState) => {
       if (result.matches) {
         this.isMobile = true;
@@ -125,6 +131,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
+
+    // Collapse sidebar when visit summary screen is openedAdd commentMore actions
+    if (this.routeUrl.includes('/visit-summary/')) {
+      this.collapsed = true;
+    } else {
+      this.collapsed = false;
+    }
 
     this.subscription1 = this.socketService.adminUnread.subscribe(res => {
       this.adminUnread = res;

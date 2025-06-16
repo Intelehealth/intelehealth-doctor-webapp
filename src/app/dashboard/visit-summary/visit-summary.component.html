@@ -1083,32 +1083,29 @@
               <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'" class="notes-section">
               <div class="top-row">
                 <div class="notes-form">
-                   <h6 class="notes-label">Notes</h6>
-                   <small class="grey-color">Add notes on the interaction to support future reference</small>
-                    <form class="mt-3" [formGroup]="patientInteractionNotesForm">
-                      <textarea
-                    formControlName="value"
-                    class="notes-textarea"
-                    rows="3"
-                    placeholder="Type here"
-                    (keyup)="autoGrowTextZone($event)"
-                    [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
-                  ></textarea>
-                  <button [disabled]="!patientInteractionNotesForm.value.value" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded" type="submit" (click)="saveDDxNotes()" class="save-btn">Save</button>
-                </form>
+                  <h6 class="notes-label">Notes</h6>
+                  <small class="grey-color">Add notes on the interaction to support future reference</small>
+                  <form class="mt-3" [formGroup]="patientInteractionNotesForm">
+                    <textarea
+                      formControlName="value"
+                      class="notes-textarea"
+                      rows="3"
+                      placeholder="Type here"
+                      (keyup)="autoGrowTextZone($event)"
+                      [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
+                    ></textarea>
+                    <button [disabled]="!patientInteractionNotesForm.value.value" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded" type="submit" (click)="saveDDxNotes()" class="save-btn">Save</button>
+                  </form>
                 </div>
 
-                <div class="suggestions-box">
+                <!-- Further Questions Section -->
+                <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box">
                   <div style="margin-top: 0;display: flex;justify-content: space-between;">
-                      <h4><img src="assets/svgs/ayu-ddx.svg" alt="" />
-                       Ayu suggested questions</h4> 
+                    <h4><img src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested questions</h4> 
                     <span style="font-size: 12px; color: #888;">Show details</span>
                   </div>
-                  <ul>
-                    <li>Key symptoms and their characteristics</li>
-                    <li>Could you describe your cough in more detail (e.g., frequency, intensity, timing)?</li>
-                    <li>Have you experienced any recent travel or exposure to sick individuals?</li>
-                    <li>Are there any known allergens or irritants in your environment that could be contributing to your symptoms?</li>
+                  <ul class="question-list">
+                    <li *ngFor="let question of furtherQuestionsList">{{ question }}</li>
                   </ul>
                 </div>
               </div>

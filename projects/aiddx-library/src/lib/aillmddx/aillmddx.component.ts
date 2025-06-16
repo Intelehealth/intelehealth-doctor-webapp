@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './aillmddx.component.html',
   styleUrls: ['./aillmddx.component.scss']
 })
+
 export class AillmddxComponent {
   @Input() patientInfo: any;
   @Input() visit: any;
@@ -22,6 +23,7 @@ export class AillmddxComponent {
   isActive = false;
   conclusion: string = '';
   menuContent: string = '';
+  diagnosisName: any = [];
   questions = [
     {
       title: 'Key symptoms and their characteristics',
@@ -111,9 +113,11 @@ export class AillmddxComponent {
               return {
                 ...v,
                 diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
-                rationale: this.ddxSvc.markdownit(v?.rationale)
+                // rationale: this.ddxSvc.markdownit(v?.rationale)
+                rationale: v?.rationale
               }
             });
+            console.log(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
               this.furtherQuestionsList = data.result.data.further_questions.map(q => {
                 const key = Object.keys(q)[0];
@@ -177,7 +181,11 @@ export class AillmddxComponent {
     return this.selectedDiagnosis.includes(diagnosis) || this.existingDiagnosis.some(d => d?.diagnosisName === diagnosis);
   }
 
-  setMenuContent(item: any) {
-    this.menuContent = item;
+  setMenuContent(title: any, likelihood: any, item: any) {
+    this.menuContent = item.flatMap(obj =>
+      Object.entries(obj).map(([key, value]) => ({ key, value }))
+    );
+    this.diagnosisName = [title, likelihood]
+    return
   }
 }

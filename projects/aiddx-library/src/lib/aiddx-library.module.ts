@@ -12,6 +12,7 @@ import { AillmtxFollowupComponent } from './aillmtx-followup/aillmtx-followup.co
 import { AillmtxReferralComponent } from './aillmtx-referral/aillmtx-referral.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -28,7 +29,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     CommonModule,
     TranslateModule,
     MatMenuModule,
-    MatExpansionModule
+    MatExpansionModule,
+    NgbTooltipModule
   ],
   exports: [
     AillmddxComponent,
