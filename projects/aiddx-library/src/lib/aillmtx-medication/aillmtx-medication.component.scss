@@ -40,7 +40,7 @@
   position: relative;
   cursor: pointer;
   background-color: transparent;
-  margin-right: 10px;
+  margin-right: 9px;
   margin-bottom: 9px;
 
   &:checked {
@@ -248,6 +248,126 @@
 .conclusion-header {
   position: relative;
   bottom: 16px;
+}
+
+.reminder-msg{
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.reminder {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1B163A;
+}
+
+.ayu-suggestion-container {
+  background-color: #F9FFFC;
+  border: 1px solid #B5F2DF;
+  .ayu-header {
+    font-size: 16px;
+    color: #1B163A;
+    font-weight: bold;
+  }
+  .warning {
+  background-color: #FFF7F3;
+  border: 0.8px solid #FF475D14;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+}
+
+.med-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.med-card {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ddd;
+}
+
+.med-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.med-name {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: 0%;
+  word-break: break-word;
+  width: 175px;
+  color: #1B163A;
+}
+
+.med-severity {
+  font-weight: 400;
+  font-size: 12px;
+  color: #7F7B92;
+  white-space: nowrap;
+  margin-top: 3px;
+}
+
+.med-details {
+  font-family: DM Sans;
+  font-weight: 400;
+  font-size: 14px;
+  margin-top: 6px;
+  padding-left: 35px;
+}
+
+.selected-med {
+  background-color: #0FD197;
+  color: white;
+}
+
+.reminder-alert {
+  color: #FF475D;
+  background-color: white;
+  border: 1px solid #F0EFF2;
+  padding: 16px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+.warning {
+  margin-right: 8px;
+}
+
+.med-scroll-wrapper {
+  max-height: unset;
+  overflow-y: unset;
+}
+
+.med-scroll-wrapper.scroll-enabled {
+  max-height: 400px; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 4px; /* optional for scrollbar space */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Optional scrollbar styling */
+.med-scroll-wrapper.scroll-enabled::-webkit-scrollbar {
+  width: 6px;
+}
+.med-scroll-wrapper.scroll-enabled::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

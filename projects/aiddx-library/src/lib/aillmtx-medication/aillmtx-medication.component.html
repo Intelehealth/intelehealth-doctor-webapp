@@ -1,13 +1,14 @@
 <ng-container *ngIf="!medicationList.length">
     <div class="d-flex justify-content-center mt-2">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
-            
+
             <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
-                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
+                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
                     <h3 class="text-danger">No diagnosis Provided</h3>
-                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Medicines suggestions.</p>
+                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Medicines
+                        suggestions.</p>
                 </div>
             </div>
 
@@ -16,7 +17,8 @@
                     <i class="bi bi-exclamation-triangle-fill"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon mr-2" />
                     <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span>
-                    <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span>
+                    <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an
+                        AI-assistant assessment.</span>
                 </div>
                 <button *ngIf="noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
                     {{'Try again'|translate}}
@@ -40,66 +42,44 @@
 
 <ng-container *ngIf="medicationList.length" class="mt-2">
 
-    <!-- <div class="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon"/>
-        <span class="text-reminder">Reminder:</span>
-        Patient is allergic to penicilin. Please prescribe accordingly.
-    </div> -->
+     <!-- Reminder -->
+  <div class="reminder-alert">
+     <span class="reminder-msg"><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> Reminder: </span>
+     <span class="reminder">Patient is allergic to iboprofen. Please prescribe accordingly.</span>
+  </div>
 
-    <p class="note-con ml-2">
-        <span class="note-label">Note:</span>
-        This information is AI generated. Please rely on your medical judgement while referring to it.
-    </p>
-    <div class="intel-accordion-title">
-        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested medications</h6>
-    </div>
-    <div class="intel-accordion-title">
-        <p class="text-muted mb-3 diagnosis-list ml-2">
-            Select the medication based on your medical judgement.
-        </p>
-    </div>
+    <div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+        <div class="mb-2 flex items-center ayu-header">
+             <img class="mr-2"  src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested medication
+        </div>
 
-    <div class="diagnosis-container p-3">
-        <div *ngFor="let medicine of medicationList" 
-             class="d-flex align-items-center mb-2"
-             [class.disabled-diagnosis]="isMedicineExists(medicine.name)">
-            <input type="checkbox" class="custom-checkbox me-2"
-                [checked]="isMedicineSelected(medicine)"
-                [disabled]="isMedicineExists(medicine.name)"
-                (change)="onAIMedicineChange(medicine)">
-            <label class="fw-bold" [class.text-muted]="isMedicineExists(medicine.name)">
-                {{ medicine.name }}
-                <span class="text-muted ms-2">(likely {{ medicine.confidence }})</span>
-            </label>
+        <div class="warning">
+            <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
+            This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
+            for all relevant factors; please use your own judgment before acting.
+        </div>
+
+        <div class="med-scroll-wrapper" [ngClass]="{ 'scroll-enabled': medicationList.length > 6 }">
+        <div class="med-grid">
+            <div *ngFor="let medicine of medicationList" class="med-card">
+                <div class="med-header">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [ngClass]="{ 'selected-med': medicine.selected }" class="custom-checkbox me-2"  [(ngModel)]="medicine.selected"  [checked]="isMedicineSelected(medicine)"
+                         [disabled]="isMedicineExists(medicine.name)" (change)="onAIMedicineChange(medicine)" />
+                        <span class="med-name"  [class.text-muted]="isMedicineExists(medicine.name)">{{ medicine.name }}</span>
+                    </label>
+                    <span class="med-severity"  [class.text-muted]="isMedicineExists(medicine.name)">({{ medicine.confidence }})</span>
+                </div>
+                <ul class="med-details" [class.text-muted]="isMedicineExists(medicine.name)">
+                    <li>{{ medicine.dosage }}</li>
+                    <li>{{ medicine.frequency }}</li>
+                    <li>{{ medicine.duration }} {{medicine.duration_unit}}</li>
+                    <li>{{ medicine.instructions }}</li>
+                    <li>{{ medicine.rationale }}</li>
+                </ul>
+            </div>
         </div>
     </div>
-
-    <!-- <div class="rationale-container">
-        <h5 class="fw-bold rationale">Rationale</h5>
-        <div *ngFor="let rationale of medicationList; let i = index" class="rationale-item p-3 mb-2">
-            <h3 class="fw-bold">
-                {{ i + 1 }}. {{ rationale.name }}
-                <span class="text-muted small">(likely {{ rationale.confidence }})</span>
-            </h3>
-            <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
-        </div>
-    </div> -->
+    </div>
 
 </ng-container>
-
-<!-- <div *ngIf="conclusion" class="conclusion-card">
-    <div class="conclusion-header">
-        <h2>Conclusion</h2>
-    </div>
-    <div class="conclusion-body">
-        <p>{{ conclusion }}</p>
-    </div>
-</div> -->
-
-<!-- <div *ngIf="furtherQuestionsList.length" class="rationale-container">
-    <h2 class="fw-bold">Further questions</h2>
-    <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
-        <li>{{ question }}</li>
-    </div>
-</div> -->
