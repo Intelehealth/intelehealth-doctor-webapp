@@ -2,11 +2,16 @@ import { Inject, Injectable, Optional } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { ENVIRONMENT } from "../lib/token";
 import markdownit from "markdown-it";
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: "root",
 })
 export class AiTxService {
+  private lastDiagnosis: string | null = null;
+  private cachedResponse: Observable<any> | null = null;
+
   constructor(
     private http: HttpClient,
     @Optional() @Inject(ENVIRONMENT) private env?: any
@@ -17,7 +22,13 @@ export class AiTxService {
   }
 
   getAITTx(casehistory: any, diagnosis: any) {
-    return this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory });
+    if (diagnosis !== this.lastDiagnosis || !this.cachedResponse) {
+      this.lastDiagnosis = diagnosis;
+      this.cachedResponse = this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory }).pipe(
+        shareReplay(1)
+      );
+    }
+    return this.cachedResponse;
   }
 
   getTxPayload(patientInfo: any, visit: any) {
@@ -119,5 +130,10 @@ ${vitals?.length ? vitalPayload : ""}`;
     }
 
     return md.renderInline(formattedText);
+  }
+
+  clearCache() {
+    this.lastDiagnosis = null;
+    this.cachedResponse = null;
   }
 }
