@@ -2812,7 +2812,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             obsDatetime: new Date(),
             value: advice.value,
             encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res:ObsModel)=>advice.uuid=res.uuid))
+          }).pipe(tap((res: ObsModel)=>advice.uuid=res.uuid))
         );
       }
 

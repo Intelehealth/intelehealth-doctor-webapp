@@ -8,7 +8,7 @@
           <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span>
           <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span>
         </div>
-        <button *ngIf="noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">{{'Try again'|translate}}</button>
+        <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">{{'Try again'|translate}}</button>
       </ng-container>
 
       <button *ngIf="isLoading" class="stats-loading">
@@ -58,12 +58,15 @@
                     {{point[i+1]}}
                 </li>
               </ul>   
-              <button class="read-more" 
+              <button 
+                class="read-more" 
                 [ngbTooltip]="tipContent" 
-                [container]="'body'"
-                [placement]="i === diagnosisList.length - 1 ? 'top' : 'bottom'"
-                [ngClass]="{ 'active-btn': isActive && selectedIndex === i}"
-                (mouseenter)="setMenuContent(rationale.diagnosis, rationale.likelihood, rationale.rationale);">Read more</button>
+                [placement]="i === 0 ? 'bottom' : 'top'"
+                [ngClass]="{ 'active-btn': isActive && selectedIndex === i }"
+                (mouseenter)="setMenuContent(rationale.diagnosis, rationale.likelihood, rationale.rationale);"
+              >
+                Read more
+              </button>
             </div>
             </div>
           </div>
