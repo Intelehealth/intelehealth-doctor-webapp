@@ -1930,7 +1930,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.notifyHwForAvailablePrescription(
           `Follow‑up date time added for ${this.visit?.patient?.person?.display || 'Patient'}`,
           'followup'
-          );
+          ); // notify function
         }
       
           )
