@@ -1929,7 +1929,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.followUpForm.patchValue({ present: true});
           this.notifyHwForAvailablePrescription(
           `Follow‑up date time added for ${this.visit?.patient?.person?.display || 'Patient'}`,
-          'followup'
+          'followup',
+          new Date()
           ); // notify function
         }
       
@@ -2190,7 +2191,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * Send notification to health worker for available prescription
   * @returns {void}
   */
-  notifyHwForAvailablePrescription(title = null, type = null): void {
+  notifyHwForAvailablePrescription(title = null, type = null,followupDatetime: Date = null): void {
     const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
     const openMRSID = this.getPatientIdentifier("OpenMRS ID");
     const payload = {
@@ -2204,7 +2205,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         patientUuid: this.patient.uuid,
         patientOpenMrsId: openMRSID,
         visitUuid: this.visit.uuid,
-        followupDatetime: this.followUpDatetime
+        followupDatetime: followupDatetime
       }
     }
     this.mindmapService.notifyApp(hwUuid, payload).subscribe();
