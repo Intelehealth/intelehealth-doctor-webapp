@@ -39,10 +39,10 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="medicationList.length" class="mt-2">
+<ng-container *ngIf="medicationList.length">
 
      <!-- Reminder -->
-  <div class="reminder-alert">
+  <div class="reminder-alert mt-2">
      <span class="reminder-msg"><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> Reminder: </span>
      <span class="reminder">Patient is allergic to iboprofen. Please prescribe accordingly.</span>
   </div>
@@ -74,7 +74,6 @@
                     <li>{{ medicine.frequency }}</li>
                     <li>{{ medicine.duration }} {{medicine.duration_unit}}</li>
                     <li>{{ medicine.instructions }}</li>
-                    <li>{{ medicine.rationale }}</li>
                 </ul>
             </div>
         </div>

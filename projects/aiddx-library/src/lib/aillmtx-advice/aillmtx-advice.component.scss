@@ -250,6 +250,24 @@
   bottom: 16px;
 }
 
+.ayu-suggestion-container {
+  background-color: #F9FFFC;
+  border: 1px solid #B5F2DF;
+  .ayu-header {
+    font-size: 16px;
+    color: #1B163A;
+    font-weight: bold;
+  }
+  .warning {
+  background-color: #FFF7F3;
+  border: 0.8px solid #FF475D14;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+}
+
 @media (max-width: 768px) {
   .erorr-container {
     height: 180px;
