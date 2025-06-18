@@ -1930,7 +1930,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.notifyHwForAvailablePrescription(
           `Follow‑up date time added for ${this.visit?.patient?.person?.display || 'Patient'}`,
           'followup',
-          new Date()
+          `Date:${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`
+
           ); // notify function
         }
       
@@ -2191,7 +2192,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * Send notification to health worker for available prescription
   * @returns {void}
   */
-  notifyHwForAvailablePrescription(title = null, type = null,followupDatetime: Date = null): void {
+  notifyHwForAvailablePrescription(title = null, type = null,followupDatetime = null): void {
     const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
     const openMRSID = this.getPatientIdentifier("OpenMRS ID");
     const payload = {
