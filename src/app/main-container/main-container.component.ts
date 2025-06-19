@@ -132,7 +132,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
 
-    // Collapse sidebar when visit summary screen is openedAdd commentMore actions
+    // Collapse sidebar when visit summary screen is opened
     if (this.routeUrl.includes('/visit-summary/')) {
       this.collapsed = true;
     } else {

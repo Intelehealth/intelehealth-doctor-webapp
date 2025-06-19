@@ -64,7 +64,7 @@
 .items-list {
   font-family: DM Sans;
   font-size: 16px;
-  padding: 24px 0px 0px 24px;
+  padding: 0px 0px 0px 24px;
   margin-bottom: 0px;
 
   li {
@@ -96,6 +96,7 @@
 }
 
 .form-group {
+  margin-bottom: 0px !important;
   label {
     font-size: inherit;
     color: var(--color-darkestBlue);
@@ -119,7 +120,7 @@
     font-weight: bold;
     border: 1px solid var(--color-lightGray);
     padding: 10px 16px;
-    margin-bottom: 30px;
+    //margin-bottom: 30px;
   }
 
   .gray-btn {
@@ -137,7 +138,7 @@
   .white-btn:disabled,
   .gray-btn:disabled {
     opacity: 0.5;
-    margin-bottom: 20px;
+   // margin-bottom: 20px;
   }
 
   .blue-btn:focus,
@@ -232,6 +233,14 @@ textarea.form-control {
   }
 }
 
+.table {
+  margin-bottom: 0px !important;
+}
+ .borderc {
+    border-top: 0;
+    border-bottom: 1px solid #dee2e6;
+ }
+   
 @media (max-width: 768px) {
   .items-list {
     list-style-type: none;
@@ -329,4 +338,69 @@ textarea.form-control {
       }
     }
   }
+}
+
+.medication-section {
+  padding: 16px;
+}
+
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+.med-table th,
+.med-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.instruction-cell {
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #444;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid transparent;
+  padding-top: 0 !important;
+}
+
+.med {
+    //padding: 0.15rem;
+    font-size: 16px;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.input-widths{
+  min-height: 100px;
+  max-height: 500px;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 12px;
+  left: 5px;
+  background: white;
+  padding: 0 5px;
+  font-size: 16px;
+  color: #888;
+}
+
+.input-wrapper input {
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.custom-typeahead-popup, .ngb-typeahead-window {
+  max-height: 150px !important;
+  overflow-y: auto !important;
+}
+
+.custom-typeahead-popup .dropdown-item {
+  padding: 6px 12px;
 }
