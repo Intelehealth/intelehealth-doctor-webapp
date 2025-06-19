@@ -1,13 +1,14 @@
 <ng-container *ngIf="!referralList.length">
     <div class="d-flex justify-content-center mt-2">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
-            
+
             <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
-                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
+                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
                     <h3 class="text-danger">No diagnosis Provided</h3>
-                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Referral suggestions.</p>
+                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Referral
+                        suggestions.</p>
                 </div>
             </div>
 
@@ -40,55 +41,28 @@
 </ng-container>
 
 <ng-container *ngIf="referralList.length" class="mt-2">
- <div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
-    <div class="mb-2 flex items-center ayu-header">
-        <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested referrals
-    </div>
-    <div class="warning">
-        <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
-        This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
-        for all relevant factors; please use your own judgment before acting.
-    </div>
-    <div class="diagnosis-container p-3">
-        <div *ngFor="let refer of referralList" 
-             class="d-flex align-items-center mb-2"
-             [class.disabled-diagnosis]="isReferralExists(refer.referral_to)">
-            <input type="checkbox" class="custom-checkbox me-2"
-                [checked]="isReferralSelected(refer)"
-                [disabled]="isReferralExists(refer.referral_to)"
-                (change)="onAIReferralChange(refer)">
-            <label class="fw-bold" [class.text-muted]="isReferralExists(refer.referral_to)">
-                {{ refer.referral_to }}, {{ refer.referral_facility }}, {{ refer.remark }}
-                <!-- <span class="text-muted ms-2">(likely {{ refer.confidence }})</span> -->
-            </label>
+    <div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+        <div class="mb-2 flex items-center ayu-header">
+            <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested referrals
+        </div>
+        <div class="warning">
+            <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
+            This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
+            for all relevant factors; please use your own judgment before acting.
+        </div>
+        <div>
+            <div *ngFor="let refer of referralList" class="med-card">
+                <div class="med-header">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [ngClass]="{ 'selected-med': refer.selected }"
+                            class="custom-checkbox me-2" [(ngModel)]="refer.selected"
+                            [checked]="isReferralSelected(refer)" [disabled]="isReferralExists(refer.referral_to)"
+                            (change)="onAIReferralChange(refer)">
+                        <span class="med-name" [class.text-muted]="isReferralExists(refer.referral_to)">
+                            {{ refer.referral_to }}, {{ refer.referral_facility }}, {{ refer.remark }}</span>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- <div class="rationale-container">
-        <h5 class="fw-bold rationale">Rationale</h5>
-        <div *ngFor="let rationale of referralList; let i = index" class="rationale-item p-3 mb-2">
-            <h3 class="fw-bold">
-                {{ i + 1 }}. {{ rationale.referral_to }}, {{ rationale.referral_facility }}
-                <span class="text-muted small">(likely {{ rationale.confidence }})</span>
-            </h3>
-            <p class="rationale-description" [innerHTML]="rationale.remark"></p>
-        </div>
-    </div> -->
-</div>   
 </ng-container>
-
-<!-- <div *ngIf="conclusion" class="conclusion-card">
-    <div class="conclusion-header">
-        <h2>Conclusion</h2>
-    </div>
-    <div class="conclusion-body">
-        <p>{{ conclusion }}</p>
-    </div>
-</div> -->
-
-<!-- <div *ngIf="furtherQuestionsList.length" class="rationale-container">
-    <h2 class="fw-bold">Further questions</h2>
-    <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
-        <li>{{ question }}</li>
-    </div>
-</div> -->

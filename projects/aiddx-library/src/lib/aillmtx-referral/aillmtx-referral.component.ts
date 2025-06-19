@@ -35,6 +35,7 @@ export class AillmtxReferralComponent {
     this.furtherQuestionsList = [];
     this.TxService.getAITTx(payload, diagnosis).subscribe({
       next: (data: any) => {
+        console.log("data?.result?.referral?.length", data?.result?.referral)
         if (data?.result?.referral?.length > 0) {
           this.noData = false;
           this.referralList = data.result.referral.map((v: any) => {

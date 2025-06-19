@@ -5,9 +5,10 @@
             <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
-                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon"/>
+                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
                     <h3 class="text-danger">No diagnosis Provided</h3>
-                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Advices suggestions.</p>
+                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Advices
+                        suggestions.</p>
                 </div>
             </div>
 
@@ -40,25 +41,25 @@
 </ng-container>
 
 <ng-container *ngIf="adviceList.length" class="mt-2">
-<div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
-    <div class="mb-2 flex items-center ayu-header">
-        <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested advice
-    </div>
-    <div class="warning">
-        <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
-        This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
-        for all relevant factors; please use your own judgment before acting.
-    </div>
-    <div class="diagnosis-container p-3">
-        <div *ngFor="let advice of adviceList" class="d-flex align-items-center mb-2"
-            [class.disabled-diagnosis]="isAdviceExists(advice.v)">
-            <input type="checkbox" class="custom-checkbox me-2" [checked]="isAdviceSelected(advice)"
-                [disabled]="isAdviceExists(advice.v)" (change)="onAIAdviceChange(advice)">
-            <label class="fw-bold" [class.text-muted]="isAdviceExists(advice.v)">
-                {{ advice.v }}
-                <!-- <span class="text-muted ms-2">(likely {{ advice.likelihood }})</span> -->
-            </label>
+    <div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+        <div class="mb-2 flex items-center ayu-header">
+            <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested advice
         </div>
+        <div class="warning">
+            <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
+            This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
+            for all relevant factors; please use your own judgment before acting.
+        </div>
+        <div class="med-grid">
+            <div  *ngFor="let advice of adviceList" class="med-card">
+                <div class="med-header">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [ngClass]="{ 'selected-med': advice.selected }" class="custom-checkbox me-2"  [(ngModel)]="advice.selected"  [checked]="isAdviceSelected(advice)"
+                       [disabled]="isAdviceExists(advice.v)" (change)="onAIAdviceChange(advice)"/>
+                        <span class="med-name"[class.text-muted]="isAdviceExists(advice.v)">{{ advice.v }}</span>
+                    </label>
+                </div>
+            </div>
+       </div>
     </div>
-  </div>  
 </ng-container>

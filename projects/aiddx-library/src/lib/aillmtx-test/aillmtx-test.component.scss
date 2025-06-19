@@ -34,14 +34,15 @@
 .custom-checkbox {
   appearance: none;
   width: 18px;
-  height: 18px;
+  height: 16px;
+  border-width: 1px;
   border: 1px solid #B0ADBE;
   border-radius: 4px;
   position: relative;
   cursor: pointer;
   background-color: transparent;
   margin-right: 10px;
-  margin-bottom: 9px;
+  //margin-bottom: 9px;
 
   &:checked {
     background-color: #0FD197;
@@ -61,7 +62,7 @@
 
 .ayu-suggestion-container {
   background-color: #F9FFFC;
-  border: 1px solid #B5F2DF;
+  border: 1px solid #B5F2DF !important;
   .ayu-header {
     font-size: 16px;
     color: #1B163A;
@@ -76,7 +77,45 @@
   margin-bottom: 20px;
 }
 }
+.med-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
 
+.med-card {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 20px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ddd;
+}
+
+.med-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkbox-label {
+  display: flex;
+//  align-items: baseline;
+  gap: 8px;
+}
+
+.med-name {
+  font-family: DM Sans;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: 0%;
+  word-break: break-word;
+  width: 100%;
+  color: #1B163A;
+}
+.selected-med {
+  background-color: #0FD197;
+  color: white;
+}
 .rationale-container {
   background-color: #faf7fc;
   border-radius: 10px;
