@@ -40,67 +40,25 @@
 </ng-container>
 
 <ng-container *ngIf="adviceList.length" class="mt-2">
-
-    <!-- <div class="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon"/>
-        <span class="text-reminder">Reminder:</span>
-        Patient is allergic to penicilin. Please prescribe accordingly.
-    </div> -->
-
-    <p class="note-con ml-2">
-        <span class="note-label">Note:</span>
-        This information is AI generated. Please rely on your medical judgement while referring to it.
-    </p>
-    <div class="intel-accordion-title">
-        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested advice</h6>
+<div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+    <div class="mb-2 flex items-center ayu-header">
+        <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested advice
     </div>
-    <div class="intel-accordion-title">
-        <p class="text-muted mb-3 diagnosis-list ml-2">
-            Select the advice based on your medical judgement.
-        </p>
+    <div class="warning">
+        <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
+        This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
+        for all relevant factors; please use your own judgment before acting.
     </div>
-
     <div class="diagnosis-container p-3">
-        <div *ngFor="let advice of adviceList" 
-             class="d-flex align-items-center mb-2"
-             [class.disabled-diagnosis]="isAdviceExists(advice.v)">
-            <input type="checkbox" class="custom-checkbox me-2"
-                [checked]="isAdviceSelected(advice)"
-                [disabled]="isAdviceExists(advice.v)"
-                (change)="onAIAdviceChange(advice)">
+        <div *ngFor="let advice of adviceList" class="d-flex align-items-center mb-2"
+            [class.disabled-diagnosis]="isAdviceExists(advice.v)">
+            <input type="checkbox" class="custom-checkbox me-2" [checked]="isAdviceSelected(advice)"
+                [disabled]="isAdviceExists(advice.v)" (change)="onAIAdviceChange(advice)">
             <label class="fw-bold" [class.text-muted]="isAdviceExists(advice.v)">
                 {{ advice.v }}
                 <!-- <span class="text-muted ms-2">(likely {{ advice.likelihood }})</span> -->
             </label>
         </div>
     </div>
-
-    <!-- <div class="rationale-container">
-        <h5 class="fw-bold rationale">Rationale</h5>
-        <div *ngFor="let rationale of adviceList; let i = index" class="rationale-item p-3 mb-2">
-            <h3 class="fw-bold">
-                {{ i + 1 }}. {{ rationale.diagnosis }}
-                <span class="text-muted small">(likely {{ rationale.likelihood }})</span>
-            </h3>
-            <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
-        </div>
-    </div> -->
-
+  </div>  
 </ng-container>
-
-<!-- <div *ngIf="conclusion" class="conclusion-card">
-    <div class="conclusion-header">
-        <h2>Conclusion</h2>
-    </div>
-    <div class="conclusion-body">
-        <p>{{ conclusion }}</p>
-    </div>
-</div> -->
-
-<!-- <div *ngIf="furtherQuestionsList.length" class="rationale-container">
-    <h2 class="fw-bold">Further questions</h2>
-    <div *ngFor="let question of furtherQuestionsList; let i = index" class="fq-item">
-        <li>{{ question }}</li>
-    </div>
-</div> -->

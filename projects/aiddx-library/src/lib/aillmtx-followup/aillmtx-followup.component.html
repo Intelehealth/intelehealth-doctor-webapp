@@ -40,28 +40,15 @@
 </ng-container>
 
 <ng-container *ngIf="followUpList.length" class="mt-2">
-
-    <!-- <div class="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon"/>
-        <span class="text-reminder">Reminder:</span>
-        Patient is allergic to penicilin. Please prescribe accordingly.
-    </div> -->
-
-
-    <p class="note-con ml-2">
-        <span class="note-label">Note:</span>
-        This information is AI generated. Please rely on your medical judgement while referring to it.
-    </p>
-    <div class="intel-accordion-title">
-        <h6 class="mt-1 ml-2 diffrential-diagnosis">Ayu suggested follow-up</h6>
+<div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+    <div class="mb-2 flex items-center ayu-header">
+        <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested follow-up
     </div>
-    <div class="intel-accordion-title">
-        <p class="text-muted mb-3 diagnosis-list ml-2">
-            Select the follow-up based on your medical judgement.
-        </p>
+    <div class="warning">
+        <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
+        This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
+        for all relevant factors; please use your own judgment before acting.
     </div>
-
     <div class="diagnosis-container p-3">
         <div *ngFor="let followup of followUpList" 
              class="d-flex align-items-center mb-2"
@@ -87,7 +74,7 @@
             <p class="rationale-description" [innerHTML]="rationale.rationale"></p>
         </div>
     </div> -->
-
+</div>  
 </ng-container>
 
 <!-- <div *ngIf="conclusion" class="conclusion-card">
