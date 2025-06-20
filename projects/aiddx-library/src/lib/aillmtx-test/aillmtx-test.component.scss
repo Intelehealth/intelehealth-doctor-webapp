@@ -41,6 +41,7 @@
   position: relative;
   cursor: pointer;
   background-color: transparent;
+  margin-top: 2px;
   margin-right: 10px;
   //margin-bottom: 9px;
 
@@ -63,6 +64,7 @@
 .ayu-suggestion-container {
   background-color: #F9FFFC;
   border: 1px solid #B5F2DF !important;
+  border-radius: 12px;
   .ayu-header {
     font-size: 16px;
     color: #1B163A;

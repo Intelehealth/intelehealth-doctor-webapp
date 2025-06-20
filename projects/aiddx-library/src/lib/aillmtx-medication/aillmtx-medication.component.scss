@@ -40,6 +40,7 @@
   position: relative;
   cursor: pointer;
   background-color: transparent;
+  margin-top: 3px;
   margin-right: 9px;
   margin-bottom: 9px;
 
@@ -264,6 +265,7 @@
 .ayu-suggestion-container {
   background-color: #F9FFFC;
   border: 1px solid #B5F2DF !important;
+  border-radius: 12px;
   .ayu-header {
     font-size: 16px;
     color: #1B163A;
@@ -305,7 +307,7 @@
 }
 
 .med-name {
-  font-family: DM Sans Medium;
+  font-family: DM Sans;
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;

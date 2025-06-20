@@ -227,6 +227,7 @@
 .ayu-suggestion-container {
   background-color: #F9FFFC;
   border: 1px solid #B5F2DF !important;
+  border-radius: 12px;
 
   .ayu-header {
     font-size: 16px;
@@ -267,7 +268,7 @@
 
 .checkbox-label {
   display: flex;
-//  align-items: baseline;
+ // align-items: center;
   gap: 8px;
 }
 
@@ -291,6 +292,7 @@
   position: relative;
   cursor: pointer;
   background-color: transparent;
+  margin-top: 12px;
   margin-right: 10px;
  // margin-bottom: 9px;
 
