@@ -440,9 +440,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   }
 
   removeDiagnosis(diagnosis: string): void {
-    if (this.aillmddxComponent) {
-      this.aillmddxComponent.onAIDiagnosisChange(diagnosis);
-    }
+    this.onAIDiagnosisChange(diagnosis);
   }
 
   toggleDiagnosis(): void {
@@ -537,7 +535,28 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   }
 
   onAIDiagnosisSelected(): void {
-    this.diagnosisForm.get('diagnosisName').patchValue(this.selectedDiagnoses[0]);
+    if (this.aillmddxComponent && this.aillmddxComponent.selectedDiagnosis) {
+      // Clear existing selections
+      this.selectedDiagnoses.length = 0;
+
+      // Add selected diagnoses
+      this.aillmddxComponent.selectedDiagnosis.forEach(diagnosis => {
+        if (!this.isDiagnosisExists(diagnosis)) {
+          this.selectedDiagnoses.push(diagnosis);
+        }
+      });
+
+      // Update the form with the first diagnosis as the primary
+      if (this.selectedDiagnoses.length > 0) {
+        this.diagnosisForm.patchValue({
+          diagnosisName: this.selectedDiagnoses[0],
+        });
+      }
+
+      // Emit further questions if available
+      const furtherQuestions = this.aillmddxComponent.furtherQuestionsList || [];
+      this.furtherQuestionsReceived.emit(furtherQuestions);
+    }
   }
 
   removeMedicine(medicine: any): void {
@@ -1284,6 +1303,51 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
           control?.updateValueAndValidity();
         });
       }
+    }
+  }
+
+  isDiagnosisExists(diagnosis: string): boolean {
+    return this.existingDiagnosis.some(d => 
+      d.diagnosisName.trim().toLowerCase() === diagnosis.trim().toLowerCase()
+    );
+  }
+
+  isDiagnosisSelected(diagnosis: string): boolean {
+    return this.selectedDiagnoses.includes(diagnosis) || 
+           this.existingDiagnosis.some(d => 
+             d?.diagnosisName.trim().toLowerCase() === diagnosis.trim().toLowerCase()
+           );
+  }
+
+  onAIDiagnosisChange(diagnosis: string): void {
+    if (!diagnosis) {
+      this.aillmddxComponent?.selectedDiagnosis?.length && (this.aillmddxComponent.selectedDiagnosis.length = 0);
+    } else {
+      const normDiagnosis = diagnosis.trim().toLowerCase();
+      const index = this.selectedDiagnoses.findIndex(
+        d => d.trim().toLowerCase() === normDiagnosis
+      );
+
+      index > -1
+        ? this.selectedDiagnoses.splice(index, 1)
+        : this.selectedDiagnoses.push(diagnosis);
+    }
+
+    if (this.selectedDiagnoses.length > 0) {
+      this.diagnosisForm.patchValue({
+        diagnosisName: this.selectedDiagnoses[0],
+      });
+    } else {
+      this.diagnosisForm.reset();
+      ['diagnosisCode', 'isSnomed'].forEach(control => {
+        if (this.diagnosisForm.contains(control)) {
+          this.diagnosisForm.removeControl(control);
+        }
+      });
+    }
+
+    if (this.aillmddxComponent) {
+      this.aillmddxComponent.selectedDiagnosis = [...this.selectedDiagnoses];
     }
   }
 }

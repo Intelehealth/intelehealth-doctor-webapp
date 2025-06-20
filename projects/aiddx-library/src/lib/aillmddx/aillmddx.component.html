@@ -48,26 +48,26 @@
             <h2> Rationale </h2>
           </div>
           <div class="diagnosis-box">
-          <div *ngFor="let rationale of diagnosisList; let i = index" class="rationale-item mb-2">
-            <div>
-              <h4><span style="font-weight: bold;">{{ rationale.diagnosis }}</span>
-                <span class="text-muted"> (likely {{ rationale.likelihood }})</span>
-              </h4>
-              <ul>
-                <li *ngFor="let point of rationale.summarised_rationale; let i = index">
-                    {{point[i+1]}}
-                </li>
-              </ul>   
-              <button 
-                class="read-more" 
-                [ngbTooltip]="tipContent" 
-                [placement]="i === 0 ? 'bottom' : 'top'"
-                [ngClass]="{ 'active-btn': isActive && selectedIndex === i }"
-                (mouseenter)="setMenuContent(rationale.diagnosis, rationale.likelihood, rationale.rationale);"
-              >
-                Read more
-              </button>
-            </div>
+            <div *ngFor="let rationale of diagnosisList; let i = index" class="rationale-item mb-2">
+              <div>
+                <h4><span style="font-weight: bold;">{{ rationale.diagnosis }}</span>
+                  <span class="text-muted ms-2"> ({{ rationale.likelihood }} likely)</span>
+                </h4>
+                <ul>
+                  <li *ngFor="let point of rationale.summarised_rationale; let i = index">
+                      {{point[i+1]}}
+                  </li>
+                </ul>   
+                <button 
+                  class="read-more" 
+                  [ngbTooltip]="tipContent" 
+                  [placement]="i === 0 ? 'bottom' : 'top'"
+                  [ngClass]="{ 'active-btn': isActive && selectedIndex === i }"
+                  (mouseenter)="setMenuContent(rationale.diagnosis, rationale.likelihood, rationale.rationale);"
+                >
+                  Read more
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@
           <div class="tooltip-box">
             <div class="tooltip-header">
               <strong>{{diagnosisName[0]}}</strong>
-              <span class="status">({{diagnosisName[1]}} likely)</span>
+              <span class="text-muted ms-2">({{diagnosisName[1]}} likely)</span>
             </div>
             <ul class="bullet-points">
               <li *ngFor="let item of menuContent">

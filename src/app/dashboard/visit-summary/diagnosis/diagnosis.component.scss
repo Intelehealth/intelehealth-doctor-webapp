@@ -199,7 +199,8 @@ textarea.form-control {
 
 ::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
 .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
-  min-width: 120px;
+  width: 100% !important;
+  min-width: 380px !important;
 }
 
 ::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
@@ -236,10 +237,10 @@ textarea.form-control {
 .table {
   margin-bottom: 0px !important;
 }
- .borderc {
-    border-top: 0;
-    border-bottom: 1px solid #dee2e6;
- }
+.borderc {
+  border-top: 0;
+  border-bottom: 1px solid #dee2e6;
+}
    
 @media (max-width: 768px) {
   .items-list {
@@ -404,3 +405,87 @@ textarea.form-control {
 .custom-typeahead-popup .dropdown-item {
   padding: 6px 12px;
 }
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.diagnosis-box {
+  flex: 1;
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+}
+
+.suggested-box {
+  // flex: 1;
+  background: #F9FFFC;
+  border: 1px solid #B5F2DF;
+  border-radius: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 500px;
+  max-height: fit-content;
+
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    span {
+      margin-left: 10px;
+      font-size: 12px;
+    }
+  }
+}
+
+.custom-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #B0ADBE;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  margin-right: 10px;
+  margin-bottom: 9px;
+
+  &:checked {
+    background-color: #0FD197;
+    border: none;
+
+    &::after {
+      content: '\2713';
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.disabled-diagnosis {
+  opacity: 0.7;
+  cursor: not-allowed;
+
+  .custom-checkbox {
+    cursor: not-allowed;
+  }
+
+  // .text-muted {
+  //   opacity: 0.7;
+  //   font-size: 14px;
+  //   color: #868e96;
+  // }
+}
+

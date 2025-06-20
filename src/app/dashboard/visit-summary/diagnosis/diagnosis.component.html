@@ -25,7 +25,7 @@
       </thead>
       <tbody>
         <ng-container *ngIf="existingDiagnosis.length">
-          <tr *ngFor="let d of existingDiagnosis; let i = index">
+          <tr *ngFor="let d of existingDiagnosis; let i = index" style="border-bottom: 1px solid #dee2e6;">
             <td>{{ d.diagnosisName }}</td>
             <td>{{ d.diagnosisType }}</td>
             <td>{{ d.diagnosisStatus }}</td>
@@ -55,86 +55,107 @@
   </div>
   <ng-container>
     <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()" *ngIf="!addMoreDiagnosis">
-      <ul class="items-list">
-        <li>
-          <div class="row mt-2">
-            <label for="select-diagnosis" class="col-sm-3 col-form-label">{{'Select diagnosis'|translate}}*</label>
-            <div class="col-sm-6 d-grid">
-              <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom" formControlName="diagnosisName"
-                (search)="onKeyUp($event)" (change)="onDiagnosisChange($event)" [items]="diagnosis$ | async"
-                bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true"
-                placeholder="{{'Select diagnosis'|translate}}" [addTag]="false" data-test-id="selectDiagnosisName">
-              </ng-select>
-              <div class="selected-diagnoses mt-1" *ngIf="selectedDiagnoses.length > 0">
-                <span *ngFor="let diagnosis of selectedDiagnoses" class="selected-item mr-2"
-                  [class.selected-primary]="diagnosis === selectedDiagnoses[0]">
-                  {{ diagnosis }}
-                  <button class="remove-icon" mat-icon-button (click)="removeDiagnosis(diagnosis)">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </span>
+      <div class="top-row">
+        <div class="diagnosis-box">
+          <ul class="items-list">
+            <li>
+              <div class="row mt-2">
+                <label for="select-diagnosis" class="col-sm-3 col-form-label">{{'Select diagnosis'|translate}}*</label>
+                <div class="col-sm-6 d-grid">
+                  <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom" formControlName="diagnosisName"
+                    (search)="onKeyUp($event)" (change)="onDiagnosisChange($event)" [items]="diagnosis$ | async"
+                    bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true"
+                    placeholder="{{'Select diagnosis'|translate}}" [addTag]="false" data-test-id="selectDiagnosisName">
+                  </ng-select>
+                  <div class="selected-diagnoses mt-1" *ngIf="selectedDiagnoses.length > 0">
+                    <span *ngFor="let diagnosis of selectedDiagnoses" class="selected-item mr-2"
+                      [class.selected-primary]="diagnosis === selectedDiagnoses[0]">
+                      {{ diagnosis }}
+                      <button class="remove-icon" mat-icon-button (click)="removeDiagnosis(diagnosis)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </li>
+            <li>
+              <div class="row">
+                <label class="col-sm-3 col-form-label">{{'Diagnosis type'|translate}}*</label>
+                <div class="col-sm-9 d-flex align-items-center">
+                  <div class="pretty p-default p-round">
+                    <input type="radio" [value]="'Primary'" formControlName="diagnosisType"
+                      data-test-id="radioDiagnosisTypePrimary" />
+                    <div class="state p-success">
+                      <label>{{'Primary'|translate}}</label>
+                    </div>
+                  </div>
+                  <div class="pretty p-default p-round">
+                    <input type="radio" [value]="'Secondary'" formControlName="diagnosisType"
+                      data-test-id="radioDiagnosisTypeSecondary" />
+                    <div class="state p-success">
+                      <label>{{'Secondary'|translate}}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row">
+                <label class="col-sm-3 col-form-label">{{'Status'|translate}}*</label>
+                <div class="col-sm-9 d-flex align-items-center">
+                  <div class="pretty p-default p-round">
+                    <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus"
+                      data-test-id="radioDiagnosisStatusProvisional" />
+                    <div class="state p-success">
+                      <label>{{'Provisional'|translate}}</label>
+                    </div>
+                  </div>
+                  <div class="pretty p-default p-round">
+                    <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus"
+                      data-test-id="radioDiagnosisStatusConfirmed" />
+                    <div class="state p-success">
+                      <label>{{'Confirmed'|translate}}</label>
+                    </div>
+                  </div>
+                  <div *ngIf="appConfigService?.patient_visit_summary?.diagnosis_under_evaluation"
+                    class="pretty p-default p-round">
+                    <input type="radio" [value]="'Under Evaluation'" formControlName="diagnosisStatus"
+                      data-test-id="radioDiagnosisStatusUnderEvaluation" />
+                    <div class="state p-success">
+                      <label>{{'Under Evaluation'|translate}}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="form-group mb-0  mt-5" *ngIf="!isMCCUser">
+            <button type="button" class="white-btn mr-2 mt-3 mb-3" (click)="toggleDiagnosis()" data-test-id="btnCancelDiagnosis">
+              {{'Cancel'|translate}}
+            </button>
+            <button type="submit" class="gray-btn mb-3" [disabled]="diagnosisForm.invalid" data-test-id="btnSubmitDiagnosis">
+              {{'Add'|translate}}
+            </button>
           </div>
-        </li>
-        <li>
-          <div class="row">
-            <label class="col-sm-3 col-form-label">{{'Diagnosis type'|translate}}*</label>
-            <div class="col-sm-9 d-flex align-items-center">
-              <div class="pretty p-default p-round">
-                <input type="radio" [value]="'Primary'" formControlName="diagnosisType"
-                  data-test-id="radioDiagnosisTypePrimary" />
-                <div class="state p-success">
-                  <label>{{'Primary'|translate}}</label>
-                </div>
-              </div>
-              <div class="pretty p-default p-round">
-                <input type="radio" [value]="'Secondary'" formControlName="diagnosisType"
-                  data-test-id="radioDiagnosisTypeSecondary" />
-                <div class="state p-success">
-                  <label>{{'Secondary'|translate}}</label>
-                </div>
-              </div>
-            </div>
+        </div>
+        <div class="suggested-box" *ngIf="aillmddxComponent?.diagnosisList.length > 0">
+          <div style="margin-top: 0;display: flex;justify-content: space-between;">
+            <h4><img src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested diagnosis</h4> 
           </div>
-        </li>
-        <li>
-          <div class="row">
-            <label class="col-sm-3 col-form-label">{{'Status'|translate}}*</label>
-            <div class="col-sm-9 d-flex align-items-center">
-              <div class="pretty p-default p-round">
-                <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus"
-                  data-test-id="radioDiagnosisStatusProvisional" />
-                <div class="state p-success">
-                  <label>{{'Provisional'|translate}}</label>
-                </div>
-              </div>
-              <div class="pretty p-default p-round">
-                <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus"
-                  data-test-id="radioDiagnosisStatusConfirmed" />
-                <div class="state p-success">
-                  <label>{{'Confirmed'|translate}}</label>
-                </div>
-              </div>
-              <div *ngIf="appConfigService?.patient_visit_summary?.diagnosis_under_evaluation"
-                class="pretty p-default p-round">
-                <input type="radio" [value]="'Under Evaluation'" formControlName="diagnosisStatus"
-                  data-test-id="radioDiagnosisStatusUnderEvaluation" />
-                <div class="state p-success">
-                  <label>{{'Under Evaluation'|translate}}</label>
-                </div>
-              </div>
-            </div>
+          <div *ngFor="let diagnosis of aillmddxComponent?.diagnosisList" 
+            class="d-flex align-items-center mb-2"
+            [class.disabled-diagnosis]="isDiagnosisExists(diagnosis.diagnosis)">
+            <input type="checkbox" class="custom-checkbox me-2"
+              [checked]="isDiagnosisSelected(diagnosis.diagnosis)"
+              [disabled]="isDiagnosisExists(diagnosis.diagnosis)"
+              (change)="onAIDiagnosisChange(diagnosis.diagnosis)">
+            <label class="fw-bold" [class.text-muted]="isDiagnosisExists(diagnosis.diagnosis)">
+              {{ diagnosis.diagnosis }}
+              <span class="text-muted ms-2">({{ diagnosis.likelihood }} likely)</span>
+            </label>
           </div>
-        </li>
-      </ul>
-      <div class="form-group mb-0" *ngIf="!isMCCUser">
-        <button type="button" class="white-btn mr-2 mt-3 mb-3" (click)="toggleDiagnosis()" data-test-id="btnCancelDiagnosis">
-          {{'Cancel'|translate}}
-        </button>
-        <button type="submit" class="gray-btn mb-3" [disabled]="diagnosisForm.invalid" data-test-id="btnSubmitDiagnosis">
-          {{'Add'|translate}}
-        </button>
+        </div>
       </div>
     </form>
   </ng-container>

@@ -226,6 +226,12 @@
   }
 }
 
+.text-muted {
+  opacity: 0.7;
+  font-size: 12px;
+  color: #868e96;
+}
+
 .warning-icon {
   height: 50px;
   width: 50px;
@@ -253,7 +259,7 @@
 
 .left-section {
   flex: 2;
-  background: #F9FFFC;
+  // background: #F9FFFC;
   border-radius: 10px;
   margin-bottom: -50px;
 }
@@ -314,14 +320,14 @@
   float: right;
   border-radius: 4px;
   padding: 4px 12px;
-  color: #333;
+  color: gray;
   transition: all .2s ease;
   position: relative;
   bottom: 40px;
 
   &:hover {
     background: #B5F2DF;
-    color: grey;
+    color: gray;
     border-color: #0FD197;
   }
 }
@@ -388,6 +394,7 @@
       box-shadow: none !important;
       border-radius: 12px !important;
       margin-bottom: 0px;
+      overflow: visible !important;
     }
 
     .mat-expansion-panel-header {
