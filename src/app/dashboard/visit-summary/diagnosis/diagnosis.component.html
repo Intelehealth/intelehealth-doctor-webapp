@@ -290,7 +290,7 @@
         <tr *ngIf="!addMoreMedicine && !isMCCUser">
           <td colspan="6" class="border-top-0">
             <div class="form-group mb-0">
-              <button type="button" class="white-btn mr-2" (click)="toggleMedicine()" data-test-id="btnCancelMed">
+              <button type="button" class="white-btn mr-3" (click)="toggleMedicine()" data-test-id="btnCancelMed">
                 {{'Cancel'|translate}}
               </button>
               <button type="submit" class="gray-btn" [disabled]="addMedicineForm.invalid" data-test-id="btnSubmitMed">
@@ -390,8 +390,8 @@
           </span>
         </div>
       </div>
-      <div class="form-group mt-2">
-        <button type="button" class="white-btn mr-2" (click)="toggleAdvice()" data-test-id="btnCancelAdvice">
+      <div class="form-group mt-3">
+        <button type="button" class="white-btn mr-3" (click)="toggleAdvice()" data-test-id="btnCancelAdvice">
           {{'Cancel'|translate}}
         </button>
         <button type="submit" class="gray-btn" [disabled]="addAdviceForm.invalid" data-test-id="btnSubmitAdvice">
@@ -400,7 +400,7 @@
       </div>
     </form>
   </ng-container>
-
+  <hr>
   <ul class="items-list mt-3" *ngIf="advices.length else noAdvices">
     <li *ngFor="let ad of advices; let i = index">
       <div class="d-flex justify-content-between">
@@ -457,8 +457,8 @@
             </span>
           </div>
         </div>
-        <div class="form-group  mt-2">
-          <button type="button" class="white-btn mr-2" (click)="toggleTest()" data-test-id="btnCancelTest">
+        <div class="form-group  mt-3">
+          <button type="button" class="white-btn mr-3" (click)="toggleTest()" data-test-id="btnCancelTest">
             {{'Cancel'|translate}}
           </button>
           <button type="submit" class="gray-btn" [disabled]="addTestForm.invalid" data-test-id="btnSubmitTest">
@@ -467,6 +467,7 @@
         </div>
       </form>
     </ng-container>
+    <hr>
     <ul class="items-list mt-3" *ngIf="tests.length">
       <li *ngFor="let t of tests; let i = index">
         <div class="d-flex justify-content-between">
@@ -598,7 +599,7 @@
             <tr *ngIf="!addMoreReferral && !isMCCUser">
               <td colspan="6" class="border-top-0">
                 <div class="form-group mb-0">
-                  <button type="button" class="white-btn mr-2" (click)="toggleReferral()"
+                  <button type="button" class="white-btn mr-3" (click)="toggleReferral()"
                     data-test-id="btnCancelReferralVisitSummary">
                     {{'Cancel'|translate}}
                   </button>

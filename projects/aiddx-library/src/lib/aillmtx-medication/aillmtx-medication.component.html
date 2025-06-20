@@ -67,7 +67,7 @@
                          [disabled]="isMedicineExists(medicine.name)" (change)="onAIMedicineChange(medicine)" />
                         <span class="med-name"  [class.text-muted]="isMedicineExists(medicine.name)">{{ medicine.name }}</span>
                     </label>
-                    <span class="med-severity"  [class.text-muted]="isMedicineExists(medicine.name)">({{ medicine.confidence }})</span>
+                    <span class="med-severity"  [class.text-muted]="isMedicineExists(medicine.name)">({{ medicine.confidence ? (medicine.confidence.charAt(0).toUpperCase() + medicine.confidence.slice(1).toLowerCase()) : '' }})</span>
                 </div>
                 <ul class="med-details" [class.text-muted]="isMedicineExists(medicine.name)">
                     <li>{{ medicine.dosage }}</li>

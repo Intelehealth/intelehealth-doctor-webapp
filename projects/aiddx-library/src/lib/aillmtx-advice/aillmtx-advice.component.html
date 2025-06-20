@@ -52,7 +52,7 @@
         </div>
         <div class="med-grid">
             <div  *ngFor="let advice of adviceList" class="med-card">
-                <div class="mt-2">
+                <div class="mt-3">
                     <label class="checkbox-label">
                         <input type="checkbox" [ngClass]="{ 'selected-med': advice.selected }" class="custom-checkbox me-2"  [(ngModel)]="advice.selected"  [checked]="isAdviceSelected(advice)"
                        [disabled]="isAdviceExists(advice.v)" (change)="onAIAdviceChange(advice)"/>

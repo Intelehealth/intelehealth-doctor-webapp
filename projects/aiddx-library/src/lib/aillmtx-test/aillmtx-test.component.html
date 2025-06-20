@@ -52,7 +52,7 @@
         </div>
         <div class="med-grid">
             <div *ngFor="let test of testList" class="med-card">
-                <div class="mt-2">
+                <div class="mt-2 pl-2">
                     <label class="checkbox-label">
                         <input type="checkbox" [ngClass]="{ 'selected-med': test.selected }"
                             class="custom-checkbox me-2" [(ngModel)]="test.selected" [checked]="isTestSelected(test)"
