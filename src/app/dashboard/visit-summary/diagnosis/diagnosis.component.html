@@ -17,15 +17,15 @@
     <table class="table" aria-describedby="">
       <thead>
         <tr>
-          <th scope="col">{{'Diagnosis'|translate}}</th>
-          <th scope="col">{{'Type'|translate}}</th>
-          <th scope="col">{{'Status'|translate}}</th>
-          <th scope="col"></th>
+          <th scope="col" class="border-top-0">{{'Diagnosis'|translate}}</th>
+          <th scope="col" class="border-top-0">{{'Type'|translate}}</th>
+          <th scope="col" class="border-top-0">{{'Status'|translate}}</th>
+          <th scope="col" class="border-top-0"></th>
         </tr>
       </thead>
       <tbody>
         <ng-container *ngIf="existingDiagnosis.length">
-          <tr *ngFor="let d of existingDiagnosis; let i = index" style="border-bottom: 1px solid #dee2e6;">
+          <tr *ngFor="let d of existingDiagnosis; let i = index">
             <td>{{ d.diagnosisName }}</td>
             <td>{{ d.diagnosisType }}</td>
             <td>{{ d.diagnosisStatus }}</td>
@@ -131,7 +131,7 @@
             </li>
           </ul>
           <div class="form-group mb-0  mt-5" *ngIf="!isMCCUser">
-            <button type="button" class="white-btn mr-2 mt-3 mb-3" (click)="toggleDiagnosis()" data-test-id="btnCancelDiagnosis">
+            <button type="button" class="white-btn mr-3 mt-3 mb-3" (click)="toggleDiagnosis()" data-test-id="btnCancelDiagnosis">
               {{'Cancel'|translate}}
             </button>
             <button type="submit" class="gray-btn mb-3" [disabled]="diagnosisForm.invalid" data-test-id="btnSubmitDiagnosis">
@@ -354,7 +354,7 @@
             </tr>
             <tr *ngIf="m.instructRemark">
               <td colspan="6" class="instruction-cell border-bottom-0">
-                <span class="text-muted">Instructions/Remarks:</span><span style="color: #000000;">{{ m.instructRemark || 'N/A' }}</span> 
+                <span class="text-muted">Instructions/Remarks: </span><span style="color: #000000;">{{ m.instructRemark || 'N/A' }}</span> 
               </td>
             </tr>
           </ng-container>
@@ -397,21 +397,12 @@
       </button>
     </div>
     <form [formGroup]="addAdviceForm" (ngSubmit)="addAdvice()" *ngIf="!addMoreAdvice">
-      <div class="form-group">
+      <div class="form-group mt-2">
         <label for="note"><b>{{'Advice'|translate}}*</b></label>
         <input type="text" class="form-control" formControlName="advice" placeholder="{{'Add advice to patient'|translate}}"
           [ngbTypeahead]="search1" data-test-id="etAdvice" />
-        <div class="selected-diagnoses mt-1" *ngIf="selectedAdvices.length > 0">
-          <span *ngFor="let advice of selectedAdvices" class="selected-item mr-2"
-            [class.selected-primary]="advice === selectedAdvices[0]">
-            {{ advice }}
-            <button class="remove-icon" mat-icon-button (click)="removeAdvice(advice)">
-              <mat-icon>close</mat-icon>
-            </button>
-          </span>
-        </div>
       </div>
-      <div class="form-group mt-3">
+      <div class="form-group mt-2">
         <button type="button" class="white-btn mr-3" (click)="toggleAdvice()" data-test-id="btnCancelAdvice">
           {{'Cancel'|translate}}
         </button>
@@ -421,7 +412,7 @@
       </div>
     </form>
   </ng-container>
-  <hr>
+  <hr *ngIf="advices.length > 0">
   <ul class="items-list mt-3" *ngIf="advices.length else noAdvices">
     <li *ngFor="let ad of advices; let i = index">
       <div class="d-flex justify-content-between">
@@ -464,21 +455,12 @@
         </button>
       </div>
       <form [formGroup]="addTestForm" (ngSubmit)="addTest()" *ngIf="!addMoreTest">
-        <div class="form-group">
+        <div class="form-group mt-2">
           <label for="note"><b>{{'Test'|translate}}*</b></label>
           <input type="text" class="form-control" formControlName="test" placeholder="{{'Add test to patient'|translate}}"
             [ngbTypeahead]="search7" data-test-id="etTest" />
-          <div class="selected-diagnoses mt-1" *ngIf="selectedTests.length > 0">
-            <span *ngFor="let test of selectedTests" class="selected-item mr-2"
-              [class.selected-primary]="test === selectedTests[0]">
-              {{ test }}
-              <button class="remove-icon" mat-icon-button (click)="removeTest(test)">
-                <mat-icon>close</mat-icon>
-              </button>
-            </span>
-          </div>
         </div>
-        <div class="form-group  mt-3">
+        <div class="form-group  mt-2">
           <button type="button" class="white-btn mr-3" (click)="toggleTest()" data-test-id="btnCancelTest">
             {{'Cancel'|translate}}
           </button>
@@ -488,7 +470,7 @@
         </div>
       </form>
     </ng-container>
-    <hr>
+    <hr *ngIf="tests.length > 0">
     <ul class="items-list mt-3" *ngIf="tests.length">
       <li *ngFor="let t of tests; let i = index">
         <div class="d-flex justify-content-between">
@@ -535,7 +517,7 @@
     <lib-aillmtx-referral [patientInfo]="patientInfo" [visit]="visit" (referralSelected)="onAIReferralSelected()"
       [existingReferral]="existingReferral" [diagnosisName]="diagnosisName"></lib-aillmtx-referral>
   </ng-container>
-  <form class="mt-3" [formGroup]="addReferralForm" (ngSubmit)="addReferral()"
+  <form class="mt-2" [formGroup]="addReferralForm" (ngSubmit)="addReferral()"
     *ngIf="!appConfigService?.patient_visit_summary?.dp_referral_secondary">
     <div class="table-responsive medication-con">
       <table class="table" aria-describedby="">
@@ -604,19 +586,6 @@
                 </div>
               </td>
             </tr>
-            <tr>
-              <td colspan="7">
-                <div class="selected-diagnoses mt-1" *ngIf="selectedReferrals.length > 0">
-                  <span *ngFor="let refer of selectedReferrals" class="selected-item mr-2"
-                    [class.selected-primary]="refer === selectedReferrals[0]">
-                    {{ refer.referral_to }} - {{ refer.referral_facility }} - {{ refer.remark }}
-                    <button class="remove-icon" mat-icon-button (click)="removeReferral(refer)">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </span>
-                </div>
-              </td>
-            </tr>
             <tr *ngIf="!addMoreReferral && !isMCCUser">
               <td colspan="6" class="border-top-0">
                 <div class="form-group mb-0">
@@ -658,7 +627,7 @@
       </table>
     </div>
   </form>
-  <form class="mt-3" [formGroup]="referralSecondaryForm"
+  <form class="mt-2" [formGroup]="referralSecondaryForm"
     *ngIf="appConfigService?.patient_visit_summary?.dp_referral_secondary">
     <div class="form-group">
       <textarea formControlName="ref" class="form-control" rows="3" placeholder="{{'Type here'|translate}}"
@@ -799,16 +768,6 @@
             <div class="col-sm-9">
               <input type="text" class="form-control" placeholder="{{'Type here'|translate}}"
                 formControlName="followUpReason" data-test-id="etFollowUpReason" />
-              <div class="selected-diagnoses mt-1" *ngIf="selectedFollowups.length > 0">
-                <span *ngFor="let follow of selectedFollowups" class="selected-item mr-2"
-                  [class.selected-primary]="follow === selectedFollowups[0]">
-                  {{ follow.follow_up_required ? 'Yes' : 'No' }}, {{ follow.follow_up_duration }}, {{
-                  follow.reason_for_follow_up }}
-                  <button class="remove-icon" mat-icon-button (click)="removeFollowUp(follow)">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </span>
-              </div>
             </div>
           </div>
         </li>
