@@ -309,6 +309,35 @@
   bottom: 16px;
 }
 
+.advice-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.advice-card {
+  flex: 1 1 30%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+ // justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.advice-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1B163A;
+  text-align: left;
+}
+
 @media (max-width: 768px) {
   .erorr-container {
     height: 180px;

@@ -268,7 +268,7 @@
 
 .checkbox-label {
   display: flex;
- // align-items: center;
+  align-items: center;
   gap: 8px;
 }
 
@@ -292,7 +292,7 @@
   position: relative;
   cursor: pointer;
   background-color: transparent;
-  margin-top: 12px;
+  //margin-top: 12px;
   margin-right: 10px;
  // margin-bottom: 9px;
 
@@ -315,6 +315,35 @@
 .selected-med {
   background-color: #0FD197;
   color: white;
+}
+
+.advice-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.advice-card {
+  flex: 1 1 30%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+ // justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.advice-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1B163A;
+  text-align: left;
 }
 
 @media (max-width: 768px) {
