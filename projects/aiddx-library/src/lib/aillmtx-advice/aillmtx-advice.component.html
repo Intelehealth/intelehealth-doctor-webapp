@@ -42,7 +42,7 @@
 </ng-container>
 
 <ng-container *ngIf="adviceList.length" class="mt-2">
-    <div class="mt-2 ayu-suggestion-container p-4 rounded-lg border border-gray-300 bg-green-50">
+    <div class="mt-3 mb-3 ayu-suggestion-container p-4 border border-gray-300 bg-green-50">
         <div class="mb-2 flex items-center ayu-header">
             <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested advice
         </div>
@@ -51,14 +51,12 @@
             This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
             for all relevant factors; please use your own judgment before acting.
         </div>
-        <div class="med-grid">
-            <div  *ngFor="let advice of adviceList" class="med-card">
-                <div class="med-header">
-                    <label class="checkbox-label">
+        <div class="advice-container">
+            <div  *ngFor="let advice of adviceList" class="advice-card">
+                <div class="advice-content">
                         <input type="checkbox" [ngClass]="{ 'selected-med': advice.selected }" class="custom-checkbox me-2"  [(ngModel)]="advice.selected"  [checked]="isAdviceSelected(advice)"
                        [disabled]="isAdviceExists(advice.v)" (change)="onAIAdviceChange(advice)"/>
-                        <span class="med-name"[class.text-muted]="isAdviceExists(advice.v)">{{ advice.v }}</span>
-                    </label>
+                        <div class="med-name"[class.text-muted]="isAdviceExists(advice.v)">{{ advice.v }}</div>
                 </div>
             </div>
        </div>
