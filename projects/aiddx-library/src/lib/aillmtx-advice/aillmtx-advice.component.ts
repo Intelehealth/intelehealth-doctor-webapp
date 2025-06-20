@@ -33,7 +33,7 @@ export class AillmtxAdviceComponent {
     this.isLoading = true;
     this.adviceList = [];
     this.furtherQuestionsList = [];
-    this.TxService.getAITTx(payload, diagnosis).subscribe({
+    this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
@@ -65,7 +65,7 @@ export class AillmtxAdviceComponent {
       this.isLoading = true;
       this.adviceList = [];
       this.furtherQuestionsList = [];
-      this.TxService.getAITTx(payload, diagnosis).subscribe({
+      this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
           console.log('AI Advice Up Data:', data.result.medical_advice.length > 0, data.result.medical_advice.length);
           if (data.result.medical_advice.length > 0) {

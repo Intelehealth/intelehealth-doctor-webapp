@@ -51,7 +51,7 @@ export class AillmddxComponent {
     this.isLoading = true;
     this.diagnosisList = [];
     this.furtherQuestionsList = [];
-    this.ddxSvc.getAIDiagnosis(payload).subscribe({
+    this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
       next: (data: any) => {
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
@@ -71,7 +71,7 @@ export class AillmddxComponent {
             const key = Object.keys(q)[0];
             return q[key];
           });
-           this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
+          this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
         }
       },
       error: (err: any) => {
@@ -104,7 +104,7 @@ export class AillmddxComponent {
       this.isLoading = true;
       this.diagnosisList = [];
       this.furtherQuestionsList = [];
-      this.ddxSvc.getAIDiagnosis(payload).subscribe({
+      this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
         next: (data: any) => {
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {

@@ -16,8 +16,8 @@ export class AiddxService {
     }
   }
 
-  getAIDiagnosis(casehistory: any) {
-    return this.http.post(`${this.env.base}/ddx`, { casehistory });
+  getAIDiagnosis(casehistory: any, visitUuid: string) {
+    return this.http.post(`${this.env.base}/ddx`, { casehistory, visitUuid });
   }
 
   getDDxPayload(patientInfo: any, visit: any, notes?: string) {

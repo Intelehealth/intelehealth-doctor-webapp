@@ -33,7 +33,7 @@ export class AillmtxTestComponent {
     this.isLoading = true;
     this.testList = [];
     this.furtherQuestionsList = [];
-    this.TxService.getAITTx(payload, diagnosis).subscribe({
+    this.TxService.getAITTx(payload, diagnosis, this.visit).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
@@ -65,7 +65,7 @@ export class AillmtxTestComponent {
       this.isLoading = true;
       this.testList = [];
       this.furtherQuestionsList = [];
-      this.TxService.getAITTx(payload, diagnosis).subscribe({
+      this.TxService.getAITTx(payload, diagnosis, this.visit).subscribe({
         next: (data: any) => {
           if (data.result.tests_to_be_done.length > 0) {
             this.noData = false;

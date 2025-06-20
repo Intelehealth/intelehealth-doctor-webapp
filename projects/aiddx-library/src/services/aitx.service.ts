@@ -21,10 +21,10 @@ export class AiTxService {
     }
   }
 
-  getAITTx(casehistory: any, diagnosis: any) {
+  getAITTx(casehistory: any, diagnosis: any, visitUuid: string) {
     if (diagnosis !== this.lastDiagnosis || !this.cachedResponse) {
       this.lastDiagnosis = diagnosis;
-      this.cachedResponse = this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory }).pipe(
+      this.cachedResponse = this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory, visitUuid }).pipe(
         shareReplay(1)
       );
     }
