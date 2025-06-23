@@ -107,7 +107,7 @@
           </div>
         </div>
       </div>
-      
+
       <mat-tab-group class="patient-tab-group" mat-align-tabs="start">
         <mat-tab label="{{'Address'| translate}}" *ngIf="hasPatientAddressEnabled">
           <div class="rows patient-info-wrapper">
@@ -563,6 +563,7 @@
             </div>
           </div>
         </div>
+
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
@@ -594,6 +595,48 @@
                       <tr>
                         <td colspan="4" class="text-center">
                           {{'No referrals added'|translate}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/referral.svg" alt="" />
+              <h6>{{'External Appointment'|translate}}</h6>
+            </div>
+            <div class="data-section-content">
+              <div class="table-responsive">
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">{{'Referral facility'|translate}}</th>
+                      <th scope="col">{{'Practitioner'|translate}}</th>
+                      <th scope="col">{{'Date'|translate}}</th>
+                      <th scope="col">{{'Time'|translate}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="externalAppointmentList.length; else noAppointments">
+                        <tr *ngFor="let r of externalAppointmentList; let i = index">
+                          <td>{{ (r.facilityName) | translate }}</td>
+                          <td>{{ (r.practitionerName) | translate }}</td>
+                          <td>{{ (r.appointmentDate) | translate }}</td>
+                          <td>{{ r.appointmentTime }}</td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noAppointments>
+                      <tr>
+                        <td colspan="4" class="text-center">
+                          {{'No appointment added'|translate}}
                         </td>
                       </tr>
                     </ng-template>

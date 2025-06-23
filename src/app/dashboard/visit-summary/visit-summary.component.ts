@@ -623,7 +623,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.toastr.error("Failed to fetch external appointment list");
           },
         });
-    } 
+    }
   }
 
   /**
@@ -750,6 +750,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
     return identifier;
   }
+
   /**
   * Get patient identifier for given identifier type
   * @param {string} identifierType - Identifier type
@@ -2787,7 +2788,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
     const abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
     if (abhaNumber || abhaAddress || mobileNumber) {
-      // Added call to generate linking token and add isABDMLink attribute 
+      // Added call to generate linking token and add isABDMLink attribute
       this.visitService.postAttribute(this.visit.uuid,
         {
           attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */

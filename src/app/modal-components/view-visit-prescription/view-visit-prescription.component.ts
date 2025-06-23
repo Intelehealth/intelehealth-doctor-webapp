@@ -48,6 +48,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   followUp: FollowUpDataModel;
   consultedDoctor: any;
 
+
   conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
   conceptNote = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
@@ -69,6 +70,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   hasVitalsEnabled: boolean = false;
   hasPatientOtherEnabled: boolean = false;
   hasPatientAddressEnabled: boolean = false;
+  externalAppointmentList: any[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -82,7 +84,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
-      this.vitals = [...this.appConfigService.patient_vitals]; 
+      this.vitals = [...this.appConfigService.patient_vitals];
       this.hasVitalsEnabled = this.appConfigService.patient_vitals_section;
       this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
       this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
@@ -159,6 +161,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             this.patient = patient;
             this.clinicName = visit.location.display;
             this.getVisitProvider(visit.encounters);
+            this.getExternalAppointsList();
             this.getOrderList();
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
@@ -579,6 +582,38 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
+  getPatientMPIdentifier(): string {
+    return (
+      this?.visit?.patient?.identifiers?.find(
+        (i: any) => i?.identifierType?.name === "MPI"
+      )?.identifier ?? ""
+    );
+  }
+
+  getExternalAppointsList() {
+    if (Boolean(this.getPatientMPIdentifier())) {
+      this.visitEncounterService
+        .getExternalAppointmentList(
+          this.getPatientMPIdentifier(),
+          this.visit.uuid
+        )
+        .subscribe({
+          next: (externalAppointment) => {
+            this.externalAppointmentList = externalAppointment;
+          },
+          error: (err) => {
+            console.error("Error fetching external appointment list:", err);
+          },
+        });
+    }
+  }
+
+
+  /**
   * Download prescription
   * @return {void}
   */
@@ -705,8 +740,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 //   table: {
                 //     widths: ['100%'],
                 //     body: [
-                //       [ 
-                //         [ 
+                //       [
+                //         [
                 //           ...this.getPatientRegFieldsForPDF('National ID'),
                 //           ...this.getPatientRegFieldsForPDF('Phone Number'),
                 //           , {text: ' ', style: 'subheader'}, {text: ' '}
@@ -1346,11 +1381,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             break;
         }
         if (value) {
-          other.push({ 
+          other.push({
             stack: [
               { text: e.name, style: 'subsubheader' },
               { text: value, style: 'pval' }
-            ] 
+            ]
           });
         }
       });
@@ -1415,11 +1450,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             break;
         }
         if (value != 'NA' && value) {
-          other.push({ 
+          other.push({
             stack: [
               { text: e.name, style: 'subsubheader' },
               { text: value, style: 'pval' }
-            ] 
+            ]
           });
         }
       });
