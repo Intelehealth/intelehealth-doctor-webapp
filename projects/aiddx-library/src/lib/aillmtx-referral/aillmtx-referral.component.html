@@ -53,15 +53,13 @@
         </div>
         <div>
             <div *ngFor="let refer of referralList" class="med-card">
-                <div>
-                    <label class="checkbox-label">
-                        <input type="checkbox" [ngClass]="{ 'selected-med': refer.selected }"
+                <div class="checkbox-label">
+                         <input type="checkbox" [ngClass]="{ 'selected-med': refer.selected }"
                             class="custom-checkbox me-2" [(ngModel)]="refer.selected"
                             [checked]="isReferralSelected(refer)" [disabled]="isReferralExists(refer.referral_to)"
                             (change)="onAIReferralChange(refer)">
                         <span class="med-name" [class.text-muted]="isReferralExists(refer.referral_to)">
                             {{ refer.referral_to }}, {{ refer.referral_facility }}, {{ refer.remark }}</span>
-                    </label>
                 </div>
             </div>
         </div>

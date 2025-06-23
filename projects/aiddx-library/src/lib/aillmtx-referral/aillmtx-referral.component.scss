@@ -269,17 +269,22 @@
 }
 }
 .med-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
 .med-card {
-  background: white;
-  padding: 12px 16px;
-  border-radius: 12px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+  flex: 1 1 30%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+ // justify-content: center;
   border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .med-header {
@@ -290,11 +295,15 @@
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1B163A;
+  text-align: left;
 }
 
 .med-name {
-  font-family: DM Sans Medium;
+  font-family: DM Sans;
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
