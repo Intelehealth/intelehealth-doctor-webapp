@@ -1,5 +1,5 @@
 <ng-container *ngIf="!medicationList.length">
-    <div class="d-flex justify-content-center mt-3">
+    <div class="d-flex justify-content-center mt-3 mb-3">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
 
             <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
@@ -48,7 +48,7 @@
      <span class="reminder">Patient is allergic to iboprofen. Please prescribe accordingly.</span>
   </div>
 
-    <div class="mt-3 mb-3 ayu-suggestion-container p-4 border border-gray-300 bg-green-50">
+    <div class="mt-3 mb-3 ayu-suggestion-container p-3 border border-gray-300 bg-green-50">
         <div class="mb-2 flex items-center ayu-header">
              <img class="mr-2"  src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested medication
         </div>
