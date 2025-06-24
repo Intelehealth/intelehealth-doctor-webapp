@@ -35,8 +35,8 @@ export class AillmtxReferralComponent {
     this.furtherQuestionsList = [];
     this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
       next: (data: any) => {
-        console.log("data?.result?.referral?.length", data?.result?.referral)
         if (data?.result?.referral?.length > 0) {
+           console.log("data?.result?.referral?.length", data?.result?.referral)
           this.noData = false;
           this.referralList = data.result.referral.map((v: any) => {
             return {
@@ -70,7 +70,7 @@ export class AillmtxReferralComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data?.result?.referral?.length > 0) {
+          if (data?.result?.referral?.length > 0 && data?.result?.referral[0]?.referral_to) {
             this.noData = false;
             this.referralList = data.result.referral.map((v: any) => {
               return {
