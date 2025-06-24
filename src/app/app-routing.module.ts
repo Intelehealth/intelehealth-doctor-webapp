@@ -17,9 +17,9 @@ const canActivateMenu = (menu: string | number) => {
     router?.navigateByUrl('/dashboard');
     return false
   }
-  
+
   return true;
-  
+
 }
 
 const routes: Routes = [

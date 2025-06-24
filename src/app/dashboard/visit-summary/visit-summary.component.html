@@ -47,17 +47,18 @@
                     {{ getPatientMPIdentifier() ? getPatientMPIdentifier() + ' (MPI)' : '' }}
                   </small>
                   <br/>
-                  <button  
-                  class="icon-btn-external-facilities"
-                  (click)="getPatientMPIdentifier() ? openExternalFacilitiesModal() : null"
-                  [ngClass]="{'disabled': !getPatientMPIdentifier()}"
-                  [attr.title]="!getPatientMPIdentifier() ? 'MPI ID not found to show healthcare data from external facilities' : 'Show external facilities healthcare data'"
-                  [disabled]="!getPatientMPIdentifier()"  
-                >
+                  <button
+                    *ngIf="getPatientMPIdentifier()"
+                    class="icon-btn-external-facilities"
+                    (click)="getPatientMPIdentifier() ? openExternalFacilitiesModal() : null"
+                    [ngClass]="{'disabled': !getPatientMPIdentifier()}"
+                    [attr.title]="!getPatientMPIdentifier() ? 'MPI ID not found to show healthcare data from external facilities' : 'Show external facilities healthcare data'"
+                    [disabled]="!getPatientMPIdentifier()"
+                  >
                   <img src="assets/svgs/attach.svg" alt="" class="icon-external"/>
                   {{ 'External Facilities' | translate }}
                 </button>
-                
+
                 </div>
               </div>
             </div>
@@ -1699,7 +1700,7 @@
                           </td>
                           <td>
                             <div class="form-group mb-0">
-                              <ng-select class="visit-select" appendTo=".visit-summary-tab-group" 
+                              <ng-select class="visit-select" appendTo=".visit-summary-tab-group"
                                 formControlName="requesterId" bindLabel="name" bindValue="uuid" [clearable]="false"
                                 [searchable]="true" [addTag]="true" placeholder="{{'Select practitioner'|translate}}*"
                                 data-test-id="selectExternalAppointmentPractitioner">

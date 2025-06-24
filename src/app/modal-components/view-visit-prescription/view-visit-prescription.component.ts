@@ -1028,6 +1028,38 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   table: {
                     widths: [30, '*'],
                     headerRows: 1,
+                    body:  [
+                      [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'External Appointment', style: 'sectionheader', border: [false, false, false, true] }],
+                      [
+                        {
+                          colSpan: 2,
+                          table: {
+                            widths: ['30%', '30%', '15%', '25%'],
+                            headerRows: 1,
+                            body: [
+                              [{text: 'Referral Facility', style: 'tableHeader'}, {text: 'Practitioner', style: 'tableHeader'}, {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}],
+                              ...this.getRecords('appointment')
+                            ]
+                          },
+                          layout: 'lightHorizontalLines'
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
                     body: [
                       [ {image: 'followUp', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Follow-up', style: 'sectionheader', border: [false, false, false, true] }],
                       [
@@ -1181,6 +1213,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           });
         } else {
           records.push([{ text: 'No referrals added', colSpan: 4, alignment: 'center' }]);
+        }
+        break;
+      case 'appointment':
+        if (this.externalAppointmentList.length) {
+          this.externalAppointmentList.forEach(r => {
+            records.push([r.facilityName, r.practitionerName, r.appointmentDate, r.appointmentTime ]);
+          });
+        } else {
+          records.push([{ text: 'No appointment added', colSpan: 4, alignment: 'center' }]);
         }
         break;
       case 'followUp':
