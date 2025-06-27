@@ -67,10 +67,9 @@ export class AillmtxAdviceComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          console.log('AI Advice Up Data:', data.result.medical_advice.length > 0, data.result.medical_advice.length);
-          if (data.result.medical_advice.length > 0) {
+          if (data.result.data.medical_advice.length > 0) {
             this.noData = false;
-            this.adviceList = data.result.medical_advice.map(v => {
+            this.adviceList = data.result.data.medical_advice.map(v => {
               return {
                 v
               }

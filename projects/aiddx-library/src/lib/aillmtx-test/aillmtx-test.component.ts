@@ -67,14 +67,9 @@ export class AillmtxTestComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit).subscribe({
         next: (data: any) => {
-          if (data.result.tests_to_be_done.length > 0) {
+          if (data.result.data.tests_to_be_done.length > 0) {
             this.noData = false;
-            this.testList = data.result.tests_to_be_done.map(v => {
-              console.log('Test:', {...v});
-              console.log('Test Reason:', v?.test_reason);
-              
-              console.log(this.TxService.markdownit(v?.test_reason));
-              
+            this.testList = data.result.data.tests_to_be_done.map(v => {              
               return {
                 ...v,
                 rationale: this.TxService.markdownit(v?.rationale)

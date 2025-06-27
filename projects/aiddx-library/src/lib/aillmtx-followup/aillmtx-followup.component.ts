@@ -67,9 +67,9 @@ export class AillmtxFollowupComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data.result.follow_up.length > 0) {
+          if (data.result.data.follow_up.length > 0 && data.result.data.follow_up[0]?.follow_up_duration) {
             this.noData = false;
-            this.followUpList = data.result.follow_up.map(v => {
+            this.followUpList = data.result.data.follow_up.map(v => {
               return {
                 ...v,
               }

@@ -70,9 +70,9 @@ export class AillmtxReferralComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data?.result?.referral?.length > 0 && data?.result?.referral[0]?.referral_to) {
+          if (data?.result?.data.referral?.length > 0 && data?.result?.data.referral[0]?.referral_to) {
             this.noData = false;
-            this.referralList = data.result.referral.map((v: any) => {
+            this.referralList = data.result.data.referral.map((v: any) => {
               return {
                 ...v,
               }
