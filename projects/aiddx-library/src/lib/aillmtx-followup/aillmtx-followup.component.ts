@@ -21,7 +21,8 @@ export class AillmtxFollowupComponent {
   followUpList: any = []
   furtherQuestionsList: any = []
   selectedFollowUp: any[] = [];
-
+  loggedError: string;
+  
   constructor(
     private TxService: AiTxService,
   ) { }
@@ -67,13 +68,16 @@ export class AillmtxFollowupComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data.result.data.follow_up.length > 0 && data.result.data.follow_up[0]?.follow_up_duration) {
+          if (data.result.data.success && data.result.data.follow_up.length > 0 && data.result.data.follow_up[0]?.follow_up_duration) {
             this.noData = false;
             this.followUpList = data.result.data.follow_up.map(v => {
               return {
                 ...v,
               }
             });
+           } else if(!data.data.success) {
+              this.hasError = true;
+              this.loggedError = data.data?.error;
           } else {
             this.noData = true;
           }

@@ -21,7 +21,8 @@ export class AillmtxReferralComponent {
   referralList: any = []
   furtherQuestionsList: any = []
   selectedReferral: any[] = [];
-
+  loggedError: string;
+  
   constructor(
     private TxService: AiTxService,
   ) { }
@@ -70,13 +71,16 @@ export class AillmtxReferralComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data?.result?.data.referral?.length > 0 && data?.result?.data.referral[0]?.referral_to) {
+          if (data.result.data.success && data?.result?.data.referral?.length > 0 && data?.result?.data.referral[0]?.referral_to) {
             this.noData = false;
             this.referralList = data.result.data.referral.map((v: any) => {
               return {
                 ...v,
               }
             });
+           } else if(!data.data.success) {
+              this.hasError = true;
+              this.loggedError = data.data?.error;
           } else {
             this.noData = true;
           }

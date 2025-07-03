@@ -8,7 +8,8 @@
   font-weight: bold;
   font-size: 14px;
   line-height: 150%;
-  color: var(--color-darkBlue);
+  background-color: var(--color-darkBlue);
+  color: white;
 }
 
 .diffrential-diagnosis {
@@ -261,7 +262,7 @@
   flex: 2;
   // background: #F9FFFC;
   border-radius: 10px;
-  margin-bottom: -50px;
+  margin-bottom: -42px;
 }
 
 .right-section {
@@ -285,11 +286,11 @@
 }
 
 .warning {
-  background-color: #FF475D14;
-  border: 1px solid #FF475D14;
+  background-color: #fff7f3;
+  border: 0.8px solid #FF475D14;
   padding: 10px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 12px;
   margin-bottom: 14px;
 }
 
@@ -319,11 +320,11 @@
   background: white;
   float: right;
   border-radius: 4px;
-  padding: 4px 12px;
+  padding: 0px 7px;
   color: gray;
   transition: all .2s ease;
   position: relative;
-  bottom: 40px;
+  bottom: 32px;
 
   &:hover {
     background: #B5F2DF;
@@ -477,6 +478,10 @@
   }
 }
 
+::ng-deep ngb-tooltip-window .arrow {
+  top: 5px !important; /* move arrow 20px from the left */
+}
+
 .tooltip-container {
   width: 100%;
   box-sizing: border-box;
@@ -544,4 +549,8 @@
       }
     }
   }
+}
+
+.space {
+  margin-top: 40px;
 }

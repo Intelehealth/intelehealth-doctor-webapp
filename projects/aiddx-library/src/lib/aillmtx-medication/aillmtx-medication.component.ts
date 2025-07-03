@@ -21,6 +21,7 @@ export class AillmtxMedicationComponent {
   medicationList: any = []
   furtherQuestionsList: any = []
   selectedMedicine: any[] = [];
+  loggedError:string;
 
   constructor(
     private TxService: AiTxService,
@@ -67,7 +68,7 @@ export class AillmtxMedicationComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data.result.data.medications.length > 0) {
+          if (data.result.data.success && data.result.data.medications.length > 0) {
             this.noData = false;
             this.medicationList = data.result.data.medications.map(v => {
 
@@ -75,7 +76,10 @@ export class AillmtxMedicationComponent {
                 ...v,
               }
             });
-          } else {
+        } else if(!data.data.success) {
+              this.hasError = true;
+              this.loggedError = data.data?.error;
+          }  else {
             this.noData = true;
           }
           this.isLoading = false;

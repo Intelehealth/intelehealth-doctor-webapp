@@ -1,8 +1,8 @@
-<ng-container *ngIf="!testList.length">
+<ng-container *ngIf="!testList.length && (hasError || !noData)">
     <div class="d-flex justify-content-center mt-3 mb-3">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
 
-            <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
+            <div *ngIf="!hasError && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
@@ -12,16 +12,16 @@
                 </div>
             </div>
 
-            <ng-container *ngIf="!isLoading && (hasError || noData)">
-                <div class="text-danger txt-position">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon mr-2" />
-                    <span *ngIf="hasError" class="ms-2">No tests are recommended based on the information provided.</span>
+            <ng-container *ngIf="!isLoading && hasError">
+                <div *ngIf="!isLoading && hasError" class="text-danger txt-position">
+                   <span><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> </span>
+                    <span *ngIf="!loggedError" class="ml-2">No suggestions at this moment</span>
+                    <span *ngIf="loggedError" class="ml-2">{{ loggedError }}</span>
                     <!-- <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span> -->
                     <!-- <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span> -->
-                    <span *ngIf="noData" class="ms-2">No suggestions at this moment</span>
+                    <!-- <span *ngIf="noData" class="ms-2">No suggestions at this moment</span> -->
                 </div>
-                <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
+                <button *ngIf="!noData" type="button" class="try-again-btn mt-5" (click)="onTryAgain()">
                     {{'Try again'|translate}}
                 </button>
             </ng-container>
@@ -41,7 +41,7 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="testList.length" class="mt-2">
+<ng-container *ngIf="testList.length || (!isLoading && (hasError && noData))" class="mt-2">
     <div class="mt-3 ayu-suggestion-container p-3 border border-gray-300 bg-green-50">
         <div class="mb-2 flex items-center ayu-header">
             <img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested investigations
@@ -51,9 +51,9 @@
             This AI-generated suggestion is intended to support—not replace—your clinical judgment and may not account
             for all relevant factors; please use your own judgment before acting.
         </div>
-        <div class="advice-container">
-            <div *ngFor="let test of testList" class="advice-card">
-                <div class="advice-content">
+        <div *ngIf="testList.length" class="med-grid">
+            <div *ngFor="let test of testList" class="med-card">
+                <div class="checkbox-label">
                         <input type="checkbox" [ngClass]="{ 'selected-med': test.selected }"
                             class="custom-checkbox me-2" [(ngModel)]="test.selected" [checked]="isTestSelected(test)"
                             [disabled]="isTestExists(test.test_name)" (change)="onAITestChange(test)" />
@@ -62,5 +62,8 @@
                 </div>
             </div>
         </div>
+        <div class="textalign" *ngIf="!isLoading && !hasError && noData">
+        <span>No tests are recommended based on the information provided.</span>
+    </div>
     </div>
 </ng-container>

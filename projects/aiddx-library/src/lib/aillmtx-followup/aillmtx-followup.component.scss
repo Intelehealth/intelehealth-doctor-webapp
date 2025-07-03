@@ -8,7 +8,8 @@
   font-weight: bold;
   font-size: 14px;
   line-height: 150%;
-  color: var(--color-darkBlue);
+  background-color: var(--color-darkBlue);
+  color: white;
 }
 
 .diffrential-diagnosis {
@@ -260,7 +261,7 @@
     font-weight: bold;
   }
   .warning {
-  background-color: #FFF7F3;
+  background-color: #fff7f3;
   border: 0.8px solid #FF475D14;
   padding: 10px;
   border-radius: 8px;
@@ -313,6 +314,12 @@
 .selected-med {
   background-color: #0FD197;
   color: white;
+}
+
+.textalign {
+    text-align: center;
+    color: #7F7B92;
+    margin-top: 15px;
 }
 
 @media (max-width: 768px) {

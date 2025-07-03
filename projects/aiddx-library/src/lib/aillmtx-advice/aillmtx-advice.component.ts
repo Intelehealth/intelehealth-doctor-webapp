@@ -21,6 +21,7 @@ export class AillmtxAdviceComponent {
   adviceList: any = []
   furtherQuestionsList: any = []
   selectedAdvice: string[] = [];
+  loggedError: string;
 
   constructor(
     private TxService: AiTxService,
@@ -57,7 +58,7 @@ export class AillmtxAdviceComponent {
   }
 
   public getAIAdviceWithRetry(diagnosis: any) {    
-    const MAX_RETRIES = 3;
+    const MAX_RETRIES = 1;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
@@ -67,13 +68,16 @@ export class AillmtxAdviceComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (data.result.data.medical_advice.length > 0) {
+          if (data.result.data.success &&  data.result.data.medical_advice.length > 0) {
             this.noData = false;
             this.adviceList = data.result.data.medical_advice.map(v => {
               return {
                 v
               }
             });
+          } else if(!data.data.success) {
+              this.hasError = true;
+              this.loggedError = data.data?.error;
           } else {
             this.noData = true;
           }

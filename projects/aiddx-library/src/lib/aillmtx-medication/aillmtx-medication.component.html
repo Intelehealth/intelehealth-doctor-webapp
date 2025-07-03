@@ -1,8 +1,8 @@
-<ng-container *ngIf="!medicationList.length">
+<ng-container *ngIf="!medicationList.length && (hasError || !noData)">
     <div class="d-flex justify-content-center mt-3 mb-3">
         <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
 
-            <div *ngIf="!noData && !isLoading" class="no-data-container text-center">
+            <div *ngIf="!hasError && !isLoading" class="no-data-container text-center">
                 <div class="conclusion-header d-flex flex-column align-items-center">
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
@@ -11,16 +11,16 @@
                 </div>
             </div>
 
-            <ng-container *ngIf="!isLoading && (hasError || noData)">
-                <div class="text-danger txt-position">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon mr-2" />
-                    <span *ngIf="hasError" class="ms-2">No medicinesre recommended based on the information provided.</span>
+            <ng-container *ngIf="!isLoading && hasError">
+                <div *ngIf="!isLoading && hasError" class="text-danger txt-position">
+                     <span><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> </span>
+                     <span *ngIf="!loggedError" class="ml-2">No suggestions at this moment</span>
+                     <span *ngIf="loggedError" class="ml-2">{{ loggedError }}</span>
                     <!-- <span *ngIf="hasError" class="ms-2">An unexpected issue occurred</span> -->
                     <!-- <span *ngIf="noData" class="ms-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span> -->
-                    <span *ngIf="noData" class="ms-2">No suggestions at this moment</span>
+                    <!-- <span *ngIf="noData" class="ms-2">No suggestions at this moment</span> -->
                 </div>
-                <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">
+                <button *ngIf="!noData" type="button" class="try-again-btn mt-5" (click)="onTryAgain()">
                     {{'Try again'|translate}}
                 </button>
             </ng-container>
@@ -40,10 +40,10 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="medicationList.length">
+<ng-container *ngIf="medicationList.length || (!isLoading && (hasError && noData))">
 
      <!-- Reminder -->
-  <div class="reminder-alert mt-3">
+  <div *ngIf="medicationList.length" class="reminder-alert mt-3">
      <span class="reminder-msg"><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> Reminder: </span>
      <span class="reminder">Patient is allergic to iboprofen. Please prescribe accordingly.</span>
   </div>
@@ -59,7 +59,7 @@
             for all relevant factors; please use your own judgment before acting.
         </div>
 
-        <div class="med-scroll-wrapper" [ngClass]="{ 'scroll-enabled': medicationList.length > 6 }">
+        <div *ngIf="medicationList.length" class="med-scroll-wrapper" [ngClass]="{ 'scroll-enabled': medicationList.length > 6 }">
         <div class="med-grid">
             <div *ngFor="let medicine of medicationList" class="med-card">
                 <div class="med-header">
@@ -78,6 +78,9 @@
                 </ul>
             </div>
         </div>
+    </div>
+     <div class="textalign" *ngIf="!isLoading && !hasError && noData">
+        <span>No medicines are recommended based on the information provided.</span>
     </div>
     </div>
 

@@ -21,6 +21,7 @@ export class AillmtxTestComponent {
   testList: any = []
   furtherQuestionsList: any = []
   selectedTest: string[] = [];
+  loggedError: string;
 
   constructor(
     private TxService: AiTxService,
@@ -67,7 +68,7 @@ export class AillmtxTestComponent {
       this.furtherQuestionsList = [];
       this.TxService.getAITTx(payload, diagnosis, this.visit).subscribe({
         next: (data: any) => {
-          if (data.result.data.tests_to_be_done.length > 0) {
+          if (data.result.data.success && data.result.data.tests_to_be_done.length > 0) {
             this.noData = false;
             this.testList = data.result.data.tests_to_be_done.map(v => {              
               return {
@@ -75,6 +76,9 @@ export class AillmtxTestComponent {
                 rationale: this.TxService.markdownit(v?.rationale)
               }
             });
+          } else if(!data.data.success) {
+              this.hasError = true;
+              this.loggedError = data.data?.error;
           } else {
             this.noData = true;
           }
