@@ -448,8 +448,9 @@
   padding: 8px 0 !important;
 
   .arrow {
-    left: auto !important;
-    right: 40px !important;
+    left: 40px !important;
+    top: auto !important;
+    bottom: 5px !important;
 
     &::before {
       border-width: 10px 10px 0 10px !important;
@@ -467,6 +468,7 @@
   .arrow {
     left: auto !important;
     right: 40px !important;
+    top: 5px !important;
 
     &::before {
       border-width: 0 10px 10px 10px !important;
@@ -476,10 +478,6 @@
       background: transparent !important;
     }
   }
-}
-
-::ng-deep ngb-tooltip-window .arrow {
-  top: 5px !important; /* move arrow 20px from the left */
 }
 
 .tooltip-container {
