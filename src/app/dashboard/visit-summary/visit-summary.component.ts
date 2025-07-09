@@ -458,10 +458,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   getAppointment(visitId: string): void {
+    console.log("visitId");
     this.appointmentService.getAppointment(visitId).subscribe((res: ApiResponseModel) => {
       if (res) {
         this.visitAppointment = res?.data?.slotJsDate;
       }
+      console.log("this.visitAppointment===",this.visitAppointment);
     });
   }
 
@@ -1712,11 +1714,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   getPastVisitHistory(): void {
+    console.log("inside visit past..........");
     this.pastVisits = [];
     this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: RecentVisitsApiResponseModel) => {
       const visits = res.results;
+      console.log("visits========",visits);
       if (visits.length > 1) {
         visits.forEach((visit: VisitModel) => {
+          console.log("visit=====",visit);
+          console.log("visit?.startDatetime===",visit?.startDatetime);
+          console.log("visit?.dateCreated ===",visit?.dateCreated );
+          
           if (visit.uuid !== this.visit.uuid) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: VisitModel) => {
               visitdetail.created_on = visitdetail.startDatetime;
