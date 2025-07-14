@@ -92,6 +92,7 @@ export class AillmtxAdviceComponent {
             }, 1000);
           } else {
             this.hasError = true;
+            this.loggedError = err;
             this.isLoading = false;
             console.error('Failed to get AI diagnosis after 3 attempts:', err);
           }

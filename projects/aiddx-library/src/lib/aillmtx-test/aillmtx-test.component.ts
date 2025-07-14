@@ -58,7 +58,7 @@ export class AillmtxTestComponent {
   }
 
   public getAITestWithRetry(diagnosis: any) {    
-    const MAX_RETRIES = 3;
+    const MAX_RETRIES = 1;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
@@ -94,6 +94,7 @@ export class AillmtxTestComponent {
           } else {
             this.hasError = true;
             this.isLoading = false;
+            this.loggedError = err;
             console.error('Failed to get AI diagnosis after 3 attempts:', err);
           }
         },

@@ -61,7 +61,7 @@ export class AillmtxReferralComponent {
   }
 
   public getAIReferralWithRetry(diagnosis: any) {    
-    const MAX_RETRIES = 3;
+    const MAX_RETRIES = 1;
     let retryCount = 0;
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);
 
@@ -97,7 +97,7 @@ export class AillmtxReferralComponent {
             console.error('Failed to get AI referral after 3 attempts:', err);
             this.hasError = true;
             this.isLoading = false;
-            this.noData = true;
+            this.loggedError = err;
           }
         },
         complete: () => {

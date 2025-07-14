@@ -43,7 +43,7 @@
   cursor: pointer;
   background-color: transparent;
   //margin-top: 2px;
-  margin-right: 10px;
+  //margin-right: 10px;
   //margin-bottom: 9px;
 
   &:checked {
@@ -204,6 +204,34 @@
   font-weight: 700;
 }
 
+.advice-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.advice-card {
+  flex: 1 1 30%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+ // justify-content: center;
+  border: 1px solid #B2AFBE33;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.advice-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1B163A;
+  text-align: left;
+}
 @keyframes bouncedelay {
 
   0%,
