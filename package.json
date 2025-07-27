@@ -50,7 +50,7 @@
     "ih-library": "github:Intelehealth/intelehealth-doctor-webapp-config-table-grid#v-0.2.8",
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
-    "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.7",
+    "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.0.10",
     "libphonenumber-js": "^1.10.18",
     "livekit-client": "^2.8.0",
     "markdown-it": "^14.1.0",
