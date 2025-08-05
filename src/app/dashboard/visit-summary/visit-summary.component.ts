@@ -1487,13 +1487,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
-      this.diagnosisService.getDiagnosisList(val, this.appConfigService?.patient_visit_summary?.diagnosis_snomedct  ? 'SNOMED CT' : 'ICD-10').subscribe({
+      this.diagnosisService.getSnomedCTDiagnosisList(val).subscribe({
         next: (response) => {
-          if (response.results && response.results.length) {
+          if (response.data && response.data.length) {
             const data = [];
-            response.results.forEach((element: { name: any, mappings: any }) => {
+            response.data.forEach((element: { concept_name: any, snomedCTCode: any }) => {
               if (element) {
-                data.push({ name: element?.name?.display, snomedId: element?.mappings?.[0] });
+                data.push({ name: element?.concept_name, snomedCTCode: element?.snomedCTCode });
               }
             });
             this.diagnosisSubject.next(data);
@@ -1575,7 +1575,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDiagnosisChange(event: any): void {
     this.diagnosisValidated = true;
-    if (isFeaturePresent("snomedCtDiagnosis")) {
+    if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
       if (event.conceptId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.addControl('isSnomed', new FormControl(null));
@@ -1585,6 +1585,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       else if (event.snomedId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.patchValue({ diagnosisCode: event.snomedId?.display.split(': ')[1] });
+      }
+      else if (event.snomedCTCode) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.addControl('isSnomed', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.snomedCTCode });
+        this.diagnosisForm.patchValue({ isSnomed: true });
       }
     }
   }
@@ -2677,11 +2683,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               concept: conceptIds.conceptDiagnosis,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
               encounter: this.visitNotePresent.uuid
             }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
           );
-          if (diagnosis?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+          if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
             postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode));
           }
         }
@@ -2846,11 +2852,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             concept: conceptIds.conceptDiagnosis,
             person: this.visit.patient.uuid,
             obsDatetime: new Date(),
-            value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+            value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
             encounter: this.visitNotePresent.uuid
           }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
         );
-        if (diagnosis?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+        if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
           postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode))
         }
       }
