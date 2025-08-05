@@ -8,6 +8,10 @@ table {
   width: 100%;
   font-family: DM Sans;
 }
+::ng-deep .mat-column-sectionr.shift-sectionr {
+  transform: translateX(-240px);
+  transition: transform 0.3s ease;
+}
 
 th.mat-header-cell {
   border: none;

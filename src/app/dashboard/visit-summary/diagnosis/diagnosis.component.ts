@@ -105,6 +105,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @Output() referralSaved = new EventEmitter<any>();
   @Output() followUpSaved = new EventEmitter<any>();
   @Output() furtherQuestionsReceived = new EventEmitter<string[]>();
+  @Output() diagnosisReceived = new EventEmitter<any>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -222,8 +223,6 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
 
 
     this.diagnosis$ = this.diagnosisSubject.asObservable();
-
-    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
     this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
@@ -251,6 +250,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.aillmddxComponent.furtherQuestionsListReceived.subscribe((questions: string[]) => {
         if (questions && questions.length) {
           this.furtherQuestionsReceived.emit(questions);
+        }
+      });
+
+      this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
+        if (diagnosisData && diagnosisData.length) {
+          this.diagnosisReceived.emit(diagnosisData);
         }
       });
     }
@@ -383,18 +388,18 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
 
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
-      this.diagnosisService.getDiagnosisList(val, isFeaturePresent("snomedCtDiagnosis") ? 'SNOMED' : 'ICD10').subscribe({
+      this.diagnosisService.getSnomedCTDiagnosisList(val).subscribe({
         next: (response) => {
-          if (response.results && response.results.length) {
+          if (response.data && response.data.length) {
             const data = [];
-            response.results.forEach((element: { name: any, mappings: any }) => {
+            response.data.forEach((element: { concept_name: any, snomedCTCode: any }) => {
               if (element) {
-                data.push({ name: element?.name?.display, snomedId: element?.mappings?.[0] });
+                data.push({ name: element?.concept_name, snomedCTCode: element?.snomedCTCode });
               }
             });
             this.diagnosisSubject.next(data);
           } else {
-            if (isFeaturePresent("snomedCtDiagnosis")) {
+            if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
               this.diagnosisService.getSnomedDiagnosisList(val).subscribe({
                 next: (res) => {
                   if (res && res.result) {
@@ -422,7 +427,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
 
   onDiagnosisChange(event: any): void {
     this.diagnosisValidated = true;
-    if (isFeaturePresent("snomedCtDiagnosis")) {
+    if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
       if (event?.conceptId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.addControl('isSnomed', new FormControl(null));
@@ -432,6 +437,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       else if (event?.snomedId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.patchValue({ diagnosisCode: event.snomedId?.display.split(': ')[1] });
+      }
+      else if (event.snomedCTCode) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.addControl('isSnomed', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.snomedCTCode });
+        this.diagnosisForm.patchValue({ isSnomed: true });
       }
     }
     if (this.selectedDiagnoses.length > 0) {

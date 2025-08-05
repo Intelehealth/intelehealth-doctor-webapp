@@ -14,7 +14,7 @@
     </div>
   </div>
 </div> -->
-<mat-dialog-content>
+<mat-dialog-content [disableDirective]="true">
   <div class="container-fluid">
     <div class="row">
       <div class="col p-0">
@@ -48,17 +48,19 @@
             </div>
             <div class="call-duration-container">
               <div class="call-duration" [class.d-none]="_minimized">
+                <span [ngClass]="{ 'fontColor': !_remoteVideoOff }" style="font-size: 16px; font-weight: 500;">Call ends in</span>
                 <span *ngIf="callDuration" class="pill">{{
                   callDuration
                 }}</span>
               </div>
             </div>
-            <div class="video-controls" [class.d-none]="_minimized">
+            <div class="video-controls">
               <button
                 type="button"
                 class="video-ctrl-btn red"
                 (click)="endCallInRoom()"
                 data-test-id="btnEnd"
+               [class.minimized]="_minimized"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
@@ -68,6 +70,7 @@
                 (click)="toggleAudio()"
                 data-test-id="btnToggleAudio"
                 [class.gray]="_localAudioMute"
+                [class.minimized]="_minimized"
               >
                 <img
                   src="{{
@@ -79,6 +82,7 @@
                 />
               </button>
               <button
+               [class.d-none]="_minimized"
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleVideo()"
@@ -95,12 +99,12 @@
                 />
               </button>
             </div>
-            <div class="window-controls" [class.minimized]="_minimized">
-              <button
+               <button
                 type="button"
-                class="video-ctrl-btn"
+                class="video-ctrl-btn fullscreen-btn"
                 (click)="toggleWindow()"
                 data-test-id="btnToggleWindow"
+                [class.minimized]="_minimized"
               >
                 <img
                   src="{{
@@ -111,15 +115,15 @@
                   alt=""
                 />
               </button>
-            </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
             <div #localVideo class="local-container"></div>
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
-                src="{{ baseUrl + '/personimage/' + data.drPersonUuid }}"
-                (error)="$event.target.src = 'assets/svgs/dr-user.svg'"
-                alt=""
+               [src]="baseUrl + '/personimage/' + data.drPersonUuid"
+              (error)="setDefaultImage($event)"
+              alt=""
+              [useDefaultImageDirective]="false"
               />
             </div>
             <div class="audio-status">

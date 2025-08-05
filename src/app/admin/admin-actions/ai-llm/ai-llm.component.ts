@@ -16,13 +16,21 @@ import { languages } from "src/config/constant";
 export class AiLlmComponent {
 
   aiLlmDataSource = new MatTableDataSource<any>();
+  aiLlmDataSource2 = new MatTableDataSource<any>();
+
   @ViewChild("aiLlmPaginator") aiLlmPaginator: MatPaginator;
+  @ViewChild('aiLlmPaginator2') aiLlmPaginator2: MatPaginator;
+
   sectionEnabled: boolean = false;
   allSectionData: any = {};
   displayedAILLMColumns: string[] = ["serialNo", "section"];
+  displayedAILLMRecordingColumns: string[] = ["serialNo", "sectionr"];
+
   tableData = [];
   aiLlmId: number;
   aiLlmfeatures: any = {};
+  aiLlmRecordingfeatures: any ={};
+  aiLlmRecordingId: any;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -36,10 +44,16 @@ export class AiLlmComponent {
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
     this.getAILLM();
     this.getAILLMByKey();
+
+    // Recordings
+     this.getAILLMRecording();
+    this.getAILLMRecordingByKey();
   }
 
   ngAfterViewInit(){
     this.aiLlmDataSource.paginator = this.aiLlmPaginator;
+    this.aiLlmDataSource2.paginator = this.aiLlmPaginator2;
+
   }
 
   /**
@@ -97,6 +111,91 @@ export class AiLlmComponent {
       },
       (err) => {
         this.getAILLM();
+      }
+    );
+  }
+
+  // Recording
+
+   /**
+   * Get all fields.
+   * @return {void}
+   */
+  getAILLMRecording(): void {
+    this.configService.getAILLMRecording().subscribe((res: any) => {
+      this.aiLlmDataSource2 = new MatTableDataSource(res.aiLlm);
+      this.aiLlmDataSource2.paginator = this.aiLlmPaginator2;
+    });
+  }
+
+  getAILLMRecordingByKey(){
+this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe((res: any) => {
+        console.log("99999999999===", res);
+
+      this.aiLlmRecordingId = res.feature.id;
+      this.aiLlmRecordingfeatures = res.feature ;
+    });
+  }
+
+  /**
+   * Update patient details status.
+   * @return {void}
+   */
+  updateAILLMRecordingEnabledStatus(id: number, status: boolean): void {
+    this.configService.updateAILLMRecordingEnabledStatus(id, status).subscribe(
+      (res) => {
+        this.toastr.success("AI LLM recording have been successfully updated", "Update successful!");
+        this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
+      }
+    );
+  }
+  
+  /**
+   * @return {void}
+   */
+  updateAILLMRecordingStatus(event:Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.configService.updateFeatureEnabledStatus(this.aiLlmRecordingId, checked).subscribe(
+      (res) => {
+        this.toastr.success("AI video recording have been successfully updated", "Update successful!");
+        this.updateAILLMVideoRecording(1, checked)
+      //  this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
+      }
+    );
+  }
+
+  /**
+   * @return {void}
+   */
+  updateAILLMVideoRecording(id,status): void {
+    this.configService.updateAILLMVideoRecording(id,status).subscribe(
+      (res) => {
+      //  this.toastr.success("AI LLM video Recording have been successfully updated", "Update successful!");
+        this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
+      }
+    );
+  }
+   /**
+   * @return {void}
+   */
+  updateAILLMAudioRecording(id:number,event: Event): void {
+      const newValue = (event.target as HTMLInputElement).checked;
+    this.configService.updateAILLMAudioRecording(id, newValue).subscribe(
+      (res) => {
+        this.toastr.success("AI LLM Audio recording have been successfully updated", "Update successful!");
+     //   this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
       }
     );
   }

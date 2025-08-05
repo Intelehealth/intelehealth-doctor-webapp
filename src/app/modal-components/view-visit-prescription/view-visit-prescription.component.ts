@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -630,7 +630,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
     const checkUpReasonConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['check_up_reason'].key);
-    
+    const isValidSign = this.signature.value && await isValidBase64Image(this.signature.value);
+
     const vitalsConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['vitals'].key); 
     const pdfObj = {
       pageSize: 'A4',
@@ -959,12 +960,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   alignment: 'right',
-                  stack: [
-                    { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
-                    { text: `${this.consultedDoctor?.typeOfProfession}`},
-                    { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
-                  ]
+                  stack: isValidSign
+                  ? [
+                      { image: `${this.signature.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0] },
+                      { text: `${this.consultedDoctor?.typeOfProfession}` },
+                      { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
+                    ]
+                  : [
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -40, 0, 0] },
+                      { text: `${this.consultedDoctor?.typeOfProfession}` },
+                      { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
+                    ]
                 },
                 '',
                 '',
@@ -1775,3 +1782,5 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     return this.getPatientIdentifier('OpenMRS ID');
   }
 }
+
+

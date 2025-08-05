@@ -55,6 +55,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   recodingStarted = false;
   tableId: number;
 
+  callType: string;
+  videoBitrateTooLow: boolean = false;
+  videoBitrateCheckInterval: any;
+  lastVideoBytesSent = 0;
+  lastTimestamp = 0;
+
+  isVideoEnabled: boolean;
+  isAudioEnabled: boolean;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<VideoCallComponent>,
@@ -69,13 +78,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
-
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
-
+    this.callType = this.data.callType;
     if (this.data.initiator) this.initiator = this.data.initiator;
     this.socketSvc.initSocket();
     this.initSocketEvents();
@@ -98,7 +106,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     } else {
       this.startCall();
     }
+      // set flag for audio/video enable/disable
+
+  this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
+console.log('AI Video Enabled:', this.isVideoEnabled);
   }
+
 
   /**
   * Getter for visit provider
@@ -194,9 +207,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       doctorId: this.data?.connectToDrId,
       appToken: this.webrtcSvc.appToken,
       socketId: this.socketSvc?.socket?.id,
-      initiator: this.initiator
+      initiator: this.initiator,
+      callType : this.callType
     };
-
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
     /**
@@ -220,8 +233,17 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async handleParticipantConnect(): Promise<void> {
     this.callConnected = true;
     this.callStartedAt = moment();
+    if(this.callType === 'audio') {
+      this._localVideoOff = true;
+        this.videoBitrateCheckInterval = setInterval(() => {
+        this.checkLocalVideoBitrate();
+      }, 3000);
+    }
     this.socketSvc.emitEvent('call-connected', this.incomingData);
-    if(isFeaturePresent('webrtcRecording')) {
+
+    console.log("is Video Enabled", this.isVideoEnabled);
+    if(this.callType === 'video' && this.isVideoEnabled) {
+      console.log("Starting recording");
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -471,6 +493,44 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  async checkLocalVideoBitrate(): Promise<void> {
+  const pc: RTCPeerConnection | undefined = (this.webrtcSvc.room as any)?.engine?.pcManager?.publisher?._pc;
+
+  const stats = await pc.getStats();
+
+  stats.forEach((report) => {
+    if (this.lastTimestamp === 0) {
+    this.lastTimestamp = report.timestamp;
+    this.lastVideoBytesSent = report.bytesSent;
+    return;
+    }
+    if (
+      report.type === 'outbound-rtp' &&
+      report.kind === 'video' &&
+      typeof report.bytesSent === 'number' &&
+      typeof report.timestamp === 'number'
+    ) {
+      if (this.lastTimestamp && this.lastVideoBytesSent) {
+        const timeDiffSec = (report.timestamp - this.lastTimestamp) / 1000;
+        const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
+        if (timeDiffSec > 0) {
+        const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
+        console.log('Video bitrate (bps):', bitrate);
+
+        this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 200 kbps
+        }
+      }
+      this.lastTimestamp = report.timestamp;
+      this.lastVideoBytesSent = report.bytesSent;
+    }
+  });
+
+  if(this.videoBitrateTooLow) {
+     this.toastr.warning('Low bandwidth detected. Continuing with the audio call');
+     this._localVideoOff = true;
+  }
+}
   /**
   * End call and disconnect from the room
   * @return {void}
@@ -482,7 +542,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       if(this.recodingStarted && isFeaturePresent('webrtcRecording')) {
         this.recodingStarted = false;
         await this.webrtcSvc.stopRecording(this.tableId, this.room)
-        // await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
           .toPromise()
           .catch(err => {
             console.log("stop recoding error", err)
@@ -504,7 +563,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       webapp: true,
       initiator: this.initiator,
     });
-
+    clearInterval(this.videoBitrateCheckInterval);
+    this.lastVideoBytesSent = 0;
+    this.lastTimestamp = 0;
     this.close();
   }
 
@@ -611,4 +672,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   checkPatientRegField(fieldName: string): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
+  
+  setDefaultImage(event: Event) {
+  const imgElement = event.target as HTMLImageElement;
+  imgElement.src = 'assets/svgs/dr-user.svg';
+}
 }

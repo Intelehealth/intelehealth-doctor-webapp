@@ -40,7 +40,7 @@
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "@sjmc11/tourguidejs": "^0.0.17",
-    "aiddx-library": "github:Intelehealth/intelehealth-doctor-ddx-plugin#v1.1.4",
+    "aiddx-library": "github:Intelehealth/intelehealth-doctor-ddx-plugin#v1.1.5",
     "angular-calendar": "^0.29.0",
     "angular2-signaturepad": "^4.0.2",
     "bootstrap": "^4.6.2",

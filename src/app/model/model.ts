@@ -666,6 +666,7 @@ export interface WebrtcDataModel {
 export interface WebRTCConfigModel {
   chat: boolean;
   video_call: boolean;
+  audio_call: boolean;
 }
 
 export interface PatientVisitSummaryModel {
