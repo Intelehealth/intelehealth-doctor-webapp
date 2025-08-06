@@ -15,6 +15,7 @@ export class AillmddxComponent {
   @Input() existingDiagnosis: any[] = [];
   @Output() diagnosisSelected = new EventEmitter<string[]>();
   @Output() furtherQuestionsListReceived = new EventEmitter<any[]>();
+  @Output() diagnosisReceived = new EventEmitter<any[]>();
   @Input() notes: string;
   isLoading = false;
   hasError = false;
@@ -63,6 +64,7 @@ export class AillmddxComponent {
               rationale: this.ddxSvc.markdownit(v?.rationale)
             }
           });
+          this.diagnosisReceived.emit(this.diagnosisList);
         } else {
           this.noData = true;
         }
@@ -118,6 +120,7 @@ export class AillmddxComponent {
               }
             });
             console.log(this.diagnosisList);
+            this.diagnosisReceived.emit(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
               this.furtherQuestionsList = data.result.data.further_questions.map(q => {
                 const key = Object.keys(q)[0];
