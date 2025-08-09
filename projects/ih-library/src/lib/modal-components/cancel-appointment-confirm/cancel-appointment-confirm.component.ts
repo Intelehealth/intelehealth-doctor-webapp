@@ -6,6 +6,7 @@ import { ApiResponseModel } from '../../model/model';
 import { AppointmentService } from '../../services/appointment.service';
 import { getCacheData } from '../../utils/utility-functions';
 import { doctorDetails } from '../../config/constant';
+import { MindmapService } from '../../services/mindmap.service';
 
 @Component({
   selector: 'app-cancel-appointment-confirm',
@@ -17,7 +18,8 @@ export class CancelAppointmentConfirmComponent {
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
     private toastr: ToastrService, 
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private mindmapService: MindmapService
   ) { }
 
   /**
@@ -33,6 +35,7 @@ export class CancelAppointmentConfirmComponent {
     this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
         if (res) {
           if (res.status) {
+            this.mindmapService.notifyHwForCancelAppointment(this.data);
             this.close(true);
           } else {
             this.toastr.error(this.translateService.instant('You can\'t cancel the past appointment'), this.translateService.instant('Can\'t Cancel'));

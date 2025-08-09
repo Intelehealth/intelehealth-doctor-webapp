@@ -32,6 +32,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { MatSortModule } from '@angular/material/sort';
+import { NgxUiLoaderModule } from 'ngx-ui-loader';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -86,7 +87,8 @@ registerLocaleData(localeEn);
     MatNativeDateModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSortModule
+    MatSortModule,
+    NgxUiLoaderModule
   ],
   exports: [
     DefaultImageDirective,

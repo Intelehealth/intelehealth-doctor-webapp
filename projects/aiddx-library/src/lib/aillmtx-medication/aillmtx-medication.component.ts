@@ -71,14 +71,13 @@ export class AillmtxMedicationComponent {
           if (data.result.data.success && data.result.data.medications.length > 0) {
             this.noData = false;
             this.medicationList = data.result.data.medications.map(v => {
-
               return {
                 ...v,
               }
             });
-        } else if(!data.data.success) {
-              this.hasError = true;
-              this.loggedError = data.data?.error;
+          } else if(!data.result.data.success) {
+            this.hasError = true;
+            this.loggedError = data.result.data?.error;
           }  else {
             this.noData = true;
           }

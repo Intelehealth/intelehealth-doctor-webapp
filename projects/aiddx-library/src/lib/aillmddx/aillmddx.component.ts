@@ -119,7 +119,6 @@ export class AillmddxComponent {
                 rationale: v?.rationale
               }
             });
-            console.log(this.diagnosisList);
             this.diagnosisReceived.emit(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
               this.furtherQuestionsList = data.result.data.further_questions.map(q => {

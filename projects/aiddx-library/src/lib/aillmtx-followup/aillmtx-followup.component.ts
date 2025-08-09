@@ -75,9 +75,9 @@ export class AillmtxFollowupComponent {
                 ...v,
               }
             });
-           } else if(!data.data.success) {
+           } else if(!data.result.data.success) {
               this.hasError = true;
-              this.loggedError = data.data?.error;
+              this.loggedError = data.result.data?.error;
           } else {
             this.noData = true;
           }

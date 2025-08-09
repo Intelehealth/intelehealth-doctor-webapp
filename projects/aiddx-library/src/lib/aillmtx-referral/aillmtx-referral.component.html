@@ -53,14 +53,14 @@
         </div>
         <div *ngIf="referralList.length">
             <div *ngFor="let refer of referralList" class="med-card">
-                <div class="checkbox-label">
-                         <input type="checkbox" [ngClass]="{ 'selected-med': refer.selected }"
-                            class="custom-checkbox me-2" [(ngModel)]="refer.selected"
-                            [checked]="isReferralSelected(refer)" [disabled]="isReferralExists(refer.referral_to)"
-                            (change)="onAIReferralChange(refer)">
-                        <span class="med-name" [class.text-muted]="isReferralExists(refer.referral_to)">
-                            {{ refer.referral_to }}, {{ refer.referral_facility }}, {{ refer.remark }}</span>
+                <div class="checkbox-label" *ngIf="refer.referral_to">
+                    <input type="checkbox" [ngClass]="{ 'selected-med': refer.selected }"
+                        class="custom-checkbox me-2" [(ngModel)]="refer.selected"
+                        [checked]="isReferralSelected(refer)" [disabled]="isReferralExists(refer.referral_to)"
+                        (change)="onAIReferralChange(refer)">
+                    <span class="med-name" [class.text-muted]="isReferralExists(refer.referral_to)">{{ refer.referral_to }}, {{ refer.referral_facility }}, {{ refer.remark }}</span>
                 </div>
+                <span *ngIf="refer.referral_to === ''">Referral Not recommended</span>
             </div>
         </div>
           <div class="textalign" *ngIf="!isLoading && !hasError && noData">
