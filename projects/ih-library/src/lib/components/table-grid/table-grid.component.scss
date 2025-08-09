@@ -199,6 +199,11 @@
     left: 0;
   }
 
+  .visit-completed-cell {
+    color: green !important;
+    background-color: #d4edda !important;
+  }
+
   @media (max-width: 768px) {
     .input-group {
       width: 100%;

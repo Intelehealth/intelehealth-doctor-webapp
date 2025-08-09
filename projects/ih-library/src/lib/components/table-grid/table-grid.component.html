@@ -37,7 +37,7 @@
                     <div class="input-date">
                       <label class="label-text">{{ 'Start date' | translate }}</label>
                       <div class="input-wrapper">
-                        <input type="text" class="form-control" [max]="maxDate" formControlName="startDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date" aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
+                        <input type="text" class="form-control" [max]="filteredDateAndRangeForm.value.endDate ? filteredDateAndRangeForm.value.endDate : maxDate" formControlName="startDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date" aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
                         <mat-datepicker #picker1></mat-datepicker>
                         <mat-datepicker-toggle matSuffix [for]="picker1" class="datepicker-icon">
                           <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -49,7 +49,7 @@
                     <div class="input-date">
                       <label class="label-text">{{ 'End date' | translate }}</label>
                       <div class="input-wrapper">
-                        <input type="text" class="form-control" [max]="maxDate" formControlName="endDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date" aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
+                        <input type="text" class="form-control" [min]="filteredDateAndRangeForm.value.startDate" [max]="maxDate" formControlName="endDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date" aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
                         <mat-datepicker #picker2></mat-datepicker>
                         <mat-datepicker-toggle matSuffix [for]="picker2" class="datepicker-icon">
                           <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -80,16 +80,49 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
+    <span *ngIf="tableLoader">
+      <ngx-ui-loader 
+        [loaderId]="'table-loader-' + pluginConfigObs.pluginConfigObsFlag" 
+        [fgsType]="'ball-spin-clockwise'" 
+        [fgsColor]="'#aba4a4'" 
+        [fgsPosition]="'center-center'" 
+        [fgsSize]="50" 
+        [overlayColor]="'rgb(255, 255, 255)'" 
+        [hasProgressBar]="false"
+        [text]="('Loading'|translate) + ' ' + (pluginConfigObs.pluginConfigObsFlag|translate) + ' ' + ('data'|translate) + '...'"
+        [textColor]="'#333'"
+        [textPosition]="'center-center'"
+      ></ngx-ui-loader>
+    </span>
+    <table mat-table [dataSource]="dataSource" #tableMatSort="matSort" matSort>
 
       <ng-container *ngFor="let column of displayedAppointmentColumns" [matColumnDef]="column.key">
-        <th mat-header-cell *matHeaderCellDef>{{ column.label | translate }}</th>
+        <ng-container *ngIf="column.isSortable; else noSort">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header matSortDirection="asc">
+            {{ column.label | translate }}
+          </th>
+        </ng-container>
+        <ng-template #noSort>
+          <th mat-header-cell *matHeaderCellDef>
+            {{ column.label | translate }}
+          </th>
+        </ng-template>
 
         <td mat-cell *matCellDef="let element; let j = index;" [attr.data-test-id]="'td' + j">
-          <ng-container *ngIf="column.key !== 'patient_name'">
+          <ng-container *ngIf="column.key !== 'patient_name' && column.key !== 'visit_completed'">
             <div class="float-left" 
                 [innerHTML]="renderHtmlContent(column, element)" 
                 [ngClass]="getClasses(column, element)">
+            </div>
+          </ng-container>
+          
+          <!-- This is for visit_completed column -->
+          <ng-container *ngIf="column.key === 'visit_completed'">
+            <div class="d-flex align-items-center visit-completed-cell">
+              <img src="assets/svgs/green-pad.svg" alt="Completed" class="mr-2" />
+              <span class="text-success">
+                {{ element.completed }}
+              </span>
             </div>
           </ng-container>
 
@@ -145,6 +178,6 @@
       <tr mat-row *matRowDef="let row; let x = index; columns: displayedColumns;" [attr.data-test-id]="'tr' + x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
       
     </table>
-    <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of periodic elements"></mat-paginator>
+    <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="pageSizeOptions" aria-label="Select page of periodic elements"></mat-paginator>
   </div>
 </mat-expansion-panel>

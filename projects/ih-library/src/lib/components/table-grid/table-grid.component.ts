@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, Input, SimpleChanges, ChangeDetectionStrategy, Inject, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Input, SimpleChanges, ChangeDetectionStrategy, Inject, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel, PatientVisitSummaryConfigModel } from '../../model/model';
@@ -8,7 +8,7 @@ import moment from 'moment';
 import { CoreService } from '../../services/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData, checkIfDateOldThanOneDay } from '../../utils/utility-functions';
+import { getCacheData, checkIfDateOldThanOneDay, isFeaturePresent } from '../../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from '../../config/constant';
 import { MindmapService } from '../../services/mindmap.service';
 import { AppConfigService } from '../../services/app-config.service';
@@ -17,6 +17,8 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { DomSanitizer } from '@angular/platform-browser';
 import { formatDate } from '@angular/common';
 import { NgxRolesService } from 'ngx-permissions';
+import { MatSort } from '@angular/material/sort';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'lib-table-grid',
@@ -24,7 +26,7 @@ import { NgxRolesService } from 'ngx-permissions';
   styleUrls: ['./table-grid.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableGridComponent implements OnInit {
+export class TableGridComponent implements OnInit, AfterViewInit {
   
   @Input() pluginConfigObs: any;
   displayedAppointmentColumns: any = [];
@@ -32,12 +34,15 @@ export class TableGridComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   patientRegFields: string[] = [];
   isMCCUser = false;
-
+  pageSizeOptions = [5, 10, 20];
+  
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
   filteredDateAndRangeForm: FormGroup;
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
+  @ViewChild('tableMatSort',{ static: true }) tableMatSort: MatSort;
+
 
   panelExpanded: boolean = true;
   mode: 'date' | 'range' = 'date';
@@ -56,9 +61,18 @@ export class TableGridComponent implements OnInit {
   isFilterApplied = false;
   pvs: PatientVisitSummaryConfigModel;
   baseURL: any;
+  isBrandName: string;
+
+  // to apply filter with date and text search
+  dateField: string;
+  dateFilter: string;
+  originalData: any[];
+  filteredDataAfterDate: any[];
+  tableLoader: boolean;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.tableMatSort;
   }
 
   constructor(
@@ -71,8 +85,10 @@ export class TableGridComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private appConfigService: AppConfigService,
     private rolesService: NgxRolesService,
+    private ngxLoader: NgxUiLoaderService,
     @Inject('environment') environment
   ) { 
+    this.tableLoader = isFeaturePresent(environment.featureList, 'tableLoader');
     this.baseURL = environment.baseURL;
     this.filteredDateAndRangeForm = this.createFilteredDateRangeForm();
   }
@@ -137,6 +153,9 @@ export class TableGridComponent implements OnInit {
       }
     }
     this.maxDate = this.pluginConfigObs.filterObs.filterDateMax;
+    if(this.pluginConfigObs.hasOwnProperty("pageSizeOptions")){
+      this.pageSizeOptions = this.pluginConfigObs.pageSizeOptions
+    }
   }
 
   /**
@@ -145,11 +164,37 @@ export class TableGridComponent implements OnInit {
    */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["pluginConfigObs"] && changes["pluginConfigObs"].currentValue) {
-      this.displayedAppointmentColumns = this.pluginConfigObs.tableColumns || [];
-      this.displayedColumns = this.displayedAppointmentColumns.map(
-        (column) => column.key
-      );
+      this.displayedAppointmentColumns = [...changes["pluginConfigObs"].currentValue?.tableColumns]
+      this.displayedColumns = this.displayedAppointmentColumns.map(column => column.key);
     }
+    if( (!changes['pluginConfigObs'].firstChange) && this.pluginConfigObs.pluginConfigObsFlag == "Appointment" && changes["pluginConfigObs"].currentValue?.tableHeader !== changes["pluginConfigObs"].previousValue?.tableHeader){
+      this.getAppointments();
+    }
+    const prev = changes['pluginConfigObs'].previousValue;
+    const curr = changes['pluginConfigObs'].currentValue;
+    const prevType = prev?.filter?.filterType;
+    const currType = curr?.filter?.filterType;
+    if ( prevType !== currType) {
+      console.log("tab changed");
+      this.resetDateForm(); // Reset only when type has changed
+    }
+  }
+
+  /**
+  * Reset the date for appointments(Today's,upcoming,pending appoinments)  g
+  */
+  resetDateForm() {
+    if (this.filteredDateAndRangeForm) {
+      this.filteredDateAndRangeForm.reset({
+        date: null,
+        startDate: null,
+        endDate: null
+      });
+    }
+    this.mode = 'date'; 
+    this.searchElement.nativeElement.value = "";
+    this.isFilterApplied = false;
+    this.dataSource.filter = null;
   }
 
   /**
@@ -201,16 +246,17 @@ export class TableGridComponent implements OnInit {
   /**
   * Reschedule appointment
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @param {boolean} isValidationRequired - If true, validation is required
   * @return {void}
   */
-  reschedule(appointment: AppointmentModel) {
+  reschedule(appointment: AppointmentModel, isValidationRequired: boolean) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
       return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
       this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
-    } else if(appointment.visitStatus == 'Visit In Progress') {
+    } else if(appointment.visitStatus == 'Visit In Progress' && isValidationRequired) {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
@@ -241,10 +287,11 @@ export class TableGridComponent implements OnInit {
   /**
   * Cancel appointment
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @param {boolean} isValidationRequired - If true, validation is required
   * @return {void}
   */
-  cancel(appointment: AppointmentModel) {
-    if(appointment.visitStatus == 'Visit In Progress') {
+  cancel(appointment: AppointmentModel, isValidationRequired: boolean) {
+    if (appointment.visitStatus == 'Visit In Progress' && isValidationRequired) {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
       return;
     }
@@ -270,11 +317,29 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if(this.pluginConfigObs?.pluginConfigObsFlag === "Appointment"){
+      const customPredicate = (data: any, filter: string): boolean => {
+        return (
+          data?.openMrsId?.toLowerCase().includes(filter) ||
+          data?.patientName?.toLowerCase().includes(filter) ||
+          data?.TMH_patient_id?.toLowerCase().includes(filter)
+        );
+      };
+      // Always filter from the full original data
+      this.filteredDataAfterDate = this.originalData.filter(item => customPredicate(item, filterValue));
+      this.dataSource.data = this.filteredDataAfterDate;
+    }
+    else {
+      this.dataSource.filter = filterValue;
+    }
     this.isFilterApplied = true;
   }
 
+  // Call this once after loading appointments
+  storeOriginalData() {
+    this.originalData = [...this.dataSource.data]; // Backup full data
+  }
   /**
   * Clear filter from a datasource
   * @return {void}
@@ -283,6 +348,13 @@ export class TableGridComponent implements OnInit {
     this.dataSource.filter = null;
     this.searchElement.nativeElement.value = "";
     this.isFilterApplied = false;
+    this.filteredDateAndRangeForm.reset({
+      date: null,
+      startDate: null,
+      endDate: null
+    });
+    this.mode = 'date'; 
+    this.dataSource.data = [...this.originalData];
   }
 
   /**
@@ -384,9 +456,10 @@ export class TableGridComponent implements OnInit {
     const selectedDate = this.filteredDateAndRangeForm.get('date')?.value;
     const startDate = this.filteredDateAndRangeForm.get('startDate')?.value;
     const endDate = this.filteredDateAndRangeForm.get('endDate')?.value;
-  
+
     if (selectedDate) {
       const formattedDate = this.formatDate(selectedDate);
+      this.dateFilter = this.formatDate(selectedDate);
 
       this.dataSource.filterPredicate = (data: any, filter: string) => {
         let itemDate;
@@ -417,9 +490,13 @@ export class TableGridComponent implements OnInit {
       };
 
       this.dataSource.filter = `${formattedStartDate}:${formattedEndDate}`;
+      this.dateFilter = `${this.formatDate(startDate)}:${this.formatDate(endDate)}`;
     } else {
       this.dataSource.filter = '';
+      this.dateFilter = '';
     }
+    this.dateField = dateField;
+    //this.updateCombinedFilter();
     this.tempPaginator.firstPage();
     this.closeMenu();
   }
@@ -431,7 +508,7 @@ export class TableGridComponent implements OnInit {
   resetDate(flag: boolean = false) {
     this.filteredDateAndRangeForm.reset();
     this.dataSource.filter = '';
-    this.dataSource.filterPredicate = (data: any, filter: string) => true;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
     if (!flag) {
       this.closeMenu();
     }
@@ -464,32 +541,46 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   getAppointments() {
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
     this.appointments = [];
-    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.isMCCUser ? this.specialization : null)
-      .subscribe((res: ApiResponseModel) => {        
-        this.visitsLengthCount = res.data?.length;
-        this.emitVisitsCount(this.visitsLengthCount);
-        let appointmentsdata = res.data;
-        appointmentsdata.forEach((appointment: AppointmentModel) => {
-          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
-            if (appointment.visit) {
-              appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
-              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
-              appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person);
-              appointment.TMH_patient_id = this.getAttributeData(appointment.visit, "TMH Case Number")?.value;
-              appointment.uuid = appointment.visitUuid;
-              appointment.location = appointment?.visit?.location?.name;
-              appointment.age = appointment?.patientAge + ' ' + this.translateService.instant('y');
-              this.appointments.push(appointment);
+    let fromDate = moment().startOf('year').format('DD/MM/YYYY');
+    let toDate = moment().endOf('year').format('DD/MM/YYYY');
+    let pending_visits = this.pluginConfigObs.filter?.hasOwnProperty("pending_visits")  ? this.pluginConfigObs.filter?.pending_visits : null;
+    if(this.pluginConfigObs?.filter){
+      fromDate = this.pluginConfigObs?.filter?.fromDate
+      toDate = this.pluginConfigObs?.filter?.toDate
+    }
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, fromDate, toDate, this.isMCCUser ? this.specialization : null, pending_visits)
+      .subscribe({
+        next: (res: ApiResponseModel) => {        
+          this.visitsLengthCount = res.data?.length;
+          this.emitVisitsCount(this.visitsLengthCount);
+          let appointmentsdata = res.data;
+          appointmentsdata.forEach((appointment: AppointmentModel) => {
+            if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
+              if (appointment.visit) {
+                appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
+                appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
+                appointment.telephone = this.getTelephoneNumber(appointment?.visit?.person);
+                appointment.TMH_patient_id = this.getAttributeData(appointment.visit, "TMH Case Number")?.value;
+                appointment.uuid = appointment.visitUuid;
+                appointment.location = appointment?.visit?.location?.name;
+                appointment.age = appointment?.patientAge + ' ' + this.translateService.instant('y');
+                this.appointments.push(appointment);
+              }
             }
-          }
-        });
-        this.dataSource.data = [...this.appointments];
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
-      });
+          });
+          this.dataSource.data = [...this.appointments];
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.tableMatSort;
+          this.dataSource.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
+          this.storeOriginalData();
+        },
+        complete: () => {
+          this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
+        }
+    });
   }
-  
   
   /**
   * Get doctor speciality
@@ -573,31 +664,38 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   getAwaitingVisits(page: number = 1) {
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
     if(page == 1) {
       this.awaitingVisits = [];
     }    
-    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
-      if (res.success) {
-        this.visitsLengthCount = res.totalCount;
-        this.emitVisitsCount(this.visitsLengthCount);
-        for (let i = 0; i < res.data.length; i++) {
-          let visit = res.data[i];
-          visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
-          visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.patient_type = this.getDemarcation(visit?.encounters);
-          visit.location = visit?.location?.name;
-          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
-          this.awaitingVisits.push(visit);
+    this.visitService.getAwaitingVisits(this.specialization, page).subscribe({
+      next:(res: ApiResponseModel) => {
+        if (res.success) {
+          this.visitsLengthCount = res.totalCount;
+          this.emitVisitsCount(this.visitsLengthCount);
+          for (let i = 0; i < res.data.length; i++) {
+            let visit = res.data[i];
+            visit.cheif_complaint = this.getCheifComplaint(visit);
+            visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+            visit.person.age = this.calculateAge(visit.person.birthdate);
+            visit.patient_type = this.getDemarcation(visit?.encounters);
+            visit.location = visit?.location?.name;
+            visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+            this.awaitingVisits.push(visit);
+          }
+          this.dataSource.data = [...this.awaitingVisits];
+          if (page == 1) {
+            this.dataSource.paginator = this.tempPaginator;
+            this.dataSource.sort = this.tableMatSort;
+            this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          } else {
+            this.tempPaginator.length = this.awaitingVisits.length;
+            this.tempPaginator.nextPage();
+          }
         }
-        this.dataSource.data = [...this.awaitingVisits];
-        if (page == 1) {
-          this.dataSource.paginator = this.tempPaginator;
-          this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
-        } else {
-          this.tempPaginator.length = this.awaitingVisits.length;
-          this.tempPaginator.nextPage();
-        }
+      },
+      complete: () => {
+        this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
       }
     });
   }
@@ -608,66 +706,73 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   getInProgressVisits(page: number = 1) {
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
     if(page == 1) {
       this.inProgressVisits = [];
     }
-    this.visitService.getInProgressVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
-      if (res.success) {
-        this.visitsLengthCount = res.totalCount;
-        this.emitVisitsCount(this.visitsLengthCount);
-        for (let i = 0; i < res.data.length; i++) {
-          let visit = res.data[i];
-          visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
-          visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
-          visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
-          visit.location = visit?.location?.name;
-          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
-          this.inProgressVisits.push(visit);
+    this.visitService.getInProgressVisits(this.specialization, page).subscribe({
+      next:(res: ApiResponseModel) => {
+        if (res.success) {
+          this.visitsLengthCount = res.totalCount;
+          this.emitVisitsCount(this.visitsLengthCount);
+          for (let i = 0; i < res.data.length; i++) {
+            let visit = res.data[i];
+            visit.cheif_complaint = this.getCheifComplaint(visit);
+            visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+            visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
+            visit.person.age = this.calculateAge(visit.person.birthdate);
+            visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
+            visit.location = visit?.location?.name;
+            visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+            this.inProgressVisits.push(visit);
+          }
+          this.inProgressVisits.sort((a, b) => {
+              const parseTime = (value: string) => {
+                  if (value.includes("minutes ago")) {
+                      return { type: "minutes", time: parseInt(value) }; // Store only numeric minutes
+                  }
+                  if (value.includes("Hours ago")) {
+                      return { type: "hours", time: parseInt(value) * 60 }; // Convert hours to minutes for correct comparison
+                  }
+                  return { type: "date", time: moment(value, "DD MMM, YYYY").valueOf() };
+              };
+
+              const visitA = parseTime(a.prescription_started);
+              const visitB = parseTime(b.prescription_started);
+              // Sort minutes first (ascending)
+              if (visitA.type === "minutes" && visitB.type === "minutes") {
+                  return visitA.time - visitB.time;
+              }
+              // Sort hours first (ascending)
+              if (visitA.type === "hours" && visitB.type === "hours") {
+                  return visitA.time - visitB.time;
+              }
+              // Sort dates (descending)
+              if (visitA.type === "date" && visitB.type === "date") {
+                  return visitB.time - visitA.time;
+              }
+              // Prioritize minutes over hours, and hours over dates
+              if (visitA.type === "minutes") return -1;
+              if (visitB.type === "minutes") return 1;
+              if (visitA.type === "hours") return -1;
+              if (visitB.type === "hours") return 1;
+
+              return 0;
+          });
+
+          this.dataSource.data = [...this.inProgressVisits];
+          if (page == 1) {
+            this.dataSource.paginator = this.tempPaginator;
+            this.dataSource.sort = this.tableMatSort;
+            this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          } else {
+            this.tempPaginator.length = this.inProgressVisits.length;
+            this.tempPaginator.nextPage();
+          }
         }
-        this.inProgressVisits.sort((a, b) => {
-            const parseTime = (value: string) => {
-                if (value.includes("minutes ago")) {
-                    return { type: "minutes", time: parseInt(value) }; // Store only numeric minutes
-                }
-                if (value.includes("Hours ago")) {
-                    return { type: "hours", time: parseInt(value) * 60 }; // Convert hours to minutes for correct comparison
-                }
-                return { type: "date", time: moment(value, "DD MMM, YYYY").valueOf() };
-            };
-
-            const visitA = parseTime(a.prescription_started);
-            const visitB = parseTime(b.prescription_started);
-            // Sort minutes first (ascending)
-            if (visitA.type === "minutes" && visitB.type === "minutes") {
-                return visitA.time - visitB.time;
-            }
-            // Sort hours first (ascending)
-            if (visitA.type === "hours" && visitB.type === "hours") {
-                return visitA.time - visitB.time;
-            }
-            // Sort dates (descending)
-            if (visitA.type === "date" && visitB.type === "date") {
-                return visitB.time - visitA.time;
-            }
-            // Prioritize minutes over hours, and hours over dates
-            if (visitA.type === "minutes") return -1;
-            if (visitB.type === "minutes") return 1;
-            if (visitA.type === "hours") return -1;
-            if (visitB.type === "hours") return 1;
-
-            return 0;
-        });
-
-        this.dataSource.data = [...this.inProgressVisits];
-        if (page == 1) {
-          this.dataSource.paginator = this.tempPaginator;
-          this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
-        } else {
-          this.tempPaginator.length = this.inProgressVisits.length;
-          this.tempPaginator.nextPage();
-        }
+      },
+      complete: () => {
+        this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
       }
     });
   }
@@ -678,30 +783,37 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   getPriorityVisits(page: number = 1) {
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
     if(page == 1) {
       this.priorityVisits = [];
     }
-    this.visitService.getPriorityVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
-      if (res.success) {
-        this.visitsLengthCount = res.totalCount;
-        this.emitVisitsCount(this.visitsLengthCount);
-        for (let i = 0; i < res.data.length; i++) {
-          let visit = res.data[i];
-          visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
-          visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.location = visit?.location?.name;
-          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
-          this.priorityVisits.push(visit);
+    this.visitService.getPriorityVisits(this.specialization, page).subscribe({
+      next:(res: ApiResponseModel) => {
+        if (res.success) {
+          this.visitsLengthCount = res.totalCount;
+          this.emitVisitsCount(this.visitsLengthCount);
+          for (let i = 0; i < res.data.length; i++) {
+            let visit = res.data[i];
+            visit.cheif_complaint = this.getCheifComplaint(visit);
+            visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
+            visit.person.age = this.calculateAge(visit.person.birthdate);
+            visit.location = visit?.location?.name;
+            visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+            this.priorityVisits.push(visit);
+          }
+          this.dataSource.data = [...this.priorityVisits];
+          if (page == 1) {
+            this.dataSource.paginator = this.tempPaginator;
+            this.dataSource.sort = this.tableMatSort;
+            this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          } else {
+            this.tempPaginator.length = this.priorityVisits.length;
+            this.tempPaginator.nextPage();
+          }
         }
-        this.dataSource.data = [...this.priorityVisits];
-        if (page == 1) {
-          this.dataSource.paginator = this.tempPaginator;
-          this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
-        } else {
-          this.tempPaginator.length = this.priorityVisits.length;
-          this.tempPaginator.nextPage();
-        }
+      },
+      complete: () => {
+        this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
       }
     });
   }
@@ -711,29 +823,36 @@ export class TableGridComponent implements OnInit {
    * @return {void}
    */
   getCompletedVisits(page: number = 1) {
-    this.visitService.getEndedVisits(this.specialization, page).subscribe((res: ApiResponseModel) => {
-      if (res.success) {
-        this.visitsLengthCount = res.totalCount;
-        this.emitVisitsCount(this.visitsLengthCount);
-        for (let i = 0; i < res.data.length; i++) {
-          let visit = res.data[i];
-          visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
-          visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.completed = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
-          visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
-          visit.location = visit?.location?.name;
-          visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
-          this.completedVisits.push(visit);
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
+    this.visitService.getEndedVisits(this.specialization, page).subscribe({
+      next:(res: ApiResponseModel) => {
+        if (res.success) {
+          this.visitsLengthCount = res.totalCount;
+          this.emitVisitsCount(this.visitsLengthCount);
+          for (let i = 0; i < res.data.length; i++) {
+            let visit = res.data[i];
+            visit.cheif_complaint = this.getCheifComplaint(visit);
+            visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+            visit.person.age = this.calculateAge(visit.person.birthdate);
+            visit.completed = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+            visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
+            visit.location = visit?.location?.name;
+            visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+            this.completedVisits.push(visit);
+          }
+          this.dataSource.data = [...this.completedVisits];
+          if (page == 1) {
+            this.dataSource.paginator = this.tempPaginator;
+            this.dataSource.sort = this.tableMatSort;
+            this.dataSource.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          } else {
+            this.tempPaginator.length = this.completedVisits.length;
+            this.tempPaginator.nextPage();
+          }
         }
-        this.dataSource.data = [...this.completedVisits];
-        if (page == 1) {
-          this.dataSource.paginator = this.tempPaginator;
-          this.dataSource.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
-        } else {
-          this.tempPaginator.length = this.completedVisits.length;
-          this.tempPaginator.nextPage();
-        }
+      },
+      complete: () => { 
+        this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
       }
     });
   }
@@ -743,6 +862,7 @@ export class TableGridComponent implements OnInit {
   * @return {void}
   */
   getFollowUpVisit(page: number = 1) {
+    this.ngxLoader.startLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Start section loader
     this.visitService.getFollowUpVisits(this.specialization).subscribe({
       next: (res: ApiResponseModel) => {
         if (res.success) {
@@ -764,12 +884,16 @@ export class TableGridComponent implements OnInit {
           this.dataSource.data = [...this.followUpVisits];
           if (page == 1) {
             this.dataSource.paginator = this.tempPaginator;
+            this.dataSource.sort = this.tableMatSort;
             this.dataSource.filterPredicate = (data: { patient: { identifier: string; }; patient_name: { given_name: string; middle_name: string; family_name: string; }; }, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat((data?.patient_name.middle_name && this.checkPatientRegField('Middle Name') ? ' ' + data?.patient_name.middle_name : '') + ' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
           } else {
             this.tempPaginator.length = this.followUpVisits.length;
             this.tempPaginator.nextPage();
           }
         }
+      },
+      complete: () => {
+        this.ngxLoader.stopLoader('table-loader-' + this.pluginConfigObs.pluginConfigObsFlag); // Stop section loader
       }
     });
   }
@@ -794,10 +918,10 @@ export class TableGridComponent implements OnInit {
    * Renders HTML content for a column, sanitized for security
    * @param {any} column - Column definition
    * @param {any} element - Data element to render
-   * @return {string} - Formatted HTML or element value
+   * @return {SafeHtml | string} - Formatted HTML or element value
    */
-  renderHtmlContent(column: any, element: any): string {
-    return typeof column.formatHtml === 'function' ? this.sanitizer.bypassSecurityTrustHtml(column.formatHtml(element)) : element[column.key];
+  renderHtmlContent(column: any, element: any): import('@angular/platform-browser').SafeHtml | string {
+    return column.formatHtml && typeof column.formatHtml === 'function' ? this.sanitizer.bypassSecurityTrustHtml(column.formatHtml(element)) : element[column.key];
   }
     
   /**
@@ -824,7 +948,7 @@ export class TableGridComponent implements OnInit {
    * @return {string} - Formatted date
    */
   processFollowUpDate(value: string): string {
-    return value.split(',').length > 1 ? `${value.split(',')[0]}${value.split(',')[1].replace("Time:", "")}` : value;
+    return value ? value.split(',').length > 1 ? `${value.split(',')[0]} ${value.split(',')[1].replace("Time:", "")}` : value : '';
   };
 
   /**
@@ -833,10 +957,12 @@ export class TableGridComponent implements OnInit {
    * @param {any} element - Element to perform the action on
    */
   handleAction(action: any, element: any) {
+    const isValidationRequired = action.validationRequired !== undefined ? action.validationRequired : true;
+    
     if (action.label === 'Reschedule') {
-      this.reschedule(element);
+      this.reschedule(element, isValidationRequired);
     } else if (action.label === 'Cancel') {
-      this.cancel(element);
+      this.cancel(element, isValidationRequired);
     }
   }
 
