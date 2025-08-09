@@ -666,6 +666,7 @@ export interface WebrtcDataModel {
 export interface WebRTCConfigModel {
   chat: boolean;
   video_call: boolean;
+  audio_call: boolean;
 }
 
 export interface PatientVisitSummaryModel {
@@ -698,6 +699,7 @@ export interface PatientVisitSummaryConfigModel {
   dp_referral_secondary: boolean
   dp_discussion_summary: boolean
   inprogress_visit_section: boolean
+  diagnosis_snomedct: boolean
 }
 
 export interface PagerdutyList {

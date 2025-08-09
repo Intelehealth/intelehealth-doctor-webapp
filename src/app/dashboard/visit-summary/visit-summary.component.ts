@@ -26,7 +26,7 @@ import { VideoCallComponent } from 'src/app/modal-components/video-call/video-ca
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
 import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -154,6 +154,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hasChatEnabled: boolean = false;
   hasVideoEnabled: boolean = false;
+  hasAudioEnabled: boolean = false;
   hasWebRTCEnabled: boolean = false;
   hasVitalsEnabled: boolean = false;
   hasPatientAddressEnabled: boolean = false;
@@ -203,7 +204,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
         this.ddxCompRef.instance.visitEnded = this.visitEnded;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
-        
+       this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+
+        this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
+          if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
+            this.SaveAIDiagosisHistory(this.visit,digData);
+          }
+        })
+
         // Subscribe to diagnosis saved event
         this.ddxCompRef.instance.diagnosisSaved.subscribe((diagnoses: any[]) => {
           this.existingDiagnosis = [...diagnoses];
@@ -215,7 +223,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Subscribe to further questions event
         this.ddxCompRef.instance.furtherQuestionsReceived.subscribe((questions: string[]) => {
-          console.log('Received further questions:', questions);
           if (questions && questions.length) {
             this.furtherQuestionsList = [...questions];
           }
@@ -495,6 +502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasWebRTCEnabled = this.appConfigService?.webrtc_section;
     this.hasChatEnabled = this.appConfigService?.webrtc?.chat;
     this.hasVideoEnabled = this.appConfigService?.webrtc?.video_call;
+    this.hasAudioEnabled = this.appConfigService?.webrtc?.audio_call;
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
@@ -658,7 +666,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfFollowUpPresent();
               this.checkIfPatientCallDurationPresent(visit.attributes)
               this.checkIfCallStatusPresent(visit.attributes)
-              this.checkIfDiscussionSummaryPresent()
+              this.checkIfDiscussionSummaryPresent();
 
               if (isFeaturePresent('medicationFrequencyList')) this.getFrequencyList();
             }
@@ -1206,7 +1214,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * Start video call with HW/patient
   * @return {void}
   */
-  startCall(): void {
+  startCall(callType:string): void {
     if (this.dialogRef2) {
       this.dialogRef2.close();
       this.isCalling = false;
@@ -1223,7 +1231,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       initiator: 'dr',
       drPersonUuid: this.provider?.person.uuid,
       patientAge: this.patient.person.age,
-      patientGender: this.patient.person.gender
+      patientGender: this.patient.person.gender,
+      location:this.clinicName,
+      callType: callType
     });
 
     this.dialogRef2.afterClosed().subscribe((res) => {
@@ -1487,18 +1497,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
-      this.diagnosisService.getDiagnosisList(val, isFeaturePresent("snomedCtDiagnosis") ? 'SNOMED' : 'ICD10').subscribe({
+      this.diagnosisService.getSnomedCTDiagnosisList(val).subscribe({
         next: (response) => {
-          if (response.results && response.results.length) {
+          if (response.data && response.data.length) {
             const data = [];
-            response.results.forEach((element: { name: any, mappings: any }) => {
+            response.data.forEach((element: { concept_name: any, snomedCTCode: any }) => {
               if (element) {
-                data.push({ name: element?.name?.display, snomedId: element?.mappings?.[0] });
+                data.push({ name: element?.concept_name, snomedCTCode: element?.snomedCTCode });
               }
             });
             this.diagnosisSubject.next(data);
           } else {
-            if (isFeaturePresent("snomedCtDiagnosis")) {
+            if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
               this.diagnosisService.getSnomedDiagnosisList(val).subscribe({
                 next: (res) => {
                   if (res && res.result) {
@@ -1575,7 +1585,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDiagnosisChange(event: any): void {
     this.diagnosisValidated = true;
-    if (isFeaturePresent("snomedCtDiagnosis")) {
+    if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
       if (event.conceptId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.addControl('isSnomed', new FormControl(null));
@@ -1585,6 +1595,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       else if (event.snomedId) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
         this.diagnosisForm.patchValue({ diagnosisCode: event.snomedId?.display.split(': ')[1] });
+      }
+      else if (event.snomedCTCode) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.snomedCTCode });
       }
     }
   }
@@ -2677,11 +2691,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               concept: conceptIds.conceptDiagnosis,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
               encounter: this.visitNotePresent.uuid
             }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
           );
-          if (diagnosis?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+          if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
             postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode));
           }
         }
@@ -2695,11 +2709,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               concept: conceptIds.conceptDiagnosis,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
               encounter: this.visitNotePresent.uuid
             }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
           );
-          if (diagnosis?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+          if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
             postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode))
           }
         }
@@ -2846,11 +2860,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             concept: conceptIds.conceptDiagnosis,
             person: this.visit.patient.uuid,
             obsDatetime: new Date(),
-            value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+            value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
             encounter: this.visitNotePresent.uuid
           }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
         );
-        if (diagnosis?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+        if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
           postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode))
         }
       }
@@ -3392,5 +3406,103 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   // Add this method to receive questions from AILLMDDX
   onFurtherQuestionsReceived(questions: string[]) {
     this.furtherQuestionsList = questions;
+  }
+
+  SaveAIDiagosisHistory(visit:any, diagnosisData:any){
+    let checkAIDiagnosisEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.AI_DIAGNOSIS_SUPPORT);
+    if(checkAIDiagnosisEncounter){
+      let checkLLMRegenerationEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.LLM_REGENERATION);
+      if(checkLLMRegenerationEncounter){
+        this.deleteExistingLLMObs(checkLLMRegenerationEncounter.obs).subscribe(res=>{
+          this.createLLMObs(checkLLMRegenerationEncounter.uuid,diagnosisData,true).subscribe();
+        })
+      } else {
+        this.createLLMEncounter(true).subscribe(res=>{
+          if(res){
+            this.createLLMObs(res.uuid,diagnosisData,true).subscribe();
+          }
+        })
+      }
+    } else {
+      this.createLLMEncounter().subscribe(res=>{
+        if(res){
+          this.createLLMObs(res.uuid,diagnosisData).subscribe();
+        }
+      })
+    }
+  }
+
+  deleteExistingLLMObs(obs: ObsModel[]):Observable<any>{
+    let deleteAllObs = obs.map(o=>this.diagnosisService.deleteObs(o.uuid,true))
+    return forkJoin(deleteAllObs)
+  }
+
+  createLLMEncounter(revised:boolean = false):Observable<any>{
+    const json = {
+      patient: this.visit.patient.uuid,
+      encounterType: revised ? visitEncounters.llmRegeneration : visitEncounters.aiDiagnosis, // Visit Note encounter
+      encounterProviders: [
+        {
+          provider: this.provider.uuid,
+          encounterRole: visitEncounters.doctorProviderId, // Doctor encounter role
+        },
+      ],
+      visit: this.visit.uuid,
+      encounterDatetime: new Date(Date.now() - 30000),
+    };
+    return this.encounterService.postEncounter(json);
+  }
+
+  createLLMObs(encounterUUID:string, diagnosisData:any, revised: boolean = false):Observable<any>{
+      let diagnosisObs = diagnosisData.map((diagnosisAIData:any,rank:number)=>{
+        let diagnosisRecord = {
+          concept: conceptIds.conceptLLM,
+          person: this.visit.patient.uuid,
+          obsDatetime: new Date(),
+          encounter: encounterUUID,
+          groupMembers: [
+            {
+              concept: conceptIds.conceptDiagnosisName,
+              value: diagnosisAIData.diagnosis,
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+              
+            },
+            {
+              concept: conceptIds.conceptDiagnosisLikelihood,
+              value: diagnosisAIData.likelihood + " likely",
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptRationale,
+              value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptRank,
+              value: (rank+1),
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptVersion,
+              value: revised ? 'revised' : 'initial',
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptWasRegenerated,
+              value: revised,
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            }
+          ]
+        }
+
+        return this.encounterService.postObs(diagnosisRecord, true)
+      })
+      return forkJoin(diagnosisObs)
   }
 }

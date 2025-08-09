@@ -1084,7 +1084,7 @@
               <div class="top-row">
                 <div class="notes-form">
                   <h6 class="notes-label">Notes</h6>
-                  <small class="grey-color">Add notes on the interaction to support future reference</small>
+                  <span class="grey-color">Add notes on the interaction to support future reference</span>
                   <form class="mt-3" [formGroup]="patientInteractionNotesForm">
                     <textarea
                       formControlName="value"
@@ -1101,12 +1101,12 @@
                 <!-- Further Questions Section -->
                 <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box">
                   <div style="margin-top: 0;display: flex;justify-content: space-between;">
-                    <h4><img src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested questions</h4> 
+                    <h4><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2"/> Ayu suggested questions</h4> 
                     <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
                   </div>
-                  <ul class="question-list">
-                    <li *ngFor="let question of furtherQuestionsList">{{ question }}</li>
-                  </ul>
+                  <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index">
+                    <span class="ml-2"> {{i+1}}. {{ question }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2254,99 +2254,6 @@
                   </div>
               </form>
             </mat-expansion-panel>
-            <!-- TODO : Call Status Removed from the UI for now -->
-            <!-- <mat-expansion-panel [expanded]="true" #panel9 hideToggle *ngIf="appConfigService?.patient_visit_summary?.dp_call_status">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img
-                      src="assets/svgs/patient-interaction.svg"
-                      alt=""
-                      width="44px"
-                    />
-                    <h6 class="mb-0 ml-2">{{'Call Status'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel9.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <form 
-                [formGroup]="patientCallStatusForm"
-                *ngIf="!isMCCUser"
-              >
-                <ul class="items-list">
-                  <li>
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label">{{ 'Call Status' | translate }}*</label>
-                      <div class="col-sm-9 d-flex align-items-center">
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            value="{{ 'Completed' | translate }}"
-                            formControlName="callStatus"
-                            (change)="onCallStatusChange()"
-                            data-test-id="radioCallStatusCompleted"
-                            [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
-                          />
-                          <div class="state p-success">
-                            <label>{{ 'Completed' | translate }}</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            value="{{ 'Reschedule/Repeat Internally' | translate }}"
-                            formControlName="callStatus"
-                            (change)="onCallStatusChange()"
-                            data-test-id="radioCallStatusReschedule"
-                            [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
-                          />
-                          <div class="state p-success">
-                            <label>{{ 'Reschedule/Repeat Internally' | translate }}</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            value="{{ 'Close Call without Completion' | translate }}"
-                            formControlName="callStatus"
-                            (change)="onCallStatusChange()"
-                            data-test-id="radioCallStatusClose"
-                            [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
-                          />
-                          <div class="state p-success">
-                            <label>{{ 'Close Call without Completion' | translate }}</label>
-                          </div>
-                        </div>
-                  
-                      </div>
-                    </div>
-                  </li>
-                  
-                  <li *ngIf="(reasonsList.length > 0)">
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label">{{ 'Select Reason' | translate }}*</label>
-                      <div class="col-sm-9">
-                        <ng-select
-                          #reasonSelect
-                          appendTo=".visit-summary-tab-group"
-                          class="visit-select"
-                          formControlName="reason"
-                          bindLabel="label"
-                          bindValue="label"
-                          placeholder="{{ 'Select a reason' | translate }}"
-                          data-test-id="selectReason"
-                        >
-                          <ng-option *ngFor="let reason of reasonsList" [value]="reason.name">
-                            {{ reason.name | translate }}
-                          </ng-option>
-                        </ng-select>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </form>
-            </mat-expansion-panel> -->
           </mat-accordion>
         </div>
       </div>
@@ -2385,7 +2292,8 @@
 </div>
 
 <div class="webrtc-controls" *ngIf="isVisitNoteProvider && !visitEnded && !isCalling && hasWebRTCEnabled">
-  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall" *ngIf="hasVideoEnabled"/>
+  <img class="shadow" style="width: 44px;" alt="" src="assets/svgs/audio-call.svg" (click)="startCall('audio')" data-test-id="imgStartAudioCall" *ngIf="hasAudioEnabled"/>
+  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall('video')" data-test-id="imgStartVideoCall" *ngIf="hasVideoEnabled"/>
   <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat" *ngIf="hasChatEnabled"/>
 </div>
 <router-outlet></router-outlet>

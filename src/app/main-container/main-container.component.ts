@@ -97,8 +97,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
-    this.thumbnailLogoURL = this.appConfigService.theme_config.find(obj=>obj.key==='thumbnail_logo')?.value;
+    this.logoImageURL = this.appConfigService.theme_config.find(obj => obj.key === 'logo')?.value;
+    this.thumbnailLogoURL = this.appConfigService.theme_config.find(obj => obj.key === 'thumbnail_logo')?.value;
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
@@ -127,17 +127,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       filter((event: Event) => event instanceof NavigationEnd),
       distinctUntilChanged(),
     ).subscribe(() => {
-        this.routeUrl = this.router.url;
-        this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
-        document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
+      this.routeUrl = this.router.url;
+      this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
+      document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
+      // Collapse sidebar when visit summary screen is opened
+      if (this.routeUrl.includes('/visit-summary/')) {
+        this.collapsed = true;
+      } else {
+        this.collapsed = false;
+      }
     });
-
-    // Collapse sidebar when visit summary screen is opened
-    if (this.routeUrl.includes('/visit-summary/')) {
-      this.collapsed = true;
-    } else {
-      this.collapsed = false;
-    }
 
     this.subscription1 = this.socketService.adminUnread.subscribe(res => {
       this.adminUnread = res;
@@ -167,7 +166,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       }, 30000);
     }
 
-    if(this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
+    if (this.appConfigService?.webrtc_section && this.appConfigService?.webrtc?.chat) {
       this.getSubscription();
       this.getNotificationStatus();
     }
@@ -191,17 +190,17 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then(async (_) => {
-            // Get the visitor identifier when you need it.
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            this.authService.subscribePushNotification(
-              _,
-              this.user.uuid,
-              result.visitorId,
-              this.provider.person.display,
-              this.getSpecialization()
-            ).subscribe(_response => {
-            });
+          // Get the visitor identifier when you need it.
+          const fp = await FingerprintJS.load();
+          const result = await fp.get();
+          this.authService.subscribePushNotification(
+            _,
+            this.user.uuid,
+            result.visitorId,
+            this.provider.person.display,
+            this.getSpecialization()
+          ).subscribe(_response => {
+          });
         }).catch((_) => console.log);
       } else {
         const fp = await FingerprintJS.load();
@@ -229,7 +228,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.snoozed = res.data?.snooze_till;
-        this.interval = setInterval(()=>{
+        this.interval = setInterval(() => {
           if (this.snoozed) {
             if (new Date().valueOf() > this.snoozed) {
               this.snoozed = 0;
@@ -245,14 +244,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   * @return {void}
   */
   getSubscription() {
-    if(Notification.permission === 'default') {
+    if (Notification.permission === 'default') {
       Notification.requestPermission().then(() => {
         this.requestSubscription();
       }).catch(() => {
         // show permission denied error
       });
     }
-    else if(Notification.permission === 'denied') {
+    else if (Notification.permission === 'denied') {
       // show permission is denied, please allow it error
     } else {
       this.requestSubscription();
@@ -334,7 +333,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             }
           }
         });
-        this.coreService.openSearchedPatientModal(values).subscribe((result) => {});
+        this.coreService.openSearchedPatientModal(values).subscribe((result) => { });
         this.searchForm.reset();
       },
         (err) => {
@@ -369,29 +368,29 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     // so we rebuild it each time
     const nextUrl = path ? `${url}/${path}` : url;
     const label = breadcrumbArr && typeof breadcrumbArr == 'string' ? breadcrumbArr : '';
-    
+
     const breadcrumb: BreadcrumbModel = {
       label: label,
       url: nextUrl,
     };
     // Only adding route with non-empty label
-    const newBreadcrumbs = breadcrumb.label ? [ ...breadcrumbs, breadcrumb ] : [ ...breadcrumbs];
+    const newBreadcrumbs = breadcrumb.label ? [...breadcrumbs, breadcrumb] : [...breadcrumbs];
 
-    if(breadcrumbArr && typeof breadcrumbArr !== 'string') {
+    if (breadcrumbArr && typeof breadcrumbArr !== 'string') {
       this.createBreadcrumFromArr(breadcrumbArr, newBreadcrumbs, rs)
     }
-    
+
     if (route.firstChild) {
-        // If we are not on our current path yet,
-        // there will be more children to look after, to build our breadcumb
-        return this.buildBreadCrumb(route.firstChild, nextUrl, newBreadcrumbs);
+      // If we are not on our current path yet,
+      // there will be more children to look after, to build our breadcumb
+      return this.buildBreadCrumb(route.firstChild, nextUrl, newBreadcrumbs);
     }
     return newBreadcrumbs;
   }
 
   createBreadcrumFromArr(breadcrumbArr: BreadcrumbModel[], newBreadcrumbs: BreadcrumbModel[], rs: ActivatedRouteSnapshot) {
     breadcrumbArr.forEach((breadcrumb: any) => {
-      if(!breadcrumb?.label?.trim()) return;
+      if (!breadcrumb?.label?.trim()) return;
 
       if (breadcrumb?.url?.startsWith(':id') && !!rs) {
         const paramName = breadcrumb?.url.split(':')[1];
@@ -401,7 +400,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       if (label?.startsWith(':') && !!rs) {
         label = rs.params[label?.split(':')[1]]
       }
-      if(!label) return;
+      if (!label) return;
 
       newBreadcrumbs.push({
         label: label,
@@ -419,11 +418,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     let child: ActivatedRouteSnapshot | null;
     child = state.root.firstChild;
     while (child != null) {
-        if (child.routeConfig.path === path) {
-          expectedChild = child;
-          break;
-        }
-        child = child.firstChild;
+      if (child.routeConfig.path === path) {
+        expectedChild = child;
+        break;
+      }
+      child = child.firstChild;
     }
     return expectedChild;
   }
@@ -477,8 +476,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.snoozed = '';
-        this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
-         `${this.translateService.instant('Notifications')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off') }`);
+        this.toastr.success(`${this.translateService.instant('Notifications turned')} ${this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
+          `${this.translateService.instant('Notifications')} ${this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')}`);
       }
     });
   }
@@ -517,7 +516,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   * @return {void}
   */
   resetSearch() {
-    this.searchForm.patchValue({ keyword: ''});
+    this.searchForm.patchValue({ keyword: '' });
   }
 
   ngOnDestroy(): void {

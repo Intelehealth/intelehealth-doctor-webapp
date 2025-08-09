@@ -6,7 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
@@ -54,6 +54,16 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
+  location: string;
+
+  callType: string;
+  videoBitrateTooLow: boolean = false;
+  videoBitrateCheckInterval: any;
+  lastVideoBytesSent = 0;
+  lastTimestamp = 0;
+
+  isVideoEnabled: boolean;
+  isAudioEnabled: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -69,13 +79,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
-
+    this.location = this.data.location;
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
-
+    this.callType = this.data.callType;
     if (this.data.initiator) this.initiator = this.data.initiator;
     this.socketSvc.initSocket();
     this.initSocketEvents();
@@ -98,6 +108,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     } else {
       this.startCall();
     }
+      // set flag for audio/video enable/disable
+
+  // this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
+// console.log('AI Video Enabled:', this.isVideoEnabled);
   }
 
   /**
@@ -194,7 +208,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       doctorId: this.data?.connectToDrId,
       appToken: this.webrtcSvc.appToken,
       socketId: this.socketSvc?.socket?.id,
-      initiator: this.initiator
+      initiator: this.initiator,
+      callType : this.callType
     };
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
@@ -220,17 +235,26 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async handleParticipantConnect(): Promise<void> {
     this.callConnected = true;
     this.callStartedAt = moment();
+    if(this.callType === 'audio') {
+      this._localVideoOff = true;
+        this.videoBitrateCheckInterval = setInterval(() => {
+        this.checkLocalVideoBitrate();
+      }, 3000);
+    }
     this.socketSvc.emitEvent('call-connected', this.incomingData);
-    await this.webrtcSvc.startRecording({
-      doctorName: this.doctorName,
-      roomId: this.room,
-      visitId: this.data?.visitId,
-      doctorId: this.data?.connectToDrId,
-      chwId: this.nurseId,
-      patientId: this.data?.patientId,
-      nurseName: this.hwName,
-      name: this.provider?.uuid
-    })
+
+    if(this.callType === 'video' && this.isVideoEnabled) {
+      await this.webrtcSvc.startRecording({
+        doctorName: this.doctorName,
+        roomId: this.room,
+        visitId: this.data?.visitId,
+        doctorId: this.data?.connectToDrId,
+        chwId: this.nurseId,
+        patientId: this.data?.patientId,
+        nurseName: this.hwName,
+        name: this.provider?.uuid,
+        location: this.location
+      })
       .toPromise()
       .then((res: RecordingResponse) => {
         this.recodingStarted = true
@@ -239,7 +263,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       .catch(err => {
         console.log("start recoding error", err)
       });
- }
+    }
+  }
 
   /**
   * Returns call connected or not
@@ -469,6 +494,44 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  async checkLocalVideoBitrate(): Promise<void> {
+  const pc: RTCPeerConnection | undefined = (this.webrtcSvc.room as any)?.engine?.pcManager?.publisher?._pc;
+
+  const stats = await pc.getStats();
+
+  stats.forEach((report) => {
+    if (this.lastTimestamp === 0) {
+    this.lastTimestamp = report.timestamp;
+    this.lastVideoBytesSent = report.bytesSent;
+    return;
+    }
+    if (
+      report.type === 'outbound-rtp' &&
+      report.kind === 'video' &&
+      typeof report.bytesSent === 'number' &&
+      typeof report.timestamp === 'number'
+    ) {
+      if (this.lastTimestamp && this.lastVideoBytesSent) {
+        const timeDiffSec = (report.timestamp - this.lastTimestamp) / 1000;
+        const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
+        if (timeDiffSec > 0) {
+        const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
+        console.log('Video bitrate (bps):', bitrate);
+
+        this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 200 kbps
+        }
+      }
+      this.lastTimestamp = report.timestamp;
+      this.lastVideoBytesSent = report.bytesSent;
+    }
+  });
+
+  if(this.videoBitrateTooLow) {
+     this.toastr.warning('Low bandwidth detected. Continuing with the audio call');
+     this._localVideoOff = true;
+  }
+}
   /**
   * End call and disconnect from the room
   * @return {void}
@@ -477,10 +540,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
-      if(this.recodingStarted) {
+      if(this.recodingStarted && isFeaturePresent('webrtcRecording')) {
         this.recodingStarted = false;
         await this.webrtcSvc.stopRecording(this.tableId, this.room)
-        // await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
           .toPromise()
           .catch(err => {
             console.log("stop recoding error", err)
@@ -502,7 +564,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       webapp: true,
       initiator: this.initiator,
     });
-
+    clearInterval(this.videoBitrateCheckInterval);
+    this.lastVideoBytesSent = 0;
+    this.lastTimestamp = 0;
     this.close();
   }
 
@@ -608,5 +672,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   checkPatientRegField(fieldName: string): boolean{
     return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
+  
+  setDefaultImage(event: Event) {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = 'assets/svgs/dr-user.svg';
   }
 }

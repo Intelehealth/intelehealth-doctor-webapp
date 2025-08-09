@@ -16,13 +16,21 @@ import { languages } from "src/config/constant";
 export class AiLlmComponent {
 
   aiLlmDataSource = new MatTableDataSource<any>();
+  aiLlmRecordingDataSource = new MatTableDataSource<any>();
+
   @ViewChild("aiLlmPaginator") aiLlmPaginator: MatPaginator;
+  @ViewChild('aiLlmRecordingPaginator') aiLlmRecordingPaginator: MatPaginator;
+
   sectionEnabled: boolean = false;
   allSectionData: any = {};
   displayedAILLMColumns: string[] = ["serialNo", "section"];
+  displayedAILLMRecordingColumns: string[] = ["serialNo", "sectionr"];
+
   tableData = [];
   aiLlmId: number;
   aiLlmfeatures: any = {};
+  aiLlmRecordingfeatures: any ={};
+  aiLlmRecordingId: any;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -36,10 +44,15 @@ export class AiLlmComponent {
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
     this.getAILLM();
     this.getAILLMByKey();
+
+    // AI LLM Recordings
+    this.getAILLMRecording();
+    this.getAILLMRecordingByKey();
   }
 
   ngAfterViewInit(){
     this.aiLlmDataSource.paginator = this.aiLlmPaginator;
+    this.aiLlmRecordingDataSource.paginator = this.aiLlmRecordingPaginator;
   }
 
   /**
@@ -97,6 +110,57 @@ export class AiLlmComponent {
       },
       (err) => {
         this.getAILLM();
+      }
+    );
+  }
+
+  // AI LLM Recording Section..
+   /**
+   * Get all fields.
+   * @return {void}
+   */
+  getAILLMRecording(): void {
+    this.configService.getAILLMRecording().subscribe((res: any) => {
+      this.aiLlmRecordingDataSource = new MatTableDataSource(res.aiLlm);
+      this.aiLlmRecordingDataSource.paginator = this.aiLlmRecordingPaginator;
+    });
+  }
+
+  /**
+   * Update patient details status.
+   * @return {void}
+   */
+  updateAILLMRecordingEnabledStatus(id: number, status: boolean): void {
+    this.configService.updateAILLMRecordingEnabledStatus(id, status).subscribe(
+      (res) => {
+        this.toastr.success("AI LLM recording have been successfully updated", "Update successful!");
+        this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
+      }
+    );
+  }
+  
+  getAILLMRecordingByKey(){
+    this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe((res: any) => {
+      this.aiLlmRecordingId = res.feature.id;
+      this.aiLlmRecordingfeatures = res.feature ;
+    });
+  }
+
+  /**
+   * @return {void}
+   */
+  updateAILLMRecordingStatus(event:Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.configService.updateFeatureEnabledStatus(this.aiLlmRecordingId, checked).subscribe(
+      (res) => {
+        this.toastr.success("AI video recording have been successfully updated", "Update successful!");
+        this.getAILLMRecording();
+      },
+      (err) => {
+        this.getAILLMRecording();
       }
     );
   }
