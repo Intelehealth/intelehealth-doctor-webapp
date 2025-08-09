@@ -53,6 +53,8 @@ import { LanguageFieldUpdate } from './language-fields-update/language-fields-up
 import { SubSectionsComponent } from './sub-sections/sub-sections.component';
 import { MatTableModule } from '@angular/material/table';
 import { CallHistoryComponent } from './call-history/call-history.component';
+import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
+import { LibPresciptionModule } from 'lib-presciption'
 
 @NgModule({
     declarations: [
@@ -92,7 +94,8 @@ import { CallHistoryComponent } from './call-history/call-history.component';
         AddTicketComponent,
         LanguageFieldUpdate,
         SubSectionsComponent,
-        CallHistoryComponent
+        CallHistoryComponent,
+        PatientRegValidationsComponent
     ],
     imports: [
         CommonModule,
@@ -113,7 +116,8 @@ import { CallHistoryComponent } from './call-history/call-history.component';
         SharedModule,
         MatProgressBarModule,
         MatTabsModule,
-        MatTableModule
+        MatTableModule,
+        LibPresciptionModule
     ],
     exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
     schemas: [NO_ERRORS_SCHEMA]

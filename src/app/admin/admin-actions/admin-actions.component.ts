@@ -36,8 +36,8 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
-      title: "Mobile App Languages",
-      desc: "Manage Mobile App Languages",
+      title: "Supported Languages",
+      desc: "Manage Mobile/Web App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
       path: "admin/actions/mobile-app-languages",
       isLocalPath: true
@@ -117,6 +117,20 @@ export class AdminActionsComponent implements OnInit {
       desc: "Patient Visit Section Configuration",
       icon: "assets/svgs/patient-visit-summary.svg",
       path: "admin/actions/patient-visit-section",
+      isLocalPath: true
+    },
+    {
+      title:"Patient Visit Dropdown",
+      desc: "Patient visit dropdown",
+      icon: "assets/svgs/patient_visit_dropdown.svg",
+      path: "admin/actions/patient-visit-dropdown",
+      isLocalPath: true
+    },
+    {
+      title:"Home Screen",
+      desc: "Home screen section",
+      icon: "assets/svgs/patient_visit_dropdown.svg",
+      path: "admin/actions/home-screen",
       isLocalPath: true
     }
   ];

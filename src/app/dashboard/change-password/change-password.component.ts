@@ -81,7 +81,7 @@ export class ChangePasswordComponent implements OnInit {
       if (!res) {
         this.toastr.success(this.translateService.instant('Password has been changed successfully!'),
         this.translateService.instant('Password Changed!'));
-        this.router.navigate(['/session/login']);
+        this.authService.logOut();
       } else {
         this.toastr.error(this.translateService.instant(res.message), "Error");
       }

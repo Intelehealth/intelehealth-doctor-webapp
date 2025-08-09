@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./mobile-app-languages.component.scss']
 })
 export class MobileAppLanguagesComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_default', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_default', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   mobileAppLangData : MobileAppLanguageModel[];

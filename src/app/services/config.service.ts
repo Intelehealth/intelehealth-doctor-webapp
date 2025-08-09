@@ -65,6 +65,10 @@ export class ConfigService {
    * Publish config
    * @return {Observable<any>}
    */
+  publishConfig_logo(){
+   const url = `${this.baseURL}/config/publish`;
+    return this.http.post(url, null);
+  }
   publishConfig(): Observable<any> {
     const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
@@ -150,6 +154,7 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
+    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 
@@ -422,5 +427,70 @@ export class ConfigService {
   getRosterQuestionnaireByKey(key: String): Observable<any> {
     const url = `${this.baseURL}/roster-questionnaire/getByKey/${key}`;
     return this.http.get(url);
+  }
+
+  /**
+   * Update patient reg field validations
+   * @param {boolean} id - id of patient reg field
+   * @param {any} validations - validations
+   * @return {Observable<any>}
+   */
+  updatePatientRegValidations(
+    id: number,
+    validations: any
+  ): Observable<any> {
+    const url = `${this.baseURL}/pr/updateValidations/${id}`;
+    return this.http.put(url, { validations });
+  }
+
+  /**
+   * Get patient visit dropdown fields
+   * @return {Observable<any>}
+   */
+  getPatientVisitDropdownFields(): Observable<any> {
+    const url = `${this.baseURL}/dropdown/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update Patient visit dropdown enabled status
+   * @param {boolean} id - id of speciality
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updatePatientVisitDropdown(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/dropdown/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Get patient visit HomeScreen fields
+  * @return {Observable<any>}
+  */
+  getHomeScreenFields(): Observable<any> {
+    const url = `${this.baseURL}/home-screen/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update Patient visit homescreen enabled status
+   * @param {boolean} id - id of speciality
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateHomeScreenEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Update patient vital name
+   * @param {boolean} id - id of vital
+   * @param {any} lang - update vital name
+   * @return {Observable<any>}
+   */
+  updateHomeScreenName(id: number, lang: any): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateHomeScreenName/${id}`;
+    return this.http.put(url, { lang });
   }
 }

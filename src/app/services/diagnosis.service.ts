@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -33,8 +33,12 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   deleteObs(uuid): Observable<any> {
-    const url = `${this.baseURL}/obs/${uuid}`;
-    return this.http.delete(url);
+    if(uuid){
+      const url = `${this.baseURL}/obs/${uuid}`;
+      return this.http.delete(url);
+    } else {
+      return of(false)
+    }
   }
 
   /**
@@ -54,9 +58,26 @@ export class DiagnosisService {
   * @param {string} term - Search term
   * @return {Observable<any>}
   */
-  getDiagnosisList(term: string): Observable<any> {
-    const url = `${environment.baseURL}/concept?class=${conceptIds.conceptDiagnosisClass}&source=ICD10&q=${term}`;
+  getDiagnosisList(term: string, source = 'SNOMED'): Observable<any> {
+    const url = `${environment.baseURL}/concept?class=${conceptIds.conceptDiagnosisClass}&source=${source}&q=${term}&v=custom:(uuid,name:(name,display),mappings:(display),conceptClass:(uuid,name))`;
     return this.http.get(url);
+  }
+
+  getSnomedDiagnosisList(term: string): Observable<any> {
+    const url = `${environment.base}/getdiags/${term}`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Add SNOMED diagnosis
+  * @param {string} conceptName - Concept name
+  * @param {string} snomedCode - SNOMED CT code
+  * @return {Observable<any>}
+  */
+  addSnomedDiagnosis(conceptName: string, snomedCode: string): Observable<any> {
+    const url = `${environment.base}/snomed`;
+    const data = { conceptName, snomedCode };
+    return this.http.post(url, data);
   }
 
   /**

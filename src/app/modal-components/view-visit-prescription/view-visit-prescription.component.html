@@ -67,6 +67,13 @@
           </div>
         </div>
 
+        <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Request ID') && getPersonAttributeValue('Request ID') !== 'NA'">
+          <div class="patient-info-item mb-3">
+            <h6 data-test-id="etPatient">{{'Request ID' | translate}}</h6>
+            <p data-test-id="etPatient">{{ getPersonAttributeValue('Request ID') }}</p>
+          </div>
+        </div>
+
         <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Phone Number') && getPersonAttributeValue('Telephone Number') !== 'NA'">
           <div class="patient-info-item">
             <h6 data-test-id="etPatient">{{'Phone Number'| translate}}:</h6>
@@ -126,6 +133,15 @@
         <mat-tab label="{{'Address'| translate}}" *ngIf="hasPatientAddressEnabled">
           <div class="rows patient-info-wrapper">
 
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Household Number') && patient?.person?.preferredAddress?.address6">
+              <div class="patient-info-item">
+                <h6 data-test-id="etPatient">{{'Household number' | translate}}</h6>
+                <p data-test-id="etPatient">
+                  {{ patient?.person?.preferredAddress?.address6 }}
+                </p>
+              </div>
+            </div>
+
             <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Corresponding Address 1') && patient?.person?.preferredAddress?.address1">
               <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Corresponding address 1' | translate}}</h6>
@@ -140,6 +156,15 @@
                 <h6 data-test-id="etPatient">{{'Corresponding address 2' | translate}}</h6>
                 <p data-test-id="etPatient">
                   {{ patient?.person?.preferredAddress?.address2 }}
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Block') && patient?.person?.preferredAddress?.address3">
+              <div class="patient-info-item">
+                <h6 data-test-id="etPatient">{{'Block' | translate}}</h6>
+                <p data-test-id="etPatient">
+                  {{ patient?.person?.preferredAddress?.address3 }}
                 </p>
               </div>
             </div>
@@ -224,13 +249,6 @@
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('TMH Case Number') }}</p>
               </div>
             </div> -->
-
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Request ID') && getPersonAttributeValue('Request ID') !== 'NA'">
-              <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatient">{{'Request ID' | translate}}</h6>
-                <p data-test-id="etPatient">{{ getPersonAttributeValue('Request ID') }}</p>
-              </div>
-            </div>
 
             <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Discipline') && getPersonAttributeValue('Discipline') !== 'NA'">
               <div class="patient-info-item mb-3">
@@ -384,7 +402,8 @@
                   <!-- END Vitals -->
                       
                   <!-- Checkup Reasons -->
-                    <div class="data-section-content" *ngSwitchCase="pvsConstant['check_up_reason'].key">
+                  <ng-container *ngSwitchCase="pvsConstant['check_up_reason'].key">
+                    <div class="data-section-content" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">
                       <div class="cheif-complaint-wrapper">
                         <h6>{{'Chief complaint'|translate}}</h6>
                         <div class="complaint-chips">
@@ -394,6 +413,49 @@
                         </div>
                       </div>
                     </div>
+                    <ng-container *ngFor="let ckr of checkUpReasonData">
+                      <ng-container *ngIf="ckr.title != 'Associated symptoms'">
+                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">{{ ckr.title }}</h6>
+                        <ul class="items-list pt-0">
+                          <li *ngFor="let ckri of ckr.data">
+                            <div class="list-item">
+                              <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
+                              <div
+                                class="list-item-content"
+                                [class.text-muted]="!ckri.value"
+                                [attr.data-test-id]="'etValue'+ckri.value.changingThisBreaksApplicationSecurity.slice(0,4).trim()+'Checkup'"
+                                [innerHTML]="ckri.value ? ckri.value : ('None' | translate)">
+                              </div>
+                              <!-- <div
+                                class="list-item-content"
+                                [class.text-muted]="!ckri.value"
+                                [attr.data-test-id]="'etValue'+ckri.value.changingThisBreaksApplicationSecurity.slice(0,4).trim()+'Checkup'"
+                              >
+                                {{ ckri.value ? ckri.value : ('None'|translate) }}
+                              </div> -->
+                            </div>
+                          </li>
+                        </ul>
+                      </ng-container>
+                      <ng-container *ngIf="ckr.title == 'Associated symptoms'">
+                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'">{{ ckr.title }}</h6>
+                        <ul class="items-list pt-0">
+                          <li *ngFor="let ckri of ckr.data">
+                            <div class="list-item-col">
+                              <label [attr.data-test-id]="'etKey'+ckri.key.slice(0,3)+'Checkup'">{{ ckri.key }}</label>
+                              <div
+                                class="list-item-content"
+                                [class.text-muted]="!ckri.value"
+                                [attr.data-test-id]="'etValue'+ckri.value.slice(0,4).trim()+'Checkup'"
+                              >
+                                {{ ckri.value ? ckri.value :  ('None'|translate) }}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
                   <!-- END Checkup Reasons -->
                 </ng-container>
               </div>
@@ -454,9 +516,9 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/diagnosis.svg" alt="" />
-              <h6>{{'Diagnosis'|translate}}</h6>
+              <h6>{{'Diagnosis Details'|translate}}</h6>
             </div>
-            <div class="data-section-content">
+            <div class="data-section-content" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">
               <ul class="items-list">
                 <li *ngIf="!isDownloadPrescription">
                   <div class="list-item">
@@ -472,7 +534,6 @@
                   <thead>
                     <tr>
                       <th scope="col">{{'Diagnosis'|translate}}</th>
-                      <th scope="col"  *ngIf="isFeatureAvailable('tnmStaging')">{{'TNM Staging'|translate}}</th>
                       <th scope="col">{{'Type'|translate}}</th>
                       <th scope="col">{{'Status'|translate}}</th>
                     </tr>
@@ -480,9 +541,30 @@
                   <tbody>
                     <tr *ngFor="let d of existingDiagnosis; let i = index">
                       <td>{{ d.diagnosisName }}</td>
-                      <td *ngIf="isFeatureAvailable('tnmStaging')">{{ d.diagnosisTNMStaging ?? '-' }}</td>
                       <td>{{ d.diagnosisType }}</td>
                       <td>{{ d.diagnosisStatus }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="data-section-content" *ngIf="isFeatureAvailable('dp_diagnosis_secondary')">
+              <div class="table-responsive" *ngIf="dignosisSecondary">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">{{'Diagnosis'|translate}}</th>
+                      <th scope="col">{{'Type'|translate}}</th>
+                      <th scope="col">{{'TNM'|translate}}</th>
+                      <th scope="col">{{'Other Staging'|translate}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ dignosisSecondary['diagnosis'] }}</td>
+                      <td>{{ dignosisSecondary['type'] }}</td>
+                      <td>{{ dignosisSecondary['tnm'] }}</td>
+                      <td>{{ dignosisSecondary['otherStaging'] }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -491,7 +573,25 @@
           </div>
         </div>
 
-        <div *ngIf="notes?.length" class="col-md-12 px-3 mb-3">
+        <div *ngIf="discussionSummary && isFeatureAvailable('dp_discussion_summary')" class="col-md-12 px-3 mb-3" >
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/note.svg" alt="" />
+              <h6>{{'Discussion Summary'|translate}}</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ discussionSummary | translate}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="notes?.length && isFeatureAvailable('visitNotes')" class="col-md-12 px-3 mb-3" >
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/note.svg" alt="" />
@@ -536,28 +636,16 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('doctor-recommendation')">
-          <div class="data-section">
-            <div class="data-section-title">
-              <img src="assets/svgs/test.svg" alt="" />
-              <h6>{{'Doctor's Recommendation'|translate}}</h6>
-            </div>
-            <div class="data-section-content pt-3">
-              <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
-            </div>
-          </div>
-        </div>
-
-        <ng-container *ngIf="!isFeatureAvailable('doctor-recommendation')">
+        <ng-container *ngIf="!brandName">
           <ng-template *ngTemplateOutlet="tplDrRcom" ></ng-template>
         </ng-container>
 
-        <ng-template #tplDrRcom >
+        <ng-template #tplDrRcom>
           <div class="col-md-12 px-3 mb-3">
             <div class="data-section">
               <div class="data-section-title">
                 <img src="assets/svgs/medication.svg" alt="" />
-                <h6>{{'Medications Advised'|translate}}</h6>
+                <h6>{{'Medications'|translate}}</h6>
               </div>
               <div class="data-section-content">
                 <div class="table-responsive">
@@ -616,7 +704,7 @@
             <div class="data-section">
               <div class="data-section-title">
                 <img src="assets/svgs/test.svg" alt="" />
-                <h6>{{'Investigations Advised'|translate}}</h6>
+                <h6>{{'Investigations'|translate}}</h6>
               </div>
               <div class="data-section-content">
                 <ul *ngIf="tests?.length; else noTests" class="items-list">
@@ -638,78 +726,94 @@
               </div>
             </div>
           </div>
-  
-          <div class="col-md-12 px-3 mb-3">
+          <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('follow-up-instruction')">
             <div class="data-section">
               <div class="data-section-title">
-                <img src="assets/svgs/referral.svg" alt="" />
-                <h6>{{'Referral Advise'|translate}}</h6>
+                <img src="assets/svgs/test.svg" alt="" />
+                <h6>{{'Follow Up'|translate}}</h6>
               </div>
               <div class="data-section-content">
-                <div class="table-responsive">
-  
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{'Referral to'|translate}}</th>
-                        <th scope="col" *ngIf="isFeatureAvailable('referralFacility', true)">{{'Referral facility'|translate}}</th>
-                        <th scope="col" *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{'Priority of Referral'|translate}}</th>
-                        <th scope="col">{{'Referral for (Reason)'|translate}}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <ng-container *ngIf="referrals.length; else noReferrals">
-                        <tr *ngFor="let r of referrals; let i = index">
-                          <td>{{ r.speciality }}</td>
-                          <td *ngIf="isFeatureAvailable('referralFacility', true)">{{ r.facility }}</td>
-                          <td *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{ r.priority }}</td>
-                          <td>{{ r.reason }}</td>
-                        </tr>
-                      </ng-container>
-                      <ng-template #noReferrals>
-                        <tr>
-                          <td colspan="4" class="text-center">
-                            {{'No referrals added'|translate}}
-                          </td>
-                        </tr>
-                      </ng-template>
-                    </tbody>
-                  </table>
-                </div>
+                <ul *ngIf="followUpInstructions?.length; else noTests" class="items-list">
+                  <li *ngFor="let t of followUpInstructions">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <span>{{ t.value }}</span>
+                    </div>
+                  </li>
+                </ul>
+                <ng-template #noTests>
+                  <tr>
+                    <td colspan="5" class="text-center">
+                    {{'No Follow Up Instructions added' | translate}}
+                    </td>
+                  </tr>
+                </ng-template>
               </div>
             </div>
           </div>
         </ng-template>
 
-        
-
-        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('follow-up-instruction')">
+        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('doctor-recommendation')">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/test.svg" alt="" />
-              <h6>{{'Follow Up Instructions'|translate}}</h6>
+              <img src="assets/svgs/advice.svg" alt="" />
+              <h6>{{'Recommendation'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul *ngIf="followUpInstructions?.length; else noTests" class="items-list">
-                <li *ngFor="let t of followUpInstructions">
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <span>{{ t.value }}</span>
+              <ul class="items-list">
+                <li>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ recommendation?.value | translate}}</span>
                   </div>
                 </li>
               </ul>
-              <ng-template #noTests>
-                <tr>
-                  <td colspan="5" class="text-center">
-                   {{'No Follow Up Instructions added' | translate}}
-                  </td>
-                </tr>
-              </ng-template>
             </div>
           </div>
         </div>
-        <div class="col-md-12 px-3 mb-3">
+
+        <div class="col-md-12 px-3 mb-3" *ngIf="!brandName">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/referral.svg" alt="" />
+              <h6>{{'Referral'|translate}}</h6>
+            </div>
+            <div class="data-section-content">
+              <div class="table-responsive">
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">{{'Referral to'|translate}}</th>
+                      <th scope="col" *ngIf="isFeatureAvailable('referralFacility', true)">{{'Referral facility'|translate}}</th>
+                      <th scope="col" *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{'Priority of Referral'|translate}}</th>
+                      <th scope="col">{{'Referral for (Reason)'|translate}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="referrals.length; else noReferrals">
+                      <tr *ngFor="let r of referrals; let i = index">
+                        <td>{{ r.speciality }}</td>
+                        <td *ngIf="isFeatureAvailable('referralFacility', true)">{{ r.facility }}</td>
+                        <td *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{ r.priority }}</td>
+                        <td>{{ r.reason }}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noReferrals>
+                      <tr>
+                        <td colspan="4" class="text-center">
+                          {{'No referrals added'|translate}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('visitFollowUp')">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/follow-up.svg" alt="" />

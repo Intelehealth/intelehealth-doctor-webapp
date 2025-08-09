@@ -10,6 +10,9 @@ import { languages } from "src/config/constant";
 import { MatSort } from "@angular/material/sort";
 import { PatientRegistrationFieldsModel } from "src/app/model/model";
 import * as moment from "moment";
+import { CoreService } from "src/app/services/core/core.service";
+import { MatDialogRef } from "@angular/material/dialog";
+import { PatientRegValidationsComponent } from "src/app/modal-components/patient-reg-validations/patient-reg-validations.component";
 
 @Component({
   selector: 'app-patient-registration',
@@ -17,7 +20,7 @@ import * as moment from "moment";
   styleUrls: ['./patient-registration.component.scss']
 })
 export class PatientRegistrationComponent {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_mandatory', 'is_editable','is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_mandatory', 'is_editable','is_enabled'];
   tabList = ['Personal', 'Address', 'Other'];
   currentTabIndex = 0; 
   dataSource = new MatTableDataSource<any>();
@@ -37,20 +40,17 @@ export class PatientRegistrationComponent {
   sectionEnabled: boolean = false;
   allSectionData: any = {};
 
-  displayedRosterColumns: string[] = [
-    "serialNo",
-    "section",
-    "updatedAt",
-    "is_enabled",
-  ];
+  displayedRosterColumns: string[] = ["serialNo", "section", 'platform', "updatedAt", "is_enabled" ];
   tableData = [];
   rosterQuestionnaireId: number;
   rosterQuestionnairefeatures: any = {};
+  dialogRef: MatDialogRef<PatientRegValidationsComponent>;
 
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
     private configService: ConfigService,
+    private coreServce: CoreService,
     private toastr: ToastrService
   ) { }
 
@@ -256,5 +256,19 @@ export class PatientRegistrationComponent {
           this.getRoosterQuestionnaire();
         }
       );
+  }
+
+  openValidations(element: PatientRegistrationFieldsModel) {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+      return;
+    }
+    const id = element?.id;
+    const validations = element?.validations
+    this.dialogRef = this.coreServce.openPatientRegValidationsModal({ id,validations });
+    this.dialogRef.afterClosed().subscribe(async result => {
+      this.dialogRef = undefined;
+      if(result) this.getAllFields();
+    })
   }
 }
