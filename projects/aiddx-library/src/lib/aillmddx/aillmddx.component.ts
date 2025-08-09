@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Optional, Inject } from '@angular/core';
 import { AiddxService } from '../../services/aiddx.service';
 import { MatDialog } from '@angular/material/dialog';
 // import { dummyPayload, response } from '../token';
+import { ENVIRONMENT } from "../../lib/token";
 
 @Component({
   selector: 'app-aillmddx',
@@ -42,8 +43,14 @@ export class AillmddxComponent {
   selectedDiagnosis: string[] = [];
 
   constructor(
-    private ddxSvc: AiddxService, private dialog: MatDialog
-  ) { }
+    private ddxSvc: AiddxService,
+    private dialog: MatDialog,
+    @Optional() @Inject(ENVIRONMENT) private env?: any
+  ) { 
+    if (!this.env) {
+      console.warn("ENVIRONMENT is not provided!");
+    }
+  }
 
   ngOnInit() {}
 

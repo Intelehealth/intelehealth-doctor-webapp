@@ -55,7 +55,8 @@
                 </h4>
                 <ul>
                   <li *ngFor="let point of rationale.summarised_rationale; let i = index">
-                      {{point}}
+                      <span *ngIf="env.base.includes('nasstudy')">{{point}}</span>
+                      <span *ngIf="!env.base.includes('nasstudy')">{{point[i+1]}}</span>
                   </li>
                 </ul>   
                 <button 
