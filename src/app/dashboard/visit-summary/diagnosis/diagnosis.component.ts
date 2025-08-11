@@ -1263,8 +1263,6 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.followUpForm.reset();
       this.setSelectedFollowUp();
       });
-      //this.followUpForm.reset();
-      //this.toastr.warning(this.translateService.instant('Required delete exit value'), this.translateService.instant('Follow-up Not Added'));
     }
   }
 
@@ -1370,3 +1368,4 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     }
   }
 }
+

@@ -211,6 +211,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.SaveAIDiagosisHistory(this.visit,digData);
           }
         })
+
         // Subscribe to diagnosis saved event
         this.ddxCompRef.instance.diagnosisSaved.subscribe((diagnoses: any[]) => {
           this.existingDiagnosis = [...diagnoses];
@@ -222,7 +223,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Subscribe to further questions event
         this.ddxCompRef.instance.furtherQuestionsReceived.subscribe((questions: string[]) => {
-          console.log('Received further questions:', questions);
           if (questions && questions.length) {
             this.furtherQuestionsList = [...questions];
           }
@@ -406,7 +406,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
-    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
 
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
@@ -507,6 +506,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
+    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
 
     this.pvsConfigs = this.appConfigService.patient_visit_sections;
     this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
@@ -1232,6 +1232,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       drPersonUuid: this.provider?.person.uuid,
       patientAge: this.patient.person.age,
       patientGender: this.patient.person.gender,
+      location:this.clinicName,
       callType: callType
     });
 
@@ -1597,9 +1598,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       else if (event.snomedCTCode) {
         this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
-        this.diagnosisForm.addControl('isSnomed', new FormControl(null));
         this.diagnosisForm.patchValue({ diagnosisCode: event.snomedCTCode });
-        this.diagnosisForm.patchValue({ isSnomed: true });
       }
     }
   }

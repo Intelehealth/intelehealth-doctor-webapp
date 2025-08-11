@@ -76,7 +76,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   sanitizedValue: SafeHtml;
   recommendation: { uuid: string; value: any; };
-
   brandName = environment.brandName === 'KCDO';
 
   constructor(
@@ -631,7 +630,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
     const checkUpReasonConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['check_up_reason'].key);
     const isValidSign = this.signature.value && await isValidBase64Image(this.signature.value);
-
     const vitalsConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['vitals'].key); 
     const pdfObj = {
       pageSize: 'A4',
@@ -1782,5 +1780,3 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     return this.getPatientIdentifier('OpenMRS ID');
   }
 }
-
-

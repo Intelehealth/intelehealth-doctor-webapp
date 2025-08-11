@@ -54,6 +54,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
+  location: string;
 
   callType: string;
   videoBitrateTooLow: boolean = false;
@@ -78,6 +79,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
+    this.location = this.data.location;
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
@@ -108,10 +110,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
       // set flag for audio/video enable/disable
 
-  this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
-console.log('AI Video Enabled:', this.isVideoEnabled);
+  // this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
+// console.log('AI Video Enabled:', this.isVideoEnabled);
   }
-
 
   /**
   * Getter for visit provider
@@ -210,6 +211,7 @@ console.log('AI Video Enabled:', this.isVideoEnabled);
       initiator: this.initiator,
       callType : this.callType
     };
+
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
     /**
@@ -241,9 +243,7 @@ console.log('AI Video Enabled:', this.isVideoEnabled);
     }
     this.socketSvc.emitEvent('call-connected', this.incomingData);
 
-    console.log("is Video Enabled", this.isVideoEnabled);
     if(this.callType === 'video' && this.isVideoEnabled) {
-      console.log("Starting recording");
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -252,7 +252,8 @@ console.log('AI Video Enabled:', this.isVideoEnabled);
         chwId: this.nurseId,
         patientId: this.data?.patientId,
         nurseName: this.hwName,
-        name: this.provider?.uuid
+        name: this.provider?.uuid,
+        location: this.location
       })
       .toPromise()
       .then((res: RecordingResponse) => {
@@ -674,7 +675,7 @@ console.log('AI Video Enabled:', this.isVideoEnabled);
   }
   
   setDefaultImage(event: Event) {
-  const imgElement = event.target as HTMLImageElement;
-  imgElement.src = 'assets/svgs/dr-user.svg';
-}
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = 'assets/svgs/dr-user.svg';
+  }
 }

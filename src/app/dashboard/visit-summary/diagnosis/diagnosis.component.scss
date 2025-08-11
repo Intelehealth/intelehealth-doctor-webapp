@@ -209,7 +209,6 @@ textarea.form-control {
   min-width: 235px !important;
 }
 
-
 ::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
 ::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
   height: 48px;
@@ -423,8 +422,6 @@ textarea.form-control {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  // margin-top: 24px;
- // margin-bottom: 24px;
 }
 
 .diagnosis-box {
@@ -460,17 +457,17 @@ textarea.form-control {
 }
 
 .custom-checkbox {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #B0ADBE;
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-    background-color: transparent;
-    margin-top: 3px;
-    margin-right: 9px;
-    margin-bottom: 9px;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #B0ADBE;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  margin-top: 3px;
+  margin-right: 9px;
+  margin-bottom: 9px;
 
   &:checked {
     background-color: #0FD197;
@@ -506,7 +503,6 @@ textarea.form-control {
 
 .medication-form-container {
   background-color: #FAF9FF !important;
- // padding: 1rem;
   border-radius: 8px;
 }
 
@@ -520,10 +516,7 @@ textarea.form-control {
 
 .form-row {
   display: flex;
-  //gap: 10px;
   margin-bottom: 10px;
-  // margin-left: 0px;
-  // margin-right: 0px;
 }
 
 .form-row input,
@@ -538,25 +531,23 @@ textarea.form-control {
 .form-control,
 ng-select.form-control {
   border-radius: 8px;
-  min-width: 0; /* allows flex-fill to shrink properly */
+  min-width: 0;
 }
 
 
 .form-row div {
- // padding: 0.5rem;
   border-radius: 4px;
-  //border: 1px solid #B2AFBE33;
   flex: 1;
   font-size: 16px;
 }
 
 ::ng-deep .ng-select .ng-select-container .ng-placeholder {
-  font-size: 16px; /* or any desired size */
+  font-size: 16px;
 }
 
 input::placeholder {
-  color: #888888; /* your desired color */
-  opacity: 1;     /* optional: ensure full visibility */
+  color: #888888;
+  opacity: 1;
 }
 
 .custom-hr {

@@ -99,7 +99,7 @@
                 />
               </button>
             </div>
-               <button
+              <button
                 type="button"
                 class="video-ctrl-btn fullscreen-btn"
                 (click)="toggleWindow()"
@@ -120,10 +120,10 @@
             <div #localVideo class="local-container"></div>
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
-               [src]="baseUrl + '/personimage/' + data.drPersonUuid"
-              (error)="setDefaultImage($event)"
-              alt=""
-              [useDefaultImageDirective]="false"
+                [src]="baseUrl + '/personimage/' + data.drPersonUuid"
+                (error)="setDefaultImage($event)"
+                alt=""
+                [useDefaultImageDirective]="false"
               />
             </div>
             <div class="audio-status">

@@ -81,7 +81,7 @@ export class DiagnosisService {
       })
     );
   }
-
+  
   getSnomedDiagnosisList(term: string): Observable<any> {
     const url = `${environment.base}/getdiags/${term}`;
     return this.http.get(url);

@@ -16,10 +16,10 @@ import { languages } from "src/config/constant";
 export class AiLlmComponent {
 
   aiLlmDataSource = new MatTableDataSource<any>();
-  aiLlmDataSource2 = new MatTableDataSource<any>();
+  aiLlmRecordingDataSource = new MatTableDataSource<any>();
 
   @ViewChild("aiLlmPaginator") aiLlmPaginator: MatPaginator;
-  @ViewChild('aiLlmPaginator2') aiLlmPaginator2: MatPaginator;
+  @ViewChild('aiLlmRecordingPaginator') aiLlmRecordingPaginator: MatPaginator;
 
   sectionEnabled: boolean = false;
   allSectionData: any = {};
@@ -45,15 +45,14 @@ export class AiLlmComponent {
     this.getAILLM();
     this.getAILLMByKey();
 
-    // Recordings
-     this.getAILLMRecording();
+    // AI LLM Recordings
+    this.getAILLMRecording();
     this.getAILLMRecordingByKey();
   }
 
   ngAfterViewInit(){
     this.aiLlmDataSource.paginator = this.aiLlmPaginator;
-    this.aiLlmDataSource2.paginator = this.aiLlmPaginator2;
-
+    this.aiLlmRecordingDataSource.paginator = this.aiLlmRecordingPaginator;
   }
 
   /**
@@ -115,25 +114,15 @@ export class AiLlmComponent {
     );
   }
 
-  // Recording
-
+  // AI LLM Recording Section..
    /**
    * Get all fields.
    * @return {void}
    */
   getAILLMRecording(): void {
     this.configService.getAILLMRecording().subscribe((res: any) => {
-      this.aiLlmDataSource2 = new MatTableDataSource(res.aiLlm);
-      this.aiLlmDataSource2.paginator = this.aiLlmPaginator2;
-    });
-  }
-
-  getAILLMRecordingByKey(){
-this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe((res: any) => {
-        console.log("99999999999===", res);
-
-      this.aiLlmRecordingId = res.feature.id;
-      this.aiLlmRecordingfeatures = res.feature ;
+      this.aiLlmRecordingDataSource = new MatTableDataSource(res.aiLlm);
+      this.aiLlmRecordingDataSource.paginator = this.aiLlmRecordingPaginator;
     });
   }
 
@@ -153,6 +142,13 @@ this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe(
     );
   }
   
+  getAILLMRecordingByKey(){
+    this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe((res: any) => {
+      this.aiLlmRecordingId = res.feature.id;
+      this.aiLlmRecordingfeatures = res.feature ;
+    });
+  }
+
   /**
    * @return {void}
    */
@@ -161,38 +157,7 @@ this.configService.getAILLMRecordingByKey("ai_llm_recording_section").subscribe(
     this.configService.updateFeatureEnabledStatus(this.aiLlmRecordingId, checked).subscribe(
       (res) => {
         this.toastr.success("AI video recording have been successfully updated", "Update successful!");
-        this.updateAILLMVideoRecording(1, checked)
-      //  this.getAILLMRecording();
-      },
-      (err) => {
         this.getAILLMRecording();
-      }
-    );
-  }
-
-  /**
-   * @return {void}
-   */
-  updateAILLMVideoRecording(id,status): void {
-    this.configService.updateAILLMVideoRecording(id,status).subscribe(
-      (res) => {
-      //  this.toastr.success("AI LLM video Recording have been successfully updated", "Update successful!");
-        this.getAILLMRecording();
-      },
-      (err) => {
-        this.getAILLMRecording();
-      }
-    );
-  }
-   /**
-   * @return {void}
-   */
-  updateAILLMAudioRecording(id:number,event: Event): void {
-      const newValue = (event.target as HTMLInputElement).checked;
-    this.configService.updateAILLMAudioRecording(id, newValue).subscribe(
-      (res) => {
-        this.toastr.success("AI LLM Audio recording have been successfully updated", "Update successful!");
-     //   this.getAILLMRecording();
       },
       (err) => {
         this.getAILLMRecording();
