@@ -1695,8 +1695,8 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <ng-container *ngIf="medicines.length else noMedicines">
-                            <tr *ngFor="let m of medicines; let i = index">
+                          <ng-container *ngIf="standardMedicines.length else noMedicines">
+                            <tr *ngFor="let m of standardMedicines; let i = index">
                               <td>{{ m.drug }}</td>
                               <td>{{ m.dose }}</td>
                               <td>{{ m.frequency }}</td>
@@ -1834,7 +1834,7 @@
                                   <button
                                     type="submit"
                                     class="gray-btn"
-                                    [disabled]="addMedicineForm.invalid"
+                                    [disabled]="addStandardMedicineForm.invalid"
                                     data-test-id="btnSubmitMed"
                                   >
                                     {{'Add'|translate}}
