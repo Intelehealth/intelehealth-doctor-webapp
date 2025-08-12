@@ -45,7 +45,7 @@
     "core-js": "^2.5.4",
     "date-fns": "^2.29.3",
     "html2pdf.js": "^0.10.1",
-    "ih-library": "github:Intelehealth/intelehealth-doctor-webapp-config-table-grid#v-0.2.7",
+    "ih-library": "github:Intelehealth/intelehealth-doctor-webapp-config-table-grid#v-0.2.8",
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
     "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.0.11",

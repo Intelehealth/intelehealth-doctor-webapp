@@ -517,6 +517,16 @@ export interface MedicineModel {
   uuid?: string
 }
 
+export interface StandardMedicineModel {
+  drug?: string,
+  dose?: string,
+  durationNo?: string,
+  durationUnit?: string,
+  instructRemark?: string,
+  frequency?: string,
+  uuid?: string
+}
+
 export interface PatientHistoryModel {
   title?: string,
   data?: KeyValueModel[]
@@ -693,6 +703,8 @@ export interface PatientVisitSummaryConfigModel {
   dp_dignosis_secondary: boolean
   dp_discussion_summary: boolean
   inprogress_visit_section: boolean
+  diagnosis_snomedct: boolean
+  standard_medication: boolean
 }
 
 export interface PagerdutyList {
@@ -763,4 +775,23 @@ export interface PatientVisitDropdownFieldsModel{
   name?:string,
   is_enabled: boolean,
   updatedAt: string
+}
+
+export interface DropdownItemModel {
+  id: number,
+  is_enabled: boolean,
+  key: string,
+  name: string,
+}
+export interface DropdownValuesModel {
+  advice: DropdownItemModel[],
+  diagnosis: DropdownItemModel[],
+  medication: DropdownItemModel[],
+  refer_specialisation: DropdownItemModel[],
+  referral_facility: DropdownItemModel[],
+  test: DropdownItemModel[]
+}
+
+export interface RecordingResponse {
+  recordingId: number;
 }

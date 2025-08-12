@@ -132,11 +132,13 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://dev.intelehealth.org:3004/api/messages/',
-        'https://dev.intelehealth.org:3004/api/support/',
-        'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
-        'https://dev.intelehealth.org:3000/api/getToken',
-        'https://dev.intelehealth.org/pl/'
+        'https://as.intelehealth.org:3004/api/messages/',
+        'https://as.intelehealth.org:3004/api/support/',
+        'https://as.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://as.intelehealth.org/pl/',
+        `${environment.webrtcTokenServerUrl}api/getToken`,
+        `${environment.webrtcTokenServerUrl}api/startRecording`,
+        `${environment.webrtcTokenServerUrl}api/stopRecording`,
       ]
     }),
     NgxPermissionsModule.forRoot({
