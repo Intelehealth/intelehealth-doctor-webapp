@@ -289,7 +289,7 @@ export class VisitEncounterPatientOrderService {
     return this.http.get(url);
   }
   getReferralFacilityLocation(): Observable<any> {
-    const url = `${this.baseURL}/location`;
+    const url = `${this.baseURL}/location?tag=Facility`;
     return this.http.get(url);
   }
   getMiscellaneousRequest(path: "MedicationRequest" | "ServiceRequest" | "Observation", mpiId: string): Observable<any> {
@@ -297,3 +297,4 @@ export class VisitEncounterPatientOrderService {
     return this.http.get(url);
   }
 }
+ 
