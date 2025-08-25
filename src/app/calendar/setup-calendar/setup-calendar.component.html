@@ -1,32 +1,33 @@
-<div class="container-fluid">
-  <div class="row setup-title-con">
-    <div class="col-md-8 p-0 pb-2">
-      <div class="title-con d-flex align-items-center">
+<div class="container-fluid" data-test-id="calendarSetupContainer">
+  <div class="row setup-title-con" data-test-id="setupTitleRow">
+    <div class="col-md-8 p-0 pb-2" data-test-id="titleSection">
+      <div class="title-con d-flex align-items-center" data-test-id="titleContainer">
         <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
-        <div class="d-flex flex-column">
-          <h6 class="mb-0">{{'Setup your calendar'|translate}}</h6>
-          <p class="mb-0">{{'Please set up your scedule for the month according to your availability'|translate}}</p>
+        <div class="d-flex flex-column" data-test-id="titleText">
+          <h6 class="mb-0" data-test-id="headingSetupTitle">{{'Setup your calendar'|translate}}</h6>
+          <p class="mb-0" data-test-id="subheadingSetupDescription">{{'Please set up your scedule for the month according to your availability'|translate}}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-4 p-0 pb-2">
+    <div class="col-md-4 p-0 pb-2" data-test-id="viewCalendarBtnWrapper">
       <button mat-button class="view-btn" routerLink="/calendar/view-calendar" data-test-id="btnViewCal">{{'View calendar'|translate}}</button>
     </div>
   </div>
-  <div class="row mt-3">
-    <div class="col-md-3 p-1">
-      <div class="month-con">
-        <div class="month-title">
+
+  <div class="row mt-3" data-test-id="mainCalendarFormRow">
+    <div class="col-md-3 p-1" data-test-id="monthSelectorWrapper">
+      <div class="month-con" data-test-id="monthContainer">
+        <div class="month-title" data-test-id="monthTitle">
           <h6 class="mb-0">{{'Month'|translate}}</h6>
         </div>
-        <ul class="month-list">
+        <ul class="month-list" data-test-id="monthList">
           <ng-container *ngFor="let m of scheduledMonths; let i=index;">
-            <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
+            <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)" [attr.data-test-id]="'monthItem' + i">
               <span data-test-id="spSelectMonth">{{(m.name)| translate}} {{(m.year)| translate}}</span>
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
-          <li class="add-more-list-item">
+          <li class="add-more-list-item" data-test-id="addMoreMonthItem">
             <a href="javascript:void(0)" (click)="addMonth()" data-test-id="linkAddMonths">
               <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
               {{'Add more months'|translate}}
@@ -35,17 +36,20 @@
         </ul>
       </div>
     </div>
-    <div class="col-md-9 p-1">
-      <form [formGroup]="addSlotsForm">
-        <div class="card intel-card">
-          <div class="month-title2">
+
+    <div class="col-md-9 p-1" data-test-id="calendarFormWrapper">
+      <form [formGroup]="addSlotsForm" data-test-id="calendarForm">
+        <div class="card intel-card" data-test-id="calendarCard">
+          <div class="month-title2" data-test-id="selectedMonthTitle">
             <h6 class="mb-0">{{(selectedMonth?.name) |translate}} {{selectedMonth?.year}}</h6>
           </div>
-          <div class="card-header">
+
+          <div class="card-header" data-test-id="workingDaysHeader">
             <h6 class="mb-0 color-blue">{{'Working days'|translate}}</h6>
           </div>
-          <div class="card-body">
-            <div class="form-row">
+
+          <div class="card-body" data-test-id="workingDaysBody">
+            <div class="form-row" data-test-id="datePickersRow">
               <div class="form-group col-md-6">
                 <label>{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
@@ -77,7 +81,7 @@
                 </div>
               </div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" data-test-id="timingsTableWrapper">
               <table class="table" formArrayName="timings" aria-describedby="timings">
                 <thead>
                   <tr>
@@ -264,11 +268,11 @@
               </table>
             </div>
           </div>
-          <div class="card-header">
+          <div class="card-header" data-test-id="daysOffHeader">
             <h6 class="mb-0 color-blue">{{'Days off'|translate}}</h6>
           </div>
-          <div class="card-body">
-            <div class="form-row">
+          <div class="card-body" data-test-id="daysOffBody">
+            <div class="form-row" data-test-id="daysOffDatePickerRow">
               <div class="form-group col-md-6">
                 <label>{{'Dates'|translate}}</label>
                 <div class="input-group">
@@ -286,7 +290,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 pb-3">
+              <div class="col-md-6 pb-3" data-test-id="daysOffActionButtons">
                 <div class="h-100 d-flex align-items-end">
                   <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()" data-test-id="btnSaveDayOff">
                     {{'Save'|translate}}
@@ -297,11 +301,11 @@
                 </div>
               </div>
             </div>
-            <div class="days-off-chips-con">
+            <div class="days-off-chips-con" data-test-id="daysOffChipsContainer">
               <h6 class="mb-0">{{'Your days off'|translate}}</h6>
-              <div class="days-off-chips" formArrayName="daysOff">
+              <div class="days-off-chips" formArrayName="daysOff"  data-test-id="daysOffChipsList">
                 <ng-container *ngFor="let doff of fd.controls; let j=index;">
-                  <div class="chip-item">
+                  <div class="chip-item" [attr.data-test-id]="'chipDayOff' + j">
                     <span>{{doff.value|date:'d MMM y'}}</span>
                     <button mat-icon-button type="button" (click)="removeDaysOff(j)" [attr.data-test-id]="'btnRemoveDaysOff' + j">
                       <mat-icon>close</mat-icon>
