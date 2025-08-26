@@ -108,10 +108,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     } else {
       this.startCall();
     }
-      // set flag for audio/video enable/disable
-
-  // this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
-// console.log('AI Video Enabled:', this.isVideoEnabled);
+    // set flag for audio/video enable/disable
+    this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
   }
 
   /**

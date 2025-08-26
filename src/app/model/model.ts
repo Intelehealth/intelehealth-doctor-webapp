@@ -534,7 +534,8 @@ export interface DiagnosisModel {
   diagnosisStatus?: string,
   uuid?: string,
   diagnosisCode?: string,
-  isSnomed? : boolean
+  isSnomed? : boolean,
+  diagnosisAiGenerated?: string,
 }
 
 export interface DocImagesModel {

@@ -218,6 +218,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.changesMade = true;
           if (this.updatedObsData) {
             this.updatedObsData.diagnosis = diagnoses;
+            // Check if any diagnosis is AI-generated
+            const hasAiGeneratedDiagnosis = diagnoses.some(diagnosis => diagnosis.diagnosisAiGenerated);
+            if (hasAiGeneratedDiagnosis) {
+              this.checkChanges(this.updatedObsData);
+            }
           }
         });
 
@@ -406,6 +411,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
+    this.hasAILLMEnabled = environment.base.includes('-') ? this.appConfigService?.ai_llm_section : !this.appConfigService?.ai_llm_section;
 
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
@@ -506,7 +512,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
-    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
 
     this.pvsConfigs = this.appConfigService.patient_visit_sections;
     this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
@@ -2704,13 +2709,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.hasAILLMEnabled && this.ddxCompRef?.instance) {
         for (const diagnosis of this.ddxCompRef.instance.existingDiagnosis) {
           if (diagnosis?.uuid) continue;
-          postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptDiagnosis,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
-              encounter: this.visitNotePresent.uuid
+            postObsRequests.push(
+              this.encounterService.postObs({
+                concept: conceptIds.conceptDiagnosis,
+                person: this.visit.patient.uuid,
+                obsDatetime: new Date(),
+                value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+                encounter: this.visitNotePresent.uuid
             }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
           );
           if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
@@ -2860,7 +2865,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             concept: conceptIds.conceptDiagnosis,
             person: this.visit.patient.uuid,
             obsDatetime: new Date(),
-            value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
+            value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}${diagnosis.diagnosisAiGenerated ? ':' + diagnosis.diagnosisAiGenerated : ''}`,
             encounter: this.visitNotePresent.uuid
           }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
         );
@@ -3476,7 +3481,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             },
             {
               concept: conceptIds.conceptRationale,
-              value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
+              value: diagnosisAIData.summarised_rationale.join(":"),
               obsDatetime: new Date(),
               person: this.visit.patient.uuid,
             },
