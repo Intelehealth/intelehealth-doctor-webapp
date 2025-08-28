@@ -197,18 +197,6 @@ textarea.form-control {
   }
 }
 
-::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
-.ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
- // width: 100% !important;
-  min-width: 235px !important;
-}
-
-::ng-deep .ng-select.visit-select.custom1.ng-select-single .ng-select-container,
-.ng-select.visit-select.custom1.ng-select-multiple .ng-select-container {
-  background: var(--color-offWhite);
-  min-width: 235px !important;
-}
-
 ::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
 ::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
   height: 48px;
@@ -288,6 +276,29 @@ textarea.form-control {
 
   .col-form-label {
     font-weight: bold;
+  }
+
+  .medication-form-container {
+    input[formControlName="durationNo"] {
+      min-width: 80px !important;
+      max-width: 140px;
+    }
+
+    ng-select.visit-select.custom {
+      min-width: 100px !important;
+      flex: 1 1 180px;
+    }
+  }
+
+  .gridAlignment{
+    th {
+      margin-left: 10px;
+      &:nth-child(1) { width: 23% !important; }
+      &:nth-child(2) { width: 24% !important; }
+      &:nth-child(3) { width: 17% !important; }
+      &:nth-child(4) { width: 12% !important; }
+      &:nth-child(5) { width: 11% !important; }
+    }
   }
 }
 
@@ -506,7 +517,24 @@ textarea.form-control {
   border-radius: 8px;
 }
 
- .pretty {
+.medication-form-container {
+  .col-md-6.d-flex.gap-2 {
+    flex: 1 1 360px;
+  }
+
+  input[formControlName="durationNo"] {
+    min-width: 140px;
+    max-width: 140px;
+  }
+
+  ng-select.visit-select.custom {
+    min-width: 110px !important;
+    flex: 1 1 180px;
+  }
+}
+
+
+.pretty {
   min-width: fit-content;
 }
 
@@ -555,3 +583,12 @@ input::placeholder {
   margin-top: 10px;
 }
 
+.gridAlignment{
+  th {
+    &:nth-child(1) { width: 33.5%; }
+    &:nth-child(2) { width: 16.5%; }
+    &:nth-child(3) { width: 18%; }
+    &:nth-child(4) { width: 12.5%; }
+    &:nth-child(5) { width: 12%; }
+  }
+}

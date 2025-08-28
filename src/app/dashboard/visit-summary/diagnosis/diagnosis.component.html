@@ -239,12 +239,12 @@
   <ng-container>
   <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
     *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
-    <div class="form-row">
-           <th  style="margin-left: 10px" width="33.5%">{{'Drug name'|translate}}</th>
-            <th width="17%">{{'Dosage'|translate}}</th>
-            <th width="19%">{{'Frequency'|translate}}</th>
-            <th width="12%">{{'Duration (no.)'|translate}}</th>
-            <th width="12%">{{'Duration (units)'|translate}}</th>
+    <div class="form-row gridAlignment">
+      <th style="margin-left: 10px">{{'Drug name'|translate}}</th>
+      <th>{{'Dosage'|translate}}</th>
+      <th>{{'Frequency'|translate}}</th>
+      <th>{{'Duration (no.)'|translate}}</th>
+      <th>{{'Duration (units)'|translate}}</th>
     </div>
     <hr class="custom-hr"/>
     <div *ngIf="!addMoreMedicine && !isMCCUser" class="form-row">
