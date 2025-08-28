@@ -1,93 +1,121 @@
 <div class="container-fluid">
-    <div class="row mt-3">
-      <div class="col-md-12 p-0">
-        <div class="card intel-card">
-            <div class="card-header">
-                <img class="mr-2" src="assets/svgs/ticket-icon.svg" alt="" height="44px">
-                <div>
-                    <h6 class="mb-0">{{'Tickets' | translate}}</h6>
-                    <span class="open-tickets">{{"("+openTicketsCount+" " }}{{'Open Tickets' | translate}} {{")"}}</span>
-                </div>
-                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" #searchInput class="form-control" placeholder="{{ 'Search Tickets' | translate }}" aria-label="search1" aria-describedby="basic-addon1" data-test-id="etSearchAppointmentDashboard">
-                  <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1" *ngIf="!searchInput.value">
-                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
-                    </span>
-                    <button data-test-id="btnResetApSerach" mat-icon-button aria-label="Reset appointment search" *ngIf="searchInput.value" (click)="clearFilter()">
-                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
-                    </button>
-                  </div>
-                </div>
-                <div class="card-header-actions">
-                  <button type="button" class="btn" (click)="createTicket()" data-test-id="btnAddMindmap">{{'Create Ticket' | translate}}</button>
-                </div>
-            </div>
-          <div class="card-body">
-            <div class="mat-elevation-z8">
-              <table mat-table [dataSource]="dataSource" matTableResponsive matSort>
-                <!-- Position Column -->
-                <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef> {{'Ticket No.' | translate}} </th>
-                  <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-                </ng-container>
-  
-                <!-- Name Column -->
-                <ng-container matColumnDef="title">
-                  <th mat-header-cell *matHeaderCellDef> {{'Title' | translate}} </th>
-                  <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-                </ng-container>
-
-                <!-- Name Column -->
-                <ng-container matColumnDef="createdAt">
-                  <th mat-header-cell *matHeaderCellDef class="text-center" mat-sort-header> {{'Created Date' | translate}} </th>
-                  <td mat-cell *matCellDef="let element">{{element.createdAt|date:'dd MMM, yyyy'}}</td>
-                </ng-container>
-  
-                <!-- Last Updated Column -->
-                <ng-container matColumnDef="updatedAt">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Last Updated' | translate}} </th>
-                  <td mat-cell *matCellDef="let element">{{element.updatedAt|date:'dd MMM, yyyy'}}</td>
-                </ng-container>
-  
-                <!-- Prescription Sent Column -->
-                <ng-container matColumnDef="priority">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Priority'| translate}} </th>
-                    <td mat-cell *matCellDef="let element;">
-                        <button class="action-btn priority" [ngClass]="element.priority" type="button">{{ element.priority | titlecase | translate}}</button>
-                    </td>
-                </ng-container>
-
-                <!-- Prescription Sent Column -->
-                <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Status'| translate}} </th>
-                  <td mat-cell *matCellDef="let element;">
-                      <button class="action-btn status" [ngClass]="element.status === 'resolved' && 'low'" type="button">{{statuses[element.status] | translate}}</button>
-                  </td>
-                </ng-container>
-
-                <!-- Prescription Sent Column -->
-                <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef></th>
-                  <td mat-cell *matCellDef="let element;" class="text-center">
-                      <button class="action-btn view-ticket blue-btn" type="button" routerLink="/help/ticket/{{element.incident_id}}">{{'View Ticket' | translate}}</button>
-                  </td>
-                </ng-container>
-  
-                <tr class="mat-row" *matNoDataRow>
-                  <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-                    {{'No data to display.' | translate}}
-                  </td>
-                </tr>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-              </table>
-            </div>
-            <mat-paginator #ticketPaginator hidePageSize [length]="totalData" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="getTableData($event)" aria-label="Select page of periodic elements"></mat-paginator>
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header" data-test-id="ticketListHeader">
+          <img class="mr-2" src="assets/svgs/ticket-icon.svg" alt="" height="44px" data-test-id="ticketIcon">
+          <div>
+            <h6 class="mb-0" data-test-id="ticketListTitle">{{'Tickets' | translate}}</h6>
+            <span class="open-tickets" data-test-id="openTicketsCount">{{"("+openTicketsCount+" " }}{{'Open Tickets' | translate}} {{")"}}</span>
           </div>
+          <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();" data-test-id="ticketSearchBar">
+            <input 
+              type="text" 
+              #searchInput 
+              class="form-control" 
+              placeholder="{{ 'Search Tickets' | translate }}" 
+              aria-label="search1" 
+              aria-describedby="basic-addon1" 
+              data-test-id="inpSearchTicket">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon1" *ngIf="!searchInput.value" data-test-id="iconSearchTicket">
+                <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+              </span>
+              <button 
+                data-test-id="btnResetTicketSearch" 
+                mat-icon-button 
+                aria-label="Reset appointment search" 
+                *ngIf="searchInput.value" 
+                (click)="clearFilter()">
+                <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button 
+              type="button" 
+              class="btn" 
+              (click)="createTicket()" 
+              data-test-id="btnCreateTicket">{{'Create Ticket' | translate}}</button>
+          </div>
+        </div>
+
+        <div class="card-body" data-test-id="ticketListBody">
+          <div class="mat-elevation-z8" data-test-id="ticketTableWrapper">
+            <table mat-table [dataSource]="dataSource" matTableResponsive matSort data-test-id="ticketTable">
+
+              <!-- Ticket No -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thTicketNo"> {{'Ticket No.' | translate}} </th>
+                <td mat-cell *matCellDef="let element" data-test-id="tdTicketNo">{{element.id}}</td>
+              </ng-container>
+
+              <!-- Title -->
+              <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thTitle"> {{'Title' | translate}} </th>
+                <td mat-cell *matCellDef="let element" data-test-id="tdTitle">{{element.title}}</td>
+              </ng-container>
+
+              <!-- Created Date -->
+              <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef class="text-center" mat-sort-header data-test-id="thCreatedDate"> {{'Created Date' | translate}} </th>
+                <td mat-cell *matCellDef="let element" data-test-id="tdCreatedDate">{{element.createdAt|date:'dd MMM, yyyy'}}</td>
+              </ng-container>
+
+              <!-- Updated Date -->
+              <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header data-test-id="thUpdatedDate"> {{'Last Updated' | translate}} </th>
+                <td mat-cell *matCellDef="let element" data-test-id="tdUpdatedDate">{{element.updatedAt|date:'dd MMM, yyyy'}}</td>
+              </ng-container>
+
+              <!-- Priority -->
+              <ng-container matColumnDef="priority">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header data-test-id="thPriority"> {{'Priority'| translate}} </th>
+                <td mat-cell *matCellDef="let element;" data-test-id="tdPriority">
+                  <button class="action-btn priority" [ngClass]="element.priority" type="button" data-test-id="btnPriority">{{ element.priority | titlecase | translate}}</button>
+                </td>
+              </ng-container>
+
+              <!-- Status -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header data-test-id="thStatus"> {{'Status'| translate}} </th>
+                <td mat-cell *matCellDef="let element;" data-test-id="tdStatus">
+                  <button class="action-btn status" [ngClass]="element.status === 'resolved' && 'low'" type="button" data-test-id="btnStatus">{{statuses[element.status] | translate}}</button>
+                </td>
+              </ng-container>
+
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thActions"></th>
+                <td mat-cell *matCellDef="let element;" class="text-center" data-test-id="tdActions">
+                  <button class="action-btn view-ticket blue-btn" type="button" routerLink="/help/ticket/{{element.incident_id}}" data-test-id="btnViewTicket">{{'View Ticket' | translate}}</button>
+                </td>
+              </ng-container>
+
+              <!-- No Data -->
+              <tr class="mat-row" *matNoDataRow data-test-id="rowNoData">
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                  {{'No data to display.' | translate}}
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns" data-test-id="rowHeader"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" data-test-id="rowTicket"></tr>
+            </table>
+          </div>
+
+          <mat-paginator 
+            #ticketPaginator 
+            hidePageSize 
+            [length]="totalData" 
+            [pageIndex]="pageIndex" 
+            [pageSize]="pageSize" 
+            (page)="getTableData($event)" 
+            aria-label="Select page of periodic elements" 
+            data-test-id="ticketPaginator">
+          </mat-paginator>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
