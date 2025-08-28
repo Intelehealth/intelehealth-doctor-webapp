@@ -35,9 +35,14 @@ export class AppointmentsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
+  @ViewChild('appointmentPaginator', { read: ElementRef }) paginatorRef!: ElementRef;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    const rangeActions = this.paginatorRef.nativeElement.querySelector('.mat-paginator-range-actions');
+    if (rangeActions) {
+      rangeActions.setAttribute('data-test-id', 'matPaginatorRangeActionsAppointment');
+    }
   }
 
   constructor(

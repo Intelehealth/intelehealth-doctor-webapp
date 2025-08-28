@@ -1,68 +1,86 @@
-<div class="add-ticket-modal" data-test-id="addTicketModal">
-  <div class="modal-title" data-test-id="modalTitleContainer">
-    <h6>{{ 'Create Ticket' | translate }}</h6>
-    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseAddTicket">
+<div class="add-ticket-modal">
+  <div class="modal-title">
+    <h6>{{'Create Ticket'|translate}}</h6>
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseModal">
       <img src="assets/svgs/CloseX.svg" alt="">
     </button>
   </div>
-  <div class="modal-body" data-test-id="modalBodyContainer">
-    <form [formGroup]="addTicketForm" (ngSubmit)="createTicket()" data-test-id="addTicketForm">
+  <div class="modal-body">
+    <form [formGroup]="addTicketForm" (ngSubmit)="createTicket()" data-test-id="formCreateTicket">
       <div class="form-row">
-        <div class="form-group col-md-12" data-test-id="groupTitle">
-          <label for="title"><b>{{ 'Title ' | translate }}*</b></label>
-          <input type="text" class="form-control" formControlName="title" placeholder="{{ 'Enter Title' | translate }}" data-test-id="etTicketTitle">
-          <div *ngIf="submitted && f1.title.errors" class="d-flex flex-column" data-test-id="errorTicketTitle">
-            <small class="error-msg" *ngIf="f1.title.errors.required">{{ 'Enter Title' | translate }}</small>
+        <div class="form-group col-md-12">
+          <label for="title"><b>{{'Title '|translate}}*</b></label>
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="title" 
+            placeholder="{{'Enter Title' | translate}}"
+            data-test-id="inputTitle"
+          >
+          <div *ngIf="submitted && f1.title.errors" class="d-flex flex-column">
+            <small class="error-msg" *ngIf="f1.title.errors.required">{{'Enter Title' | translate}}</small>
           </div>
         </div>
       </div>
+
       <div class="form-row">
-        <div class="form-group col-md-12" data-test-id="groupDescription">
-          <label for="description"><b>{{ 'Description ' | translate }} *</b></label>
+        <div class="form-group col-md-12">
+          <label for="description"><b>{{'Description '|translate}} *</b></label>
           <textarea
             class="form-control"
             rows="3"
-            placeholder="{{ 'Enter Description' | translate }}"
+            placeholder="{{'Enter Description'|translate}}"
             formControlName="description"
-            data-test-id="etTicketDescription"
+            data-test-id="inputDescription"
           ></textarea>
-          <div *ngIf="submitted && f1.description.errors" class="d-flex flex-column" data-test-id="errorTicketDescription">
-            <small class="error-msg" *ngIf="f1.description.errors.required">{{ 'Enter Description' | translate }}</small>
+          <div *ngIf="submitted && f1.description.errors" class="d-flex flex-column">
+            <small class="error-msg" *ngIf="f1.description.errors.required">{{'Enter Description' | translate}}</small>
           </div>
         </div>
       </div>
+
       <div class="form-row">
-        <div class="form-group col-md-12" data-test-id="groupPriority">
-          <label for="priority">{{ 'Priority' | translate }} *</label>
+        <div class="form-group col-md-12">
+          <label for="priority">{{'Priority'| translate}} *</label>
           <div class="py-2" data-test-id="priorityOptions">
-            <div class="pretty p-default p-round" data-test-id="optionLow">
-              <input type="radio" value="low" formControlName="priority">
+            <div class="pretty p-default p-round">
+              <input type="radio" value="low" formControlName="priority" data-test-id="radioPriorityLow">
               <div class="state p-success">
-                <label>{{ 'Low' | translate }}</label>
+                <label>{{'Low'| translate}}</label>
               </div>
             </div>
-            <div class="pretty p-default p-round" data-test-id="optionMedium">
-              <input type="radio" value="medium" formControlName="priority">
+            <div class="pretty p-default p-round">
+              <input type="radio" value="medium" formControlName="priority" data-test-id="radioPriorityMedium">
               <div class="state p-success">
-                <label>{{ 'Medium' | translate }}</label>
+                <label>{{'Medium'| translate}}</label>
               </div>
             </div>
-            <div class="pretty p-default p-round" data-test-id="optionHigh">
-              <input type="radio" value="high" formControlName="priority">
+            <div class="pretty p-default p-round">
+              <input type="radio" value="high" formControlName="priority" data-test-id="radioPriorityHigh">
               <div class="state p-success">
-                <label>{{ 'High' | translate }}</label>
+                <label>{{'High'| translate}}</label>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="form-row">
-        <div class="form-group d-flex col-md-12 justify-content-center" data-test-id="actionButtonsContainer">
-          <button type="button" class="btn back-btn mr-2" (click)="close(false)" data-test-id="btnCancelAddTicket">
-            {{ 'Cancel' | translate }}
+        <div class="form-group d-flex col-md-12 justify-content-center">
+          <button 
+            type="button" 
+            class="btn back-btn mr-2" 
+            (click)="close(false)" 
+            data-test-id="btnCancel"
+          >
+            {{'Cancel'| translate}}
           </button>
-          <button type="submit" class="btn next-btn" data-test-id="btnSubmitAddTicket">
-            {{ 'Create Ticket' | translate }}
+          <button 
+            type="submit" 
+            class="btn next-btn" 
+            data-test-id="btnSubmitCreateTicket"
+          >
+            {{'Create Ticket'| translate}}
           </button>
         </div>
       </div>
