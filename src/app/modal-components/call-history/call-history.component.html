@@ -1,24 +1,29 @@
-<div class="select-lang-modal">
-    <div class="modal-title-con">
-        <p class="mb-0 h5"><b>{{'Patient Call History'|translate}}</b></p>
-        <div class="close-btn-con">
-        <button class="modal-close-btn" (click)="dialogRef.close()"><img src="assets/svgs/CloseX.svg" alt="" data-test-id="btnClose"></button>
-        </div>
-    </div>
-    <div class="modal-con align-items-start w-100 h-300">
-        <table class="table" aria-describedby="">
-            <thead>
-              <tr>
-                <th scope="col">{{'Call Duration'|translate}}</th>
-                <th scope="col">{{'Date & Time'|translate}}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let duration of callDurationHistory">
-                <td>{{ getCallDuration(duration.callDuration)}}</td>
-                <td>{{ getCallDateTime(duration.timestamp) }}</td>
-              </tr>
-            </tbody>
-        </table>
+<div class="select-lang-modal" data-test-id="patientCallHistoryModal">
+  <div class="modal-title-con" data-test-id="modalHeader">
+    <p class="mb-0 h5" data-test-id="modalTitle">
+      <b>{{ 'Patient Call History' | translate }}</b>
+    </p>
+    <div class="close-btn-con">
+      <button class="modal-close-btn" (click)="dialogRef.close()" data-test-id="btnClose">
+        <img src="assets/svgs/CloseX.svg" alt="close" />
+      </button>
     </div>
   </div>
+
+  <div class="modal-con align-items-start w-100 h-300" data-test-id="modalBody">
+    <table class="table" aria-describedby="" data-test-id="callHistoryTable">
+      <thead data-test-id="tableHeader">
+        <tr>
+          <th scope="col" data-test-id="thDuration">{{ 'Call Duration' | translate }}</th>
+          <th scope="col" data-test-id="thDateTime">{{ 'Date & Time' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody data-test-id="tableBody">
+        <tr *ngFor="let duration of callDurationHistory; let i = index" data-test-id="tableRow-{{i}}">
+          <td data-test-id="tdDuration-{{i}}">{{ getCallDuration(duration.callDuration) }}</td>
+          <td data-test-id="tdDateTime-{{i}}">{{ getCallDateTime(duration.timestamp) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
