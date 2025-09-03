@@ -3397,7 +3397,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateInstructionRemarks(medicine:MedicineModel) {
-    const exists = this.instructionRemarks.some(item => item.name.trim().toLowerCase() === medicine.instructRemark.trim().toLowerCase());
+    const exists = this.instructionRemarks.some(item => item.name?.trim().toLowerCase() === medicine.instructRemark?.trim().toLowerCase());
     if (!exists) {
       const newItem = { id: Date.now(), name: medicine.instructRemark };
       this.visitService.addInstructionRemarks(newItem).subscribe((data: DataItemModel[]) => {

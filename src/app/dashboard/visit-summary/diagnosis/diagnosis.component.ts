@@ -710,7 +710,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Medicine already added, please add another drug.'), this.translateService.instant('Already Added'));
       return;
     }
-    this.medicines.push({ ...this.addMedicineForm.value });
+    // Ensure instructRemark is never null
+    const medicineData = { ...this.addMedicineForm.value };
+    if (medicineData.instructRemark === null || medicineData.instructRemark === undefined) {
+      medicineData.instructRemark = '';
+    }
+    this.medicines.push(medicineData);
+    // this.medicines.push({ ...this.addMedicineForm.value });
     this.addMedicineForm.reset();
     this.medicationSaved.emit(this.medicines);
   }
