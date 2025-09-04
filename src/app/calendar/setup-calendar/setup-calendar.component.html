@@ -113,6 +113,178 @@
                 </thead>
                 <tbody>
                   <!-- slots rows already have test-ids on controls -->
+                  <ng-container *ngFor="let t of ft.controls; let i=index; let last=last;">
+                    <ng-container [formGroupName]="i">
+                      <tr *ngIf="!last">
+                        <td>
+                          <div class="d-flex">
+                            <ng-select formControlName="startTime" class="customSelect2 mr-2" [items]="timeList"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="timeList[0].name"
+                              [clearable]="false"
+                              [searchable]="false">
+                            </ng-select>
+                            <ng-select formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
+                              [clearable]="false"
+                              [searchable]="false">
+                            </ng-select>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex">
+                            <ng-select formControlName="endTime" class="customSelect2 mr-2" [items]="timeList"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="timeList[0].name"
+                              [clearable]="false"
+                              [searchable]="false">
+                            </ng-select>
+                            <ng-select formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
+                              [clearable]="false"
+                              [searchable]="false">
+                            </ng-select>
+                          </div>
+                        </td>
+                        <td>
+                          <ng-select class="customSelect1" [items]="filteredDays"
+                            formControlName="days"
+                            appendTo=".intel-card"
+                            bindLabel="shortName"
+                            bindValue="shortName"
+                            [placeholder]="(filteredDays[0]?.shortName)|translate"
+                            multiple="true"
+                            [closeOnSelect]="false"
+                            [clearable]="false"
+                            [searchable]="false">
+                            <ng-template ng-label-tmp let-item="item">
+                              {{(item.shortName)|translate}},
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                              <div class="pretty p-image p-plain">
+                                <input type="checkbox" [checked]="item$.selected"/>
+                                <div class="state">
+                                    <img class="image" src="assets/svgs/checkbox-tick.png" alt="">
+                                    <label>{{(item.name) | translate}}</label>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </td>
+                        <td>
+                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)" data-test-id="btnDeleteSlot">
+                            <img src="assets/svgs/delete-icon.svg" alt="">
+                            {{'Delete'|translate}}
+                          </button>
+                        </td>
+                      </tr>
+
+                      <tr *ngIf="!_addMoreTiming && last">
+                        <td colspan="4">
+                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddTime">
+                            <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
+                           {{'Add more timings'|translate}}
+                          </a>
+                        </td>
+                      </tr>
+                      <tr *ngIf="_addMoreTiming && last">
+                        <td>
+                          <div class="d-flex">
+                            <ng-select [class.invalid-input]="submitted && t.controls.startTime.errors" formControlName="startTime" class="customSelect2 mr-2" [items]="timeList"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="timeList[0].name"
+                              [clearable]="false"
+                              [searchable]="false"
+                              data-test-id="selStartTime">
+                            </ng-select>
+                            <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
+                              [clearable]="false"
+                              [searchable]="false"
+                              data-test-id="selStartAm&Pm">
+                            </ng-select>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex">
+                            <ng-select [class.invalid-input]="submitted && t.controls.endTime.errors" formControlName="endTime" class="customSelect2 mr-2" [items]="timeList"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="timeList[0].name"
+                              [clearable]="false"
+                              [searchable]="false"
+                              data-test-id="selEndTime">
+                            </ng-select>
+                            <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
+                              appendTo=".intel-card"
+                              bindLabel="name"
+                              bindValue="name"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
+                              [clearable]="false"
+                              [searchable]="false"
+                              data-test-id="selEndAm&Pm">
+                            </ng-select>
+                          </div>
+                        </td>
+                        <td>
+                          <ng-select [class.invalid-input]="submitted && t.controls.days.errors" class="customSelect1" [items]="filteredDays"
+                            formControlName="days"
+                            appendTo=".intel-card"
+                            bindLabel="shortName"
+                            bindValue="shortName"
+                            [placeholder]="(filteredDays[0]?.shortName)|translate"
+                            multiple="true"
+                            [closeOnSelect]="false"
+                            [clearable]="false"
+                            [searchable]="false"
+                            data-test-id="selDays">
+                            <ng-template ng-label-tmp let-item="item">
+                              {{(item.shortName) | translate}},
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                              <div class="pretty p-image p-plain">
+                                <input type="checkbox" [checked]="item$.selected"/>
+                                <div class="state">
+                                    <img class="image" src="assets/svgs/checkbox-tick.png" alt="">
+                                    <label>{{(item.name)|translate}}</label>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </td>
+                        <td>
+                          <button mat-button type="button" class="save-btn mr-2" (click)="save()" data-test-id="btnSaveSlot">
+                            {{'Save'|translate}}
+                          </button>
+                          <button mat-button type="button" class="cancel-btn" (click)="toggleAddMoreTiming()" data-test-id="btnCanelSlot">
+                            {{'Cancel'|translate}}
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="_addMoreTiming && last && timeslotError">
+                        <td colspan="4" class="td-error">
+                          <div class="d-flex">{{ timeslotError | translate}}
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
                 </tbody>
               </table>
             </div>
@@ -129,7 +301,7 @@
                 <div class="input-group" data-test-id="daysOffInputGroup">
                   <input type="text" [value]="daysOffDates" class="form-control"
                     placeholder="{{'Select dates'|translate}}" readonly data-test-id="etDayOff">
-                  <input type="text" class="form-control hidden-input"
+                  <input type="text" class="form-control hidden-input"  [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)" [matDatepicker]="picker3"
                     [matDatepicker]="picker3" readonly data-test-id="etDayOffSelect">
                   <mat-datepicker #picker3 [panelClass]="'daysOffCalendar'" [dateClass]="isDayOff"></mat-datepicker>
                   <div class="input-group-append" data-test-id="dpicSelDayOff">
