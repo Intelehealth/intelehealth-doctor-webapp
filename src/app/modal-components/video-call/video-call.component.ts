@@ -54,6 +54,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
+  location: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -69,6 +70,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
+    this.location = this.data.location;
 
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
@@ -230,7 +232,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         chwId: this.nurseId,
         patientId: this.data?.patientId,
         nurseName: this.hwName,
-        name: this.provider?.uuid
+        name: this.provider?.uuid,
+        location: this.location
       })
       .toPromise()
       .then((res: RecordingResponse) => {

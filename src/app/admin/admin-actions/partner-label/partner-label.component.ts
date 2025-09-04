@@ -116,16 +116,18 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onLogoFileDelete(type) {
-    this.themeConfigData[type] = "";
-    this.setType = type;
+  onLogoFileDelete(type){
+   
+      this.themeConfigData[type] = '';
+       this.setType = type;
+ //  this.updateThemeConfig(type,'');
   }
 
   updateThemeConfig(key, value) {
     const formData = new FormData();
     formData.append('key', key);
     formData.append('value', value);
-    return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData); // return observable
+    return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
   }
 
   onColorChange(value: string, key: string) {
@@ -185,7 +187,7 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
       this.callPublish();
     }
   }
-
+  
   validateJson(json: string): void {
     try {
       this.isJsonValid = Array.isArray(JSON.parse(json));
@@ -194,7 +196,6 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
       return e.message;
     }
   }
-
   saveHelpTourConfig(): void {
     if (this.isJsonValid) {
       this.configService.updateHelpTour(JSON.parse(this.themeConfigData.help_tour_config)).subscribe(res => {

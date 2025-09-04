@@ -24,41 +24,22 @@
           data-test-id="selectLanguageForm"
         >
           <div class="row">
-            <!-- English -->
-            <div class="col-6 p-1" data-test-id="languageOptionEnglish">
+            <div class="col-6 p-1" *ngFor="let lang of languages">
               <div class="lang-item">
                 <div class="pretty p-default p-round">
-                  <input
-                    type="radio"
-                    value="en"
-                    formControlName="language"
-                    data-test-id="radioEnglish"
-                  />
-                  <div class="state p-success-o">
-                    <label data-test-id="labelEnglish">English</label>
-                  </div>
+                   <input
+                      type="radio"
+                      [value]="lang.code"
+                      formControlName="language"
+                      [attr.data-test-id]="'radio' + lang.en_name"
+                    />
+                <div class="state p-success-o">
+                  <label>{{ lang.en_name }}</label>
+                </div>
                 </div>
               </div>
             </div>
-
-            <!-- Russian -->
-            <div class="col-6 p-1" data-test-id="languageOptionRussian">
-              <div class="lang-item">
-                <div class="pretty p-default p-round">
-                  <input
-                    type="radio"
-                    value="ru"
-                    formControlName="language"
-                    data-test-id="radioRussian"
-                  />
-                  <div class="state p-success-o">
-                    <label data-test-id="labelRussian">Russian</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Submit -->
+           
             <div class="col-12 text-center py-2">
               <button
                 class="modal-btn blue-btn"

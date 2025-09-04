@@ -1,144 +1,101 @@
-<div class="container-fluid" data-test-id="dashboardContainer">
-  <div id="count-cards" class="row" data-test-id="rowCountCards">
-
-    <!-- Appointment -->
-    <div id="appointment" class="col p-1" 
-         *ngIf="pvs.appointment_button && brandName !== 'KCDO'" 
-         (click)="scrollToPanel('anchor-appointment')" 
-         data-test-id="cardAppointments">
-      <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
-        <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" data-test-id="iconAppointments"/>
+<div class="container-fluid" data-test-id="container-fluid">
+  <div id="count-cards" class="row" data-test-id="count-cards-row">
+    <div id="appointment" class="col p-1" *ngIf="pvs.appointment_button && brandName !== 'KCDO'" 
+         (click)="scrollToPanel('anchor-appointment')" data-test-id="appointment-card">
+      <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}" data-test-id="chip-appointments">
+        <img class="chip-img" src="assets/svgs/cam-icon.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countAppointments">{{appointmentVisitsCount}}</h6>
-          <span data-test-id="labelAppointments">{{'Appointments' | translate}}</span>
+          <h6 data-test-id="appointment-count">{{appointmentVisitsCount}}</h6>
+          <span>{{'Appointments' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- Priority -->
-    <div id="priority" class="col p-1" 
-         *ngIf="pvs.priority_visit_section" 
-         (click)="scrollToPanel('anchor-priority')" 
-         data-test-id="cardPriorityVisits">
-      <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}">
-        <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" data-test-id="iconPriorityVisits"/>
+    <div id="priority" class="col p-1" *ngIf="pvs.priority_visit_section" (click)="scrollToPanel('anchor-priority')" data-test-id="priority-card">
+      <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}" data-test-id="chip-priority">
+        <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countPriorityVisits">{{priorityVisitsCount}}</h6>
-          <span data-test-id="labelPriorityVisits">{{'Priority visits' | translate}}</span>
+          <h6 data-test-id="priority-count">{{priorityVisitsCount}}</h6>
+          <span>{{'Priority visits' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- Awaiting -->
-    <div id="awaiting" class="col p-1" 
-         *ngIf="pvs.awaiting_visit_section" 
-         (click)="scrollToPanel('anchor-awaiting')" 
-         data-test-id="cardAwaitingVisits">
-      <div class="chip-item chip-item-green" title="{{'Awaiting visits' | translate}}">
-        <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" data-test-id="iconAwaitingVisits"/>
+    <div id="awaiting" class="col p-1" (click)="scrollToPanel('anchor-awaiting')" *ngIf="pvs.awaiting_visit_section" data-test-id="awaiting-card">
+      <div class="chip-item chip-item-green" title="{{'Awaiting visits' | translate}}" data-test-id="chip-awaiting">
+        <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countAwaitingVisits">{{awaitingVisitsCount}}</h6>
-          <span data-test-id="labelAwaitingVisits">{{'Awaiting visits' | translate}}</span>
+          <h6 data-test-id="awaiting-count">{{awaitingVisitsCount}}</h6>
+          <span>{{'Awaiting visits' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- In Progress -->
-    <div id="in-progress" class="col p-1" 
-         *ngIf="pvs.inprogress_visit_section" 
-         (click)="scrollToPanel('anchor-inprogress')" 
-         data-test-id="cardInProgressVisits">
-      <div class="chip-item chip-item-green" title="{{'In-progress visits' | translate}}">
-        <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" data-test-id="iconInProgressVisits"/>
+    <div id="in-progress" class="col p-1" (click)="scrollToPanel('anchor-inprogress')" *ngIf="pvs.inprogress_visit_section" data-test-id="inprogress-card">
+      <div class="chip-item chip-item-green" title="{{'In-progress visits' | translate}}" data-test-id="chip-inprogress">
+        <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countInProgressVisits">{{inprogressVisitsCount}}</h6>
-          <span data-test-id="labelInProgressVisits">{{'In-progress visits' | translate}}</span>
+          <h6 data-test-id="inprogress-count">{{inprogressVisitsCount}}</h6>
+          <span>{{'In-progress visits' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- Completed -->
-    <div class="col p-1" *ngIf="pvs.completed_visit_section" 
-         (click)="scrollToPanel('anchor-completed')" 
-         data-test-id="cardCompletedVisits">
-      <div class="chip-item chip-item-green" title="{{'Completed Visits' | translate}}">
-        <img class="chip-img" src="assets/svgs/completed.svg" alt="" data-test-id="iconCompletedVisits"/>
+    <div class="col p-1" *ngIf="pvs.completed_visit_section" (click)="scrollToPanel('anchor-completed')" data-test-id="completed-card">
+      <div class="chip-item chip-item-green" title="{{'Completed Visits' | translate}}" data-test-id="chip-completed">
+        <img class="chip-img" src="assets/svgs/completed.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countCompletedVisits">{{completedVisitsCount}}</h6>
-          <span data-test-id="labelCompletedVisits">{{'Completed Visits' | translate}}</span>
+          <h6 data-test-id="completed-count">{{completedVisitsCount}}</h6>
+          <span>{{'Completed Visits' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- Follow Up -->
-    <div class="col p-1" *ngIf="pvs.follow_up_visit_section" 
-         (click)="scrollToPanel('anchor-follow up')" 
-         data-test-id="cardFollowUpVisits">
-      <div class="chip-item chip-item-blue" title="{{'Follow Up Visits' | translate}}">
-        <img class="chip-img" src="assets/svgs/diagnosis.svg" alt="" data-test-id="iconFollowUpVisits"/>
+    <div class="col p-1" *ngIf="pvs.follow_up_visit_section" (click)="scrollToPanel('anchor-follow up')" data-test-id="followup-card">
+      <div class="chip-item chip-item-blue" title="{{'Follow Up Visits' | translate}}" data-test-id="chip-followup">
+        <img class="chip-img" src="assets/svgs/diagnosis.svg" alt="" />
         <div class="chip-info">
-          <h6 data-test-id="countFollowUpVisits">{{followUpVisitsCount}}</h6>
-          <span data-test-id="labelFollowUpVisits">{{'Follow Up Visits' | translate}}</span>
+          <h6 data-test-id="followup-count">{{followUpVisitsCount}}</h6>
+          <span>{{'Follow Up Visits' | translate}}</span>
         </div>
       </div>
     </div>
-
-    <!-- KCDO Special Cards -->
-    <div id="todaysAppointment" class="col p-1" 
-         *ngIf="brandName === 'KCDO'" 
-         (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('today')" 
-         data-test-id="cardTodaysAppointments">
+    <div id="todaysAppointment" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('today')" *ngIf="brandName === 'KCDO'" data-test-id="todays-appointment-card">
       <div class="chip-item chip-today-apt chip-item-blue" 
            [ngClass]="{'active-card' : currentAppointmentFilter == 'today'}" 
-           title="{{'Today\'s Appointments' | translate}}">
+           title="{{'Today\'s Appointments' | translate}}" data-test-id="chip-todays-appointments">
         <div class="chip-info">
-          <h6 data-test-id="countTodaysAppointments">{{todayAppointmentFilterCount}}</h6>
-          <span class="chip-info-apt" data-test-id="labelTodaysAppointments">{{'Today\'s Appointments' | translate}}</span>
+          <h6 data-test-id="todays-appointment-count">{{todayAppointmentFilterCount}}</h6>
+          <span class="chip-info-apt">{{'Today\'s Appointments' | translate}}</span><br/><br/>
         </div>
       </div>
     </div>
-
-    <div id="upcomingAppointment" class="col p-1" 
-         *ngIf="brandName === 'KCDO'" 
-         (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('upcoming')" 
-         data-test-id="cardUpcomingAppointments">
+    <div id="upcomingAppointment" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('upcoming')" *ngIf="brandName === 'KCDO'" data-test-id="upcoming-appointment-card">
       <div class="chip-item chip-upcoming-apt" 
            [ngClass]="{'active-card' : currentAppointmentFilter == 'upcoming'}" 
-           title="{{'Upcoming Appointments' | translate}}">
+           title="{{'Upcoming Appointments' | translate}}" data-test-id="chip-upcoming-appointments">
         <div class="chip-info">
-          <h6 data-test-id="countUpcomingAppointments">{{upcomingAppointmentVisitsCount}}</h6>
-          <span class="chip-info-apt" data-test-id="labelUpcomingAppointments">{{'Upcoming Appointments' | translate}}</span>
-          <small data-test-id="noteUpcomingAppointments">(Case Summary Completed)</small>
+          <h6 data-test-id="upcoming-appointment-count">{{upcomingAppointmentVisitsCount}}</h6>
+          <span class="chip-info-apt">{{'Upcoming Appointments' | translate}}</span><br/>
+          <small>(Case Summary Completed)</small>
         </div>
       </div>
     </div>
-
-    <div id="pendingVisits" class="col p-1" 
-         *ngIf="brandName === 'KCDO'" 
-         (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('pending')" 
-         data-test-id="cardPendingVisits">
+    <div id="pendingVisits" class="col p-1" (click)="scrollToPanel('anchor-appointment');changeAppointmentFilter('pending')" *ngIf="brandName === 'KCDO'" data-test-id="pending-visits-card">
       <div class="chip-item chip-pending-apt" 
            [ngClass]="{'active-card' : currentAppointmentFilter == 'pending'}" 
-           title="{{'Pending Visits' | translate}}">
+           title="{{'Pending Visits' | translate}}" data-test-id="chip-pending-visits">
         <div class="chip-info">
-          <h6 data-test-id="countPendingVisits">{{pendingAppointmentVisitsCount}}</h6>
-          <span class="chip-info-apt" data-test-id="labelPendingVisits">{{'Pending Visits' | translate}}</span>
+          <h6 data-test-id="pending-appointment-count">{{pendingAppointmentVisitsCount}}</h6>
+          <span class="chip-info-apt">{{'Pending Visits' | translate}}</span><br/><br/>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Accordion Section -->
-  <div class="row mt-3" data-test-id="rowAccordionDashboard">
+  <div class="row mt-3" data-test-id="bottom-row">
     <div class="col-md-12 p-0">
-      <div class="text-right my-2" data-test-id="accordionControls">
+      <div class="text-right my-2" data-test-id="show-hide-buttons">
         <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll" data-test-id="btnShowAllDashboard">
-          <span class="text-muted">{{'Show all' | translate}}</span>
-          <mat-icon>expand_more</mat-icon>
+          <span class="text-muted">{{'Show all' | translate}}</span> <mat-icon>expand_more</mat-icon> 
         </button>
         <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll" data-test-id="btnHideAllDashboard">
-          <span class="text-muted">{{'Hide all' | translate}}</span>
-          <mat-icon>expand_less</mat-icon>
+          <span class="text-muted">{{'Hide all' | translate}}</span> <mat-icon>expand_less</mat-icon>
         </button>
       </div>
 

@@ -101,19 +101,19 @@ export class DashboardComponent implements OnInit {
         label: "Chief Complaint",
         key: "cheif_complaint",
       },
-      // {
-      //   label: "Patient Type",
-      //   key: "patient_type",
-      //   classList: (element) => {
-      //     if (element?.patient_type?.toLowerCase() === "new") return ["chip", "chip-item-green", "green"];
-      //     if (element?.patient_type?.toLowerCase() === "follow-up") return ["chip", "chip-item-blue", "blue"];
-      //     return ["chip"]; // Default fallback class
-      //   },
-      //   // formatHtml: (element) => {
-      //   //   return element?.patient_type || "N/A"; // Only return text
-      //   // }
-      //   isSortable: true,
-      // },
+      {
+        label: "Patient Type",
+        key: "patient_type",
+        classList: (element) => {
+          if (element?.patient_type?.toLowerCase() === "new") return ["chip", "chip-item-green", "green"];
+          if (element?.patient_type?.toLowerCase() === "follow-up") return ["chip", "chip-item-blue", "blue"];
+          return ["chip"]; // Default fallback class
+        },
+        // formatHtml: (element) => {
+        //   return element?.patient_type || "N/A"; // Only return text
+        // }
+        isSortable: true,
+      },
       {
         label: "Visit Uploaded",
         key: "visit_created",

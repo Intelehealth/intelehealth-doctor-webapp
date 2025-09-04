@@ -19,6 +19,7 @@ import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.
 import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-crop.component';
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { ILanguageFieldUpdate, LanguageFieldUpdate } from 'src/app/modal-components/language-fields-update/language-fields-update.component';
+import { PlatformFieldsSelectonComponent } from 'src/app/modal-components/platform-fields-selecton/platform-fields-selecton.component'
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
 import { PasswordResetComponent } from 'src/app/modal-components/password-reset/password-reset.component';
@@ -390,6 +391,20 @@ export class CoreService {
     return dialogRef;
   }
 
+    /**
+  * Open language field modal
+  * @return {Observable<any>} - Dialog result
+  */
+openPlatformSelectionFieldModal({ data }: { data: { platform: string,lang_name:string } }): MatDialogRef<PlatformFieldsSelectonComponent, any> {
+  return this.dialog.open(PlatformFieldsSelectonComponent, {
+    width: '500px',        // fixed width
+    maxWidth: '90vw', 
+    panelClass: 'modal-lg',
+    hasBackdrop: true,
+    disableClose: false,
+    data
+  });
+}
   /**
   * Open Visit Summery Sub Section modal
   * @return {Observable<any>} - Dialog result

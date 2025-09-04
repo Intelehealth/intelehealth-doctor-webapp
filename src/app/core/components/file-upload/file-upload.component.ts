@@ -2,6 +2,8 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleCh
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
+import { Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-file-upload',
@@ -51,7 +53,6 @@ export class FileUploadComponent implements OnChanges {
 
   private deleteSubject = new Subject<string>();
   delete$ = this.deleteSubject.asObservable();
-
   constructor(private configService: ConfigService, private toastr: ToastrService){
 
   }
@@ -139,6 +140,7 @@ export class FileUploadComponent implements OnChanges {
   }
 
   removeFile(){
+    console.log("this.options.deleteFileURL ==",this.options.deleteFileURL );
     if(this.options.deleteFileURL !== ''){
       this.configService.deleteImage(this.options.deleteFileURL,this.filePath).subscribe(res=>{
         this.onFileRemove.emit(res);

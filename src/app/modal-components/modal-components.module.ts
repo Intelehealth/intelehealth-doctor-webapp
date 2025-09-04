@@ -54,7 +54,8 @@ import { SubSectionsComponent } from './sub-sections/sub-sections.component';
 import { MatTableModule } from '@angular/material/table';
 import { CallHistoryComponent } from './call-history/call-history.component';
 import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
-import { LibPresciptionModule } from 'lib-presciption'
+import { LibPresciptionModule } from 'lib-presciption';
+import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/platform-fields-selecton.component'
 
 @NgModule({
     declarations: [
@@ -95,7 +96,8 @@ import { LibPresciptionModule } from 'lib-presciption'
         LanguageFieldUpdate,
         SubSectionsComponent,
         CallHistoryComponent,
-        PatientRegValidationsComponent
+        PatientRegValidationsComponent,
+        PlatformFieldsSelectonComponent
     ],
     imports: [
         CommonModule,

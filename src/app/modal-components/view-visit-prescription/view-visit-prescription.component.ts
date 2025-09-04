@@ -10,7 +10,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { conceptIds, doctorDetails, visitTypes } from 'src/config/constant';
-import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, StandardMedicineModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -43,6 +43,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   spokenWithPatient: string = 'No';
   notes: ObsModel[] = [];
   medicines: MedicineModel[] = [];
+  standardMedicines: StandardMedicineModel[] = [];
   existingDiagnosis: DiagnosisModel[] = [];
   dignosisSecondary: any = {};
   advices: ObsModel[] = [];
@@ -281,29 +282,20 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if (this.isFeatureAvailable('dp_diagnosis_secondary')) {
             this.dignosisSecondary = obsParse(obs.value)
-          } else if (obs.value.includes("}")) {
-            let obsData: any = obsParse(obs.value, obs.uuid)
-            this.existingDiagnosis.push({
-              diagnosisName: obsData.diagnosis,
-              diagnosisStatus: obsData.type,
-              uuid: obsData.uuid,
-            });
-          } else if (obs?.uuid) {
-            this.existingDiagnosis.push(this.extractDiagnosisInfo(obs.value, obs.uuid));
+          } else {
+            if (obs?.uuid)
+              this.existingDiagnosis.push(this.extractDiagnosisInfo(obs.value, obs.uuid));
           }
         }
       });
     });
   }
 
-  extractDiagnosisInfo(value: string, uuid: string) {
-    let diagnosisParts = value?.split?.(':') ?? [];
-    if (value?.includes?.("::")) {
-      diagnosisParts = value?.split?.("::")?.pop()?.split?.(":") ?? [];
-    }
-
-    const typeStatusParts = diagnosisParts?.[1]?.split?.('&') || [];
-
+  extractDiagnosisInfo(value, uuid) {
+    const parts = value?.split?.('::') || [];
+    const diagnosisParts = parts?.[1]?.split?.(':') || [];
+    const typeStatusParts = diagnosisParts?.[1]?.split?.(' & ') || [];
+    
     return {
       diagnosisName: diagnosisParts?.[0]?.trim?.() || '',
       diagnosisType: typeStatusParts?.[0]?.trim?.() || '',
@@ -345,21 +337,26 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * Get medicines for the visit
   * @returns {void}
   */
-  checkIfMedicationPresent() {
+  checkIfMedicationPresent(): void {
     this.medicines = [];
+    this.standardMedicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if (obs.value.includes(':')) {
-            this.medicines.push({
-              drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
-              remark: obs.value?.split(':')[4],
-              frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : '',
-              uuid: obs.uuid
-            });
+            if(this.appConfigService.patient_visit_summary?.standard_medication){
+              this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
+            } else {
+              this.medicines.push({
+                drug: obs.value?.split(':')[0],
+                strength: obs.value?.split(':')[1],
+                days: obs.value?.split(':')[2],
+                timing: obs.value?.split(':')[3],
+                remark: obs.value?.split(':')[4],
+                frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : '',
+                uuid: obs.uuid
+              });
+            }
           } else {
             this.additionalInstructions.push(obs);
           }
@@ -1008,13 +1005,23 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         }
         break;
       case 'medication':
-        if (this.medicines.length) {
-          this.medicines.forEach(m => {
-            records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
-          });
+        if(this.appConfigService.patient_visit_summary?.standard_medication){
+          if (this.standardMedicines.length) {
+            this.standardMedicines.forEach(m => {
+              records.push([m.drug, m.dose, m.frequency, m.durationNo, m.durationUnit, m.instructRemark]);
+            });
+          } else {
+            records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
+          }
         } else {
-          records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
-        }
+          if (this.medicines.length) {
+            this.medicines.forEach(m => {
+              records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
+            });
+          } else {
+            records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
+          }
+        }        
         break;
       case 'additionalInstruction':
         if (this.additionalInstructions.length) {
@@ -1625,7 +1632,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto'],
           headerRows: 1,
           body: [
-            [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+            [{text: 'Drug name', style: 'tableHeader'}, {text: 'Dose', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Duration (number)', style: 'tableHeader'}, {text: 'Duration (units)', style: 'tableHeader'}, {text: 'Instruction(Remarks)', style: 'tableHeader'}],
             ...this.getRecords('medication')
           ]
         },
