@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleCh
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
-import { Subject } from 'rxjs';
 
 
 @Component({

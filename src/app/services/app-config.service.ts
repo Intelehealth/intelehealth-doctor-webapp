@@ -29,7 +29,6 @@ export class AppConfigService {
   public patient_visit_sections: PatientVisitSection[]
   public dropdown_values: DropdownValuesModel[]
   public patient_diagnostics_section: boolean;
-  public dropdown_values: DropdownValuesModel[]
 
   constructor(private http: HttpClient) { }
 
