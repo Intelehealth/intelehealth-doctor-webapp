@@ -126,7 +126,7 @@ export class AppointmentService {
   rescheduleAppointment(payload: AppointmentModel): Observable<any> {
     return this.http.post(
       `${this.baseURL}/appointment/rescheduleAppointment`,
-      payload
+      {...payload, webApp: true}
     );
   }
 
@@ -138,7 +138,7 @@ export class AppointmentService {
   cancelAppointment(payload: { id: any; visitUuid: any; hwUUID: any; }): Observable<any> {
     return this.http.post(
       `${this.baseURL}/appointment/cancelAppointment`,
-      payload
+      {...payload, webApp: true}
     );
   }
 

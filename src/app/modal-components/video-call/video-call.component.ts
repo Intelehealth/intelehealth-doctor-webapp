@@ -51,6 +51,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   activeSpeakerIds: any = [];
   connecting = false;
   callEndTimeout = null;
+  endCall: boolean = false;
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
@@ -62,8 +63,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   lastVideoBytesSent = 0;
   lastTimestamp = 0;
 
-  isVideoEnabled: boolean;
-  isAudioEnabled: boolean;
+  isVideoRecordingEnabled: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -109,7 +109,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.startCall();
     }
     // set flag for audio/video enable/disable
-    this.isVideoEnabled= this.appConfigService.ai_llm_recording_section
+    this.isVideoRecordingEnabled = this.appConfigService.ai_llm_recording_section
   }
 
   /**
@@ -219,8 +219,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
-        this.socketSvc.emitEvent('call_time_up', this.nurseId);
-        this.endCallInRoom();
+        // this.socketSvc.emitEvent('call_time_up', this.nurseId);
+        this.endCallInRoom('call_time_up');
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
       }
     }, ringingTimeout);
@@ -241,7 +241,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
     this.socketSvc.emitEvent('call-connected', this.incomingData);
 
-    if(this.callType === 'video' && this.isVideoEnabled) {
+    if(this.callType === 'video' && this.isVideoRecordingEnabled) {
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -530,11 +530,16 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      this._localVideoOff = true;
   }
 }
+
+  setFlag() {
+    this.endCall = true;
+  }
+
   /**
   * End call and disconnect from the room
   * @return {void}
   */
-  endCallInRoom() {
+  endCallInRoom(flag?) {
     setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
@@ -548,24 +553,38 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       }
     }, 0);
     this.webrtcSvc.token = '';
+    this.cleanupVideoElement('localVideo');
+    this.cleanupVideoElement('remoteVideo');
     this.webrtcSvc.handleDisconnect();
-    this.socketSvc.emitEvent("bye", {
-      ...this.incomingData,
-      nurseId: this.nurseId,
-      webapp: true,
-      initiator: this.initiator,
-    });
-
-    this.socketSvc.emitEvent("cancel_dr", {
-      ...this.incomingData,
-      nurseId: this.nurseId,
-      webapp: true,
-      initiator: this.initiator,
-    });
+    if (this.callDuration) {
+      this.socketSvc.emitEvent("bye", {
+        ...this.incomingData,
+        nurseId: this.nurseId,
+        webapp: true,
+        initiator: this.initiator,
+      });
+    } else if(this.endCall) {
+      this.socketSvc.emitEvent("cancel_dr", {
+        ...this.incomingData,
+        nurseId: this.nurseId,
+        webapp: true,
+        initiator: this.initiator,
+      });
+    } else if (this.callDuration === "" && !this.endCall && (flag === 'call_time_up')) {
+      this.socketSvc.emitEvent('call_time_up', this.nurseId);
+    }
     clearInterval(this.videoBitrateCheckInterval);
     this.lastVideoBytesSent = 0;
     this.lastTimestamp = 0;
     this.close();
+  }
+
+  cleanupVideoElement(videoElementId: string) {
+    const videoEl = document.getElementById(videoElementId) as HTMLVideoElement;
+    if (videoEl && videoEl.srcObject instanceof MediaStream) {
+      videoEl.srcObject.getTracks().forEach(track => track.stop());
+      videoEl.srcObject = null;
+    }
   }
 
   /**

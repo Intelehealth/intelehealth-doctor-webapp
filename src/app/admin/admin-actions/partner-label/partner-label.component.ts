@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, AfterViewInit,QueryList} from '@angular/core';
 import { environment } from "../../../../environments/environment";
 import { ConfigService } from 'src/app/services/config.service';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
@@ -6,18 +6,26 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { ToastrService } from 'ngx-toastr';
+import { FileUploadComponent } from 'src/app/core/components/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-partner-label',
   templateUrl: './partner-label.component.html',
   styleUrls: ['./partner-label.component.scss']
 })
-export class PartnerLabelComponent implements OnInit{
+export class PartnerLabelComponent implements OnInit,AfterViewInit{
+
+@ViewChildren(FileUploadComponent) uploadComponents!: QueryList<FileUploadComponent>;
+
   baseURL = environment.configURL;
   themeConfigURL = `${this.baseURL}/theme_config/updateThemeConfig`;
   uploadImageURL = `${this.baseURL}/theme_config/uploadImage`;
   deleteImageURL = `${this.baseURL}/theme_config/deleteImage`;
   isJsonValid: boolean = false;
+
+  setType: any;
+  pendingDeleteLogoRequest: string;
+  pendingDeleteThumbnailRequest: string;
 
   commonUploadImageOptions = { 
     uploadMsg : 'File size (5-50kb), Image size (512x512px), Format (PNG)', 
@@ -73,6 +81,19 @@ export class PartnerLabelComponent implements OnInit{
     this.getThemConfigData();
   }
 
+  ngAfterViewInit() {
+    this.uploadComponents.forEach((component: FileUploadComponent) => {
+      component.delete$.subscribe((payload) => {
+        console.log("🗑️ Delete payload:", payload);
+        if (payload === 'logo') {
+          this.pendingDeleteLogoRequest = payload;
+        } else if (payload === 'thumbnail_logo') {
+          this.pendingDeleteThumbnailRequest = payload;
+        }
+      });
+    });
+  }
+
   getThemConfigData(){
     this.configService.getThemeConfig().subscribe(res=>{
       res.theme_config.forEach(config=>{
@@ -99,16 +120,15 @@ export class PartnerLabelComponent implements OnInit{
 
   onLogoFileDelete(type){
     this.themeConfigData[type] = '';
-    this.updateThemeConfig(type,'');
+    this.setType = type;
+ //  this.updateThemeConfig(type,'');
   }
 
-  updateThemeConfig(key,value){
+  updateThemeConfig(key, value) {
     const formData = new FormData();
-    formData.append('key',key);
-    formData.append('value',value);
-    this.configService.uploadImage(this.themeConfigURL,'PUT',formData).subscribe(res=>{
-
-    })
+    formData.append('key', key);
+    formData.append('value', value);
+    return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
   }
 
   onColorChange(value:string,key:string){
@@ -155,9 +175,19 @@ export class PartnerLabelComponent implements OnInit{
   * @return {void}
   */
   onPublish(): void {
-    this.configService.publishConfig().subscribe(res => {
-      this.toastr.success("Partner White Labelling has been successfully published", "Publish successfull!");
-    });
+    console.log("value from subscriber==",this.pendingDeleteThumbnailRequest,this.pendingDeleteLogoRequest);
+    if (this.pendingDeleteLogoRequest === 'logo' || this.pendingDeleteThumbnailRequest === 'thumbnail_logo') {
+      this.updateThemeConfig(this.setType, '').subscribe({
+        next: () => {
+          this.callPublish();
+        },
+        error: (err) => {
+          this.toastr.error("Failed to update theme config before publish", "Error");
+        }
+      });
+    } else {
+      this.callPublish();
+    }
   }
 
   validateJson(json: string): void {
@@ -175,5 +205,15 @@ export class PartnerLabelComponent implements OnInit{
         this.toastr.success("Help Tour Config updated successfully", "Updated Successfully");
       });
     }
+  }
+  callPublish(): void {
+    this.configService.publishConfig().subscribe({
+      next: () => {
+        this.toastr.success("Partner White Labelling has been successfully published", "Publish successful!");
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.message || "Publish failed", "Error");
+      }
+    });
   }
 }

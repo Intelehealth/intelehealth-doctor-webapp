@@ -12,14 +12,13 @@ export class AppComponent implements OnInit {
   secondaryColor: string = '#1B163A';
 
   constructor(public translate: TranslateService, private appConfigService: AppConfigService) {
-    translate.addLangs(['en', 'ru']);
-    translate.setDefaultLang('en');
-
-    const browserLang = translate.getBrowserLang();
-    translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+       
   }
 
   ngOnInit() {
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+    this.translate.setDefaultLang(savedLang);
+    this.translate.use(savedLang);
     this.primaryColor = this.appConfigService.theme_config.find(obj=>obj.key==='primary_color')?.value;
     this.secondaryColor = this.appConfigService.theme_config.find(obj=>obj.key==='secondary_color')?.value;
     document.documentElement.style.setProperty('--color-darkBlue',  this.primaryColor);
