@@ -45,7 +45,7 @@
 
     <!-- Form -->
     <div class="col-md-9 p-1" data-test-id="calendarFormCol">
-      <form [formGroup]="addSlotsForm" data-test-id="calendarForm">
+      <form [formGroup]="addSlotsForm" data-test-id="calendarForm">....
         <div class="card intel-card" data-test-id="calendarFormCard">
           
           <!-- Month header -->
@@ -200,46 +200,59 @@
                       <tr *ngIf="_addMoreTiming && last">
                         <td>
                           <div class="d-flex">
-                            <ng-select [class.invalid-input]="submitted && t.controls.startTime.errors" formControlName="startTime" class="customSelect2 mr-2" [items]="timeList"
-                              appendTo=".intel-card"
-                              bindLabel="name"
-                              bindValue="name"
-                              [placeholder]="timeList[0].name"
-                              [clearable]="false"
-                              [searchable]="false"
-                              data-test-id="selStartTime">
+                            <ng-select [class.invalid-input]="submitted && t.controls.startTime.errors" formControlName="startTime"
+                              class="customSelect2 mr-2" [items]="timeList" appendTo=".intel-card" bindLabel="name" bindValue="name"
+                              [placeholder]="timeList[0].name" [clearable]="false" [searchable]="false" data-test-id="selStartTime">
+                            
+                              <!-- custom option template -->
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <div class="time-option" [attr.data-test-id]="'starttime-' + item.name">
+                                  {{ item.name }}
+                                </div>
+                              </ng-template>
                             </ng-select>
-                            <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
-                              appendTo=".intel-card"
-                              bindLabel="name"
-                              bindValue="name"
-                              [placeholder]="(clockTimeAmPM[0].name)|translate"
-                              [clearable]="false"
-                              [searchable]="false"
-                              data-test-id="selStartAm&Pm">
+
+                            <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem"
+                              class="customSelect2" [items]="clockTimeAmPM" appendTo=".intel-card" bindLabel="name" bindValue="name"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate" [clearable]="false" [searchable]="false"
+                              data-test-id="selStartAmPm">
+                            
+                              <!-- custom option template -->
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <div class="am-pm-option" [attr.data-test-id]="'start-meridiem-' + item.name">
+                                  {{ item.name }}
+                                </div>
+                              </ng-template>
                             </ng-select>
+
                           </div>
                         </td>
                         <td>
                           <div class="d-flex">
-                            <ng-select [class.invalid-input]="submitted && t.controls.endTime.errors" formControlName="endTime" class="customSelect2 mr-2" [items]="timeList"
-                              appendTo=".intel-card"
-                              bindLabel="name"
-                              bindValue="name"
-                              [placeholder]="timeList[0].name"
-                              [clearable]="false"
-                              [searchable]="false"
-                              data-test-id="selEndTime">
+                            <ng-select [class.invalid-input]="submitted && t.controls.endTime.errors" formControlName="endTime"
+                              class="customSelect2 mr-2" [items]="timeList" appendTo=".intel-card" bindLabel="name" bindValue="name"
+                              [placeholder]="timeList[0].name" [clearable]="false" [searchable]="false" data-test-id="selEndTime">
+                            
+                              <!-- custom option template -->
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <div class="time-option" [attr.data-test-id]="'endtime-' + item.name">
+                                  {{ item.name }}
+                                </div>
+                              </ng-template>
                             </ng-select>
-                            <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
-                              appendTo=".intel-card"
-                              bindLabel="name"
-                              bindValue="name"
-                              [placeholder]="(clockTimeAmPM[0].name)|translate"
-                              [clearable]="false"
-                              [searchable]="false"
-                              data-test-id="selEndAm&Pm">
+
+                            <ng-select #enddatepicker [class.invalid-input]="submitted && t.controls.endMeridiem.errors"
+                              formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM" appendTo=".intel-card" bindLabel="name"
+                              bindValue="name" [placeholder]="(clockTimeAmPM[0].name)|translate" [clearable]="false" [searchable]="false">
+                            
+                              <!-- custom option template -->
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <div class="am-pm-option" [attr.data-test-id]="'meridiem-' + item.name">
+                                  {{ item.name }}
+                                </div>
+                              </ng-template>
                             </ng-select>
+
                           </div>
                         </td>
                         <td>
@@ -258,7 +271,7 @@
                               {{(item.shortName) | translate}},
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                              <div class="pretty p-image p-plain">
+                              <div class="pretty p-image p-plain" [attr.data-test-id]="'day-' + item.name">
                                 <input type="checkbox" [checked]="item$.selected"/>
                                 <div class="state">
                                     <img class="image" src="assets/svgs/checkbox-tick.png" alt="">

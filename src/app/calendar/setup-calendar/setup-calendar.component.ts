@@ -112,6 +112,8 @@ export class SetupCalendarComponent implements OnInit {
   daysOffSelected: string[] = [];
   filteredDays=[];
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
+  @ViewChild('picker1') picker1: MatDatepicker<Date>;
+  @ViewChild('picker2') picker2: MatDatepicker<Date>;
   submitted: boolean = false;
   timeslotError: string = "";
 
@@ -148,7 +150,44 @@ export class SetupCalendarComponent implements OnInit {
     this.pageTitleService.setTitle({ title: '', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
     this.getScheduledMonths();
   }
-
+  ngAfterViewInit() {
+  this.picker1.openedStream.subscribe(() => {
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.mat-calendar-body-cell');
+      cells.forEach(cell => {
+        const label = cell.getAttribute('aria-label'); // e.g. "Mon Sep 08 2025"
+        if (label) {
+          const day = new Date(label).getDate();
+          cell.setAttribute('data-test-id', `day-${day}`);
+        }
+      });
+    });
+  });
+    this.picker2.openedStream.subscribe(() => {
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.mat-calendar-body-cell');
+      cells.forEach(cell => {
+        const label = cell.getAttribute('aria-label'); // e.g. "Mon Sep 08 2025"
+        if (label) {
+          const day = new Date(label).getDate();
+          cell.setAttribute('data-test-id', `day-${day}`);
+        }
+      });
+    });
+  });
+   this._picker.openedStream.subscribe(() => {
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.mat-calendar-body-cell');
+      cells.forEach(cell => {
+        const label = cell.getAttribute('aria-label'); // e.g. "Mon Sep 08 2025"
+        if (label) {
+          const day = new Date(label).getDate();
+          cell.setAttribute('data-test-id', `day-${day}`);
+        }
+      });
+    });
+  });
+}
   /**
   * Add new month
   * @return {void}
