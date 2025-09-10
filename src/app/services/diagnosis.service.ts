@@ -91,6 +91,11 @@ export class DiagnosisService {
     const url = `${environment.base}/getd/${term}`;
     return this.http.get(url);
   }
+
+  getAISnomedDiagnosisList(term: string): Observable<any> {
+    const url = `${environment.base}/getsncode/${term}`;
+    return this.http.get(url);
+  }
   /**
   * Add SNOMED diagnosis
   * @param {string} conceptName - Concept name

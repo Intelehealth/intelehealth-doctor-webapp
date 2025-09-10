@@ -81,7 +81,8 @@ const environmentFileContent = `
     abhaEnabled: ${process.env.ABHA_ENABLED},
     configPublicURL: '${process.env.CONFIG_PUBLIC_URL}',
     brandName: '${process.env.BRAND_NAME}',
-    featureList: ${process.env.FEATURES_LIST}
+    featureList: ${process.env.FEATURES_LIST},
+    gaMeasurementId: '${process.env.GAMEASUREMENTID}'
   };
 `;
 

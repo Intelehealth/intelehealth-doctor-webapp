@@ -747,23 +747,27 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'Draw':
         signature = this.signaturePad.toDataURL('image/jpeg');
         this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res) => {
-          this.personalInfoForm.patchValue({ signature });
-          this.updateProviderAttributes();
+          if (res.success && res.data.url) {
+            this.personalInfoForm.patchValue({ signature: res.data.url });
+            this.updateProviderAttributes();
+          }
         });
         break;
 
       case 'Generate':
         this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
-          if (res.success) {
-            fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
-              const reader = new FileReader();
-              reader.onload = () => {
-                signature = reader.result.toString();
-                this.personalInfoForm.patchValue({ signature });
-                this.updateProviderAttributes();
-              };
-              reader.readAsDataURL(blob);
-            });
+          if (res.success && res.data.url) {
+            this.personalInfoForm.patchValue({ signature: res.data.url });
+            this.updateProviderAttributes();
+            // fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
+            //   const reader = new FileReader();
+            //   reader.onload = () => {
+            //     signature = reader.result.toString();
+            //     this.personalInfoForm.patchValue({ signature });
+            //     this.updateProviderAttributes();
+            //   };
+            //   reader.readAsDataURL(blob);
+            // });
           }
         });
         break;

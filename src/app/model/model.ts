@@ -510,6 +510,16 @@ export interface TestModel {
 
 export interface MedicineModel {
   drug?: string,
+  strength?: string,
+  days?: string,
+  timing?: string,
+  remark?: string,
+  frequency?: string,
+  uuid?: string,
+}
+
+export interface StandardMedicineModel {
+  drug?: string,
   dose?: string,
   durationNo?: string,
   durationUnit?: string,
@@ -534,7 +544,8 @@ export interface DiagnosisModel {
   diagnosisStatus?: string,
   uuid?: string,
   diagnosisCode?: string,
-  isSnomed? : boolean
+  isSnomed? : boolean,
+  diagnosisAiGenerated?: string,
 }
 
 export interface DocImagesModel {
@@ -700,6 +711,7 @@ export interface PatientVisitSummaryConfigModel {
   dp_discussion_summary: boolean
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean
+  standard_medication: boolean
 }
 
 export interface PagerdutyList {

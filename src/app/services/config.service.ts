@@ -65,6 +65,11 @@ export class ConfigService {
    * Publish config
    * @return {Observable<any>}
    */
+  publishConfig_logo(){
+   const url = `${this.baseURL}/config/publish`;
+    return this.http.post(url, null);
+  }
+
   publishConfig(): Observable<any> {
     const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
@@ -150,6 +155,7 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
+    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 
@@ -543,5 +549,15 @@ export class ConfigService {
   getAILLMRecordingByKey(key: String): Observable<any> {
     const url = `${this.baseURL}/ai-llm-recording/getByKey/${key}`;
     return this.http.get(url);
+  }
+
+   /**
+   * Update language platform mobile/webapp/both
+   * @param {boolean} id - id of language
+   * @return {Observable<any>}
+   */
+  updatePlatform(id: number, platform: string): Observable<any> {
+    const url = `${this.baseURL}/language/updatePlatform/${id}`;
+    return this.http.put(url, {platform});
   }
 }

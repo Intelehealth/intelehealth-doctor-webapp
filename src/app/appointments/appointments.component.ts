@@ -190,6 +190,7 @@ export class AppointmentsComponent implements OnInit {
     }
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
+        this.mindmapService.notifyHwForCancelAppointment(appointment);
         this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
         this.getAppointments();
       }

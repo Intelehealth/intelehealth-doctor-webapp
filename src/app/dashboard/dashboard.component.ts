@@ -1638,7 +1638,8 @@ export class DashboardComponent implements OnInit {
         filter: {
           fromDate: today,
           toDate: today,
-          pending_visits: false
+          pending_visits: false,
+          filterType:"today"
         },
         tableHeader: "Today's Appointments",
         noRecordFound: "No any appointments scheduled."
@@ -1647,7 +1648,8 @@ export class DashboardComponent implements OnInit {
         filter: {
           fromDate: moment().add(1, "day").format('DD/MM/YYYY'),
           toDate: oneYearLater,
-          pending_visits: false
+          pending_visits: false,
+          filterType:"upcoming"
         },
         tableHeader: "Upcoming Appointments",
         noRecordFound: "No any appointments scheduled."
@@ -1656,7 +1658,8 @@ export class DashboardComponent implements OnInit {
         filter: {
           fromDate: oneYearAgo,
           toDate: oneYearLater,
-          pending_visits: true
+          pending_visits: true,
+          filterType:"pending"
         },
         tableHeader: "Pending Visits",
         noRecordFound: "There are no pending visits"

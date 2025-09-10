@@ -237,74 +237,74 @@
       [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
-  <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
-    *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
-    <div class="form-row">
-           <th  style="margin-left: 10px" width="33.5%">{{'Drug name'|translate}}</th>
-            <th width="17%">{{'Dosage'|translate}}</th>
-            <th width="19%">{{'Frequency'|translate}}</th>
-            <th width="12%">{{'Duration (no.)'|translate}}</th>
-            <th width="12%">{{'Duration (units)'|translate}}</th>
-    </div>
-    <hr class="custom-hr"/>
-    <div *ngIf="!addMoreMedicine && !isMCCUser" class="form-row">
-    <div class="col-md-6 d-flex gap-2">
-    <input style="border-radius: 8px;" formControlName="drug" type="text" class="form-control mr-2" placeholder="{{'Select or type'|translate}}"
-                [ngbTypeahead]="search2" data-test-id="etDrugName" title="{{addMedicineForm.get('drug')?.value}}"
-                (change)="onMedicineChange($event)" />
+    <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
+      *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
+      <div class="form-row gridAlignment">
+        <th style="margin-left: 10px">{{'Drug name'|translate}}</th>
+        <th>{{'Dosage'|translate}}</th>
+        <th>{{'Frequency'|translate}}</th>
+        <th>{{'Duration (no.)'|translate}}</th>
+        <th>{{'Duration (units)'|translate}}</th>
+      </div>
+      <hr class="custom-hr"/>
+      <div *ngIf="!addMoreMedicine && !isMCCUser" class="form-row">
+        <div class="col-md-6 d-flex gap-2">
+          <input style="border-radius: 8px;" formControlName="drug" type="text" class="form-control mr-2" placeholder="{{'Select or type'|translate}}"
+            [ngbTypeahead]="search2" data-test-id="etDrugName" title="{{addMedicineForm.get('drug')?.value}}"
+            (change)="onMedicineChange($event)" />
 
-    <input style="max-width: fit-content;border-radius: 8px;" formControlName="dose" type="text" class="form-control" placeholder="{{'Enter'|translate}}"
-                [ngbTypeahead]="search3" data-test-id="etDose"/>
+          <input style="max-width: fit-content;border-radius: 8px;" formControlName="dose" type="text" class="form-control" placeholder="{{'Enter'|translate}}"
+            [ngbTypeahead]="search3" data-test-id="etDose"/>
 
-    </div>
-      <div class="col-md-6 d-flex gap-2">
-   <ng-select appendTo=".visit-summary-tab-group" formControlName="frequency" class="visit-select custom"
-              [items]="frequencyList" [clearable]="false" [searchable]="true" [addTag]="true"
-              placeholder="{{'Select or type'|translate}}">
-            </ng-select>
-                
-    <input style="max-width: fit-content;border-radius: 8px;" formControlName="durationNo" type="text" class="form-control ml-2 mr-2" placeholder="Enter"
-                data-test-id="durationNo" (keypress)="onKeyPress($event)" />
+        </div>
+        <div class="col-md-6 d-flex gap-2">
+          <ng-select appendTo=".visit-summary-tab-group" formControlName="frequency" class="visit-select custom"
+            [items]="frequencyList" [clearable]="false" [searchable]="true" [addTag]="true"
+            placeholder="{{'Select or type'|translate}}">
+          </ng-select>
+                  
+          <input style="max-width: fit-content;border-radius: 8px;" formControlName="durationNo" type="text" class="form-control ml-2 mr-2" placeholder="Enter"
+                      data-test-id="durationNo" (keypress)="onKeyPress($event)" />
 
-   <ng-select appendTo=".visit-summary-tab-group" formControlName="durationUnit" class="visit-select custom"
-              [items]="durationUnitList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true"
-              [addTag]="true" placeholder="{{'Select'|translate}}" data-test-id="etDurationUnit">
-  </ng-select>
-  </div>            
-  </div>
-  <div class="form-row" *ngIf="!addMoreMedicine && !isMCCUser">
-    <div class="col-md-6 form-group mb-0 input-wrapper">
-              <input style="border-radius: 8px;" formControlName="instructRemark" type="text" class="form-control input-widths"
-                 data-test-id="etRemarkMed"
-                [ngbTypeahead]="search6" [popupClass]="'custom-typeahead-popup'" id="instructRemark" />
-                <label class="pl-2" for="instructRemark">{{'Instruction (Remarks)'|translate}}</label>
-   </div>
-   <div class="col-md-6" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
-       <form  [formGroup]="additionalInstructionForm" (ngSubmit)="saveAdditionalInstruction()">
-              <div class="form-group input-wrapper">
-                <input  style="border-radius: 8px;" formControlName="value" type="text"  class="form-control input-widths" id="instructions"
-                  data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
-                  [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"/>
-                  <label for="instructions">{{'Additional instructions'|translate}}</label>
-              </div>
-            </form>
-   </div>
-  </div>
-  <div class="form-group mb-2" *ngIf="!addMoreMedicine && !isMCCUser && isVisitNoteProvider && !visitEnded">
-                  <button type="button" class="white-btn mr-3" (click)="toggleMedicine()" data-test-id="btnCancelMed">
-                {{'Cancel'|translate}}
-              </button>
-              <button type="submit" class="gray-btn" [disabled]="addMedicineForm.invalid" data-test-id="btnSubmitMed">
-                {{'Add'|translate}}
-              </button>
-  </div>
-   <div class="form-group mb-0" *ngIf="addMoreMedicine && !isMCCUser && isVisitNoteProvider && !visitEnded">
-              <button type="button" class="add-more-btn" (click)="toggleMedicine()" data-test-id="btnAddMoreMed">
-                <img src="assets/svgs/plus-circle.svg" alt="" />
-                <span class="ml-2">{{'Add more medicine'|translate}}</span>
-              </button>
-  </div>
-<table class="table mt-3" aria-describedby="">
+          <ng-select appendTo=".visit-summary-tab-group" formControlName="durationUnit" class="visit-select custom"
+            [items]="durationUnitList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true"
+            [addTag]="true" placeholder="{{'Select'|translate}}" data-test-id="etDurationUnit">
+          </ng-select>
+        </div>            
+      </div>
+      <div class="form-row" *ngIf="!addMoreMedicine && !isMCCUser">
+        <div class="col-md-6 form-group mb-0 input-wrapper">
+          <input style="border-radius: 8px;" formControlName="instructRemark" type="text" class="form-control input-widths"
+            data-test-id="etRemarkMed"
+            [ngbTypeahead]="search6" [popupClass]="'custom-typeahead-popup'" id="instructRemark" />
+          <label class="pl-2" for="instructRemark">{{'Instruction (Remarks)'|translate}}</label>
+        </div>
+        <div class="col-md-6" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
+        <form  [formGroup]="additionalInstructionForm" (ngSubmit)="saveAdditionalInstruction()">
+            <div class="form-group input-wrapper">
+              <input  style="border-radius: 8px;" formControlName="value" type="text"  class="form-control input-widths" id="instructions"
+                data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
+                [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"/>
+              <label for="instructions">{{'Additional instructions'|translate}}</label>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="form-group mb-2" *ngIf="!addMoreMedicine && !isMCCUser && isVisitNoteProvider && !visitEnded">
+        <button type="button" class="white-btn mr-3" (click)="toggleMedicine()" data-test-id="btnCancelMed">
+          {{'Cancel'|translate}}
+        </button>
+        <button type="submit" class="gray-btn" [disabled]="addMedicineForm.invalid" data-test-id="btnSubmitMed">
+          {{'Add'|translate}}
+        </button>
+      </div>
+      <div class="form-group mb-0" *ngIf="addMoreMedicine && !isMCCUser && isVisitNoteProvider && !visitEnded">
+        <button type="button" class="add-more-btn" (click)="toggleMedicine()" data-test-id="btnAddMoreMed">
+          <img src="assets/svgs/plus-circle.svg" alt="" />
+          <span class="ml-2">{{'Add more medicine'|translate}}</span>
+        </button>
+      </div>
+      <table class="table mt-3" aria-describedby="">
         <tbody *ngIf="medicines.length else noMedicines">
           <ng-container *ngFor="let m of medicines; let i = index">
             <tr>

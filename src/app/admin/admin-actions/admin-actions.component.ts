@@ -36,8 +36,8 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
-      title: "Mobile App Languages",
-      desc: "Manage Mobile App Languages",
+      title: "Supported Languages",
+      desc: "Manage Mobile/Web App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
       path: "admin/actions/mobile-app-languages",
       isLocalPath: true
