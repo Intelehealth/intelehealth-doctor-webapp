@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, Optional, Inject } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { AiddxService } from '../../services/aiddx.service';
 import { MatDialog } from '@angular/material/dialog';
 // import { dummyPayload, response } from '../token';
@@ -45,6 +46,7 @@ export class AillmddxComponent {
   constructor(
     private ddxSvc: AiddxService,
     private dialog: MatDialog,
+    private toastr: ToastrService,
     @Optional() @Inject(ENVIRONMENT) private env?: any
   ) { 
     if (!this.env) {
@@ -61,6 +63,9 @@ export class AillmddxComponent {
     this.furtherQuestionsList = [];
     this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
       next: (data: any) => {
+        if (!this.isValidDdxResponse(data)) {
+          this.toastr.error('The response format has changed. Please try again later.');
+        }
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
           this.noData = false;
@@ -115,6 +120,9 @@ export class AillmddxComponent {
       this.furtherQuestionsList = [];
       this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
         next: (data: any) => {
+          if (!this.isValidDdxResponse(data)) {
+            this.toastr.error('Please contact support or try again later.', 'API response format has changed.');
+          }
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {
             this.noData = false;
@@ -142,7 +150,7 @@ export class AillmddxComponent {
         error: (err: any) => {
           retryCount++;
           if (retryCount < MAX_RETRIES) {
-            console.log(`Retry attempt ${retryCount} for getAIDiagnosis`);
+            console.warn('[AILLMDDX] Retry attempt scheduled', { retryAfterMs: 1000, nextAttempt: retryCount + 1 });
             setTimeout(() => {
               attemptDiagnosis();
             }, 1000);
@@ -196,5 +204,31 @@ export class AillmddxComponent {
     );
     this.diagnosisName = [title, likelihood]
     return
+  }
+
+  private isValidDdxResponse(data: any): boolean {
+    if (!data || typeof data !== 'object') return false;
+    const resultArray = data?.result?.data?.result;
+    const furtherQuestions = data?.result?.data?.further_questions;
+    const conclusionTop = data?.conclusion;
+    const conclusionNested = data?.result?.data?.conclusion;
+    const resultArrayValid = Array.isArray(resultArray);
+    if (!resultArrayValid) return false;
+
+    const itemsValid = resultArray.every((item: any, idx: number) => {
+      const diagnosisOk = typeof item?.diagnosis === 'string' && item.diagnosis.length > 0;
+      const likelihoodOk = typeof item?.likelihood === 'string' && item.likelihood.length > 0;
+      const rationaleOk = Array.isArray(item?.rationale) && item.rationale.every((r: any) => r && typeof r === 'object' && !Array.isArray(r));
+      const summarisedOk = Array.isArray(item?.summarised_rationale) && item.summarised_rationale.every((s: any) => typeof s === 'string');
+      const ok = diagnosisOk && likelihoodOk && rationaleOk && summarisedOk;
+      if (!ok) {
+        console.error('[AILLMDDX] Invalid result item at index', idx, { item });
+      }
+      return ok;
+    });
+
+    const furtherQuestionsValid = furtherQuestions === undefined || Array.isArray(furtherQuestions);
+    const conclusionValid = (conclusionTop === undefined || typeof conclusionTop === 'string') && (conclusionNested === undefined || typeof conclusionNested === 'string');
+    return itemsValid && furtherQuestionsValid && conclusionValid;
   }
 }
