@@ -250,8 +250,7 @@
       <div *ngIf="!addMoreMedicine && !isMCCUser" class="form-row">
         <div class="col-md-6 d-flex gap-2">
           <input style="border-radius: 8px;" formControlName="drug" type="text" class="form-control mr-2" placeholder="{{'Select or type'|translate}}"
-            [ngbTypeahead]="search2" data-test-id="etDrugName" title="{{addMedicineForm.get('drug')?.value}}"
-            (change)="onMedicineChange($event)" />
+            [ngbTypeahead]="search2" data-test-id="etDrugName" title="{{addMedicineForm.get('drug')?.value}}"/>
 
           <input style="max-width: fit-content;border-radius: 8px;" formControlName="dose" type="text" class="form-control" placeholder="{{'Enter'|translate}}"
             [ngbTypeahead]="search3" data-test-id="etDose"/>

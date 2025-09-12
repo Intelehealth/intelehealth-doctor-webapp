@@ -658,24 +658,28 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   addMedicine(): void {
     if (this.selectedMedication.length > 0) {
       const medicine = this.selectedMedication[0];
+
       const formattedMedicine = {
-        drug: medicine.name,
-        dose: medicine.dosage,
-        frequency: medicine.frequency,
-        durationNo: medicine.duration,
-        durationUnit: medicine.duration_unit,
-        instructRemark: medicine.instructions,
+        drug: this.addMedicineForm.value.drug,
+        dose: this.addMedicineForm.value.dose,
+        frequency: this.addMedicineForm.value.frequency,
+        durationNo: this.addMedicineForm.value.durationNo,
+        durationUnit: this.addMedicineForm.value.durationUnit,
+        instructRemark: this.addMedicineForm.value.instructRemark || '',
         uuid: medicine.uuid
       };
 
+      // Check for duplicates
       if (!this.medicines.find(m => m.drug.toLowerCase() === formattedMedicine.drug.toLowerCase())) {
         this.medicines.push(formattedMedicine);
+
         if (this.aillmtxMedicationComponent) {
           this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
         }
+
         this.removeMedicine(medicine);
         this.medicationSaved.emit(this.medicines);
-        
+
         if (this.selectedMedication.length > 0) {
           const nextMedicine = this.selectedMedication[0];
           if (nextMedicine) {
@@ -702,6 +706,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Add manually entered medicine
     if (this.addMedicineForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
@@ -712,9 +717,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     }
     // Ensure instructRemark is never null
     const medicineData = { ...this.addMedicineForm.value };
-    if (medicineData.instructRemark === null || medicineData.instructRemark === undefined) {
+    if (!medicineData.instructRemark) {
       medicineData.instructRemark = '';
     }
+
     this.medicines.push(medicineData);
     // this.medicines.push({ ...this.addMedicineForm.value });
     this.addMedicineForm.reset();
