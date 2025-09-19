@@ -14,7 +14,7 @@
   .header-main {
     position: sticky;
     top: 0px;
-    background: #FFFFFF;
+    background: var(--color-white);
     padding: 0px;
     z-index: 999;
 
@@ -34,7 +34,7 @@
         height: 20px;
         width: 20px;
         font-size: 20px;
-        color: #2E1E91;
+        color: var(--color-darkBlue);
         margin-left: 8px;
       }
 
@@ -44,7 +44,7 @@
       }
 
       .input-group {
-        background: #FAF9FF;
+        background: var(--color-offwhite);
         border: 2px solid rgba(178, 175, 190, 0.2);
         border-radius: 8px;
         height: 52px;
@@ -75,7 +75,7 @@
       width: 44px;
       min-width: 44px;
       height: 44px;
-      background: #EFE8FF;
+      background: var(--color-lightGray);
       border-radius: 12px;
       padding: 0px;
 
@@ -83,7 +83,7 @@
         height: 20px;
         width: 20px;
         font-size: 20px;
-        color: #2E1E91;
+        color: var(--color-darkBlue);
       }
     }
 
@@ -115,7 +115,7 @@
 }
 
 ::ng-deep .profile-dropdown {
-  background: #FFFFFF;
+  background: var(--color-white);
   box-shadow: 0px 7px 30px rgba(37, 46, 75, 0.06);
   border-radius: 8px !important;
 
@@ -165,7 +165,7 @@
 }
 
 .menu-items-wrapper {
-  background: #2E1E91;
+  background: var(--color-darkBlue);
   border-radius: 12px;
   width: 278px;
   height: 100%;
@@ -189,7 +189,7 @@
       right: -17px;
       width: 34px;
       height: 34px;
-      background: #FFFFFF;
+      background: var(--color-white);
       border: none;
       box-shadow: 0px 0px 16px rgba(46, 30, 145, 0.32);
       border-radius: 50%;
@@ -230,16 +230,16 @@
 
       .mat-divider {
         border-top-width: 2px;
-        border-top-color: #EFE8FF;
+        border-top-color: var(--color-lightGray);
         opacity: 0.48;
       }
 
       .nav-item-link:hover {
-        background: #4B39B7;
+        background: var(--color-secondary);
       }
 
       .nav-item-link.active {
-        background: #4B39B7;
+        background: var(--color-secondary);
       }
 
       .nav-item-link {
@@ -257,7 +257,7 @@
           font-style: normal;
           font-size: 16px;
           font-weight: 500;
-          color: #FFFFFF;
+          color: var(--color-white);
           width: 100%;
           padding: 0px 20px;
         }
@@ -282,15 +282,15 @@
 .breadcrumb {
   background: none;
   padding: 0px;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
   font-family: DM Sans;
   font-size: 16px;
   line-height: 150%;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
   margin-bottom: 0px;
 
   a {
     text-decoration: none;
-    color: #7F7B92;
+    color: var(--color-gray);
   }
 }

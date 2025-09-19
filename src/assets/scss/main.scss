@@ -164,7 +164,7 @@
 .btn-view{
   @include font(700,1.125rem);
   color: var(--color-darkBlue);
-  background: #EFE8FF;
+  background: var(--color-lightGray);
   width: 10.25rem;
   height: 3rem;
   border: none;

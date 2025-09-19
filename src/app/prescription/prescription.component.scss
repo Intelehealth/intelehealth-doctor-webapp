@@ -38,12 +38,12 @@
 
         .chip-info span {
           font-size: 16px;
-          color: #7F7B92;
+          color: var(--color-gray);
         }
       }
 
       .chip-item-blue {
-        background: #EFE8FF;
+        background: var(--color-lightGray);
       }
 
       .chip-item-green {
@@ -60,11 +60,11 @@
       }
 
       .chip-item-blue {
-        background: #2E1E91;
+        background: var(--color-darkBlue);
       }
 
       .chip-item-green {
-        background: #0FD197;
+        background: var(--color-green);
       }
     }
   }

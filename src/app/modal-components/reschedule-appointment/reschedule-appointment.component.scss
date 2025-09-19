@@ -9,18 +9,18 @@
     padding: 24px;
     width: 100%;
     height: 70px;
-    background: #EFE8FF;
+    background: var(--color-lightGray);
 
     h6 {
       font-weight: bold;
       font-size: 20px;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
     }
 
     .modal-close-btn {
       border: none;
       background: transparent;
-      color: var(--primary-blue, #2E1E91);
+      color: var(--primary-blue, var(--color-darkBlue));
       text-align: center;
       font-family: DM Sans;
       font-size: 18px;
@@ -45,7 +45,7 @@
       h6 {
         font-weight: bold;
         font-size: 16px;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         display: flex;
         align-items: center;
       }
@@ -60,12 +60,12 @@
 
           .slot-chip-item {
             padding: 8px 22px;
-            background: #EFE8FF;
+            background: var(--color-lightGray);
             border: 1px solid rgba(178, 175, 190, 0.2);
             border-radius: 6px;
             font-size: 14px;
             line-height: 150%;
-            color: #1B163A;
+            color: var(--color-darkestBlue);
             margin-right: 5px;
             margin-bottom: 5px;
             cursor: pointer;
@@ -73,10 +73,10 @@
           }
 
           .slot-chip-item.selected {
-            background: #2E1E91;
+            background: var(--color-darkBlue);
             border: none;
             border-radius: 6px;
-            color: #FFFFFF;
+            color: var(--color-white);
           }
         }
       }
@@ -89,12 +89,12 @@
   padding: 8px 24px;
   min-width: 119px;
   height: 48px;
-  background: #FFFFFF;
-  border: 1px solid #EFE8FF;
+  background: var(--color-white);
+  border: 1px solid var(--color-lightGray);
   border-radius: 8px;
   font-size: 18px;
   line-height: 150%;
-  color: #2E1E91;
+  color: var(--color-darkBlue);
   font-weight: bold;
 }
 
@@ -102,25 +102,25 @@
   padding: 8px 24px;
   min-width: 119px;
   height: 48px;
-  background: #2E1E91;
-  border: 1px solid #2E1E91;
+  background: var(--color-darkBlue);
+  border: 1px solid var(--color-darkBlue);
   border-radius: 8px;
   font-size: 18px;
   line-height: 150%;
-  color: #FFFFFF;
+  color: var(--color-white);
   font-weight: bold;
 }
 
 .form-group {
   label {
     font-size: 14px;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     font-weight: bold;
   }
 
   .input-group {
     border: 1px solid rgba(178, 175, 190, 0.2);
-    background: #FAF9FF;
+    background: var(--color-offwhite);
     border-radius: 8px;
     height: 48px;
 
@@ -128,7 +128,7 @@
       padding: 14px 16px;
       height: 48px;
       font-size: 16px;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       border: none;
       background: transparent;
     }

@@ -12,12 +12,12 @@
 
 .title-con {
   padding: 24px 24px 16px;
-  background: #EFE8FF;
+  background: var(--color-lightGray);
 
   h6 {
     font-size: 24px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     text-align: center;
     font-weight: bold;
     margin-bottom: 0px;
@@ -63,12 +63,12 @@
         font-size: 18px;
         font-weight: bold;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #7F7B92;
+        color: var(--color-gray);
         font-size: 16px;
         line-height: 150%;
       }
@@ -79,12 +79,12 @@
         margin-bottom: 0px;
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
       }
@@ -110,7 +110,7 @@
      h6 {
       font-size: 20px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       font-weight: bold;
       margin-bottom: 0px;
      }
@@ -152,12 +152,12 @@
 }
 
 .text-important-red {
-  color: #FF475D;
+  color: var(--color-red);
   font-weight: bold;
 }
 
 .text-important-green {
-  color: #0FD197;
+  color: var(--color-green);
   font-weight: bold;
 }
 
@@ -167,7 +167,7 @@
   h6 {
     font-size: 18px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     font-weight: bold;
   }
 
@@ -178,9 +178,9 @@
 
     .chip-item {
       padding: 4px 8px;
-      background: #EA315B;
+      background: var(--color-lightRed);
       border-radius: 4px;
-      color: #FFFFFF;
+      color: var(--color-white);
       margin: 5px 5px 5px 0px;
       font-size: 16px;
       line-height: 150%;
@@ -237,8 +237,8 @@
     position: relative;
     width: 120px;
     height: 120px;
-    background: #EFE8FF;
-    border: 1px solid #2E1E91;
+    background: var(--color-lightGray);
+    border: 1px solid var(--color-darkBlue);
     border-radius: 8px;
     margin: 5px;
     display: flex;
@@ -257,7 +257,7 @@
         font-size: 14px;
         line-height: 150%;
         text-align: center;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       img {
