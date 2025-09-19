@@ -42,6 +42,7 @@ export class AillmddxComponent {
   diagnosisList: any = []
   furtherQuestionsList: any = []
   selectedDiagnosis: string[] = [];
+  apiResponseChanged: boolean = false;
 
   constructor(
     private ddxSvc: AiddxService,
@@ -64,7 +65,8 @@ export class AillmddxComponent {
     this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
       next: (data: any) => {
         if (!this.isValidDdxResponse(data)) {
-          this.toastr.error('The response format has changed. Please try again later.');
+          this.apiResponseChanged = true;
+          return false;
         }
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
@@ -73,20 +75,22 @@ export class AillmddxComponent {
             return {
               ...v,
               diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
-              rationale: this.ddxSvc.markdownit(v?.rationale)
+              // rationale: this.ddxSvc.markdownit(v?.rationale)
+              rationale: v?.rationale
             }
           });
           this.diagnosisReceived.emit(this.diagnosisList);
+          if(data?.result?.data?.further_questions?.length > 0) {
+            this.furtherQuestionsList = data.result.data.further_questions.map(q => {
+              const key = Object.keys(q)[0];
+              return q[key];
+            });
+            this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
+          }
         } else {
           this.noData = true;
         }
-        if(data?.result?.data?.further_questions?.length > 0) {
-          this.furtherQuestionsList = data.result.data.further_questions.map(q => {
-            const key = Object.keys(q)[0];
-            return q[key];
-          });
-          this.furtherQuestionsListReceived.emit(this.furtherQuestionsList);
-        }
+        this.isLoading = false;
       },
       error: (err: any) => {
         this.hasError = true;
@@ -96,17 +100,6 @@ export class AillmddxComponent {
         this.isLoading = false;
       }
     });
-
-    // setTimeout(() => {
-    //   if (response.result.length > 0) {
-    //     this.noData = false;
-    //     this.conclusion = response?.conclusion;
-    //     this.diagnosisList = response.result.map(v => ({ ...v, diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, '') }));
-    //   } else {
-    //     this.noData = true;
-    //   }
-    //   this.isLoading = false;
-    // }, 3000);
   }
 
   public getAIDiagnosisWithRetry(notes?: string) {
@@ -121,7 +114,8 @@ export class AillmddxComponent {
       this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
         next: (data: any) => {
           if (!this.isValidDdxResponse(data)) {
-            this.toastr.error('Please contact support or try again later.', 'API response format has changed.');
+            this.apiResponseChanged = true;
+            return false;
           }
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {
@@ -208,13 +202,19 @@ export class AillmddxComponent {
 
   private isValidDdxResponse(data: any): boolean {
     if (!data || typeof data !== 'object') return false;
+
     const resultArray = data?.result?.data?.result;
     const furtherQuestions = data?.result?.data?.further_questions;
     const conclusionTop = data?.conclusion;
     const conclusionNested = data?.result?.data?.conclusion;
-    const resultArrayValid = Array.isArray(resultArray);
-    if (!resultArrayValid) return false;
 
+    // Check if resultArray is valid
+    const resultArrayValid = Array.isArray(resultArray);
+    if (!resultArrayValid) {
+      this.toastr.error('API response format of "result" has changed.', 'Please contact support or try again later.');
+    }
+
+    // Validate each result item
     const itemsValid = resultArray.every((item: any, idx: number) => {
       const diagnosisOk = typeof item?.diagnosis === 'string' && item.diagnosis.length > 0;
       const likelihoodOk = typeof item?.likelihood === 'string' && item.likelihood.length > 0;
@@ -223,12 +223,24 @@ export class AillmddxComponent {
       const ok = diagnosisOk && likelihoodOk && rationaleOk && summarisedOk;
       if (!ok) {
         console.error('[AILLMDDX] Invalid result item at index', idx, { item });
+        this.toastr.error(`Invalid result item at index ${idx}`, 'API response format of "result.items" has changed.');
+
       }
       return ok;
     });
 
+    // Validate further questions
     const furtherQuestionsValid = furtherQuestions === undefined || Array.isArray(furtherQuestions);
+    if (!furtherQuestionsValid) {
+      this.toastr.error('API response format of "further_questions" has changed.', 'Please contact support or try again later.');
+    }
+
+    // Validate conclusion
     const conclusionValid = (conclusionTop === undefined || typeof conclusionTop === 'string') && (conclusionNested === undefined || typeof conclusionNested === 'string');
+    if (!conclusionValid) {
+      this.toastr.error('API response format of "conclusion" has changed.', 'Please contact support or try again later.');
+    }
+
     return itemsValid && furtherQuestionsValid && conclusionValid;
   }
 }

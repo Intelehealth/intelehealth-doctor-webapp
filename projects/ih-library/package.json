@@ -1,6 +1,9 @@
 {
   "name": "ih-library",
   "version": "0.2.12",
+  "scripts": {
+    "dev": "ng build ih-library --watch"
+  },
   "peerDependencies": {
     "@angular/animations": "^18.2.6",
     "@angular/cdk": "^18.2.6",

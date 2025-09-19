@@ -1,10 +1,11 @@
 <ng-container *ngIf="!diagnosisList.length">
   <div class="d-flex justify-content-center mt-3">
     <div class="erorr-container alert text-center p-4 d-flex flex-column align-items-center">
-      <ng-container *ngIf="!isLoading && (hasError || noData)">
+      <ng-container *ngIf="!isLoading && (hasError || noData || apiResponseChanged)">
         <div class="text-danger" [ngStyle]="{ 'margin-top': hasError ? '15px' : '40px' }">
           <span><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /></span>
           <span *ngIf="hasError" class="ml-2">No suggestions at this moment</span>
+          <span *ngIf="apiResponseChanged" class="ml-2">The response format has changed. Please contact support or try again later.</span>
           <span *ngIf="noData" class="ml-2">The input provided does not have enough clinical details for an AI-assistant assessment.</span>
         </div>
         <button *ngIf="!noData" type="button" class="try-again-btn mt-3" (click)="onTryAgain()">{{'Try again'|translate}}</button>
