@@ -6,7 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
@@ -55,6 +55,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
+  location: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -71,7 +72,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
-
+    this.location = this.data.location;
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
@@ -223,16 +224,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.callConnected = true;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
-    await this.webrtcSvc.startRecording({
-      doctorName: this.doctorName,
-      roomId: this.room,
-      visitId: this.data?.visitId,
-      doctorId: this.data?.connectToDrId,
-      chwId: this.nurseId,
-      patientId: this.data?.patientId,
-      nurseName: this.hwName,
-      name: this.provider?.uuid
-    })
+    if(isFeaturePresent('webrtcRecording')) {
+      await this.webrtcSvc.startRecording({
+        doctorName: this.doctorName,
+        roomId: this.room,
+        visitId: this.data?.visitId,
+        doctorId: this.data?.connectToDrId,
+        chwId: this.nurseId,
+        patientId: this.data?.patientId,
+        nurseName: this.hwName,
+        name: this.provider?.uuid,
+        location: this.location
+      })
       .toPromise()
       .then((res: RecordingResponse) => {
         this.recodingStarted = true
@@ -241,7 +244,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       .catch(err => {
         console.log("start recoding error", err)
       });
- }
+    }
+  }
 
   /**
   * Returns call connected or not
@@ -479,7 +483,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
-      if(this.recodingStarted) {
+      if(this.recodingStarted && isFeaturePresent('webrtcRecording')) {
         this.recodingStarted = false;
         await this.webrtcSvc.stopRecording(this.tableId, this.room)
         // await this.webrtcSvc.stopRecording(this.provider?.uuid, this.room, this.nurseId)
@@ -562,11 +566,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {string} - Call duration
   */
   get callDuration() {
-    let duration: any;
-    if (this.callStartedAt) {
-      duration = moment.duration(moment().diff(this.callStartedAt))
-    }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    if (!this.callStartedAt) return '00:00';
+    const duration = moment.duration(moment().diff(this.callStartedAt));
+    const [h, m, s] = [duration.hours(), duration.minutes(), duration.seconds()].map(n => String(n).padStart(2, '0'));
+    return h !== '00' ? `${h}:${m}:${s}` : `${m}:${s}`;
   }
 
   /**

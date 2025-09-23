@@ -177,7 +177,7 @@
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('District') && patient?.person?.preferredAddress?.countyDistrict">
                   <div class="patient-info-item mb-3">
                     <h6 data-test-id="etPatient">{{'District' | translate}}</h6>
-                    <p data-test-id="etPatient">{{ patient?.person.preferredAddress.countyDistrict.trm() | translate}}</p>
+                    <p data-test-id="etPatient">{{ patient?.person.preferredAddress.countyDistrict.trim() | translate}}</p>
                   </div>
                 </div>
 
