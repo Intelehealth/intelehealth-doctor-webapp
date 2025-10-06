@@ -133,7 +133,11 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
   onColorChange(value: string, key: string) {
     var regex = new RegExp("^#([A-Fa-f0-9]{6})$");
     if (regex.test(value)) {
-      this.updateThemeConfig(key, value);
+      this.updateThemeConfig(key, value).subscribe({
+        error: () => {
+          this.toastr.error("Invalid color code", "Error");
+        }
+      });
     }
   }
 
