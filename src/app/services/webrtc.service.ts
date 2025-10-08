@@ -83,6 +83,7 @@ export class WebrtcService {
     handleTrackUnmuted = this.noop,
     handleParticipantDisconnected = this.noop,
     handleParticipantConnect = this.noop,
+    handleMediaError = (_err?: any) => this.noop(),
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
@@ -115,9 +116,18 @@ export class WebrtcService {
       .on(RoomEvent.Connected, handleConnect)
       .on(RoomEvent.Connected, async () => {
         try {
-          await this.room.localParticipant.enableCameraAndMicrophone()
+          await this.room.localParticipant.setCameraEnabled(true);
         } catch (error) {
-          console.log("error", error)
+          console.log("camera enable error", error)
+          try { handleMediaError({ source: 'camera', error }); } catch(_e) {}
+        }
+
+        // then enable microphone
+        try {
+          await this.room.localParticipant.setMicrophoneEnabled(true);
+        } catch (error) {
+          console.log("microphone enable error", error)
+          try { handleMediaError({ source: 'microphone', error }); } catch(_e) {}
         }
       })
       .on(RoomEvent.Disconnected, handleDisconnect)
@@ -151,8 +161,17 @@ export class WebrtcService {
       const videoElement = camTrack.videoTrack?.attach();
       const localContainer: any = this.localContainer;
 
-      videoElement.style.height = '100%';
-      localContainer.appendChild(videoElement);
+      // Ensure only one local video element is rendered to avoid split/duplicate tiles
+      try {
+        if (localContainer) {
+          localContainer.innerHTML = '';
+        }
+      } catch(_e) {}
+
+      if (videoElement) {
+        videoElement.style.height = '100%';
+        localContainer.appendChild(videoElement);
+      }
     }
   }
 

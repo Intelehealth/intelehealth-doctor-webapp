@@ -46,9 +46,21 @@
             <div class="audio-status">
               <img class="audio-img" [src]="remoteAudioIcon" />
             </div>
+             <!-- Simple Network connectivity indicator -->
+             <div class="network-status-container"
+                  [ngClass]="'quality--' + networkQuality"
+                  [class.d-none]="_minimized || networkBars === 0" 
+                  [title]="'Network Quality: ' + networkQuality + ' (' + networkBars + '/4 bars)'">
+               <div class="network-bars">
+                 <div *ngFor="let bar of [0,1,2,3]; let i = index" 
+                      class="network-bar" 
+                      [class.active]="i < networkBars">
+                 </div>
+               </div>
+             </div>
             <div class="call-duration-container">
               <div class="call-duration" [class.d-none]="_minimized">
-                <span [ngClass]="{ 'fontColor': !_remoteVideoOff }" style="font-size: 16px; font-weight: 500;">Call ends in</span>
+                <!-- <span [ngClass]="{ 'fontColor': !_remoteVideoOff }" style="font-size: 16px; font-weight: 500;">Call ends in</span> -->
                 <span *ngIf="callDuration" class="pill">{{
                   callDuration
                 }}</span>
@@ -80,6 +92,7 @@
                   }}"
                   alt=""
                 />
+                <span class="ctrl-indicator" *ngIf="microphoneIssue" title="Microphone issue">!</span>
               </button>
               <button
                [class.d-none]="_minimized"
@@ -97,6 +110,7 @@
                   }}"
                   alt=""
                 />
+                <span class="ctrl-indicator" *ngIf="cameraIssue" title="Camera issue">!</span>
               </button>
             </div>
               <button
