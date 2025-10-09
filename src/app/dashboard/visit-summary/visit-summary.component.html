@@ -1006,6 +1006,37 @@
                   </form>
                 </li>
               </ul>
+              <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'" class="notes-section">
+              <div class="top-row">
+                <div class="notes-form">
+                  <h6 class="notes-label">Notes</h6>
+                  <span class="grey-color">Add notes on the interaction to support future reference</span>
+                  <form class="mt-3" [formGroup]="patientInteractionNotesForm">
+                    <textarea
+                      formControlName="value"
+                      class="notes-textarea"
+                      rows="3"
+                      placeholder="Type here"
+                      (keyup)="autoGrowTextZone($event)"
+                      [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"
+                    ></textarea>
+                    <button [disabled]="!patientInteractionNotesForm.value.value" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded" type="submit" (click)="saveDDxNotes()" class="save-btn">Save</button>
+                  </form>
+                </div>
+
+                <!-- Further Questions Section -->
+                <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box">
+                  <div style="margin-top: 0;display: flex;justify-content: space-between;">
+                    <h4><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2"/> Ayu suggested questions</h4> 
+                    <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
+                  </div>
+                  <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index">
+                    <span class="ml-2"> {{i+1}}. {{ question }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>  
             </mat-expansion-panel>
 
 
@@ -1927,3 +1958,4 @@
   <img class="img shadow" alt="Start Chat" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()"
     data-test-id="imgStartChat" *ngIf="hasChatEnabled" />
 </div>
+<router-outlet></router-outlet>

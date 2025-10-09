@@ -1,6 +1,3 @@
-
-
-
 .appointment-banner {
   display: flex;
   align-items: center;
@@ -409,7 +406,7 @@
 
 .no-docs {
   padding: 24px 0px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .refer-form {
@@ -929,3 +926,153 @@ th.mat-header-cell:last-child {
   background: var(--color-red);
 }
 
+.remove-icon {
+  margin-left: -8px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: -9px; 
+}
+
+.remove-icon:hover {
+  opacity: 0.8;
+}
+
+.selected-item {
+  border: 1px solid #EFE8FF;
+  padding: 4px;
+  color: #2E1E91;
+}
+
+.notes-section {
+  padding: 16px;
+  background: #E6FFF3;
+  border-radius: 12px;
+ // margin-bottom: 16px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+
+  .notes-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 8px;
+  }
+
+  .notes-subtitle {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 16px;
+  }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .notes-form {
+      flex: 1;
+    }
+
+    .notes-form label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .notes-form textarea {
+      min-height: 100px;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #B2AFBE33;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .suggestions-box {
+      max-width: 530px;
+      flex: 1;
+      background: #F9FFFC;
+      border: 1px solid #B5F2DF;
+      border-radius: 12px;
+      padding: 15px;
+      // max-height: fit-content;
+    }
+
+    .suggestions-box h4 {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .suggestions-box ul {
+      padding-left: 20px;
+      margin: 10px 0 0;
+      font-size: 14px;
+    }
+
+    .suggestions-box li {
+      margin-bottom: 6px;
+    }
+
+  .notes-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 16px;
+    background: #FFFFFF;
+    border: 1px solid #B2AFBE33;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333333;
+    resize: none;
+    margin-bottom: 16px;
+
+    &::placeholder {
+      color: #666666;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #2563EB;
+    }
+
+    &:disabled {
+      background-color: #F3F4F6;
+      cursor: not-allowed;
+    }
+  }
+
+   .textarea2 {
+      resize: vertical;
+      height: 200px;
+   }
+
+  .save-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #45a049;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.dose-column {
+  width: 180px; // Set your desired width
+  min-width: 150px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -9,6 +9,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { CoreService } from 'src/app/services/core/core.service';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-mobile-app-languages',

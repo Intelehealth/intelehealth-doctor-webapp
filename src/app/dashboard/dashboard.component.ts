@@ -834,7 +834,7 @@ export class DashboardComponent implements OnInit {
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.patient_type = this.getDemarcation(visit?.encounters);
+          visit.patient_type = this.visitService.getDemarcation(visit?.encounters);
           this.awaitingVisits.push(visit);
         }
         this.dataSource3.data = [...this.awaitingVisits];
@@ -847,18 +847,6 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
-  }
-
-  getDemarcation(enc) {
-    let isFollowUp = false;
-    const adlIntl = enc?.find?.(e => e?.type?.name === visitTypes.ADULTINITIAL);
-    if (Array.isArray(adlIntl?.obs)) {
-      adlIntl?.obs.forEach(obs => {
-        if (!isFollowUp)
-          isFollowUp = obs?.value_text?.toLowerCase?.()?.includes?.("follow up");
-      });
-    }
-    return isFollowUp ? visitTypes.FOLLOW_UP : visitTypes.NEW;
   }
 
   /**

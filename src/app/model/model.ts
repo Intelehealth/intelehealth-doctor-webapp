@@ -480,7 +480,8 @@ export interface VisitModel {
   cheif_complaint?: string[],
   prescription_sent?: string,
   visitUploadTime?: string,
-  dateCreated?: string
+  dateCreated?: string,
+  demarcation?: string
 }
 
 export interface VisitAttributeModel {
@@ -514,6 +515,17 @@ export interface MedicineModel {
   timing?: string,
   remark?: string,
   frequency?: string,
+  uuid?: string,
+
+}
+
+export interface StandardMedicineModel {
+  drug?: string,
+  dose?: string,
+  durationNo?: string,
+  durationUnit?: string,
+  instructRemark?: string,
+  frequency?: string,
   uuid?: string
 }
 
@@ -543,7 +555,8 @@ export interface DiagnosisModel {
   diagnosisStatus?: string,
   uuid?: string,
   diagnosisCode?: string,
-  isSnomed? : boolean
+  isSnomed? : boolean,
+  diagnosisAiGenerated?: string,
 }
 
 export interface DocImagesModel {
@@ -675,6 +688,7 @@ export interface WebrtcDataModel {
 export interface WebRTCConfigModel {
   chat: boolean;
   video_call: boolean;
+  audio_call: boolean;
 }
 
 export interface PatientVisitSummaryModel {
@@ -699,8 +713,12 @@ export interface PatientVisitSummaryConfigModel {
   awaiting_visits_patient_type_demarcation: boolean
   awaiting_visit_section: boolean
   diagnosis_at_secondary_level: boolean
+  dp_recommendation_group: boolean
   dp_call_status: boolean
   dp_dignosis_secondary: boolean
+  dp_medication_secondary: boolean
+  dp_investigations_secondary: boolean
+  dp_referral_secondary: boolean
   dp_discussion_summary: boolean
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean

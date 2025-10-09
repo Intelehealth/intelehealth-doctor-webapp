@@ -128,6 +128,9 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
     formData.append('key', key);
     formData.append('value', value);
     return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
+    formData.append('key', key);
+    formData.append('value', value);
+    return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
   }
 
   onColorChange(value: string, key: string) {

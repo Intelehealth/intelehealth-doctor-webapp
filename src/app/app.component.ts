@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigService } from './services/app-config.service';
-
+import { NavigationEnd, Router } from '@angular/router';
+import { AnalyticsService } from './services/analytics.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,7 +12,10 @@ export class AppComponent implements OnInit {
   primaryColor: string = '#2E1E91';
   secondaryColor: string = '#1B163A';
 
-  constructor(public translate: TranslateService, private appConfigService: AppConfigService) {
+       
+  constructor(public translate: TranslateService, private appConfigService: AppConfigService,
+    private router: Router, private analytics: AnalyticsService
+  ) {
        
   }
 
@@ -23,6 +27,11 @@ export class AppComponent implements OnInit {
     this.secondaryColor = this.appConfigService.theme_config.find(obj=>obj.key==='secondary_color')?.value;
     document.documentElement.style.setProperty('--color-darkBlue',  this.primaryColor);
     document.documentElement.style.setProperty('--color-secondary',  this.secondaryColor);
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+       this.analytics.logPageView(event.urlAfterRedirects);
+      }
+    });
   }
 
 }

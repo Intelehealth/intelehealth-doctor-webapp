@@ -38,6 +38,8 @@ export const visitTypes = {
     FOLLOW_UP:'Follow-up',
     NEW:'New',
     PATIENT_INTERACTION_COMMENT:'Patient Interaction Comment',
+    AI_DIAGNOSIS_SUPPORT:'AI Diagnosis Support',
+    LLM_REGENERATION: 'LLM Regeneration'
 }
 
 export const doctorDetails = {
@@ -79,6 +81,10 @@ export const facility = {
     { id : 5 , name : 'DH'},
     { id : 6 , name : 'TH'},
     { id : 7 , name : 'GH'},
+    { id : 8 , name : 'RH'},
+    { id : 8 , name : 'Anganwadi Center'},
+    { id : 8 , name : 'HWC'},
+    { id : 8 , name : 'Government District Hospital'},
     { id : 8 , name : 'Private Hospital'},
   ]
 };
@@ -245,7 +251,14 @@ export const conceptIds = {
   conceptFollowUpInstruction: 'e444b5e9-e3b9-4cb1-92ee-29bba00b33d0',
   conceptDiscussionSummary: 'b673cd54-a01d-4d8a-9c07-8fb19bf4982c',
   conceptFrequencyList: '9847b24f-8434-4ade-8978-157184c435d2',
-  conceptRecommendation: '59873e7c-0085-497d-8611-8722d9872143'
+  conceptRecommendation: '59873e7c-0085-497d-8611-8722d9872143',
+  conceptLLM: '155b6ee1-db3c-4da1-aaa7-cef48bd8440d',
+  conceptDiagnosisName: 'ecae4841-7d37-479e-b5bb-38645689f44d',
+  conceptDiagnosisLikelihood: 'fb1fa50d-bebd-4eb3-a95c-22ed20b9ec83',
+  conceptRationale: '37167aef-0ab7-4cda-b21d-f22d2d1b8ec3',
+  conceptRank : 'fb53830b-552a-4f4f-999a-1713b199ef6e',
+  conceptVersion: '7918ebd7-bc82-4cb5-bd5e-5875688443b2',
+  conceptWasRegenerated: 'f3714916-c1d3-4c5a-8f11-2033e42be5c2'
 }
 
 export const WEBRTC = {
@@ -258,4 +271,10 @@ export const visitAttributeTypes = {
   PatientInteraction: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',
   callStatus: 'f8e121db-0999-455f-a105-514cf2ec3e43',
   patientInteractionComment: 'ed7444db-0e1e-4a88-88c6-9d9775a9bf3e'
+}
+
+export const visitEncounters = {
+  aiDiagnosis: '0efaa89c-4cb2-4e6c-8229-2987c86d165f',
+  doctorProviderId: '73bbb069-9781-4afc-a9d1-54b6b2270e03',
+  llmRegeneration: 'de08edc3-bbcc-46cb-a3df-4b4ff17af0d0'
 }

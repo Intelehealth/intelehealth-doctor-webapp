@@ -56,7 +56,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     CompletedVisitsComponent,
     FollowupVisitsComponent,
     NotesComponent,
-    FollowUpInstructionComponent
+    FollowUpInstructionComponent,
   ],
   imports: [
     IhLibraryModule,

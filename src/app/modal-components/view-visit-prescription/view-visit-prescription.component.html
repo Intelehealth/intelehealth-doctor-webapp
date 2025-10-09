@@ -403,7 +403,7 @@
                       
                   <!-- Checkup Reasons -->
                   <ng-container *ngSwitchCase="pvsConstant['check_up_reason'].key">
-                    <div class="data-section-content" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">
+                    <div class="data-section-content" *ngIf="!appConfigService?.patient_visit_summary?.dp_dignosis_secondary">
                       <div class="cheif-complaint-wrapper">
                         <h6>{{'Chief complaint'|translate}}</h6>
                         <div class="complaint-chips">
@@ -415,7 +415,7 @@
                     </div>
                     <ng-container *ngFor="let ckr of checkUpReasonData">
                       <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">{{ ckr.title }}</h6>
+                        <h6 class="my-3" [attr.data-test-id]="'etTitle'+ckr.title.slice(0,3)+'Checkup'" *ngIf="!appConfigService?.patient_visit_summary?.dp_dignosis_secondary">{{ ckr.title }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item">
@@ -518,7 +518,7 @@
               <img src="assets/svgs/diagnosis.svg" alt="" />
               <h6>{{'Diagnosis Details'|translate}}</h6>
             </div>
-            <div class="data-section-content" *ngIf="!isFeatureAvailable('dp_diagnosis_secondary')">
+            <div class="data-section-content" *ngIf="!appConfigService?.patient_visit_summary?.dp_dignosis_secondary">
               <ul class="items-list">
                 <li *ngIf="!isDownloadPrescription">
                   <div class="list-item">
@@ -548,7 +548,7 @@
                 </table>
               </div>
             </div>
-            <div class="data-section-content" *ngIf="isFeatureAvailable('dp_diagnosis_secondary')">
+            <div class="data-section-content" *ngIf="appConfigService?.patient_visit_summary?.dp_dignosis_secondary">
               <div class="table-responsive" *ngIf="dignosisSecondary">
                 <table class="table">
                   <thead>
@@ -573,7 +573,7 @@
           </div>
         </div>
 
-        <div *ngIf="discussionSummary && isFeatureAvailable('dp_discussion_summary')" class="col-md-12 px-3 mb-3" >
+        <div *ngIf="discussionSummary && appConfigService?.patient_visit_summary?.dp_discussion_summary" class="col-md-12 px-3 mb-3" >
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/note.svg" alt="" />
@@ -636,11 +636,23 @@
           </div>
         </div>
 
-        <ng-container *ngIf="!brandName">
+        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('doctor-recommendation')">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/test.svg" alt="" />
+              <h6>{{'Recommendation'|translate}}</h6>
+            </div>
+            <div class="data-section-content pt-3">
+              <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!isFeatureAvailable('doctor-recommendation')">
           <ng-template *ngTemplateOutlet="tplDrRcom" ></ng-template>
         </ng-container>
 
-        <ng-template #tplDrRcom>
+        <ng-template #tplDrRcom >
           <div class="col-md-12 px-3 mb-3">
             <div class="data-section">
               <div class="data-section-title">
@@ -648,7 +660,7 @@
                 <h6>{{'Medications'|translate}}</h6>
               </div>
               <div class="data-section-content">
-                <div class="table-responsive">
+                <div class="table-responsive" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
                   <table class="table">
                     <thead>
                       <tr>
@@ -681,7 +693,7 @@
                     </tbody>
                   </table>
                 </div>
-                <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
+                <h6 class="list-header mt-3 mb-2" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">{{'Additional instructions'|translate}}*</h6>
                 <ul *ngIf="additionalInstructions.length; else noInstuctions" class="items-list">
                   <li *ngFor="let ai of additionalInstructions">
                     <div class="d-flex justify-content-between align-items-center">
@@ -754,32 +766,14 @@
           </div>
         </ng-template>
 
-        <div class="col-md-12 px-3 mb-3" *ngIf="isFeatureAvailable('doctor-recommendation')">
-          <div class="data-section">
-            <div class="data-section-title">
-              <img src="assets/svgs/advice.svg" alt="" />
-              <h6>{{'Recommendation'|translate}}</h6>
-            </div>
-            <div class="data-section-content">
-              <ul class="items-list">
-                <li>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ recommendation?.value | translate}}</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-12 px-3 mb-3" *ngIf="!brandName">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/referral.svg" alt="" />
               <h6>{{'Referral'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <div class="table-responsive">
+              <div class="table-responsive" *ngIf="!appConfigService?.patient_visit_summary?.dp_referral_secondary">
 
                 <table class="table">
                   <thead>
@@ -809,6 +803,13 @@
                   </tbody>
                 </table>
               </div>
+              <ul class="items-list" *ngIf="appConfigService?.patient_visit_summary?.dp_referral_secondary">
+                <li>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ referralSecondary | translate}}</span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
