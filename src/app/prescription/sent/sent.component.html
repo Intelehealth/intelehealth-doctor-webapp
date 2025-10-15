@@ -122,9 +122,12 @@
             </table>
 
             <mat-paginator
-              #tempPaginator
+              #sentPaginator
               hidePageSize
               [pageSizeOptions]="[5, 10, 20]"
+              [pageSize]="pageSize"
+              [length]="prescriptionsSentCount"
+              (page)="getData($event)"
               aria-label="Select page of periodic elements"
               data-test-id="matPaginatorSent"
             ></mat-paginator>

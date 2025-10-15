@@ -39,6 +39,7 @@ export class PrescriptionComponent implements OnInit {
   /**
   * Get completed visits for a given page number
   * @param {number} page - Page number
+  * @param {string} searchTerm - Optional search term
   * @return {void}
   */
   getCompletedVisits(page: number = 1) {
@@ -63,23 +64,27 @@ export class PrescriptionComponent implements OnInit {
           records.push(visit);
         }
         this.completedVisits = this.completedVisits.concat(records);
-        this.loaded1 = true;
+        // For server-side pagination, replace data instead of concatenating
+        if(!this.loaded1) {
+          this.loaded1 = true;
+        }
       }
     });
   }
 
   /**
-  * Get completed visits for a given page number
-  * @param {number} page - Page number
+  * Get completed visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
   * @return {void}
   */
-  getCompletedVisitsData(page: number) {
-    this.getCompletedVisits(page);
+  getCompletedVisitsData(params: {page: number, pageSize: number, searchTerm?: string}) {
+    this.getCompletedVisits(params.page);
   }
 
   /**
   * Get prescriptions sent visits for a given page number
   * @param {number} page - Page number
+  * @param {string} searchTerm - Optional search term
   * @return {void}
   */
   getPrescriptionSentVisits(page: number = 1) {
@@ -98,18 +103,20 @@ export class PrescriptionComponent implements OnInit {
           records.push(visit);
         }
         this.prescriptionSent = this.prescriptionSent.concat(records);
-        this.loaded2 = true;
+        if(!this.loaded2) {;
+          this.loaded2 = true;
+        }
       }
     });
   }
 
   /**
-  * Get prescriptions sent visits for a given page number
-  * @param {number} page - Page number
+  * Get prescriptions sent visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
   * @return {void}
   */
-  getPrescriptionSentVisitsData(page: number) {
-    this.getPrescriptionSentVisits(page);
+  getPrescriptionSentVisitsData(params: {page: number, pageSize: number, searchTerm?: string}) {
+    this.getPrescriptionSentVisits(params.page);
   }
 
   /**
