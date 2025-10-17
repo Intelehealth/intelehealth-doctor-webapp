@@ -1563,12 +1563,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    console.log("this.appConfigService.patient_visit_summary?.standard_medication==",this.appConfigService.patient_visit_summary?.standard_medication);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if(this.appConfigService.patient_visit_summary?.standard_medication){
+            console.log("obs.value if==",obs.value);
             this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
-          } else {
+          } else { 
+            console.log("in else...........");
             this.medicines.push({
               drug: obs.value?.split(':')[0],
               strength: obs.value?.split(':')[1],
@@ -1615,6 +1618,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.standardMedicines.push({ ...this.addStandardMedicineForm.value});
     this.addStandardMedicineForm.reset();
   }
+   /**
+   * Delete standard medicine
+   * @param {number} index - Index of medicine to delete
+   * @param {string} uuid - UUID of medicine to delete
+   * @returns {void}
+   */
+  deleteStandardMedicine(index: number, uuid: string): void {
+    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+      this.standardMedicines.splice(index, 1);
+    });
+  }
+
 
   /**
   * Save additional instruction

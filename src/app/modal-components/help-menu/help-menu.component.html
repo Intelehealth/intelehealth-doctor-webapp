@@ -23,9 +23,9 @@
       <li
         class="chat-item read-status"
         [class.text-left]="m?.from === 'System Administrator'"
-        data-test-id="chatMessageStatus-{{ i }}"
+        [attr.data-test-id]="'chatMessageStatus-' + i"
       >
-        <span class="mr-1" data-test-id="doctorSentMsg-{{i}}">{{ m.createdAt | amDateFormat : "LT" }}</span>
+        <span class="mr-1" [attr.data-test-id]="'doctorSentMsg-' + i">{{ m.createdAt | amDateFormat : "LT" }}</span>
         <ng-container *ngIf="first && m?.from === user?.uuid">
           <ng-container *ngIf="m.isRead">
             <img
