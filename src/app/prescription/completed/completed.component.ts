@@ -26,7 +26,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   dataSource: CustomVisitModel[] = [];
   baseUrl: string = environment.baseURL;
   pageIndex: number = 0;
-  pageSize: number = environment.recordsPerPage;
+  pageSize: number = Number(environment.recordsPerPage ?? 25);
   currentPage: number = 1;
   patientRegFields: string[] = [];
   
@@ -95,7 +95,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
    * @return {void}
    */
   clearFilter(): void {
-    this.searchElement.nativeElement.value = "";
+    this.clearSearchFilter();
     this.resetToFirstPage();
     this.emitClearSearchEvent();
   }
