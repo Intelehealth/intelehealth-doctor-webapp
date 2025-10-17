@@ -190,7 +190,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
 
 
   private resetToFirstPage(): void {
-    const resetState = this.paginationService.resetToFirstPage();
+    const resetState = this.paginationService.resetToFirstPage(this.pageSize);
     this.currentPage = resetState.currentPage;
     this.pageIndex = resetState.pageIndex;
     
