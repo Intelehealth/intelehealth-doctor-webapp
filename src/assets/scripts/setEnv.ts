@@ -77,7 +77,7 @@ const environmentFileContent = `
     vapidPublicKey: '${process.env.VAPID_PUBLIC_KEY}',
     authGatwayURL: '${process.env.AUTH_GATE_WAY_URL}',
     showCaptcha: ${showCaptcha},
-    recordsPerPage: 1000,
+    recordsPerPage: '${Number(process.env.RECORDS_PER_PAGE) ?? 25}',,
     abhaEnabled: ${process.env.ABHA_ENABLED},
     configPublicURL: '${process.env.CONFIG_PUBLIC_URL}',
     brandName: '${process.env.BRAND_NAME}',
