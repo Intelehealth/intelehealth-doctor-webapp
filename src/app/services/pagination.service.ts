@@ -128,10 +128,10 @@ export class PaginationService {
    * Resets pagination to first page
    * @returns Reset pagination state
    */
-  resetToFirstPage(): PaginationState {
+  resetToFirstPage(pageSize: number): PaginationState {
     return {
       pageIndex: 0,
-      pageSize: 0, // Should be set by component
+      pageSize: pageSize, // Should be set by component
       currentPage: 1,
       recordsFetched: 0
     };

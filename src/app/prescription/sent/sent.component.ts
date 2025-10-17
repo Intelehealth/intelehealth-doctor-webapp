@@ -32,13 +32,13 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   
   // Configuration
   readonly baseUrl: string = environment.baseURL;
-  readonly pageSize = environment.recordsPerPage;
+  readonly pageSize = Number(environment.recordsPerPage ?? 25);
   readonly patientRegFields: string[] = [];
   
   // Pagination state
   private paginationState: PaginationState = {
     pageIndex: 0,
-    pageSize: environment.recordsPerPage,
+    pageSize: this.pageSize,
     currentPage: 1,
     recordsFetched: 0
   };
@@ -197,7 +197,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   private resetToFirstPage(): void {
-    const resetState = this.paginationService.resetToFirstPage();
+    const resetState = this.paginationService.resetToFirstPage(this.pageSize);
     this.paginationState.currentPage = resetState.currentPage;
     this.paginationState.pageIndex = resetState.pageIndex;
     

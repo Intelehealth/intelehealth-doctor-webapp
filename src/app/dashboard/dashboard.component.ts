@@ -515,7 +515,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
   @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
 
-  offset: number = environment.recordsPerPage;
+  offset: number = Number(environment.recordsPerPage ?? 25);
   awatingRecordsFetched: number = 0;
   pageEvent1: PageEvent;
   pageIndex1:number = 0;
