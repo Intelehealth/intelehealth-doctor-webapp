@@ -64,10 +64,10 @@ export class AillmddxComponent {
     this.furtherQuestionsList = [];
     this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
       next: (data: any) => {
-        if (!this.isValidDdxResponse(data)) {
-          this.apiResponseChanged = true;
-          return false;
-        }
+        // if (!this.isValidDdxResponse(data)) {
+        //   this.apiResponseChanged = true;
+        //   return false;
+        // }
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
           this.noData = false;
@@ -113,10 +113,10 @@ export class AillmddxComponent {
       this.furtherQuestionsList = [];
       this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
         next: (data: any) => {
-          if (!this.isValidDdxResponse(data)) {
-            this.apiResponseChanged = true;
-            return false;
-          }
+          // if (!this.isValidDdxResponse(data)) {
+          //   this.apiResponseChanged = true;
+          //   return false;
+          // }
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {
             this.noData = false;
@@ -242,5 +242,10 @@ export class AillmddxComponent {
     }
 
     return itemsValid && furtherQuestionsValid && conclusionValid;
+  }
+
+  // In your component class
+  isObject(value: any): boolean {
+    return typeof value === 'object' && value !== null;
   }
 }

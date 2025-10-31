@@ -56,7 +56,12 @@
                 </h4>
                 <ul>
                   <li *ngFor="let point of rationale.summarised_rationale; let i = index">
-                    <span>{{point}}</span>
+                    <ng-container *ngIf="isObject(point); else directString">
+                      <span>{{point[i+1]}}</span>
+                    </ng-container>
+                    <ng-template #directString>
+                      <span>{{ point }}</span>
+                    </ng-template>
                   </li>
                 </ul>   
                 <button 
