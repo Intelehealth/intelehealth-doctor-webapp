@@ -228,7 +228,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
 
-  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours", "Twice daily before meals", "Twice daily after meals"];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(

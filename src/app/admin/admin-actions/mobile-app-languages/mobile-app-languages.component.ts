@@ -98,6 +98,7 @@ export class MobileAppLanguagesComponent implements OnInit {
     dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
       this.configServce.updatePlatform(id, result).subscribe(
         (res) => {
+          element.platform = result; // Update the local data to reflect the change
           dialogRef.close();
           this.toastr.success(`Platform for ${element.en_name} is changed successfully.`);
         },

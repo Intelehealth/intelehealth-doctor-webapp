@@ -32,7 +32,21 @@
           "
           class="main-container"
         >
+          <div *ngIf="isReconnecting" class="reconnecting-banner">
+            <div class="reconnecting-content">
+              <div class="reconnecting-spinner"></div>
+              <span class="reconnecting-text">Reconnecting...</span>
+            </div>
+          </div>
           <div class="remote-con" [class.minimized]="_minimized" [class.video-on]="!_remoteVideoOff">
+            <div class="network-status-container" [ngClass]="networkQualityClass(localConnectionQuality)">
+              <div class="network-bars">
+                <div class="network-bar" [class.active]="qualityLevel(localConnectionQuality) >= 1"></div>
+                <div class="network-bar" [class.active]="qualityLevel(localConnectionQuality) >= 2"></div>
+                <div class="network-bar" [class.active]="qualityLevel(localConnectionQuality) >= 3"></div>
+                <div class="network-bar" [class.active]="qualityLevel(localConnectionQuality) >= 4"></div>
+              </div>
+            </div>
             <div #remoteVideo class="remote-container"></div>
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
@@ -46,18 +60,6 @@
             <div class="audio-status">
               <img class="audio-img" [src]="remoteAudioIcon" />
             </div>
-             <!-- Simple Network connectivity indicator -->
-             <div class="network-status-container"
-                  [ngClass]="'quality--' + networkQuality"
-                  [class.d-none]="_minimized || networkBars === 0" 
-                  [title]="'Network Quality: ' + networkQuality + ' (' + networkBars + '/4 bars)'">
-               <div class="network-bars">
-                 <div *ngFor="let bar of [0,1,2,3]; let i = index" 
-                      class="network-bar" 
-                      [class.active]="i < networkBars">
-                 </div>
-               </div>
-             </div>
             <div class="call-duration-container">
               <div class="call-duration" [class.d-none]="_minimized">
                 <!-- <span [ngClass]="{ 'fontColor': !_remoteVideoOff }" style="font-size: 16px; font-weight: 500;">Call ends in</span> -->

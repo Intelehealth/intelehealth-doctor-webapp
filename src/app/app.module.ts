@@ -135,6 +135,7 @@ registerLocaleData(localeEn);
         `${environment.mindmapURL}/messages/`,
         `${environment.mindmapURL}/support/`,
         `${environment.mindmapURL}/auth/validateProviderAttribute`,
+        `${environment.baseURL}/pl/`,
         `${environment.webrtcTokenServerUrl}api/getToken`,
         `${environment.base}/pl/`,
         `${environment.base}/ddx`,

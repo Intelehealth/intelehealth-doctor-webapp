@@ -99,14 +99,12 @@
         </button>
       </div>
       <mat-accordion class="intel-accordion-con" multi data-test-id="matAccDashboard">
-
-        <lib-table-grid [pluginConfigObs]="pluginConfigObsAppointment" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.appointment_button" data-test-id="matExpAppointment"></lib-table-grid>
-        <lib-table-grid id="matExpPriority" [pluginConfigObs]="pluginConfigObsPriority" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.priority_visit_section" data-test-id="matExpPriority"></lib-table-grid>
-        <lib-table-grid id="matExpAwaiting" [pluginConfigObs]="pluginConfigObsAwaiting" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.awaiting_visit_section" data-test-id="matExpAwaiting"></lib-table-grid>
-        <lib-table-grid id="matExpInprogress" [pluginConfigObs]="pluginConfigObsInProgress" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.inprogress_visit_section" data-test-id="matExpInprogress"></lib-table-grid>
-        <lib-table-grid id="matExpCompleted" [pluginConfigObs]="pluginConfigObsCompleted" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.completed_visit_section" data-test-id="matExpCompleted"></lib-table-grid>
-        <lib-table-grid id="matExpfollowUp" [pluginConfigObs]="pluginConfigObsFollowUp" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.follow_up_visit_section" data-test-id="matExpfollowUp"></lib-table-grid>
-
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsAppointment" (visitsCountDate)="onVisitsCountDate($event)"  *ngIf="pvs.appointment_button" data-test-id="matExpAppointment"></lib-table-grid>
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsPriority" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.priority_visit_section" data-test-id="matExpPriority"></lib-table-grid>
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsAwaiting" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.awaiting_visit_section" data-test-id="matExpAwaiting"></lib-table-grid>
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsInProgress" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.inprogress_visit_section" data-test-id="matExpInprogress"></lib-table-grid>
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsCompleted" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.completed_visit_section" data-test-id="matExpCompleted"></lib-table-grid>
+        <lib-table-grid [pluginConfigObs]="pluginConfigObsFollowUp" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.follow_up_visit_section" data-test-id="matExpFollowUp"></lib-table-grid>
       </mat-accordion>
     </div>
   </div>

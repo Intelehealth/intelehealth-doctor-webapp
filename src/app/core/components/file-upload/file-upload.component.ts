@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { ConfigService } from 'src/app/services/config.service';
 import { Subject } from 'rxjs';
+import { ConfigService } from 'src/app/services/config.service';
 
 
 @Component({
@@ -148,7 +148,7 @@ export class FileUploadComponent implements OnChanges {
       })
     } else {
       this.onFileRemove.emit({ success : true , filePath : this.filePath});
-     this.deleteSubject.next(this.options.formData.key);
+      this.deleteSubject.next(this.options.formData.key);
     }
     
   }

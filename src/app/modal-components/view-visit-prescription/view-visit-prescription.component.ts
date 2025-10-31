@@ -1411,8 +1411,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   renderReferralSectionPDF() {
-    const referralFacility = isFeaturePresent('referralFacility', true)
-    const priorityOfReferral = isFeaturePresent('priorityOfReferral', true)
+    const referralFacility = this.isFeatureAvailable('referralFacility', true)
+    const priorityOfReferral = this.isFeatureAvailable('priorityOfReferral', true)
 
     if (this.appConfigService.patient_visit_summary?.dp_referral_secondary) {
       return {

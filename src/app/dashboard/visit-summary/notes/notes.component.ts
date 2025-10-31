@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -30,6 +30,7 @@ export class NotesComponent implements OnInit {
     note: new FormControl(null, [Validators.required])
   });
   addMoreNote = false;
+  @Output() notesChanged = new EventEmitter<ObsModel[]>();
 
   constructor(
     private diagnosisSvc: DiagnosisService,
@@ -83,6 +84,7 @@ export class NotesComponent implements OnInit {
       return;
     }
     this.notes.push({ value: this.addNoteForm.value.note });
+    this.notesChanged.emit(this.notes);
     this.addNoteForm.reset();
     // this.encounterSvc.postObs({
     //   concept: this.conceptId,
@@ -104,6 +106,7 @@ export class NotesComponent implements OnInit {
   deleteNote(index: number, uuid: string): void {
     this.diagnosisSvc.deleteObs(uuid).subscribe(() => {
       this.notes.splice(index, 1);
+      this.notesChanged.emit(this.notes);
     });
   }
 

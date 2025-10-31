@@ -1,14 +1,28 @@
-<div class="select-lang-modal">
-  <div class="modal-title-con">
-    <h6 class="mb-0">{{'Select Language'|translate}}</h6>
+<div class="select-lang-modal" data-test-id="selectLanguageModal">
+  <!-- Modal Title -->
+  <div class="modal-title-con" data-test-id="selectLanguageModalTitle">
+    <h6 class="mb-0">{{ 'Select Language' | translate }}</h6>
     <div class="close-btn-con">
-      <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
+      <button
+        class="modal-close-btn"
+        (click)="close(false)"
+        data-test-id="btnCloseSelectLanguageModal"
+      >
+        <img src="assets/svgs/CloseX.svg" alt="">
+      </button>
     </div>
   </div>
-  <div class="modal-con">
+
+  <!-- Modal Content -->
+  <div class="modal-con" data-test-id="selectLanguageModalBody">
     <div class="container-fluid">
       <div class="row">
-        <form [formGroup]="languageForm" (ngSubmit)="select()" class="col-md-12 p-0">
+        <form
+          [formGroup]="languageForm"
+          (ngSubmit)="select()"
+          class="col-md-12 p-0"
+          data-test-id="selectLanguageForm"
+        >
           <div class="row">
             <div class="col-6 p-1" *ngFor="let lang of languages">
               <div class="lang-item">
@@ -27,12 +41,17 @@
             </div>
            
             <div class="col-12 text-center py-2">
-              <button class="modal-btn blue-btn" type="submit" data-test-id="btnSubmit">{{'Select'|translate}}</button>
+              <button
+                class="modal-btn blue-btn"
+                type="submit"
+                data-test-id="btnSubmitSelectLanguageModal"
+              >
+                {{ 'Select' | translate }}
+              </button>
             </div>
           </div>
         </form>
       </div>
     </div>
   </div>
-
 </div>

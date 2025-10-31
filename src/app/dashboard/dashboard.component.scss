@@ -189,3 +189,10 @@ button.mat-button .reset-btn {
   font-size: 20px !important;
   font-weight: bold;
 }
+::ng-deep .green-pill.visit-completed-cell {
+  color: #008000 !important;            
+  background-color: #D4EDDA !important; 
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+}

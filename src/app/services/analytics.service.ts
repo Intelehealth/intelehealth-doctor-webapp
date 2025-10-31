@@ -15,6 +15,7 @@ export class AnalyticsService {
    * @param url string - current route path
    */
   logPageView(url: string) {
+    if (!this.measurementId) return;
     gtag('config', this.measurementId, {   // Replace with your Measurement ID
       page_path: url,
       debug_mode: true 

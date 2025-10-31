@@ -25,7 +25,7 @@ export class AppointmentsComponent implements OnInit {
 
   items = ["Appointments"];
   expandedIndex = 0;
-  displayedColumns: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'drName', 'telephone', 'actions'];
+  displayedColumns: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'drName', 'actions'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   isLoaded: boolean = false;
@@ -35,9 +35,14 @@ export class AppointmentsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
+  @ViewChild('appointmentPaginator', { read: ElementRef }) paginatorRef!: ElementRef;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    const rangeActions = this.paginatorRef.nativeElement.querySelector('.mat-paginator-range-actions');
+    if (rangeActions) {
+      rangeActions.setAttribute('data-test-id', 'matPaginatorRangeActions');
+    }
   }
 
   constructor(
@@ -149,9 +154,11 @@ export class AppointmentsComponent implements OnInit {
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
-      this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+      // this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+   this.coreService.showToast('error',"Visit is already completed, it can't be rescheduled.",'Rescheduling failed!','visit-completed-toast');
     } else if(appointment.visitStatus == 'Visit In Progress') {
-      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+      // this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+      this.coreService.showToast('error',"Visit is in progress, it can't be rescheduled.",'Rescheduling failed!','visit-in-progress-toast');
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
         if (res) {
@@ -166,9 +173,11 @@ export class AppointmentsComponent implements OnInit {
                 if (res.status) {
                   this.mindmapService.notifyHwForRescheduleAppointment(appointment)
                   this.getAppointments();
-                  this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
+                  // this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
+                  this.coreService.showToast('success',"The appointment has been rescheduled successfully!",'Rescheduling successful!','reschedule-success-toast');
                 } else {
-                  this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
+                  //this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
+                  this.coreService.showToast('success',message,'Rescheduling failed!','reschedule-failed-toast');
                 }
               });
             }
@@ -185,13 +194,15 @@ export class AppointmentsComponent implements OnInit {
   */
   cancel(appointment: AppointmentModel) {
     if(appointment.visitStatus == 'Visit In Progress') {
-      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      // this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      this.coreService.showToast('error',"Visit is in progress, it can't be cancelled.",'Canceling failed!','cancel-failed-toast');
       return;
     }
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
       if (res) {
         this.mindmapService.notifyHwForCancelAppointment(appointment);
-        this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
+        // this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
+        this.coreService.showToast('success',"The Appointment has been successfully canceled.",'Canceling successful!','cancel-success-toast');
         this.getAppointments();
       }
     });
