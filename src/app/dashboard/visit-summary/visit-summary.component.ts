@@ -15,7 +15,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -235,6 +235,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   search7 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
   search8 = (text$: Observable<string>) => this.mainSearch(text$, this.durationUnitList.map((val) => val.name));
   search9 = (text$: Observable<string>) => this.mainSearch(text$, instructionRemarks.map((val) => val.name));
+
+  searchInstructionRemark = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term =>
+        term.length < 1 ? of([]) : of(instructionRemarks.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+      )
+    );
+  }
 
   // Add this property to the component class
   obsData = {
@@ -3402,5 +3412,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (error) {
       console.error('Error loading DDX component:', error);
     }
+  }
+
+  /**
+   * Lazy load DDX component (alias method)
+   */
+  async lazyLoadDDx(): Promise<void> {
+    await this.loadDDxComponent();
   }
 }
