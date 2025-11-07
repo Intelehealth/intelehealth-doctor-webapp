@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, ElementRef, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -183,6 +183,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('familyHistoryNote') familyHistoryNoteRef: NotesComponent;
   @ViewChild('pastMedicalHistoryNote') pastMedicalHistoryNoteRef: NotesComponent;
   @ViewChild('notes') notesRef: NotesComponent;
+  @ViewChild('lazyDDxContainer', { read: ViewContainerRef, static: false }) lazyLoadDDxContainer!: ViewContainerRef;
+  ddxCompRef: any;
+  furtherQuestionsList: string[] = [];
+  hasAILLMEnabled: boolean = false;
+  patientInteractionNotesForm: FormGroup;
   genderData: any = {"M":"Male", "F":"Female", "O":"Other"}
   patientInteractionCommentForm: FormGroup
   isWhatsappCallWarningShown = false;
@@ -408,6 +413,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       value: new FormControl(null, [Validators.required])
     })
 
+    this.patientInteractionNotesForm = new FormGroup({
+      uuid: new FormControl(null),
+      value: new FormControl(null)
+    })
+
     this.diagnosisSubject = new BehaviorSubject<any[]>([]);
     this.diagnosis$ = this.diagnosisSubject.asObservable();
 
@@ -417,6 +427,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
+    this.hasAILLMEnabled = isFeaturePresent('aillmddx');
 
     if(!this.appConfigService.patient_diagnostics_section) {
       this.appConfigService.patient_visit_sections = this.appConfigService.patient_visit_sections.filter((e: PatientVisitSection) => e.key !== 'diagnostics');
@@ -603,6 +614,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             if (environment.brandName === 'KCDO' && this.visit && this.visit.uuid && !this.visitNotePresent) {
               this.logUserEvent('visit-summary open');
+            }
+            // Load DDX component lazily after visit data is loaded
+            if (this.hasAILLMEnabled && this.lazyLoadDDxContainer) {
+              this.loadDDxComponent();
             }
           }
           this.checkOpenChatBoxFlag();
@@ -3358,6 +3373,34 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.visitService.postAttribute(this.visit.uuid, payload).subscribe((res: any) => {
         this.eventLogAttributeUuid = res.uuid;
       });
+    }
+  }
+
+  /**
+   * Lazy load DDX component dynamically
+   */
+  async loadDDxComponent(): Promise<void> {
+    if (!this.hasAILLMEnabled || !this.lazyLoadDDxContainer || this.ddxCompRef) {
+      return;
+    }
+
+    try {
+      const { DiagnosisComponent } = await import('./diagnosis/diagnosis.component');
+      this.ddxCompRef = this.lazyLoadDDxContainer.createComponent(DiagnosisComponent);
+      
+      // Set component inputs
+      if (this.ddxCompRef.instance) {
+        this.ddxCompRef.instance.visit = this.visit;
+        this.ddxCompRef.instance.patientInfo = this.patient;
+        this.ddxCompRef.instance.isMCCUser = this.isMCCUser;
+        this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
+        this.ddxCompRef.instance.visitEnded = this.visitEnded;
+        this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
+      }
+      
+      this.ddxCompRef.changeDetectorRef.detectChanges();
+    } catch (error) {
+      console.error('Error loading DDX component:', error);
     }
   }
 }
