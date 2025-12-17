@@ -118,9 +118,9 @@ export class ProviderService {
   * @param {string} retry - Retry count (default '0')
   * @return {Observable<any>}
   */
-  kaleyraClick2Call(caller: string, receiver: string, custom: string, retry: string = '0'): Observable<any> {
+  kaleyraClick2Call(caller: string, receiver: string, custom: string, retry: string = '0', notes: string): Observable<any> {
     const url = `${this.mindmapUrl}/kaleyra/click2call`;
-    const payload: any = { caller, receiver, custom, retry };
+    const payload: any = { caller, receiver, custom, retry, notes };
     return this.http.post(url, payload);
   }
 }

@@ -18,6 +18,8 @@ export class AppConfigService {
   public theme_config: any[];
   public patient_vitals: VitalModel[];
   public patient_diagnostics:any[];
+  public digital_stethoscope:any[];
+  public digital_stethoscope_section: boolean;
   public webrtc_section: boolean;
   public webrtc: WebRTCConfigModel;
   public patient_visit_summary: PatientVisitSummaryConfigModel;

@@ -154,6 +154,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   diagnostics: DiagnosticModel[] = [];
+  digitalStethoscope: DiagnosticModel[] = [];
   patientVisitSummary: PatientVisitSummaryConfigModel;
   pvsConfigs: PatientVisitSection[] = [];
   pvsConstant = VISIT_SECTIONS;
@@ -197,6 +198,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('lazyDDxContainer', { read: ViewContainerRef, static: false }) lazyLoadDDxContainer!: ViewContainerRef;
   ddxCompRef: any;
   furtherQuestionsList: string[] = [];
+  showAndHideUiElement: boolean = true;
 
   async lazyLoadDDx() {
     setTimeout(async () => {
@@ -436,6 +438,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.vitals = [...this.appConfigService.patient_vitals];
     this.diagnostics = this.appConfigService.patient_diagnostics_section ? [...this.appConfigService.patient_diagnostics] : [];
+    this.digitalStethoscope = this.appConfigService.digital_stethoscope_section ? [...this.appConfigService.digital_stethoscope] : [];
     this.specializations = [...this.appConfigService.specialization];
     this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
@@ -505,7 +508,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
       followUpDate: new FormControl(null),
-      followUpTime: new FormControl(null),
+      // followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
       followUpType: new FormControl(null)
@@ -585,6 +588,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
+    this.showAndHideUiElements();
   }
 
   /**
@@ -642,13 +646,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').clearValidators();
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -704,6 +708,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfMedicationPresent();
+              this.checkIfAdditionalInstructionPresent();
               this.getAdvicesList();
               this.checkIfAdvicePresent();
               this.getTestsList();
@@ -1354,9 +1359,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     const visitUuid = this.visit?.uuid;
     const nurseProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     const nurseUuid = nurseProvider && nurseProvider.provider ? nurseProvider.provider.uuid : '';
-    const custom = `${doctorUuid}:${patientUuid}:${visitUuid}:${nurseUuid}`;
+    const custom = `${doctorUuid}:${patientUuid}`;
+    const notes = `${visitUuid}:${nurseUuid}`;
     const caller = doctorPhoneNumber ? doctorPhoneNumber : environment.doctorPhoneNumber;
-    this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0').subscribe({
+    this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0', notes).subscribe({
       next: (data) => {
         console.log('Kaleyra call initiated successfully:', data);
         this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
@@ -1870,7 +1876,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
     } else if (this.additionalInstructionForm.valid) {
       return this.encounterService.postObs({
-        concept: conceptIds.conceptMed,
+        concept: conceptIds.conceptAdvice,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
         value: this.additionalInstructionForm.value.value,
@@ -1935,6 +1941,33 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+  * Get additional instructions for the visit
+  * @returns {void}
+  */
+  checkIfAdditionalInstructionPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+        
+            if (this.additionalInstructionForm && !obs.value.includes('</a>')) {
+            
+              if (!obs.value.includes(':') || obs.value.split(':').length < 3) {
+              
+                if (!this.advicesList.includes(obs.value)) {
+                  this.additionalInstructions = obs;
+                  if (this.additionalInstructionForm) {
+                    this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+  }
+
+  /**
   * Get advices for the visit
   * @returns {void}
   */
@@ -1945,7 +1978,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             if (!obs.value.includes('</a>')) {
-              this.advices.push(obs);
+              // Exclude additional instructions from advices list
+              if (!this.additionalInstructions || this.additionalInstructions.uuid !== obs.uuid) {
+                this.advices.push(obs);
+              }
             }
           }
         });
@@ -2180,13 +2216,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
+          let followUpDate: string, /* followUpTime: any, */ followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
           if (obs.value.includes('Time:')) {
             const result = obs.value.split(',').filter(Boolean);
-            const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+            // const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            followUpTime = time ? time : null;
+            // followUpTime = time ? time : null;
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
 
@@ -2201,7 +2237,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp,
             followUpDate,
-            followUpTime,
+            // followUpTime,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
@@ -2217,7 +2253,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`; // Removed Time:${this.followUpForm.value.followUpTime}
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -2233,7 +2269,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.followUpForm.value.followUpTime,
+            // followUpTime : this.followUpForm.value.followUpTime,
             followUpReason : this.followUpForm.value.followUpReason,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -2252,7 +2288,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
-            followUpTime : null,
+            // followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
             followUpType : null
@@ -2267,7 +2303,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null });
+      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, /* followUpTime: null, */ followUpReason: null, followUpType: null });
       this.followUpDatetime = null;
     });
   }
@@ -2324,7 +2360,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       ]
                     }).subscribe((post) => {
                       this.visitCompleted = true;
-                      const followUpDate = `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`;
+                      const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
 
                       this.notifyHwForAvailablePrescription("","",followUpDate);
                       this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
@@ -3762,5 +3798,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   onPastMedicalHistoryNotesChanged(newNotes: ObsModel[]) {
     this.updatedObsData.pastMedicalHistoryNote = [...newNotes];
     this.checkChanges(this.updatedObsData);
+  }
+
+  /**
+  * Check if login profile then show/hide features accondingly
+  * @returns {boolean}
+  */
+  showAndHideUiElements(): boolean {
+    const doctorName = getCacheData(true, doctorDetails.USER)?.person?.display;
+    return this.showAndHideUiElement = !doctorName || !doctorName.includes('Namco');
   }
 }

@@ -38,6 +38,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruction/follow-up-instruction.component';
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
+import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -57,6 +58,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     FollowupVisitsComponent,
     NotesComponent,
     FollowUpInstructionComponent,
+    DigitalStethoscopeComponent,
   ],
   imports: [
     IhLibraryModule,

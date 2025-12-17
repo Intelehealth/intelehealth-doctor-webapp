@@ -272,13 +272,13 @@
         </div>            
       </div>
       <div class="form-row" *ngIf="!addMoreMedicine && !isMCCUser">
-        <div class="col-md-6 form-group mb-0 input-wrapper">
+        <div class="form-group mb-0 input-wrapper" [ngClass]="{'col-md-6': (appConfigService?.patient_visit_summary?.dp_medication_secondary === false && showAndHideUiElement), 'col-md-12': !(appConfigService?.patient_visit_summary?.dp_medication_secondary === false && showAndHideUiElement)}">
           <input style="border-radius: 8px;" formControlName="instructRemark" type="text" class="form-control input-widths"
             data-test-id="etRemarkMed"
             [ngbTypeahead]="search6" [popupClass]="'custom-typeahead-popup'" id="instructRemark" />
           <label class="pl-2" for="instructRemark">{{'Instruction (Remarks)'|translate}}</label>
         </div>
-        <div class="col-md-6" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
+        <div class="col-md-6" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary && showAndHideUiElement">
         <form  [formGroup]="additionalInstructionForm" (ngSubmit)="saveAdditionalInstruction()">
             <div class="form-group input-wrapper">
               <input  style="border-radius: 8px;" formControlName="value" type="text"  class="form-control input-widths" id="instructions"
@@ -634,7 +634,7 @@
           <th scope="col">{{'Follow Up Requested'|translate}}</th>
           <th scope="col" *ngIf="isFeatureAvailable('followUpType')">{{'Type'|translate}}</th>
           <th scope="col">{{'Date'|translate}}</th>
-          <th scope="col">{{'Time'| translate}}</th>
+          <!-- <th scope="col">{{'Time'| translate}}</th> -->
           <th scope="col">{{'Reason'|translate}}</th>
           <th scope="col"></th>
         </tr>
@@ -645,7 +645,7 @@
           <td *ngIf="isFeatureAvailable('followUpType')">{{ (followUpForm.value.followUpType) ?
             followUpForm.value.followUpType : '-' }}</td>
           <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
-          <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
+          <!-- <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td> -->
           <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
           <td class="pr-0 pt-0">
             <button type="button" class="float-right" mat-icon-button (click)="deleteFollowUp()"
@@ -725,7 +725,7 @@
             </div>
           </div>
         </li>
-        <li>
+        <!-- <li>
           <div class="row">
             <label for="follow-date" class="col-sm-3 col-form-label">{{'Select time'| translate}}*</label>
             <div class="col-sm-3">
@@ -735,7 +735,7 @@
               </ng-select>
             </div>
           </div>
-        </li>
+        </li> -->
         <li>
           <div class="row">
             <label for="follow-reason" class="col-sm-3 col-form-label">{{'Reason for follow-up'|translate}}</label>

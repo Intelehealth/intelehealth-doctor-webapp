@@ -1,0 +1,478 @@
+.lung-stethoscope-container {
+  // min-height: 100vh;
+  // background-color: #f9fafb;
+  padding: 1rem;
+
+  .content-wrapper-heart {
+  //   max-width: 1400px;
+  //   margin: 0 auto;
+    margin-bottom: 4rem;
+  }
+
+  .page-title {
+    font-size: 1rem;
+    font-weight: 600;
+    // margin-bottom: 1.5rem;
+    color: #1f2937;
+  }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 1024px) {
+      // grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  .body-diagrams-section {
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+
+  .diagrams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .diagram-view {
+    .view-title {
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: #374151;
+    }
+
+    .diagram-container {
+      position: relative;
+      background-color: #f3f4f6;
+      border-radius: 0.5rem;
+      aspect-ratio: 4 / 4;
+      overflow: hidden;
+
+      .body-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+
+      .measurement-point {
+        position: absolute;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: #70a4f8;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translate(-50%, -50%);
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          background-color: #2563eb;
+          transform: translate(-50%, -50%) scale(1.1);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        &.selected {
+          background-color: #2563eb;
+          transform: translate(-50%, -50%) scale(1.15);
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        }
+
+        &.has-condition {
+          background-color: #3b82f6;
+
+          &:hover {
+            background-color: #2563eb;
+          }
+        }
+      }
+    }
+  }
+
+  // Control Section
+  .control-section {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .control-card,
+  .details-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+
+  // Control Header (Position and Heart Rate)
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .position-label {
+      display: flex;
+      gap: 0.25rem;
+
+      .label-text {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #374151;
+      }
+
+      .position-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #111827;
+      }
+    }
+
+    .heart-rate-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+
+      .rate-label {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #1f2937;
+      }
+
+      .rate-value {
+        background-color: #60a5fa;
+        color: white;
+        padding: 0.3rem 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // Progress Section
+  .progress-section {
+    margin-bottom: 1.5rem;
+
+    .time-display {
+      background-color: #d1d5db;
+      color: #4b5563;
+      padding: 0.275rem .5rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 0.25rem;
+      background-color: #d1d5db;
+      border-radius: 0.25rem;
+      overflow: hidden;
+
+      .progress-bar-fill {
+        height: 100%;
+        background-color: #9ca3af;
+        border-radius: 0.25rem;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+
+  // Controls Section (Volume, Play, Speed)
+  .controls-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 1rem;
+
+    .volume-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #1f2937;
+      padding: 0.5rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #3b82f6;
+      }
+    }
+
+    .play-button-large {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+      &:hover {
+        background-color: #2563eb;
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .speed-control-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .speed-display {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .speed-text {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #1f2937;
+          line-height: 1.2;
+        }
+
+        .speed-value {
+          font-size: 1rem;
+          color: #6b7280;
+          line-height: 1.2;
+        }
+      }
+
+      .speed-adjust-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #6b7280;
+        padding: 0.25rem;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+
+  // Graphical Insight Button
+  .insight-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: transparent;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    border-radius: 2rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #eff6ff;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  // Details Card
+  .details-card {
+    width: 450px;
+    .details-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .details-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .position-rate {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: -16px;
+    }
+
+    .detail-item {
+      .detail-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+      }
+
+      .detail-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #111827;
+        text-transform: capitalize;
+      }
+    }
+
+    .condition-alert {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 0.5rem;
+      padding: 2px 8px;
+      margin-bottom: 0rem;
+      margin-top: 0.25rem;
+
+      .condition-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .condition-name {
+          font-weight: 500;
+          color: #991b1b;
+        }
+
+        .condition-confidence {
+          font-size: 0.875rem;
+          color: #dc2626;
+        }
+      }
+    }
+
+    .condition-normal {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+
+      span {
+        color: #166534;
+      }
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .result-item {
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .result-name {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #374151;
+        }
+
+        .result-score {
+          font-size: 0.75rem;
+          color: #6b7280;
+        }
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 0.5rem;
+        background-color: #e5e7eb;
+        border-radius: 9999px;
+        overflow: hidden;
+
+        .progress-fill {
+          height: 100%;
+          background-color: #3b82f6;
+          border-radius: 9999px;
+          transition: width 0.3s ease;
+        }
+      }
+    }
+
+    &.empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+
+      p {
+        text-align: center;
+        color: #6b7280;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .lung-stethoscope-container {
+    padding: 1rem;
+
+    .page-title {
+      font-size: 1.25rem;
+    }
+
+    .diagrams-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .measurement-point {
+      width: 2rem !important;
+      height: 2rem !important;
+      font-size: 0.75rem !important;
+    }
+
+    .control-header {
+      flex-direction: column;
+      gap: 1rem;
+
+      .heart-rate-badge {
+        align-items: flex-start;
+      }
+    }
+
+    .controls-section {
+      gap: 1rem;
+
+      .play-button-large {
+        width: 4rem;
+        height: 4rem;
+      }
+    }
+  }
+}
