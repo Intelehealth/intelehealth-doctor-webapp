@@ -129,6 +129,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   currentComplaint: string;
 
   additionalNotes = '';
+  abhaAddress = '';
   isCalling: boolean = false;
 
   openChatFlag: boolean = false;
@@ -320,6 +321,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+            // check if abha address exists in visit attributes
+            this.getAbhaAddress(visit.attributes);
             // check if abha number / abha address exists for this patient
             this.getAbhaDetails(patient)
             // check if visit note exists for this visit
@@ -908,6 +911,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     attributes.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === 'AdditionalNote') {
         this.additionalNotes = attr.value;
+      }
+    });
+  }
+
+  /**
+  * Get abhaAddress from visit attributes
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  getAbhaAddress(attributes: VisitAttributeModel[]) {
+    attributes.forEach((attr: VisitAttributeModel) => {
+      if (attr.attributeType.display === 'ABHA_ADDRESS_ASSOCIATED') {
+        this.abhaAddress = attr.value;
       }
     });
   }
@@ -1730,7 +1746,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
    */
   getAbhaDetails(_patient: PatientModel): void {
     this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier;
-    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+    this.patient.person.abhaAddress = this.abhaAddress ? this.abhaAddress : (_patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier)
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
     const abhaAddress = this.patient?.person?.abhaAddress ?? abhaNumber;
     this.patient.person.abhaAddress = abhaAddress;
