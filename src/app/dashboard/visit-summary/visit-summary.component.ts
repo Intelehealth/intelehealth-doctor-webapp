@@ -2217,7 +2217,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           let followUpDate: string, /* followUpTime: any, */ followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
-          if (obs.value.includes('Time:')) {
+          if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
             // const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();

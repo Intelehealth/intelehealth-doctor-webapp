@@ -354,10 +354,10 @@
     <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
-  <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
+  <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
     <lib-aillmtx-advice [patientInfo]="patientInfo" [visit]="visit" (adviceSelected)="onAIAdviceSelected()"
       [existingAdvice]="existingAdvice" [diagnosisName]="diagnosisName"></lib-aillmtx-advice>
-  </ng-container>
+  </ng-container> -->
 
     <ng-container *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
     <div class="form-group mt-3" *ngIf="addMoreAdvice">
@@ -412,10 +412,10 @@
     </mat-panel-title>
     <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
-  <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
+  <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
   <lib-aillmtx-test [patientInfo]="patientInfo" [visit]="visit" (testSelected)="onAITestSelected()"
     [existingTest]="existingTest" [diagnosisName]="diagnosisName"></lib-aillmtx-test>
-</ng-container>
+</ng-container> -->
   <ng-container *ngIf="!appConfigService?.patient_visit_summary?.dp_investigations_secondary">
     <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
       <div class="form-group mt-3" *ngIf="addMoreTest">
@@ -483,10 +483,10 @@
     </mat-panel-title>
     <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
-  <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
+  <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
     <lib-aillmtx-referral [patientInfo]="patientInfo" [visit]="visit" (referralSelected)="onAIReferralSelected()"
       [existingReferral]="existingReferral" [diagnosisName]="diagnosisName"></lib-aillmtx-referral>
-  </ng-container>
+  </ng-container> -->
   <form class="mt-2" [formGroup]="addReferralForm" (ngSubmit)="addReferral()"
     *ngIf="!appConfigService?.patient_visit_summary?.dp_referral_secondary">
     <div class="table-responsive medication-con">
@@ -622,10 +622,10 @@
     <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
-  <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
+  <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
     <lib-aillmtx-followup [patientInfo]="patientInfo" [visit]="visit" (followUpSelected)="onAIFollowUpSelected()"
       [existingFollowUp]="existingFollowUp" [diagnosisName]="diagnosisName"></lib-aillmtx-followup>
-  </ng-container>
+  </ng-container> -->
 
   <div class="table-responsive" *ngIf="followUpForm.value.present">
     <table class="table" aria-describedby="">
