@@ -64,10 +64,10 @@ export class AillmddxComponent {
     this.furtherQuestionsList = [];
     this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
       next: (data: any) => {
-        // if (!this.isValidDdxResponse(data)) {
-        //   this.apiResponseChanged = true;
-        //   return false;
-        // }
+        if (!this.isValidDdxResponse(data)) {
+          this.apiResponseChanged = true;
+          return false;
+        }
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
           this.noData = false;
@@ -113,10 +113,10 @@ export class AillmddxComponent {
       this.furtherQuestionsList = [];
       this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
         next: (data: any) => {
-          // if (!this.isValidDdxResponse(data)) {
-          //   this.apiResponseChanged = true;
-          //   return false;
-          // }
+          if (!this.isValidDdxResponse(data)) {
+            this.apiResponseChanged = true;
+            return false;
+          }
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {
             this.noData = false;
@@ -211,7 +211,7 @@ export class AillmddxComponent {
     // Check if resultArray is valid
     const resultArrayValid = Array.isArray(resultArray);
     if (!resultArrayValid) {
-      this.toastr.error('API response format of "result" has changed.', 'Please contact support or try again later.');
+      this.toastr.error('Please refresh the page to try again. If issue persists contact Tech Support', 'AI recommendation could not be generated.');
     }
 
     // Validate each result item
@@ -232,13 +232,13 @@ export class AillmddxComponent {
     // Validate further questions
     const furtherQuestionsValid = furtherQuestions === undefined || Array.isArray(furtherQuestions);
     if (!furtherQuestionsValid) {
-      this.toastr.error('API response format of "further_questions" has changed.', 'Please contact support or try again later.');
+      this.toastr.error('Please refresh the page to try again. If issue persists contact Tech Support', 'AI recommendation could not be generated.');
     }
 
     // Validate conclusion
     const conclusionValid = (conclusionTop === undefined || typeof conclusionTop === 'string') && (conclusionNested === undefined || typeof conclusionNested === 'string');
     if (!conclusionValid) {
-      this.toastr.error('API response format of "conclusion" has changed.', 'Please contact support or try again later.');
+      this.toastr.error('Please refresh the page to try again. If issue persists contact Tech Support', 'AI recommendation could not be generated.');
     }
 
     return itemsValid && furtherQuestionsValid && conclusionValid;
