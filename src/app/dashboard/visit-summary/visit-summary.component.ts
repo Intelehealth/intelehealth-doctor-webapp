@@ -508,7 +508,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
       followUpDate: new FormControl(null),
-      // followUpTime: new FormControl(null),
+      followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
       followUpType: new FormControl(null)
@@ -2216,15 +2216,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate: string, /* followUpTime: any, */ followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
+          let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
           if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
-            // const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            // followUpTime = time ? time : null;
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
+
+            // Only try to get Time if the feature is enabled
+            if (this.isFeatureAvailable('followUpTime')) {
+              const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+              followUpTime = time ? time : null;
+            }
 
             // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
@@ -2237,7 +2241,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp,
             followUpDate,
-            // followUpTime,
+            followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
@@ -2253,7 +2257,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`; // Removed Time:${this.followUpForm.value.followUpTime}
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -2269,7 +2273,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            // followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -2288,7 +2292,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
-            // followUpTime : null,
+            followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
             followUpType : null

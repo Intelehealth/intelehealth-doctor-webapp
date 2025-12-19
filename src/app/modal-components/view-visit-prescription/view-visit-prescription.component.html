@@ -828,7 +828,7 @@
                       <th scope="col">{{'Follow-up suggested'|translate}}</th>
                       <th scope="col" *ngIf="isFeatureAvailable('followUpType')">{{'Follow-up Type'|translate}}</th>
                       <th scope="col">{{'Follow-up Date'|translate}}</th>
-                      <th scope="col">{{'Follow-up Time'|translate}}</th>
+                      <th scope="col" *ngIf="isFeatureAvailable('followUpTime')">{{'Follow-up Time'|translate}}</th>
                       <th scope="col">{{'Reason for follow-up'|translate}}</th>
                     </tr>
                   </thead>
@@ -838,7 +838,7 @@
                         <td> {{ followUp.wantFollowUp }}</td>
                         <td *ngIf="isFeatureAvailable('followUpType')">{{ followUp.followUpType ? followUp.followUpType : '-' }}</td>
                         <td> {{ followUp.followUpDate ? (followUp.followUpDate|date : "mediumDate") : '-' }}</td>
-                        <td> {{ followUp.followUpTime ? followUp.followUpTime : '-' }}</td>
+                        <td *ngIf="isFeatureAvailable('followUpTime')">{{ followUp.followUpTime ? followUp.followUpTime : '-' }}</td>
                         <td> {{ followUp.followUpReason ? followUp.followUpReason : '-' }}</td>
                       </tr>
                     </ng-container>

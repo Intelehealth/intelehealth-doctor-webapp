@@ -2344,7 +2344,7 @@
                         </div>
                       </div>
                     </li>
-                    <!-- <li>
+                    <li *ngIf="isFeatureAvailable('followUpTime')">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpTime">
                           {{'Select time'| translate}}*
@@ -2357,7 +2357,7 @@
                           </ng-select>
                         </div>
                       </div>
-                    </li> -->
+                    </li>
                     <li>
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpReason">

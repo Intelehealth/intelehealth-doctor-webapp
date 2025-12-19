@@ -875,7 +875,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths:['*', '*', '*', '*', '*'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Follow-up Requested', style: 'tableHeader'}, (this.isFeatureAvailable('followUpType') ? {text: 'Type', style: 'tableHeader'} : []), {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
+                              [{text: 'Follow-up Requested', style: 'tableHeader'}, (this.isFeatureAvailable('followUpType') ? {text: 'Type', style: 'tableHeader'} : []), {text: 'Date', style: 'tableHeader'}, (this.isFeatureAvailable('followUpTime') ? {text: 'Time', style: 'tableHeader'} : []), {text: 'Reason', style: 'tableHeader'}],
                               ...this.getRecords('followUp')
                             ]
                           },
@@ -1065,9 +1065,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'followUp':
           if (this.followUp) {
             records.push([this.followUp.wantFollowUp, (this.isFeatureAvailable('followUpType') ? [this.followUp.followUpType ?? '-'] : []), this.followUp.followUpDate ? moment(this.followUp.followUpDate).format('DD MMM YYYY') : '-', 
-             this.followUp.followUpTime ?? '-', this.followUp.followUpReason ?? '-']);
+             (this.isFeatureAvailable('followUpTime') ? this.followUp.followUpTime ?? '-' : ''), this.followUp.followUpReason ?? '-']);
           } else {
-            records.push([{ text: 'No follow-up added', colSpan: this.isFeatureAvailable('followUpType') ? 5 : 4, alignment: 'center' }]);
+            records.push([{ text: 'No follow-up added', colSpan: (this.isFeatureAvailable('followUpType') ? 5 : this.isFeatureAvailable('followUpTime') ? 4 : 3), alignment: 'center' }]);
           }
           break;
       case 'cheifComplaint':

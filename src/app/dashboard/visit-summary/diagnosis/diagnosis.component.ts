@@ -217,7 +217,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
       followUpDate: new FormControl(null),
-      // followUpTime: new FormControl(null),
+      followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
       followUpType: new FormControl(null)
@@ -1143,15 +1143,19 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate: string, /* followUpTime: any, */ followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
+          let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
           if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
-            // const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            // followUpTime = time ? time : null;
-            followUpReason = (remark && remark !=="null") ? remark : null;
+            followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
+
+            // Only try to get Time if the feature is enabled
+            if (this.isFeatureAvailable('followUpTime')) {
+              const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+              followUpTime = time ? time : null;
+            }
 
             // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
@@ -1164,23 +1168,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp,
             followUpDate,
-            // followUpTime,
+            followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
           });
-
-          if (this.aillmtxFollowupComponent) {
-            this.aillmtxFollowupComponent.existingFollowUp = [{
-              present: true,
-              wantFollowUp,
-              followUpDate,
-              // followUpTime,
-              followUpReason,
-              uuid: obs.uuid,
-              followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
-            }];
-          }
         }
       });
     });
@@ -1192,7 +1184,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`; // Removed Time:${this.followUpForm.value.followUpTime}
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -1202,7 +1194,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            // followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
           });
@@ -1218,7 +1210,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            // followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -1238,7 +1230,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
-            // followUpTime : null,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -1248,7 +1240,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
               present: true,
               wantFollowUp: 'No',
               followUpDate : null,
-              // followUpTime : null,
+              followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
               followUpReason : null,
               followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
             });
@@ -1264,7 +1256,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, /* followUpTime: null, */ followUpReason: null, followUpType: null }
+      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
       this.followUpForm.patchValue(followUp);
       this.followUpDatetime = null;
       if (this.aillmtxFollowupComponent) {
@@ -1296,7 +1288,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: false,
             wantFollowUp: 'Yes',
             followUpDate: moment().add(daysToAdd, 'days').toDate(),
-            // followUpTime: '10:00 AM',
+            followUpTime: '10:00 AM',
             followUpReason: selectedFollowUp.reason_for_follow_up,
             followUpType: null
           });

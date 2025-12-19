@@ -634,7 +634,7 @@
           <th scope="col">{{'Follow Up Requested'|translate}}</th>
           <th scope="col" *ngIf="isFeatureAvailable('followUpType')">{{'Type'|translate}}</th>
           <th scope="col">{{'Date'|translate}}</th>
-          <!-- <th scope="col">{{'Time'| translate}}</th> -->
+          <th scope="col" *ngIf="isFeatureAvailable('followUpTime')">{{'Time'| translate}}</th>
           <th scope="col">{{'Reason'|translate}}</th>
           <th scope="col"></th>
         </tr>
@@ -642,10 +642,9 @@
       <tbody>
         <tr>
           <td>{{ followUpForm.value.wantFollowUp }}</td>
-          <td *ngIf="isFeatureAvailable('followUpType')">{{ (followUpForm.value.followUpType) ?
-            followUpForm.value.followUpType : '-' }}</td>
+          <td *ngIf="isFeatureAvailable('followUpType')">{{ (followUpForm.value.followUpType) ? followUpForm.value.followUpType : '-' }}</td>
           <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
-          <!-- <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td> -->
+          <td *ngIf="isFeatureAvailable('followUpTime')">{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
           <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
           <td class="pr-0 pt-0">
             <button type="button" class="float-right" mat-icon-button (click)="deleteFollowUp()"
@@ -725,7 +724,7 @@
             </div>
           </div>
         </li>
-        <!-- <li>
+        <li *ngIf="isFeatureAvailable('followUpTime')">
           <div class="row">
             <label for="follow-date" class="col-sm-3 col-form-label">{{'Select time'| translate}}*</label>
             <div class="col-sm-3">
@@ -735,7 +734,7 @@
               </ng-select>
             </div>
           </div>
-        </li> -->
+        </li>
         <li>
           <div class="row">
             <label for="follow-reason" class="col-sm-3 col-form-label">{{'Reason for follow-up'|translate}}</label>
