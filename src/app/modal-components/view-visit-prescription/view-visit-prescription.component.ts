@@ -67,6 +67,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   logoImageURL: string;
   vitals: VitalModel[] = [];
 
+  abhaAddress = "";
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
@@ -109,6 +111,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+            // check if abha address exists in visit attributes            
+            this.getAbhaAddress(visit.attributes);
             // check if abha number / abha address exists for this patient
             this.getAbhaDetails(patient)
             this.getVisitProvider(visit.encounters);
@@ -264,6 +268,19 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           }
         }
       });
+    });
+  }
+
+  /**
+  * Get abhaAddress from visit attributes
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  getAbhaAddress(attributes: VisitAttributeModel[]) {
+    attributes.forEach((attr: VisitAttributeModel) => {
+      if (attr.attributeType.display === 'ABHA_ADDRESS_ASSOCIATED') {
+        this.abhaAddress = attr.value;
+      }
     });
   }
 
@@ -1220,12 +1237,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         }
         break;
       case 'Abha Address':
-        let abhaAddress = this.getPatientIdentifier('Abha Address') ?? this.getPatientIdentifier('Abha Number');
-        if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
-          abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`
+        let strAbhaAddress = this.abhaAddress ? this.abhaAddress : (this.getPatientIdentifier('Abha Address') ?? this.getPatientIdentifier('Abha Number'));
+        if (strAbhaAddress && !strAbhaAddress.includes('@') && !strAbhaAddress.includes(environment.abhaAddressSuffix)) {
+          strAbhaAddress = `${strAbhaAddress}${environment.abhaAddressSuffix}`
         }
-        if (abhaAddress) {
-          fieldArray = [{ text: 'ABHA Address', style: 'subheader' }, `${abhaAddress}`];
+        if (strAbhaAddress) {
+          fieldArray = [{ text: 'ABHA Address', style: 'subheader' }, `${strAbhaAddress}`];
         }
         break;
       case 'Abha Number':
@@ -1243,7 +1260,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
    */
   getAbhaDetails(_patient: PatientModel): void {
     this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier;
-    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+    this.patient.person.abhaAddress = this.abhaAddress ? this.abhaAddress : (_patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier)
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
     const abhaAddress = this.patient?.person?.abhaAddress ?? abhaNumber;
     this.patient.person.abhaAddress = abhaAddress;
