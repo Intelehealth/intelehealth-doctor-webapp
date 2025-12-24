@@ -113,6 +113,30 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
+    console.log("payload for notification:",payload);
+    this.notifyApp(hwUuid, payload).subscribe();
+  }
+  /**
+  * Send cancel notification to health worker
+  * @returns {void}
+  */
+  notifyHwForCancelAppointment(appointment): void {
+    console.log("inside cancell notification");
+    const hwUuid = appointment?.hwUUID;
+    const openMRSID = appointment?.openMrsId;
+    const payload = {
+      title: `Appointment cancelled for ${appointment?.patientName || 'Patient'}`,
+      body: "Click notification to see!",
+      type: "cancel",
+      data: {
+        patientFirstName: appointment?.patientName ?? '',
+        patientUuid: appointment?.patientId,
+        patientOpenMrsId: openMRSID,
+        visitUuid: appointment?.visitUuid,
+        slotDateTime: appointment?.slotJsDate
+      }
+    }
+    console.log("payload===",payload);    
     this.notifyApp(hwUuid, payload).subscribe();
   }
 }

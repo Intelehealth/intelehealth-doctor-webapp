@@ -61,6 +61,14 @@ export class WebrtcService {
       }));
   }
 
+  startRecording(payload) {
+    return this.http.post(`${environment.webrtcTokenServerUrl}api/startRecording`, payload);
+  }
+
+  stopRecording(id: number, roomId: string) {
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`);
+  }
+
   async createRoomAndConnectCall({
     handleTrackSubscribed = this.handleTrackSubscribed.bind(this),
     handleTrackUnsubscribed = this.handleTrackUnsubscribed,
@@ -286,4 +294,10 @@ export class WebrtcService {
   noop() {
     console.log('Not Implemented.')
   }
+
+  autoStartRecording(payload){
+    console.log("calling auto egress recording api...");
+     return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
+  }
+
 }

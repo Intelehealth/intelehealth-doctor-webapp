@@ -16,7 +16,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./patient-visit-sections.component.scss']
 })
 export class PatientVisitSectionsComponent {
-  displayedColumns : string[] = ['id', 'name', 'order', 'updatedAt', 'is_enabled', 'sub_sections'];
+  displayedColumns : string[] = ['id', 'name', 'order', 'platform', 'updatedAt', 'is_enabled', 'sub_sections'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatTable) table: MatTable<any>;
 

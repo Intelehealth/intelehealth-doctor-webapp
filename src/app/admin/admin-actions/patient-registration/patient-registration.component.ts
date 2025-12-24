@@ -20,7 +20,7 @@ import { PatientRegValidationsComponent } from "src/app/modal-components/patient
   styleUrls: ['./patient-registration.component.scss']
 })
 export class PatientRegistrationComponent {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_mandatory', 'is_editable','is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_mandatory', 'is_editable','is_enabled'];
   tabList = ['Personal', 'Address', 'Other'];
   currentTabIndex = 0; 
   dataSource = new MatTableDataSource<any>();
@@ -40,12 +40,7 @@ export class PatientRegistrationComponent {
   sectionEnabled: boolean = false;
   allSectionData: any = {};
 
-  displayedRosterColumns: string[] = [
-    "serialNo",
-    "section",
-    "updatedAt",
-    "is_enabled",
-  ];
+  displayedRosterColumns: string[] = ["serialNo", "section", 'platform', "updatedAt", "is_enabled" ];
   tableData = [];
   rosterQuestionnaireId: number;
   rosterQuestionnairefeatures: any = {};

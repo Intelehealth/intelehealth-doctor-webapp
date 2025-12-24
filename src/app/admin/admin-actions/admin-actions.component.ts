@@ -36,8 +36,8 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
-      title: "Mobile App Languages",
-      desc: "Manage Mobile App Languages",
+      title: "Supported Languages",
+      desc: "Manage Mobile/Web App Languages",
       icon: "assets/svgs/mobile-app-lang.svg",
       path: "admin/actions/mobile-app-languages",
       isLocalPath: true
@@ -125,7 +125,21 @@ export class AdminActionsComponent implements OnInit {
       icon: "assets/svgs/patient_visit_dropdown.svg",
       path: "admin/actions/patient-visit-dropdown",
       isLocalPath: true
-    }
+    },
+    {
+      title:"Home Screen",
+      desc: "Home screen section",
+      icon: "assets/svgs/patient_visit_dropdown.svg",
+      path: "admin/actions/home-screen",
+      isLocalPath: true
+    },
+    {
+      title: "AI LLM",
+      desc: "Manage AI LLM functionality",
+      icon: "assets/svgs/webrtc.svg",
+      path: "admin/actions/ai-llm",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,

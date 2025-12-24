@@ -6,12 +6,13 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, EncounterProviderModel, MessageModel, RecordingResponse } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 
 @Component({
   selector: 'app-video-call',
@@ -46,12 +47,24 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   isAttachment = false;
   callStartedAt = null;
   changeDetForDuration: any = null;
+  callDurationDisplay = '00:00';
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   activeSpeakerIds: any = [];
   connecting = false;
   callEndTimeout = null;
+  endCall: boolean = false;
   patientRegFields: string[] = [];
+  recodingStarted = false;
+  tableId: number;
+  location: string;
+  videoBitrateTooLow: boolean = false;
+  videoBitrateCheckInterval: any;
+  lastVideoBytesSent = 0;
+  lastTimestamp = 0;
+  // isVideoRecordingEnabled: boolean;
+  callType: string;
+  isVideoRecordingEnabled: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -61,19 +74,21 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private cs: CoreService,
     private toastr: ToastrService,
     private webrtcSvc: WebrtcService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+     private analytics: AnalyticsService
   ) { }
 
   async ngOnInit() {
     this.patientRegFields = this.appConfigService.patientRegFields;
     this.room = this.data.patientId;
+    this.location = this.data.location;
 
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
-
+    this.callType = this.data.callType;
     if (this.data.initiator) this.initiator = this.data.initiator;
     this.socketSvc.initSocket();
     this.initSocketEvents();
@@ -81,9 +96,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.getMessages();
     }
     /**
-     * Don't remove this, required change detection for duration
+     * Update call duration every second
      */
-    this.changeDetForDuration = setInterval(() => { }, 1000);
+    this.changeDetForDuration = setInterval(() => {
+      this.updateCallDuration();
+    }, 1000);
     if (this.initiator === 'hw') {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;
@@ -96,6 +113,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     } else {
       this.startCall();
     }
+    // set flag for audio/video enable/disable
+
+    this.isVideoRecordingEnabled = this.appConfigService.ai_llm_recording_section
+
   }
 
   /**
@@ -130,9 +151,24 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async startCall() {
     if (!this.webrtcSvc.token) {
       await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
+
+        this.analytics.logEvent('generate-token_failed', 'engagement', 'call_button', 1,  {
+        doctorUserId: this.data?.connectToDrId,
+        doctorName: this.doctorName,
+        patientOpenMrsId: this.data.patientOpenMrsId,
+        hwName : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.display?.split(":")?.[0],
+        hwId : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER) && getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider ? getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER).provider?.uuid : null,
+        visitId: this.data?.visitId,
+        location:this.location,
+        callType: this.callType,
+        callDuration: this.callDuration,
+        error: err
+      });
+
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
+    console.log("this.webrtcSvc.token",this.webrtcSvc.token);
     if (!this.webrtcSvc.token) return;
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
@@ -161,7 +197,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   onHWIncomingCallConnect() {
-    this.connecting = false;
+setTimeout(() => this.connecting = false);
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
@@ -183,7 +219,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @param {boolean} val - Dialog result
   * @return {void}
   */
-  onCallConnect() {
+  async onCallConnect(event: any) {
     this.socketSvc.incomingCallData = {
       nurseId: this.nurseId,
       doctorName: this.doctorName,
@@ -192,8 +228,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       doctorId: this.data?.connectToDrId,
       appToken: this.webrtcSvc.appToken,
       socketId: this.socketSvc?.socket?.id,
-      initiator: this.initiator
+      initiator: this.initiator,
+      callType : this.callType
     };
+    this.analytics.logEvent('on-call-connect', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
@@ -204,8 +242,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
-        this.socketSvc.emitEvent('call_time_up', this.nurseId);
+      this.socketSvc.emitEvent('call_time_up', this.nurseId);
+      this.analytics.logEvent('call_time_up', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
         this.endCallInRoom();
+
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
       }
     }, ringingTimeout);
@@ -215,10 +255,53 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * Handle participant disconnect callback
   * @return {void}
   */
-  handleParticipantConnect() {
+  async handleParticipantConnect(): Promise<void> {
     this.callConnected = true;
     this.callStartedAt = moment();
+
+    if(this.callType === 'audio') {
+      this._localVideoOff = true;
+    }
+     this.videoBitrateCheckInterval = setInterval(() => {
+        this.checkLocalVideoBitrate();
+      }, 3000);
+
     this.socketSvc.emitEvent('call-connected', this.incomingData);
+    this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+    if(this.callType === 'video' && this.isVideoRecordingEnabled) {
+      await this.webrtcSvc.startRecording({
+        doctorName: this.doctorName,
+        roomId: this.room,
+        visitId: this.data?.visitId,
+        doctorId: this.data?.connectToDrId,
+        chwId: this.nurseId,
+        patientId: this.data?.patientId,
+        nurseName: this.hwName,
+        name: this.provider?.uuid,
+        location: this.location
+      })
+      .toPromise()
+      .then((res: RecordingResponse) => {
+        this.recodingStarted = true
+        this.tableId = res.recordingId
+        this.analytics.logEvent('call-recoding-started', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+      })
+      .catch(err => {
+      this.analytics.logEvent('call-recoding-error', 'engagement', 'call_button', 1, {
+        doctorUserId: this.data?.connectToDrId,
+        doctorName: this.doctorName,
+        patientOpenMrsId: this.data.patientOpenMrsId,
+        hwName : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.display?.split(":")?.[0],
+        hwId : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER) && getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider ? getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER).provider?.uuid : null,
+        visitId: this.data?.visitId,
+        location:this.location,
+        callType: this.callType,
+        callDuration: this.callDuration,
+        error: err
+      });
+      console.log("start recoding error", err)
+      });
+    }
   }
 
   /**
@@ -415,12 +498,16 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       if (data === 'app') {
         this.endCallInRoom();
         this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
+        this.analytics.logEvent('hw_call_reject', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+
       }
     });
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
       if (data === 'app') {
         this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
+
+         this.analytics.logEvent('hw_ended_call', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
       }
     });
 
@@ -449,32 +536,123 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  async checkLocalVideoBitrate(): Promise<void> {
+  const pc: RTCPeerConnection | undefined = (this.webrtcSvc.room as any)?.engine?.pcManager?.publisher?._pc;
+
+  const stats = await pc.getStats();
+
+  stats.forEach((report) => {
+    if (this.lastTimestamp === 0) {
+    this.lastTimestamp = report.timestamp;
+    this.lastVideoBytesSent = report.bytesSent;
+    return;
+    }
+    if (
+      report.type === 'outbound-rtp' &&
+      report.kind === 'video' &&
+      typeof report.bytesSent === 'number' &&
+      typeof report.timestamp === 'number'
+    ) {
+      if (this.lastTimestamp && this.lastVideoBytesSent) {
+        const timeDiffSec = (report.timestamp - this.lastTimestamp) / 1000;
+        const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
+        if (timeDiffSec > 0) {
+        const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
+        this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 600 kbps
+        }
+      }
+      this.lastTimestamp = report.timestamp;
+      this.lastVideoBytesSent = report.bytesSent;
+    }
+  });
+
+ if (this.videoBitrateTooLow && !this._localVideoOff) {
+      this.toastr.warning('Low bandwidth detected. switching to audio call');
+      this._localVideoOff = true;
+    } else {
+      this._localVideoOff = false;
+  }
+}
+
+  setFlag() {
+    this.endCall = true;
+  }
+
   /**
   * End call and disconnect from the room
   * @return {void}
   */
-  endCallInRoom() {
-    setTimeout(() => {
+  endCallInRoom(flag?) {
+    setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
+      if(this.recodingStarted && isFeaturePresent('webrtcRecording')) {
+        this.recodingStarted = false;
+        await this.webrtcSvc.stopRecording(this.tableId, this.room)
+          .toPromise()
+          .then(()=>{
+            this.analytics.logEvent('call-recoding-stopped', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+          })
+          .catch(err => {
+            this.analytics.logEvent('call-recoding-stopped-error', 'engagement', 'call_button', 1, {
+            doctorUserId: this.data?.connectToDrId,
+            doctorName: this.doctorName,
+            patientOpenMrsId: this.data.patientOpenMrsId,
+            hwName : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.display?.split(":")?.[0],
+            hwId : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER) && getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider ? getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER).provider?.uuid : null,
+            visitId: this.data?.visitId,
+            location:this.location,
+            callType: this.callType,
+            recordingId: this.tableId,
+            callDuration: this.callDuration,
+            error: err
+          });
+            console.log("stop recoding error", err)
+          });
+      }
     }, 0);
     this.webrtcSvc.token = '';
+    this.cleanupVideoElement('localVideo');
+    this.cleanupVideoElement('remoteVideo');
     this.webrtcSvc.handleDisconnect();
-    this.socketSvc.emitEvent("bye", {
-      ...this.incomingData,
-      nurseId: this.nurseId,
-      webapp: true,
-      initiator: this.initiator,
-    });
 
-    this.socketSvc.emitEvent("cancel_dr", {
-      ...this.incomingData,
-      nurseId: this.nurseId,
-      webapp: true,
-      initiator: this.initiator,
-    });
+    if (this.callDuration) {
 
+      this.socketSvc.emitEvent("bye", {
+        ...this.incomingData,
+        nurseId: this.nurseId,
+        webapp: true,
+        initiator: this.initiator,
+      });
+       this.analytics.logEvent('bye_by_dr', 'engagement', 'end_call_button', 1, this.buildAnalyticsEventPayload());
+    } else if(this.endCall) {
+
+      this.socketSvc.emitEvent("cancel_dr", {
+        ...this.incomingData,
+        nurseId: this.nurseId,
+        webapp: true,
+        initiator: this.initiator,
+      });
+
+    this.analytics.logEvent('cancel_by_dr', 'engagement', 'end_call_button', 1,  this.buildAnalyticsEventPayload());
+    } else if (this.callDuration === "" && !this.endCall && (flag === 'call_time_up')) {
+      this.socketSvc.emitEvent('call_time_up', this.nurseId);
+      this.analytics.logEvent('call_time_up', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+
+    }
+    clearInterval(this.videoBitrateCheckInterval);
+    this.lastVideoBytesSent = 0;
+    this.lastTimestamp = 0;
     this.close();
+  }
+
+  cleanupVideoElement(videoElementId: string) {
+    const videoEl = document.getElementById(videoElementId) as HTMLVideoElement;
+    if (videoEl && videoEl.srcObject instanceof MediaStream) {
+      videoEl.srcObject.getTracks().forEach(track => track.stop());
+      videoEl.srcObject = null;
+    }
   }
 
   /**
@@ -495,6 +673,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     const event = this._localAudioMute ? 'audioOff' : 'audioOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
+
+    this.analytics.logEvent('toggle_audio', 'engagement', 'audio_button', 1,  this.buildAnalyticsEventPayload());
+
   }
 
   /**
@@ -503,9 +684,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   */
   toggleVideo() {
     this._localVideoOff = this.webrtcSvc.toggleVideo();
-
     const event = this._localVideoOff ? 'videoOff' : 'videoOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
+
+    this.analytics.logEvent('toggle_video', 'engagement', 'video_button', 1,  this.buildAnalyticsEventPayload());
+
   }
 
   /**
@@ -524,6 +707,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.dialogRef.removePanelClass('minimized');
       this.dialogRef.updatePosition(null);
     }
+    this.analytics.logEvent('toggle_window', 'engagement', 'window_button', 1, this.buildAnalyticsEventPayload());
+
   }
 
   /**
@@ -531,13 +716,22 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {string} - Call duration
   */
   get callDuration() {
-    let duration: any;
-    if (this.callStartedAt) {
-      duration = moment.duration(moment().diff(this.callStartedAt))
-    }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    return this.callDurationDisplay;
   }
 
+    /**
+ * Update call duration display
+ * @return {void}
+ */
+  updateCallDuration() {
+    if (!this.callStartedAt) {
+      this.callDurationDisplay = '00:00';
+      return;
+    }
+    const duration = moment.duration(moment().diff(this.callStartedAt));
+    const [h, m, s] = [duration.hours(), duration.minutes(), duration.seconds()].map(n => String(n).padStart(2, '0'));
+    this.callDurationDisplay = h !== '00' ? `${h}:${m}:${s}` : `${m}:${s}`;
+  }
   /**
   * Check if attachement is pdf
   * @return {boolean} - True if pdf else false
@@ -578,7 +772,31 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.webrtcSvc.token = '';
   }
 
-  checkPatientRegField(fieldName: string): boolean{
+  checkPatientRegField(fieldName: string): boolean {
     return this.patientRegFields.indexOf(fieldName) !== -1;
   }
+
+  setDefaultImage(event: Event) {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = 'assets/svgs/dr-user.svg';
+  }
+
+  buildAnalyticsEventPayload() {
+
+  const providerData = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+
+  return {
+    doctorUserId: this.data?.connectToDrId,
+    doctorName: this.doctorName,
+    patientOpenMrsId: this.data?.patientOpenMrsId,
+    hwName: providerData?.display?.split(":")?.[0] || null,
+    hwId: providerData?.provider?.uuid || null,
+    visitId: this.data?.visitId,
+    location: this.location,
+    callType: this.callType,
+    recordingId: this.tableId,
+    callDuration: this.callDuration
+  };
+}
+
 }

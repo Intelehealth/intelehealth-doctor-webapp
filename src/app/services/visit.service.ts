@@ -2,11 +2,13 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
+import { visitTypes } from "src/config/constant";
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
+
 
   private baseURL = environment.baseURL;
   private baseURLMindmap = environment.mindmapURL;
@@ -119,7 +121,18 @@ export class VisitService {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
-
+  getDemarcation(enc) {
+    let isFollowUp = false;
+    const adlIntl = enc?.find?.(e => [e?.type?.name, e?.encounterType?.display].includes(visitTypes.ADULTINITIAL));
+    if (Array.isArray(adlIntl?.obs)) {
+      adlIntl?.obs.forEach(obs => {
+        const val = obs?.value_text || obs?.value;
+        if (!isFollowUp)
+          isFollowUp = val?.toLowerCase?.()?.includes?.("follow up");
+      });
+    }
+    return isFollowUp ? visitTypes.FOLLOW_UP : visitTypes.NEW;
+  }
   /**
   * Update visit attribute
   * @param {string} visitId - Visit uuid
@@ -229,19 +242,19 @@ export class VisitService {
   * @param {number} page - Page number
   * @return {Observable<any>}
   */
-  getCompletedVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
+  getCompletedVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
     return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
- /**
-  * Get follow up visits
-  * @param {string} speciality - Visit speciality
-  * @param {number} page - Page number
-  * @return {Observable<any>}
-  */
- getFollowUpVisits(speciality: string, page: number = 1, countOnly:boolean = false): Observable<any> {
-  return this.http.get(`${this.baseURLMindmap}/openmrs/getFollowUpVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
- }
+  /**
+   * Get follow up visits
+   * @param {string} speciality - Visit speciality
+   * @param {number} page - Page number
+   * @return {Observable<any>}
+   */
+  getFollowUpVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getFollowUpVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
+  }
 
   /**
   * Get ended visits
@@ -254,6 +267,22 @@ export class VisitService {
   }
 
   /**
+   * get InstructionRemarks of Medication
+   *  @return {Observable<any>}
+   */
+  getInstructionRemarks() : Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/instructionRemarkList`);
+  }
+
+  /**
+   * Add InstructionRemarks of Medication
+   *  @return {Observable<any>}
+   */
+   addInstructionRemarks(json: Object) : Observable<any>{
+    return this.http.post(`${this.baseURLMindmap}/instructionRemarks`, json);
+   }
+
+  /**
    * Post visit data to abdm
    * @param {any} json - Attribute payload
    * @return {Observable<any>}
@@ -261,5 +290,19 @@ export class VisitService {
   postVisitToABDM(json: any): Observable<any> {
     const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
+  }
+
+  formatMedicineDisplay(medicine: string, uuid?: string): object {
+    const splitMed = medicine?.split?.(':');
+    let med: any = {
+      drug: splitMed?.[0] ?? '-',
+      dose: splitMed?.[1] ?? '-'  ,
+      durationNo: splitMed?.[2] ?? '-',
+      durationUnit: splitMed?.[3] ?? '-',
+      instructRemark: splitMed?.[4] ?? '-',
+      frequency: splitMed?.[5] ?? '-'
+    };
+    if (uuid) med.uuid = uuid;
+    return med;
   }
 }

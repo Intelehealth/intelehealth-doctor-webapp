@@ -10,11 +10,11 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { conceptIds, doctorDetails, visitTypes } from 'src/config/constant';
-import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
+import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientRegistrationFieldsModel, PatientVisitSection, PersonAttributeModel, ProviderAttributeModel, ReferralModel, StandardMedicineModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -43,6 +43,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   spokenWithPatient: string = 'No';
   notes: ObsModel[] = [];
   medicines: MedicineModel[] = [];
+  standardMedicines: StandardMedicineModel[] = [];
   existingDiagnosis: DiagnosisModel[] = [];
   dignosisSecondary: any = {};
   advices: ObsModel[] = [];
@@ -75,6 +76,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   pvsConstant = VISIT_SECTIONS;
 
   sanitizedValue: SafeHtml;
+  recommendation: { uuid: string; value: any; };
+  brandName = environment.brandName === 'KCDO';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -140,7 +143,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
               this.checkIfFollowUpInstructionsPresent();
-              this.checkIfDiscussionSummaryPresent()
+              this.checkIfDiscussionSummaryPresent();
             }
             this.getCheckUpReason(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -275,21 +278,31 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
+
           if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
+
             this.dignosisSecondary = obsParse(obs.value)
           } else {
-            this.existingDiagnosis.push({
-              diagnosisName: obs.value.split(':')[0].trim(),
-              diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-              diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
-              uuid: obs.uuid
-            });
+            if (obs?.uuid)
+              this.existingDiagnosis.push(this.extractDiagnosisInfo(obs.value, obs.uuid));
           }
-          
         }
       });
     });
   }
+
+  extractDiagnosisInfo(value, uuid) {
+    const parts = value?.split?.('::') || [];
+    const diagnosisParts = parts?.[1]?.split?.(':') || [];
+    const typeStatusParts = diagnosisParts?.[1]?.split?.(' & ') || [];
+    
+    return {
+      diagnosisName: diagnosisParts?.[0]?.trim?.() || '',
+      diagnosisType: typeStatusParts?.[0]?.trim?.() || '',
+      diagnosisStatus: typeStatusParts?.[1]?.trim?.() || '',
+      uuid
+    };
+  };
 
   /**
   * Get notes for the visit
@@ -324,21 +337,26 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * Get medicines for the visit
   * @returns {void}
   */
-  checkIfMedicationPresent() {
+  checkIfMedicationPresent(): void {
     this.medicines = [];
+    this.standardMedicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':') && !this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
-            this.medicines.push({
-              drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
-              remark: obs.value?.split(':')[4],
-              frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : '',
-              uuid: obs.uuid
-            });
+          if (obs.value.includes(':')) {
+            if(this.appConfigService.patient_visit_summary?.standard_medication){
+              this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
+            } else {
+              this.medicines.push({
+                drug: obs.value?.split(':')[0],
+                strength: obs.value?.split(':')[1],
+                days: obs.value?.split(':')[2],
+                timing: obs.value?.split(':')[3],
+                remark: obs.value?.split(':')[4],
+                frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : '',
+                uuid: obs.uuid
+              });
+            }
           } else {
             this.additionalInstructions.push(obs);
           }
@@ -627,8 +645,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
     const checkUpReasonConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['check_up_reason'].key);
-    
+    const isValidSign = this.signature.value && await isValidBase64Image(this.signature.value);
     const vitalsConfig = this.pvsConfigs.find((v) => v.key === this.pvsConstant['vitals'].key); 
+    
+    let signatureValue = this.signature.value;
+    if (signatureValue.includes("amazonaws.com")) {
+        signatureValue = await this.toObjectUrl(`${this.signature.value}`);
+    }
+
     const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -691,88 +715,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   },
                   layout: 'noBorders'
                 },
-                // {
-                //   table: {
-                //     widths: ['100%'],
-                //     body: [
-                //       [
-                //         [
-                //           ...this.getPatientRegFieldsForPDF('Gender'),
-                //           ...this.getPatientRegFieldsForPDF('Age'),
-                //         ]
-                //       ]
-                //     ]
-                //   },
-                //   layout: {
-                //     vLineWidth: function (i, node) {
-                //       if (i === 0) {
-                //         return 1;
-                //       }
-                //       return 0;
-                //     },
-                //     hLineWidth: function (i, node) {
-                //       return 0;
-                //     },
-                //     vLineColor: function (i) {
-                //       return "lightgray";
-                //     },
-                //   }
-                // },
-                // {
-                //   table: {
-                //     widths: ['100%'],
-                //     body: [
-                //       [
-                //         [
-                //           ...this.getPatientRegFieldsForPDF('Address'),
-                //           ...this.getPatientRegFieldsForPDF('Occupation')
-                //         ]
-                //       ]
-                //     ]
-                //   },
-                //   layout: {
-                //     vLineWidth: function (i, node) {
-                //       if (i === 0) {
-                //         return 1;
-                //       }
-                //       return 0;
-                //     },
-                //     hLineWidth: function (i, node) {
-                //       return 0;
-                //     },
-                //     vLineColor: function (i) {
-                //       return "lightgray";
-                //     },
-                //   }
-                // },
-                // {
-                //   table: {
-                //     widths: ['100%'],
-                //     body: [
-                //       [ 
-                //         [ 
-                //           ...this.getPatientRegFieldsForPDF('National ID'),
-                //           ...this.getPatientRegFieldsForPDF('Phone Number'),
-                //           , {text: ' ', style: 'subheader'}, {text: ' '}
-                //         ]
-                //       ],
-                //     ]
-                //   },
-                //   layout: {
-                //     vLineWidth: function (i, node) {
-                //       if (i === 0) {
-                //         return 1;
-                //       }
-                //       return 0;
-                //     },
-                //     hLineWidth: function (i, node) {
-                //       return 0;
-                //     },
-                //     vLineColor: function (i) {
-                //       return "lightgray";
-                //     },
-                //   }
-                // }
               ],
               [
                 this.getPersonalInfo()
@@ -956,12 +898,20 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   alignment: 'right',
-                  stack: [
-                    { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
-                    { text: `${this.consultedDoctor?.typeOfProfession}`},
-                    { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
-                  ]
+
+                  stack: isValidSign
+                  ? [
+                      { image: `${this.signature.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0] },
+                      { text: `${this.consultedDoctor?.typeOfProfession}` },
+                      { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
+                    ]
+                  : [
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -40, 0, 0] },
+                      { text: `${this.consultedDoctor?.typeOfProfession}` },
+                      { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
+                    ]
+
                 },
                 '',
                 '',
@@ -1020,7 +970,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       if(section[0].sectionName === 'advice' && !this.isFeatureAvailable('advice')) return false;
       return true;
     });
-    console.log(pdfObj)
     pdfMake.createPdf(pdfObj).download(`e-prescription_${this.openMrsId || Date.now()}`);
   }
 
@@ -1033,24 +982,41 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     const records = [];
     switch (type) {
       case 'diagnosis':
-        if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
-          records.push([this.dignosisSecondary['diagnosis'],this.dignosisSecondary['type'],this.dignosisSecondary['tnm'],this.dignosisSecondary['otherStaging']]);
+        if(this.isFeatureAvailable('dp_diagnosis_secondary')){
+          const diagnosisRow = [
+            this.dignosisSecondary['diagnosis'] || "",
+            this.dignosisSecondary['type'] || "",
+            this.dignosisSecondary['tnm'] || "",
+            this.dignosisSecondary['otherStaging'] || ""
+          ];
+          records.push(diagnosisRow);
         } else if (this.existingDiagnosis.length) {
-          this.existingDiagnosis.forEach(d => {
-            records.push([d.diagnosisName, d.diagnosisType, d.diagnosisStatus]);
+          this.existingDiagnosis.forEach((d) => {
+            const row = [d.diagnosisName ?? '', d.diagnosisType ?? '', d.diagnosisStatus ?? ''];
+            records.push(row);
           });
         } else {
           records.push([{ text: 'No diagnosis added', colSpan: 3, alignment: 'center' }]);
         }
         break;
       case 'medication':
-        if (this.medicines.length) {
-          this.medicines.forEach(m => {
-            records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
-          });
+        if(this.appConfigService.patient_visit_summary?.standard_medication){
+          if (this.standardMedicines.length) {
+            this.standardMedicines.forEach(m => {
+              records.push([m.drug, m.dose, m.frequency, m.durationNo, m.durationUnit, m.instructRemark]);
+            });
+          } else {
+            records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
+          }
         } else {
-          records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
-        }
+          if (this.medicines.length) {
+            this.medicines.forEach(m => {
+              records.push([m.drug, m.strength, m.days, m.timing, m.frequency, m.remark]);
+            });
+          } else {
+            records.push([{ text: 'No medicines added', colSpan: 6, alignment: 'center' }]);
+          }
+        }        
         break;
       case 'additionalInstruction':
         if (this.additionalInstructions.length) {
@@ -1449,8 +1415,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   renderReferralSectionPDF() {
-    const referralFacility = isFeaturePresent('referralFacility', true)
-    const priorityOfReferral = isFeaturePresent('priorityOfReferral', true)
+    const referralFacility = this.isFeatureAvailable('referralFacility', true)
+    const priorityOfReferral = this.isFeatureAvailable('priorityOfReferral', true)
 
     if (this.appConfigService.patient_visit_summary?.dp_referral_secondary) {
       return {
@@ -1675,7 +1641,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto'],
           headerRows: 1,
           body: [
-            [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+            [{text: 'Drug name', style: 'tableHeader'}, {text: 'Dose', style: 'tableHeader'}, {text: 'Frequency', style: 'tableHeader'}, {text: 'Duration (number)', style: 'tableHeader'}, {text: 'Duration (units)', style: 'tableHeader'}, {text: 'Instruction(Remarks)', style: 'tableHeader'}],
             ...this.getRecords('medication')
           ]
         },

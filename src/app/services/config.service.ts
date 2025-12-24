@@ -65,6 +65,10 @@ export class ConfigService {
    * Publish config
    * @return {Observable<any>}
    */
+  publishConfig_logo(){
+   const url = `${this.baseURL}/config/publish`;
+    return this.http.post(url, null);
+  }
   publishConfig(): Observable<any> {
     const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
@@ -150,6 +154,7 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
+    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 
@@ -456,5 +461,101 @@ export class ConfigService {
   updatePatientVisitDropdown(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/dropdown/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
+  }
+
+  /**
+  * Get patient visit HomeScreen fields
+  * @return {Observable<any>}
+  */
+  getHomeScreenFields(): Observable<any> {
+    const url = `${this.baseURL}/home-screen/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update Patient visit homescreen enabled status
+   * @param {boolean} id - id of speciality
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateHomeScreenEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Update patient vital name
+   * @param {boolean} id - id of vital
+   * @param {any} lang - update vital name
+   * @return {Observable<any>}
+   */
+  updateHomeScreenName(id: number, lang: any): Observable<any> {
+    const url = `${this.baseURL}/home-screen/updateHomeScreenName/${id}`;
+    return this.http.put(url, { lang });
+  }
+  /**
+ * Get AI LLM
+ * @return {Observable<any>}
+ */
+  getAILLM(): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update AI LLM enabled status
+   * @param {boolean} id - id of vital
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateAILLMEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+  
+  /**
+   * @returns {Observable<any>}
+   */
+  getAILLMByKey(key: String): Observable<any> {
+    const url = `${this.baseURL}/ai-llm/getByKey/${key}`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Get AI LLM Recording
+   * @return {Observable<any>}
+   */
+  getAILLMRecording(): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-recording/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update AI LLM  recording enabled status
+   * @param {boolean} id - id of vital
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateAILLMRecordingEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-recording/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  } 
+
+  /**
+   * @returns {Observable<any>}
+   */
+  getAILLMRecordingByKey(key: String): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-recording/getByKey/${key}`;
+    return this.http.get(url);
+  }
+
+   /**
+   * Update language platform mobile/webapp/both
+   * @param {boolean} id - id of language
+   * @return {Observable<any>}
+   */
+  updatePlatform(id: number, platform: string): Observable<any> {
+    const url = `${this.baseURL}/language/updatePlatform/${id}`;
+    return this.http.put(url, {platform});
   }
 }

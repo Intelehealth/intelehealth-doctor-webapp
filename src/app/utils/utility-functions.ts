@@ -192,3 +192,40 @@ export function obsParse(obs: string, uuid: string = ""): object {
     return { uuid: uuid }
   }
 }
+
+export  function isValidBase64Image(base64String) {
+  try {
+    // Optional: Remove Data URI scheme if present
+    const cleaned = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+
+    // Step 1: Check if it's valid base64
+    if (!/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(cleaned)) {
+      return false;
+    }
+
+    // Step 2: Decode and check if it creates a valid image
+    const byteCharacters = atob(cleaned);
+    const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+
+    const blob = new Blob([byteArray]);
+
+    // Try to load it as an image
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+
+    return new Promise((resolve) => {
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(true);  // Valid image
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve(false);  // Not a valid image
+      };
+      img.src = url;
+    });
+  } catch (e) {
+    return Promise.resolve(false);
+  }
+}

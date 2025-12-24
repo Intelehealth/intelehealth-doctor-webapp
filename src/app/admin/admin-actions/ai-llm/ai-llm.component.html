@@ -1,0 +1,218 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-diagnosis.svg" alt="" height="44px"/>
+          <div>
+            <h6 class="mb-0">{{ "AI LLM" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "AI LLM" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [(ngModel)]="aiLlmfeatures.is_enabled" (change)="updateAILLMStatus($event.target.checked)"/>
+                <div class="state">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnAddMindmap">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="aiLlmDataSource" matTableResponsive>
+              <ng-container matColumnDef="serialNo">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Sr. No." | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ this.paginator?.pageIndex == 0 ? i + 1 : 1 + i + this.paginator?.pageIndex * this.paginator?.pageSize }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="section">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Section" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="priority-v d-flex flex-row align-items-center">
+                    {{ element.name }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Last Modified" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.updatedAt | date : "dd MMM, yyyy" }}
+                </td>
+              </ng-container> -->
+
+              <!-- <ng-container matColumnDef="is_enabled">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Active" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="tooltip-box">
+                    <div class="pretty p-switch p-fill">
+                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateAILLMEnabledStatus(element.id, $event.target.checked)" data-test-id="checkboxMindmapToggleStatus"/>
+                      <div class="state">
+                        <label></label>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container> -->
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedAILLMColumns.length">{{ "No data to display." | translate }}</td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedAILLMColumns"></tr>
+              <tr mat-row [ngClass]="!aiLlmfeatures.is_enabled ? 'text-greyout' : ''" *matRowDef="let row; columns: displayedAILLMColumns"></tr>
+            </table>
+          </div>
+
+          <mat-paginator #aiLlmPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"></mat-paginator>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">
+            {{ "Publish" | translate }}
+          </button>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-diagnosis.svg" alt="" height="44px" />
+          <div>
+            <h6 class="mb-0">{{ "AI/LLM Recordings" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "Recordings" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [(ngModel)]="aiLlmRecordingfeatures.is_enabled"
+                  (change)="updateAILLMRecordingStatus($event)" />
+                <div class="state"><label></label></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnAddMindmap">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="aiLlmRecordingDataSource" matTableResponsive>
+
+              <!-- Serial Number -->
+              <ng-container matColumnDef="serialNo">
+                <th mat-header-cell *matHeaderCellDef>{{ "Sr. No." | translate }}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ aiLlmRecordingPaginator?.pageIndex == 0 ? i + 1 : 1 + i + aiLlmRecordingPaginator?.pageIndex * aiLlmRecordingPaginator?.pageSize }}
+                </td>
+              </ng-container>
+
+              <!-- Section Name -->
+              <ng-container matColumnDef="sectionr">
+                <th mat-header-cell *matHeaderCellDef class="shift-sectionr">{{ "Section" | translate }}</th>
+                <td mat-cell *matCellDef="let element" class="shift-sectionr">
+                  <div class="priority-v d-flex flex-row align-items-center">{{ element.name }}</div>
+                </td>
+              </ng-container>
+
+              <!-- Last Updated -->
+              <!-- <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Last Modified" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.updatedAt | date : "dd MMM, yyyy" }}
+                </td>
+              </ng-container> -->
+
+              <!-- Active Switch -->
+              <!-- <ng-container matColumnDef="is_enabled">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Active" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="tooltip-box">
+                    <div class="pretty p-switch p-fill">
+                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateAILLMEnabledStatus(element.id, $event.target.checked)" data-test-id="checkboxMindmapToggleStatus"/>
+                      <div class="state">
+                        <label></label>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container> -->
+
+              <!-- Empty State -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedAILLMRecordingColumns.length">
+                  {{ "No data to display." | translate }}
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedAILLMRecordingColumns"></tr>
+              <tr mat-row [ngClass]="!aiLlmRecordingfeatures.is_enabled ? 'text-greyout' : ''"
+                *matRowDef="let row; columns: displayedAILLMRecordingColumns">
+              </tr>
+            </table>
+          </div>
+
+          <mat-paginator #aiLlmRecordingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Select page of periodic elements">
+          </mat-paginator>
+
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">
+            {{ "Publish" | translate }}
+          </button>
+        </div>
+        <div class="header-line"></div>
+        <div class="disclaimer-card" [ngClass]="!aiLlmfeatures.is_enabled ? 'text-greyout' : ''">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <img src="assets/svgs/alert-triangle.svg" alt="Warning" class="alert-icon" style="width: 30px; height: 30px;"/>
+          <span class="text-reminder">Disclaimer</span>
+          <ul class="disclaimer-list mt-2">
+            <li>
+              <strong>This AI Assistant is a clinical decision support tool intended to assist—not replace—the clinical judgment of qualified healthcare professionals.</strong>
+              It provides guidance based on available medical knowledge, standard clinical protocols, and structured symptom inputs. However, it may not account for all
+              patient-specific factors, comorbidities, recent evidence updates, or the full context of care. Its recommendations should be viewed as supportive—not
+              definitive—especially in complex cases.
+            </li>
+            <li>
+              This tool is designed to support frontline providers, including those working in <strong>low-resource or remote settings</strong>, 
+              by improving access to evidence-based care pathways. <strong>However, it does not substitute for the oversight, contextual knowledge, 
+              and experience of a licensed medical professional. Use of this tool must comply with all applicable national, regional, and facility-level 
+              clinical guidelines and health regulations.</strong> It is the responsibility of the user to validate that the tool’s output aligns with 
+              local protocols and scope-of-practice norms.
+            </li>
+            <li>
+              The AI model powering this assistant operates based on structured data and predefined algorithms. <strong>It does not "understand" 
+              clinical nuance in the way a human does, and it has no awareness of individual patient risk factors unless explicitly entered.</strong> 
+              Limitations include incomplete contextual reasoning and potential bias from training data.
+            </li>
+            <li>
+              This tool is <strong>not intended for emergency use</strong> or autonomous clinical decision-making. Final decisions must always be made by a human provider.
+              By using this assistant, you acknowledge and accept these limitations and agree to use it only as a supplementary aid in patient care.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
