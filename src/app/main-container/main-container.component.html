@@ -106,6 +106,33 @@
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu" data-test-id="notificationMenu">
                   <!-- menu items -->
+                  <button mat-menu-item (click)="toggleNotification()" data-test-id="btnToggleNotif">
+                    <mat-icon data-test-id="iconToggleNotif">
+                      {{ notificationEnabled ? 'notifications_off' : 'notifications_active' }}
+                    </mat-icon>
+                    <span data-test-id="txtToggleNotif">
+                      {{ notificationEnabled ? ('Turn Off Notifications' | translate) : ('Turn On Notifications' | translate) }}
+                    </span>
+                  </button>
+                  
+                  <button mat-menu-item (click)="snoozeNotification('30m')" *ngIf="notificationEnabled && !snoozed"
+                    data-test-id="btnSnooze30m">
+                    <mat-icon data-test-id="iconSnooze30m">snooze</mat-icon>
+                    <span data-test-id="txtSnooze30m">{{ 'Snooze for 30 minutes' | translate }}</span>
+                  </button>
+                  
+                  <button mat-menu-item (click)="snoozeNotification('1h')" *ngIf="notificationEnabled && !snoozed"
+                    data-test-id="btnSnooze1h">
+                    <mat-icon data-test-id="iconSnooze1h">snooze</mat-icon>
+                    <span data-test-id="txtSnooze1h">{{ 'Snooze for 1 hour' | translate }}</span>
+                  </button>
+                  
+                  <button mat-menu-item (click)="snoozeNotification('2h')" *ngIf="notificationEnabled && !snoozed"
+                    data-test-id="btnSnooze2h">
+                    <mat-icon data-test-id="iconSnooze2h">snooze</mat-icon>
+                    <span data-test-id="txtSnooze2h">{{ 'Snooze for 2 hours' | translate }}</span>
+                  </button>
+
                 </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
                   <img class="user-img mr-3" src="{{profilePic}}" alt="" data-test-id="imgUserProfile">
