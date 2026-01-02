@@ -8,14 +8,14 @@ export class NetworkInterceptor implements HttpInterceptor {
   constructor(private coreService: CoreService) { }
 
   intercept(_request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const request: any = _request.clone({
+    const request: HttpRequest<any> = _request.clone({
       withCredentials: true,
     })
 
     if (!navigator.onLine) {
       // if there is no internet, throw a HttpErrorResponse error
       // since an error is thrown, the function will terminate here
-      this.coreService.openNoInternetConnectionModal().subscribe((res: any) => {
+      this.coreService.openNoInternetConnectionModal().subscribe((res: boolean) => {
         if (res) {
           next.handle(request);
         }

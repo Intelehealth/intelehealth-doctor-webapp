@@ -1,17 +1,45 @@
-<div *ngIf="visitId && prescriptionVerified" class="col external-prescription-col">
-  <div class="row justify-content-center">
+<div
+  *ngIf="visitId && prescriptionVerified"
+  class="col external-prescription-col"
+  data-test-id="externalPrescriptionSection"
+>
+  <!-- Download Button Row -->
+  <div class="row justify-content-center" data-test-id="downloadButtonRow">
     <div class="text-center">
-      <button (click)="download()" type="button" class="blue-btn m-2" data-test-id="btnDownloadPrecription">
-        Download e-Prescription
+      <button
+        (click)="download()"
+        type="button"
+        class="blue-btn m-2"
+        data-test-id="btnDownloadPrescriptionOrVisitSummary"
+      >
+        Download e-{{ linkType==='visit-summary-verification' ? 'Visit Summary' : 'Prescription'}}
       </button>
     </div>
   </div>
-  <div class="row">
-    <page #prescription id="prescription" size="A4" class="external-prescription">
+
+  <!-- Prescription / Visit Summary Content -->
+  <div class="row" data-test-id="externalPrescriptionContent">
+    <page
+      #prescription
+      id="prescription"
+      size="A4"
+      class="external-prescription"
+      data-test-id="prescriptionPage"
+    >
+      <app-view-visit-summary
+        *ngIf="linkType==='visit-summary-verification'"
+        [isDownloadVisitSummary]="true"
+        [visitId]="visitId"
+        [download]="eventsSubject.asObservable()"
+        data-test-id="visitSummaryComponent"
+      ></app-view-visit-summary>
+
       <app-view-visit-prescription
+        *ngIf="linkType==='presctiption-verification'"
         [isDownloadPrescription]="true"
         [visitId]="visitId"
         [download]="eventsSubject.asObservable()"
+        data-test-id="prescriptionComponent"
       ></app-view-visit-prescription>
     </page>
   </div>

@@ -5,6 +5,8 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
+import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -14,15 +16,19 @@ import { doctorDetails, visitTypes } from 'src/config/constant';
 export class AppointmentDetailComponent implements OnInit {
 
   baseUrl: string = environment.baseURL;
+  patientRegFields: string[] = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
     private visitService: VisitService,
-    private translate:TranslateService) { }
+    private translate:TranslateService,
+    private appConfigService: AppConfigService
+  ) { }
 
   ngOnInit(): void {
+    this.patientRegFields = this.appConfigService.patientRegFields;
     if (this.data?.title == 'Appointment') {
-      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: any)=> {
+      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
         this.data.meta.visit_info = visit;
         let cdata = this.getCheifComplaint(visit);
         this.data.meta.cheif_complaint = cdata.complaint;
@@ -42,15 +48,21 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  close(val: any) {
+  /**
+  * Close modal
+  * @param {string|boolean} val - Dialog result
+  * @return {void}
+  */
+  close(val: string|boolean) {
     this.dialogRef.close(val);
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  checkIfDateOldThanOneDay(data: any) {
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
+  checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
     if(hours > 24) {
@@ -69,17 +81,22 @@ export class AppointmentDetailComponent implements OnInit {
     return `${this.translate.instant('Starts in')} ${hours} ${this.translate.instant('hrs')}`;
   }
 
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    let hwPhoneNo: any = '';
-    let prescriptionCreatedAt: any = '';
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {VisitModel} visit - Visit
+  * @return {{complaint: string[],hwPhoneNo: string, prescriptionCreatedAt: string }} - Object having Chief complaints array, HW phone number and prescription created time
+  */
+  getCheifComplaint(visit: VisitModel) {
+    let recent: string[] = [];
+    let hwPhoneNo: string = '';
+    let prescriptionCreatedAt: string = '';
 
     const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
+    encounters.forEach((encounter: EncounterModel) => {
       const display = encounter.display;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
-        obs.forEach((currentObs: any) => {
+        obs.forEach((currentObs: ObsModel) => {
           if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
@@ -92,7 +109,7 @@ export class AppointmentDetailComponent implements OnInit {
         });
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
-          providerAttribute.forEach((attribute: any) => {
+          providerAttribute.forEach((attribute: ProviderAttributeModel) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;
             }
@@ -106,7 +123,12 @@ export class AppointmentDetailComponent implements OnInit {
     return { complaint: recent, hwPhoneNo, prescriptionCreatedAt };
   }
 
-  checkVisitStatus(encounters: any) {
+  /**
+  * Check visit status
+  * @param {EncounterModel[]} encounters - Array of visit encounters
+  * @return {string} - Returns visit status
+  */
+  checkVisitStatus(encounters: EncounterModel[]) {
     if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
@@ -120,11 +142,21 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+  /**
+  * Returns the ecounter for a given encounter type
+  * @param {CustomEncounterModel[]} encounters - Array of visit encounters
+  * @return {CustomEncounterModel} - Ecounter for a given encounter type
+  */
+  checkIfEncounterExists(encounters: EncounterModel[], encounterType: string) {
+    return encounters.find(({ display = "" }) => display.includes(encounterType));
   }
 
-  checkPrescriptionCreatedAt(data: any) {
+  /**
+  * Returns the prescription created time
+  * @param {string} data - Timestamp
+  * @return {string} - Prescription created time
+  */
+  checkPrescriptionCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
@@ -134,6 +166,10 @@ export class AppointmentDetailComponent implements OnInit {
       return `${this.translate.instant('Prescription created')} ${minutes} ${this.translate.instant('minutes ago')}`;
     }
     return `${this.translate.instant('Prescription created')} ${hours} ${this.translate.instant('hrs ago')}`;
+  }
+
+  checkPatientRegField(fieldName): boolean{
+    return this.patientRegFields.indexOf(fieldName) !== -1;
   }
 
 }

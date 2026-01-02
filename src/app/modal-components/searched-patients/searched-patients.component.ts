@@ -1,6 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
+import { RecentVisitsApiResponseModel } from 'src/app/model/model';
 import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
@@ -8,26 +11,39 @@ import { VisitService } from 'src/app/services/visit.service';
   templateUrl: './searched-patients.component.html',
   styleUrls: ['./searched-patients.component.scss']
 })
-export class SearchedPatientsComponent implements OnInit {
+export class SearchedPatientsComponent {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<SearchedPatientsComponent>,
     private router: Router,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private toastr: ToastrService,
+    private translateService: TranslateService,
   ) { }
 
-  ngOnInit(): void {
-  }
-
-  close(val: any) {
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * View visit details
+  * @param {string} uuid - visit uuid
+  * @return {void}
+  */
   view(uuid: string) {
-    this.visitService.recentVisits(uuid).subscribe((response: any) => {
-      this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
-      this.close(true);
+    this.visitService.recentVisits(uuid).subscribe((response: RecentVisitsApiResponseModel) => {
+      if(response.results?.length > 0){
+        this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
+        this.close(true);
+      } else {
+        this.toastr.error(this.translateService.instant('Visit Not Found for this patient'), this.translateService.instant('Visit Not Found!'));
+      }
     });
   }
 }

@@ -1,51 +1,73 @@
-<div class="modal-nav">
-  <button mat-icon-button (click)="close(false)" data-test-id="btnClose">
-    <img src="assets/svgs/arrow-right-white.svg" alt="" />
+<div class="modal-nav" data-test-id="previewModalHeader">
+  <button
+    mat-icon-button
+    (click)="imgLink.click()"
+    class="modal-nav-btn"
+    data-test-id="btnDownloadPreview"
+  >
+    <img src="assets/svgs/download-white.svg" alt="download" />
   </button>
-  <button mat-icon-button (click)="imgLink.click()" data-test-id="btnDownload">
-    <img src="assets/svgs/download-white.svg" alt="" />
+  <button
+    mat-icon-button
+    (click)="close(false)"
+    class="modal-nav-btn"
+    data-test-id="btnClosePreview"
+  >
+    <img src="assets/svgs/icons8-close.svg" alt="close" />
   </button>
 </div>
-<mat-dialog-content>
+
+<mat-dialog-content data-test-id="previewModalContent">
   <div class="preview-con d-flex align-items-center justify-content-center">
     <div class="nav-icon">
-      <a
-        href="javascript:void(0)"
+      <button
+        mat-icon-button
         (click)="previous()"
         [hidden]="startIndex == min"
-        data-test-id="linkPrevious"
+        data-test-id="btnPreviousPreview"
+        class="modal-nav-btn"
       >
-        <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%" />
-      </a>
+        <img src="assets/svgs/back-white.png" alt="previous" />
+      </button>
     </div>
+
     <ng-container *ngIf="isPDF(imgUrl); else image">
-      <div class="pdf-con">
+      <div class="pdf-con" data-test-id="pdfViewerPreview">
         <pdf-viewer
           [src]="imgUrl"
           style="width: 100%; height: 500px"
         ></pdf-viewer>
       </div>
     </ng-container>
+
     <ng-template #image>
-      <div class="img-con">
+      <div class="img-con" data-test-id="imagePreview">
         <img
           [src]="imgUrl"
-          alt=""
+          alt="preview"
           height="100%"
           (error)="onImageError($event)"
         />
       </div>
     </ng-template>
+
     <div class="nav-icon">
-      <a
-        href="javascript:void(0)"
+      <button
+        mat-icon-button
         (click)="next()"
         [hidden]="startIndex == max"
-        data-test-id="linkNext"
+        data-test-id="btnNextPreview"
+        class="modal-nav-btn"
       >
-        <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
-      </a>
+        <img src="assets/svgs/forward-white.png" alt="next" />
+      </button>
     </div>
   </div>
-  <a [href]="imgUrl" download="image.png" #imgLink data-test-id="linkImage"></a>
+
+  <a
+    [href]="imgUrl"
+    download="image.png"
+    #imgLink
+    data-test-id="downloadLinkPreview"
+  ></a>
 </mat-dialog-content>

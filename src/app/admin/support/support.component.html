@@ -32,7 +32,7 @@
                           : filteredConversations
                       " (click)="conversationSelected(conversation)">
                       <div class="chat-item-con">
-                        <img src="{{ baseURL + '/personimage/' + conversation.personUuid }}" alt="" (error)="onImgError($event)" />
+                        <img src="{{ baseURL + '/personimage/' + conversation.personUuid }}" alt=""  />
                         <div>
                           <h6>
                             {{
@@ -53,7 +53,7 @@
               <div class="chat-main-con" *ngIf="selectedConversation; else noConversationSelected">
                 <div class="chat-con-title">
                   <div class="chat-item-info">
-                    <img src="{{ baseURL + '/personimage/' + selectedConversation.personUuid }}" alt="" (error)="onImgError($event)"/>
+                    <img src="{{ baseURL + '/personimage/' + selectedConversation.personUuid }}" alt="" />
                     <div class="title">
                       <h6 class="mb-0">
                         {{

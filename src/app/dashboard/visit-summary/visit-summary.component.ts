@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, ElementRef, ViewContainerRef, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -6,16 +6,17 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { MindmapService } from 'src/app/services/mindmap.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import doses from '../../core/data/dose';
+import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
-import { SocketService } from 'src/app/services/socket.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { LinkService } from 'src/app/services/link.service';
@@ -24,18 +25,22 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes } from 'src/config/constant';
-
-export const PICK_FORMATS = {
-  parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
-  display: {
-    dateInput: 'input',
-    monthYearLabel: { year: 'numeric', month: 'short' },
-    dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
-    monthYearA11yLabel: { year: 'numeric', month: 'long' }
-  }
-};
+import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
+import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
+import { AppConfigService } from 'src/app/services/app-config.service';
+import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { NgxRolesService } from 'ngx-permissions';
+// import diagnostics from '../../core/data/diagnostics';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FollowUpInstructionComponent } from './follow-up-instruction/follow-up-instruction.component';
+import { NotesComponent } from './notes/notes.component';
+import durationUnitList from 'src/app/core/data/durationUnitList';
+import instructionRemarks from 'src/app/core/data/instructionRemarks';
+import { keepOnlyPairedEvents } from 'src/app/utils/paired-events';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -56,205 +61,76 @@ class PickDateAdapter extends NativeDateAdapter {
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
   ]
 })
-export class VisitSummaryComponent implements OnInit, OnDestroy {
-
-  visit: any;
-  patient: any;
-  baseUrl: string = environment.baseURL;
-  visitAppointment: any;
+export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('visitNoteDiv') visitNoteDiv: ElementRef;
+  visit: VisitModel;
+  patient: PatientModel;
+  baseURL: string = environment.baseURL;
+  visitAppointment: string;
   visitStatus: string;
   providerName: string;
   hwPhoneNo: string;
   clinicName: string;
-  vitalObs: any = [];
-  cheifComplaints: any = [];
-  checkUpReasonData: any = [];
-  physicalExaminationData: any = [];
-  patientHistoryData: any = [];
-  conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';
-  conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
-  conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
-  conceptNote = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-  conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
-  conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
-  conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
-  conceptReferral = '605b6f15-8f7a-4c45-b06d-14165f6974be';
-  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
-  conceptDDx = 'bc48889e-b461-4e5e-98d1-31eb9dd6160e';
+  vitalObs: ObsModel[] = [];
+  cheifComplaints: string[] = [];
+  checkUpReasonData: PatientHistoryModel[] = [];
+  physicalExaminationData: PatientHistoryModel[] = [];
+  patientHistoryData: PatientHistoryModel[] = [];
 
-  baseURL = environment.baseURL;
-  additionalDocs: any = [];
-  eyeImages: any = [];
-  notes: any = [];
-  medicines: any = [];
-  existingDiagnosis: any = [];
-  advices: any = [];
-  additionalInstructions: any = [];
-  tests: any = [];
-  referrals: any = [];
-  pastVisits: any = [];
+  additionalDocs: DocImagesModel[] = [];
+  eyeImages: DocImagesModel[] = [];
+  medicines: MedicineModel[] = [];
+  standardMedicines: StandardMedicineModel[] = [];
+  existingDiagnosis: DiagnosisModel[] = [];
+  advices: ObsModel[] = [];
+  additionalInstructions: ObsModel;
+  tests: TestModel[] = [];
+  referrals: ReferralModel[] = [];
+  pastVisits: VisitModel[] = [];
   minDate = new Date();
   selectedTabIndex = 0;
-  facilities = [
-      { id : 1 , name : 'HSC'},
-      { id : 2 , name : 'PHC'},
-      { id : 3 , name : 'CHC'},
-      { id : 4 , name : 'SDH'},
-      { id : 5 , name : 'DH'},
-      { id : 6 , name : 'TH'},
-      { id : 7 , name : 'GH'},
-      { id : 8 , name : 'Private Hospital'},
-  ];
-  specializations: any[] = [
-    {
-      id: 1,
-      name: 'General Physician'
-    },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
-      id: 3,
-      name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
-    }
-  ];
-  refer_specializations = [
-      { id: 1, name : 'CHO'},
-      { id: 2, name : 'MO'},
-      { id: 3, name : 'General Physician'},
-      { id: 4, name : 'Obstetrician & Gynecologist'},
-      { id: 5, name : 'Pediatrician'},
-      { id: 6, name : 'General Surgeon'},
-      { id: 7, name : 'Dermatologist'},
-      { id: 8, name : 'ENT Specialist'},
-      { id: 9, name : 'Eye Specialist'},
-      { id: 10, name : 'Dental Surgeon'},
-  ];
+  facilities: DataItemModel[] = facility.facilities
+  specializations: SpecializationModel[] = [];
+  referSpecializations: DropdownItemModel[] = [];
+  refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
+  strengthList: DataItemModel[] = strength.strengthList
+  daysList: DataItemModel[] = days.daysList
+  timingList: DataItemModel[] = timing.timingList
+  durationUnitList: DataItemModel[] = durationUnitList;
+  instructionRemarks:DataItemModel[] =[]; 
+  timeList: string[] = [];
+  drugNameList: DataItemModel[] = [];
+  advicesList: string[] = [];
+  testsList: string[] = [];
 
-  refer_priorities = [
-    {id: 1, name: 'Elective'},
-    {id: 1, name: 'Urgent'}
-  ];
-
-  diagnosis: any[] = [];
-  strengthList: any[] = [
-    {
-      id: 1,
-      name: '5 Mg'
-    },
-    {
-      id: 2,
-      name: '10 Mg'
-    },
-    {
-      id: 3,
-      name: '50 Mg'
-    },
-    {
-      id: 4,
-      name: '75 Mg'
-    },
-    {
-      id: 5,
-      name: '100 Mg'
-    },
-    {
-      id: 6,
-      name: '500 Mg'
-    },
-    {
-      id: 7,
-      name: '1000 Mg'
-    }
-  ];
-  daysList: any[] = [
-    {
-      id: 1,
-      name: '7'
-    },
-    {
-      id: 2,
-      name: '14'
-    },
-    {
-      id: 3,
-      name: '20'
-    },
-    {
-      id: 4,
-      name: '25'
-    },
-    {
-      id: 5,
-      name: '30'
-    }
-  ];
-  timingList: any[] = [
-    {
-      id: 1,
-      name: '1 - 0 - 0'
-    },
-    {
-      id: 2,
-      name: '0 - 1 - 0'
-    },
-    {
-      id: 3,
-      name: '0 - 0 - 1'
-    },
-    {
-      id: 4,
-      name: '1 - 1 - 0'
-    },
-    {
-      id: 5,
-      name: '1 - 0 - 1'
-    },
-    {
-      id: 6,
-      name: '0 - 1 - 1'
-    },
-    {
-      id: 7,
-      name: '1 - 1 - 1'
-    }
-  ];
-  timeList: any = [];
-  drugNameList: any = [];
-  advicesList: any = [];
-  testsList: any = [];
-
-  visitEnded: any = false;
-  visitCompleted: any = false;
-  visitNotePresent: any = false;
+  visitEnded: EncounterModel | string;
+  visitCompleted: EncounterModel | boolean;
+  visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
   referSpecialityForm: FormGroup;
-  provider: any;
+  provider: ProviderModel;
   showAll = true;
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
-  addMoreNote = false;
   addMoreMedicine = false;
-  addMoreAdditionalInstruction = false;
   addMoreAdvice = false;
   addMoreTest = false;
   addMoreReferral = false;
   addMoreDiagnosis = false;
 
-  patientInteractionForm: FormGroup;
+  hwInteractionUuid: String;
+  patientInteractionUuid: String;
+  patientCallStatusForm: FormGroup;
   diagnosisForm: FormGroup;
-  addNoteForm: FormGroup;
   addMedicineForm: FormGroup;
-  addAdditionalInstructionForm: FormGroup;
+  addStandardMedicineForm: FormGroup;
+  additionalInstructionForm: FormGroup;
   addAdviceForm: FormGroup;
   addTestForm: FormGroup;
+  testForm: FormGroup;
   addReferralForm: FormGroup;
   followUpForm: FormGroup;
+  followUpDatetime: string;
 
   displayedColumns: string[] = ['action', 'created_on', 'consulted_by', 'cheif_complaint', 'summary', 'prescription', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
@@ -262,56 +138,275 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   diagnosisSubject: BehaviorSubject<any>;
   diagnosis$: Observable<any>;
   private dSearchSubject: Subject<string> = new Subject();
+  diagnosisValidated: boolean = false;
 
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
-  currentComplaint: any;
-  ddx: any;
-  ddxPresent: any = false;
+  currentComplaint: string;
 
   additionalNotes = '';
+  isCalling: boolean = false;
 
-  search = (text$: Observable<string>) =>
+  openChatFlag: boolean = false;
+
+
+  patientRegFields: string[] = [];
+  vitals: VitalModel[] = [];
+  diagnostics: DiagnosticModel[] = [];
+  patientVisitSummary: PatientVisitSummaryConfigModel;
+  pvsConfigs: PatientVisitSection[] = [];
+  pvsConstant = VISIT_SECTIONS;
+
+  hasChatEnabled: boolean = false;
+  hasVideoEnabled: boolean = false; 
+  hasWebRTCEnabled: boolean = false;
+  hasVitalsEnabled: boolean = false;
+  hasPatientAddressEnabled: boolean = false;
+  hasPatientOtherEnabled: boolean = false;
+  hasAILLMEnabled: boolean = false;
+
+  collapsed: boolean = false;
+  isMCCUser: boolean = false;
+  brandName = environment.brandName === 'KCDO';
+  diagnosticList;
+  sanitizedValue: SafeHtml;
+  changedFields: any;
+  editFormValues: boolean = false;
+  public changesMade: boolean = false;
+  public isCallInProgress: boolean = false;
+  callTimerInterval: Subscription;
+  callDuration: number = 0;
+  arrCallDurations: any[] = [];
+  callDurationTimeStamp: number;
+  callDurationsUuid: string;
+  selectedDiagnoses: string[] = [];
+
+  updatedObsData: any;
+  referralSecondaryForm: FormGroup;
+  diagnosisSecondaryForm: FormGroup;
+  discussionSummaryForm: FormGroup;
+  @ViewChild(FollowUpInstructionComponent) followUpInstructionComponentRef: FollowUpInstructionComponent;
+  @ViewChild('familyHistoryNote') familyHistoryNoteRef: NotesComponent;
+  @ViewChild('pastMedicalHistoryNote') pastMedicalHistoryNoteRef: NotesComponent;
+  @ViewChild('notes') notesRef: NotesComponent;
+  genderData: any = { "M": "Male", "F": "Female", "O": "Other" }
+  patientInteractionCommentForm: FormGroup
+  patientInteractionNotesForm: FormGroup
+  @ViewChild('lazyDDxContainer', { read: ViewContainerRef, static: false }) lazyLoadDDxContainer!: ViewContainerRef;
+  ddxCompRef: any;
+  furtherQuestionsList: string[] = [];
+
+  async lazyLoadDDx() {
+    setTimeout(async () => {
+      this.lazyLoadDDxContainer?.clear();
+      const { DiagnosisComponent } = await import(/* webpackChunkName: "diagnosis-aillm-ddx" */'./diagnosis/diagnosis.component');
+      this.ddxCompRef = this.lazyLoadDDxContainer.createComponent(DiagnosisComponent);
+      if (this.ddxCompRef) {
+        this.ddxCompRef.instance.visit = this.visit;
+        this.ddxCompRef.instance.patientInfo = this.patient;
+        this.ddxCompRef.instance.isMCCUser = this.isMCCUser;
+        this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
+        this.ddxCompRef.instance.visitEnded = this.visitEnded;
+        this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
+       this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+
+        this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
+          if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
+            this.SaveAIDiagosisHistory(this.visit,digData);
+          }
+        })
+
+        // Subscribe to diagnosis saved event
+        this.ddxCompRef.instance.diagnosisSaved.subscribe((diagnoses: any[]) => {
+          const lastDiagnosis = diagnoses[diagnoses.length - 1];
+          if(!lastDiagnosis?.diagnosisCode) {
+          let diagnosisName = lastDiagnosis?.diagnosisName;
+          if (diagnosisName?.includes('/')) {
+            const parts = diagnosisName.split('/');
+            diagnosisName = parts[0]; // Take the first part as name
+            }
+            this.diagnosisService.getAISnomedDiagnosisList(diagnosisName).subscribe({
+                next: (res) => {
+                  if (res && res.result?.conceptId) {
+                   diagnoses[diagnoses.length-1].diagnosisCode = res.result.conceptId;
+                  }
+                }
+              });
+            }
+          this.existingDiagnosis = [...diagnoses];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.diagnosis = diagnoses;
+            // Check if any diagnosis is AI-generated
+            const hasAiGeneratedDiagnosis = diagnoses.some(diagnosis => diagnosis.diagnosisAiGenerated);
+            if (hasAiGeneratedDiagnosis) {
+              this.checkChanges(this.updatedObsData);
+            }
+          }
+        });
+
+        // Subscribe to further questions event
+        this.ddxCompRef.instance.furtherQuestionsReceived.subscribe((questions: string[]) => {
+          if (questions && questions.length) {
+            this.furtherQuestionsList = [...questions];
+          }
+        });
+
+        // Subscribe to medication saved event
+        this.ddxCompRef.instance.medicationSaved.subscribe((medicines: any[]) => {
+          this.standardMedicines = [...medicines];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.standardMedicines = medicines;
+          }
+        });
+        // Subscribe to advice saved event
+        this.ddxCompRef.instance.adviceSaved.subscribe((advices: any[]) => {
+          this.advices = [...advices];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.advice = advices;
+          }
+        });
+        // Subscribe to test saved event
+        this.ddxCompRef.instance.testSaved.subscribe((tests: any[]) => {
+          this.tests = [...tests];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.tests = tests;
+          }
+        });
+        // Subscribe to referral saved event
+        this.ddxCompRef.instance.referralSaved.subscribe((referrals: any[]) => {
+          this.referrals = [...referrals];
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.referrals = referrals;
+          }
+        });
+        // Subscribe to follow-up saved event
+        this.ddxCompRef.instance.followUpSaved.subscribe((followUp: any) => {
+          if (this.followUpForm) {
+            this.followUpForm.patchValue(followUp);
+          }
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.followUp = followUp;
+          }
+        });
+      }
+    }, 1000);
+  }
+  isWhatsappCallWarningShown = false;
+
+  reasons = {
+    'Completed': [
+      { name: 'Call closed. No further action from TMH team' },
+      { name: 'To Repeat after Radiology/Pathology review (chargeable)' },
+      { name: 'To Send Protocol Letter (chargeable)' }
+    ],
+    'Reschedule/Repeat Internally': [
+      { name: 'Could not connect or Poor Network' },
+      { name: 'Other discipline doctor could not be available' },
+      { name: 'Patient to share Reports/ Scan Images/Video of Investigations' },
+      { name: 'Repeat call with another DMG/Discipline (Non Chargeable)' },
+      { name: 'Incomplete Visits' },
+      { name: 'No Prescription' }
+    ],
+    'Close Call without Completion': [
+      { name: 'Could not connect for attempts on 2 or more different days' },
+      { name: 'Patient Not willing' },
+      { name: 'Not found suitable for Tele-consult' },
+      { name: 'Patient already visited the hospital' }
+    ]
+  };
+
+  @ViewChild('reasonSelect', { static: false }) reasonSelectComponent: NgSelectComponent;
+  reasonsList: { name: string }[] = [];
+
+  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+
+  mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.advicesList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+      map(term => term.length < 1 ? [] : list.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
-  search2 = (text$: Observable<string>) =>
-    text$.pipe(
+  searchInstructionRemark = (text$: Observable<string>) => {
+    return text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    )
+      switchMap(term =>
+        term.length < 2 ? of([]) : this.getOptions(term)
+      )
+    );
+  } 
 
-  search3 = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
-    )
+  search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
+  search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
+  search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
+  search4 = (text$: Observable<string>) => this.mainSearch(text$, this.strengthList.map((val) => val.name));
+  search5 = (text$: Observable<string>) => this.mainSearch(text$, this.daysList.map((val) => val.name));
+  search6 = (text$: Observable<string>) => this.mainSearch(text$, this.timingList.map((val) => val.name));
+  search7 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
+  search8 = (text$: Observable<string>) => this.mainSearch(text$, this.durationUnitList.map((val) => val.name));
+  search9 = (text$: Observable<string>) => this.mainSearch(text$, instructionRemarks.map((val) => val.name));
 
-  search4 = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.strengthList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
-    )
+  // Add this property to the component class
+  obsData = {
+    notes: [],
+    familyHistoryNote: [],
+    pastMedicalHistoryNote: [], 
+    followUp: false,
+    followUpInstruction: false,  // Changed to boolean
+    diagnosis: [],
+    addMedicine: [],
+    addStandardMedicine: [],
+    additionalInstruction: null,
+    addAdvice: [],
+    addTests: [],
+    test: null,
+    addReferral: [],
+    discussionSummary: null,
+    patientCallStatus: null,
+    diagnosisSecondary: null,
+    referralSecondary: null,
+    patientInteractionComment: null,
+    hwInteraction: null,
+    patientInteraction: null,
+    medicine: []
+  };
 
-  search5 = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.daysList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
-    )
+  private _hwInteraction: string;
+  private _patientInteraction: string;
 
-  search6 = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.timingList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
-    )
+  get hwInteraction(): string {
+    return this._hwInteraction;
+  }
+
+  set hwInteraction(value: string) {
+    if (this._hwInteraction !== value) {
+      this._hwInteraction = value;
+      this.updatedObsData.hwInteraction = true;
+      this.checkChanges(this.updatedObsData);
+    }
+  }
+
+  get patientInteraction(): string {
+    return this._patientInteraction;
+  }
+
+  set patientInteraction(value: string) {
+    if (this._patientInteraction !== value) {
+      this._patientInteraction = value;
+      this.updatedObsData.patientInteraction = true;
+      this.checkChanges(this.updatedObsData);
+    }
+  }
+
+  eventLog: any[] = [];
+  eventLogAttributeUuid: string;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -324,28 +419,40 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private encounterService: EncounterService,
     private linkSvc: LinkService,
-    private socket: SocketService,
     private translateService: TranslateService,
-    private translationService: TranslationService) {
+    private translationService: TranslationService,
+    private visitSummaryService: VisitSummaryHelperService,
+    private mindmapService: MindmapService,
+    public appConfigService: AppConfigService,
+    private rolesService: NgxRolesService,
+    private sanitizer: DomSanitizer,
+    private analytics: AnalyticsService) {
+    Object.keys(this.appConfigService.patient_registration).forEach(obj => {
+      this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
+    });
+
+    this.vitals = [...this.appConfigService.patient_vitals];
+    this.diagnostics = this.appConfigService.patient_diagnostics_section ? [...this.appConfigService.patient_diagnostics] : [];
+    this.specializations = [...this.appConfigService.specialization];
+    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
+    this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
+
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
     });
 
-    this.patientInteractionForm = new FormGroup({
+    this.patientCallStatusForm = new FormGroup({
       uuid: new FormControl(null),
-      present: new FormControl(false, [Validators.required]),
-      spoken: new FormControl(null, [Validators.required])
+      reason: new FormControl(null, []),
+      callStatus: new FormControl(null, []),
     });
 
     this.diagnosisForm = new FormGroup({
       diagnosisName: new FormControl(null, Validators.required),
       diagnosisType: new FormControl(null, Validators.required),
-      diagnosisStatus: new FormControl(null, Validators.required)
-    });
-
-    this.addNoteForm = new FormGroup({
-      note: new FormControl(null, [Validators.required])
+      diagnosisStatus: new FormControl(null, Validators.required),
     });
 
     this.addMedicineForm = new FormGroup({
@@ -353,11 +460,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       strength: new FormControl(null, [Validators.required]),
       days: new FormControl(null, [Validators.required]),
       timing: new FormControl(null, [Validators.required]),
-      remark: new FormControl(null, [Validators.required])
+      frequency: new FormControl(null),
+      remark: new FormControl('', [])
     });
 
-    this.addAdditionalInstructionForm = new FormGroup({
-      note: new FormControl(null, [Validators.required])
+    this.addStandardMedicineForm = new FormGroup({
+      drug: new FormControl(null, [Validators.required]),
+      dose: new FormControl(null, [Validators.required]),
+      frequency: new FormControl(null),
+      durationNo: new FormControl(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
+      durationUnit: new FormControl(null, [Validators.required]),
+      instructRemark: new FormControl('', [])
+    });
+
+    this.additionalInstructionForm = new FormGroup({
+      uuid: new FormControl(null),
+      value: new FormControl(null, [Validators.required])
     });
 
     this.addAdviceForm = new FormGroup({
@@ -368,24 +486,81 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       test: new FormControl(null, [Validators.required])
     });
 
+    this.testForm = new FormGroup({
+      uuid: new FormControl(null),
+      test: new FormControl(null, [Validators.required])
+    });
+
     this.addReferralForm = new FormGroup({
-      facility: new FormControl(null, [Validators.required]),
+      facility: new FormControl(null, !this.isFeatureAvailable('referralFacility') ? [Validators.required] : []),
       speciality: new FormControl(null, [Validators.required]),
-      priority_refer: new FormControl('Elective', [Validators.required]),
+      priority_refer: new FormControl('Elective', !this.isFeatureAvailable('priorityOfReferral') ? [Validators.required] : []),
       reason: new FormControl(null)
     });
 
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
-      wantFollowUp: new FormControl('No', [Validators.required]),
+      wantFollowUp: new FormControl('', [Validators.required]),
       followUpDate: new FormControl(null),
       followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
-      uuid: new FormControl(null)
+      uuid: new FormControl(null),
+      followUpType: new FormControl(null)
+    });
+
+    this.referralSecondaryForm = new FormGroup({
+      uuid: new FormControl(null),
+      ref: new FormControl(null, [Validators.required])
+    })
+
+    this.diagnosisSecondaryForm = new FormGroup({
+      uuid: new FormControl(null),
+      diagnosis: new FormControl(null, [Validators.required]),
+      type: new FormControl(null),
+      tnm: new FormControl(null),
+      otherStaging: new FormControl(null)
+    })
+
+    this.discussionSummaryForm = new FormGroup({
+      uuid: new FormControl(null),
+      value: new FormControl(null, [Validators.required])
+    })
+
+    this.patientInteractionCommentForm = new FormGroup({
+      uuid: new FormControl(null),
+      value: new FormControl(null, [Validators.required])
+    })
+
+    this.patientInteractionNotesForm = new FormGroup({
+      uuid: new FormControl(null),
+      value: new FormControl(null)
     });
 
     this.diagnosisSubject = new BehaviorSubject<any[]>([]);
     this.diagnosis$ = this.diagnosisSubject.asObservable();
+
+    this.hasWebRTCEnabled = this.appConfigService?.webrtc_section;
+    this.hasChatEnabled = this.appConfigService?.webrtc?.chat;
+    this.hasVideoEnabled = this.appConfigService?.webrtc?.video_call;
+    this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
+    this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
+    this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
+    this.hasAILLMEnabled = this.appConfigService?.ai_llm_section;
+
+    if(!this.appConfigService.patient_diagnostics_section) {
+      this.appConfigService.patient_visit_sections = this.appConfigService.patient_visit_sections.filter((e: PatientVisitSection) => e.key !== 'diagnostics');
+    }
+    this.pvsConfigs = this.appConfigService.patient_visit_sections.filter(obj=>!["share_prescription","share_patient_visit_summary"].includes(obj.key));
+    this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
+  }
+
+  ngAfterViewInit(): void {
+    this.formControlValueChanges();
+    
+    setTimeout(()=>{
+      if(this.visitNoteDiv) autoGrowAllTextAreaZone(this.visitNoteDiv.nativeElement.querySelectorAll('textarea'));
+      this.trackFormChanges();
+    },2000)
   }
 
   ngOnInit(): void {
@@ -394,23 +569,73 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
     medicines.forEach(med => {
-      this.drugNameList.push({'id': med.id, 'name': this.translateService.instant(med.name)});
+      this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
     });
+    
+    // Reset changed fields and disable save as draft on page refresh
+    this.updatedObsData = {...this.obsData};
+    this.changesMade = false;
+    
     this.getVisit(id);
+    this.getInstructionRemarks();
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
   }
 
-  formControlValueChanges() {
-    this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
-      if (val) {
-        this.referSpecialityForm.get( doctorDetails.SPECIALIZATION).setValue(null);
+  /**
+   * Watch for changes in hwInteraction and patientInteraction
+   */
+  private watchInteractionChanges() {
+    // Create getters/setters for hwInteraction
+    let hwInteractionValue = this.hwInteraction;
+    Object.defineProperty(this, 'hwInteraction', {
+      get: function() { return hwInteractionValue; },
+      set: function(value) {
+        if (value !== hwInteractionValue) {
+          this.updatedObsData.hwInteraction = true;
+          this.checkChanges(this.updatedObsData);
+        }
+        hwInteractionValue = value;
       }
     });
 
-    this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
+    // Create getters/setters for patientInteraction  
+    let patientInteractionValue = this.patientInteraction;
+    Object.defineProperty(this, 'patientInteraction', {
+      get: function() { return patientInteractionValue; },
+      set: function(value) {
+        if (value !== patientInteractionValue) {
+          this.updatedObsData.patientInteraction = true;
+          this.checkChanges(this.updatedObsData);
+        }
+        patientInteractionValue = value;
+      }
+    });
+  }
+
+  checkOpenChatBoxFlag() {
+    if (this.openChatFlag && this.hasWebRTCEnabled && this.hasChatEnabled) {
+      setTimeout(() => {
+        this.startChat();
+      }, 1000);
+    }
+  }
+
+  /**
+  * Subscribe to the form control value changes observables
+  * @return {void}
+  */
+  formControlValueChanges(): void {
+   
+    this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
+      if (val) {
+        this.referSpecialityForm.get(doctorDetails.SPECIALIZATION).setValue(null);
+      }
+    });
+
+    this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: string) => {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
@@ -423,57 +648,75 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
-    this.followUpForm.get('followUpDate').valueChanges.subscribe((val: any) => {
+    this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
       if (val) {
-        this.timeList = this.getHours(false, val);
+        this.timeList = this.visitSummaryService.getHours(false, val);
       } else {
         this.timeList = [];
       }
     });
   }
 
-  getVisit(uuid: string) {
-    this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
+  /**
+  * Get visit
+  * @param {string} uuid - Visit uuid
+  * @return {void}
+  */
+  getVisit(uuid: string): void {
+    this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
+        setTimeout(()=>{
+          this.editFormValues = true;
+        },2000)
         this.visit = visit;
-        if (this.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
-          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'];
-        } else if (this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
-          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL)['encounterDatetime'];
+        this.visit.demarcation = this.visitDemarcation;
+        if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
+          this.visit['visitUploadTime'] = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED) ? this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'] : null;
+        } else if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
+          this.visit['visitUploadTime'] = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED) ? this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL)['encounterDatetime'] : null;
         }
         this.checkVisitStatus(visit.encounters);
-        this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: any) => {
+        this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
+
+            if (this.appConfigService.abha_section) {
+              // check if abha number / abha address exists for this patient
+              this.getAbhaDetails(patient)
+            }
             // check if visit note exists for this visit
-            this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
+            this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             // check if visit complete exists for this visit
-            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
-            // check if visit note provider and logged in provider are same
-            this.visitEnded = this.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
-            // check if visit note exists for this visit
-            this.ddxPresent = this.checkIfEncounterExists(visit.encounters, 'Differential Diagnosis');
-            // check if visit note provider and logged in provider are same
+            this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
+            // check if Patient Exit Survey exists for this visit
+            this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
-              this.visitNotePresent.encounterProviders.forEach((p: any) => {
+              this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
                 if (p.provider.uuid === this.provider.uuid) {
                   this.isVisitNoteProvider = true;
                 }
               });
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
-              this.checkIfNotePresent();
               this.checkIfMedicationPresent();
+              this.checkIfAdditionalInstructionPresent();
               this.getAdvicesList();
               this.checkIfAdvicePresent();
               this.getTestsList();
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.checkIfPatientCallDurationPresent(visit.attributes)
+              this.checkIfCallStatusPresent(visit.attributes)
+              this.checkIfDiscussionSummaryPresent();
+
+              if (isFeaturePresent('medicationFrequencyList')) this.getFrequencyList();
             }
-            this.getAdditionalNote(visit.attributes);
+            if (this.patientVisitSummary.notes_section) {
+              this.getAdditionalNote(visit.attributes);
+            }
             this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -481,43 +724,35 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getPhysicalExamination(visit.encounters);
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
-            this.getVisitAdditionalDocs(visit);
-            if (this.ddxPresent) {
-              if (this.username === 'doctorai') {
-                this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDDx).subscribe((response: any) => {
-                  response.results.forEach((obs: any) => {
-                    if (obs.encounter.visit.uuid === this.visit.uuid) {
-                      this.ddx = {
-                        maxCols: 1,
-                        data: []
-                      };
-                      let maxCol = 1;
-                      const rows = obs?.value.split('\n');
-                      rows.forEach(r => {
-                        const cols = r.split('|');
-                        if (cols.length > maxCol) { maxCol = cols.length; }
-                        this.ddx.data.push(cols);
-                      });
-                      this.ddx.maxCols = maxCol;
-                    }
-                  });
-                });
-              }
-            } else {
-              setTimeout(() => {
-                this.getDDx();
-              }, 1000);
+            if (this.patientVisitSummary.attachment_section) {
+              this.getVisitAdditionalDocs(visit);
+            }
+            // Load event log from visit attributes
+            const eventLogAttr = visit.attributes.find(attr => attr.attributeType.uuid === '98660a74-9f8b-41d5-b142-ed3f22684068');
+            if (eventLogAttr) {
+              this.eventLog = keepOnlyPairedEvents(JSON.parse(eventLogAttr.value || '[]'));
+              this.eventLogAttributeUuid = eventLogAttr.uuid;
+            }
+            if (environment.brandName === 'KCDO' && this.visit && this.visit.uuid && !this.visitNotePresent) {
+              this.logUserEvent('visit-summary open');
             }
           }
+          this.checkOpenChatBoxFlag();
+          if (this.hasAILLMEnabled) this.lazyLoadDDx();
         });
       }
-    }, (error: any) => {
+    }, (error) => {
       this.router.navigate(['/dashboard']);
     });
   }
 
-  getVisitProvider(encounters: any) {
-    encounters.forEach((encounter: any) => {
+  /**
+  * Get visit provider details
+  * @param {EncounterModel[]} encounters - Array of visit encounters
+  * @return {void}
+  */
+  getVisitProvider(encounters: EncounterModel[]): void {
+    encounters.forEach((encounter: EncounterModel) => {
       if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
         this.providerName = encounter.encounterProviders[0].provider.person.display;
         // store visit provider in local-Storage
@@ -533,18 +768,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAppointment(visitId: string) {
-    this.appointmentService.getAppointment(visitId).subscribe((res: any) => {
+  /**
+  * Get appointment for the given visit
+  * @param {string} visitId - Visit uuid
+  * @return {void}
+  */
+  getAppointment(visitId: string): void {
+    this.appointmentService.getAppointment(visitId).subscribe((res: ApiResponseModel) => {
       if (res) {
         this.visitAppointment = res?.data?.slotJsDate;
       }
     });
   }
 
-  getPatientIdentifier(identifierType: string) {
-    let identifier = '';
+  /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
+  getPatientIdentifier(identifierType: string): string {
+    let identifier: string = '';
     if (this.patient) {
-      this.patient.identifiers.forEach((idf: any) => {
+      this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
         if (idf.identifierType.display === identifierType) {
           identifier = idf.identifier;
         }
@@ -553,59 +798,90 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return identifier;
   }
 
-  getVitalObs(encounters: any) {
-    encounters.forEach((enc: any) => {
+  /**
+  * Get vital observations from the vital encounter
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
+  getVitalObs(encounters: EncounterModel[]): void {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.VITALS) {
         this.vitalObs = enc.obs;
       }
     });
   }
 
-  getObsValue(obsName: string) {
-    let val = null;
-    this.vitalObs.forEach((obs: any) => {
-      if (obs.concept.display === obsName) {
-        val = obs.value;
-      }
-    });
-    return val;
+  /**
+  * Get vital value for a given vital uuid
+  * @param {string} uuid - Vital uuid
+  * @return {any} - Obs value
+  */
+  getObsValue(uuid: string, key?: string): any {
+    const v = this.vitalObs.find(e => e.concept.uuid === uuid);
+    const value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
+    if (!value && key === 'bmi') {
+      return calculateBMI(this.vitals, this.vitalObs);
+    }
+    return value
   }
 
-  getCheckUpReason(encounters: any) {
+  /**
+  * Get chief complaints and patient visit reason/summary
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
+  getCheckUpReason(encounters: EncounterModel[]): void {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
-    encounters.forEach((enc: any) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: any) => {
+        enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
-            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
+            const currentComplaint = this.visitService.getData(obs)?.value.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
                 if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   this.cheifComplaints.push(obs1[0]);
                 }
-
                 const splitByBr = currentComplaint[i].split('<br/>');
                 if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                  const obj1: any = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = this.translateService.instant(visitTypes.ASSOCIATED_SYMPTOMS);
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
-                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1] });
+                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1].trim() });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
                 } else {
-                  const obj1: any = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
                       const splitByDash = splitByBr[k].split('-');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
+                      const processedStrings = splitByDash.slice(1, splitByDash.length).join('-').split(".").map(itemList => {
+                        let splitByHyphen = itemList.split(" - ");
+                        let value = splitByHyphen.pop() || "";
+                        // if(this.isValidUnitFormat(value)){
+                        //   if (this.checkTestUnitValues(diagnostics?.testUnits, value, splitByHyphen)) {
+                        //     value = `<span class="light-green">${value}</span>`;
+                        //   } else {
+                        //     value = `<span class="red-color">${value}</span>`;
+                        //   }
+                        // } else {
+                        //   if(this.checkTestNameValues(diagnostics?.testNames, value)) {
+                        //     value = `<span class="light-green">${value}</span>`;
+                        //   }
+                        // }
+                        splitByHyphen.push(value);
+                        return splitByHyphen.join(" - ");
+                      });
+                      const resultString = processedStrings.join(". ").trim();
+                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: resultString });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -618,19 +894,73 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPhysicalExamination(encounters: any) {
+  /**
+  * Validates the format of a unit string.
+  * @param {string} unit - The unit string.
+  * @return {boolean} - True if valid, false otherwise.
+  */
+  isValidUnitFormat(unit: string): boolean {
+    const unitRegex = /(?:^|\s)\d+(\.\d+)?\s*(g\/dL|%|million\/µL|mg\/dL|U\/L|seconds?|cells\/µL|\/µL|fL|pg\/cell|mL\/min\/1.73\s*m²|mEq\/L|ng\/mL)(?:\s|$)/i;
+    return unitRegex.test(unit);
+  }
+
+  /**
+  * Checks if the value and unit are valid for a diagnostic unit.
+  * @param {DiagnosticUnit[]} diagnosticsUnit - List of diagnostic units.
+  * @param {string} value - The value and unit to check.
+  * @param {string[]} valueArray - Additional values (last item is the test name).
+  * @return {boolean} - True if valid, false otherwise.
+  */
+  checkTestUnitValues(diagnosticsUnit: DiagnosticUnit[], value: string, valueArray: string[]): boolean {
+    const popValue = valueArray.slice(-1)[0];
+    let [unitCount, unitType] = value.split(" ");
+
+    for (let unit = 0; unit < diagnosticsUnit.length; unit++) {
+      if (diagnosticsUnit[unit]?.name?.toLowerCase() === popValue?.toLowerCase()) {
+        if (value.includes(diagnosticsUnit[unit]?.unit?.toLowerCase()) && (diagnosticsUnit[unit]?.unit?.length === unitType?.length)) {
+          if (Number(unitCount) >= diagnosticsUnit[unit].min && Number(unitCount) <= diagnosticsUnit[unit].max) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+  * Checks if a test name exists in the list of diagnostic names.
+  * @param {DiagnosticName[]} diagnosticsName - List of diagnostic names.
+  * @param {string} value - The test name to check.
+  * @return {boolean} - True if found, false otherwise.
+  */
+  checkTestNameValues(diagnosticsName: DiagnosticName[], value: string): boolean {
+    for (let name = 0; name < diagnosticsName.length; name++) {
+      if (diagnosticsName[name]?.testName?.toLowerCase() === value?.toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+  * Get physical examination details
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
+  getPhysicalExamination(encounters: EncounterModel[]): void {
     this.physicalExaminationData = [];
-    encounters.forEach((enc: any) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: any) => {
+        enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === 'PHYSICAL EXAMINATION') {
             const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
-
                 if (splitByBr[0].includes('Abdomen')) {
-                  const obj1: any = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -640,7 +970,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   }
                   this.physicalExaminationData.push(obj1);
                 } else {
-                  const obj1: any = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -659,14 +989,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getMedicalHistory(encounters: any) {
+  /**
+  * Get medical history details
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
+  getMedicalHistory(encounters: EncounterModel[]): void {
     this.patientHistoryData = [];
-    encounters.forEach((enc: any) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: any) => {
+        enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            const obj1: any = {};
+            const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
@@ -677,18 +1012,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             }
             this.patientHistoryData.push(obj1);
           }
-
           if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            const obj1: any = {};
+            const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
                 if (familyHistory[i].includes(':')) {
                   const splitByColon = familyHistory[i].split(':');
-                  const splitByComma = splitByColon[1].split(',');
-                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                  const splitByDot = splitByColon[1].trim().split("•");
+                  splitByDot.forEach((element: string) => {
+                    if (element.trim()) {
+                      const splitByComma = element.split(',');
+                      obj1.data.push({ key: splitByComma.shift().trim(), value: splitByComma.length ? splitByComma.toString().trim() : " " });
+                    }
+                  });
                 } else {
                   obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
                 }
@@ -701,47 +1040,74 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getEyeImages(visit: any) {
+  /**
+  * Get eye images
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
+  getEyeImages(visit: VisitModel): void {
     this.eyeImages = [];
-    this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
-      response.results.forEach((obs: any) => {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.eyeImages.push(data);
         }
       });
     });
   }
 
-  previewEyeImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => { });
+  /**
+  * Open eye images preview modal
+  * @param {number} index - Index
+  * @param {string} section - Section title
+  * @return {void}
+  */
+  previewEyeImages(index: number, section: string): void {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.getImagesBySection(section) }).subscribe((res) => { });
   }
 
-  getVisitAdditionalDocs(visit: any) {
+  /**
+  * Get additional docs
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
+  getVisitAdditionalDocs(visit: VisitModel): void {
     this.additionalDocs = [];
-    this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
-      response.results.forEach((obs: any) => {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.additionalDocs.push(data);
         }
       });
     });
   }
 
-  previewDocImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res: any) => { });
+  /**
+  * Open doc images preview modal
+  * @param {number} index - Index
+  * @return {void}
+  */
+  previewDocImages(index: number): void {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => { });
   }
 
-  onTabChange(event: number) {
+  /**
+  * Callback for tab changed event
+  * @param {number} event - Array of encounters
+  * @return {void}
+  */
+  onTabChange(event: number): void {
     this.selectedTabIndex = event;
   }
 
-  onImgError(event: any) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  getAge(birthdate: string) {
+  /**
+  * Get age of patient from birthdate
+  * @param {string} birthdate - Birthdate
+  * @return {string} - Age
+  */
+  getAge(birthdate: string): string {
     const years = moment().diff(birthdate, 'years');
     const months = moment().diff(birthdate, 'months');
     const days = moment().diff(birthdate, 'days');
@@ -754,10 +1120,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  getPersonAttributeValue(attrType: string) {
-    let val = this.translateService.instant('NA');
+  /**
+  * Get person attribute value for a given attribute type
+  * @param {str'} attrType - Person attribute type
+  * @return {any} - Value for a given attribute type
+  */
+  getPersonAttributeValue(attrType: string): any {
+    let val = 'NA';
     if (this.patient) {
-      this.patient.person.attributes.forEach((attr: any) => {
+      this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
         if (attrType === attr.attributeType.display) {
           val = attr.value;
         }
@@ -766,58 +1137,71 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return val;
   }
 
-  getWhatsAppLink() {
-    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(doctorDetails.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink(): string {
+    return this.visitService.getWhatsappLink(this.getPhoneNumber(), `Hello I'm calling for consultation`);
   }
 
-  replaceWithStar(str: string) {
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
+  replaceWithStar(str: string): string {
     const n = str.length;
     return str.replace(str.substring(0, n - 4), '*****');
   }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = '' }) => display.includes(visitType));
-  }
-
-  checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+  /**
+  * Check visit status
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
+  checkVisitStatus(encounters: EncounterModel[]): void {
+    if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
+    } else if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       this.visitStatus = visitTypes.COMPLETED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
+    } else if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
       this.visitStatus = visitTypes.IN_PROGRESS_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
-      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)['encounterDatetime'];
+    } else if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
+      this.visit['uploadTime'] = this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.FLAGGED) ? this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.FLAGGED)['encounterDatetime'] : null;
       this.visitStatus = visitTypes.PRIORITY_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
-      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL)['encounterDatetime'];
+    } else if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
+      this.visit['uploadTime'] = this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) ? this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL)['encounterDatetime'] : null;
       this.visitStatus = visitTypes.AWAITING_VISIT;
     }
   }
 
-  referSpecialist() {
+  /**
+  * Refer to specialist
+  * @return {void}
+  */
+  referSpecialist(): void {
     if (this.referSpecialityForm.invalid) {
-      this.toastr.warning(this.translateService.instant('Please select specialization'), this.translateService.instant('Invalid!'));
+      this.coreService.showToast("warning", 'Please select specialization', 'Invalid!', 'warning-select-specialization-toast');
+
       return;
     }
-
     if (this.visitNotePresent) {
-      this.toastr.warning(this.translateService.instant('Can\'t refer, visit note already exists for this visit!'), this.translateService.instant('Can\'t refer'));
+     this.coreService.showToast("warning", 'Can\'t refer, visit note already exists for this visit!', 'Can\'t refer', 'warning-visit-note-exists-toast');
       return;
     }
-
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Are you sure to re-assign this visit to another doctor?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' })
-      .afterClosed().subscribe((res: any) => {
+      .afterClosed().subscribe((res: boolean) => {
         if (res) {
-          const attr = this.checkIfAttributeExists(this.visit.attributes);
+          const attr = this.visitSummaryService.checkIfAttributeExists(this.visit.attributes);
           if (attr) {
-            this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: any) => {
+            this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
               if (result) {
                 this.updateEncounterForRefer();
               }
             });
           } else {
-            this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: any) => {
+            this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
               if (result) {
                 this.updateEncounterForRefer();
               }
@@ -827,7 +1211,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateEncounterForRefer() {
+  /**
+  * Refer visit to another speciality
+  * @return {void}
+  */
+  updateEncounterForRefer(): void {
     const timestamp = new Date(Date.now() - 30000);
     const patientUuid = this.visit.patient.uuid;
     const providerUuid = this.provider.uuid;
@@ -846,26 +1234,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
         this.router.navigate(['/dashboard']);
-        this.toastr.success(this.translateService.instant('Visit has been re-assigned to the another speciality doctor successfully.'), this.translateService.instant('Visit Re-assigned!'));
+        this.coreService.showToast('success','Visit has been re-assigned to the another speciality doctor successfully.','Visit Re-assigned!','visit-reassigned-toast');
       }
     });
   }
 
-  checkIfAttributeExists(attrs: any) {
-    let currentAttr;
-    attrs.forEach((attr: any) => {
-      if (attr.attributeType.display === 'Visit Speciality') {
-        currentAttr = attr;
-      }
-    });
-    return currentAttr;
-  }
-
-  startChat() {
+  /**
+  * Start chat with HW/patient
+  * @return {void}
+  */
+  startChat(): void {
     if (this.dialogRef1) {
       this.dialogRef1.close();
+      this.isCalling = false;
       return;
     }
+    this.isCalling = true;
     this.dialogRef1 = this.coreService.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -874,41 +1258,60 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
     });
 
-    this.dialogRef1.afterClosed().subscribe((res: any) => {
+    this.dialogRef1.afterClosed().subscribe((res) => {
       this.dialogRef1 = undefined;
+      this.isCalling = false;
     });
   }
 
-  startCall() {
+  /**
+  * Start video call with HW/patient
+  * @return {void}
+  */
+  startCall(callType:string): void {
     if (this.dialogRef2) {
       this.dialogRef2.close();
+      this.isCalling = false;
       return;
     }
+    this.analytics.logEvent('start_call', 'engagement', 'call_button', 1, {
+      doctorUserId: this.visitSummaryService.userId,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      hwName : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.display?.split(":")?.[0],
+      hwId : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER) && getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider ? getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER).provider?.uuid : null,
+      visitId: this.visit.uuid,
+      location:this.clinicName,
+      callType: callType
+    });
+    
+    this.isCalling = true;
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
-      connectToDrId: this.userId,
+      connectToDrId: this.visitSummaryService.userId,
       patientName: this.patient.person.display,
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr',
-      drPersonUuid: this.provider?.person.uuid
+      drPersonUuid: this.provider?.person.uuid,
+      patientAge: this.patient.person.age,
+      patientGender: this.patient.person.gender,
+      location:this.clinicName
     });
 
-    this.dialogRef2.afterClosed().subscribe((res: any) => {
+    this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
+      this.isCalling = false;
     });
   }
 
-  get userId() {
-    return getCacheData(true, doctorDetails.USER).uuid;
-  }
-
-  get username() {
-    return getCacheData(true, doctorDetails.USER).username;
-  }
-
-  checkIfDateOldThanOneDay(data: any) {
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
+  checkIfDateOldThanOneDay(data: string): string {
     const hours = moment().diff(moment(data), 'hours');
     const minutes = moment().diff(moment(data), 'minutes');
     if (hours > 24) {
@@ -921,7 +1324,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return `${hours} hrs ago`;
   }
 
-  startVisitNote() {
+  /**
+  * Start visit note
+  * @return {void}
+  */
+  startVisitNote(): void {
     const json = {
       patient: this.visit.patient.uuid,
       encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79', // Visit Note encounter
@@ -935,568 +1342,1010 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       encounterDatetime: new Date(Date.now() - 30000),
     };
     this.encounterService.postEncounter(json).subscribe((response) => {
-      if (response) {
+      this.visitNotePresent = response;
+      // save diagnosis from case summary
+      if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
+        let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
+        if(diagnosisData){
+          this.diagnosisSecondaryForm.patchValue({diagnosis:diagnosisData.value})
+          this.saveDiagnosisSecondary().subscribe(res=>{
+              this.getVisit(this.visit.uuid);
+          });
+        } else {
+          this.getVisit(this.visit.uuid);
+        }
+      } else {
         this.getVisit(this.visit.uuid);
       }
     });
   }
 
-
-  checkIfPatientInteractionPresent(attributes: any) {
-    attributes.forEach((attr: any) => {
+  /**
+  * Check if patient interaction visit attrubute present or not
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  checkIfPatientInteractionPresent(attributes: VisitAttributeModel[]): void {
+    attributes.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION) {
-        this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
+        this._patientInteraction = attr.value
+        this.patientInteractionUuid = attr.uuid
+      }
+      if (attr.attributeType.display === visitTypes.HW_INTERACTION) {
+        this._hwInteraction = attr.value
+        this.hwInteractionUuid = attr.uuid
+      }
+      if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION_COMMENT) {
+        this.patientInteractionCommentForm.patchValue(attr)
       }
     });
   }
 
-  getAdditionalNote(attributes: any) {
-    attributes.forEach((attr: any) => {
+  saveDDxNotes(): void {
+    if (this.patientInteractionNotesForm.value.uuid) {
+      this.encounterService.updateObs(this.patientInteractionNotesForm.value.uuid, {
+        concept: conceptIds.conceptNote,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.patientInteractionNotesForm.value.value,
+        encounter: this.visitNotePresent.uuid
+      }).subscribe({
+        next: (res: ObsModel) => {
+          this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          this.ddxCompRef.instance.saveDDxNotes();
+        }
+      });
+    } else {
+      this.encounterService.postObs({
+        concept: conceptIds.conceptNote,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.patientInteractionNotesForm.value.value,
+        encounter: this.visitNotePresent.uuid
+      }).subscribe({
+        next: (res: ObsModel) => {
+          this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          this.ddxCompRef.instance.saveDDxNotes();
+        }
+      });
+    }
+  }
+
+  /**
+  * Get additional notes from visit attributes
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  getAdditionalNote(attributes: VisitAttributeModel[]): void {
+    attributes.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === 'AdditionalNote') {
         this.additionalNotes = attr.value;
       }
     });
   }
 
+  /**
+  * Save HW interaction visit attribute
+  * @param {String} val - Array of visit attributes
+  * @returns {void}
+  */
+  saveHWInteraction(): Observable<any> {
+    if (this.hwInteraction == undefined) return of(false)
+    const payload = {
+      attributeType: visitAttributeTypes.HWInteraction,
+      value: this.hwInteraction
+    };
+    if (this.hwInteractionUuid)
+      return this.visitService.updateAttribute(this.visit.uuid, this.hwInteractionUuid, payload);
+    else
+      return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.hwInteractionUuid = res.uuid));
+  };
 
-  savePatientInteraction() {
-    if (this.patientInteractionForm.invalid || !this.isVisitNoteProvider) {
-      return;
+  /**
+  * Save patient interaction visit attribute
+  * @returns {void}
+  */
+  savePatientInteraction(): Observable<any> {
+    if (this.patientInteraction == undefined) return of(false)
+    const payload = {
+      attributeType: visitAttributeTypes.PatientInteraction,
+      value: this.patientInteraction
+    };
+    if (this.patientInteractionUuid)
+      return this.visitService.updateAttribute(this.visit.uuid, this.patientInteractionUuid, payload);
+    else
+      return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientInteractionUuid = res.uuid));
+  };
+
+  /**
+  * Save HW interaction visit attribute
+  * @param {String} val - Array of visit attributes
+  * @returns {void}
+  */
+  savePatientInteractionComment(): Observable<any> {
+    if (!this.isSubSectionEnabled("patient_interaction", 'Comment') || this.patientInteractionCommentForm.invalid || !this.patientInteractionCommentForm.value.value) return of(false)
+    const payload = {
+      attributeType: visitAttributeTypes.patientInteractionComment,
+      value: this.patientInteractionCommentForm.value.value
+    };
+    if (this.patientInteractionCommentForm.value.uuid)
+      return this.visitService.updateAttribute(this.visit.uuid, this.patientInteractionCommentForm.value.uuid, payload);
+    else
+      return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientInteractionCommentForm.patchValue({ uuid: res.uuid })));
+  };
+
+  /**
+  * Save patient interaction visit attribute
+  * @returns {void}
+  */
+  saveCallStatus(): Observable<any> {
+    if (this.patientCallStatusForm.valid) {
+      const payload = {
+        attributeType: visitAttributeTypes.callStatus,
+        value: `${obsStringify({ ...this.patientCallStatusForm.value })}`,
+      };
+      if (this.patientCallStatusForm.value.uuid)
+        return this.visitService.updateAttribute(this.visit.uuid, this.patientCallStatusForm.value.uuid, payload);
+      else
+        return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientCallStatusForm.patchValue({ uuid: res.uuid })));
+    } else {
+      return of(false)
     }
-    this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
-      .subscribe((res: any) => {
-        if (res) {
-          this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
-        }
-      });
-  }
+  };
 
-  deletePatientInteraction() {
-    this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe((res: any) => {
-      this.patientInteractionForm.patchValue({ present: false, spoken: null, uuid: null });
-    });
-  }
-
-  toggleDiagnosis() {
+  /**
+  * Toggle diagnosis add form, show/hide add more diagnosis button
+  * @returns {void}
+  */
+  toggleDiagnosis(): void {
     this.addMoreDiagnosis = !this.addMoreDiagnosis;
     this.diagnosisForm.reset();
   }
 
-  checkIfDiagnosisPresent() {
+  /**
+  * Get diagnosis for the visit
+  * @returns {void}
+  */
+  checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          this.existingDiagnosis.push({
-            diagnosisName: obs.value.split(':')[0].trim(),
-            diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
-            uuid: obs.uuid
-          });
+          if (obs.value.includes("}") && this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) {
+            this.diagnosisSecondaryForm.patchValue(obsParse(obs.value, obs.uuid))
+          } else {
+            if (obs.value.includes("}")) {
+              let obsData: any = obsParse(obs.value, obs.uuid)
+              this.existingDiagnosis.push({
+                diagnosisName: obsData.diagnosis,
+                diagnosisStatus: obsData.type,
+                uuid: obsData.uuid,
+              });
+            } else {
+              if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary)
+                this.diagnosisService.deleteObs(obs.uuid).subscribe()
+              else {
+                let obsValues = obs.value.split(':');
+                if (obs.value.includes("::")) {
+                  obsValues = obs.value.split("::").pop()?.split(":");
+                }
+                const obsValuesOne = obsValues?.[1]?.split('&');
+                this.existingDiagnosis.push({
+                  diagnosisName: obsValues?.[0]?.trim() ?? '',
+                  diagnosisType: obsValuesOne?.[0]?.trim() ?? '',
+                  diagnosisStatus: obsValuesOne?.[1]?.trim() ?? '',
+                  uuid: obs.uuid,
+                });
+              }
+            }
+          }
         }
       });
     });
   }
 
-  onKeyUp(event: any) {
+  /**
+  * Callback for key up event diagnosis input
+  * @returns {void}
+  */
+  onKeyUp(event: { term: string; }): void {
+    this.diagnosisForm.controls.diagnosisName.reset();
+    this.diagnosisValidated = false;
     this.dSearchSubject.next(event.term);
   }
 
-  searchDiagnosis(val: any) {
-    if (val) {
-      if (val.length >= 3) {
-        this.diagnosisService.getDiagnosisList(val).subscribe(response => {
-          if (response && response.length) {
+  /**
+   * Search diagnosis for a given value
+   * @param {string} val - search value
+   * @returns {void}
+   */
+  searchDiagnosis(val: string): void {
+    if (val && val.length >= 3) {
+      this.diagnosisService.getSnomedCTDiagnosisList(val).subscribe({
+        next: (response) => {
+          if (response.data && response.data.length) {
             const data = [];
-            response.forEach(element => {
+            response.data.forEach((element: { concept_name: any, snomedCTCode: any }) => {
               if (element) {
-                data.push({ name: element });
+                data.push({ name: element?.concept_name, snomedCTCode: element?.snomedCTCode });
               }
             });
             this.diagnosisSubject.next(data);
           } else {
-            this.diagnosisSubject.next([]);
+            if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
+              this.diagnosisService.getSnomedDiagnosisList(val).subscribe({
+                next: (res) => {
+                  if (res && res.result) {
+                    const data = res?.result.map((element: { term: string, conceptId: string }) => ({ name: element.term, conceptId: element?.conceptId }));
+                    this.diagnosisSubject.next(data);
+                  } else {
+                    this.diagnosisSubject.next([]);
+                  }
+                },
+                error: () => {
+                  this.diagnosisSubject.next([]);
+                }
+              });
+            } else {
+              this.diagnosisSubject.next([]);
+            }
           }
-        }, (error) => {
+        },
+        error: () => {
           this.diagnosisSubject.next([]);
-        });
-      }
-    }
-  }
-
-  saveDiagnosis() {
-    if (this.diagnosisForm.invalid || !this.isVisitNoteProvider) {
-      return;
-    }
-    this.encounterService.postObs({
-      concept: this.conceptDiagnosis,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: any) => {
-      if (res) {
-        this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
-        this.diagnosisForm.reset();
-      }
-    });
-  }
-
-  deleteDiagnosis(index: number, uuid: string) {
-    this.diagnosisService.deleteObs(uuid).subscribe((res: any) => {
-      this.existingDiagnosis.splice(index, 1);
-    });
-  }
-
-  toggleNote() {
-    this.addMoreNote = !this.addMoreNote;
-    this.addNoteForm.reset();
-  }
-
-  checkIfNotePresent() {
-    this.notes = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptNote).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
-          this.notes.push(obs);
         }
       });
-    });
+    }
+
+    // // Helper to process OpenMRS diagnosis response
+    // const processOpenMrsDiagnosis = (response: any) => {
+    //   if (response.results && response.results.length) {
+    //     const data = response.results
+    //       .filter((element: any) => element && element.conceptClass && element.conceptClass.uuid === conceptIds.conceptDiagnosisClass)
+    //       .map((element: any) => ({
+    //         name: element?.name?.display,
+    //         snomedId: element?.mappings?.[0],
+    //       }));
+    //     this.diagnosisSubject.next(data);
+    //   } else if (isFeaturePresent("snomedCtDiagnosis")) {
+    //     // If no results and SNOMED is enabled, fallback to SNOMED search
+    //     this.diagnosisService.getSnomedDiagnosisList(val).subscribe({
+    //       next: processSnomedDiagnosis,
+    //       error: () => this.diagnosisSubject.next([])
+    //     });
+    //   } else {
+    //     this.diagnosisSubject.next([]);
+    //   }
+    // };
+
+    // // Helper to process SNOMED diagnosis response
+    // const processSnomedDiagnosis = (res: any) => {
+    //   if (res && res.result) {
+    //     const data = res.result.map((element: { term: string, conceptId: string }) => ({
+    //       name: element.term,
+    //       conceptId: element.conceptId
+    //     }));
+    //     this.diagnosisSubject.next(data);
+    //   } else {
+    //     this.diagnosisSubject.next([]);
+    //   }
+    // };
+
+    // // Main OpenMRS diagnosis search
+    // this.diagnosisService.getDiagnosisList(val, isFeaturePresent("snomedCtDiagnosis") ? 'SNOMED' : 'ICD10').subscribe({
+    //   next: processOpenMrsDiagnosis,
+    //   error: () => this.diagnosisSubject.next([])
+    // });
   }
 
-  addNote() {
-    if (this.addNoteForm.invalid) {
-      this.toastr.warning(this.translateService.instant('Please enter note text to add'), this.translateService.instant('Invalid note'));
+  /**
+  * Save disgnosis for a given value
+  * @returns {void}
+  */
+  saveDiagnosis(): void {
+    if (this.diagnosisForm.invalid) {
+      return; 
+    }
+    if (this.existingDiagnosis.find(o => o.diagnosisName.toLocaleLowerCase() === this.diagnosisForm.value.diagnosisName.toLocaleLowerCase())) {
+    this.coreService.showToast("warning", 'Diagnosis Already Exist','Duplicate Diagnosis','warning-toast');
       return;
     }
-    if (this.notes.find((o: any) => o.value === this.addNoteForm.value.note)) {
-      this.toastr.warning(this.translateService.instant('Note already added, please add another note.'), this.translateService.instant('Already Added'));
-      return;
+
+    // Update updatedObsData and enable save as draft button
+    // this.updatedObsData.diagnosis = true;
+    // this.checkChanges(this.updatedObsData);
+
+    const diagnosisName = this.diagnosisForm.value.diagnosisName?.replace(/:/g, ' ');
+    this.existingDiagnosis.push({ ...this.diagnosisForm.value, diagnosisName: diagnosisName });
+    this.diagnosisForm.reset();
+
+    // this.encounterService.postObs({
+    //   concept: conceptIds.conceptDiagnosis,
+    //   person: this.visit.patient.uuid,
+    //   obsDatetime: new Date(),
+    //   value: `${this.diagnosisCode?.value ? this.diagnosisCode?.value : 'NA'}::${diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
+    //   encounter: this.visitNotePresent.uuid
+    // }).subscribe((res: ObsModel) => {
+    //   if (res) {
+
+    //   }
+    // });
+
+    // if (this.diagnosisForm?.value?.isSnomed && isFeaturePresent("snomedCtDiagnosis")) {
+    //   this.diagnosisService.addSnomedDiagnosis(this.diagnosisForm.value.diagnosisName, this.diagnosisForm.value.diagnosisCode)
+    //     .subscribe({
+    //       next: (res) => {
+    //         if (res) {
+    //           this.diagnosisForm.reset();
+    //         }
+    //       }
+    //   });
+    // }
+  }
+
+  get diagnosisCode(): AbstractControl | null {
+    return this.diagnosisForm.get('diagnosisCode');
+  }
+
+  onDiagnosisChange(event: any): void {
+    this.diagnosisValidated = true;
+    if (this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
+      if (event.conceptId) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.addControl('isSnomed', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.conceptId });
+        this.diagnosisForm.patchValue({ isSnomed: true });
+      }
+      else if (event.snomedId) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.snomedId?.display.split(': ')[1] });
+      }
+      else if (event.snomedCTCode) {
+        this.diagnosisForm.addControl('diagnosisCode', new FormControl(null));
+        this.diagnosisForm.addControl('isSnomed', new FormControl(null));
+        this.diagnosisForm.patchValue({ diagnosisCode: event.snomedCTCode });
+        this.diagnosisForm.patchValue({ isSnomed: true });
+      }
     }
-    this.encounterService.postObs({
-      concept: this.conceptNote,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addNoteForm.value.note,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: any) => {
-      this.notes.push({ uuid: res.uuid, value: this.addNoteForm.value.note });
-      this.addNoteForm.reset();
-    });
   }
 
-  deleteNote(index: number, uuid: string) {
-    this.diagnosisService.deleteObs(uuid).subscribe((res: any) => {
-      this.notes.splice(index, 1);
-    });
+  /**
+  * Delete disgnosis for a given index and uuid
+  * @param {number} index - Index
+  * @param {string} uuid - Diagnosis obs uuid
+  * @returns {void}
+  */
+  deleteDiagnosis(index: number, uuid: string): void {
+    if (uuid) {
+      this.diagnosisService.deleteObs(uuid).subscribe(() => {
+        this.existingDiagnosis.splice(index, 1);
+      });
+    } else {
+      this.existingDiagnosis.splice(index, 1);
+    }
   }
 
-  toggleMedicine() {
+  /**
+  * Toggle medicine add form, show/hide add more medicine button
+  * @returns {void}
+  */
+  toggleMedicine(): void {
     this.addMoreMedicine = !this.addMoreMedicine;
     this.addMedicineForm.reset();
   }
 
-  toggleAdditionalInstruction() {
-    this.addMoreAdditionalInstruction = !this.addMoreAdditionalInstruction;
-    this.addAdditionalInstructionForm.reset();
-  }
-
-  checkIfMedicationPresent() {
+  /**
+  * Get medicines for the visit
+  * @returns {void}
+  */
+  checkIfMedicationPresent(): void {
     this.medicines = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptMed).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+    this.standardMedicines = [];
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':')) {
+          if(this.appConfigService.patient_visit_summary?.standard_medication){
+            this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
+          } else {
             this.medicines.push({
               drug: obs.value?.split(':')[0],
               strength: obs.value?.split(':')[1],
               days: obs.value?.split(':')[2],
               timing: obs.value?.split(':')[3],
               remark: obs.value?.split(':')[4],
+              frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : "",
               uuid: obs.uuid
             });
-          } else {
-            this.additionalInstructions.push(obs);
           }
         }
       });
     });
   }
 
-  addMedicine() {
+  /**
+  * Save medicine
+  * @returns {void}
+  */
+  addMedicine(): void {
     if (this.addMedicineForm.invalid) {
       return;
     }
-    if (this.medicines.find((o: any) => o.drug === this.addMedicineForm.value.drug)) {
-      this.toastr.warning(this.translateService.instant('Drug already added, please add another drug.'), this.translateService.instant('Already Added'));
+    if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
+      this.coreService.showToast("warning", 'Drug already added, please add another drug.','Already Added','warning-toast');
       return;
-    }
-    this.encounterService.postObs({
-      concept: this.conceptMed,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.addMedicineForm.value.drug}:${this.addMedicineForm.value.strength}:${this.addMedicineForm.value.days}:${this.addMedicineForm.value.timing}:${this.addMedicineForm.value.remark}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe(response => {
-      this.medicines.push({ ...this.addMedicineForm.value, uuid: response.uuid });
-      this.addMedicineForm.reset();
-    });
+    }    
+    this.medicines.push({ ...this.addMedicineForm.value});
+    this.addMedicineForm.reset();
   }
 
-  addAdditionalInstruction() {
-    if (this.addAdditionalInstructionForm.invalid) {
+  /**
+  * Save medicine
+  * @returns {void}
+  */
+  addStandardMedicine(): void {
+    if (this.addStandardMedicineForm.invalid) {
       return;
     }
-    if (this.additionalInstructions.find((o: any) => o.value === this.addAdditionalInstructionForm.value.note)) {
-      this.toastr.warning(this.translateService.instant('Additional instruction already added, please add another instruction.'), this.translateService.instant('Already Added'));
+    if (this.standardMedicines.find((o: StandardMedicineModel) => o.drug === this.addStandardMedicineForm.value.drug)) {
+      this.coreService.showToast("warning",'Drug already added, please add another drug.','Already Added','addmedicine-warning-toast');
       return;
-    }
-    this.encounterService.postObs({
-      concept: this.conceptMed,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addAdditionalInstructionForm.value.note,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe(response => {
-      this.additionalInstructions.push({ uuid: response.uuid, value: this.addAdditionalInstructionForm.value.note });
-      this.addAdditionalInstructionForm.reset();
-    });
+    }    
+    this.standardMedicines.push({ ...this.addStandardMedicineForm.value});
+    this.addStandardMedicineForm.reset();
   }
 
-  deleteMedicine(index: number, uuid: string) {
+  /**
+  * Save additional instruction
+  * @returns {void}
+  */
+  saveAdditionalInstruction(): Observable<any> {
+    if (this.additionalInstructionForm.value.uuid) {
+      if (this.additionalInstructionForm.valid)
+        return this.encounterService.updateObs(this.additionalInstructionForm.value.uuid, {
+          value: this.additionalInstructionForm.value.value
+        })
+      else
+        return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
+    } else if (this.additionalInstructionForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptAdvice,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.additionalInstructionForm.value.value,
+        encounter: this.visitNotePresent.uuid
+      }).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: response.uuid })));
+    } else {
+      return of(false)
+    }
+  }
+
+  /**
+  * Delete medicine for a given index and uuid
+  * @param {number} index - Index
+  * @param {string} uuid - Medicine obs uuid
+  * @returns {void}
+  */
+  deleteMedicine(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
-      this.medicines.splice(index, 1);
+      if(this.appConfigService?.patient_visit_summary?.standard_medication){
+        this.standardMedicines.splice(index, 1);
+      } else {
+       this.medicines.splice(index, 1);
+      }
     });
   }
 
-  deleteAdditionalInstruction(index: number, uuid: string) {
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.additionalInstructions.splice(index, 1);
-    });
-  }
-
-  getAdvicesList() {
+  /**
+  * Get advices list
+  * @returns {void}
+  */
+  getAdvicesList(): void {
     const adviceUuid = '0308000d-77a2-46e0-a6fa-a8c1dcbc3141';
     this.diagnosisService.concept(adviceUuid).subscribe(res => {
       const result = res.answers;
-      result.forEach(ans => {
-        this.advicesList.push(this.translationService.getDropdownTranslation('advice', ans.display));
+      result.forEach((ans: { display: string; }) => {
+        this.advicesList.push(ans.display);
       });
     });
   }
 
-  toggleAdvice() {
+  /**
+  * Get frequency list
+  * @returns {void}
+  */
+  getFrequencyList(): void {
+    this.diagnosisService.concept(conceptIds.conceptFrequencyList).subscribe(res => {
+      const result = res.answers;
+      this.frequencyList = [];
+      result.forEach((ans: { display: string; }) => {
+        this.frequencyList.push(ans.display);
+      });
+    });
+  }
+
+  /**
+  * Toggle advice add form, show/hide add more advice button
+  * @returns {void}
+  */
+  toggleAdvice(): void {
     this.addMoreAdvice = !this.addMoreAdvice;
     this.addAdviceForm.reset();
   }
 
-  checkIfAdvicePresent() {
-    this.advices = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAdvice)
-      .subscribe((response: any) => {
-        response.results.forEach((obs: any) => {
+  /**
+  * Get additional instructions for the visit
+  * @returns {void}
+  */
+  checkIfAdditionalInstructionPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            if (!obs.value.includes('</a>')) {
-              this.advices.push(obs);
+        
+            if (this.additionalInstructionForm && !obs.value.includes('</a>')) {
+            
+              if (!obs.value.includes(':') || obs.value.split(':').length < 3) {
+              
+                if (!this.advicesList.includes(obs.value)) {
+                  this.additionalInstructions = obs;
+                  if (this.additionalInstructionForm) {
+                    this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
+                  }
+                }
+              }
             }
           }
         });
       });
   }
 
-  addAdvice() {
+  /**
+  * Get advices for the visit
+  * @returns {void}
+  */
+  checkIfAdvicePresent(): void {
+    this.advices = [];
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            if (!obs.value.includes('</a>')) {
+              // Exclude additional instructions from advices list
+              if (!this.additionalInstructions || this.additionalInstructions.uuid !== obs.uuid) {
+                this.advices.push(obs);
+              }
+            }
+          }
+        });
+      });
+  }
+
+  /**
+  * Save advice
+  * @returns {void}
+  */
+  addAdvice(): void {
     if (this.addAdviceForm.invalid) {
       return;
     }
-    if (this.advices.find((o: any) => o.value === this.addAdviceForm.value.advice)) {
-      this.toastr.warning(this.translateService.instant('Advice already added, please add another advice.'), this.translateService.instant('Already Added'));
+    if (this.advices.find((o: ObsModel) => o.value === this.addAdviceForm.value.advice)) {
+    this.coreService.showToast("warning", 'Advice already added, please add another advice.', 'Already Added', 'add-advice-warning-toast');
+
       return;
     }
-    this.encounterService.postObs({
-      concept: this.conceptAdvice,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addAdviceForm.value.advice,
-      encounter: this.visitNotePresent.uuid,
-    }).subscribe(response => {
-      this.advices.push({ uuid: response.uuid, value: this.addAdviceForm.value.advice });
-      this.addAdviceForm.reset();
-    });
+    this.advices.push({ value: this.addAdviceForm.value.advice });
+    this.addAdviceForm.reset();
+
+    // this.encounterService.postObs({
+    //   concept: conceptIds.conceptAdvice,
+    //   person: this.visit.patient.uuid,
+    //   obsDatetime: new Date(),
+    //   value: this.addAdviceForm.value.advice,
+    //   encounter: this.visitNotePresent.uuid,
+    // }).subscribe((response: ObsModel) => {
+
+    // });
   }
 
-  deleteAdvice(index: number, uuid: string) {
+  /**
+  * Delete advice for a given index and uuid
+  * @param {number} index - Index
+  * @param {string} uuid - Advice obs uuid
+  * @returns {void}
+  */
+  deleteAdvice(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.advices.splice(index, 1);
     });
   }
 
-  getTestsList() {
-    const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
-    this.diagnosisService.concept(testUuid).subscribe(res => {
+  /**
+  * Get tests list
+  * @returns {void}
+  */
+  getTestsList(): void {
+    this.diagnosisService.concept(conceptIds.conceptInvestigationsTest).subscribe(res => {
       const result = res.answers;
-      result.forEach(ans => {
+      result.forEach((ans: { display: string; }) => {
         this.testsList.push(this.translationService.getDropdownTranslation('tests', ans.display));
       });
     });
   }
 
+  /**
+  * Toggle test add form, show/hide add more test button
+  * @returns {void}
+  */
   toggleTest() {
     this.addMoreTest = !this.addMoreTest;
     this.addTestForm.reset();
   }
 
-  checkIfTestPresent() {
+  /**
+  * Get tests for the visit
+  * @returns {void}
+  */
+  checkIfTestPresent(): void {
     this.tests = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptTest)
-      .subscribe((response: any) => {
-        response.results.forEach((obs: any) => {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.tests.push(obs);
+            if(this.appConfigService.patient_visit_summary.dp_investigations_secondary)
+              this.testForm.patchValue({uuid:obs.uuid, test:obs.value})
+            else
+              this.tests.push(obs);
           }
         });
       });
   }
 
+  /**
+  * Get tests for the visit
+  * @returns {void}
+  */
+  checkIfDiscussionSummaryPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiscussionSummary)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            this.discussionSummaryForm.patchValue({ uuid: obs.uuid, value: obs.value })
+          }
+        });
+      });
+  }
+
+  /**
+  * Add test
+  * @returns {void}
+  */
   addTest() {
     if (this.addTestForm.invalid) {
       return;
     }
-    if (this.tests.find((o: any) => o.value === this.addTestForm.value.test)) {
-      this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
+    if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
+      this.coreService.showToast("warning", 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
+
       return;
     }
-    this.encounterService.postObs({
-      concept: this.conceptTest,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: this.addTestForm.value.test,
-      encounter: this.visitNotePresent.uuid,
-    }).subscribe(response => {
-      this.tests.push({ uuid: response.uuid, value: this.addTestForm.value.test });
-      this.addTestForm.reset();
-    });
+    this.tests.push({value: this.addTestForm.value.test });
+    this.addTestForm.reset();
   }
 
-  deleteTest(index: number, uuid: string) {
+
+  /**
+  * Save test
+  * @returns {Observable<any>}
+  */
+  saveTest(): Observable<any> {
+    if(this.testForm.value.uuid){
+      if(this.testForm.valid && this.obsData.test !== this.testForm.value.test)
+        return this.encounterService.updateObs(this.testForm.value.uuid,{
+          value: this.testForm.value.test,
+        })
+      else
+        return this.diagnosisService.deleteObs(this.testForm.value.uuid).pipe(tap((response: ObsModel) => this.testForm.patchValue({ uuid: null })));
+    } else if (this.testForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptTest,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.testForm.value.test,
+        encounter: this.visitNotePresent.uuid,
+      }).pipe(tap((response: ObsModel) => this.testForm.patchValue({ uuid: response.uuid })));
+    } else {
+      return of(false)
+    }
+  }
+
+  /**
+  * Delete test for a given index and uuid
+  * @param {number} index - Index
+  * @param {string} uuid - Test obs uuid
+  * @returns {void}
+  */
+  deleteTest(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.tests.splice(index, 1);
     });
   }
 
-  toggleReferral() {
+  /**
+  * Toggle referral add form, show/hide add more referral button
+  * @returns {void}
+  */
+  toggleReferral(): void {
     this.addMoreReferral = !this.addMoreReferral;
     this.addReferralForm.reset();
   }
 
-  checkIfReferralPresent() {
+  /**
+  * Get referrals for the visit
+  * @returns {void}
+  */
+  checkIfReferralPresent(): void {
     this.referrals = [];
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
-      .subscribe((response: any) => {
-        response.results.forEach((obs: any) => {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() ? obs_values[3].trim() : '-' });
+          } else if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            this.referralSecondaryForm.patchValue({ uuid: obs.uuid, ref: obs.value })
           }
         });
       });
   }
 
-  addReferral() {
+  /**
+  * Save referral
+  * @returns {void}
+  */
+  addReferral(): void {
     if (this.addReferralForm.invalid) {
       return;
     }
-    if (this.referrals.find((o: any) => o.speciality === this.addReferralForm.value.speciality)) {
-      this.toastr.warning(this.translateService.instant('Referral already added, please add another referral.'), this.translateService.instant('Already Added'));
+    if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
+    this.coreService.showToast("warning", 'Referral already added, please add another referral.', 'Already Added', 'warning-referral-toast');
       return;
     }
+
+    // Update updatedObsData and enable save as draft button
+    // this.updatedObsData.addReferral = true;
+    // this.checkChanges(this.updatedObsData);
+
     const refer_reason = this.addReferralForm.value.reason ? this.addReferralForm.value.reason : '';
-    this.encounterService.postObs({
-      concept: this.conceptReferral,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
-      encounter: this.visitNotePresent.uuid,
-    }).subscribe(response => {
-      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility, priority: this.addReferralForm.value.priority_refer, reason: refer_reason });
-      this.addReferralForm.reset();
-      this.addReferralForm.controls.priority_refer.setValue('Elective');
-    });
+    this.referrals.push({ speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility, priority: this.addReferralForm.value.priority_refer, reason: refer_reason });
+    this.addReferralForm.reset();
+    this.addReferralForm.controls.priority_refer.setValue('Elective');
+    // this.encounterService.postObs({
+    //   concept: conceptIds.conceptReferral,
+    //   person: this.visit.patient.uuid,
+    //   obsDatetime: new Date(),
+    //   value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
+    //   encounter: this.visitNotePresent.uuid,
+    // }).subscribe((response: ObsModel) => {
+
+    // });
   }
 
-  deleteReferral(index: number, uuid: string) {
+  /**
+  * Delete referral for a given index and uuid
+  * @param {number} index - Index
+  * @param {string} uuid - Referral obs uuid
+  * @returns {void}
+  */
+  deleteReferral(index: number, uuid: string): void {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.referrals.splice(index, 1);
     });
   }
 
-  getHours(returnAll = true, date?: any) {
-    const hours = Array.from(
-      {
-        length: 21,
-      },
-      (_, hour) =>
-        moment({
-          hour,
-          minutes: 0,
-        }).format('LT')
-    );
-    hours.splice(0, 9);
-    if (this.isToday(date) && !returnAll) {
-      const hrs = hours.filter((h) => moment(h, 'LT').isAfter(moment()));
-      return hrs;
-    } else {
-      return hours;
-    }
-  }
-
-  isToday(date: any) {
-    const start = moment().startOf('day');
-    const end = moment().endOf('day');
-    return (
-      moment().startOf('day').isSame(moment(date)) ||
-      moment(date).isBetween(start, end)
-    );
-  }
-
-  checkIfFollowUpPresent() {
-    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+  /**
+  * Get followup for the visit
+  * @returns {void}
+  */
+  checkIfFollowUpPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          const followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
-          const followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
-          const followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
+          let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
+          if (obs.value.includes('Time:')) {
+            const result = obs.value.split(',').filter(Boolean);
+            const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+            const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
+            followUpDate = moment(result[0]).format('YYYY-MM-DD');
+            followUpTime = time ? time : null;
+            followUpReason = remark ? remark : null;
+            wantFollowUp = 'Yes';
+
+            // Only try to get Type if the feature is enabled
+            if (this.isFeatureAvailable('followUpType')) {
+              const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
+              followUpType = type && type !== 'null' ? type : null;
+            }
+          }
+          this.followUpDatetime = obs.value;
           this.followUpForm.patchValue({
             present: true,
-            wantFollowUp: 'Yes',
+            wantFollowUp,
             followUpDate,
             followUpTime,
             followUpReason,
-            uuid: obs.uuid
+            uuid: obs.uuid,
+            followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
           });
         }
       });
     });
   }
 
+  /**
+  * Save followup
+  * @returns void
+  */
   saveFollowUp() {
-    if (this.followUpForm.invalid || !this.isVisitNoteProvider) {
-      return;
+    let value = 'No';
+    if (this.followUpForm.value.wantFollowUp === 'Yes') {
+      value = `${moment(this.followUpForm.value.followUpDate ?? new Date()).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime ?? 'NA'},Remark:${this.followUpForm.value.followUpReason || 'NA'},Type:${this.followUpForm.value.followUpType || 'NA'}`;
     }
-    this.encounterService.postObs({
-      concept: this.conceptFollow,
-      person: this.visit.patient.uuid,
-      obsDatetime: new Date(),
-      value: (this.followUpForm.value.followUpReason) ? `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`,
-      encounter: this.visitNotePresent.uuid
-    }).subscribe((res: any) => {
-      if (res) {
-        this.followUpForm.patchValue({ present: true, uuid: res.uuid });
-      }
-    });
+    if (this.followUpForm.value.uuid) {
+      this.encounterService.updateObs(this.followUpForm.value.uuid, { value }).pipe(tap((response: ObsModel) => this.followUpForm.patchValue({ present: true}))).subscribe();
+    } else {
+        this.encounterService.postObs({
+          concept: conceptIds.conceptFollow,
+          person: this.visit.patient.uuid,
+          obsDatetime: new Date(),
+          value: value,
+          encounter: this.visitNotePresent.uuid
+        }).pipe(tap((response: ObsModel) => this.followUpForm.patchValue({ present: true}))).subscribe();
+     }
   }
 
-  deleteFollowUp() {
+  /**
+  * Delete followup
+  * @returns {void}
+  */
+  deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: 'No', followUpDate: null, followUpTime: null, followUpReason: null });
+      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null });
+      this.followUpDatetime = null;
     });
   }
 
-  sharePrescription() {
-    this.coreService.openSharePrescriptionConfirmModal().subscribe((res: any) => {
-      if (res) {
-        if (this.isVisitNoteProvider) {
-          if (this.provider.attributes.length) {
-            if (navigator.onLine) {
-              if (!this.visitCompleted) {
-                this.encounterService.postEncounter({
-                  patient: this.visit.patient.uuid,
-                  encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                  encounterProviders: [
-                    {
-                      provider: this.provider.uuid,
-                      encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                    },
-                  ],
-                  visit: this.visit.uuid,
-                  encounterDatetime: new Date(Date.now() - 30000),
-                  obs: [
-                    {
-                      concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                      value: JSON.stringify(this.getDoctorDetails()),
-                    },
-                  ]
-                }).subscribe((post) => {
-                  this.visitCompleted = true;
-                  this.appointmentService.completeAppointment({visitUuid: this.visit.uuid}).subscribe();
-                  this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                    next: (linkSvcRes: any) => {
-                      const link = linkSvcRes.data.hash;
-                      this.visitService.postAttribute(
-                        this.visit.uuid,
+  /**
+  * Share prescription
+  * @returns {boolean}
+  */
+  sharePrescription(): boolean {
+    if (this.isFeatureAvailable('dp_diagnosis_secondary') && this.diagnosisSecondaryForm.invalid){
+    this.coreService.showToast("warning", 'Enter Diagnosis', 'Diagnosis Required', 'warning-diagnosis-toast');
+      return false;
+    } else if (!this.isFeatureAvailable('dp_diagnosis_secondary') && this.existingDiagnosis.length === 0 ) {
+     this.coreService.showToast("warning", 'Diagnosis not added', 'Diagnosis Required', 'warning-diagnosis-not-added-toast');
+      return false;
+    }
+    if (this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.present) {
+   this.coreService.showToast("warning", 'Follow-up not added', 'Follow-up Required', 'warning-followup-not-added-toast');
+      return false;
+    }
+    this.changedFields = [];
+    this.saveAllObs().subscribe({
+      next: (responses) => {
+        this.changesMade = false;
+        //Open Share Prescription Confirmation Modal
+        this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
+          if (res) {
+            if (this.isVisitNoteProvider) {
+              if (this.provider.attributes.length) {
+                if (navigator.onLine) {
+                  if (!this.visitCompleted) {
+                    this.encounterService.postEncounter({
+                      patient: this.visit.patient.uuid,
+                      encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+                      encounterProviders: [
                         {
-                          attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                          value: `/i/${link}`,
-                        }).subscribe();
+                          provider: this.provider.uuid,
+                          encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+                        },
+                      ],
+                      visit: this.visit.uuid,
+                      encounterDatetime: new Date(Date.now() - 30000),
+                      obs: [
+                        {
+                          concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+                          value: JSON.stringify(this.getDoctorDetails()),
+                        },
+                      ]
+                    }).subscribe((post) => {
+                      this.visitCompleted = true;
+                      const followUpDate = `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`;
 
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
+                      this.notifyHwForAvailablePrescription("","",followUpDate);
+                      this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+
+                      if (this.appConfigService.abha_section) {
+                        this.updateAbhaDetails(post.uuid);
+                      }
+
+                      this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                        next: (linkSvcRes: ApiResponseModel) => {
+                          const link = linkSvcRes.data.hash;
+                          this.visitService.postAttribute(
+                            this.visit.uuid,
+                            {
+                              attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+                              value: `/i/${link}`,
+                            }).subscribe();
+                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                            if (result === 'view') {
+                              // Open visit summary modal here....
+                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                            } else if (result === 'dashboard') {
+                              this.router.navigate(['/dashboard']);
+                            }
+                          });
+                        },
+                        error: (err) => {
+                        this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
+                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                            if (result === 'view') {
+                              // Open visit summary modal here....
+                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                            } else if (result === 'dashboard') {
+                              this.router.navigate(['/dashboard']);
+                            }
+                          });
                         }
                       });
-                    },
-                    error: (err) => {
-                      this.toastr.error(err.message);
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
-                        }
-                      });
+                    });
+                  } else {
+                    this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                      if (result === 'view') {
+                        // Open visit summary modal here....
+                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                      } else if (result === 'dashboard') {
+                        this.router.navigate(['/dashboard']);
+                      }
+                    });
+                  }
+                } else {
+                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                    if (c) {
+                      // Do nothing
                     }
                   });
-                });
+                }
               } else {
-                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                  if (result === 'view') {
-                    // Open visit summary modal here....
-                    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                  } else if (result === 'dashboard') {
-                    this.router.navigate(['/dashboard']);
+                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+                  if (c) {
+                    this.router.navigate(['/dashboard/profile']);
                   }
                 });
               }
             } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: any) => {
+              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
                 if (c) {
-
+                  this.router.navigate(['/dashboard']);
                 }
               });
             }
-
-          } else {
-            this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: any) => {
-              if (c) {
-                this.router.navigate(['/dashboard/profile']);
-              }
-            });
           }
-        } else {
-          this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: any) => {
-            if (c) {
-              this.router.navigate(['/dashboard']);
-            }
-          });
-        }
+        });
+      },
+      error: (error) => {
+        console.error('Error saving observations', error);
       }
     });
+
   }
 
-  getDoctorDetails() {
+  /**
+  * Get doctor details for the visit complete/encounter share prescription
+  * @returns {any} - Doctor details completing the visit
+  */
+  getDoctorDetails(): any {
     const d: any = {};
     const attrs: string[] = [
       doctorDetails.QUALIFICATION,
@@ -1519,36 +2368,39 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     ];
     d.name = this.provider.person.display;
     d.uuid = this.provider.uuid;
-    attrs.forEach((attr: any) => {
-      this.provider.attributes.forEach((pattr: any) => {
+    attrs.forEach((attr: string) => {
+      this.provider.attributes.forEach((pattr: ProviderAttributeModel) => {
         if (pattr.attributeType.display === attr && !pattr.voided) {
           d[attr] = pattr.value;
-          return;
         }
       });
     });
     return d;
   }
 
-  getPastVisitHistory() {
+  /**
+  * Get all past visits for the patient
+  * @returns {void}
+  */
+  getPastVisitHistory(): void {
     this.pastVisits = [];
-    this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: any) => {
+    this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: RecentVisitsApiResponseModel) => {
       const visits = res.results;
       if (visits.length > 1) {
-        visits.forEach((visit: any) => {
+        visits.forEach((visit: VisitModel) => {
           if (visit.uuid !== this.visit.uuid) {
-            this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: any) => {
+            this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: VisitModel) => {
               visitdetail.created_on = visitdetail.startDatetime;
-              visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
-              visitdetail.encounters.forEach((encounter: any) => {
+              visitdetail.cheif_complaint = this.visitSummaryService.getCheifComplaint(visitdetail);
+              visitdetail.encounters.forEach((encounter: EncounterModel) => {
                 if (encounter.encounterType.display === visitTypes.VISIT_COMPLETE) {
                   visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-                  encounter.obs.forEach((o: any) => {
+                  encounter.obs.forEach((o: ObsModel) => {
                     if (o.concept.display === 'Doctor details') {
                       visitdetail.doctor = JSON.parse(o.value);
                     }
                   });
-                  encounter.encounterProviders.forEach((p: any) => {
+                  encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
                     visitdetail.doctor.gender = p.provider.person.gender;
                     visitdetail.doctor.person_uuid = p.provider.person.uuid;
                   });
@@ -1563,78 +2415,1257 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCheifComplaint(visit: any) {
-    const recent: any = [];
-    const encounters = visit.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match(visitTypes.ADULTINITIAL) !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
-            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
-      }
-    });
-    return recent;
-  }
-
-  openVisitSummaryModal(uuid: string) {
+  /**
+  * Open view visit summary modal
+  * @returns {void}
+  */
+  openVisitSummaryModal(uuid: string): void {
     this.coreService.openVisitSummaryModal({ uuid });
   }
 
-  openVisitPrescriptionModal(uuid: string) {
+  /**
+  * Open view visit prescription modal
+  * @returns {void}
+  */
+  openVisitPrescriptionModal(uuid: string): void {
     this.coreService.openVisitPrescriptionModal({ uuid });
   }
 
-  getDDx() {
-    if (this.currentComplaint && this.username === 'doctorai') {
-      this.visitService.chatGPTCompletionDDx(this.currentComplaint).subscribe((res: any) => {
-        this.ddx = {
-          maxCols: 1,
-          data: []
+  ngOnDestroy(): void {
+    // Log back event
+    if (environment.brandName === 'KCDO' && this.visit && this.visit.uuid && !this.visitNotePresent) {
+      this.logUserEvent('back from visit summary');
+    }
+    deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
+    if (this.dialogRef1) this.dialogRef1.close();
+    if(this.callTimerInterval && !this.callTimerInterval.closed) this.callTimerInterval.unsubscribe();
+    // Add unsubscribe from form tracking
+    this.unsubscribeFromFormTracking();
+  }
+
+  /**
+  * Getting Images by section
+  * @param {string} section - Section Title
+  * @returns {Array}
+  */
+  getImagesBySection(section: string): Array<DocImagesModel> {
+    return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  /**
+  * Send notification to health worker for available prescription
+  * @returns {void}
+  */
+  notifyHwForAvailablePrescription(title = null, type = null,followupDatetime = null): void {
+    const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
+    
+    const openMRSID = this.getPatientIdentifier("OpenMRS ID");
+    const payload = {
+      title: title || `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
+      body: "Click notification to see!",
+      type: type,
+      data: {
+        patientFirstName: this.patient.person.preferredName.givenName ?? '',
+        patientMiddleName: this.patient.person.preferredName.middleName ?? '',
+        patientLastName: this.patient.person.preferredName.familyName ?? '',
+        patientUuid: this.patient.uuid,
+        patientOpenMrsId: openMRSID,
+        visitUuid: this.visit.uuid,
+        followupDatetime: followupDatetime
+      }
+    }
+    console.log("payload from web app==",payload);
+    this.mindmapService.notifyApp(hwUuid, payload).subscribe();
+  }
+
+  /**
+   * Get Abha numner / Abha address from patient
+   */
+  getAbhaDetails(_patient: PatientModel): void {
+    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier
+    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+  }
+
+  updateAbhaDetails(encounterUUID: string): void {
+    let mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    mobileNumber = mobileNumber != 'NA' ? mobileNumber : undefined
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    const abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
+    if (abhaNumber || abhaAddress || mobileNumber) {
+      // Added call to generate linking token and add isABDMLink attribute 
+      this.visitService.postAttribute(this.visit.uuid,
+        {
+          attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
+          value: false,
+        }).subscribe(() => {
+          const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+          const openMRSID = this.getPatientIdentifier("OpenMRS ID")
+          this.visitService.postVisitToABDM({
+            openMRSID: openMRSID,
+            mobileNumber: mobileNumber,
+            visitUUID: this.visit.uuid,
+            name: this.patient?.person?.display,
+            gender: this.patient?.person?.gender,
+            abhaNumber: abhaNumber,
+            abhaAddress: abhaAddress,
+            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
+            startDateTime: this.visit.startDatetime,
+            encounterUUID: encounterUUID,
+            personDisplay: this.patient?.person?.display
+          }).subscribe();
+        });
+    }
+  }
+
+  checkPatientRegField(fieldName: string): boolean {
+    return this.patientRegFields.indexOf(fieldName) !== -1;
+  }
+
+  collapsedButton() {
+    this.collapsed = !this.collapsed
+  }
+
+  getUrl(): string {
+    return `assets/svgs/Vector${this.collapsed ? '-top' : '-bottom'}.svg`;
+  }
+
+  checkIsVisibleSection(pvsConfig: { key: string; is_enabled: boolean; }) {
+    return checkIsEnabled(pvsConfig.key,
+      pvsConfig.is_enabled, {
+      visitCompleted: this.visitCompleted,
+      visitEnded: this.visitEnded,
+      visitNotePresent: this.visitNotePresent,
+      hasVitalsEnabled: this.hasVitalsEnabled,
+      notes_section: this.patientVisitSummary.notes_section,
+      attachment_section: this.patientVisitSummary.attachment_section
+    })
+  }
+
+  /**
+  * Retrieve the appropriate language value from an element.
+  * @param {any} element - An object containing `lang` and `name`.
+  * @return {string} - The value in the selected language or the first available one.
+  * Defaults to `element.name` if no language value is found.
+  */
+  getLanguageValue(element: any): string {
+    return getFieldValueByLanguage(element)
+  }
+
+  /**
+   * Handles changes to the call status and updates the reasons list accordingly.
+   * @param {Event} event - The change event from the call status input.
+   * @return {void}
+   */
+  onCallStatusChange(isLoad: boolean = false): void {
+    if (this.patientCallStatusForm.value.callStatus) {
+      this.reasonsList = this.reasons[this.patientCallStatusForm.value.callStatus] || [];
+      if (!isLoad) {
+        this.patientCallStatusForm.patchValue({ reason: null });
+        this.editFormValues = true;
+        setTimeout(() => this.reasonSelectComponent?.open(), 0);
+      }
+    }
+  }
+
+  /**
+   * @param {string} sectionKey - The key of the section.
+   * @param {string} [subSectionName] - The name of the subsection (optional).
+   * @returns {boolean} - True if the subsection is enabled, false otherwise.
+   */
+  isSubSectionEnabled(sectionKey: string, subSectionName?: string): boolean {
+    const section = this.pvsConfigs.find(sec => sec.key === sectionKey);
+
+    if (!section || !section.is_enabled) return false;
+    if (!subSectionName) return true;
+
+    const subSection = section.sub_sections?.find(sub => sub.name === subSectionName);
+    return subSection ? subSection.is_enabled : false;
+  }
+
+  /**
+   * Retrieves the configuration for a specific section in the PVS (Patient Visit Summary).
+   *
+   * @param sectionKey - The key identifying the section for which the configuration is to be retrieved.
+   * @returns The configuration object for the specified section.
+   */
+  getPvsSectionConfig(sectionKey: string): any {
+    return this.pvsConfigs.find(config => config.key === sectionKey);
+  }
+
+  isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    return isFeaturePresent(featureName, notInclude);
+  }
+
+  /**
+  * End WhatsApp Call
+  * @returns {void}
+  */
+  endWhatsAppCall() {
+    this.isCallInProgress = false;
+    this.isWhatsappCallWarningShown = false;
+    this.callTimerInterval.unsubscribe();
+    this.arrCallDurations.push({ callDuration: this.callDuration, timestamp: this.callDurationTimeStamp })
+    if (this.callDurationsUuid)
+      this.visitService.updateAttribute(this.visit.uuid, this.callDurationsUuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
+    else
+      this.visitService.postAttribute(this.visit.uuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
+  }
+
+  /**
+  * Start WhatsApp Call
+  * @param {boolean} isScroll - Array of visit attributes
+  * @returns {void}
+  */
+  startWhatsAppCall(isScroll: boolean = false) {
+    if (this.isFeatureAvailable('callDuration') && this.isVisitNoteProvider) {
+      if (isScroll) document.getElementById('patientInteractionFormTemplate').scrollIntoView({ behavior: 'smooth' })
+      if (!this.isCallInProgress) {
+        this.isCallInProgress = true;
+        this.callDurationTimeStamp = Date.now()
+        this.callTimerInterval = interval(1000).subscribe(val => {
+          this.callDuration = val;
+        })
+      }
+    }
+  }
+
+  /**
+  * Check if patient call durations visit attrubute present or not
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  checkIfPatientCallDurationPresent(attributes: VisitAttributeModel[]): void {
+    this.callDuration = 0;
+    attributes.forEach((attr: VisitAttributeModel) => {
+      if (attr.attributeType.uuid === visitAttributeTypes.patientCallDuration && attr.value) {
+        this.arrCallDurations = JSON.parse(attr.value);
+        this.callDuration = this.arrCallDurations?.slice(-1).pop()?.callDuration
+        this.callDurationsUuid = attr.uuid
+      }
+    });
+  }
+
+  /**
+  * Check if patient call status visit attrubute present or not
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
+  checkIfCallStatusPresent(attributes: VisitAttributeModel[]): void {
+    if (this.isMCCUser || !this.isVisitNoteProvider || this.visitEnded) this.patientCallStatusForm.get('reason').disable()
+    attributes.forEach((attr: VisitAttributeModel) => {
+      if (attr.attributeType.uuid === visitAttributeTypes.callStatus && attr.value) {
+        this.patientCallStatusForm.patchValue({ ...obsParse(attr.value, attr.uuid) })
+        this.onCallStatusChange(true)
+      }
+    });
+  }
+
+  openPatientCallHistory() {
+    this.coreService.openPatientCallDurationHistoryModel({
+      data: this.arrCallDurations?.slice(0, -1)
+    })
+  }
+
+  getCallDuration(val: number) {
+    return getCallDuration(val)
+  }
+
+  autoGrowTextZone(e: any) {
+    return autoGrowTextZone(e)
+  }
+
+  saveReferralSecondary(): Observable<any> {
+    if (this.referralSecondaryForm.value.uuid) {
+      if (this.referralSecondaryForm.valid)
+        return this.encounterService.updateObs(this.referralSecondaryForm.value.uuid, {
+          value: `${this.referralSecondaryForm.value.ref}`,
+        }).pipe(tap((res: ObsModel) => this.referralSecondaryForm.patchValue({ uuid: res.uuid })))
+      else
+        return this.diagnosisService.deleteObs(this.referralSecondaryForm.value.uuid).pipe(tap((res) => this.referralSecondaryForm.patchValue({ uuid: null })))
+    } else if (this.referralSecondaryForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptReferral,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: `${this.referralSecondaryForm.value.ref}`,
+        encounter: this.visitNotePresent.uuid,
+      }).pipe(tap((res: ObsModel) => this.referralSecondaryForm.patchValue({ uuid: res.uuid })))
+    } else {
+      return of(false)
+    }
+  }
+
+  saveDiagnosisSecondary(): Observable<any> {
+    if (this.diagnosisSecondaryForm.value.uuid) {
+      if (this.diagnosisSecondaryForm.valid)
+        return this.encounterService.updateObs(this.diagnosisSecondaryForm.value.uuid, {
+          value: `${obsStringify({ ...this.diagnosisSecondaryForm.value })}`,
+        }).pipe(tap((res: ObsModel) => this.diagnosisSecondaryForm.patchValue({ uuid: res.uuid })))
+      else
+        return this.diagnosisService.deleteObs(this.diagnosisSecondaryForm.value.uuid).pipe(tap((res: ObsModel) => this.diagnosisSecondaryForm.patchValue({ uuid: null })))
+    } else if (this.diagnosisSecondaryForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptDiagnosis,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: `${obsStringify({ ...this.diagnosisSecondaryForm.value })}`,
+        encounter: this.visitNotePresent.uuid,
+      }).pipe(tap((res: ObsModel) => this.diagnosisSecondaryForm.patchValue({ uuid: res.uuid })))
+    } else {
+      return of(false)
+    }
+  }
+
+  formatMedicineSave(medicine: StandardMedicineModel): string {
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''  }:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
+  }
+
+  saveDiscussionSummary(): Observable<any>{
+    if(this.discussionSummaryForm.value.uuid){
+      if(this.discussionSummaryForm.valid)
+        return this.encounterService.updateObs(this.discussionSummaryForm.value.uuid,{
+          value: `${this.discussionSummaryForm.value.value}`,
+        }).pipe(tap((res: ObsModel) => this.discussionSummaryForm.patchValue({ uuid: res.uuid })))
+      else
+        return this.diagnosisService.deleteObs(this.discussionSummaryForm.value.uuid).pipe(tap((res) => this.discussionSummaryForm.patchValue({ uuid: null })))
+    } else if (this.discussionSummaryForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptDiscussionSummary,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: `${this.discussionSummaryForm.value.value}`,
+        encounter: this.visitNotePresent.uuid,
+      }).pipe(tap((res: ObsModel) => this.discussionSummaryForm.patchValue({ uuid: res.uuid })))
+    } else {
+      return of(false)
+    }
+  }
+
+  saveAllObs(): Observable<any> {
+    const postObsRequests = [];
+
+    // If changedFields is empty, save all fields
+    if (!this.changedFields.length) {
+      // Basic observations
+      postObsRequests.push(
+        this.saveHWInteraction(),
+        this.savePatientInteraction(),
+        this.saveAdditionalInstruction(),
+        this.saveTest(),
+        this.savePatientInteractionComment()
+      );
+
+      // Conditional observations based on config
+      if (this.isFeatureAvailable('dp_diagnosis_secondary')) {
+        postObsRequests.push(this.saveDiagnosisSecondary());
+      }
+      if (this.isFeatureAvailable('dp_discussion_summary')) {
+        postObsRequests.push(this.saveDiscussionSummary());
+      }
+      if (this.isFeatureAvailable('follow-up-instruction')) {
+        postObsRequests.push(this.followUpInstructionComponentRef?.addInstructions());
+      }
+      if (this.isFeatureAvailable('dp_call_status')) {
+        postObsRequests.push(this.saveCallStatus());
+      }
+
+      // Handle medicines
+      for (const medicine of this.medicines) {
+        if (medicine?.uuid) continue;
+        postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptMed,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: `${medicine.drug ?? ''}:${medicine.strength ?? ''}:${medicine.days ?? ''}:${medicine.timing ?? ''}:${medicine.remark ?? ''}:${medicine.frequency ?? ''}`,
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
+        );
+      }
+
+      // Handle standard medicines
+      for (const medicine of this.standardMedicines) {
+        if (medicine?.uuid) continue;
+        postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptMed,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: this.formatMedicineSave(medicine),
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
+        );
+      }
+
+      // Handle advices
+      for (const advice of this.advices) {
+        if (advice?.uuid) continue;
+        postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptAdvice,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: advice.value,
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res: ObsModel) => advice.uuid = res.uuid))
+        );
+      }
+
+      // Handle tests
+      for (const test of this.tests) {
+        if (test?.uuid) continue;
+        postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptTest,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: test.value,
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res: ObsModel) => test.uuid = res.uuid))
+        );
+      }
+
+      // Handle diagnosis
+      if (!this.isFeatureAvailable('dp_diagnosis_secondary')) {
+        for (const diagnosis of this.existingDiagnosis) {
+          if (diagnosis?.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptDiagnosis,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName ?? ''}:${diagnosis.diagnosisType ?? ''} & ${diagnosis.diagnosisStatus ?? ''}`,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
+          );
+          if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
+            postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode));
+          }
+        }
+      }
+
+      // Handle referrals
+      for (const referral of this.referrals) {
+        if (referral.uuid) continue;
+        postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptReferral,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: `${referral.speciality??''}:${referral.facility??''}:${referral.priority??''}:${referral?.reason??''}`,
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res: ObsModel) => referral.uuid = res.uuid))
+        );
+      }
+
+      // Handle notes
+      if (this.notesRef) {
+        for (const note of this.notesRef.notes) {
+          if (note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptNote,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+          );
+        }
+      }
+
+      // Handle family history notes
+      if (this.familyHistoryNoteRef) {
+        for (const note of this.familyHistoryNoteRef.notes) {
+          if (note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptFamilyHistoryNotes,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+          );
+        }
+      }
+
+      // Handle past medical history notes
+      if (this.pastMedicalHistoryNoteRef) {
+        for (const note of this.pastMedicalHistoryNoteRef.notes) {
+          if (note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptPastMedicalHistoryNotes,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+          );
+        }
+      }
+    } else {
+      // If changedFields has values, only save those specific fields
+      const observationHandlers = {
+        hwInteraction: () => this.saveHWInteraction(),
+        patientInteraction: () => this.savePatientInteraction(),
+        additionalInstruction: () => this.saveAdditionalInstruction(),
+        test: () => this.saveTest(),
+        patientInteractionComment: () => this.savePatientInteractionComment(),
+        diagnosisSecondary: () => this.isFeatureAvailable('dp_diagnosis_secondary') ? this.saveDiagnosisSecondary() : of(null),
+        discussionSummary: () => this.isFeatureAvailable('dp_discussion_summary') ? this.saveDiscussionSummary() : of(null),
+        followUpInstruction: () => this.isFeatureAvailable('follow-up-instruction') ? this.followUpInstructionComponentRef.addInstructions() : of(null),
+        patientCallStatus: () => this.isFeatureAvailable('dp_call_status') ? this.saveCallStatus() : of(null)
+      };
+
+      // Add handlers for specific fields
+      this.changedFields.forEach(field => {
+        if (observationHandlers[field]) {
+          postObsRequests.push(observationHandlers[field]());
+        }
+      });
+
+      // Handle medicines if addMedicine is in changedFields
+      if (this.changedFields.includes('addMedicine')) {
+        for (const medicine of this.medicines) {
+          if (medicine?.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptMed,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${medicine.drug ?? ''}:${medicine.strength ?? ''}:${medicine.days ?? ''}:${medicine.timing ?? ''}:${medicine.remark ?? ''}:${medicine.frequency ?? ''}`,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
+          );
+        }
+      }
+
+      // Handle standardMedicines if addStandardMedicine is in changedFields
+      if (this.changedFields.includes('addStandardMedicine')) {
+        for (const medicine of this.standardMedicines) {
+          if (medicine?.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptMed,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: this.formatMedicineSave(medicine),
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
+          );
+        }
+      }
+
+      // Advices - only save new advices
+      if (this.changedFields.includes('addAdvice')) {
+          for (const advice of this.advices) {
+            if(advice?.uuid) continue;
+            postObsRequests.push(
+              this.encounterService.postObs({
+                concept: conceptIds.conceptAdvice,
+                person: this.visit.patient.uuid,
+                obsDatetime: new Date(),
+                value: advice.value,
+                encounter: this.visitNotePresent.uuid
+              }).pipe(tap((res:ObsModel)=>advice.uuid=res.uuid))
+            );
+          }
+      }
+
+      // Advices - only save new advices
+      if (this.changedFields.includes('addTests')) {
+        for (const test of this.tests) {
+          if(test?.uuid) continue;
+          postObsRequests.push(
+          this.encounterService.postObs({
+            concept: conceptIds.conceptTest,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: test.value,
+            encounter: this.visitNotePresent.uuid
+          }).pipe(tap((res:ObsModel)=>test.uuid=res.uuid)));
+        } 
+      }
+
+      // Diagnosis - only save new diagnoses
+      if (this.changedFields.includes('diagnosis') && !this.isFeatureAvailable('dp_diagnosis_secondary')) {
+        for (const diagnosis of this.existingDiagnosis) {
+          if (diagnosis?.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptDiagnosis,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName ?? ''}:${diagnosis.diagnosisType ?? ''} & ${diagnosis.diagnosisStatus ?? ''}`,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>diagnosis.uuid=res.uuid))
+          );
+          if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
+            postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode))
+          }
+        }
+      }
+
+      // Referrals - only save new referrals
+      if (this.changedFields.includes('addReferral')) {
+        for (const referral of this.referrals) {
+          if(referral.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptReferral,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${referral.speciality ?? ''}:${referral.facility ?? ''}:${referral.priority ?? ''}:${referral?.reason ?? ''}`,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>referral.uuid=res.uuid))
+          );
+        }
+      }
+
+      // Notes - only save new notes
+      if (this.changedFields.includes('notes') && this.notesRef) {
+        for (const note of this.notesRef.notes) {
+          if(note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptNote,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+          );
+        }
+      }
+
+      // Family History Notes - only save new notes
+      if (this.changedFields.includes('familyHistoryNote') && this.familyHistoryNoteRef) {
+        for (const note of this.familyHistoryNoteRef.notes) {
+          if(note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptFamilyHistoryNotes,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+          );
+        }
+      }
+
+      // Past Medical History Notes - only save new notes
+      if (this.changedFields.includes('pastMedicalHistoryNote') && this.pastMedicalHistoryNoteRef) {
+        for (const note of this.pastMedicalHistoryNoteRef.notes) {
+          if(note.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptPastMedicalHistoryNotes,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: note.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+          );
+        }
+      }
+    }
+
+    return postObsRequests.length > 0 ? forkJoin(postObsRequests) : of(null);
+  }
+  /**
+   * Save all changes as draft
+   */
+
+  
+  saveAsDraft() {
+    // Get all fields that have been changed
+    this.changedFields = Object.keys(this.updatedObsData).filter(key => 
+      this.updatedObsData[key] !== this.obsData[key]
+    );
+
+    this.saveAllObs().subscribe({
+      next: (responses) => {     
+        // Unsubscribe from all existing subscriptions
+        this.unsubscribeFromFormTracking();
+        
+        // Reset tracking states
+        this.obsData = {
+          notes: [],
+          familyHistoryNote: [],
+          pastMedicalHistoryNote: [], 
+          followUp: false,
+          followUpInstruction: this.followUpInstructionComponentRef?.addInstructionForm?.value?.instructions || [],
+          diagnosis: [],
+          addMedicine: [],
+          addStandardMedicine: [],
+          additionalInstruction: null,
+          addAdvice: [],
+          addTests: [],
+          test: null,
+          addReferral: [],
+          discussionSummary: null,
+          patientCallStatus: null,
+          diagnosisSecondary: null,
+          referralSecondary: null,
+          patientInteractionComment: null,
+          hwInteraction: null,
+          patientInteraction: null,
+          medicine: []
         };
-        let maxCol = 1;
-        const rows = res?.data.choices[0]?.message.content.split('\n');
-        rows.forEach(r => {
-          const cols = r.split('|');
-          if (cols.length > maxCol) { maxCol = cols.length; }
-          this.ddx.data.push(cols);
-        });
-        this.ddx.maxCols = maxCol;
-        this.encounterService.postEncounter({
-          patient: this.visit.patient.uuid,
-          encounterType: '850cb3e8-9f8e-4c81-a1f9-c72395ae399b', // differential diagnosis encounter type uuid
-          encounterProviders: [
-            {
-              provider: this.provider.uuid,
-              encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-            },
-          ],
-          visit: this.visit.uuid,
-          encounterDatetime: new Date(Date.now() - 30000),
-          obs: [
-            {
-              concept: 'bc48889e-b461-4e5e-98d1-31eb9dd6160e', // ChatGPT DDx concept uuid
-              value: res?.data.choices[0]?.message.content,
-            },
-          ]
-        }).subscribe((post) => {
-          this.ddxPresent = true;
-        });
+        
+        // Update base state and reset tracking state
+        this.updatedObsData = {...this.obsData};
+        this.changesMade = false;
+        
+        // Reinitialize form tracking
+        this.trackFormChanges();
+        
+       this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
+
+      },
+      error: (error) => {
+        console.error('Error saving observations', error);
+      this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
+      }
+    });
+  }
+
+  // Add new method to handle unsubscribing
+  private formSubscriptions: Subscription[] = [];
+
+  private unsubscribeFromFormTracking() {
+    this.formSubscriptions.forEach(sub => {
+      if (sub && !sub.closed) {
+        sub.unsubscribe();
+      }
+    });
+    this.formSubscriptions = [];
+  }
+
+  private trackFormChanges() {
+    // Initialize updatedObsData with initial values from obsData
+    this.updatedObsData = {...this.obsData};
+    this.changesMade = false;
+
+    // Track follow-up instructions
+    if (this.followUpInstructionComponentRef) {
+      // Store initial value
+      this.obsData.followUpInstruction = this.followUpInstructionComponentRef.addInstructionForm?.value?.instructions || [];
+      
+      // Subscribe to the entire form value changes
+      this.formSubscriptions.push(
+        this.followUpInstructionComponentRef.addInstructionForm?.valueChanges.subscribe(() => {
+          const newValue = this.followUpInstructionComponentRef.addInstructionForm?.value?.instructions || [];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.followUpInstruction)) {
+            this.updatedObsData.followUpInstruction = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track patient interaction comment form
+    if (this.patientInteractionCommentForm) {
+      this.obsData.patientInteractionComment = this.patientInteractionCommentForm.value.value;
+      
+      this.formSubscriptions.push(
+        this.patientInteractionCommentForm.valueChanges.subscribe(() => {
+          const newValue = this.patientInteractionCommentForm.value.value;
+          if (newValue !== this.obsData.patientInteractionComment) {
+            this.updatedObsData.patientInteractionComment = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track notes forms
+    if (this.notesRef) {
+      this.obsData.notes = [...this.notesRef.notes];
+      
+      this.formSubscriptions.push(
+        this.notesRef.addNoteForm.valueChanges.subscribe(() => {
+          const newValue = [...this.notesRef.notes];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.notes)) {
+            this.updatedObsData.notes = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    if (this.familyHistoryNoteRef) {
+      this.obsData.familyHistoryNote = [...this.familyHistoryNoteRef.notes];
+      
+      this.formSubscriptions.push(
+        this.familyHistoryNoteRef.addNoteForm.valueChanges.subscribe(() => {
+          const newValue = [...this.familyHistoryNoteRef.notes];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.familyHistoryNote)) {
+            this.updatedObsData.familyHistoryNote = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    if (this.pastMedicalHistoryNoteRef) {
+      this.obsData.pastMedicalHistoryNote = [...this.pastMedicalHistoryNoteRef.notes];
+      
+      this.formSubscriptions.push(
+        this.pastMedicalHistoryNoteRef.addNoteForm.valueChanges.subscribe(() => {
+          const newValue = [...this.pastMedicalHistoryNoteRef.notes];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.pastMedicalHistoryNote)) {
+            this.updatedObsData.pastMedicalHistoryNote = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track diagnosis form
+    if (this.diagnosisForm) {
+      this.obsData.diagnosis = [...this.existingDiagnosis];
+      
+      this.formSubscriptions.push(
+        this.diagnosisForm.valueChanges.subscribe(() => {
+          const newValue = [...this.existingDiagnosis];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.diagnosis)) {
+            this.updatedObsData.diagnosis = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track medicine form
+    if (this.addMedicineForm) {
+      this.obsData.addMedicine = [...this.medicines];
+      
+      this.formSubscriptions.push(
+        this.addMedicineForm.valueChanges.subscribe(() => {
+          const newValue = [...this.medicines];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addMedicine)) {
+            this.updatedObsData.addMedicine = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track standard medicine form
+    if (this.addStandardMedicineForm) {
+      this.obsData.addStandardMedicine = [...this.standardMedicines];
+      
+      this.formSubscriptions.push(
+        this.addStandardMedicineForm.valueChanges.subscribe(() => {
+          const newValue = [...this.medicines];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addStandardMedicine)) {
+            this.updatedObsData.addStandardMedicine = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track additional instruction form
+    if (this.additionalInstructionForm) {
+      this.obsData.additionalInstruction = this.additionalInstructionForm.value.value;
+      
+      this.formSubscriptions.push(
+        this.additionalInstructionForm.valueChanges.subscribe(() => {
+          const newValue = this.additionalInstructionForm.value.value;
+          if (newValue !== this.obsData.additionalInstruction) {
+            this.updatedObsData.additionalInstruction = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track advice form
+    if (this.addAdviceForm) {
+      this.obsData.addAdvice = [...this.advices];
+      
+      this.formSubscriptions.push(
+        this.addAdviceForm.valueChanges.subscribe(() => {
+          const newValue = [...this.advices];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addAdvice)) {
+            this.updatedObsData.addAdvice = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track add test form
+    if (this.addTestForm) {
+      this.obsData.addTests = [...this.tests];
+      
+      this.formSubscriptions.push(
+        this.addTestForm.valueChanges.subscribe(() => {
+          const newValue = [...this.tests];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addTests)) {
+            this.updatedObsData.addTests = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track test form
+    if (this.testForm) {
+      this.obsData.test = this.testForm.value.test;
+      
+      this.formSubscriptions.push(
+        this.testForm.valueChanges.subscribe(() => {
+          const newValue = this.testForm.value.test;
+          if (newValue !== this.obsData.test) {
+            this.updatedObsData.test = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track referral form
+    if (this.addReferralForm) {
+      this.obsData.addReferral = [...this.referrals];
+      
+      this.formSubscriptions.push(
+        this.addReferralForm.valueChanges.subscribe(() => {
+          const newValue = [...this.referrals];
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addReferral)) {
+            this.updatedObsData.addReferral = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track discussion summary form
+    if (this.discussionSummaryForm) {
+      this.obsData.discussionSummary = this.discussionSummaryForm.value.value;
+      
+      this.formSubscriptions.push(
+        this.discussionSummaryForm.valueChanges.subscribe(() => {
+          const newValue = this.discussionSummaryForm.value.value;
+          if (newValue !== this.obsData.discussionSummary) {
+            this.updatedObsData.discussionSummary = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track diagnosis secondary form
+    if (this.diagnosisSecondaryForm) {
+      this.obsData.diagnosisSecondary = this.diagnosisSecondaryForm.value;
+      
+      this.formSubscriptions.push(
+        this.diagnosisSecondaryForm.valueChanges.subscribe(() => {
+          const newValue = this.diagnosisSecondaryForm.value;
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.diagnosisSecondary)) {
+            this.updatedObsData.diagnosisSecondary = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track referral secondary form
+    if (this.referralSecondaryForm) {
+      this.obsData.referralSecondary = this.referralSecondaryForm.value;
+      
+      this.formSubscriptions.push(
+        this.referralSecondaryForm.valueChanges.subscribe(() => {
+          const newValue = this.referralSecondaryForm.value;
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.referralSecondary)) {
+            this.updatedObsData.referralSecondary = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track patient call status form
+    if (this.patientCallStatusForm) {
+      this.obsData.patientCallStatus = {
+        callStatus: this.patientCallStatusForm.value.callStatus,
+        reason: this.patientCallStatusForm.value.reason
+      };
+      
+      this.formSubscriptions.push(
+        this.patientCallStatusForm.valueChanges.subscribe(() => {
+          const newValue = {
+            callStatus: this.patientCallStatusForm.value.callStatus,
+            reason: this.patientCallStatusForm.value.reason
+          };
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.patientCallStatus)) {
+            this.updatedObsData.patientCallStatus = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+  }
+
+  /**
+   * Check for changes and update changesMade flag
+   * @param updatedObsData - The updated observation data to check against the base state
+   * @returns {boolean} - Returns true if edit form values are disabled
+   */
+  private checkChanges(updatedObsData: any): boolean {
+    if (!this.editFormValues) {
+      return true;
+    }
+
+    if(this.isFeatureAvailable("callDuration") && this.isCallInProgress && (!this.isWhatsappCallWarningShown)){
+      this.onWhatsappOngoingDialog();
+    }
+
+    // Compare actual values instead of just checking boolean flags
+    const changedFields = Object.keys(updatedObsData).filter(key => {
+      // For arrays, compare stringified versions
+      if (Array.isArray(updatedObsData[key])) {
+        return JSON.stringify(updatedObsData[key]) !== JSON.stringify(this.obsData[key]);
+      }
+      // For objects, compare stringified versions
+      if (typeof updatedObsData[key] === 'object' && updatedObsData[key] !== null) {
+        return JSON.stringify(updatedObsData[key]) !== JSON.stringify(this.obsData[key]);
+      }
+      // For primitive values, compare directly
+      return updatedObsData[key] !== this.obsData[key];
+    });
+
+    this.changesMade = changedFields.length > 0;
+    return false;
+  }
+
+  /**
+   * Handler for instructions changes from follow-up instruction component
+   */
+  onInstructionsChanged(): void {
+    this.updatedObsData.followUpInstruction = true;
+    this.checkChanges(this.updatedObsData);
+  }
+
+  /**
+  * confirm exit this page without saving data
+  * @return {void}
+  */
+  public onExitPageConfirmDialog(nextRouteURL, msg: string): void{
+    this.coreService.openConfirmationDialog({ confirmationMsg: msg, cancelBtnText: 'Stay Here', confirmBtnText: 'Exit' }).afterClosed().subscribe(res=>{
+      if(res){
+        this.changesMade = false;
+        this.isCallInProgress = false;
+        this.router.navigate([nextRouteURL]);
+      }
+    });
+  }
+
+  /**
+  * confirm exit this page without saving data
+  * @return {void}
+  */
+  public onWhatsappOngoingDialog(): void{
+    this.coreService.openConfirmationDialog({ confirmationMsg: "Please end the call to proceed", cancelBtnText: 'Close', confirmBtnText: 'End Call' }).afterClosed().subscribe(res=>{
+      if(res){
+        this.endWhatsAppCall();
+      } else {
+        this.isWhatsappCallWarningShown = true;
+      }
+    });
+  }
+
+  /**
+  * page click event
+  * @return {void}
+  */
+  pageClick(event: any): void{
+    console.log(event)
+  }
+
+  onKeyPress(event: KeyboardEvent): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    // Allow only numbers (0-9), backspace (8), and delete (46)
+    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 8 && charCode !== 46) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  onCallStatusClick(value: string): void{
+    if(this.patientCallStatusForm.get('callStatus').value === value){
+      this.patientCallStatusForm.get('callStatus').setValue(null)
+    }
+    return null;
+  }
+
+  getPhoneNumber(getPatientNo: boolean = false): string{
+    if(["KCDO"].includes(environment.brandName) || getPatientNo){
+      return this.getPersonAttributeValue('Telephone Number') != "NA" ? this.getPersonAttributeValue('Telephone Number') : "";
+    } else {
+      return this.hwPhoneNo;
+    } 
+  }
+  get visitDemarcation() {
+    return this.visitService.getDemarcation(this.visit?.encounters);
+  }
+
+  getInstructionRemarks() {
+    this.instructionRemarks = [];
+    this.visitService.getInstructionRemarks().subscribe((data: DataItemModel[]) => {
+      if (data) {
+        this.instructionRemarks = data;
+      }
+    });
+  }
+
+  updateInstructionRemarks(medicine:MedicineModel) {
+    const exists = this.instructionRemarks.some(item => item.name?.trim().toLowerCase() === medicine.remark?.trim().toLowerCase());
+    if (!exists) {
+      const newItem = { id: Date.now(), name: medicine.remark };
+      this.visitService.addInstructionRemarks(newItem).subscribe((data: DataItemModel[]) => {
+        if (data) {
+          this.getInstructionRemarks();
+        }
       });
     }
   }
 
-  ngOnDestroy(): void {
-    deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
+  getOptions(term: string): Observable<string[]> {
+    // This could be an API call
+    let data = this.instructionRemarks.map((val) => val.name);
+    return of(data.filter(v => v.toLowerCase().includes(term.toLowerCase())));
   }
 
+  // Add this method to receive questions from AILLMDDX
+  onFurtherQuestionsReceived(questions: string[]) {
+    this.furtherQuestionsList = questions;
+  }
+
+  SaveAIDiagosisHistory(visit:any, diagnosisData:any){
+    let checkAIDiagnosisEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.AI_DIAGNOSIS_SUPPORT);
+    if(checkAIDiagnosisEncounter){
+      let checkLLMRegenerationEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.LLM_REGENERATION);
+      if(checkLLMRegenerationEncounter){
+        this.deleteExistingLLMObs(checkLLMRegenerationEncounter.obs).subscribe(res=>{
+          this.createLLMObs(checkLLMRegenerationEncounter.uuid,diagnosisData,true).subscribe();
+        })
+      } else {
+        this.createLLMEncounter(true).subscribe(res=>{
+          if(res){
+            this.createLLMObs(res.uuid,diagnosisData,true).subscribe();
+          }
+        })
+      }
+    } else {
+      this.createLLMEncounter().subscribe(res=>{
+        if(res){
+          this.createLLMObs(res.uuid,diagnosisData).subscribe();
+        }
+      })
+    }
+  }
+
+  deleteExistingLLMObs(obs: ObsModel[]):Observable<any>{
+    let deleteAllObs = obs.map(o=>this.diagnosisService.deleteObs(o.uuid,true))
+    return forkJoin(deleteAllObs)
+  }
+
+  createLLMEncounter(revised:boolean = false):Observable<any>{
+    const json = {
+      patient: this.visit.patient.uuid,
+      encounterType: revised ? visitEncounters.llmRegeneration : visitEncounters.aiDiagnosis, // Visit Note encounter
+      encounterProviders: [
+        {
+          provider: this.provider.uuid,
+          encounterRole: visitEncounters.doctorProviderId, // Doctor encounter role
+        },
+      ],
+      visit: this.visit.uuid,
+      encounterDatetime: new Date(Date.now() - 30000),
+    };
+    return this.encounterService.postEncounter(json);
+  }
+
+  createLLMObs(encounterUUID:string, diagnosisData:any, revised: boolean = false):Observable<any>{
+      let diagnosisObs = diagnosisData.map((diagnosisAIData:any,rank:number)=>{
+        let diagnosisRecord = {
+          concept: conceptIds.conceptLLM,
+          person: this.visit.patient.uuid,
+          obsDatetime: new Date(),
+          encounter: encounterUUID,
+          groupMembers: [
+            {
+              concept: conceptIds.conceptDiagnosisName,
+              value: diagnosisAIData.diagnosis,
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+              
+            },
+            {
+              concept: conceptIds.conceptDiagnosisLikelihood,
+              value: diagnosisAIData.likelihood + " likely",
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptRationale,
+              value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptRank,
+              value: (rank+1),
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptVersion,
+              value: revised ? 'revised' : 'initial',
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            },
+            {
+              concept: conceptIds.conceptWasRegenerated,
+              value: revised,
+              obsDatetime: new Date(),
+              person: this.visit.patient.uuid,
+            }
+          ]
+        }
+
+        return this.encounterService.postObs(diagnosisRecord, true)
+      })
+      return forkJoin(diagnosisObs)
+  }
+
+  /**
+  * Log user event and save to visit attribute
+  */
+  logUserEvent(eventType: string) {
+    const event = {
+      type: eventType,
+      timestamp: new Date().toISOString()
+    };
+    this.eventLog.push(event);
+    const payload = {
+      attributeType: '98660a74-9f8b-41d5-b142-ed3f22684068', // TODO: Visit_Provider_Activity_Logs
+      value: JSON.stringify(this.eventLog)
+    };
+    if (this.eventLogAttributeUuid) {
+      this.visitService.updateAttribute(this.visit.uuid, this.eventLogAttributeUuid, payload).subscribe();
+    } else {
+      this.visitService.postAttribute(this.visit.uuid, payload).subscribe((res: any) => {
+        this.eventLogAttributeUuid = res.uuid;
+      });
+    }
+  }
 }
+

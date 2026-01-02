@@ -1,23 +1,29 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12 p-0 section-title">
-      <h6>{{'Forgot Username'|translate}}</h6>
-      <p>
+<div class="container" data-test-id="containerForgotUsername">
+  <div class="row" data-test-id="rowForgotUsername">
+    <div class="col-md-12 p-0 section-title" data-test-id="sectionTitle">
+      <h6 data-test-id="lblForgotUsername">{{'Forgot Username'|translate}}</h6>
+      <p data-test-id="lblInstruction">
         {{'No worries, enter your Mobile number or Email ID and we will send you the OTP to retrive your username.'|translate}}
       </p>
     </div>
-    <div class="col-md-12 px-0 py-4">
+    <div class="col-md-12 px-0 py-4" data-test-id="contentWrapper">
 
-      <ul id="navTabs" ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
-        <li [ngbNavItem]="'phone'">
+      <ul id="navTabs" ngbNav #nav="ngbNav" [(activeId)]="active"
+          class="nav-tabs nav-fill"
+          (activeIdChange)="reset()"
+          data-test-id="navTabs">
+        <li [ngbNavItem]="'phone'" data-test-id="navItemPhone">
           <a ngbNavLink data-test-id="navMobile">{{'Mobile number'|translate}}</a>
           <ng-template ngbNavContent>
-            <form [formGroup]="forgotUsernameForm" id="forgotUsernameByPhone" (ngSubmit)="forgotUsername()">
-              <div class="form-group">
-                <label for="phone">
+            <form [formGroup]="forgotUsernameForm"
+                  id="forgotUsernameByPhone"
+                  (ngSubmit)="forgotUsername()"
+                  data-test-id="formMobile">
+              <div class="form-group" data-test-id="groupMobile">
+                <label for="phone" data-test-id="lblMobile">
                   {{'Mobile number'|translate}}
                 </label>
-                <div class="phone-field">
+                <div class="phone-field" data-test-id="phoneField">
                   <input type="text"
                     data-test-id="etMobile"
                     ng2TelInput
@@ -30,18 +36,22 @@
                     class="form-control"
                     formControlName="phone"
                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
-                  <button class="btn toggle-password-btn" type="button">
+                  <button class="btn toggle-password-btn" type="button" data-test-id="btnMobileIcon">
                     <img src="assets/svgs/mobile.svg" alt="">
                   </button>
                 </div>
-                <div *ngIf="submitted && f.phone.errors">
-                  <small *ngIf="f.phone.errors.required" class="error-msg">{{'Please enter mobile number'|translate}}</small>
+                <div *ngIf="submitted && f.phone.errors" data-test-id="msgMobileRequired">
+                  <small *ngIf="f.phone.errors.required" class="error-msg">
+                    {{'Please enter mobile number'|translate}}
+                  </small>
                 </div>
-                <div *ngIf="submitted  && !phoneIsValid && !f.phone.errors">
-                  <small class="error-msg">{{'Please enter valid mobile number'|translate}}</small>
+                <div *ngIf="submitted  && !phoneIsValid && !f.phone.errors" data-test-id="msgMobileInvalid">
+                  <small class="error-msg">
+                    {{'Please enter valid mobile number'|translate}}
+                  </small>
                 </div>
               </div>
-              <div class="form-group mt-5">
+              <div class="form-group mt-5" data-test-id="groupMobileSubmit">
                 <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitMobile">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
@@ -50,26 +60,38 @@
             </form>
           </ng-template>
         </li>
-        <li [ngbNavItem]="'email'">
+
+        <li [ngbNavItem]="'email'" data-test-id="navItemEmail">
           <a ngbNavLink data-test-id="navEmail">{{'EMAIL'|translate}}</a>
           <ng-template ngbNavContent>
-            <form id="forgotUsernameByEmail" [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
-              <div class="form-group">
-                <label for="email">
+            <form id="forgotUsernameByEmail"
+                  [formGroup]="forgotUsernameForm"
+                  (ngSubmit)="forgotUsername()"
+                  data-test-id="formEmail">
+              <div class="form-group" data-test-id="groupEmail">
+                <label for="email" data-test-id="lblEmail">
                   {{'EMAIL'|translate}}
                 </label>
-                <div class="email-id-field">
-                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}" data-test-id="etEmail">
-                  <button class="btn toggle-password-btn" type="button">
+                <div class="email-id-field" data-test-id="emailField">
+                  <input type="email"
+                         class="form-control"
+                         formControlName="email"
+                         placeholder="{{'Enter Email ID'|translate}}"
+                         data-test-id="etEmail">
+                  <button class="btn toggle-password-btn" type="button" data-test-id="btnEmailIcon">
                     <img src="assets/svgs/email.svg" alt="">
                   </button>
                 </div>
-                <div *ngIf="submitted && f.email.errors">
-                  <small *ngIf="f.email.errors.required" class="error-msg">{{'Please enter email'|translate}}</small>
-                  <small *ngIf="f.email.errors.pattern" class="error-msg">{{'Please enter valid email'|translate}}</small>
+                <div *ngIf="submitted && f.email.errors" data-test-id="msgEmailError">
+                  <small *ngIf="f.email.errors.required" class="error-msg" data-test-id="msgEmailRequired">
+                    {{'Please enter email'|translate}}
+                  </small>
+                  <small *ngIf="f.email.errors.pattern" class="error-msg" data-test-id="msgEmailInvalid">
+                    {{'Please enter valid email'|translate}}
+                  </small>
                 </div>
               </div>
-              <div class="form-group mt-5">
+              <div class="form-group mt-5" data-test-id="groupEmailSubmit">
                 <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitEmail">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
@@ -79,7 +101,10 @@
           </ng-template>
         </li>
       </ul>
-      <div [ngbNavOutlet]="nav" class="mt-5"></div>
+
+      <div [ngbNavOutlet]="nav" class="mt-5" data-test-id="navOutlet"></div>
     </div>
   </div>
 </div>
+
+

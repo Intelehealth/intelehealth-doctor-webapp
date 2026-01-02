@@ -13,6 +13,19 @@
 .title-con {
   padding: 24px 24px 16px;
   background: var(--color-lightGray);
+  position: relative;
+
+  .close-btn-con {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+  }
 
   h6 {
     font-size: 24px;
@@ -32,7 +45,7 @@
   font-family: DM Sans;
 
   .patient-info-section {
-    border-right: 1px solid rgba(178, 175, 190, 0.2);
+    // border-right: 1px solid rgba(178, 175, 190, 0.2);
 
     .patient-img-item {
       display: flex;
@@ -59,6 +72,7 @@
         color: var(--color-gray);
         font-size: 16px;
         line-height: 150%;
+        word-break: break-all;
       }
     }
 
@@ -75,6 +89,7 @@
         color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
+        word-break: break-all;
       }
     }
 
@@ -91,17 +106,19 @@
     align-items: center;
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
     padding: 5px 0px;
-     img {
+
+    img {
       width: 48px;
       margin-right: 10px;
-     }
-     h6 {
+    }
+
+    h6 {
       font-size: 20px;
       line-height: 150%;
       color: var(--color-darkestBlue);
       font-weight: bold;
       margin-bottom: 0px;
-     }
+    }
   }
 }
 
@@ -128,6 +145,7 @@
 
     .list-item-content {
       padding: 5px 0px;
+      width: 75%;
     }
   }
 
@@ -314,13 +332,14 @@
 
   .data-section {
     .data-section-title {
-       img {
+      img {
         width: 38px;
         margin-right: 10px;
-       }
-       h6 {
+      }
+
+      h6 {
         font-size: 16px;
-       }
+      }
     }
   }
 
@@ -329,4 +348,37 @@
       font-size: 16px;
     }
   }
+
+  .btn_download_pdf span {
+    display: none;
+  }
+
+  .desktop-close-btn {
+    display: none !important;
+  }
+
+  .mobile-close-btn {
+    display: block !important;
+  }
+}
+
+.btn_download_pdf {
+  position: absolute;
+  color: var(--color-gray);
+  border: unset;
+  background: transparent;
+  font-size: 18px;
+}
+
+.mobile-close-btn {
+  display: none;
+}
+
+.dekstop-close-btn {
+  display: block;
+}
+
+.rows {
+  display: flex;
+  flex-wrap: wrap;
 }

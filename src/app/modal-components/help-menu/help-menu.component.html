@@ -1,33 +1,79 @@
-<button type="button" class="modal-close-btn" mat-dialog-close data-test-id="btnClose">
-  <img src="assets/svgs/modal-close-icon.svg" alt="" width="100%">
+<button
+  type="button"
+  class="modal-close-btn"
+  mat-dialog-close
+  data-test-id="btnClose"
+>
+  <img src="assets/svgs/modal-close-icon.svg" alt="close icon" width="100%" />
 </button>
-<div mat-dialog-title>
+
+<div mat-dialog-title data-test-id="helpChatModalTitle">
   <div class="d-flex flex-row justify-content-between align-items-center">
-    <h6 class="mb-0 font-weight-bold">{{'Help' | translate}}</h6>
+    <h6 class="mb-0 font-weight-bold">{{ 'Help' | translate }}</h6>
   </div>
 </div>
-<mat-dialog-content>
-  <ul class="chat-item-list">
-    <ng-container *ngFor="let m of messages; let first = first">
-      <li class="chat-item read-status" [class.text-left]="m?.from === 'System Administrator'">
-        <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
+
+<mat-dialog-content data-test-id="helpChatContent">
+  <ul
+    class="chat-item-list"
+    style="overflow-x: hidden !important;"
+    data-test-id="chatMessageListhelp"
+  >
+    <ng-container *ngFor="let m of messages; let first = first; let i = index">
+      <li
+        class="chat-item read-status"
+        [class.text-left]="m?.from === 'System Administrator'"
+        data-test-id="chatMessageStatus-{{ i }}"
+      >
+        <span class="mr-1" data-test-id="doctorSentMsg-{{i}}">{{ m.createdAt | amDateFormat : "LT" }}</span>
         <ng-container *ngIf="first && m?.from === user?.uuid">
           <ng-container *ngIf="m.isRead">
-            <img src="assets/svgs/read-status.svg" alt="" width="12px"> {{'Read' | translate}}
+            <img
+              src="assets/svgs/read-status.svg"
+              alt="read"
+              width="12px"
+              data-test-id="msgReadStatusIcon-{{i}}"
+            />
+            {{ 'Read' | translate }}
           </ng-container>
           <ng-container *ngIf="!m.isRead">
-            <img src="assets/svgs/sent-status.svg" alt="" width="12px"> {{'Sent' | translate}}
+            <img
+              src="assets/svgs/sent-status.svg"
+              alt="sent"
+              width="12px"
+              data-test-id="msgSentStatusIcon-{{i}}"
+            />
+            {{ 'Sent' | translate }}
           </ng-container>
         </ng-container>
       </li>
-      <li class="chat-item" [class.left]="m.from == user.uuid">{{m.message}}</li>
-    </ng-container>
 
+      <li
+        class="chat-item"
+        [class.left]="m.from == user.uuid"
+        data-test-id="chatMessageText-{{ i }}"
+      >
+      <span data-test-id="chatMessageText-{{ i }}">{{ m.message }}</span>  
+      </li>
+    </ng-container>
   </ul>
 </mat-dialog-content>
-<mat-dialog-actions>
-  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessage">
-  <button class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessage">
-    <mat-icon aria-hidden="false" aria-label="send icon">{{'send'|translate}}</mat-icon>
+
+<mat-dialog-actions data-test-id="helpChatActions">
+  <input
+    type="text"
+    placeholder="{{ 'Type here' | translate }}"
+    maxlength="255"
+    class="mr-2"
+    [(ngModel)]="message"
+    (keyup.enter)="sendMessage()"
+    data-test-id="etChatMessage"
+  />
+  <button
+    class="send-btn"
+    (click)="sendMessage()"
+    data-test-id="btnSendMessage"
+  >
+    <mat-icon aria-hidden="false" aria-label="send icon">send</mat-icon>
   </button>
 </mat-dialog-actions>

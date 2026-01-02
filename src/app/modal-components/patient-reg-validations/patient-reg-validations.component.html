@@ -1,0 +1,46 @@
+<div class="intel-con-modal">
+  <div class="modal-title">
+    <h6 data-test-id="lblTitle">{{'Field Validations'|translate}}</h6>
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose">
+      <img src="assets/svgs/CloseX.svg" alt="">
+    </button>
+  </div>
+  <div class="modal-con mt-3">
+    <form [formGroup]="patientRegValidationForm" (ngSubmit)="updateValidations()">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="minLength" data-test-id="lblMinLength">{{'Minimum Length' | translate}} *</label>
+          <input type="number" class="form-control" formControlName="minLength" placeholder="{{'Enter Minimum Length' | translate}}" data-test-id="etMinLength">
+          <div *ngIf="submitted && f1.minLength.errors" class="d-flex flex-column">
+            <small class="error-msg" *ngIf="f1.minLength.errors.required" data-test-id="errMinLengthRequired">{{'Enter Minimum Length' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.minLength.errors.maxlength" data-test-id="errMinLengthMax">{{'Maximum 2 digit number allowed' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.minLength.errors.min" data-test-id="errMinLengthMin">{{'Value should be greater than 5' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.minLength.errors.max" data-test-id="errMinLengthMaxValue">{{'Value should be less than 16' | translate}}</small>
+          </div>
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="maxLength" data-test-id="lblMaxLength">{{'Maximum Length' | translate}} *</label>
+          <input type="number" class="form-control" formControlName="maxLength" placeholder="{{'Enter Maximum Length' | translate}}" data-test-id="etMaxLength">
+          <div *ngIf="submitted && f1.maxLength.errors">
+            <small class="error-msg" *ngIf="f1.maxLength.errors.required" data-test-id="errMaxLengthRequired">{{'Enter Maximum Length' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.maxLength.errors.maxlength" data-test-id="errMaxLengthMax">{{'Maximum 2 digit number allowed' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.maxLength.errors.min" data-test-id="errMaxLengthMin">{{'Value should be greater than 5' | translate}}</small>
+            <small class="error-msg" *ngIf="f1.maxLength.errors.max" data-test-id="errMaxLengthMaxValue">{{'Value should be less than 16' | translate}}</small>
+          </div>
+          <div *ngIf="submitted && !f1.maxLength.errors" class="d-flex flex-column">
+            <small class="error-msg" *ngIf="patientRegValidationForm.get('minLength').value > patientRegValidationForm.get('maxLength').value" data-test-id="errMinGreaterThanMax">{{'Value should be equal or greater than Minimum Length' | translate}}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-3">
+        <div class="form-group col-md-12 text-center">
+          <button type="submit" class="btn next-btn" data-test-id="btnSaveValidations">
+            {{'Save Validations'| translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="container-fluid" data-test-id="ticketDetailsContainer">
+  <div class="row mt-3" data-test-id="rowTicketDetails">
+    <div class="col-md-12 p-0" data-test-id="colTicketDetails">
+      <div class="card intel-card" data-test-id="ticketDetailsCard">
+        
+        <!-- Header -->
+        <div class="card-header" data-test-id="ticketHeader">
+          <div class="grid-title" data-test-id="ticketTitleSection">
+            <span data-test-id="txtTicketId">
+              {{ticketData?.jira_ticket_id ?? ticketData?.external_references?.[0]?.external_id}}
+            </span>
+            <h6 class="mb-0" data-test-id="txtTicketTitle">
+              {{ticketData?.title | translate}}
+            </h6>
+          </div>
+          <div class="card-header-actions" data-test-id="ticketHeaderActions">
+            <button 
+              type="button" 
+              class="btn" 
+              (click)="onReopenTicket()" 
+              *ngIf="ticketData?.status == 'resolved'" 
+              data-test-id="btnReopenTicket">
+              {{'Reopen Ticket' | translate}}
+            </button>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body" data-test-id="ticketBody">
+          
+          <div class="created_at" data-test-id="txtCreatedAt">
+            {{ticketData?.created_at | date:'d MMM, y'}}
+          </div>
+
+          <div class="key-value" data-test-id="sectionDescription">
+            <div class="key" data-test-id="lblDescription">{{'Description'| translate}}</div>
+            <div class="value" data-test-id="txtDescription">
+              {{ticketData?.description ?? 'N/A'}}
+            </div>
+          </div>
+
+          <div class="key-value" data-test-id="sectionLastUpdated">
+            <div class="key" data-test-id="lblLastUpdated">{{'Last Updated' | translate }}:</div>
+            <div class="value" data-test-id="txtLastUpdated">
+              {{ticketData?.updated_at |  date:'d MMM, y'}}
+            </div>
+          </div>
+
+          <div class="key-value" data-test-id="sectionPriority">
+            <div class="key" data-test-id="lblPriority">{{'Priority' | translate}}</div>
+            <div class="value" data-test-id="txtPriority">
+              <span 
+                class="status-label priority" 
+                [ngClass]="ticketData?.priority"
+                data-test-id="badgePriority">
+                {{ticketData?.priority | translate | titlecase}}
+              </span>
+            </div>
+          </div>
+
+          <div class="key-value" data-test-id="sectionStatus">
+            <div class="key" data-test-id="lblStatus">{{'Status'| translate}}</div>
+            <div class="value" data-test-id="txtStatus">
+              <span 
+                class="status-label status" 
+                [ngClass]="ticketData?.status"
+                data-test-id="badgeStatus">
+                {{statuses[ticketData?.status] | translate | titlecase}}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

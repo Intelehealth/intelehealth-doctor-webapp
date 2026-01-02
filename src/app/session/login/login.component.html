@@ -1,53 +1,66 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12 p-0 section-title">
-      <h6>{{'LOGIN'|translate}}</h6>
-      <p>
+<div class="container" data-test-id="loginContainer">
+  <div class="row" data-test-id="rowLogin">
+    <div class="col-md-12 p-0 section-title" data-test-id="colSectionTitle">
+      <h6 data-test-id="lblLoginTitle">{{'LOGIN'|translate}}</h6>
+      <p data-test-id="lblLoginDescription">
         {{'Login with your provided username and password then you can choose the verification method.'|translate}}
       </p>
     </div>
-    <div class="col-md-12 px-0 py-4">
+
+    <div class="col-md-12 px-0 py-4" data-test-id="colFormWrapper">
       <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="login()" data-test-id="form">
-        <div class="form-group">
-          <label for="username">
+        <div class="form-group" data-test-id="grpUsername">
+          <label for="username" data-test-id="lblUsername">
             {{'Username'|translate}}
-            <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsername">{{'Forgot Username'|translate}} ?</a></span>
+            <!-- <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsername">{{'Forgot Username'|translate}} ?</a></span> -->
           </label>
-          <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsername">
+          <input type="text" class="form-control" formControlName="username"
+                 placeholder="Enter username" data-test-id="etUsername">
           <div *ngIf="submitted && f.username.errors">
-            <small *ngIf="f.username.errors.required" class="error-msg">{{'Please enter username'|translate}}</small>
-            <small *ngIf="f.username.errors.usernameExists" class="error-msg">Couldn’t find you, please enter valid username</small>
+            <small *ngIf="f.username.errors.required" class="error-msg" data-test-id="errUsernameRequired">
+              {{'Please enter username'|translate}}
+            </small>
+            <small *ngIf="f.username.errors.usernameExists" class="error-msg" data-test-id="errUsernameInvalid">
+              Couldn’t find you, please enter valid username
+            </small>
           </div>
         </div>
-        <div class="form-group">
-          <label for="password">
+
+        <div class="form-group" data-test-id="grpPassword">
+          <label for="password" data-test-id="lblPassword">
             {{'Password'|translate}}
-            <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPassword">{{'Forgot Password'|translate}} ?</a></span>
+            <!-- <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPassword">{{'Forgot Password'|translate}} ?</a></span> -->
           </label>
-          <div class="password-field">
-            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPassword">
-            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePassword">
-              <img src="assets/svgs/icon-eye.svg" alt="">
+          <div class="password-field" data-test-id="passwordField">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control"
+                   formControlName="password" placeholder="Enter password" data-test-id="etPassword">
+            <button class="btn toggle-password-btn" type="button"
+                    (click)="visible = !visible" data-test-id="btnTogglePassword">
+              <img [hidden]="visible" src="assets/svgs/icon-eye.svg" alt="">
+              <img [hidden]="!visible" src="assets/svgs/icon-eye-closed.svg" alt="">
             </button>
           </div>
           <div *ngIf="submitted && f.password.errors">
-            <small *ngIf="f.password.errors.required" class="error-msg">{{'Please enter password'|translate}}</small>
+            <small *ngIf="f.password.errors.required" class="error-msg" data-test-id="errPasswordRequired">
+              {{'Please enter password'|translate}}
+            </small>
           </div>
         </div>
-        <div class="form-group" *ngIf="showCaptcha">
-          <label for="capcha">{{'Before logging in, please confirm you are not a robot'|translate}}</label>
+
+        <div class="form-group" *ngIf="showCaptcha" data-test-id="grpCaptcha">
+          <label for="capcha" data-test-id="lblCaptcha">
+            {{'Before logging in, please confirm you are not a robot'|translate}}
+          </label>
           <ngx-recaptcha2 #captchaElem
-            [siteKey]="siteKey"
-            [hl]="selectedLanguage"
-            (reset)="handleReset()"
-            (expire)="handleExpire()"
-            (load)="handleLoad()"
-            (success)="handleSuccess($event)"
-            [useGlobalDomain]="false"
-            formControlName="recaptcha">
+                          [siteKey]="siteKey"
+                          [hl]="selectedLanguage"
+                          [useGlobalDomain]="false"
+                          formControlName="recaptcha"
+                          data-test-id="captchaComponent">
           </ngx-recaptcha2>
         </div>
-        <div class="form-group mt-3">
+
+        <div class="form-group mt-3" data-test-id="grpSubmit">
           <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
             {{'Next'|translate}}
             <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
@@ -55,11 +68,18 @@
         </div>
       </form>
     </div>
-    <div class="col-md-12">
-      <p class="section-terms-conditions">
-        Intelehealth <a data-test-id="linkTermsAndConditions" href="https://intelehealth.org/terms-of-use" target="_blank">{{'Terms & Conditions'|translate}}</a>  {{'AND'|translate}} <a data-test-id="linkPrivacyPolicy" href="https://intelehealth.org/privacy-policy" target="_blank">{{'Privacy Policy'|translate}}</a>
+
+    <div class="col-md-12" data-test-id="colFooterLinks">
+      <p class="section-terms-conditions" data-test-id="lblTermsConditionsText">
+        Intelehealth
+        <a data-test-id="linkTermsAndConditions" href="https://intelehealth.org/terms-of-use" target="_blank">
+          {{'Terms & Conditions'|translate}}
+        </a>
+        {{'AND'|translate}}
+        <a data-test-id="linkPrivacyPolicy" href="https://intelehealth.org/privacy-policy" target="_blank">
+          {{'Privacy Policy'|translate}}
+        </a>
       </p>
     </div>
   </div>
 </div>
-

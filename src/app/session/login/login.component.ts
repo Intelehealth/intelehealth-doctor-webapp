@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
+import { AuthGatewayLoginResponseModel, CheckSessionResponseModel, LoginResponseModel, ProviderResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
@@ -31,7 +32,8 @@ export class LoginComponent implements OnInit {
     private rolesService: NgxRolesService,
     public translate: TranslateService,
     public translationService: TranslationService) {
-      
+
+
     this.loginForm = new FormGroup({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
@@ -57,6 +59,10 @@ export class LoginComponent implements OnInit {
     this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
   }
 
+  /**
+  * Login to the account using username and password
+  * @return {void}
+  */
   login() {
     this.loginAttempt++;
     this.submitted = true;
@@ -66,13 +72,16 @@ export class LoginComponent implements OnInit {
     const val = this.loginForm.value;
     const cred = `${val.username}:${val.password}`;
     const base64cred = btoa(cred);
-    this.authService.login(base64cred).subscribe((res: any) => {
+    this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
       if (res.authenticated && !res.verified) {
-        this.authService.getAuthToken(val.username, val.password).subscribe(token => {
-          this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
+        this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
+          this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
             if (provider.results.length) {
               setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
               setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
+              if(provider?.results?.[0]?.attributes?.length === 0) {
+                setCacheData(doctorDetails.IS_NEW_DOCTOR, res.user.uuid);
+              }
               this.loginSuccess();
             } else {
               this.translationService.getTranslation('Couldn\'t find provider.', 'Login Failed!', false);
@@ -87,26 +96,37 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  
+
+  /**
+  * Perform appropriate actions for a sucessful login
+  * @return {void}
+  */
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.translationService.getTranslation('You have sucessfully logged in.', 'Login Successful', true);
     const role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     const isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
     if (role) {
+      setCacheData(doctorDetails.ROLE, 'admin');
       this.router.navigate(['/admin']);
     } else {
       if (isNurse) {
+        setCacheData(doctorDetails.ROLE, 'nurse');
         this.router.navigate(['/dashboard/hw-profile']);
       } else {
+        setCacheData(doctorDetails.ROLE, 'doctor');
         this.router.navigate(['/dashboard']);
       }
     }
   }
 
+  /**
+  * Check user session
+  * @return {void}
+  */
   checkSession() {
     this.authService.checkSession().subscribe({
-      next: (res: any) => {
+      next: (res: CheckSessionResponseModel) => {
         this.rememberMe = res.rememberme;
         this.authService.rememberMe = this.rememberMe ? true : false;
       }

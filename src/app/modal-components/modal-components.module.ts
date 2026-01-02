@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddLicenseKeyComponent } from './add-license-key/add-license-key.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -40,6 +40,22 @@ import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-
 import { RaiseTicketComponent } from './raise-ticket/raise-ticket.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropComponent } from './image-crop/image-crop.component';
+import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
+import { ReportGeneratorComponent } from './report-generator/report-generator.component';
+import { FileDownloadComponent } from './file-download/file-download.component';
+import { ReportErrorComponent } from './report-error/report-error.component';
+import { ReportSuccessComponent } from './report-success/report-success.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { AddTicketComponent } from './add-ticket/add-ticket.component';
+import { LanguageFieldUpdate } from './language-fields-update/language-fields-update.component';
+import { SubSectionsComponent } from './sub-sections/sub-sections.component';
+import { MatTableModule } from '@angular/material/table';
+import { CallHistoryComponent } from './call-history/call-history.component';
+import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
+import { LibPresciptionModule } from 'lib-presciption';
+import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/platform-fields-selecton.component'
 
 @NgModule({
     declarations: [
@@ -69,7 +85,19 @@ import { ImageCropComponent } from './image-crop/image-crop.component';
         PwaPromptComponent,
         ConfirmOpenmrsIdComponent,
         RaiseTicketComponent,
-        ImageCropComponent
+        ImageCropComponent,
+        VcallOverlayComponent,
+        ReportGeneratorComponent,
+        FileDownloadComponent,
+        ReportErrorComponent,
+        ReportSuccessComponent,
+        PasswordResetComponent,
+        AddTicketComponent,
+        LanguageFieldUpdate,
+        SubSectionsComponent,
+        CallHistoryComponent,
+        PatientRegValidationsComponent,
+        PlatformFieldsSelectonComponent
     ],
     imports: [
         CommonModule,
@@ -86,8 +114,14 @@ import { ImageCropComponent } from './image-crop/image-crop.component';
         SharedModule,
         NgSelectModule,
         SignaturePadModule,
-        ImageCropperModule
+        ImageCropperModule,
+        SharedModule,
+        MatProgressBarModule,
+        MatTabsModule,
+        MatTableModule,
+        LibPresciptionModule
     ],
-    exports: [ViewVisitPrescriptionComponent]
+    exports: [ViewVisitPrescriptionComponent, ViewVisitSummaryComponent],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class ModalComponentsModule { }

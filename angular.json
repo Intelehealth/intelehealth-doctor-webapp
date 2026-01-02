@@ -28,7 +28,8 @@
               "pdfjs-dist/build/pdf",
               "pdfjs-dist/web/pdf_viewer",
               "pdfmake/build/pdfmake",
-              "pdfmake/build/vfs_fonts"
+              "pdfmake/build/vfs_fonts",
+              "@sjmc11/tourguidejs"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",
@@ -40,6 +41,7 @@
               "src/assets",
               "src/manifest.webmanifest",
               "src/ngsw-worker.js",
+              "src/custom-service-worker.js",
               "src/ngsw.json"
             ],
             "styles": [
@@ -81,7 +83,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5mb",
+                  "maximumWarning": "7mb",
                   "maximumError": "10mb"
                 }
               ],
@@ -114,7 +116,7 @@
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
+            "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
               "src/assets",

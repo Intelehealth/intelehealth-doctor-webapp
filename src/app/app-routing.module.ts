@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from './main-container/main-container.component';
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard } from 'ngx-permissions';
+import { MenuAccessGuard } from './core/guards/menu-access.guard';
 
 const routes: Routes = [
   {
@@ -34,36 +35,46 @@ const routes: Routes = [
       {
         path: 'messages',
         data: {
-          breadcrumb: 'Messages'
+          breadcrumb: 'Messages',
+          menu: 'messages'
         },
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
       },
       {
         path: 'calendar',
         data: {
-          breadcrumb: 'Calendar'
+          breadcrumb: 'Calendar',
+          menu: 'calendar'
         },
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
       },
       {
         path: 'appointments',
         data: {
-          breadcrumb: 'Appointments'
+          breadcrumb: 'Appointments',
+          menu: 'appointment'
         },
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
       },
       {
         path: 'prescription',
         data: {
-          breadcrumb: 'Prescription'
+          breadcrumb: 'Prescription',
+          menu: 'prescription'
         },
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
       },
       {
         path: 'help',
         data: {
-          breadcrumb: 'Help & Support'
+          breadcrumb: 'Help & Support',
+          menu: 'help_support'
         },
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
       },
       {

@@ -1,33 +1,57 @@
-<div class="appointment-detail-modal">
-  <div class="modal-title">
-    <h6 class="mb-0">{{data?.date|date:'dd MMM, yyyy'}}</h6>
-    <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/Close.svg" alt="" data-test-id="btnCloseAppDetailMonth"></button>
+<div class="appointment-detail-modal" data-test-id="modalAppointmentDetailMonth">
+  <div class="modal-title" data-test-id="modalTitleAppDetailMonth">
+    <h6 class="mb-0" data-test-id="lblDateAppDetailMonth">
+      {{ data?.date | date:'dd MMM, yyyy' }}
+    </h6>
+    <button class="modal-close-btn"
+            (click)="close(false)"
+            data-test-id="btnCloseAppDetailMonth">
+      <img src="assets/svgs/Close.svg"
+           alt=""
+           data-test-id="icoCloseAppDetailMonth">
+    </button>
   </div>
-  <div class="modal-body">
-    <form [formGroup]="dayOffForm" (ngSubmit)="markDayOff()">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12 p-0">
-            <div class="appointment-info-con">
-              <ul>
-                <li>
-                  <div class="info-row">
-                    <div class="info-label">{{'Appointments'|translate}} ({{appointmentCount}})</div>
-                    <div class="info-con">
-                      <ng-container *ngFor="let e of data?.events;">
-                        <div *ngIf="e.title == 'Appointment'">{{e.start|date:'h:mm'}} {{e.start|date:'a'|lowercase|translate}} -
-                           {{e.end|date:'h:mm'}}{{e.end|date:'a'|lowercase|translate}}</div>
+
+  <div class="modal-body" data-test-id="modalBodyAppDetailMonth">
+    <form [formGroup]="dayOffForm"
+          (ngSubmit)="markDayOff()"
+          data-test-id="formDayOffAppDetailMonth">
+      <div class="container-fluid" data-test-id="containerFluidAppDetailMonth">
+        <div class="row" data-test-id="rowAppDetailMonth">
+          <div class="col-md-12 p-0" data-test-id="colAppointmentsAppDetailMonth">
+            <div class="appointment-info-con" data-test-id="infoContainerAppDetailMonth">
+              <ul data-test-id="listAppointmentsAppDetailMonth">
+                <li data-test-id="listItemAppointmentsAppDetailMonth">
+                  <div class="info-row" data-test-id="rowAppointmentsAppDetailMonth">
+                    <div class="info-label" data-test-id="lblAppointmentsAppDetailMonth">
+                      {{ 'Appointments' | translate }} ({{ appointmentCount }})
+                    </div>
+                    <div class="info-con" data-test-id="valAppointmentsAppDetailMonth">
+                      <ng-container *ngFor="let e of data?.events">
+                        <div *ngIf="e.title == 'Appointment'" data-test-id="itemAppointmentTimeAppDetailMonth">
+                          {{ e.start | date:'h:mm' }}
+                          {{ e.start | date:'a' | lowercase | translate }} -
+                          {{ e.end | date:'h:mm' }}
+                          {{ e.end | date:'a' | lowercase | translate }}
+                        </div>
                       </ng-container>
                     </div>
                   </div>
                 </li>
-                <li>
-                  <div class="info-row">
-                    <div class="info-label">{{'Follow-ups'|translate}} ({{followupCount}})</div>
-                    <div class="info-con">
-                      <ng-container *ngFor="let e of data?.events;">
-                        <div *ngIf="e.title == 'Follow-up visit'">{{e.start|date:'h:mm'|lowercase}} {{e.start|date:'a'|lowercase|translate}} -
-                          {{e.end|date:'h:mm'|lowercase}}{{e.end|date:'a'|lowercase|translate}}</div>
+
+                <li data-test-id="listItemFollowupsAppDetailMonth">
+                  <div class="info-row" data-test-id="rowFollowupsAppDetailMonth">
+                    <div class="info-label" data-test-id="lblFollowupsAppDetailMonth">
+                      {{ 'Follow-ups' | translate }} ({{ followupCount }})
+                    </div>
+                    <div class="info-con" data-test-id="valFollowupsAppDetailMonth">
+                      <ng-container *ngFor="let e of data?.events">
+                        <div *ngIf="e.title == 'Follow-up visit'" data-test-id="itemFollowupTimeAppDetailMonth">
+                          {{ e.start | date:'h:mm' | lowercase }}
+                          {{ e.start | date:'a' | lowercase | translate }} -
+                          {{ e.end | date:'h:mm' | lowercase }}
+                          {{ e.end | date:'a' | lowercase | translate }}
+                        </div>
                       </ng-container>
                     </div>
                   </div>
@@ -35,49 +59,100 @@
               </ul>
             </div>
           </div>
-          <div class="col-md-12 p-0 mt-3">
-            <div class="day-off-form-con">
-              <div class="form-group row">
-                <label for="markAS" class="col-4 col-form-label">{{'Mark as'|translate}}</label>
-                <div class="col-8 py-2">
-                  <div class="pretty p-default p-round">
-                    <input type="radio" value="dayOff" formControlName="markAs" data-test-id="radioDayOffAppDetailMonth">
+
+          <!-- Mark as Day/Hour Off -->
+          <div class="col-md-12 p-0 mt-3"
+               *ngIf="isFutureDate"
+               data-test-id="colMarkOffAppDetailMonth">
+            <div class="day-off-form-con" data-test-id="dayOffFormContainerAppDetailMonth">
+              <div class="form-group row" data-test-id="rowMarkAsAppDetailMonth">
+                <label for="markAS"
+                       class="col-4 col-form-label"
+                       data-test-id="lblMarkAsAppDetailMonth">
+                  {{ 'Mark as' | translate }}
+                </label>
+                <div class="col-8 py-2" data-test-id="colRadioGroupAppDetailMonth">
+                  <div class="pretty p-default p-round" data-test-id="radioGroupDayOffAppDetailMonth">
+                    <input type="radio"
+                           value="dayOff"
+                           formControlName="markAs"
+                           data-test-id="radioDayOffAppDetailMonth">
                     <div class="state p-success">
-                      <label>{{'Day off'|translate}}</label>
+                      <label data-test-id="lblRadioDayOffAppDetailMonth">{{ 'Day off' | translate }}</label>
                     </div>
                   </div>
-                  <div class="pretty p-default p-round">
-                    <input type="radio" value="hoursOff" formControlName="markAs" data-test-id="radioHourOffAppDetailMonth">
+                  <div class="pretty p-default p-round" data-test-id="radioGroupHourOffAppDetailMonth">
+                    <input type="radio"
+                           value="hoursOff"
+                           formControlName="markAs"
+                           data-test-id="radioHourOffAppDetailMonth">
                     <div class="state p-success">
-                      <label>{{'Hours off'|translate}}</label>
+                      <label data-test-id="lblRadioHourOffAppDetailMonth">{{ 'Hours off' | translate }}</label>
                     </div>
                   </div>
                 </div>
               </div>
-              <ng-container *ngIf="dayOffForm.value.markAs == 'hoursOff'">
-                <div class="form-group row">
-                  <label for="markAS" class="col-4 col-form-label">{{'From'|translate}}</label>
-                  <div class="col-8">
-                    <ng-select class="appointment-select" formControlName="from" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="{{'Select'|translate}}" data-test-id="selectHourOffFromAppDetailMonth">
+
+              <!-- Hours Off Selection -->
+              <ng-container *ngIf="dayOffForm.value.markAs == 'hoursOff'" data-test-id="containerHoursOffAppDetailMonth">
+                <div class="form-group row" data-test-id="rowFromHourAppDetailMonth">
+                  <label class="col-4 col-form-label" data-test-id="lblFromHourAppDetailMonth">
+                    {{ 'From' | translate }}
+                  </label>
+                  <div class="col-8" data-test-id="colFromHourAppDetailMonth">
+                    <ng-select class="appointment-select"
+                               formControlName="from"
+                               [items]="timeList"
+                               bindLabel="name"
+                               bindValue="name"
+                               [clearable]="false"
+                               [searchable]="false"
+                               placeholder="{{ 'Select' | translate }}"
+                               data-test-id="selectHourOffFromAppDetailMonth">
                     </ng-select>
                   </div>
                 </div>
-                <div class="form-group row">
-                  <label for="markAS" class="col-4 col-form-label">{{'To'|translate}}</label>
-                  <div class="col-8">
-                    <ng-select class="appointment-select" formControlName="to" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="{{'Select'|translate}}" data-test-id="selectHourOffToAppDetailMonth">
+
+                <div class="form-group row" data-test-id="rowToHourAppDetailMonth">
+                  <label class="col-4 col-form-label" data-test-id="lblToHourAppDetailMonth">
+                    {{ 'To' | translate }}
+                  </label>
+                  <div class="col-8" data-test-id="colToHourAppDetailMonth">
+                    <ng-select class="appointment-select"
+                               formControlName="to"
+                               [items]="timeList"
+                               bindLabel="name"
+                               bindValue="name"
+                               [clearable]="false"
+                               [searchable]="false"
+                               placeholder="{{ 'Select' | translate }}"
+                               data-test-id="selectHourOffToAppDetailMonth">
                     </ng-select>
                   </div>
                 </div>
               </ng-container>
             </div>
           </div>
-          <div class="col-md-12 p-0 mt-3">
-            <div class="d-flex align-items-center justify-content-center flex-wrap">
-              <button class="blue-btn" type="button" (click)="close(false)" data-test-id="btnCancelAppDetailMonth">{{'Cancel'|translate}}</button>
-              <button class="confirm-btn" type="submit" data-test-id="btnSubmitAppDetailMonth">{{'Continue'|translate}}</button>
+
+          <!-- Buttons -->
+          <div class="col-md-12 p-0 mt-3" data-test-id="colButtonsAppDetailMonth">
+            <div class="d-flex align-items-center justify-content-center flex-wrap"
+                 data-test-id="buttonGroupAppDetailMonth">
+              <button class="blue-btn"
+                      type="button"
+                      (click)="close(false)"
+                      data-test-id="btnCancelAppDetailMonth">
+                {{ 'Cancel' | translate }}
+              </button>
+              <button class="confirm-btn"
+                      *ngIf="isFutureDate"
+                      type="submit"
+                      data-test-id="btnSubmitAppDetailMonth">
+                {{ 'Continue' | translate }}
+              </button>
             </div>
           </div>
+
         </div>
       </div>
     </form>

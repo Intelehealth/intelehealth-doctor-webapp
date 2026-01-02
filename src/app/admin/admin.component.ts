@@ -10,7 +10,7 @@ import { notifications } from 'src/config/constant';
 export class AdminComponent implements OnInit, OnDestroy {
 
   subscription1: Subscription;
-  interval: any;
+  interval;
 
   constructor(private socketSvc: SocketService) { }
 

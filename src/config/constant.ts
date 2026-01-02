@@ -1,6 +1,10 @@
 export const notifications = {
     ADMIN_UNREAD_COUNT:'adminUnreadCount',
     GET_ADMIN_UNREAD_COUNT:'getAdminUnreadCount',
+    DOCTOR_ADMIN_UNREAD_COUNT:'doctorAdminUnreadCount',
+    GET_DOCTOR_ADMIN_UNREAD_COUNT:'getDoctorAdminUnreadCount',
+    DOCTOR_UNREAD_COUNT:'drUnreadCount',
+    GET_DOCTOR_UNREAD_COUNT:'getDrUnreadCount',
     SUPPORT_MESSAGE:'supportMessage',
     ISREAD_SUPPORT:'isreadSupport',
     UPDATE_MESSAGE:'updateMessage',
@@ -19,6 +23,7 @@ export const visitTypes = {
     PRIORITY_VISIT:'Priority Visit',
     AWAITING_VISIT:'Awaiting Visit',
     PATIENT_INTERACTION:'Patient Interaction',
+    HW_INTERACTION:'HW Interaction',
     GENERAL_PHYSICIAN:'General Physician',
     ADULTINITIAL:'ADULTINITIAL',
     ASSOCIATED_SYMPTOMS:'Associated symptoms',
@@ -30,6 +35,11 @@ export const visitTypes = {
     VISIT_NOTE:'Visit Note',
     MEDICAL_HISTORY:'MEDICAL HISTORY',
     FAMILY_HISTORY:'FAMILY HISTORY',
+    FOLLOW_UP:'Follow-up',
+    NEW:'New',
+    PATIENT_INTERACTION_COMMENT:'Patient Interaction Comment',
+    AI_DIAGNOSIS_SUPPORT:'AI Diagnosis Support',
+    LLM_REGENERATION: 'LLM Regeneration'
 }
 
 export const doctorDetails = {
@@ -57,4 +67,214 @@ export const doctorDetails = {
     WORK_EXPERIENCE:'workExperience',
     WORK_EXPERIENCE_DETAILS:'workExperienceDetails',
     WHATS_APP_NUMBER:'whatsAppNumber',
+    ROLE: 'user_role',
+    USER_NAME: 'username',
+    IS_NEW_DOCTOR: 'isNewDoctor'
+}
+
+export const facility = {
+  facilities :[
+    { id : 1 , name : 'HSC'},
+    { id : 2 , name : 'PHC'},
+    { id : 3 , name : 'CHC'},
+    { id : 4 , name : 'SDH'},
+    { id : 5 , name : 'DH'},
+    { id : 6 , name : 'TH'},
+    { id : 7 , name : 'GH'},
+    { id : 8 , name : 'RH'},
+    { id : 8 , name : 'Anganwadi Center'},
+    { id : 8 , name : 'HWC'},
+    { id : 8 , name : 'Government District Hospital'},
+    { id : 8 , name : 'Private Hospital'},
+  ]
+};
+
+export const specialization = {
+  specializations :[
+    {
+        id: 1,
+        name: 'General Physician'
+    },
+    {
+        id: 2,
+        name: 'Dermatologist'
+    },
+    {
+        id: 3,
+        name: 'Gynecologist'
+    },
+    {
+        id: 4,
+        name: 'Pediatrician'
+    }
+  ]
+};
+
+export const refer_specialization = {
+  refer_specializations :[
+    { id: 1, name : 'CHO'},
+    { id: 2, name : 'MO'},
+    { id: 3, name : 'General Physician'},
+    { id: 4, name : 'Obstetrician & Gynecologist'},
+    { id: 5, name : 'Pediatrician'},
+    { id: 6, name : 'General Surgeon'},
+    { id: 7, name : 'Dermatologist'},
+    { id: 8, name : 'ENT Specialist'},
+    { id: 9, name : 'Eye Specialist'},
+    { id: 10, name : 'Dental Surgeon'},
+  ]
+};
+
+export const refer_prioritie = {
+  refer_priorities :[
+    {id: 1, name: 'Elective'},
+    {id: 1, name: 'Urgent'}
+  ]
+}
+
+export const strength = {
+  strengthList :[
+    {
+      id: 1,
+      name: '5 Mg'
+    },
+    {
+      id: 2,
+      name: '10 Mg'
+    },
+    {
+      id: 3,
+      name: '50 Mg'
+    },
+    {
+      id: 4,
+      name: '75 Mg'
+    },
+    {
+      id: 5,
+      name: '100 Mg'
+    },
+    {
+      id: 6,
+      name: '500 Mg'
+    },
+    {
+      id: 7,
+      name: '1000 Mg'
+    }
+  ]
+};
+
+export const days = {
+  daysList :[
+    {
+      id: 1,
+      name: '7'
+    },
+    {
+      id: 2,
+      name: '14'
+    },
+    {
+      id: 3,
+      name: '20'
+    },
+    {
+      id: 4,
+      name: '25'
+    },
+    {
+      id: 5,
+      name: '30'
+    }
+  ]
+};
+
+export const timing = {
+  timingList :[
+    {
+      id: 1,
+      name: '1 - 0 - 0'
+    },
+    {
+      id: 2,
+      name: '0 - 1 - 0'
+    },
+    {
+      id: 3,
+      name: '0 - 0 - 1'
+    },
+    {
+      id: 4,
+      name: '1 - 1 - 0'
+    },
+    {
+      id: 5,
+      name: '1 - 0 - 1'
+    },
+    {
+      id: 6,
+      name: '0 - 1 - 1'
+    },
+    {
+      id: 7,
+      name: '1 - 1 - 1'
+    }
+  ]
+};
+
+export const PICK_FORMATS = {
+  parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
+  display: {
+    dateInput: 'input',
+    monthYearLabel: { year: 'numeric', month: 'short' },
+    dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
+    monthYearA11yLabel: { year: 'numeric', month: 'long' }
+  }
+};
+
+export const conceptIds = {
+  conceptAdditionlDocument : '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba',
+  conceptPhysicalExamination : '200b7a45-77bc-4986-b879-cc727f5f7d5b',
+  conceptDiagnosis : '537bb20d-d09d-4f88-930b-cc45c7d662df',
+  conceptNote : '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  conceptMed : 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca',
+  conceptAdvice : '67a050c1-35e5-451c-a4ab-fff9d57b0db1',
+  conceptTest : '23601d71-50e6-483f-968d-aeef3031346d',
+  conceptInvestigationsTest: '98c5881f-b214-4597-83d4-509666e9a7c9',
+  conceptReferral : '605b6f15-8f7a-4c45-b06d-14165f6974be',
+  conceptFollow : 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86',
+  conceptDDx : 'bc48889e-b461-4e5e-98d1-31eb9dd6160e',
+  conceptDiagnosisClass : '8d4918b0-c2cc-11de-8d13-0010c6dffd0f',
+  conceptPastMedicalHistoryNotes: 'dc27d56c-f970-4eaa-88d0-46d55c2ab24c',
+  conceptFamilyHistoryNotes: '675bafa3-2d9b-4cd1-9d38-55a2f47a69a5',
+  conceptFollowUpInstruction: 'e444b5e9-e3b9-4cb1-92ee-29bba00b33d0',
+  conceptDiscussionSummary: 'b673cd54-a01d-4d8a-9c07-8fb19bf4982c',
+  conceptFrequencyList: '9847b24f-8434-4ade-8978-157184c435d2',
+  conceptRecommendation: '59873e7c-0085-497d-8611-8722d9872143',
+  conceptLLM: '155b6ee1-db3c-4da1-aaa7-cef48bd8440d',
+  conceptDiagnosisName: 'ecae4841-7d37-479e-b5bb-38645689f44d',
+  conceptDiagnosisLikelihood: 'fb1fa50d-bebd-4eb3-a95c-22ed20b9ec83',
+  conceptRationale: '37167aef-0ab7-4cda-b21d-f22d2d1b8ec3',
+  conceptRank : 'fb53830b-552a-4f4f-999a-1713b199ef6e',
+  conceptVersion: '7918ebd7-bc82-4cb5-bd5e-5875688443b2',
+  conceptWasRegenerated: 'f3714916-c1d3-4c5a-8f11-2033e42be5c2'
+}
+
+export const WEBRTC = {
+  CHAT_TEXT_LIMIT: 1000
+}
+
+export const visitAttributeTypes = {
+  patientCallDuration : '35e64f4a-d0a5-40bc-8010-8c61d52cc4b1',
+  HWInteraction : 'c3e885bf-6c97-4d27-9171-a7e0c25450e9',
+  PatientInteraction: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',
+  callStatus: 'f8e121db-0999-455f-a105-514cf2ec3e43',
+  patientInteractionComment: 'ed7444db-0e1e-4a88-88c6-9d9775a9bf3e'
+}
+
+export const visitEncounters = {
+  aiDiagnosis: '0efaa89c-4cb2-4e6c-8229-2987c86d165f',
+  doctorProviderId: '73bbb069-9781-4afc-a9d1-54b6b2270e03',
+  llmRegeneration: 'de08edc3-bbcc-46cb-a3df-4b4ff17af0d0'
 }

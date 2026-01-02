@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
@@ -29,6 +29,15 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
+import { SharedModule } from '../shared.module';
+import { OpenChatComponent } from './open-chat/open-chat.component';
+import { CompletedVisitsComponent } from './completed-visits/completed-visits.component';
+import { FollowupVisitsComponent } from './followup-visits/followup-visits.component';
+import { NotesComponent } from './visit-summary/notes/notes.component';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruction/follow-up-instruction.component';
+import { IhLibraryModule } from 'ih-library';
+import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -42,9 +51,16 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     GetStartedComponent,
     VisitSummaryComponent,
     ChangePasswordComponent,
-    HwProfileComponent
+    HwProfileComponent,
+    OpenChatComponent,
+    CompletedVisitsComponent,
+    FollowupVisitsComponent,
+    NotesComponent,
+    FollowUpInstructionComponent,
   ],
   imports: [
+    IhLibraryModule,
+    MatMenuModule,
     CommonModule,
     DashboardRoutingModule,
     MatExpansionModule,
@@ -75,10 +91,13 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    SharedModule
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
-  ]
+    CanDeactivateVisitSummary
+  ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class DashboardModule { }

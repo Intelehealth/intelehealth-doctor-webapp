@@ -1,60 +1,66 @@
-<div class="call-detail" mat-dialog-title [class.d-none]="_minimized">
+<!-- <div class="call-detail" mat-dialog-title [class.d-none]="_minimized">
   <div class="chw-item">
     <img src="assets/svgs/chw.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.hwName | titlecase }}</h6>
-      <span>{{'CHW'|translate}}</span>
+      <span>{{ "CHW" | translate }}</span>
     </div>
   </div>
   <div class="chw-item">
     <img src="assets/svgs/patient.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
-      <span>{{'Patient'|translate}}</span>
+      <span>{{ "Patient" | translate }}</span>
     </div>
   </div>
-</div>
-<mat-dialog-content>
+</div> -->
+<mat-dialog-content [disableDirective]="true">
   <div class="container-fluid">
     <div class="row">
       <div class="col p-0">
-        <div class="main-container">
-          <div class="remote-con" [class.minimized]="_minimized">
-            <video
-              #remoteVideo
-              autoplay
-              [ngClass]="{ 'd-none': _remoteVideoOff }"
-            ></video>
+        <div
+          *ngIf="initiator === 'hw'"
+          [class.d-none]="!connecting"
+          class="main-container connecting"
+        >
+          <div class="text-center text">Call is connecting...</div>
+        </div>
+        <div
+          [class.d-none]="
+            (!callConnected && initiator === 'dr') ||
+            (!callConnected && initiator === 'hw' && connecting)
+          "
+          class="main-container"
+        >
+          <div class="remote-con" [class.minimized]="_minimized" [class.video-on]="!_remoteVideoOff">
+            <div #remoteVideo class="remote-container"></div>
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
               class="video-off-container"
             >
               <img
-                src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
-                (error)="onImgError($event)"
+                src="{{checkPatientRegField('Profile Photo') ? baseUrl + '/personimage/' + data.patientPersonUuid : '' }}"
                 alt=""
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _remoteAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="remoteAudioIcon" />
             </div>
-            <div class="call-duration" [class.d-none]="_minimized">
-              <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
+            <div class="call-duration-container">
+              <div class="call-duration" [class.d-none]="_minimized">
+                <!-- <span [ngClass]="{ 'fontColor': !_remoteVideoOff }" style="font-size: 16px; font-weight: 500;">Call ends in</span> -->
+                <span *ngIf="callDuration" class="pill">{{
+                  callDuration
+                }}</span>
+              </div>
             </div>
-            <div class="video-controls" [class.d-none]="_minimized">
+            <div class="video-controls">
               <button
                 type="button"
                 class="video-ctrl-btn red"
-                (click)="endCallInRoom()"
+                (click)="endCallInRoom();setFlag();"
                 data-test-id="btnEnd"
+               [class.minimized]="_minimized"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
@@ -64,6 +70,7 @@
                 (click)="toggleAudio()"
                 data-test-id="btnToggleAudio"
                 [class.gray]="_localAudioMute"
+                [class.minimized]="_minimized"
               >
                 <img
                   src="{{
@@ -75,6 +82,7 @@
                 />
               </button>
               <button
+               [class.d-none]="_minimized"
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleVideo()"
@@ -91,12 +99,12 @@
                 />
               </button>
             </div>
-            <div class="window-controls" [class.minimized]="_minimized">
               <button
                 type="button"
-                class="video-ctrl-btn"
+                class="video-ctrl-btn fullscreen-btn"
                 (click)="toggleWindow()"
                 data-test-id="btnToggleWindow"
+                [class.minimized]="_minimized"
               >
                 <img
                   src="{{
@@ -107,28 +115,41 @@
                   alt=""
                 />
               </button>
-            </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
-            <video #localVideo autoplay></video>
+            <div #localVideo class="local-container"></div>
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
-                src="{{ baseUrl + '/personimage/' + data.connectToDrId }}"
-                (error)="$event.target.src = 'assets/svgs/dr-user.svg'"
+                [src]="baseUrl + '/personimage/' + data.drPersonUuid"
+                (error)="setDefaultImage($event)"
                 alt=""
+                [useDefaultImageDirective]="false"
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _localAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="localAudioIcon" />
             </div>
+          </div>
+        </div>
+        <div
+          *ngIf="initiator !== 'hw'"
+          [class.d-none]="callConnected"
+          class="call-container"
+        >
+          <div class="content">
+            <div class="profile-img">
+              <img src="{{ baseUrl + '/personimage/' + data?.patientId }}"
+              >
+            </div>
+            <div class="user-name">{{ this.data.patientName | titlecase }}</div>
+            <div class="user-desc">{{ this.data.patientGender | titlecase }}, {{ this.data.patientAge }}</div>
+            <button
+            type="button"
+            class="video-ctrl-btn red"
+            (click)="endCallInRoom();setFlag();"
+          >
+            <img src="assets/svgs/call-end.svg" alt="" />
+          </button>
           </div>
         </div>
       </div>
@@ -137,8 +158,8 @@
           <div class="chat-con-title">
             <div class="chat-item-info">
               <img
-                src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
-                (error)="onImgError($event)"
+                src="{{ checkPatientRegField('Profile Photo') ? baseUrl + '/personimage/' + data.patientPersonUuid : '' }}"
+
                 alt=""
               />
               <div class="title">
@@ -164,11 +185,11 @@
                   >
                     <ng-container *ngIf="item.isRead">
                       <img src="assets/svgs/read-status.svg" alt="" />
-                      <span class="ml-1">{{'Read'|translate}}</span>
+                      <span class="ml-1">{{ "Read" | translate }}</span>
                     </ng-container>
                     <ng-container *ngIf="!item.isRead">
                       <img src="assets/svgs/sent-status.svg" alt="" />
-                      <span class="ml-1">{{'Sent'|translate}}</span>
+                      <span class="ml-1">{{ "Sent" | translate }}</span>
                     </ng-container>
                   </ng-container>
                 </li>
@@ -216,7 +237,12 @@
                   </button>
                 </div>
               </div>
-              <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessage">
+              <button
+                type="button"
+                class="send-btn"
+                (click)="sendMessage()"
+                data-test-id="btnSendMessage"
+              >
                 <img src="assets/svgs/send-icon-white.svg" alt="" />
               </button>
             </div>

@@ -1,164 +1,134 @@
-<mat-drawer-container class="sidenav-container" autosize>
-  <mat-drawer #drawer class="admin-sidenav" [mode]="_mode" [opened]="_opened">
-    <div class="menu-items-wrapper" [ngClass]="{ 'collapsed' : collapsed }">
-      <div class="sidenav-logo">
-        <div class="sidenav-toggle">
+<mat-drawer-container class="sidenav-container" autosize data-test-id="sidenavContainer">
+  <mat-drawer #drawer class="admin-sidenav" [mode]="_mode" [opened]="_opened" data-test-id="adminSidenav">
+    <div class="menu-items-wrapper" [ngClass]="{ 'collapsed' : collapsed }" data-test-id="menuItemsWrapper">
+      <div class="sidenav-logo" data-test-id="sidenavLogo">
+        <div class="sidenav-toggle" data-test-id="sidenavToggleWrapper">
           <button type="button" (click)="collapsed = !collapsed" data-test-id="btnToggleSidenav">
-            <img [src]="getUrl()" alt="">
+            <img [src]="getUrl()" alt="" data-test-id="imgSidenavToggleIcon">
           </button>
         </div>
-        <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed">
-        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
+        <img *ngIf="!collapsed" src="{{ configPublicUrl + logoImageURL }}" alt="" width="100%"
+          data-test-id="imgFullLogo">
+        <img *ngIf="collapsed" src="{{ configPublicUrl + thumbnailLogoURL }}" alt="" width="100%"
+          data-test-id="imgThumbnailLogo">
       </div>
-      <ul class="admin-nav">
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemDashboard">
-          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" data-test-id="linkDashboard">
-            <img src="assets/svgs/menu-home.svg" alt="">
-            <span>{{'Dashboard' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemMessages">
-          <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkMessages">
-            <img src="assets/svgs/menu-message.svg" alt="">
-            <span>{{'Messages' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemAppointments">
-          <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAppointments">
-            <img src="assets/svgs/menu-video.svg" alt="">
-            <span>{{'Appointment' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemCalendar">
-          <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active" data-test-id="linkCalendar">
-            <img src="assets/svgs/menu-calendar.svg" alt="">
-            <span>{{'Calendar' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemPrescription">
-          <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkPrescription">
-            <img src="assets/svgs/menu-treatment.svg" alt="">
-            <span>{{'Prescription' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemProfile">
-          <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkProfile">
-            <img src="assets/svgs/menu-home.svg" alt="">
-            <span>{{'My Profile'| translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemHelp">
-          <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkHelp">
-            <img src="assets/svgs/menu-info.svg" alt="">
-            <span>{{'Help & Support' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemAyu">
-          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyu">
-            <img src="assets/svgs/warning.svg" alt="">
-            <span>{{'Ayu'| translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSupport">
-          <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkSupport">
-            <img src="assets/svgs/menu-info.svg" alt="">
-            <span>{{'Support' | translate}} <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div> </span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSystem">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank" data-test-id="linkSystem">
-            <img src="assets/svgs/user-settings.svg" alt="">
-            <span>{{'System Admin' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemUser">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank" data-test-id="linkUser">
-            <img src="assets/svgs/add-user.svg" alt="">
-            <span>{{'User Creation' | translate}}</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemReport">
-          <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank" data-test-id="linkReport">
-            <img src="assets/svgs/report.svg" alt="">
-            <span>{{'Report' | translate}}</span>
-          </a>
-        </li>
+      <ul class="admin-nav" data-test-id="adminNavList">
+        <app-sidebar-menu-list (toggleSidebar)="toggleSidebar()" [drUnread]="drUnread" [pvs]="pvs"
+          [menus]="sidebarMenus" [adminUnread]="adminUnread" data-test-id="sidebarMenuList"></app-sidebar-menu-list>
         <li class="nav-item" (click)="toggleSidebar()" data-test-id="listItemLogout">
-          <mat-divider class="mb-2"></mat-divider>
+          <mat-divider class="mb-2" data-test-id="dividerLogout"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()" data-test-id="linkLogout">
-            <img src="assets/svgs/power.svg" alt="">
-            <span>{{'Log-out' | translate}}</span>
+            <img src="assets/svgs/power.svg" alt="" data-test-id="iconLogout">
+            <span data-test-id="textLogout">{{ 'Log-out' | translate }}</span>
           </a>
         </li>
       </ul>
     </div>
   </mat-drawer>
 
-  <div class="admin-sidenav-content">
-    <div class="header-main">
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="javascript:void(0)">
-          <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile" data-test-id="btnToggleDrawer">
-            <mat-icon>menu</mat-icon>
+  <div class="admin-sidenav-content" data-test-id="adminSidenavContent">
+    <div class="header-main" data-test-id="headerMain">
+      <nav class="navbar navbar-expand-lg navbar-light" aria-label="Header menu" data-test-id="headerMainNav">
+        <a class="navbar-brand" data-test-id="navbarBrand">
+          <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile"
+            data-test-id="btnToggleDrawer">
+            <mat-icon data-test-id="iconMenu">menu</mat-icon>
           </button>
-          <div class="header-title d-flex justify-content-between align-items-center" *ngIf="header?.title">
-            <ng-container *ngIf="header.title != 'Dashboard'">
-              <img src="{{header?.imgUrl}}" alt="" width="44px">
-              <h6 class="mb-0 ml-2">{{header?.title |  translate}}</h6>
-              <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
+
+          <div id="searchPatientsSection" class="header-title d-flex justify-content-between align-items-center"
+            *ngIf="header?.title" data-test-id="searchPatientsSection">
+            <ng-container *ngIf="header.title != 'Dashboard'" data-test-id="nonDashboardHeader">
+              <img src="{{header?.imgUrl}}" alt="" width="44px" data-test-id="headerImg">
+              <h6 class="mb-0 ml-2" data-test-id="headerTitle">{{header?.title | translate}}</h6>
+              <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon"
+                data-test-id="iconHelp">help_outline</mat-icon>
             </ng-container>
-            <ng-container *ngIf="header.title == 'Dashboard'">
-              <form [formGroup]="searchForm">
-                <div class="input-group">
-                    <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()" data-test-id="etSearchPatient">
-                    <div class="input-group-append">
-                      <span class="input-group-text click" id="basic-addon1" (click)="search()" data-test-id="spanSearchPatient">
-                        <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
-                      </span>
-                    </div>
+            <ng-container *ngIf="header.title == 'Dashboard'" data-test-id="dashboardSearch">
+              <form [formGroup]="searchForm" data-test-id="searchForm">
+                <div class="input-group" data-test-id="searchInputGroup">
+                  <input type="text" class="form-control" formControlName="keyword"
+                    placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1"
+                    (keyup.enter)="search()" data-test-id="etSearchPatient">
+                  <div class="input-group-append" data-test-id="searchInputGroupAppend">
+                    <span class="input-group-text click p-0" id="basic-addon1" *ngIf="searchForm.value.keyword"
+                      (click)="resetSearch()" data-test-id="btnResetSearchPatient">
+                      <mat-icon class="ml-0" style="line-height: normal;" data-test-id="iconResetSearch">close</mat-icon>
+                    </span>
+                    <span class="input-group-text click" id="basic-addon2" (click)="search()"
+                      data-test-id="btnSearchPatient">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px"
+                        data-test-id="iconSearchPatient">
+                    </span>
+                  </div>
                 </div>
               </form>
             </ng-container>
           </div>
-          <nav aria-label="breadcrumb" *ngIf="!header?.title">
-            <ol class="breadcrumb">
-              <ng-container *ngFor="let breadcrumb of breadcrumbs;let x=index; let last=last;">
+
+          <nav aria-label="breadcrumb" *ngIf="!header?.title" data-test-id="breadcrumbNav">
+            <ol class="breadcrumb" data-test-id="breadcrumbList">
+              <ng-container *ngFor="let breadcrumb of breadcrumbs; let x = index; let last = last;">
                 <li class="breadcrumb-item" *ngIf="!last">
-                  <a [routerLink]="breadcrumb.url" data-test-id="{{'breadcrumb'+x}}">{{ breadcrumb.label | translate}}</a>
+                  <a [routerLink]="breadcrumb.url" data-test-id="breadcrumb{{x}}">{{ breadcrumb.label | translate }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page" *ngIf="last">
+                <li class="breadcrumb-item" aria-current="page" *ngIf="last" data-test-id="breadcrumbCurrent">
                   {{ breadcrumb.label | translate }}
                 </li>
               </ng-container>
             </ol>
           </nav>
         </a>
-        <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" data-test-id="btnToggleNavbar">
-          <mat-icon>keyboard_arrow_down</mat-icon>
+
+        <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse"
+          data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation" data-test-id="btnToggleNavbar">
+          <mat-icon data-test-id="iconNavbarToggle">keyboard_arrow_down</mat-icon>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <div class="d-flex align-items-center justify-content-end">
-                <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpMenu">
-                  <mat-icon>help_outline</mat-icon>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" data-test-id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto" data-test-id="navbarNavList">
+            <li class="nav-item" data-test-id="navItemUserControls">
+              <div class="d-flex align-items-center justify-content-end" data-test-id="userControls">
+                <button mat-button class="help-tour-button mr-1 p-1" (click)="tourSvc.initHelpTour()"
+                  *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpTour">
+                  <img src="assets/svgs/help-tour.svg" alt="Help Tour" data-test-id="iconHelpTour">
                 </button>
-                <button mat-button class="notification-button mr-3" (click)="toggleNotification()" data-test-id="btnNotification">
-                  <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
-                  <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
+                <button mat-button class="notification-button mr-1" (click)="openHelpMenu()"
+                  *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpMenu">
+                  <mat-icon data-test-id="iconHelpMenu">help_outline</mat-icon>
+                  <div class="dot" *ngIf="doctorAdminUnread" data-test-id="adminUnreadDot">{{ doctorAdminUnread }}</div>
                 </button>
+                <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3"
+                  data-test-id="btnNotificationSnooze">
+                  <mat-icon *ngIf="notificationEnabled && !snoozed" data-test-id="iconNotifNone">notifications_none</mat-icon>
+                  <mat-icon *ngIf="notificationEnabled && snoozed" data-test-id="iconNotifPaused">notifications_paused</mat-icon>
+                  <mat-icon *ngIf="!notificationEnabled" data-test-id="iconNotifOff">notifications_off</mat-icon>
+                </button>
+                <mat-menu #notificationmenu="matMenu" class="notification-menu" data-test-id="notificationMenu">
+                  <!-- menu items -->
+                </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
-                  <img class="user-img mr-3" src="{{profilePic}}" (error) ="onImgError($event)" alt="">
-                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
+                  <img class="user-img mr-3" src="{{profilePic}}" alt="" data-test-id="imgUserProfile">
+                  <h6 class="user-title mb-0" data-test-id="greetingUser">
+                    {{ 'Hello' | translate }}, {{ (user)? user?.person?.display : ('User' | translate) }}
+                    <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%" data-test-id="imgWavingHand">
+                  </h6>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon" data-test-id="btnProfileDropdown">
-                  <mat-icon>more_vert</mat-icon>
+                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Profile menu"
+                  data-test-id="btnProfileDropdown">
+                  <mat-icon data-test-id="iconProfileDropdown">more_vert</mat-icon>
                 </button>
-                <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
-                  <button mat-menu-item (click)="changePassword()" data-test-id="btnChangePasswordMain">{{'Change Password' | translate}}</button>
-                  <button mat-menu-item (click)="selectLanguage()" data-test-id="btnSelectLanguageMain">{{'Change Language' | translate}}</button>
-                  <button mat-menu-item routerLink="/dashboard/profile" data-test-id="btnProfileMain">{{'Profile' | translate}}</button>
+                <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown"
+                  data-test-id="profileDropdownMenu">
+                  <button mat-menu-item (click)="changePassword()" data-test-id="btnChangePasswordMain">
+                    {{ 'Change Password' | translate }}
+                  </button>
+                  <button mat-menu-item (click)="selectLanguage()" data-test-id="btnSelectLanguageMain">
+                    {{ 'Change Language' | translate }}
+                  </button>
+                  <button mat-menu-item routerLink="/dashboard/profile" data-test-id="btnProfileMain">
+                    {{ 'Profile' | translate }}
+                  </button>
                 </mat-menu>
               </div>
             </li>
@@ -166,22 +136,10 @@
         </div>
       </nav>
     </div>
-    <div class="main-container">
-      <router-outlet></router-outlet>
-      <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
-        <div class="menu-item">
-          <span>{{'Raise a Ticket'| translate}}</span>
-          <button class="help-btn-2 mr-1" type="button" (click)="openRaiseTicketModal()" data-test-id="btnToggleTicket">
-            <img src="assets/svgs/note-green.svg" alt="" width="45px" height="45px">
-          </button>
-        </div>
-        <div class="menu-item">
-          <span>{{'Support Chat'| translate}}</span>
-          <button class="help-btn-2" type="button" (click)="openHelpMenu()" data-test-id="btnToggleHelpMenu">
-            <img src="assets/svgs/send_circle_icon.svg" alt="" width="45px" height="45px">
-          </button>
-        </div>
-      </div>
+
+    <div class="main-container" data-test-id="mainContainerRoute"
+      [class.pb-0]="this.routeUrl?.includes('messages')||this.routeUrl?.includes('support')">
+      <router-outlet data-test-id="routerOutlet"></router-outlet>
     </div>
   </div>
 </mat-drawer-container>

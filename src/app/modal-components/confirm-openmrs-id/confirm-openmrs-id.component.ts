@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 
@@ -7,20 +7,26 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './confirm-openmrs-id.component.html',
   styleUrls: ['./confirm-openmrs-id.component.scss']
 })
-export class ConfirmOpenmrsIdComponent implements OnInit {
+export class ConfirmOpenmrsIdComponent {
   openMrsId: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private toastr: ToastrService,
     private dialogRef: MatDialogRef<ConfirmOpenmrsIdComponent>) { }
 
-  ngOnInit(): void {
-  }
-
-  close(val: any) {
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Submit openmrs id
+  * @return {void}
+  */
   submit() {
     if (this.openMrsId) {
       if (this.openMrsId == this.data) {
