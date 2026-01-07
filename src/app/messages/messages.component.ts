@@ -80,11 +80,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   get filteredConversations() {
+    if (!this.searchValue || this.searchValue.trim() === '') {
+      return this.conversations;
+    }
+
+    const searchTerm = this.searchValue.toLowerCase().trim();
     return this.conversations.filter((conversation: ConversationModel) => {
+      const patientName = conversation?.patientName?.toLowerCase() || '';
+      const message = conversation?.message?.toLowerCase() || '';
+      const openMrsId = conversation?.openMrsId?.toLowerCase() || '';
+
       return (
-        conversation?.patientName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-        conversation?.message.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-        conversation?.openMrsId?.toLowerCase().includes(this.searchValue.toLowerCase())
+        patientName.includes(searchTerm) ||
+        message.includes(searchTerm) ||
+        openMrsId.includes(searchTerm)
       );
     });
   }
