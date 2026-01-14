@@ -13,7 +13,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
@@ -29,6 +29,7 @@ import { doctorDetails, languages, visitTypes, facility, refer_specialization, r
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { tr } from 'date-fns/locale';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -145,6 +146,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     multiple: false,
     accept: '.pdf'
   }
+
+  hiTypes: Array<string> = [];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -1529,97 +1532,102 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
       return false;
     }
-    this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
-      if (res) {
-        if (this.isVisitNoteProvider) {
-          if (this.provider.attributes.length) {
-            if (navigator.onLine) {
-              if (!this.visitCompleted) {
-                this.encounterService.postEncounter({
-                  patient: this.visit.patient.uuid,
-                  encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                  encounterProviders: [
-                    {
-                      provider: this.provider.uuid,
-                      encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                    },
-                  ],
-                  visit: this.visit.uuid,
-                  encounterDatetime: new Date(Date.now() - 30000),
-                  obs: [
-                    {
-                      concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                      value: JSON.stringify(this.getDoctorDetails()),
-                    },
-                  ]
-                }).subscribe((post) => {
-                  this.visitCompleted = true;
-                  this.notifyHwForAvailablePrescription();
-                  this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
-                  this.updateAbhaDetails(post.uuid);
-                  this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                    next: (linkSvcRes: ApiResponseModel) => {
-                      const link = linkSvcRes.data.hash;
-                      this.visitService.postAttribute(
-                        this.visit.uuid,
-                        {
-                          attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                          value: `/i/${link}`,
-                        }).subscribe();
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
-                        }
-                      });
-                    },
-                    error: (err) => {
-                      this.toastr.error(err.message);
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
-                        }
-                      });
+    this.openVisitCareContextModal().subscribe((data: any) => {
+      if (data && data.selectedTabs && data.selectedTabs.length) {
+        this.hiTypes = data.selectedTabs;
+      }
+      this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
+        if (res) {
+          if (this.isVisitNoteProvider) {
+            if (this.provider.attributes.length) {
+              if (navigator.onLine) {
+                if (!this.visitCompleted) {
+                  this.encounterService.postEncounter({
+                    patient: this.visit.patient.uuid,
+                    encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+                    encounterProviders: [
+                      {
+                        provider: this.provider.uuid,
+                        encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+                      },
+                    ],
+                    visit: this.visit.uuid,
+                    encounterDatetime: new Date(Date.now() - 30000),
+                    obs: [
+                      {
+                        concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+                        value: JSON.stringify(this.getDoctorDetails()),
+                      },
+                    ]
+                  }).subscribe((post) => {
+                    this.visitCompleted = true;
+                    this.notifyHwForAvailablePrescription();
+                    this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+                    this.updateAbhaDetails(post.uuid);
+                    this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                      next: (linkSvcRes: ApiResponseModel) => {
+                        const link = linkSvcRes.data.hash;
+                        this.visitService.postAttribute(
+                          this.visit.uuid,
+                          {
+                            attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+                            value: `/i/${link}`,
+                          }).subscribe();
+                        this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                          if (result === 'view') {
+                            // Open visit summary modal here....
+                            this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                          } else if (result === 'dashboard') {
+                            this.router.navigate(['/dashboard']);
+                          }
+                        });
+                      },
+                      error: (err) => {
+                        this.toastr.error(err.message);
+                        this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                          if (result === 'view') {
+                            // Open visit summary modal here....
+                            this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                          } else if (result === 'dashboard') {
+                            this.router.navigate(['/dashboard']);
+                          }
+                        });
+                      }
+                    });
+                  });
+                } else {
+                  this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                    if (result === 'view') {
+                      // Open visit summary modal here....
+                      this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                    } else if (result === 'dashboard') {
+                      this.router.navigate(['/dashboard']);
                     }
                   });
-                });
+                }
               } else {
-                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                  if (result === 'view') {
-                    // Open visit summary modal here....
-                    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                  } else if (result === 'dashboard') {
-                    this.router.navigate(['/dashboard']);
+                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                  if (c) {
+                    // Do nothing
                   }
                 });
               }
             } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
                 if (c) {
-                  // Do nothing
+                  this.router.navigate(['/dashboard/profile']);
                 }
               });
             }
           } else {
-            this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+            this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
               if (c) {
-                this.router.navigate(['/dashboard/profile']);
+                this.router.navigate(['/dashboard']);
               }
             });
           }
-        } else {
-          this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
-            if (c) {
-              this.router.navigate(['/dashboard']);
-            }
-          });
         }
-      }
+      });
     });
   }
 
@@ -1750,8 +1758,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
     const abhaAddress = this.patient?.person?.abhaAddress ?? abhaNumber;
     this.patient.person.abhaAddress = abhaAddress;
-    if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment.abhaAddressSuffix)) {
-      this.patient.person.abhaAddress = `${abhaAddress}${environment.abhaAddressSuffix}`;
+    if (abhaAddress && !abhaAddress.includes('@') && !abhaAddress.includes(environment?.abhaAddressSuffix)) {
+      this.patient.person.abhaAddress = `${abhaAddress}${environment?.abhaAddressSuffix}`;
     }
   }
 
@@ -1779,7 +1787,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
             startDateTime: this.visit.startDatetime,
             encounterUUID: encounterUUID,
-            personDisplay: this.patient?.person?.display
+            personDisplay: this.patient?.person?.display,
+            hiTypes: this.hiTypes
           }).subscribe();
         });
     }
@@ -1880,5 +1889,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
      
       this.uploadDoctorAdditionalDocument(formData);
     }
+  }
+
+  openVisitCareContextModal = () => {
+    let mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    mobileNumber = mobileNumber != 'NA' ? mobileNumber: undefined
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    const abhaAddress = this.patient?.person?.abhaAddress;
+    if (environment.abhaEnabled && (abhaNumber || abhaAddress || mobileNumber)) {
+      return this.coreService.openVisitCareContextModal({
+        visit: this.visit,
+        patient: this.patient,
+        provider: this.provider,
+        vitals: this.vitalObs,
+        cheifComplaints: this.cheifComplaints,
+        diagnosis: this.existingDiagnosis,
+        medicines: this.medicines,
+        tests: this.tests,
+        advices: this.advices,
+        followUp: this.followUpForm.value,
+        physicalExamination: this.physicalExaminationData,
+        patientHistoryData: this.patientHistoryData,
+        doctorUploadedDocs: this.doctorUploadedDocs
+      })
+    }
+    else return of(false);
   }
 }

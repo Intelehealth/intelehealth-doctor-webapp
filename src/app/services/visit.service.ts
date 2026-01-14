@@ -253,4 +253,14 @@ export class VisitService {
     const url = `${this.baseURLAbha}/abha/post-care-context`
     return this.http.post(url, json);
   }
+
+  /**
+  * Get Visit Care Contexts from ABDM
+  * @param {string} visitUuid - Visit Uuid
+  * @return {Observable<any>}
+  */
+  getVisitCareContext(visitUuid: string): Observable<any> {
+    const url = `${this.baseURLAbha}/abha/visit/carecontext`
+    return this.http.post(url, {visitUUID: visitUuid});
+  }
 }

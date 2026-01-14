@@ -46,6 +46,10 @@ import { FileDownloadComponent } from './file-download/file-download.component';
 import { ReportErrorComponent } from './report-error/report-error.component';
 import { ReportSuccessComponent } from './report-success/report-success.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { VisitCareContextComponent } from './visit-care-context/visit-care-context.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
     declarations: [
@@ -80,7 +84,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         ReportGeneratorComponent,
         FileDownloadComponent,
         ReportErrorComponent,
-        ReportSuccessComponent
+        ReportSuccessComponent,
+        VisitCareContextComponent
     ],
     imports: [
         CommonModule,
@@ -99,7 +104,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         SignaturePadModule,
         ImageCropperModule,
         SharedModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatTabsModule,
+        MatProgressSpinnerModule,
+        MatCheckboxModule
     ],
     exports: [ViewVisitPrescriptionComponent],
 })
