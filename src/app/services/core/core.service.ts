@@ -34,6 +34,7 @@ import { VcallOverlayComponent } from 'src/app/modal-components/vcall-overlay/vc
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { ViewVisitPrescriptionComponent } from 'src/app/modal-components/view-visit-prescription/view-visit-prescription.component';
 import { ViewVisitSummaryComponent } from 'src/app/modal-components/view-visit-summary/view-visit-summary.component';
+import { VisitCareContextComponent } from 'src/app/modal-components/visit-care-context/visit-care-context.component';
 
 @Injectable({
   providedIn: 'root'
@@ -353,5 +354,15 @@ export class CoreService {
       reader.onloadend = () => resolve(reader.result);
       reader.readAsDataURL(blob);
     });
+  }
+
+  /**
+  * Open visit care context modal
+  * @param {any} data - Dialog data containing visitUuid
+  * @return {Observable<any>} - Dialog result
+  */
+  openVisitCareContextModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(VisitCareContextComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    return dialogRef.afterClosed();
   }
 }

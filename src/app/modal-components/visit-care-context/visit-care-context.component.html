@@ -1,0 +1,237 @@
+<div class="title-con position-relative" mat-dialog-title>
+  <h6>{{ 'Visit Care Context' | translate }}</h6>
+  <div>
+    <button class="blue-btn" (click)="sendData()" [disabled]="loading || selectedTabs.length === 0">
+      <span>{{ 'Send Data' | translate }}</span>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="main-content">
+    <div class="container-fluid">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>{{ 'Loading care context data...' | translate }}</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !loading" class="error-container">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error }}</p>
+        <button class="blue-btn" (click)="refresh()">{{ 'Retry' | translate }}</button>
+      </div>
+
+      <!-- Main Content with Patient Info and Tabs -->
+      <div *ngIf="!loading && !error" class="row">
+        <!-- Patient Info Section -->
+        <div class="col-md-12 p-0" *ngIf="data?.patient">
+          <div class="intel-card">
+            <div class="card-body p-1">
+              <div class="row patient-info-wrapper">
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-img-item mb-2">
+                    <div class="patient-img">
+                      <img
+                        src="{{ baseURL + '/personimage/' + data.patient?.person.uuid }}"
+                        alt=""
+                        width="100%"
+                        height="100%"
+                      />
+                    </div>
+                    <div class="ml-3">
+                      <h6>
+                        <span>{{ data.patient?.person?.preferredName?.givenName }}</span>
+                        <span *ngIf="data.patient?.person?.preferredName?.middleName">{{ ' ' + data.patient?.person?.preferredName?.middleName }}</span>
+                        <span>{{ ' ' + data.patient?.person?.preferredName?.familyName }}</span>
+                        <span>{{ " (" + (data.patient?.person.gender | translate) + ") "}}</span>
+                      </h6>
+                      <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{'Age'|translate}}</h6>
+                    <p>
+                      {{
+                        data.patient?.person.birthdate
+                          ? getAge(data.patient?.person.birthdate)
+                          : data.patient?.person.age
+                      }}
+                    </p>
+                  </div>
+                  <div class="patient-info-item">
+                    <h6>{{'Address'|translate}}</h6>
+                    <p>{{ data.patient?.person?.preferredAddress?.cityVillage?.replace(':',' : ') }}</p>
+                    <p>{{ data.patient?.person?.preferredAddress?.address1 }} {{ data.patient?.person?.preferredAddress?.address2 ? ', ' + data.patient?.person?.preferredAddress?.address2 : ''}}</p>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{'Occupation'|translate}}</h6>
+                    <p>{{ getPersonAttributeValue("occupation") }}</p>
+                  </div>
+                  <div class="patient-info-item">
+                    <h6>{{'National ID'|translate}}</h6>
+                    <p>{{ getPersonAttributeValue("NationalID") }}</p>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{'Contact no.'| translate}}</h6>
+                    <p>{{ getPersonAttributeValue("Telephone Number") }}</p>
+                  </div>
+                  <div class="patient-info-item" *ngIf="data.patient?.person?.abhaNumber">
+                    <h6>{{'ABHA Number'|translate}}</h6>
+                    <p>{{ data.patient?.person?.abhaNumber ?? 'N/A' }}</p>
+                  </div>
+                  <div class="patient-info-item" *ngIf="data.patient?.person?.abhaAddress">
+                    <h6>{{'ABHA Address'|translate}}</h6>
+                    <p>{{ data.patient?.person?.abhaAddress ?? 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Section -->
+        <div class="col-md-12 p-0">
+          <div class="intel-card">
+            <mat-tab-group
+              class="care-context-tab-group"
+              mat-align-tabs="start"
+              [disableRipple]="true"
+              (selectedIndexChange)="onTabChange($event)"
+            >
+              <!-- Tab 1: OP Consult Record -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-checkbox
+                    [(ngModel)]="tabCheckboxes[0]"
+                    (change)="onCheckboxChange(0, 'OP Consult Record')"
+                    (click)="$event.stopPropagation()"
+                    class="tab-checkbox">
+                  </mat-checkbox>
+                  <span class="tab-label">{{ 'OP Consult Record' | translate }}</span>
+                </ng-template>
+                <div class="tab-content-wrapper">
+                  <div class="data-section">
+                    <div class="data-section-content mb-3" *ngFor="let section of careContextData.OpConsultRecord">
+                      <h3 class="section-title mb-0">{{ section.type | translate }}</h3>
+                      <ul class="items-list">
+                        <li *ngFor="let entry of section.entries">
+                          <div class="list-item p-0">
+                            <label>{{ entry.key }}</label>
+                            <div class="list-item-content">
+                              {{ entry.value }}
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <!-- Tab 2: Wellness Record -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-checkbox
+                    [(ngModel)]="tabCheckboxes[1]"
+                    (change)="onCheckboxChange(1, 'Wellness Record')"
+                    (click)="$event.stopPropagation()"
+                    class="tab-checkbox">
+                  </mat-checkbox>
+                  <span class="tab-label">{{ 'Wellness Record' | translate }}</span>
+                </ng-template>
+                <div class="tab-content-wrapper">
+                  <div class="data-section">
+                    <div class="data-section-content mb-3" *ngFor="let section of careContextData.WellnessRecord">
+                      <h3 class="section-title mb-0">{{ section.type | translate }}</h3>
+                      <ul class="items-list">
+                        <li *ngFor="let entry of section.entries">
+                          <div class="list-item p-0">
+                            <label>{{ entry.key }}</label>
+                            <div class="list-item-content">
+                              {{ entry.value }}
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <!-- Tab 3: Prescription Record -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-checkbox
+                    [(ngModel)]="tabCheckboxes[2]"
+                    (change)="onCheckboxChange(2, 'Prescription Record')"
+                    (click)="$event.stopPropagation()"
+                    class="tab-checkbox">
+                  </mat-checkbox>
+                  <span class="tab-label">{{ 'Prescription Record' | translate }}</span>
+                </ng-template>
+                <div class="tab-content-wrapper">
+                  <div class="data-section">
+                    <div class="data-section-content" *ngFor="let section of careContextData.PrescriptionRecord">
+                      <h3 class="section-title mb-0">{{ section.type | translate }}</h3>
+                      <ul class="items-list">
+                        <li *ngFor="let entry of section.entries">
+                          <div class="list-item p-0">
+                            <label>{{ entry.key }}</label>
+                            <div class="list-item-content">
+                              {{ entry.value }}
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <!-- Tab 4: Health Document -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-checkbox
+                    [(ngModel)]="tabCheckboxes[3]"
+                    (change)="onCheckboxChange(3, 'Health Document')"
+                    (click)="$event.stopPropagation()"
+                    class="tab-checkbox">
+                  </mat-checkbox>
+                  <span class="tab-label">{{ 'Health Document' | translate }}</span>
+                </ng-template>
+                <div class="tab-content-wrapper">
+                  <div class="data-section">
+                    <div class="data-section-content" *ngFor="let section of careContextData.HealthDocumentRecord">
+                      <h3 class="section-title mb-0">{{ section.type | translate }}</h3>
+                      <ul class="items-list">
+                        <li *ngFor="let entry of section.entries">
+                          <div class="list-item p-0">
+                            <label>{{ entry.key }}</label>
+                            <div class="list-item-content">
+                              {{ entry.value }}
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
