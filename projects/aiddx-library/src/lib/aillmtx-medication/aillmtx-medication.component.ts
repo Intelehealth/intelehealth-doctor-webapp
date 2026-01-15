@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AiTxService } from '../../services/aitx.service';
 
 @Component({
@@ -6,13 +6,16 @@ import { AiTxService } from '../../services/aitx.service';
   templateUrl: './aillmtx-medication.component.html',
   styleUrls: ['./aillmtx-medication.component.scss']
 })
-export class AillmtxMedicationComponent {
+export class AillmtxMedicationComponent implements OnInit, OnChanges {
   @Input() patientInfo: any;
   @Input() visit: any;
   @Input() existingMedication: any[] = [];
   @Output() medicationSelected = new EventEmitter<string[]>();
   @Input() diagnosisName: string;
   @Input() notesss: string;
+  @Input() patientAllergies: string = '';
+  @Input() patientCurrentMedications: string = '';
+  @Input() allergyDataStatus: 'empty' | 'present' = 'empty';
   isLoading = false;
   hasError = false;
   noData = false;
@@ -22,12 +25,54 @@ export class AillmtxMedicationComponent {
   furtherQuestionsList: any = []
   selectedMedicine: any[] = [];
   loggedError:string;
+  reminderMessages: string[] = [];
 
   constructor(
     private TxService: AiTxService,
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.updateReminderMessage();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['patientAllergies'] || changes['patientCurrentMedications'] || changes['allergyDataStatus']) {
+      this.updateReminderMessage();
+    }
+  }
+
+  /**
+   * Update reminder messages based on allergy and medication data
+   */
+  updateReminderMessage(): void {
+    this.reminderMessages = [];
+
+    const isNegativeValue = (value: string): boolean => {
+      if (!value?.trim()) return true;
+      const lowerValue = value.toLowerCase().trim();
+      const negativePatterns = [
+        /^no known/i, /^no recent/i, /^none\.?$/i, /^nil\.?$/i, /^n\/a\.?$/i, /^na\.?$/i,
+        /^not applicable/i, /^skipped/i, /^empty/i, /^no allergies/i, /^no medication/i,
+        /^no drug/i, /patient denied/i, /has no h\/o/i
+      ];
+
+      return negativePatterns.some(pattern => pattern.test(lowerValue));
+    };
+
+    const hasAllergies = this.patientAllergies && !isNegativeValue(this.patientAllergies);
+    const hasMedications = this.patientCurrentMedications && !isNegativeValue(this.patientCurrentMedications);
+
+    if (!hasAllergies && !hasMedications) {
+      this.reminderMessages.push('Allergy and Current Medication status unknown — confirmation required before prescribing.');
+    } else if (hasAllergies && hasMedications) {
+      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>, and Patient is allergic to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
+    } else if (!hasAllergies && hasMedications) {
+      this.reminderMessages.push('Allergy status unknown — confirmation required before prescribing.');
+      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>. Please prescribe accordingly.`);
+    } else if (hasAllergies && !hasMedications) {
+      this.reminderMessages.push(`Patient is Allergic to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
+    }
+  }
 
   public getAIMedical(diagnosis?: string) {
     const payload = this.TxService.getTxPayload(this.patientInfo, this.visit);

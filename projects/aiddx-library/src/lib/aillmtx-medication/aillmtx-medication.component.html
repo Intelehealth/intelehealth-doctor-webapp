@@ -42,10 +42,10 @@
 
 <ng-container *ngIf="medicationList.length || (!isLoading && (hasError && noData))">
 
-     <!-- Reminder -->
-  <div *ngIf="medicationList.length" class="reminder-alert mt-3">
+    <!-- Reminder - Always show when there are reminder messages -->
+  <div *ngFor="let message of reminderMessages" class="reminder-alert mt-3">
      <span class="reminder-msg"><img class="mb-1" src="assets/svgs/alert-triangle.svg" alt="" /> Reminder: </span>
-     <span class="reminder">Patient is allergic to iboprofen. Please prescribe accordingly.</span>
+     <span class="reminder" [innerHTML]="message"></span>
   </div>
 
     <div class="mt-3 mb-3 ayu-suggestion-container p-3 border border-gray-300 bg-green-50">

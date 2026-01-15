@@ -208,6 +208,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.ddxCompRef) {
         this.ddxCompRef.instance.visit = this.visit;
         this.ddxCompRef.instance.patientInfo = this.patient;
+        this.ddxCompRef.instance.patientHistoryData = this.patientHistoryData;
         this.ddxCompRef.instance.isMCCUser = this.isMCCUser;
         this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
         this.ddxCompRef.instance.visitEnded = this.visitEnded;

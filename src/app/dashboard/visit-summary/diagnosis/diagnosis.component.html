@@ -234,7 +234,9 @@
 
   <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
     <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
-      [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"></lib-aillmtx-medication>
+      [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"
+      [patientAllergies]="patientAllergies" [patientCurrentMedications]="patientCurrentMedications"
+      [allergyDataStatus]="allergyDataStatus"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"

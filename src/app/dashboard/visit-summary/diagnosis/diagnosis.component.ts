@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -84,7 +84,7 @@ class PickDateAdapter extends NativeDateAdapter {
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })
-export class DiagnosisComponent implements OnInit, OnDestroy {
+export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(AillmddxComponent) aillmddxComponent: AillmddxComponent;
   @ViewChild(AillmtxMedicationComponent) aillmtxMedicationComponent: AillmtxMedicationComponent;
   @ViewChild(AillmtxAdviceComponent) aillmtxAdviceComponent: AillmtxAdviceComponent;
@@ -93,6 +93,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @ViewChild(AillmtxFollowupComponent) aillmtxFollowupComponent: AillmtxFollowupComponent;
   @Input() visit: any;
   @Input() patientInfo: any;
+  @Input() patientHistoryData: any[] = [];
   @Output() diagnosisName: string;
   @Input() isMCCUser: boolean = false;
   @Input() isVisitNoteProvider: boolean = false;
@@ -159,6 +160,9 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   timeList: string[] = [];
   minDate = new Date();
   showAndHideUiElement: boolean = true;
+  patientAllergies: string = '';
+  patientCurrentMedications: string = '';
+  allergyDataStatus: 'empty' | 'present' = 'empty';
 
   constructor(
     private fb: FormBuilder,
@@ -287,11 +291,37 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       }
     });
     this.showAndHideUiElements();
+    this.extractAllergyAndMedicationData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When patientHistoryData input changes, re-extract allergy and medication data
+    if (changes['patientHistoryData'] && changes['patientHistoryData'].currentValue) {
+      this.extractAllergyAndMedicationData();
+    }
   }
 
   ngOnDestroy() {
     // Clear the cache when component is destroyed
     this.aiTxService.clearCache();
+  }
+
+  /**
+   * Extract allergy and drug history data from patient history
+   */
+  extractAllergyAndMedicationData(): void {
+    this.patientAllergies = '';
+    this.patientCurrentMedications = '';
+
+    if (!this.patientHistoryData?.length) return;
+
+    this.patientHistoryData.forEach((historySection: any) => {
+      historySection.data?.forEach((item: any) => {
+        const key = (item.key || '').toLowerCase();
+        if (key === 'allergies') this.patientAllergies = item.value || '';
+        if (key === 'drug history') this.patientCurrentMedications = item.value || '';
+      });
+    });
   }
 
   /**
