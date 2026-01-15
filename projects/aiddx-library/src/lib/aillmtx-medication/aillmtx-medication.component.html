@@ -53,10 +53,11 @@
              <img class="mr-2"  src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested medication
         </div>
 
-        <div class="warning mt-2">
-            <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />
-            This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account
-            for all relevant factors; please use your own judgement before acting.
+        <div class="ai-disclaimer-prominent">
+            <img class="disclaimer-icon" src="assets/svgs/info-ddx.svg" alt="" />
+            <span class="disclaimer-text">
+                This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account for all relevant factors. Please use your own judgement before acting.
+            </span>
         </div>
 
         <div *ngIf="medicationList.length" class="med-scroll-wrapper" [ngClass]="{ 'scroll-enabled': medicationList.length > 6 }">
