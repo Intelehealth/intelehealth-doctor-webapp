@@ -1,16 +1,16 @@
-<mat-expansion-panel [expanded]="true" #panel2 hideToggle>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
+<mat-expansion-panel [expanded]="true" #panel2 hideToggle data-test-id="matExpDiagnosis">
+  <mat-expansion-panel-header data-test-id="matExpHeaderDiagnosis">
+    <mat-panel-title data-test-id="matPanelTitleDiagnosis">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleDiagnosis">
         <div class="ayu-icon">
-          <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
+          <img src="assets/svgs/diagnosis.svg" alt="" width="44px" data-test-id="imgDiagnosisIcon" />
         </div>
         <div class="diagnosis-title">
-          <h6 class="mb-0 ml-2">Diagnosis</h6>
+          <h6 class="mb-0 ml-2" data-test-id="titleDiagnosisDetails">Diagnosis</h6>
         </div>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconDiagnosisToggle">{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
   <ng-container *ngIf="hasAILLMEnabled">
@@ -21,9 +21,9 @@
      <table class="table" aria-describedby="">
       <thead>
         <tr>
-          <th scope="col" width="40%" class="border-top-0">{{'Diagnosis'|translate}}</th>
-          <th scope="col" width="20%" class="border-top-0">{{'Diagnosis type'|translate}}</th>
-          <th scope="col" width="20%" class="border-top-0">{{'Diagnosis status'|translate}}</th>
+          <th scope="col" width="40%" class="border-top-0" data-test-id="thDiagnosisName">{{'Diagnosis'|translate}}</th>
+          <th scope="col" width="20%" class="border-top-0" data-test-id="thDiagnosisType">{{'Diagnosis type'|translate}}</th>
+          <th scope="col" width="20%" class="border-top-0" data-test-id="thDiagnosisStatus">{{'Diagnosis status'|translate}}</th>
           <th scope="col" width="20%" class="border-top-0"></th>
         </tr>
       </thead>
@@ -88,11 +88,11 @@
                   </div>
 
                   <div *ngIf="appConfigService?.patient_visit_summary?.diagnosis_under_evaluation"
-                      class="pretty p-default p-round w-100 mt-3">
+                      class="pretty p-default p-round w-100 mt-3" data-test-id="wrapperDiagnosisStatusUnderEvaluation">
                     <input type="radio" [value]="'Under Evaluation'" formControlName="diagnosisStatus"
                       data-test-id="radioDiagnosisStatusUnderEvaluation" />
                     <div class="state p-success">
-                      <label>{{ 'Under Evaluation' | translate }}</label>
+                      <label data-test-id="labelDiagnosisStatusUnderEvaluation">{{ 'Under Evaluation' | translate }}</label>
                     </div>
                   </div>
                 </div>
@@ -109,20 +109,22 @@
               </button>
             </div>
           </div>
-          <div class="suggested-box" *ngIf="aillmddxComponent?.diagnosisList.length > 0">
-            <div style="margin-top: 0;display: flex;justify-content: space-between;">
-              <h4 style="font-weight: bold;"><img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" /> Ayu suggested diagnosis</h4> 
+          <div class="suggested-box" *ngIf="aillmddxComponent?.diagnosisList.length > 0" data-test-id="divAyuSuggestedDiagnosisBox">
+            <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divAyuSuggestedDiagnosisHeader">
+              <h4 style="font-weight: bold;" data-test-id="h4AyuSuggestedDiagnosis"><img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" data-test-id="imgAyuDdxIcon" /> Ayu suggested diagnosis</h4>
             </div>
-            <div *ngFor="let diagnosis of aillmddxComponent?.diagnosisList" 
+            <div *ngFor="let diagnosis of aillmddxComponent?.diagnosisList; let i = index"
               class="d-flex align-items-center mb-2"
-              [class.disabled-diagnosis]="isDiagnosisExists(diagnosis.diagnosis)">
+              [class.disabled-diagnosis]="isDiagnosisExists(diagnosis.diagnosis)"
+              [attr.data-test-id]="'divAyuDiagnosisItem' + i">
               <input type="checkbox" class="custom-checkbox ml-1"
                 [checked]="isDiagnosisSelected(diagnosis.diagnosis)"
                 [disabled]="isDiagnosisExists(diagnosis.diagnosis)"
-                (change)="onAIDiagnosisChange(diagnosis.diagnosis)">
-              <label class="fw-bold" [class.text-muted]="isDiagnosisExists(diagnosis.diagnosis)">
+                (change)="onAIDiagnosisChange(diagnosis.diagnosis)"
+                [attr.data-test-id]="'chkAyuDiagnosis' + i">
+              <label class="fw-bold" [class.text-muted]="isDiagnosisExists(diagnosis.diagnosis)" [attr.data-test-id]="'labelAyuDiagnosis' + i">
                 {{ diagnosis.diagnosis }}
-                <span class="text-muted ms-2">({{ diagnosis.likelihood }} likely)</span>
+                <span class="text-muted ms-2" [attr.data-test-id]="'spanAyuDiagnosisLikelihood' + i">({{ diagnosis.likelihood }} likely)</span>
               </label>
             </div>
           </div>
@@ -147,9 +149,9 @@
         </ng-container>
        <ng-container *ngIf="existingDiagnosis.length">
           <tr *ngFor="let d of existingDiagnosis; let i = index">
-            <td width="40%">{{ d.diagnosisName }}</td>
-            <td width="20%">{{ d.diagnosisType }}</td>
-            <td width="20%">{{ d.diagnosisStatus }}</td>
+            <td width="40%" [attr.data-test-id]="'tdDiagnosisName' + i">{{ d.diagnosisName }}</td>
+            <td width="20%" [attr.data-test-id]="'tdDiagnosisType' + i">{{ d.diagnosisType }}</td>
+            <td width="20%" [attr.data-test-id]="'tdDiagnosisStatus' + i">{{ d.diagnosisStatus }}</td>
             <td width="20%" class="pr-0 pt-0">
               <button mat-icon-button class="float-right" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded"
                 (click)="deleteDiagnosis(i, d.uuid)" data-test-id="{{'btnDeleteDiagnosisVisitSummary' + i}}">
@@ -221,15 +223,15 @@
 
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="true" #panel4 hideToggle class="">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
-        <img src="assets/svgs/medication.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Medication'|translate}}</h6>
+<mat-expansion-panel [expanded]="true" #panel4 hideToggle class="" data-test-id="matExpMedication">
+  <mat-expansion-panel-header data-test-id="matExpHeaderMedication">
+    <mat-panel-title data-test-id="matPanelTitleMedication">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleMedication">
+        <img src="assets/svgs/medication.svg" alt="" width="44px" data-test-id="imgMedicationIcon" />
+        <h6 class="mb-0 ml-2" data-test-id="titleMedication">{{'Medication'|translate}}</h6>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconMedicationToggle">{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
   <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
@@ -242,11 +244,11 @@
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
       *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
       <div class="form-row gridAlignment">
-        <th style="margin-left: 10px">{{'Drug name'|translate}}</th>
-        <th>{{'Dosage'|translate}}</th>
-        <th>{{'Frequency'|translate}}</th>
-        <th>{{'Duration (no.)'|translate}}</th>
-        <th>{{'Duration (units)'|translate}}</th>
+        <th style="margin-left: 10px" data-test-id="thDrugName">{{'Drug name'|translate}}</th>
+        <th data-test-id="thDosage">{{'Dosage'|translate}}</th>
+        <th data-test-id="thFrequency">{{'Frequency'|translate}}</th>
+        <th data-test-id="thDurationNo">{{'Duration (no.)'|translate}}</th>
+        <th data-test-id="thDurationUnits">{{'Duration (units)'|translate}}</th>
       </div>
       <hr class="custom-hr"/>
       <div *ngIf="!addMoreMedicine && !isMCCUser" class="form-row">
@@ -261,7 +263,7 @@
         <div class="col-md-6 d-flex gap-2">
           <ng-select appendTo=".visit-summary-tab-group" formControlName="frequency" class="visit-select custom"
             [items]="frequencyList" [clearable]="false" [searchable]="true" [addTag]="true"
-            placeholder="{{'Select or type'|translate}}">
+            placeholder="{{'Select or type'|translate}}" data-test-id="selectFrequency">
           </ng-select>
                   
           <input style="max-width: fit-content;border-radius: 8px;" formControlName="durationNo" type="text" class="form-control ml-2 mr-2" placeholder="Enter"
@@ -309,25 +311,25 @@
         <tbody *ngIf="medicines.length else noMedicines">
           <ng-container *ngFor="let m of medicines; let i = index">
             <tr>
-              <td class="med" width="35%">{{ m.drug }}</td>
-              <td class="med" width="17%">{{ m.dose }}</td>
-              <td class="med" width="25%">{{ m.frequency }}</td>
-              <td class="med" width="10%">{{ m.durationNo }}</td>
-              <td class="med" width="18%">{{ m?.durationUnit }}</td>
+              <td class="med" width="35%" [attr.data-test-id]="'tdDrugName' + i">{{ m.drug }}</td>
+              <td class="med" width="17%" [attr.data-test-id]="'tdDose' + i">{{ m.dose }}</td>
+              <td class="med" width="25%" [attr.data-test-id]="'tdFrequency' + i">{{ m.frequency }}</td>
+              <td class="med" width="10%" [attr.data-test-id]="'tdDurationNo' + i">{{ m.durationNo }}</td>
+              <td class="med" width="18%" [attr.data-test-id]="'tdDurationUnit' + i">{{ m?.durationUnit }}</td>
               <td width="10%">
                  <!-- <button type="button" mat-icon-button *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded"
                   (click)="deleteMedicine(i, m.uuid)" data-test-id="{{'btnDeleteMedVisitSummary'+i}}">
                   <img src="assets/svgs/edit-icon.svg" alt="" />
                 </button>  -->
                 <button type="button" mat-icon-button *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded"
-                  (click)="deleteMedicine(i, m.uuid)" data-test-id="{{'btnDeleteMedVisitSummary'+i}}">
+                  (click)="deleteMedicine(i, m.uuid)" [attr.data-test-id]="'btnDeleteMedVisitSummary' + i">
                   <img src="assets/svgs/delete-icon.svg" alt="" />
                 </button>
               </td>
             </tr>
             <tr *ngIf="m.instructRemark">
-              <td colspan="6" class="instruction-cell border-bottom-0">
-                <span class="text-muted">Instructions/Remarks: </span><span style="color: #000000;">{{ m.instructRemark || 'N/A' }}</span> 
+              <td colspan="6" class="instruction-cell border-bottom-0" [attr.data-test-id]="'tdRemark' + i">
+                <span class="text-muted">Instructions/Remarks: </span><span style="color: #000000;">{{ m.instructRemark || 'N/A' }}</span>
               </td>
             </tr>
           </ng-container>
@@ -339,21 +341,21 @@
             </tr>
           </ng-template>
         </tbody>
-      </table> 
+      </table>
 </form>
  </ng-container> 
 
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show" *ngIf="isFeatureAvailable('advice')">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
-        <img src="assets/svgs/advice.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{ 'Advice' |translate}}</h6>
+<mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show" *ngIf="isFeatureAvailable('advice')" data-test-id="matExpAdvice">
+  <mat-expansion-panel-header data-test-id="matExpHeaderAdvice">
+    <mat-panel-title data-test-id="matPanelTitleAdvice">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleAdvice">
+        <img src="assets/svgs/advice.svg" alt="" width="44px" data-test-id="imgAdviceIcon" />
+        <h6 class="mb-0 ml-2" data-test-id="titleAdvice">{{ 'Advice' |translate}}</h6>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconAdviceToggle">{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
   <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
@@ -388,8 +390,10 @@
   <ul class="items-list mt-3" *ngIf="advices.length else noAdvices">
     <li *ngFor="let ad of advices; let i = index">
       <div class="d-flex justify-content-between">
-        <span>{{ ad.value }}</span>
-        <button mat-icon-button (click)="deleteAdvice(i, ad.uuid)" data-test-id="{{'btnDeleteAdviceVisitSummary'+i}}"
+        <span [attr.data-test-id]="'addAdvice-' + i"
+>{{ ad.value }}</span>
+        <button mat-icon-button (click)="deleteAdvice(i, ad.uuid)" [attr.data-test-id]="'btnDeleteAdviceVisitSummary' + i"
+
           *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
           <img src="assets/svgs/delete-icon.svg" alt="" />
         </button>
@@ -404,15 +408,15 @@
 </mat-expansion-panel>
 
 
-<mat-expansion-panel [expanded]="true" #panel6 hideToggle class="overflow-show">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
-        <img src="assets/svgs/test.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Investigations'|translate}}</h6>
+<mat-expansion-panel [expanded]="true" #panel6 hideToggle class="overflow-show" data-test-id="matExpInvestigations">
+  <mat-expansion-panel-header data-test-id="matExpHeaderInvestigations">
+    <mat-panel-title data-test-id="matPanelTitleInvestigations">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleInvestigations">
+        <img src="assets/svgs/test.svg" alt="" width="44px" data-test-id="imgInvestigationsIcon" />
+        <h6 class="mb-0 ml-2" data-test-id="titleInvestigations">{{'Investigations'|translate}}</h6>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconInvestigationsToggle">{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
   <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
   <lib-aillmtx-test [patientInfo]="patientInfo" [visit]="visit" (testSelected)="onAITestSelected()"
@@ -444,10 +448,10 @@
     </ng-container>
     <hr *ngIf="tests.length > 0">
     <ul class="items-list mt-3" *ngIf="tests.length">
-      <li *ngFor="let t of tests; let i = index">
-        <div class="d-flex justify-content-between">
-          <span>{{ t.value }}</span>
-          <button mat-icon-button (click)="deleteTest(i, t.uuid)" data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
+      <li *ngFor="let t of tests; let i = index" [attr.data-test-id]="'liTestRow' + i">
+        <div class="d-flex justify-content-between"  [attr.data-test-id]="'divTestRow' + i">
+          <span [attr.data-test-id]="'txtInvestigation' + i">{{ t.value }}</span>
+          <button mat-icon-button (click)="deleteTest(i, t.uuid)" [attr.data-test-id]="'btnDeleteTestVisitSummary' + i"
             *ngIf="isVisitNoteProvider && !visitEnded">
             <img src="assets/svgs/delete-icon.svg" alt="" />
           </button>
@@ -471,19 +475,19 @@
   </ng-container>
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show">
+<mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" data-test-id="matExpReferral">
 
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
-        <img src="assets/svgs/referral.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Referral'|translate}}</h6>
+  <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
+    <mat-panel-title data-test-id="matPanelTitleReferral">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleReferral">
+        <img src="assets/svgs/referral.svg" alt="" width="44px" data-test-id="imgReferralIcon" />
+        <h6 class="mb-0 ml-2" data-test-id="titleReferral">{{'Referral'|translate}}</h6>
         <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon"
           matTooltip="{{'Use this if you wish to seek a second opinion from an external facility.' | translate}}"
-          matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
+          matTooltipPosition="right" data-test-id="matIcoHelpReferral">help_outline</mat-icon>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconReferralToggle">{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
   <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">
     <lib-aillmtx-referral [patientInfo]="patientInfo" [visit]="visit" (referralSelected)="onAIReferralSelected()"
@@ -495,11 +499,11 @@
       <table class="table table1" aria-describedby="">
         <thead>
           <tr>
-            <th width="25%" class="border-top-0">{{'Referral to' | translate}}</th>
-            <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('referralFacility', true)">{{'Referral facility'|translate}}</th>
-            <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{'Priority of Referral'|translate}}
+            <th width="25%" class="border-top-0" data-test-id="thReferralTo">{{'Referral to' | translate}}</th>
+            <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('referralFacility', true)" data-test-id="thReferralFacility">{{'Referral facility'|translate}}</th>
+            <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('priorityOfReferral', true)" data-test-id="thPriorityOfReferral">{{'Priority of Referral'|translate}}
             </th>
-            <th width="25%"class="border-top-0">{{'Remarks'|translate}}</th>
+            <th width="25%"class="border-top-0" data-test-id="thRemarks">{{'Remarks'|translate}}</th>
             <th scope="col" class="border-top-0"></th>
           </tr>
         </thead>
@@ -580,13 +584,13 @@
         <table class="table table1 mt-3" aria-describedby="">
           <tbody>
              <tr *ngFor="let r of referrals; let i = index">
-              <td  width="26%">{{ (r.speciality) | translate }}</td>
-              <td  width="26%" *ngIf="isFeatureAvailable('referralFacility', true)">{{ (r.facility) | translate }}</td>
-              <td  width="26%" *ngIf="isFeatureAvailable('priorityOfReferral', true)">{{ (r.priority) | translate }}</td>
+              <td  width="26%" [attr.data-test-id]="'tdReferralTo-' + i">{{ (r.speciality) | translate }}</td>
+              <td  width="26%" *ngIf="isFeatureAvailable('referralFacility', true)" [attr.data-test-id]="'tdReferralFacility-' + i" >{{ (r.facility) | translate }}</td>
+              <td  width="26%" *ngIf="isFeatureAvailable('priorityOfReferral', true)" [attr.data-test-id]="'tdReferralPriority-' + i">{{ (r.priority) | translate }}</td>
               <td  width="25%">{{ r.reason }}</td>
               <td class="pr-0 pt-0">
                 <button type="button" class="float-right" mat-icon-button (click)="deleteReferral(i, r.uuid)"
-                  data-test-id="{{'btnDeleteReferralVisitSummary'+i}}"
+                [attr.data-test-id]="'btnDeleteReferralVisitSummary' + i"
                   *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
                   <img src="assets/svgs/delete-icon.svg" alt="" />
                 </button>
@@ -613,15 +617,15 @@
   </form>
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="true" #panel8 hideToggle *ngIf="isFeatureAvailable('visitFollowUp')">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="intel-accordion-title">
-        <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
-        <h6 class="mb-0 ml-2">{{'Follow-up'| translate}}</h6>
+<mat-expansion-panel [expanded]="true" #panel8 hideToggle *ngIf="isFeatureAvailable('visitFollowUp')" data-test-id="matExpFollowup">
+  <mat-expansion-panel-header data-test-id="matExpHeaderFollowup">
+    <mat-panel-title data-test-id="matPanelTitleFollowup">
+      <div class="intel-accordion-title" data-test-id="divAccordionTitleFollowup">
+        <img src="assets/svgs/follow-up.svg" alt="" width="44px" data-test-id="imgFollowupIcon" />
+        <h6 class="mb-0 ml-2" data-test-id="titleFollowup">{{'Follow-up'| translate}}</h6>
       </div>
     </mat-panel-title>
-    <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
+    <mat-icon data-test-id="matIconFollowupToggle">{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
   </mat-expansion-panel-header>
 
   <!-- <ng-container *ngIf="hasAILLMEnabled" class="mt-2">

@@ -105,7 +105,22 @@
                   <mat-icon *ngIf="!notificationEnabled" data-test-id="iconNotifOff">notifications_off</mat-icon>
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu" data-test-id="notificationMenu">
-                  <!-- menu items -->
+                  <button mat-menu-item (click)="toggleNotification()" data-test-id="btnToggleNotif">
+                    <mat-icon>{{ notificationEnabled ? 'notifications_off' : 'notifications_active' }}</mat-icon>
+                    <span>{{ notificationEnabled ? ('Turn Off Notifications' | translate) : ('Turn On Notifications' | translate) }}</span>
+                  </button>
+                  <button mat-menu-item (click)="snoozeNotification('30m')" *ngIf="notificationEnabled && !snoozed" data-test-id="btnSnooze30m">
+                    <mat-icon>snooze</mat-icon>
+                    <span>{{ 'Snooze for 30 minutes' | translate }}</span>
+                  </button>
+                  <button mat-menu-item (click)="snoozeNotification('1h')" *ngIf="notificationEnabled && !snoozed" data-test-id="btnSnooze1h">
+                    <mat-icon>snooze</mat-icon>
+                    <span>{{ 'Snooze for 1 hour' | translate }}</span>
+                  </button>
+                  <button mat-menu-item (click)="snoozeNotification('2h')" *ngIf="notificationEnabled && !snoozed" data-test-id="btnSnooze2h">
+                    <mat-icon>snooze</mat-icon>
+                    <span>{{ 'Snooze for 2 hours' | translate }}</span>
+                  </button>
                 </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
                   <img class="user-img mr-3" src="{{profilePic}}" alt="" data-test-id="imgUserProfile">

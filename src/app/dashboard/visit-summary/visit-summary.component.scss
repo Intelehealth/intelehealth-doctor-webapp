@@ -37,6 +37,17 @@
   }
 }
 
+// Sticky patient info container
+[data-test-id="patientInfoMainContainer"] {
+  position: sticky;
+  top: 64px;
+  z-index: 100;
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  border-radius: 12px;
+}
+
 .patient-info-wrapper {
   font-family: DM Sans;
 
