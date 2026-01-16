@@ -41,8 +41,9 @@
       <div class="ayu-report-container">
         <!-- Left: Rationale -->
         <div class="left-section">
-          <div class="warning">
-            <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account for all relevant factors; please use your own judgement before acting.
+          <div class="ai-disclaimer-prominent">
+            <img class="disclaimer-icon" src="assets/svgs/info-ddx.svg" alt="" />
+            <span class="disclaimer-text">This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account for all relevant factors. Please use your own judgement before acting.</span>
           </div>
           <div class="header">
             <h2> Rationale </h2>
@@ -51,7 +52,7 @@
             <div *ngFor="let rationale of diagnosisList; let i = index"
              [ngClass]="{ 'rationale-item': i < diagnosisList.length-1 }" class=" mb-2">
               <div>
-                <h4><span style="font-weight: bold;">{{ rationale.diagnosis }}</span>
+                <h4><span style="font-weight: 500;">{{ rationale.diagnosis }}</span>
                   <span class="text-muted ms-2"> ({{ rationale.likelihood }} likely)</span>
                 </h4>
                 <ul>
@@ -80,9 +81,17 @@
 
         <!-- Right: Conclusion and Questions -->
         <div class="right-section">
+          <div class="ai-disclaimer-prominent">
+            <img class="disclaimer-icon" src="assets/svgs/info-ddx.svg" alt="" />
+            <span class="disclaimer-text">This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account for all relevant factors. Please use your own judgement before acting.</span>
+          </div>
           <div class="report-box">
-            <h3 style="font-weight: bold;">Conclusion</h3>
+            <h3 style="font-weight: 500;">Conclusion</h3>
             {{conclusion}}
+          </div>
+          <div class="report-box" *ngIf="treatment">
+            <h3 style="font-weight: 500;">Treatment</h3>
+            <p>{{ treatment }}</p>
           </div>
         </div>
       </div>

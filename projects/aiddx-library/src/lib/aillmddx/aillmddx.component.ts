@@ -25,6 +25,7 @@ export class AillmddxComponent {
   insufficientData = false;
   isActive = false;
   conclusion: string = '';
+  treatment: string = '';
   menuContent: string = '';
   diagnosisName: any = [];
   questions = [
