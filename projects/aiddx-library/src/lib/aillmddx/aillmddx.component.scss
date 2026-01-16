@@ -281,17 +281,49 @@
 }
 
 .header h2 {
-  font-weight: bold;
+  font-weight: 500;
   margin: 0;
 }
 
 .warning {
-  background-color: #fff7f3;
-  border: 0.8px solid #FF475D14;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-bottom: 14px;
+  background: linear-gradient(135deg, #fffbf5 0%, #fff0e6 100%);
+  border: 2px solid #ffb366;
+  border-left: 5px solid #ff9933;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
+}
+
+.ai-disclaimer-prominent {
+  background: linear-gradient(135deg, #fffbf5 0%, #fff0e6 100%);
+  border: 2px solid #ffb366;
+  border-left: 5px solid #ff9933;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
+
+  .disclaimer-icon {
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .disclaimer-text {
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: 0.3px;
+  }
 }
 
 // Prominent AI Disclaimer Styling - Mitigates Automation Bias
