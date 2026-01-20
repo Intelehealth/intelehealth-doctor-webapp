@@ -65,12 +65,12 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
     if (!hasAllergies && !hasMedications) {
       this.reminderMessages.push('<strong>Allergy</strong> and <strong>Current Medication status unknown</strong> — confirmation required before prescribing.');
     } else if (hasAllergies && hasMedications) {
-      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>, and Patient is allergic to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
+      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>, and Patient reports the following allergies to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
     } else if (!hasAllergies && hasMedications) {
       this.reminderMessages.push('<strong>Allergy status unknown</strong> — confirmation required before prescribing.');
       this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>. Please prescribe accordingly.`);
     } else if (hasAllergies && !hasMedications) {
-      this.reminderMessages.push(`Patient is Allergic to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
+      this.reminderMessages.push(`Patient reports the following allergies to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
     }
   }
 
