@@ -26,7 +26,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -827,13 +827,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
   * Get vital value for a given vital uuid
   * @param {string} uuid - Vital uuid
+  * @param {string} key - Optional vital key (e.g., 'bmi', 'temp_f')
   * @return {any} - Obs value
   */
   getObsValue(uuid: string, key?: string): any {
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
-    const value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
+    let value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
     if (!value && key === 'bmi') {
       return calculateBMI(this.vitals, this.vitalObs);
+    }
+    // Convert temperature from Celsius to Fahrenheit if key contains 'temp'
+    if (value && key && key.toLowerCase().includes('temp')) {
+      const convertedValue = convertCelsiusToFahrenheit(parseFloat(value));
+      return convertedValue !== null ? convertedValue : value;
     }
     return value
   }
