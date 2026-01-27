@@ -42,33 +42,49 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Update reminder messages based on allergy and medication data
+   * Cleans medication string by removing phrases like "Name of Medications" and "Medication Name".
+   * @param rawMedicationString - The raw medication string to clean.
+   * @returns Cleaned medication string, or an empty string if input is invalid.
+   */
+  extractCleanMedicationNames(rawMedicationString: string): string {
+    if (!rawMedicationString?.trim()) return '';
+    let cleaned = rawMedicationString;
+    cleaned = cleaned.replace(/Name\s+of\s+Medications\s*-?\s*/gi, '');
+    cleaned = cleaned.replace(/Medication\s+Name\s*-?\s*/g, '');
+    return cleaned.trim();
+  }
+
+  /**
+   * Checks if a value indicates a negative response (e.g., "no known allergies").
+   */
+  isNegativeValue = (value: string): boolean => {
+    if (!value?.trim()) return true;
+    const lowerValue = value.toLowerCase().trim();
+    const negativePatterns = [
+      /^no known/i, /^no recent/i, /^none\.?$/i, /^nil\.?$/i, /^n\/a\.?$/i, /^na\.?$/i,
+      /^not applicable/i, /^skipped/i, /^empty/i, /^no allergies/i, /^no medication/i,
+      /^no drug/i, /patient denied/i, /has no h\/o/i
+    ];
+
+    return negativePatterns.some(pattern => pattern.test(lowerValue));
+  };
+
+  /**
+   * Updates reminder messages based on patient's allergies and current medications.
    */
   updateReminderMessage(): void {
     this.reminderMessages = [];
-
-    const isNegativeValue = (value: string): boolean => {
-      if (!value?.trim()) return true;
-      const lowerValue = value.toLowerCase().trim();
-      const negativePatterns = [
-        /^no known/i, /^no recent/i, /^none\.?$/i, /^nil\.?$/i, /^n\/a\.?$/i, /^na\.?$/i,
-        /^not applicable/i, /^skipped/i, /^empty/i, /^no allergies/i, /^no medication/i,
-        /^no drug/i, /patient denied/i, /has no h\/o/i
-      ];
-
-      return negativePatterns.some(pattern => pattern.test(lowerValue));
-    };
-
-    const hasAllergies = this.patientAllergies && !isNegativeValue(this.patientAllergies);
-    const hasMedications = this.patientCurrentMedications && !isNegativeValue(this.patientCurrentMedications);
+    const hasAllergies = this.patientAllergies && !this.isNegativeValue(this.patientAllergies);
+    const hasMedications = this.patientCurrentMedications && !this.isNegativeValue(this.patientCurrentMedications);
+    const cleanMedications = hasMedications ? this.extractCleanMedicationNames(this.patientCurrentMedications) : '';
 
     if (!hasAllergies && !hasMedications) {
       this.reminderMessages.push('<strong>Allergy</strong> and <strong>Current Medication status unknown</strong> — confirmation required before prescribing.');
     } else if (hasAllergies && hasMedications) {
-      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>, and Patient reports the following allergies to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
+      this.reminderMessages.push(`Patient is currently taking <strong>${cleanMedications}</strong>, and Patient reports the following allergies to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
     } else if (!hasAllergies && hasMedications) {
       this.reminderMessages.push('<strong>Allergy status unknown</strong> — confirmation required before prescribing.');
-      this.reminderMessages.push(`Patient is currently taking <strong>${this.patientCurrentMedications}</strong>. Please prescribe accordingly.`);
+      this.reminderMessages.push(`Patient is currently taking <strong>${cleanMedications}</strong>. Please prescribe accordingly.`);
     } else if (hasAllergies && !hasMedications) {
       this.reminderMessages.push(`Patient reports the following allergies to <strong>${this.patientAllergies}</strong>. Please prescribe accordingly.`);
     }
