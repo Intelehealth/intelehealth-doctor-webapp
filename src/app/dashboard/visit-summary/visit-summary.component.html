@@ -26,7 +26,7 @@
       <div class="intel-card" data-test-id="patientInfoCard">
         <div class="card-body" data-test-id="patientInfoCardBody">
           <div class="row patient-info-wrapper" *ngIf="patient" data-test-id="patientInfoWrapper">
-            <div class="col-md-3 patient-info-section p-3" data-test-id="sectionPatientPhoto">
+            <div class="patient-info-section p-3" data-test-id="sectionPatientPhoto">
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
@@ -50,21 +50,21 @@
               </div>
             </div>
 
-            <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Gender') && patient?.person.gender">
+            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Gender') && patient?.person.gender">
               <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatientGender">{{'Gender'|translate}}</h6>
                 <p data-test-id="etPatientGender">{{ genderData[patient?.person.gender] | translate }}</p>
               </div>
             </div>
 
-            <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.age">
+            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.age">
               <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
               </div>
             </div>
 
-            <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
               <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatientAge">{{'Date of birth'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
@@ -72,7 +72,7 @@
             </div>
 
             <ng-container *ngFor="let v of vitals">
-              <div class="col-md-2 patient-info-section p-3" *ngIf="(v.name === 'Weight' || v.name === 'Weight (kg)' || v.key === 'weight') && getObsValue(v.uuid, v.key)">
+              <div class="patient-info-section p-3" *ngIf="(v.name === 'Weight' || v.name === 'Weight (kg)' || v.key === 'weight') && getObsValue(v.uuid, v.key)">
                 <div class="patient-info-item mb-3">
                   <h6 data-test-id="etPatientWeight">{{'Weight (in kg)'|translate}}</h6>
                   <p data-test-id="etPatientWeightValue">{{ getObsValue(v.uuid, v.key) }}</p>

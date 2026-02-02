@@ -52,6 +52,8 @@
   font-family: DM Sans;
 
   .patient-info-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
     // border-right: 1px solid rgba(178, 175, 190, 0.2);
 
     .patient-img-item {
@@ -98,12 +100,18 @@
         word-break: break-all;
       }
     }
-
   }
 
   .patient-info-section:last-child {
     border: none;
   }
+}
+
+.row.patient-info-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  justify-content: space-between;
 }
 
 .icon-btn {
@@ -797,9 +805,18 @@ th.mat-header-cell:last-child {
     padding: 10px 0px !important;
   }
 
-  .patient-info-section {
-    border-bottom: 1px solid rgba(178, 175, 190, 0.2);
-    border-right: none !important;
+  .row.patient-info-wrapper {
+    gap: 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+
+    .patient-info-section {
+      border-bottom: none !important;
+      border-right: 1px solid rgba(178, 175, 190, 0.2) !important;
+      flex: 0 0 auto !important;
+      min-width: fit-content !important;
+      max-width: none !important;
+    }
   }
 
   .visit-provider-con {
