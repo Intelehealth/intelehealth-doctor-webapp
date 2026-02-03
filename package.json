@@ -46,10 +46,11 @@
     "bootstrap": "^4.6.2",
     "core-js": "^2.5.4",
     "date-fns": "^2.29.3",
+    "html2pdf.js": "^0.12.1",
     "ih-library": "github:Intelehealth/intelehealth-doctor-webapp-config-table-grid#v-0.2.22",
+    "jspdf": "^4.0.0",
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
-    "jspdf": "^4.0.0",
     "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.0.15",
     "libphonenumber-js": "^1.10.18",
     "livekit-client": "^2.8.0",
@@ -72,14 +73,13 @@
     "rxjs": "~6.6.2",
     "serialize-javascript": "^2.1.2",
     "signature_pad": "^4.1.4",
-    "socket.io-client": "^4.8.3",
+    "socket.io-client": "^2.5.0",
     "tslib": "^2.0.0",
     "webrtc-adapter": "^7.7.1",
     "zone.js": "~0.11.4"
   },
   "overrides": {
-    "jspdf": "^4.0.0",
-    "form-data": "^2.5.4"
+    "jspdf": "^4.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.11",
@@ -98,7 +98,7 @@
     "jasmine": "^5.1.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
-    "karma": "^6.4.4",
+    "karma": "~6.3.4",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "^2.2.1",
     "karma-coverage-istanbul-reporter": "~2.0.1",
