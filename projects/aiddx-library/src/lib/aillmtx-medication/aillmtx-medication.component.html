@@ -74,6 +74,9 @@
                     <li>{{ medicine.duration }} {{medicine.duration_unit}}</li>
                     <li>{{ medicine.instructions }}</li>
                 </ul>
+                <div *ngIf="medicine.rationale" class="med-rationale" [class.text-muted]="isMedicineExists(medicine.name)">
+                    <strong>Rationale:</strong> {{ medicine.rationale }}
+                </div>
             </div>
         </div>
     </div>

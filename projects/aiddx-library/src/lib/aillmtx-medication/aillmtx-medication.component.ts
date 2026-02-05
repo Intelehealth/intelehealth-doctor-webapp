@@ -189,7 +189,8 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
           duration_unit: event.duration_unit,
           instructions: event.instructions,
           uuid: event.uuid,
-          likelihood: event.likelihood
+          likelihood: event.likelihood,
+          rationale: event.rationale
         };
         this.selectedMedicine = [...this.selectedMedicine, medicineData];
       }

@@ -366,6 +366,22 @@
   padding-left: 35px;
 }
 
+.med-rationale {
+  font-family: DM Sans;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5A5768;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #F0EFF2;
+
+  strong {
+    font-weight: 600;
+    color: #1B163A;
+  }
+}
+
 .selected-med {
   background-color: #0FD197;
   color: white;
