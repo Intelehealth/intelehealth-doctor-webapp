@@ -106,7 +106,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @Output() referralSaved = new EventEmitter<any>();
   @Output() followUpSaved = new EventEmitter<any>();
   @Output() furtherQuestionsReceived = new EventEmitter<string[]>();
-  @Output() diagnosisReceived = new EventEmitter<any>();
+  // @Output() diagnosisReceived = new EventEmitter<any>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -259,11 +259,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
 
-      this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
-        if (diagnosisData && diagnosisData.length) {
-          this.diagnosisReceived.emit(diagnosisData);
-        }
-      });
+      // this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
+      //   if (diagnosisData && diagnosisData.length) {
+      //     this.diagnosisReceived.emit(diagnosisData);
+      //   }
+      // });
     }
   }
 
@@ -506,11 +506,51 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
 
       this.diagnosisSubject.next(this.selectedDiagnoses);
       const { diagnosisAiGenerated, ...restForm } = this.diagnosisForm.value;
-      const newDiagnosis = { 
-          ...restForm, 
-          diagnosisName: this.diagnosisName, 
+
+      // For AI-generated diagnoses, extract rationale and likelihood from AI diagnosis list
+      let rationale: string[] = [];
+      let from: string | undefined = undefined;
+      let likelihood: string | undefined = undefined;
+      let rank: any = undefined;
+
+      if (diagnosisAiGenerated && this.aillmddxComponent?.diagnosisList) {
+        const aiDiagnosis = this.aillmddxComponent.diagnosisList.find(
+          (d: any) => d.diagnosis?.toLowerCase() === this.diagnosisName?.toLowerCase()
+        );
+
+        // Extract rank from AI diagnosis (based on order in list)
+        if (aiDiagnosis) {
+          const diagIndex = this.aillmddxComponent.diagnosisList.indexOf(aiDiagnosis);
+          rank = diagIndex >= 0 ? (diagIndex + 1) : undefined;
+        }
+
+        // Extract likelihood
+        if (aiDiagnosis?.likelihood) {
+          likelihood = aiDiagnosis.likelihood;
+        }
+
+        if (aiDiagnosis?.rationale) {
+          if (Array.isArray(aiDiagnosis.rationale) && typeof aiDiagnosis.rationale[0] === 'string') {
+            rationale = aiDiagnosis.rationale.filter((val: string) => val && val.trim() !== '');
+          } else {
+            rationale = aiDiagnosis.rationale
+              .map((obj: any) => Object.values(obj).pop())
+              .filter((val: any) => val && val !== '.' && val.trim() !== '');
+          }
+        }
+        from = 'AI generated';
+      }
+
+      const newDiagnosis = {
+          ...restForm,
+          diagnosisName: this.diagnosisName,
           ...(diagnosisAiGenerated ? { diagnosisAiGenerated: diagnosisAiGenerated } : {}),
+          ...(rationale.length > 0 ? { rationale: rationale } : {}),
+          ...(from ? { from: from } : {}),
+          ...(likelihood ? { likelihood: likelihood } : {}),
+          ...(rank !== undefined ? { rank: rank } : {}),
       };
+
       this.existingDiagnosis.push(newDiagnosis);
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
@@ -691,15 +731,67 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     if (this.selectedMedication.length > 0) {
       const medicine = this.selectedMedication[0];
 
-      const formattedMedicine = {
+      const formattedMedicine: any = {
         drug: this.addMedicineForm.value.drug,
         dose: this.addMedicineForm.value.dose,
         frequency: this.addMedicineForm.value.frequency,
         durationNo: this.addMedicineForm.value.durationNo,
         durationUnit: this.addMedicineForm.value.durationUnit,
         instructRemark: this.addMedicineForm.value.instructRemark || '',
-        uuid: medicine.uuid
+        uuid: medicine.uuid,
+        aiGenerated: true,
+        // Store ORIGINAL AI values for modification detection
+        originalAiData: {
+          dose: medicine.dosage || medicine.dose,
+          durationNo: medicine.duration || medicine.durationNo,
+          durationUnit: medicine.duration_unit || medicine.durationUnit,
+          instructRemark: medicine.instructions || medicine.instructRemark || '',
+          frequency: medicine.frequency
+        }
       };
+
+      // Extract rationale and likelihood from AI medication component list
+      if (this.aillmtxMedicationComponent) {
+        const medicationList = (this.aillmtxMedicationComponent as any).medicationList ||
+                               (this.aillmtxMedicationComponent as any).medicineList ||
+                               (this.aillmtxMedicationComponent as any).medications;
+
+        if (medicationList && medicationList.length > 0) {
+          const drugName = formattedMedicine.drug?.toLowerCase().trim();
+          const aiMedication = medicationList.find((m: any) =>
+            m.name?.toLowerCase().trim() === drugName ||
+            m.drug?.toLowerCase().trim() === drugName ||
+            m.medication?.toLowerCase().trim() === drugName
+          );
+
+          if (aiMedication) {
+            // Extract rank from AI medication (based on order in list)
+            const medIndex = medicationList.indexOf(aiMedication);
+            formattedMedicine.rank = medIndex >= 0 ? (medIndex + 1) : 'NA';
+            if (aiMedication.rationale) {
+              if (Array.isArray(aiMedication.rationale)) {
+                const isStringArray = typeof aiMedication.rationale[0] === 'string';
+                formattedMedicine.rationale = isStringArray
+                  ? aiMedication.rationale.filter((r: string) => r?.trim())
+                  : aiMedication.rationale.map((obj: any) => Object.values(obj).pop()).filter((val: any) => val?.trim() && val !== '.');
+              } else if (typeof aiMedication.rationale === 'string') {
+                formattedMedicine.rationale = [aiMedication.rationale];
+              }
+            }
+            if (aiMedication.likelihood) {
+              formattedMedicine.likelihood = aiMedication.likelihood;
+            }
+          }
+        }
+      }
+
+      // Fallback: try to extract from medicine object directly
+      if (!formattedMedicine.rationale && medicine.rationale && medicine.rationale.length > 0) {
+        formattedMedicine.rationale = medicine.rationale.filter((r: string) => r?.trim());
+      }
+      if (!formattedMedicine.likelihood && medicine.likelihood) {
+        formattedMedicine.likelihood = medicine.likelihood;
+      }
 
       // Check for duplicates
       if (!this.medicines.find(m => m.drug.toLowerCase() === formattedMedicine.drug.toLowerCase())) {

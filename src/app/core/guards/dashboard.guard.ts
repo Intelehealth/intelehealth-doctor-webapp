@@ -24,7 +24,21 @@ export class DashboardGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> {
       const user = getCacheData(true, doctorDetails.USER);
       const provider = getCacheData(true, doctorDetails.PROVIDER);
-    
+
+      // Check if user is admin and redirect to admin route
+      const isAdmin = !!this.roleService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+      if(isAdmin) {
+        this.router.navigate(['/admin']);
+        return of(false);
+      }
+
+      // Check if user is nurse/HW and redirect to HW profile
+      const isNurse = !!this.roleService.getRole('ORGANIZATIONAL: NURSE');
+      if(isNurse) {
+        this.router.navigate(['/dashboard/hw-profile']);
+        return of(false);
+      }
+
       const speciality = getSpecialization(provider.attributes)
       const isMCCUser = !!this.roleService.getRole('ORGANIZATIONAL:MCC');
       if(!speciality && isMCCUser) {

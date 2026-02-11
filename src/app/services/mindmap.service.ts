@@ -100,6 +100,12 @@ export class MindmapService {
   */
   notifyHwForRescheduleAppointment(appointment): void {
     const hwUuid = appointment?.hwUUID;
+
+    if (!hwUuid) {
+      console.warn('Cannot send reschedule notification: Health worker UUID is not available');
+      return;
+    }
+
     const openMRSID = appointment?.openMrsId;
     const payload = {
       title: `Appointment rescheduled for ${appointment?.patientName || 'Patient'}`,
@@ -114,7 +120,10 @@ export class MindmapService {
       }
     }
     console.log("payload for notification:",payload);
-    this.notifyApp(hwUuid, payload).subscribe();
+    this.notifyApp(hwUuid, payload).subscribe({
+      next: () => console.log('Reschedule notification sent successfully'),
+      error: (err) => console.error('Failed to send reschedule notification:', err)
+    });
   }
   /**
   * Send cancel notification to health worker
@@ -123,6 +132,12 @@ export class MindmapService {
   notifyHwForCancelAppointment(appointment): void {
     console.log("inside cancell notification");
     const hwUuid = appointment?.hwUUID;
+
+    if (!hwUuid) {
+      console.warn('Cannot send cancel notification: Health worker UUID is not available');
+      return;
+    }
+
     const openMRSID = appointment?.openMrsId;
     const payload = {
       title: `Appointment cancelled for ${appointment?.patientName || 'Patient'}`,
@@ -137,7 +152,9 @@ export class MindmapService {
       }
     }
     console.log("payload===",payload);
-    
-    this.notifyApp(hwUuid, payload).subscribe();
+    this.notifyApp(hwUuid, payload).subscribe({
+      next: () => console.log('Cancel notification sent successfully'),
+      error: (err) => console.error('Failed to send cancel notification:', err)
+    });
   }
 }

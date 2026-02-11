@@ -2100,10 +2100,10 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                     type: 'PUSH',
                     data,
                 });
-                if (!data.notification || !data.notification.title) {
+                if (!data || !data.title) {
                     return;
                 }
-                const desc = data.notification;
+                const desc = data;
                 let options = {};
                 NOTIFICATION_OPTION_NAMES.filter(name => desc.hasOwnProperty(name))
                     .forEach(name => options[name] = desc[name]);

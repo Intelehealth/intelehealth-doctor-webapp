@@ -525,7 +525,18 @@ export interface StandardMedicineModel {
   durationUnit?: string,
   instructRemark?: string,
   frequency?: string,
-  uuid?: string
+  uuid?: string,
+  aiGenerated?: boolean,
+  modified?: boolean,
+  rationale?: string[],
+  likelihood?: string,
+  originalAiData?: {
+    dose?: string,
+    durationNo?: string,
+    durationUnit?: string,
+    instructRemark?: string,
+    frequency?: string
+  }
 }
 
 export interface PatientHistoryModel {
@@ -546,6 +557,9 @@ export interface DiagnosisModel {
   diagnosisCode?: string,
   isSnomed? : boolean,
   diagnosisAiGenerated?: string,
+  rationale?: string[],
+  from?: string,
+  likelihood?: string,
 }
 
 export interface DocImagesModel {
