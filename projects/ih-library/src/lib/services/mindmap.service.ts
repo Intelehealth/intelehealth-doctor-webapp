@@ -119,12 +119,12 @@ export class MindmapService {
     }
     this.notifyApp(hwUuid, payload).subscribe();
   }
-  /**
+
+   /**
   * Send cancel notification to health worker
   * @returns {void}
   */
   notifyHwForCancelAppointment(appointment): void {
-    console.log("inside cancell notification");
     const hwUuid = appointment?.hwUUID;
     const openMRSID = appointment?.openMrsId;
     const payload = {

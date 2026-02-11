@@ -1,27 +1,45 @@
-<div class="intel-con-modal">
-  <div class="close-btn-con">
-    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
+<div class="intel-con-modal" data-test-id="rescheduleConfirmModal">
+  <!-- Close Button -->
+  <div class="close-btn-con" data-test-id="rescheduleConfirmCloseContainer">
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseRescheduleConfirm">
+      <img src="assets/svgs/CloseX.svg" alt="close icon" data-test-id="rescheduleConfirmCloseIcon">
+    </button>
   </div>
-  <div class="modal-con mt-4">
-    <img src="assets/svgs/appointment.svg" alt="" width="80px" height="80px">
-    <h6 class="mt-3">{{'Reschedule the appointment'|translate}}</h6>
-    <p class="mt-2 text-center">{{'Are you sure you want to reschedule appointment?'|translate }} </p>
-    <div class="slot-con d-flex justify-content-center align-items-center py-3">
-      <div class="d-flex flex-column align-items-center justify-content-center px-2">
-        <b>{{data?.appointment?.slotJsDate|date:'dd MMMM'}}</b>
-        <b>{{data?.appointment?.slotTime}}</b>
+
+  <!-- Modal Content -->
+  <div class="modal-con mt-4" data-test-id="rescheduleConfirmContent">
+    <img src="assets/svgs/appointment.svg" alt="appointment icon" width="80px" height="80px" data-test-id="rescheduleConfirmIcon">
+    <h6 class="mt-3" data-test-id="rescheduleConfirmTitle">{{'Reschedule the appointment'|translate}}</h6>
+    <p class="mt-2 text-center" data-test-id="rescheduleConfirmMessage">
+      {{'Are you sure you want to reschedule appointment?'|translate }}
+    </p>
+
+    <!-- Slot Comparison -->
+    <div class="slot-con d-flex justify-content-center align-items-center py-3" data-test-id="rescheduleConfirmSlotContainer">
+      <!-- Old Slot -->
+      <div class="d-flex flex-column align-items-center justify-content-center px-2" data-test-id="rescheduleOldSlot">
+        <b data-test-id="rescheduleOldSlotDate">{{data?.appointment?.slotJsDate|date:'dd MMMM'}}</b>
+        <b data-test-id="rescheduleOldSlotTime">{{data?.appointment?.slotTime}}</b>
       </div>
-      <div class="d-flex flex-column align-items-center justify-content-center px-2">
+      <!-- To Label -->
+      <div class="d-flex flex-column align-items-center justify-content-center px-2" data-test-id="rescheduleToLabel">
         <span class="text-muted">to</span>
       </div>
-      <div class="d-flex flex-column align-items-center justify-content-center px-2">
-        <b>{{data?.newSlot?.date|date:'dd MMMM'}}</b>
-        <b>{{data?.newSlot?.slot}}</b>
+      <!-- New Slot -->
+      <div class="d-flex flex-column align-items-center justify-content-center px-2" data-test-id="rescheduleNewSlot">
+        <b data-test-id="rescheduleNewSlotDate">{{data?.newSlot?.date|date:'dd MMMM'}}</b>
+        <b data-test-id="rescheduleNewSlotTime">{{data?.newSlot?.slot}}</b>
       </div>
     </div>
   </div>
-  <div class="modal-action-btn-con">
-    <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)" data-test-id="btnCancel">{{'Go Back'|translate}}</button>
-    <button class="modal-btn blue-btn" type="button" (click)="close(true)" data-test-id="btnSubmit">{{'Confirm'|translate}}</button>
+
+  <!-- Action Buttons -->
+  <div class="modal-action-btn-con" data-test-id="rescheduleConfirmActionContainer">
+    <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)" data-test-id="btnCancelRescheduleConfirm">
+      {{'Go Back'|translate}}
+    </button>
+    <button class="modal-btn blue-btn" type="button" (click)="close(true)" data-test-id="btnSubmitRescheduleConfirm">
+      {{'Confirm'|translate}}
+    </button>
   </div>
 </div>

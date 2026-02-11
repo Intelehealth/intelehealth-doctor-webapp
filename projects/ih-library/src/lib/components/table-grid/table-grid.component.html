@@ -1,183 +1,594 @@
 <mat-expansion-panel [expanded]="true" data-test-id="matExpAppointment">
   <mat-expansion-panel-header data-test-id="matExpHeaderAppointment">
-    <mat-panel-title>
-      <div id="{{pluginConfigObs.anchorId}}" class="anchor-con"></div>
-      <div class="intel-accordion-title">
-        <img src="{{ pluginConfigObs.tableHeaderIcon }}" alt="" width="44px">
-        <h6 class="mb-0 ml-2">{{ pluginConfigObs.tableHeader | translate }} ({{ visitsLengthCount }})</h6>
-        <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{ (pluginConfigObs.tooltipLabel | translate) }}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
-        <div class="ml-auto filter-search-container">
-          <button *ngIf="pluginConfigObs.filterObs.filterFlag" class="mat-stroked-button"[matMenuTriggerFor]="filterMenu1" class="filter-btn" (click)="$event.stopPropagation();">
-            <img src="{{pluginConfigObs.filterObs.filterIcon}}" alt=""> {{( pluginConfigObs.filterObs.filterLabel| translate)}}
+    <mat-panel-title data-test-id="matPanelTitleAppointment">
+      <div
+        id="{{ pluginConfigObs.anchorId }}"
+        class="anchor-con"
+        data-test-id="divAnchorAppointment"
+      ></div>
+      <div
+        class="intel-accordion-title"
+        data-test-id="divAccordionTitleAppointment"
+      >
+        <img
+          src="{{ pluginConfigObs.tableHeaderIcon }}"
+          alt=""
+          width="44px"
+          data-test-id="imgTableHeaderIconAppointment"
+        />
+        <h6 class="mb-0 ml-2" [attr.data-test-id]="pluginConfigObs.tableHeader">
+          {{ pluginConfigObs.tableHeader | translate }} ({{
+            getCurrentTotalCount()
+          }})
+        </h6>
+        <mat-icon
+          aria-hidden="false"
+          aria-label="help icon"
+          matTooltip="{{ pluginConfigObs.tooltipLabel | translate }}"
+          matTooltipPosition="right"
+          data-test-id="icoHelpAppointment"
+          >help_outline</mat-icon
+        >
+
+        <!-- Filter button -->
+        <div
+          class="ml-auto filter-search-container"
+          data-test-id="divFilterContainerAppointment"
+        >
+          <button
+            *ngIf="pluginConfigObs.filterObs.filterFlag"
+            class="mat-stroked-button filter-btn"
+            [matMenuTriggerFor]="filterMenu"
+            (click)="$event.stopPropagation()"
+            data-test-id="btnFilterAppointment"
+          >
+            <img
+              src="{{ pluginConfigObs.filterObs.filterIcon }}"
+              alt=""
+              data-test-id="imgFilterIconAppointment"
+            />{{ pluginConfigObs.filterObs.filterLabel | translate }}
           </button>
-          <mat-menu #filterMenu1="matMenu" class="custom-menu" [hasBackdrop]="true" xPosition="before">
-            <div class="toggle-buttons">
-              <button class="mat-focus-indicator mat-button mat-button-base" class="mat-focus-indicator mat-button mat-button-base" mat-button [class.active]="mode === 'date'" (click)="setMode('date'); $event.stopPropagation(); resetDate(true)"><span class="mat-button-wrapper"><span class="mat-button-wrapper">{{'Date' | translate}}</span></span></button>
-              <button class="mat-focus-indicator mat-button mat-button-base" class="mat-focus-indicator mat-button mat-button-base" mat-button [class.active]="mode === 'range'" (click)="setMode('range'); $event.stopPropagation(); resetDate(true)"><span class="mat-button-wrapper"><span class="mat-button-wrapper">{{'Range' | translate}}</span></span></button>
+          <!-- Filter Menu -->
+          <mat-menu
+            #filterMenu="matMenu"
+            class="custom-menu"
+            [hasBackdrop]="true"
+            xPosition="before"
+            data-test-id="menuFilterAppointment"
+          >
+            <div
+              class="toggle-buttons"
+              data-test-id="divToggleButtonsAppointment"
+            >
+              <button
+                class="mat-focus-indicator mat-button mat-button-base"
+                mat-button
+                [class.active]="mode === 'date'"
+                (click)="
+                  setMode('date'); $event.stopPropagation(); resetDate(true)
+                "
+                data-test-id="btnDateModeAppointment"
+              >
+                {{ "Date" | translate }}
+              </button>
+              <button
+                class="mat-focus-indicator mat-button mat-button-base"
+                mat-button
+                [class.active]="mode === 'range'"
+                (click)="
+                  setMode('range'); $event.stopPropagation(); resetDate(true)
+                "
+                data-test-id="btnRangeModeAppointment"
+              >
+                {{ "Range" | translate }}
+              </button>
             </div>
-            <div *ngIf="mode === 'date'" class="date-view" (click)="$event.stopPropagation()">
-              <form [formGroup]="filteredDateAndRangeForm">
-                <div class="form-date">
-                  <div class="input-date">
-                    <label class="label-text">{{ 'Select date' | translate}}</label>
-                    <div class="input-wrapper">
-                      <input type="text" class="form-control" [max]="maxDate" formControlName="date" [matDatepicker]="dobdp" placeholder="{{'Select date' | translate}}" aria-label="Date" aria-describedby="basic-addon1" readonly data-test-id="etDate"/>
-                      <mat-datepicker #dobdp></mat-datepicker>
-                      <mat-datepicker-toggle matSuffix [for]="dobdp" data-test-id="dpDate" class="datepicker-icon">
-                        <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+            <!-- Date Mode -->
+            <div
+              *ngIf="mode === 'date'"
+              class="date-view"
+              (click)="$event.stopPropagation()"
+              data-test-id="divDateModeAppointment"
+            >
+              <form
+                [formGroup]="filteredDateAndRangeForm"
+                data-test-id="formDateFilterAppointment"
+              >
+                <div class="form-date" data-test-id="divFormDateAppointment">
+                  <div
+                    class="input-date"
+                    data-test-id="divInputDateAppointment"
+                  >
+                    <label
+                      class="label-text"
+                      data-test-id="lblSelectDateAppointment"
+                      >{{ "Select date" | translate }}</label
+                    >
+                    <div
+                      class="input-wrapper"
+                      data-test-id="divInputWrapperDateAppointment"
+                    >
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.error-border]="dateErrorMessage"
+                        [max]="maxDate"
+                        formControlName="date"
+                        [matDatepicker]="datePicker"
+                        [placeholder]="
+                          filteredDateAndRangeForm.get('date')?.value
+                            ? (filteredDateAndRangeForm.get('date')?.value
+                              | date: 'dd/MM/yyyy')
+                            : ('Select date' | translate)
+                        "
+                        aria-label="Date"
+                        readonly
+                        data-test-id="etDate"
+                      />
+                      <mat-datepicker
+                        #datePicker
+                        (opened)="addCalendarNavigationTestIds()"
+                        data-test-id="matDatePickerAppointment"
+                      ></mat-datepicker>
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="datePicker"
+                        data-test-id="dpDate"
+                        class="datepicker-icon"
+                      >
+                        <img
+                          matDatepickerToggleIcon
+                          src="assets/svgs/calendar-date.svg"
+                          alt=""
+                          data-test-id="imgDatePickerIconAppointment"
+                        />
                       </mat-datepicker-toggle>
                     </div>
+                    <span
+                      *ngIf="dateErrorMessage"
+                      class="error-message"
+                      data-test-id="spanDateErrorMessageAppointment"
+                      >{{ dateErrorMessage }}</span
+                    >
                   </div>
                 </div>
               </form>
-              </div>
-              <div *ngIf="mode === 'range'" class="range-view" (click)=" $event.stopPropagation()">
-                <form [formGroup]="filteredDateAndRangeForm">
-                  <div class="form-date">
-                    <div class="input-date">
-                      <label class="label-text">{{ 'Start date' | translate }}</label>
-                      <div class="input-wrapper">
-                        <input type="text" class="form-control" [max]="filteredDateAndRangeForm.value.endDate ? filteredDateAndRangeForm.value.endDate : maxDate" formControlName="startDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date" aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
-                        <mat-datepicker #picker1></mat-datepicker>
-                        <mat-datepicker-toggle matSuffix [for]="picker1" class="datepicker-icon">
-                          <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
-                        </mat-datepicker-toggle>
-                      </div>
+            </div>
+            <div
+              *ngIf="mode === 'range'"
+              class="range-view"
+              (click)="$event.stopPropagation()"
+              data-test-id="divRangeModeAppointment"
+            >
+              <form
+                [formGroup]="filteredDateAndRangeForm"
+                data-test-id="formRangeFilterAppointment"
+              >
+                <div
+                  class="form-date"
+                  data-test-id="divFormStartDateAppointment"
+                >
+                  <div
+                    class="input-date"
+                    data-test-id="divInputStartDateAppointment"
+                  >
+                    <label
+                      class="label-text"
+                      data-test-id="lblStartDateAppointment"
+                      >{{ "Start date" | translate }}</label
+                    >
+                    <div
+                      class="input-wrapper"
+                      data-test-id="divInputWrapperStartDateAppointment"
+                    >
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.error-border]="startDateErrorMessage"
+                        [max]="
+                          filteredDateAndRangeForm.value.endDate
+                            ? filteredDateAndRangeForm.value.endDate
+                            : maxDate
+                        "
+                        formControlName="startDate"
+                        [matDatepicker]="startDatePicker"
+                        [placeholder]="
+                          filteredDateAndRangeForm.get('startDate')?.value
+                            ? (filteredDateAndRangeForm.get('startDate')?.value
+                              | date: 'dd/MM/yyyy')
+                            : ('Select start date' | translate)
+                        "
+                        readonly
+                        data-test-id="etSelStartDate"
+                      />
+                      <mat-datepicker
+                        #startDatePicker
+                        (opened)="addCalendarNavigationTestIds()"
+                        data-test-id="matStartDatePickerAppointment"
+                      ></mat-datepicker>
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="startDatePicker"
+                        class="datepicker-icon"
+                        data-test-id="dpStartDate"
+                      >
+                        <img
+                          matDatepickerToggleIcon
+                          src="assets/svgs/calendar-date.svg"
+                          alt=""
+                          data-test-id="imgStartDatePickerIconAppointment"
+                        />
+                      </mat-datepicker-toggle>
                     </div>
+                    <span
+                      *ngIf="startDateErrorMessage"
+                      class="error-message"
+                      data-test-id="spanStartDateErrorMessageAppointment"
+                      >{{ startDateErrorMessage }}</span
+                    >
                   </div>
-                  <div class="form-date">
-                    <div class="input-date">
-                      <label class="label-text">{{ 'End date' | translate }}</label>
-                      <div class="input-wrapper">
-                        <input type="text" class="form-control" [min]="filteredDateAndRangeForm.value.startDate" [max]="maxDate" formControlName="endDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date" aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
-                        <mat-datepicker #picker2></mat-datepicker>
-                        <mat-datepicker-toggle matSuffix [for]="picker2" class="datepicker-icon">
-                          <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
-                        </mat-datepicker-toggle>
-                      </div>
+                </div>
+                <div class="form-date" data-test-id="divFormEndDateAppointment">
+                  <div
+                    class="input-date"
+                    data-test-id="divInputEndDateAppointment"
+                  >
+                    <label
+                      class="label-text"
+                      data-test-id="lblEndDateAppointment"
+                      >{{ "End date" | translate }}</label
+                    >
+                    <div
+                      class="input-wrapper"
+                      data-test-id="divInputWrapperEndDateAppointment"
+                    >
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.error-border]="endDateErrorMessage"
+                        [min]="filteredDateAndRangeForm.value.startDate"
+                        [max]="maxDate"
+                        formControlName="endDate"
+                        [matDatepicker]="endDatePicker"
+                        [placeholder]="
+                          filteredDateAndRangeForm.get('endDate')?.value
+                            ? (filteredDateAndRangeForm.get('endDate')?.value
+                              | date: 'dd/MM/yyyy')
+                            : ('Select end date' | translate)
+                        "
+                        readonly
+                        data-test-id="etSelEndDate"
+                      />
+                      <mat-datepicker
+                        #endDatePicker
+                        (opened)="addCalendarNavigationTestIds()"
+                        data-test-id="matEndDatePickerAppointment"
+                      ></mat-datepicker>
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="endDatePicker"
+                        class="datepicker-icon"
+                        data-test-id="dpEndDate"
+                      >
+                        <img
+                          matDatepickerToggleIcon
+                          src="assets/svgs/calendar-date.svg"
+                          alt=""
+                          data-test-id="imgEndDatePickerIconAppointment"
+                        />
+                      </mat-datepicker-toggle>
                     </div>
+                    <span
+                      *ngIf="endDateErrorMessage"
+                      class="error-message"
+                      data-test-id="spanEndDateErrorMessageAppointment"
+                      >{{ endDateErrorMessage }}</span
+                    >
                   </div>
-                </form>
-              </div>
-            <div class="action-buttons">
-              <button mat-button class="mat-focus-indicator reset-btn mat-button mat-button-base" (click)="resetDate();"><span class="mat-button-wrapper">{{ 'Reset'| translate }}</span></button>
-              <button mat-button class="mat-focus-indicator apply-btn mat-button mat-button-base" (click)="applyDateOrRangeFilter(pluginConfigObs.filterObs.filterDateField)"><span class="mat-button-wrapper">{{ 'Apply'| translate }}</span></button>
+                </div>
+              </form>
+            </div>
+            <div
+              class="action-buttons"
+              data-test-id="divFilterActionBtnsAppointment"
+            >
+              <button
+                mat-button
+                class="mat-focus-indicator reset-btn mat-button mat-button-base"
+                (click)="resetDate(true); $event.stopPropagation()"
+                data-test-id="btnResetFilterAppointment"
+              >
+                {{ "Reset" | translate }}
+              </button>
+              <button
+                mat-button
+                class="mat-focus-indicator apply-btn mat-button mat-button-base"
+                (click)="
+                  applyDateOrRangeFilter(
+                    pluginConfigObs.filterObs.filterDateField
+                  );
+                  $event.stopPropagation()
+                "
+                data-test-id="btnApplyFilterAppointment"
+              >
+                {{ "Apply" | translate }}
+              </button>
             </div>
           </mat-menu>
-          <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-            <input type="text" #searchInput class="form-control" placeholder="{{ pluginConfigObs.searchPlaceHolder | translate }}" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
+          <div
+            class="input-group search-bar ml-auto"
+            (click)="$event.stopPropagation()"
+            data-test-id="divSearchAppointment"
+          >
+            <input
+              type="text"
+              #searchInput
+              class="form-control"
+              placeholder="{{ pluginConfigObs.searchPlaceHolder | translate }}"
+              (keyup)="applyFilter($event)"
+              (keydown.Space)="$event.stopPropagation()"
+              (keydown.Enter)="$event.stopPropagation()"
+              [attr.data-test-id]="'etSearch_' + pluginConfigObs.tableHeader"
+            />
             <div class="input-group-append">
-              <span class="input-group-text" id="basic-addon1"  *ngIf="!isFilterApplied">
-                <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
-              </span>
-              <button data-test-id="btnResetApSerach"  class="btnResetApSerach" class="btnResetApSerach" class="mat-icon-button" aria-label="Reset appointment search"  (click)="clearFilter()"  *ngIf="isFilterApplied">
-                <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+              <button
+                data-test-id="btnResetSearchAppointment"
+                class="btnResetApSerach mat-icon-button"
+                aria-label="Reset appointment search"
+                (click)="clearFilter(); $event.stopPropagation()"
+                *ngIf="isFilterApplied"
+              >
+                <mat-icon class="ml-0" style="line-height: normal"
+                  >close</mat-icon
+                >
               </button>
+              <span
+                class="input-group-text search-icon-span"
+                data-test-id="icoSearchAppointment"
+              >
+                <img
+                  src="assets/svgs/search-icon.svg"
+                  alt=""
+                  width="20px"
+                  height="20px"
+                  data-test-id="imgSearchIconAppointment"
+                />
+              </span>
             </div>
           </div>
         </div>
       </div>
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <div class="mat-elevation-z8">
+  <div class="mat-elevation-z8" data-test-id="divTableWrapperAppointment">
     <span *ngIf="tableLoader">
-      <ngx-ui-loader 
-        [loaderId]="'table-loader-' + pluginConfigObs.pluginConfigObsFlag" 
-        [fgsType]="'ball-spin-clockwise'" 
-        [fgsColor]="'#aba4a4'" 
-        [fgsPosition]="'center-center'" 
-        [fgsSize]="50" 
-        [overlayColor]="'rgb(255, 255, 255)'" 
+      <ngx-ui-loader
+        [loaderId]="'table-loader-' + pluginConfigObs.pluginConfigObsFlag"
+        [fgsType]="'ball-spin-clockwise'"
+        [fgsColor]="'#aba4a4'"
+        [fgsPosition]="'center-center'"
+        [fgsSize]="50"
+        [overlayColor]="'rgb(255, 255, 255)'"
         [hasProgressBar]="false"
-        [text]="('Loading'|translate) + ' ' + (pluginConfigObs.pluginConfigObsFlag|translate) + ' ' + ('data'|translate) + '...'"
+        [text]="
+          ('Loading' | translate) +
+          ' ' +
+          (pluginConfigObs.pluginConfigObsFlag | translate) +
+          ' ' +
+          ('data' | translate) +
+          '...'
+        "
         [textColor]="'#333'"
         [textPosition]="'center-center'"
+        data-test-id="loaderAppointment"
       ></ngx-ui-loader>
     </span>
-    <table mat-table [dataSource]="dataSource" #tableMatSort="matSort" matSort>
-
-      <ng-container *ngFor="let column of displayedAppointmentColumns" [matColumnDef]="column.key">
-        <ng-container *ngIf="column.isSortable; else noSort">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header matSortDirection="asc">
-            {{ column.label | translate }}
-          </th>
-        </ng-container>
-        <ng-template #noSort>
-          <th mat-header-cell *matHeaderCellDef>
-            {{ column.label | translate }}
-          </th>
-        </ng-template>
-
-        <td mat-cell *matCellDef="let element; let j = index;" [attr.data-test-id]="'td' + j">
-          <ng-container *ngIf="column.key !== 'patient_name' && column.key !== 'visit_completed'">
-            <div class="float-left" 
-                [innerHTML]="renderHtmlContent(column, element)" 
-                [ngClass]="getClasses(column, element)">
-            </div>
+    <div class="table-container" id="table-container-{{ componentId }}">
+      <table mat-table [dataSource]="paginatedDataSource">
+        <ng-container
+          *ngFor="let column of displayedAppointmentColumns"
+          [matColumnDef]="column.key"
+        >
+          <ng-container *ngIf="column.isSortable; else noSort">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              (click)="handleSort(column.key, 'asc')"
+              [attr.data-test-id]="
+                'th-' + column.key + '-' + pluginConfigObs.pluginConfigObsFlag
+              "
+              class="sortable-header"
+            >
+              {{ column.label | translate }}
+              <mat-icon class="sort-icon">arrow_upward</mat-icon>
+            </th>
           </ng-container>
-          
-          <!-- This is for visit_completed column -->
-          <ng-container *ngIf="column.key === 'visit_completed'">
-            <div class="d-flex align-items-center visit-completed-cell">
-              <img src="assets/svgs/green-pad.svg" alt="Completed" class="mr-2" />
-              <span class="text-success">
-                {{ element.completed }}
-              </span>
-            </div>
-          </ng-container>
+          <ng-template #noSort>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [attr.data-test-id]="
+                'th-' + column.key + '-' + pluginConfigObs.pluginConfigObsFlag
+              "
+            >
+              {{ column.label | translate }}
+            </th>
+          </ng-template>
 
-          <!-- Patient Name Column -->
-          <ng-container *ngIf="column.key === 'patient_name'">
-            <div class="d-flex align-items-center">
-              <img *ngIf="element.patientId" src="{{ checkPatientRegField('Profile Photo') ? baseURL + '/personimage/' + element.patientId : '' }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
-              <img *ngIf="pluginConfigObs.pluginConfigObsFlag !== 'Appointment'" src="{{ checkPatientRegField('Profile Photo') ? baseURL + '/personimage/' + element.person.uuid : '' }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
-              <div class="float-left" 
-                [innerHTML]="renderHtmlContent(column, element)" 
-                [ngClass]="getClasses(column, element)">
-              </div>
-            </div>
-          </ng-container>
+          <td
+            mat-cell
+            *matCellDef="let element; let j = index"
+            [attr.data-test-id]="
+              'td-' +
+              column.key +
+              '-' +
+              pluginConfigObs.pluginConfigObsFlag +
+              '-' +
+              j
+            "
+          >
+            <ng-container
+              *ngIf="
+                column.key !== 'patient_name' &&
+                column.key !== 'visit_completed'
+              "
+            >
+              <div
+                class="float-left"
+                [innerHTML]="renderHtmlContent(column, element)"
+                [ngClass]="getClasses(column, element)"
+              ></div>
+            </ng-container>
 
-          <!-- Telephone Column -->
-          <ng-container *ngIf="column.key === 'telephone' && element.telephone">
-            <a (click)="openWhatsApp($event, element.telephone)" class="float-left icon-btn m-0" [attr.data-test-id]="'linkPatientWhatsApp' + j">
-              <img src="assets/svgs/whatsapp-green.svg" alt="WhatsApp" />
-            </a>
-          </ng-container>
-
-          <!-- Actions Column -->
-          <ng-container *ngIf="column.key === 'actions'">
-            <div class="actions-btn-wrap d-flex align-items-center">
-              <button
-                *ngFor="let action of column.actionButtons"
-                [ngStyle]="{
-                  color: action.style?.color,
-                  backgroundColor: action.style?.backgroundColor
-                }"
-                class="action-btn mr-2"
-                type="button"
-                (click)="$event.stopPropagation(); handleAction(action, element)"
+            <!-- This is for visit_completed column -->
+            <ng-container *ngIf="column.key === 'visit_completed'">
+              <div
+                class="d-flex align-items-center visit-completed-cell"
+                [attr.data-test-id]="
+                  'td-visit_completed-' +
+                  pluginConfigObs.pluginConfigObsFlag +
+                  '-' +
+                  j
+                "
               >
-                {{ action.label | translate }}
-              </button>
-            </div>
-          </ng-container>
-        </td>
-      </ng-container>
-    
+                <img
+                  src="assets/svgs/green-pad.svg"
+                  alt="Completed"
+                  class="mr-2"
+                />
+                <span class="text-success">
+                  {{ element.completed }}
+                </span>
+              </div>
+            </ng-container>
 
-      <!-- No Data Row -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-          {{ pluginConfigObs.noRecordFound | translate }}
-        </td>
-      </tr>
+            <!-- Patient Name Column -->
+            <ng-container *ngIf="column.key === 'patient_name'">
+              <div
+                class="d-flex align-items-center"
+                [attr.data-test-id]="
+                  'td-patient_name-' +
+                  pluginConfigObs.pluginConfigObsFlag +
+                  '-' +
+                  j
+                "
+              >
+                <img
+                  *ngIf="element.patientId"
+                  src="{{
+                    checkPatientRegField('Profile Photo')
+                      ? baseURL + '/personimage/' + element.patientId
+                      : ''
+                  }}"
+                  alt=""
+                  width="32px"
+                  height="32px"
+                  style="border-radius: 50%"
+                />
+                <img
+                  *ngIf="pluginConfigObs.pluginConfigObsFlag !== 'Appointment'"
+                  src="{{
+                    checkPatientRegField('Profile Photo')
+                      ? baseURL + '/personimage/' + element.person.uuid
+                      : ''
+                  }}"
+                  alt=""
+                  width="32px"
+                  height="32px"
+                  style="border-radius: 50%"
+                  [attr.data-test-id]="
+                    'td-patient_img-' +
+                    pluginConfigObs.pluginConfigObsFlag +
+                    '-' +
+                    j
+                  "
+                />
+                <div
+                  class="float-left"
+                  [innerHTML]="renderHtmlContent(column, element)"
+                  [ngClass]="getClasses(column, element)"
+                ></div>
+              </div>
+            </ng-container>
 
-      <!-- Row Definitions -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; let x = index; columns: displayedColumns;" [attr.data-test-id]="'tr' + x" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
-      
-    </table>
-    <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="pageSizeOptions" aria-label="Select page of periodic elements"></mat-paginator>
+            <!-- Telephone Column -->
+            <ng-container
+              *ngIf="column.key === 'telephone' && element.telephone"
+            >
+              <a
+                (click)="openWhatsApp($event, element.telephone)"
+                class="float-left icon-btn m-0"
+                [attr.data-test-id]="'linkPatientWhatsApp' + j"
+              >
+                <img src="assets/svgs/whatsapp-green.svg" alt="WhatsApp" />
+              </a>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container *ngIf="column.key === 'actions'">
+              <div class="actions-btn-wrap d-flex align-items-center">
+                <button
+                  *ngFor="let action of column.actionButtons; let k = index"
+                  [ngStyle]="{
+                    color: action.style?.color,
+                    backgroundColor: action.style?.backgroundColor
+                  }"
+                  class="action-btn mr-2"
+                  type="button"
+                  (click)="
+                    $event.stopPropagation(); handleAction(action, element)
+                  "
+                  [attr.data-test-id]="'btn-action-' + action.label + '-' + k"
+                >
+                  {{ action.label | translate }}
+                </button>
+              </div>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell text-center"
+            [attr.colspan]="displayedColumns.length"
+          >
+            {{ pluginConfigObs.noRecordFound | translate }}
+          </td>
+        </tr>
+
+        <!-- Row Definitions -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; let x = index; columns: displayedColumns"
+          [attr.data-test-id]="'tr' + x"
+          [routerLink]="['/dashboard/visit-summary', row.uuid]"
+        ></tr>
+      </table>
+    </div>
+    <mat-paginator
+      *ngIf="pluginConfigObs?.pluginConfigObsFlag === 'Appointment'"
+      #tempPaginator
+      hidePageSize
+      [pageSizeOptions]="pageSizeOptions"
+      [length]="getCurrentTotalCount()"
+      [pageIndex]="currentPage"
+      [pageSize]="itemsPerPage"
+      [disabled]="isPaginationDisabled()"
+      aria-label="Select page of periodic elements"
+    ></mat-paginator>
+    <mat-paginator
+      #tempPaginator
+      *ngIf="pluginConfigObs?.pluginConfigObsFlag !== 'Appointment'"
+      hidePageSize
+      [pageSizeOptions]="pageSizeOptions"
+      [length]="getCurrentTotalCount()"
+      [pageIndex]="currentPage"
+      [pageSize]="itemsPerPage"
+      [disabled]="isPaginationDisabled()"
+      (page)="pageEvent = getData($event)"
+      aria-label="Select page of periodic elements"
+    ></mat-paginator>
   </div>
 </mat-expansion-panel>

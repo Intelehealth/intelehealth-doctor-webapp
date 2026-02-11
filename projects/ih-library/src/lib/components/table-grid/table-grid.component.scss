@@ -3,6 +3,12 @@
     width: 100%;
     overflow-x: auto;
   }
+
+  .table-container {
+    max-height: 440px; /* 5 rows * 88px (row height) = 440px */
+    overflow-y: auto;
+    overflow-x: auto;
+  }
   
   table {
     width: 100%;
@@ -245,8 +251,30 @@
     display: flex !important;
   }
   
-  .btnResetApSerach{
-    display: none;
+  .btnResetApSerach {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #7F7B92;
+    }
+
+    &:hover .mat-icon {
+      color: #2E1E91;
+    }
+  }
+
+  .search-icon-span {
+    pointer-events: none;
   }
   
   .filter-btn {
@@ -416,4 +444,16 @@
   
   .chip-item-green {
     background: #E6FFF3;
+  }
+
+  .error-message {
+    color: #ea315b;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    font-family: DM Sans;
+  }
+
+  .error-border {
+    border-color: #ea315b !important;
   }
