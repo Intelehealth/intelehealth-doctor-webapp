@@ -212,9 +212,6 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
     this.configService.publishConfig().subscribe({
       next: () => {
         this.toastr.success("Partner White Labelling has been successfully published", "Publish successful!");
-      },
-      error: (err) => {
-        this.toastr.error(err.error?.message || "Publish failed", "Error");
       }
     });
   }

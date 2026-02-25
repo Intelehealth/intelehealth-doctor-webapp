@@ -1408,11 +1408,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     const caller = doctorPhoneNumber ? doctorPhoneNumber : environment.doctorPhoneNumber;
     this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0', notes).subscribe({
       next: (data) => {
-        console.log('Kaleyra call initiated successfully:', data);
         this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
       },
       error: (error) => {
-        console.error('Error initiating Kaleyra call:', error);
         this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
       }
     });
@@ -2379,7 +2377,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // Skip follow-up validation for Namco doctors
-    if (this.showAndHideUiElement && this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.wantFollowUp) {
+    if (this.showAndHideUiElement && this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.wantFollowUp && this.visit?.demarcation !== visitTypes.FOLLOW_UP) {
       this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
       return false;
     }
@@ -2394,7 +2392,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         const isFollowUpVisit = this.visit?.demarcation === visitTypes.FOLLOW_UP;
 
         const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
-console.log("isRapidCompletion===",isRapidCompletion);
         //Open Share Prescription Confirmation Modal
         this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion }).subscribe((res: boolean) => {
           if (res) {

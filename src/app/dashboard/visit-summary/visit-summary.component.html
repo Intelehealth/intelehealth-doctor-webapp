@@ -1006,7 +1006,7 @@
                   </form>
                 </li>
               </ul>
-              <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'" class="notes-section" data-test-id="divNotesSection">
+              <div *ngIf="hasAILLMEnabled" class="notes-section" data-test-id="divNotesSection">
               <div class="top-row" data-test-id="divNotesTopRow">
                 <div class="notes-form" data-test-id="divNotesForm">
                   <h6 class="notes-label" data-test-id="h6NotesLabel">Notes</h6>
@@ -1039,7 +1039,7 @@
             </div>
           </mat-expansion-panel>  
 
-            <div *ngIf="hasAILLMEnabled && visit?.demarcation === 'New'; else diagnosisTemplate" id="ddxContainer" #lazyDDxContainer></div>
+            <div *ngIf="hasAILLMEnabled; else diagnosisTemplate" id="ddxContainer" #lazyDDxContainer></div>
             <ng-template #diagnosisTemplate>
               <mat-expansion-panel [expanded]="true" #panel2 hideToggle data-test-id="expansionPanelDiagnosis">
                 <mat-expansion-panel-header data-test-id="expansionPanelHeaderDiagnosis">
@@ -1754,7 +1754,7 @@
                                   isVisitNoteProvider &&
                                   !visitEnded
                                 "
-                                (click)="deleteStandardMedicine(i, m.uuid)"
+                                (click)="deleteMedicine(i, m.uuid)"
                                 [attr.data-test-id]="
                                   'btnDeleteStandardMedVisitSummary' + i
                                 "

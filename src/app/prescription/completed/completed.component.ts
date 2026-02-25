@@ -86,8 +86,11 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
    */
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    // Filter functionality can be implemented here if needed
-    this.paginator.firstPage();
+    // Filter functionality can be implemented here if needed;
+    this.resetToFirstPage();
+    this.emitClearSearchEvent(filterValue.trim());
+   // this.paginator.firstPage();
+  
   }
 
   /**
@@ -97,7 +100,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   clearFilter(): void {
     this.searchElement.nativeElement.value = "";
     this.resetToFirstPage();
-    this.emitClearSearchEvent();
+    this.emitClearSearchEvent("");
   }
 
   checkPatientRegField(fieldName: string): boolean {
@@ -199,11 +202,11 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
-  private emitClearSearchEvent(): void {
+  private emitClearSearchEvent(searchTerm: string): void {
     this.fetchPageEvent.emit({
       page: this.currentPage,
       pageSize: this.pageSize,
-      searchTerm: ""
+      searchTerm
     });
   }
 }
