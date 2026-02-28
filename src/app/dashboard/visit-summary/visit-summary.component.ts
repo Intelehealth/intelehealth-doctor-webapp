@@ -4007,7 +4007,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     const matchedSelectedNames = new Set<string>();
 
     // AI medications
-    aiList.forEach((aiMed: any) => {
+    aiList.forEach((aiMed: any, index: number) => {
       const aiMedName = (aiMed.name || aiMed.drug || aiMed.medication || '').toLowerCase().trim();
       const selectedMed = selected.find(
         m => m.drug?.toLowerCase().trim() === aiMedName
@@ -4019,6 +4019,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         medication: aiMed.name || aiMed.drug || aiMed.medication || '',
         ...(aiMed.rationale?.length && { rationale: Array.isArray(aiMed.rationale) ? aiMed.rationale.join('\n') : aiMed.rationale }),
         ...(aiMed.likelihood && { likelihood: aiMed.likelihood }),
+        rank: String(index + 1),
       };
 
       if (selectedMed) {
@@ -4043,13 +4044,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       medications.push(payload);
     });
 
-    // Remaining medications not matched by the current AI list
-    // Previously AI-generated → 'M' (Modified), purely manual → 'N' (Non-AI)
+    // Remaining medications not in the latest AI list → always 'N' (Non-AI)
+    let nonAiRank = 99;
     selected
       .filter(m => !matchedSelectedNames.has(m.drug?.toLowerCase().trim() || ''))
       .forEach(medication => {
-        const wasAiGenerated = medication.aiGenerated === true;
-
         medications.push({
           medication: medication.drug || '',
           dose: medication.dose,
@@ -4057,11 +4056,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           duration_unit: medication.durationUnit,
           instructions: medication.instructRemark,
           frequency: medication.frequency,
-          ...(wasAiGenerated && medication.rationale?.length
+          ...(medication.rationale?.length
             ? { rationale: Array.isArray(medication.rationale) ? medication.rationale.join('\n') : medication.rationale }
             : { rationale: 'N/A' }),
-          ...(wasAiGenerated && medication.likelihood && { likelihood: medication.likelihood }),
-          ai_assisted: wasAiGenerated ? 'M' : 'N',
+          ...(medication.likelihood && { likelihood: medication.likelihood }),
+          rank: String(nonAiRank++),
+          ai_assisted: 'N',
         });
       });
 
