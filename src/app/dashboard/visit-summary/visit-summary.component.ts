@@ -2894,7 +2894,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Check if medication has been modified (for AI medications)
     this.checkMedicationModification(medicine);
 
-    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
+    const aiMeta = medicine.aiGenerated ? JSON.stringify({
+      ai: true,
+      ...(medicine.rationale?.length && { r: medicine.rationale }),
+      ...(medicine.likelihood && { l: medicine.likelihood })
+    }) : '';
+
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}:${aiMeta}`;
   }
 
   saveDiscussionSummary(): Observable<any>{
@@ -3282,17 +3288,31 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         )
       : [];
 
+    // When there are new diagnoses, send full payload (all AI list + all selected)
+    const allSelectedDiagnoses = newlyAddedDiagnoses.length > 0 ? diagnosisSource : [];
+    const aiDiagnosisList = newlyAddedDiagnoses.length > 0
+      && this.hasAILLMEnabled && this.ddxCompRef?.instance?.aillmddxComponent?.diagnosisList
+      ? this.ddxCompRef.instance.aillmddxComponent.diagnosisList
+      : [];
+
     const newlyAddedMedications = this.standardMedicines.filter((m: StandardMedicineModel) =>
       !m.uuid && !this.sentMedicationNames.has(m.drug?.toLowerCase() || '')
     );
+
+    // When there are new medications, send full payload (all AI list + all selected)
+    const allSelectedMedications = newlyAddedMedications.length > 0 ? this.standardMedicines : [];
+    const aiMedicationList = newlyAddedMedications.length > 0
+      && this.hasAILLMEnabled && this.ddxCompRef?.instance?.aillmtxMedicationComponent?.medicationList
+      ? this.ddxCompRef.instance.aillmtxMedicationComponent.medicationList
+      : [];
 
     const saveObs$ = postObsRequests.length ? forkJoin(postObsRequests) : of(null);
 
     return saveObs$.pipe(
       switchMap(responses =>
         forkJoin([
-          this.sendDiagnosisToManualDDxAPI(newlyAddedDiagnoses),
-          this.sendMedicationToManualTTxAPI(newlyAddedMedications)
+          this.sendDiagnosisToManualDDxAPI(allSelectedDiagnoses, aiDiagnosisList),
+          this.sendMedicationToManualTTxAPI(allSelectedMedications, aiMedicationList)
         ]).pipe(
           map(() => {
             // Add to Sets to prevent duplicate sends
@@ -3894,39 +3914,63 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @param {DiagnosisModel[]} diagnosesToSend - Array of diagnoses to send to the API
   * @returns {Observable<any>}
   */
-  sendDiagnosisToManualDDxAPI(diagnosesToSend: DiagnosisModel[]): Observable<any> {
-    if (!diagnosesToSend || diagnosesToSend.length === 0) {
+  sendDiagnosisToManualDDxAPI(selectedDiagnoses: DiagnosisModel[], aiDiagnosisList: any[]): Observable<any> {
+    const selected = selectedDiagnoses || [];
+    const aiList = aiDiagnosisList || [];
+
+    if (!selected.length && !aiList.length) {
       return of(null);
     }
 
-    const apiCalls = diagnosesToSend.map(diagnosis => {
-      const isAiGenerated = diagnosis.diagnosisAiGenerated === 'Y' || diagnosis.from === 'AI generated';
-      const validRationale = isAiGenerated && diagnosis.rationale?.length
-        ? diagnosis.rationale.filter(r => r?.trim())
-        : [];
+    const diagnoses: any[] = [];
 
-      // Get rank and flag
-      const rank = (diagnosis as any).rank || 'NA';
-      const aiFlag = isAiGenerated ? 'Y' : 'N';
-      const diagnosisPayload: any = {
-        diagnosis: diagnosis.diagnosisName || '',
-        "Diagnosis type": diagnosis.diagnosisType || '',
-        "Diagnosis status": diagnosis.diagnosisStatus || '',
-        rationale: validRationale.length ? validRationale : ['N/A'],
-        ai_assisted: `${rank}:${aiFlag}`
+    // Track AI diagnosis names to reliably identify non-AI diagnoses later
+    const aiDiagNames = new Set(
+      aiList.map((d: any) => d.diagnosis?.toLowerCase() || '')
+    );
+
+    // AI diagnoses with their original rank (1, 2, 3...)
+    aiList.forEach((aiDiag: any, index: number) => {
+      const selectedDiag = selected.find(
+        d => d.diagnosisName?.toLowerCase() === aiDiag.diagnosis?.toLowerCase()
+      );
+
+      const payload: any = {
+        diagnosis: aiDiag.diagnosis || '',
+        ...(aiDiag.summarised_rationale?.length && { summarised_rationale: aiDiag.summarised_rationale }),
+        ...(aiDiag.rationale?.length && { rationale: aiDiag.rationale }),
+        ...(aiDiag.likelihood && { likelihood: aiDiag.likelihood }),
+        rank: String(index + 1),
       };
 
-      if (isAiGenerated && diagnosis.likelihood) {
-        diagnosisPayload.likelihood = diagnosis.likelihood;
+      // Doctor selected this AI diagnosis — add type/status and flag
+      if (selectedDiag) {
+        if (selectedDiag.diagnosisType) payload["Diagnosis type"] = selectedDiag.diagnosisType;
+        if (selectedDiag.diagnosisStatus) payload["Diagnosis status"] = selectedDiag.diagnosisStatus;
+        payload.ai_assisted = 'Y';
       }
 
-      return this.diagnosisService.saveManualDiagnosis({
-        visitUuid: this.visit.uuid,
-        diagnoses: [diagnosisPayload]
-      });
+      diagnoses.push(payload);
     });
 
-    return forkJoin(apiCalls);
+    // Non-AI diagnoses: any selected diagnosis whose name is NOT in the AI list
+    let nonAiRank = 99;
+    selected
+      .filter(d => !aiDiagNames.has(d.diagnosisName?.toLowerCase() || ''))
+      .forEach(diagnosis => {
+        diagnoses.push({
+          diagnosis: diagnosis.diagnosisName || '',
+          ...(diagnosis.diagnosisType && { "Diagnosis type": diagnosis.diagnosisType }),
+          ...(diagnosis.diagnosisStatus && { "Diagnosis status": diagnosis.diagnosisStatus }),
+          rationale: [{"NA": "N/A"}],
+          rank: String(nonAiRank++),
+          ai_assisted: 'N',
+        });
+      });
+
+    return diagnoses.length
+      ? this.diagnosisService.saveManualDiagnosis({ visitUuid: this.visit.uuid, diagnoses })
+      : of(null);
   }
 
   /**
@@ -3948,60 +3992,81 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-  * Send selected medications to manual TTx API
-  * Each medication is sent separately with its own ai_assisted flag (rank:Y/N/M)
+  * Send all medications (AI + manual) to manual TTx API in a single payload.
   */
-  sendMedicationToManualTTxAPI(medicationsToSend: StandardMedicineModel[]): Observable<any> {
-    if (!medicationsToSend || medicationsToSend.length === 0) {
+  sendMedicationToManualTTxAPI(selectedMedications: StandardMedicineModel[], aiMedicationList: any[]): Observable<any> {
+    const selected = selectedMedications || [];
+    const aiList = aiMedicationList || [];
+
+    if (!selected.length && !aiList.length) {
       return of(null);
     }
 
-    const apiCalls = medicationsToSend.map(medication => {
-      this.checkMedicationModification(medication);
+    const medications: any[] = [];
+    const matchedSelectedNames = new Set<string>();
 
-      const isAiGenerated = medication.aiGenerated === true;
-      const isModified = medication.modified === true;
+    // AI medications
+    aiList.forEach((aiMed: any) => {
+      const aiMedName = (aiMed.name || aiMed.drug || aiMed.medication || '').toLowerCase().trim();
+      const selectedMed = selected.find(
+        m => m.drug?.toLowerCase().trim() === aiMedName
+          || aiMedName.includes(m.drug?.toLowerCase().trim() || '')
+          || (m.drug?.toLowerCase().trim() || '').includes(aiMedName)
+      );
 
-      // Get rank and flag
-      const rank = (medication as any).rank || 'NA';
-      let aiAssistedFlag: 'Y' | 'N' | 'M';
-      if (isAiGenerated && isModified) {
-        aiAssistedFlag = 'M';
-      } else if (isAiGenerated) {
-        aiAssistedFlag = 'Y';
-      } else {
-        aiAssistedFlag = 'N';
-      }
-
-      const medicationPayload: any = {
-        medication: medication.drug,
-        dose: medication.dose,
-        duration: medication.durationNo,
-        duration_unit: medication.durationUnit,
-        instructions: medication.instructRemark,
-        frequency: medication.frequency,
-        ai_assisted: `${rank}:${aiAssistedFlag}`
+      const payload: any = {
+        medication: aiMed.name || aiMed.drug || aiMed.medication || '',
+        ...(aiMed.rationale?.length && { rationale: Array.isArray(aiMed.rationale) ? aiMed.rationale.join('\n') : aiMed.rationale }),
+        ...(aiMed.likelihood && { likelihood: aiMed.likelihood }),
       };
 
-      if (isAiGenerated) {
-        if (medication.rationale?.length) {
-          // TTx API expects rationale as a string, not an array
-          medicationPayload.rationale = Array.isArray(medication.rationale)
-            ? medication.rationale.join('\n')
-            : medication.rationale;
-        }
-        if (medication.likelihood) {
-          medicationPayload.likelihood = medication.likelihood;
-        }
+      if (selectedMed) {
+        // Doctor selected this AI medication — use doctor's values and flag
+        matchedSelectedNames.add(selectedMed.drug?.toLowerCase().trim() || '');
+        this.checkMedicationModification(selectedMed);
+        payload.dose = selectedMed.dose;
+        payload.duration = selectedMed.durationNo;
+        payload.duration_unit = selectedMed.durationUnit;
+        payload.instructions = selectedMed.instructRemark;
+        payload.frequency = selectedMed.frequency;
+        payload.ai_assisted = selectedMed.modified ? 'M' : 'Y';
+      } else {
+        // Unselected AI medication — use AI-suggested values, no ai_assisted flag
+        payload.dose = aiMed?.dosage || aiMed?.dose;
+        payload.duration = aiMed?.duration;
+        payload.duration_unit = aiMed?.duration_unit;
+        payload.instructions = aiMed?.instructions;
+        payload.frequency = aiMed?.frequency;
       }
 
-      return this.diagnosisService.saveManualTreatment({
-        visitUuid: this.visit.uuid,
-        medications: [medicationPayload]
-      });
+      medications.push(payload);
     });
 
-    return forkJoin(apiCalls);
+    // Remaining medications not matched by the current AI list
+    // Previously AI-generated → 'M' (Modified), purely manual → 'N' (Non-AI)
+    selected
+      .filter(m => !matchedSelectedNames.has(m.drug?.toLowerCase().trim() || ''))
+      .forEach(medication => {
+        const wasAiGenerated = medication.aiGenerated === true;
+
+        medications.push({
+          medication: medication.drug || '',
+          dose: medication.dose,
+          duration: medication.durationNo,
+          duration_unit: medication.durationUnit,
+          instructions: medication.instructRemark,
+          frequency: medication.frequency,
+          ...(wasAiGenerated && medication.rationale?.length
+            ? { rationale: Array.isArray(medication.rationale) ? medication.rationale.join('\n') : medication.rationale }
+            : { rationale: 'N/A' }),
+          ...(wasAiGenerated && medication.likelihood && { likelihood: medication.likelihood }),
+          ai_assisted: wasAiGenerated ? 'M' : 'N',
+        });
+      });
+
+    return medications.length
+      ? this.diagnosisService.saveManualTreatment({ visitUuid: this.visit.uuid, medications })
+      : of(null);
   }
 
   /**
