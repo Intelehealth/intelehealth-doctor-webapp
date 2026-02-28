@@ -98,6 +98,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isMCCUser: boolean = false;
   @Input() isVisitNoteProvider: boolean = false;
   @Input() visitEnded: EncounterModel | string;
+  @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
@@ -410,6 +411,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
       });
+
+      // When prescription is shared, trigger ttxfinal for medication
+      if (this.visitCompleted && this.existingDiagnosis.length > 0) {
+        this.diagnosisName = this.existingDiagnosis[0].diagnosisName;
+        this.aiTxService.clearCache();
+        this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
+      }
     });
   }
 

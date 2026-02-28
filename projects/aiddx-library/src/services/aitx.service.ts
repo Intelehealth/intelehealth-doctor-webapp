@@ -10,6 +10,7 @@ import { shareReplay } from 'rxjs/operators';
 })
 export class AiTxService {
   private lastDiagnosis: string | null = null;
+  private lastPrescriptionShared: boolean | null = null;
   private cachedResponse: Observable<any> | null = null;
 
   constructor(
@@ -21,10 +22,12 @@ export class AiTxService {
     }
   }
 
-  getAITTx(casehistory: any, diagnosis: any, visitUuid: string) {
-    if (diagnosis !== this.lastDiagnosis || !this.cachedResponse) {
+  getAITTx(casehistory: any, diagnosis: any, visitUuid: string, prescriptionShared: boolean = false) {
+    const endpoint = prescriptionShared ? '/ttxfinal' : '/ttxv1';
+    if (diagnosis !== this.lastDiagnosis || prescriptionShared !== this.lastPrescriptionShared || !this.cachedResponse) {
       this.lastDiagnosis = diagnosis;
-      this.cachedResponse = this.http.post(`${this.env.base}/ttxv1`, { diagnosis, case: casehistory, visitUuid }).pipe(
+      this.lastPrescriptionShared = prescriptionShared;
+      this.cachedResponse = this.http.post(`${this.env.base}${endpoint}`, { diagnosis, case: casehistory, visitUuid }).pipe(
         shareReplay(1)
       );
     }
@@ -134,6 +137,7 @@ ${vitals?.length ? vitalPayload : ""}`;
 
   clearCache() {
     this.lastDiagnosis = null;
+    this.lastPrescriptionShared = null;
     this.cachedResponse = null;
   }
 }

@@ -15,7 +15,8 @@
 
   <ng-container *ngIf="hasAILLMEnabled">
     <app-aillmddx [patientInfo]="patientInfo" [visit]="visit" (diagnosisSelected)="onAIDiagnosisSelected()"
-      [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"></app-aillmddx>
+      [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"
+      [visitCompleted]="visitCompleted"></app-aillmddx>
   </ng-container>
   <ng-container>
      <table class="table" aria-describedby="">
@@ -238,7 +239,7 @@
     <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
       [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"
       [patientAllergies]="patientAllergies" [patientCurrentMedications]="patientCurrentMedications"
-      [allergyDataStatus]="allergyDataStatus"></lib-aillmtx-medication>
+      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"

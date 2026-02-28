@@ -16,8 +16,9 @@ export class AiddxService {
     }
   }
 
-  getAIDiagnosis(casehistory: any, visitUuid: string) {
-    return this.http.post(`${this.env.base}/ddx`, { casehistory, visitUuid });
+  getAIDiagnosis(casehistory: any, visitUuid: string, prescriptionShared: boolean = false) {
+    const endpoint = prescriptionShared ? '/ddxfinal' : '/ddx';
+    return this.http.post(`${this.env.base}${endpoint}`, { casehistory, visitUuid });
   }
 
   getDDxPayload(patientInfo: any, visit: any, notes?: string) {

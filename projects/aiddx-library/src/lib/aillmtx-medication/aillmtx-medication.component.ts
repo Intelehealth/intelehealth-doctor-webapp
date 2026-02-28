@@ -16,6 +16,7 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
   @Input() patientAllergies: string = '';
   @Input() patientCurrentMedications: string = '';
   @Input() allergyDataStatus: 'empty' | 'present' = 'empty';
+  @Input() visitCompleted: boolean = false;
   isLoading = false;
   hasError = false;
   noData = false;
@@ -95,7 +96,7 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
     this.isLoading = true;
     this.medicationList = [];
     this.furtherQuestionsList = [];
-    this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
+    this.TxService.getAITTx(payload, diagnosis, this.visit.uuid, this.visitCompleted).subscribe({
       next: (data: any) => {
         if (data.result.data.result.length > 0) {
           this.noData = false;
@@ -127,13 +128,14 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
       this.isLoading = true;
       this.medicationList = [];
       this.furtherQuestionsList = [];
-      this.TxService.getAITTx(payload, diagnosis, this.visit.uuid).subscribe({
+      this.TxService.getAITTx(payload, diagnosis, this.visit.uuid, this.visitCompleted).subscribe({
         next: (data: any) => {
           if (data.result.data.success && data.result.data.medications.length > 0) {
             this.noData = false;
             this.medicationList = data.result.data.medications.map(v => {
               return {
                 ...v,
+                name: v.name || v.medication,
               }
             });
           } else if(!data.result.data.success) {

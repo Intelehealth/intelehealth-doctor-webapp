@@ -19,6 +19,7 @@ export class AillmddxComponent {
   @Output() furtherQuestionsListReceived = new EventEmitter<any[]>();
   @Output() diagnosisReceived = new EventEmitter<any[]>();
   @Input() notes: string;
+  @Input() visitCompleted: boolean = false;
   isLoading = false;
   hasError = false;
   noData = false;
@@ -63,23 +64,28 @@ export class AillmddxComponent {
     this.isLoading = true;
     this.diagnosisList = [];
     this.furtherQuestionsList = [];
-    this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
+    this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid, this.visitCompleted).subscribe({
       next: (data: any) => {
-        if (!this.isValidDdxResponse(data)) {
-          this.apiResponseChanged = true;
-          return false;
-        }
+        // if (!this.isValidDdxResponse(data)) {
+        //   this.apiResponseChanged = true;
+        //   return false;
+        // }
         if (data?.conclusion) this.conclusion = data?.conclusion;
         if (data?.result?.data?.result?.length > 0) {
           this.noData = false;
           this.diagnosisList = data.result.data.result.map(v => {
+            // When summarised_rationale is missing, generate from rationale values
+            let summarised = v?.summarised_rationale;
+            // if (!summarised?.length && Array.isArray(v?.rationale)) {
+            //   summarised = v.rationale.flatMap(obj => Object.values(obj));
+            // }
             return {
               ...v,
-              diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
-              // rationale: this.ddxSvc.markdownit(v?.rationale)
+              diagnosis: v?.diagnosis,
+              summarised_rationale: summarised,
               rationale: v?.rationale
             }
-          });
+          }).filter(v => v?.rank !== 'NA').slice(0, 5);
           this.diagnosisReceived.emit(this.diagnosisList);
           if(data?.result?.data?.further_questions?.length > 0) {
             this.furtherQuestionsList = data.result.data.further_questions.map(q => {
@@ -112,23 +118,27 @@ export class AillmddxComponent {
       this.isLoading = true;
       this.diagnosisList = [];
       this.furtherQuestionsList = [];
-      this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid).subscribe({
+      this.ddxSvc.getAIDiagnosis(payload, this.visit.uuid, this.visitCompleted).subscribe({
         next: (data: any) => {
-          if (!this.isValidDdxResponse(data)) {
-            this.apiResponseChanged = true;
-            return false;
-          }
+          // if (!this.isValidDdxResponse(data)) {
+          //   this.apiResponseChanged = true;
+          //   return false;
+          // }
           if (data?.conclusion) this.conclusion = data?.conclusion;
           if (data?.result?.data?.result?.length > 0) {
             this.noData = false;
             this.diagnosisList = data.result.data.result.map(v => {
+              // let summarised = v?.summarised_rationale;
+              // if (!summarised?.length && Array.isArray(v?.rationale)) {
+              //   summarised = v.rationale.flatMap(obj => Object.values(obj));
+              // }
               return {
                 ...v,
-                diagnosis: v?.diagnosis?.replace(/\s*\(.*?\)\s*/g, ''),
-                // rationale: this.ddxSvc.markdownit(v?.rationale)
+                diagnosis: v?.diagnosis,
+                summarised_rationale: v?.summarised_rationale,
                 rationale: v?.rationale
               }
-            });
+            }).filter(v => v?.rank !== 'NA').slice(0, 5);
             this.diagnosisReceived.emit(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
               this.furtherQuestionsList = data.result.data.further_questions.map(q => {
@@ -167,7 +177,6 @@ export class AillmddxComponent {
   onTryAgain() {
     this.getAIDiagnosis(this.notes);
   }
-
 
   onAIDiagnosisChange(event: any) {
     if (!event) {
