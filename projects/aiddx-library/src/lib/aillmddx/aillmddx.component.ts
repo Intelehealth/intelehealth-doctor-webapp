@@ -85,7 +85,8 @@ export class AillmddxComponent {
               summarised_rationale: summarised,
               rationale: v?.rationale
             }
-          }).filter(v => v?.rank !== 'NA').slice(0, 5);
+          }).filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; })
+            .sort((a, b) => Number(a.rank) - Number(b.rank));
           this.diagnosisReceived.emit(this.diagnosisList);
           if(data?.result?.data?.further_questions?.length > 0) {
             this.furtherQuestionsList = data.result.data.further_questions.map(q => {
@@ -138,7 +139,8 @@ export class AillmddxComponent {
                 summarised_rationale: v?.summarised_rationale,
                 rationale: v?.rationale
               }
-            }).filter(v => v?.rank !== 'NA').slice(0, 5);
+            }).filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; })
+              .sort((a, b) => Number(a.rank) - Number(b.rank));
             this.diagnosisReceived.emit(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
               this.furtherQuestionsList = data.result.data.further_questions.map(q => {
