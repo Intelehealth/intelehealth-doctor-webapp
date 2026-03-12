@@ -100,7 +100,6 @@ export class WebrtcService {
             await this.room.localParticipant.enableCameraAndMicrophone();
           } catch (err) {
             console.error('Error enabling media:', err);
-            location.reload();
           }
         }
       })

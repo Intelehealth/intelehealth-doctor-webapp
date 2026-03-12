@@ -406,7 +406,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   initSocketEvents() {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
-        this.endCallInRoom();
+        this.endCallInRoom('hw_call_reject');
         this.toastr.info("Call rejected by Sevika", null, { timeOut: 2000 });
       }
     });
@@ -480,14 +480,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
           webapp: true,
           initiator: this.initiator,
         });
-      } else if(this.endCall) {
+      } else if(this.endCall && !['hw_call_reject', 'call_time_up'].includes(flag)) {
         this.socketSvc.emitEvent("cancel_dr", {
           ...this.incomingData,
           nurseId: this.nurseId,
           webapp: true,
           initiator: this.initiator,
         });
-      } else if (this.callDuration === "" && !this.endCall && (flag === 'call_time_up')) {
+      } else if (this.callDuration === "" && (flag === 'call_time_up')) {
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
       }
 
