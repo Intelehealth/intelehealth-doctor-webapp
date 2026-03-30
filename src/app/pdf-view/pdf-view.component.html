@@ -1,0 +1,17 @@
+<div class="pdf-view-container">
+  <div *ngIf="loading" class="pdf-loading">
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="pdf-error">
+    <p>Unable to load the document. Please try again.</p>
+  </div>
+
+  <iframe
+    *ngIf="pdfUrl && !loading"
+    [src]="pdfUrl"
+    class="pdf-frame"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
+</div>

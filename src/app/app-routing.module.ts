@@ -24,6 +24,10 @@ const routes: Routes = [
     loadChildren: () => import('./ncd-report/ncd-report.module').then(m => m.NcdReportModule),
   },
   {
+    path: 'pdf',
+    loadChildren: () => import('./pdf-view/pdf-view.module').then(m => m.PdfViewModule),
+  },
+  {
     path: '',
     component: MainContainerComponent,
     canActivate: [RouteAuthGuard],
