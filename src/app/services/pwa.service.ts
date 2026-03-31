@@ -45,7 +45,7 @@ export class PwaService {
     timer(3000)
       .pipe(take(1))
       .subscribe(() => {
-        if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp'))) {
+        if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp') || this.router.url.includes('/ncdinfo'))) {
           const activeElement = document.activeElement;
           if (!activeElement.id) {
             activeElement.setAttribute('id', 'XXX');
