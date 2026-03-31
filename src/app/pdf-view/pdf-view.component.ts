@@ -21,7 +21,9 @@ export class PdfViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const pdfFileUrl = this.route.snapshot.queryParamMap.get('url');
+    // Read url param directly from window.location to avoid browser encoding (%2F etc.)
+    const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
+    const pdfFileUrl = urlParams.get('url');
     if (!pdfFileUrl) {
       this.error = true;
       this.loading = false;
