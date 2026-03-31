@@ -24,7 +24,7 @@ const routes: Routes = [
     loadChildren: () => import('./ncd-report/ncd-report.module').then(m => m.NcdReportModule),
   },
   {
-    path: 'pdf',
+    path: 'ncdinfo/:file',
     loadChildren: () => import('./pdf-view/pdf-view.module').then(m => m.PdfViewModule),
   },
   {

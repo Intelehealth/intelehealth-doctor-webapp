@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-pdf-view',
@@ -21,14 +22,13 @@ export class PdfViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Read url param directly from window.location to avoid browser encoding (%2F etc.)
-    const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
-    const pdfFileUrl = urlParams.get('url');
-    if (!pdfFileUrl) {
+    const file = this.route.snapshot.paramMap.get('file');
+    if (!file) {
       this.error = true;
       this.loading = false;
       return;
     }
+    const pdfFileUrl = `${environment.mindmapURL.replace('/api', '')}/ncdinfo/${file}`;
     this.fetchAndDisplay(pdfFileUrl);
   }
 
@@ -41,9 +41,6 @@ export class PdfViewComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: () => {
-        // Fallback: try rendering the URL directly in the iframe.
-        // This may still download on some Samsung devices if CORS blocks the blob fetch,
-        // but gives the best possible experience without a backend proxy.
         this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         this.loading = false;
       }
