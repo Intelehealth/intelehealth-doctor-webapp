@@ -24,6 +24,9 @@ export class PwaService {
     if (this.platform.ANDROID || this.platform.isBrowser) {
       window.addEventListener('beforeinstallprompt', (event) => {
         event.preventDefault();
+        if (window.location.hash.includes('/ncdinfo')) {
+          return;
+        }
         this.promptEvent = event;
         this.openPromptComponent('android');
       });
@@ -45,7 +48,8 @@ export class PwaService {
     timer(3000)
       .pipe(take(1))
       .subscribe(() => {
-        if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp') || this.router.url.includes('/ncdinfo'))) { 
+        const currentUrl = this.router.url || window.location.hash;
+        if (!(currentUrl.includes('/i/') || currentUrl.includes('/verify-otp') || currentUrl.includes('/ncdinfo'))) { 
           const activeElement = document.activeElement;
           if (!activeElement.id) {
             activeElement.setAttribute('id', 'XXX');
