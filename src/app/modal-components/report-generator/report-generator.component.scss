@@ -135,10 +135,40 @@
 }
 
 @media (max-width: 768px) {
-  .create-report-modal .modal-title {
-    height: 80px;
-  }
-  .create-report-modal .modal-body .report-form .confirm-btn {
-    font-size: 17px;
+  .create-report-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+
+    .modal-title {
+      width: 100%;
+      height: auto;
+      padding: 16px;
+    }
+
+    .modal-body {
+      padding: 16px;
+
+      .report-form {
+        .row {
+          flex-direction: column;
+        }
+
+        .input-field-group {
+          padding-left: 0 !important;
+          margin-bottom: 12px;
+
+          input, .multiselect {
+            width: 100%;
+          }
+        }
+
+        .confirm-btn {
+          font-size: 14px;
+          height: auto;
+          min-height: 48px;
+          white-space: nowrap;
+        }
+      }
+    }
   }
 }
