@@ -158,7 +158,14 @@
           margin-bottom: 12px;
 
           input, .multiselect {
-            width: 100%;
+            width: 100% !important;
+          }
+
+          .multiselect-dropdown .dropdown-list {
+            position: absolute !important;
+            width: 100% !important;
+            max-height: 150px;
+            overflow-y: auto;
           }
         }
 
