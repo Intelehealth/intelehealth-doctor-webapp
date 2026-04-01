@@ -555,6 +555,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     const logo: any = await this.toObjectUrl(`${this.configPublicURL}${this.logoImageURL}`);
+
+    let signatureValue = this.signature.value;
+    if (signatureValue.includes("amazonaws.com")) {
+        signatureValue = await this.toObjectUrl(`${this.signature.value}`);
+    }
+
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -1013,7 +1019,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   colSpan: 4,
                   alignment: 'right',
                   stack: [
-                    { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
+                    { image: `${signatureValue}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
                     { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
                     { text: `${this.consultedDoctor?.typeOfProfession}`},
                     { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
