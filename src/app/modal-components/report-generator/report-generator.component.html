@@ -58,7 +58,7 @@
       <div *ngIf="![3, 4, 6, 7].includes(data.reportId)" class="row">
         <div class="input-field-group" style="padding-left:15px;">
           <label>Speciality</label>
-          <ng-multiselect-dropdown class="multiselect" 
+          <ng-multiselect-dropdown class="multiselect dropdown-list"
           style="width: 425px;" [placeholder]="'Select Speciality'"
             [settings]="villageDropDownSettings" [data]="specializations" [(ngModel)]="selectedSpeciality"
             [ngModelOptions]="{ standalone: true }">
@@ -69,7 +69,7 @@
       <div *ngIf="[6].includes(data.reportId)" class="row">
         <div class="input-field-group" style="padding-left:15px;">
           <label>NCD Protocol</label>
-          <ng-multiselect-dropdown class="multiselect" 
+          <ng-multiselect-dropdown class="multiselect dropdown-list"
           style="width: 425px;" [placeholder]="'Select Protocol'"
             [settings]="protocolSettings" [data]="ncd_protocols" formControlName="field3" 
             [ngModelOptions]="{ standalone: true }">
