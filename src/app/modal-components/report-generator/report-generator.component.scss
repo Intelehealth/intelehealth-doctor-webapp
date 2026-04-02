@@ -60,7 +60,6 @@
 
         .multiselect {
           width: 200px;
-          border-radius: 8px;
           background: rgba(178, 175, 190, 0.2);
           border: 1px solid rgba(178, 175, 190, 0.2);
           border-radius: 8px;
@@ -69,7 +68,7 @@
 
 
         .multiselect-dropdown .dropdown-list {
-          position: fixed;
+          position: relative;
           width: fit-content;
         }
 
@@ -134,42 +133,90 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .cdk-overlay-pane:has(.create-report-modal) {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+
+  .cdk-overlay-pane:has(.create-report-modal) .mat-dialog-container {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    padding: 0;
+  }
+
   .create-report-modal {
-    max-height: 90vh;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
 
     .modal-title {
       width: 100%;
+      max-width: 100%;
       height: auto;
       padding: 16px;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .modal-body {
       padding: 16px;
       overflow-y: auto;
+      overflow-x: hidden;
       flex: 1;
+      box-sizing: border-box;
 
       .report-form {
+        width: 100%;
+        max-width: 100%;
+
         .row {
           flex-direction: column;
+          margin-left: 0;
+          margin-right: 0;
         }
 
         .input-field-group {
           padding-left: 0 !important;
+          padding-right: 0 !important;
           margin-bottom: 12px;
+          width: 100%;
+          max-width: 100%;
 
-          input, .multiselect {
+          label {
+            font-size: 14px;
+          }
+
+          input {
             width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+          }
+
+          input[type="date"] {
+            padding-right: 8px !important;
+          }
+
+          input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-right: 10 !important;
+          }
+
+          .multiselect, ng-multiselect-dropdown {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
           }
 
           .multiselect-dropdown .dropdown-list {
             position: relative !important;
             width: 100% !important;
-            max-height: 150px;
-            overflow-y: auto;
           }
         }
 

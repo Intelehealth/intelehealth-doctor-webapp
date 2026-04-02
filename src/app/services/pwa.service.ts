@@ -17,7 +17,7 @@ export class PwaService {
     '/r', // ncd report
    '/i/',
    '/verify-otp',
-   
+   '/ncdinfo', // pdf viewer
   ];
   constructor(private platform: Platform, private bottomSheet: MatBottomSheet, private router: Router) { }
 

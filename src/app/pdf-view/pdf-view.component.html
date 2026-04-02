@@ -1,0 +1,32 @@
+<div class="pdf-view-container">
+  <div *ngIf="loading" class="pdf-loading">
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="pdf-error">
+    <p>Unable to load the document. Please try again.</p>
+  </div>
+
+  <!-- Desktop: native browser PDF viewer via iframe -->
+  <iframe
+    *ngIf="!isMobile && iframeUrl"
+    [src]="iframeUrl"
+    class="pdf-frame"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
+
+  <!-- Mobile: pdf.js renderer (no download trigger) -->
+  <pdf-viewer
+    *ngIf="isMobile && pdfSrc"
+    [src]="pdfSrc"
+    [render-text]="true"
+    [original-size]="false"
+    [fit-to-page]="true"
+    [show-all]="true"
+    [stick-to-page]="true"
+    class="pdf-frame"
+    (after-load-complete)="onPdfLoaded()"
+    (error)="onPdfError()"
+  ></pdf-viewer>
+</div>
