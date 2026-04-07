@@ -45,7 +45,7 @@ export class AiddxService {
       .join("\n")}`;
 
     const payload = `Gender: ${get("pi.person.gender", "Not specified")}
-Age: ${get("pi.person.age", "Not specified")}
+Age: ${this.formatAge(data["pi.person.birthdate"], data["pi.person.age"])}
 
 Chief_complaint: ${this.formatText(complaint?.value || "")}
 
@@ -93,6 +93,35 @@ ${notes ? `Notes: ${notes}` : ""}`;
     }
 
     return flatData;
+  }
+
+  formatAge(birthdate: any, age: any): string {
+    if (birthdate) {
+      const dob = new Date(birthdate);
+      if (!isNaN(dob.getTime())) {
+        const now = new Date();
+        const days = Math.max(0, Math.floor((now.getTime() - dob.getTime()) / 86400000));
+        // 0-28 days: days only
+        if (days <= 28) return `${days} day${days === 1 ? "" : "s"}`;
+        let months = (now.getFullYear() - dob.getFullYear()) * 12 + (now.getMonth() - dob.getMonth());
+        if (now.getDate() < dob.getDate()) months--;
+        if (months < 0) months = 0;
+        // 29 days - 23 months: months only
+        if (months < 24) return `${months} month${months === 1 ? "" : "s"}`;
+        const years = Math.floor(months / 12);
+        const remMonths = months % 12;
+        // 18+ years: years only
+        if (years >= 18) return `${years} years`;
+        // 2-17 years: years and months
+        return remMonths > 0
+          ? `${years} years ${remMonths} month${remMonths === 1 ? "" : "s"}`
+          : `${years} years`;
+      }
+    }
+    if (age !== undefined && age !== null && age !== "" && Number(age) > 0) {
+      return `${age} year${Number(age) === 1 ? "" : "s"}`;
+    }
+    return "Not specified";
   }
 
   formatText(text: string): string {
