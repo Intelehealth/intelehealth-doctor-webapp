@@ -15,6 +15,9 @@
       width="100%"
     />
   </h6>
+  <div *ngIf="!isDownloadPrescription">
+    <button class="btn_download_pdf" (click)="downloadPrescription()"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
+  </div>
   <div class="close-btn-con" *ngIf="!isDownloadPrescription">
     <button class="modal-close-btn" (click)="close(false)">{{'Close'|translate}}<img src="assets/svgs/xx.svg" alt="" style="margin-bottom: 2px;"></button>
   </div>
