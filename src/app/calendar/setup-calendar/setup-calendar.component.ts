@@ -119,6 +119,7 @@ export class SetupCalendarComponent implements OnInit {
   daysOffSelected: any[] = [];
   filteredDays=[];
   invalidDaysMessages: string[] = [];
+  invalidDateRange: boolean = false;
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
   submitted: boolean = false;
 
@@ -184,6 +185,17 @@ export class SetupCalendarComponent implements OnInit {
       this.selectedMonth = { name, year };
       this.getSchedule(year, name);
       this.submitted = false;
+    }
+  }
+
+  onDateChange() {
+    const startDate = this.addSlotsForm.value.startDate;
+    const endDate = this.addSlotsForm.value.endDate;
+    if (startDate && endDate && moment(startDate) > moment(endDate)) {
+      this.invalidDateRange = true;
+      this.toastr.warning('End date should be greater than or equal to start date.', 'Invalid Dates!');
+    } else {
+      this.invalidDateRange = false;
     }
   }
 
@@ -396,7 +408,7 @@ export class SetupCalendarComponent implements OnInit {
       return;
     }
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-      this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
+      this.toastr.warning('End date should be greater than or equal to start date.', 'Invalid Dates!');
       return;
     }
     if (!this.validateSelectedDays()) {
@@ -505,7 +517,7 @@ export class SetupCalendarComponent implements OnInit {
       if (res) {
         this.fs.clear();
         if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-          this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
+          this.toastr.warning('End date should be greater than or equal to start date.', 'Invalid Dates!');
           return;
         }
         let flag = 0;
@@ -779,7 +791,7 @@ export class SetupCalendarComponent implements OnInit {
   updateSlot() {
     this.fs.clear();
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-      this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
+      this.toastr.warning('End date should be greater than or equal to start date.', 'Invalid Dates!');
       return;
     }
     let flag = 0;
