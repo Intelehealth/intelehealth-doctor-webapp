@@ -26,8 +26,10 @@ export class SearchedPatientsComponent implements OnInit {
 
   view(uuid: string) {
     this.visitService.recentVisits(uuid).subscribe((response: any) => {
-      this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
-      this.close(true);
+      if (response.results?.length) {
+        this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
+        this.close(true);
+      }
     });
   }
 }

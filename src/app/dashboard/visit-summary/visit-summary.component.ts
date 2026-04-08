@@ -561,7 +561,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const updatedDate = this.dateFinder(obs.value);
+            const updatedDate = this.dateFinder(obs.value).replace(/<br\s*\/?>/gi, '<br/>');
             const currentComplaint = updatedDate.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
@@ -577,18 +577,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
-                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1].trim() });
+                      obj1.data.push({ key: this.stripHtmlTags(splitByBr[j].replace('• ', '').replace(' -', '')), value: this.stripHtmlTags(splitByBr[j + 1]?.trim()) });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
                 } else {
                   let obj1: any = {};
-                  obj1.title = splitByBr[0].replace('</b>:', '');
+                  obj1.title = this.stripHtmlTags(splitByBr[0].replace('</b>:', ''));
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
                       const splitByDash = splitByBr[k].split(' -');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join(' -').trim() });
+                      obj1.data.push({ key: this.stripHtmlTags(splitByDash[0].replace('• ', '')), value: this.stripHtmlTags(splitByDash.slice(1, splitByDash.length).join(' -').trim()) });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -599,6 +599,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  stripHtmlTags(text: string): string {
+    return text ? text.replace(/<[^>]*>/g, '').trim() : text;
   }
 
   dateFinder(data: string) {
@@ -620,7 +624,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = obs.value.split('<b>');
+            const physicalExam = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -631,7 +635,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim()) {
-                      obj1.data.push({ key: splitByBr[k].replace('• ', ''), value: null });
+                      obj1.data.push({ key: this.stripHtmlTags(splitByBr[k].replace('• ', '')), value: null });
                     }
                   }
                   this.physicalExaminationData.push(obj1);
@@ -643,7 +647,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     if (splitByBr[k].trim()) {
                       const splitByDash = splitByBr[k].split('-');
                       // obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
-                      obj1.data.push({ key: splitByDash[1].replace('• ', ''), value: splitByDash[2] });
+                      obj1.data.push({ key: this.stripHtmlTags(splitByDash[1]?.replace('• ', '')), value: this.stripHtmlTags(splitByDash[2]) });
                     }
                   }
                   this.physicalExaminationData.push(obj1);
@@ -662,21 +666,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'MEDICAL HISTORY') {
-            const medicalHistory = obs.value.split('<br/>');
+            const medicalHistory = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<br/>');
             let obj1: any = {};
             obj1.title = 'Patient history';
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
                 const splitByDash = medicalHistory[i].split('-');
-                obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-').trim() });
+                obj1.data.push({ key: this.stripHtmlTags(splitByDash[0].replace('• ', '').trim()), value: this.stripHtmlTags(splitByDash.slice(1, splitByDash.length).join('-').trim()) });
               }
             }
             this.patientHistoryData.unshift(obj1);
           }
 
           if (obs.concept.display == 'FAMILY HISTORY') {
-            const familyHistory = obs.value.split('<br/>');
+            const familyHistory = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<br/>');
             let obj1: any = {};
             obj1.title = 'Family history';
             obj1.data = [];
@@ -686,7 +690,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByComma = splitByColon[1].split('.');
                 for (let x = 0; x < splitByComma.length; x++) {
                   if (splitByComma[x]) {
-                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
+                    obj1.data.push({ key: this.stripHtmlTags(splitByComma[x].split(',')[0].trim()), value: this.stripHtmlTags(splitByComma[x].split(',')[1] + ".") });
                   }
                 };
               }

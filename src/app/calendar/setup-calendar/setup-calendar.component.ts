@@ -118,6 +118,7 @@ export class SetupCalendarComponent implements OnInit {
   _addMoreTiming: boolean = false;
   daysOffSelected: any[] = [];
   filteredDays=[];
+  invalidDaysMessages: string[] = [];
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
   submitted: boolean = false;
 
@@ -344,6 +345,50 @@ export class SetupCalendarComponent implements OnInit {
     return this.ft.at(i).get("slots") as FormArray;
   }
 
+  getDaysOfWeekInRange(): string[] {
+    const startDate = this.addSlotsForm.value.startDate;
+    const endDate = this.addSlotsForm.value.endDate;
+    if (!startDate || !endDate) return [];
+    const daysInRange: Set<string> = new Set();
+    const current = moment(startDate);
+    const end = moment(endDate);
+    while (current <= end) {
+      daysInRange.add(current.format('ddd'));
+      current.add(1, 'day');
+    }
+    return Array.from(daysInRange);
+  }
+
+  validateSelectedDays(): boolean {
+    const daysInRange = this.getDaysOfWeekInRange();
+    this.invalidDaysMessages = [];
+    let valid = true;
+    const ts = this.ft.getRawValue();
+    for (let i = 0; i < ts.length; i++) {
+      const selectedDays: string[] = ts[i].days;
+      if (selectedDays && selectedDays.length > 0 && daysInRange.length > 0) {
+        const invalidDays = selectedDays.filter(d => !daysInRange.includes(d));
+        if (invalidDays.length > 0) {
+          const fullNames = invalidDays.map(d => {
+            const found = this.days.find(day => day.shortName === d);
+            return found ? found.name : d;
+          });
+          this.invalidDaysMessages[i] = fullNames.join(', ') + ' is not present in current date range';
+          valid = false;
+        } else {
+          this.invalidDaysMessages[i] = '';
+        }
+      } else {
+        this.invalidDaysMessages[i] = '';
+      }
+    }
+    return valid;
+  }
+
+  onDaysChange(index: number) {
+    this.validateSelectedDays();
+  }
+
   save() {
     this.submitted = true;
     this.fs.clear();
@@ -352,6 +397,9 @@ export class SetupCalendarComponent implements OnInit {
     }
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
       this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
+      return;
+    }
+    if (!this.validateSelectedDays()) {
       return;
     }
     let flag = 0;

@@ -170,7 +170,8 @@
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
-                            [searchable]="false">
+                            [searchable]="false"
+                            (change)="onDaysChange(i)">
                             <ng-template ng-label-tmp let-item="item">
                               {{(item.shortName) | translate}},
                             </ng-template>
@@ -190,6 +191,11 @@
                             <img src="assets/svgs/delete-icon.svg" alt="">
                             {{'Delete'|translate}}
                           </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="!last && invalidDaysMessages[i]">
+                        <td colspan="4">
+                          <span class="text-danger">{{invalidDaysMessages[i]}}</span>
                         </td>
                       </tr>
 
@@ -264,7 +270,8 @@
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
-                            [searchable]="false">
+                            [searchable]="false"
+                            (change)="onDaysChange(i)">
                             <ng-template ng-label-tmp let-item="item">
                               {{(item.shortName) | translate}},
                             </ng-template>
@@ -286,6 +293,11 @@
                           <button mat-button type="button" class="cancel-btn" (click)="toggleAddMoreTiming()">
                             {{'Cancel'|translate}}
                           </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="last && invalidDaysMessages[i]">
+                        <td colspan="4">
+                          <span class="text-danger">{{invalidDaysMessages[i]}}</span>
                         </td>
                       </tr>
                     </ng-container>
