@@ -984,7 +984,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     headerRows: 1,
                     body: [
                       [ {image: 'additionalDocument', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Doctor\'s Addtional Document', style: 'sectionheader', border: [false, false, false, true] }],
-                      [
+                      this.doctorUploadedDocs.length ? [
                         {
                           colSpan: 2,
                           table: {
@@ -1003,7 +1003,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           },
                           layout: 'lightHorizontalLines'
                         }
-                      ]
+                      ] : [{ text: 'Not available', alignment: 'center', colSpan: 2 }]
                     ]
                   },
                   layout: {

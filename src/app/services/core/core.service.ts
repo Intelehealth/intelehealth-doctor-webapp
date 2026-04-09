@@ -362,7 +362,7 @@ export class CoreService {
   * @return {Observable<any>} - Dialog result
   */
   openVisitCareContextModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(VisitCareContextComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: true });
+    const dialogRef = this.dialog.open(VisitCareContextComponent, { panelClass: 'modal-lg', data, hasBackdrop: true, disableClose: false });
     return dialogRef.afterClosed();
   }
 }
