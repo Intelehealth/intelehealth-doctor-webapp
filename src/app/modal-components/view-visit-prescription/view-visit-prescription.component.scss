@@ -14,6 +14,15 @@
   padding: 24px 24px 16px;
   background: #E6FFF3;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .download-btn-con {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+  }
 
   .close-btn-con {
     position: absolute;
@@ -225,11 +234,14 @@
 }
 
 .btn_download_pdf{
-  position: absolute;
   color: #7F7B92;
   border: unset;
   background: transparent;
-  font-size: 18px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .logo-telemedkg {
