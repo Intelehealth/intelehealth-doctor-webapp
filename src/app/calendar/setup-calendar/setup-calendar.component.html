@@ -49,7 +49,7 @@
               <div class="form-group col-md-6">
                 <label>{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
-                  <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" (dateChange)="onDateChange()" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
+                  <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
                     aria-describedby="basic-addon1" readonly>
                   <mat-datepicker #picker1></mat-datepicker>
                   <div class="input-group-append">
@@ -63,8 +63,8 @@
               </div>
               <div class="form-group col-md-6">
                 <label>{{'End date'|translate}}</label>
-                <div class="input-group" [class.invalid-input]="(submitted && f.endDate.errors) || invalidDateRange">
-                  <input type="text" class="form-control" formControlName="endDate" [min]="f.startDate.value || minDate" [max]="maxDate" [matDatepicker]="picker2" (dateChange)="onDateChange()" placeholder="{{'Select end date'|translate}}" aria-label="End date"
+                <div class="input-group" [class.invalid-input]="submitted && f.endDate.errors">
+                  <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
                     aria-describedby="basic-addon2" readonly>
                   <mat-datepicker #picker2></mat-datepicker>
                   <div class="input-group-append">
