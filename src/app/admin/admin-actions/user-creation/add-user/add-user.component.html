@@ -69,19 +69,19 @@
                     <label for="gender">{{'Role'| translate}} *</label>
                     <div class="py-2">
                       <div class="pretty p-default p-round">
-                        <input type="radio" value="nurse"  formControlName="role" >
+                        <input type="radio" value="nurse"  formControlName="role" data-test-id="rdRoleNurse" >
                         <div class="state p-success">
                             <label>{{'HW'| translate}}</label>
                         </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="doctor"  formControlName="role" data-test-id="rdGenderFemale" >
+                          <input type="radio" value="doctor"  formControlName="role" data-test-id="rdRoleDoctor" >
                           <div class="state p-success">
                               <label>{{'Doctor'| translate}}</label>
                           </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="mcc"  formControlName="role" data-test-id="rdGenderFemale" >
+                          <input type="radio" value="mcc"  formControlName="role" data-test-id="rdRoleMcc" >
                           <div class="state p-success">
                               <label>{{'MCC'| translate}}</label>
                           </div>
@@ -143,7 +143,7 @@
                 <div class="form-row">
                   <div class="form-group col-md-6 email-field">
                     <label for="username">{{'Username' | translate}} *</label>
-                    <input type="text" minlength="3" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}" >
+                    <input type="text" minlength="3" maxlength="20" class="form-control" formControlName="username" placeholder="{{'Enter username' | translate}}" data-test-id="etUsername" >
                     <div class="check" *ngIf="!this.uuid">
                       <mat-spinner diameter="20" *ngIf="f1.username?.pending"></mat-spinner>
                       <mat-icon class="success" *ngIf="!f1?.username?.errors && !f1.username?.pending">done_all</mat-icon>
@@ -161,7 +161,7 @@
                   </div>
                   <div class="form-group col-md-6" *ngIf="!this.uuid">
                     <label for="password">{{'Password' | translate}} *</label>
-                    <input type="password" maxlength="20" minlength="8" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}">
+                    <input type="password" maxlength="20" minlength="8" class="form-control" formControlName="password" placeholder="{{'Enter password'| translate}}" data-test-id="etPassword">
                     <app-password-strength-meter [showDetails]="f1.password.dirty && submitted && f1.password.errors?.pattern" [password]="f1.password.value"></app-password-strength-meter>
                     <div *ngIf="submitted && f1.password.errors" class="d-flex flex-column">
                       <small class="error-msg" *ngIf="f1.password.errors.required">{{'Enter password'| translate}}</small>

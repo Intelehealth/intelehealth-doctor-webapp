@@ -163,6 +163,7 @@
             type="button"
             class="video-ctrl-btn red"
             (click)="endCallInRoom();setFlag();"
+            data-test-id="btnEndCallWaiting"
           >
             <img src="assets/svgs/call-end.svg" alt="" />
           </button>
@@ -242,7 +243,7 @@
                   data-test-id="etChatMessage"
                 />
                 <div class="input-group-append">
-                  <button type="button" (click)="fileInput.click()">
+                  <button type="button" (click)="fileInput.click()" data-test-id="btnAttachFile">
                     <img src="assets/svgs/attachment-icon.svg" alt="" />
                     <input
                       #fileInput

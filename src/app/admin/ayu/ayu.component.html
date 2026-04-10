@@ -115,7 +115,7 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="selection.isSelected(row)"></tr>
             </table>
           </div>
-          <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"></mat-paginator>
+          <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" data-test-id="paginatorMindmap"></mat-paginator>
         </div>
       </div>
     </div>

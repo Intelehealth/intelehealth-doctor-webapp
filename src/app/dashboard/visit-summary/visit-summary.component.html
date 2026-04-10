@@ -158,7 +158,7 @@
             </div>
           </div>
 
-          <button (click)="collapsedButton()" class="btn" *ngIf="hasPatientAddressEnabled || hasPatientOtherEnabled">
+          <button (click)="collapsedButton()" class="btn" *ngIf="hasPatientAddressEnabled || hasPatientOtherEnabled" data-test-id="btnCollapseButton">
             <img [src]="getUrl()" alt="">
           </button>
 

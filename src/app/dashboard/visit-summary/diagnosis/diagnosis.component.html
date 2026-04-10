@@ -16,7 +16,7 @@
   <ng-container *ngIf="hasAILLMEnabled">
     <app-aillmddx [patientInfo]="patientInfo" [visit]="visit" (diagnosisSelected)="onAIDiagnosisSelected()"
       [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"
-      [visitCompleted]="visitCompleted"></app-aillmddx>
+      [visitCompleted]="visitCompleted" data-test-id="appAillmddxComponent"></app-aillmddx>
   </ng-container>
   <ng-container>
      <table class="table" aria-describedby="">
@@ -173,7 +173,7 @@
             <label for="select-diagnosis" class="col-sm-1 col-form-label">{{'Diagnosis'|translate}}*</label>
             <div class="col-sm-11">
               <textarea formControlName="diagnosis" class="form-control" rows="3"
-                placeholder="{{'Type here'|translate}}" data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
+                placeholder="{{'Type here'|translate}}" data-test-id="etDiagnosisSecondary" (keyup)="autoGrowTextZone($event)"
                 [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"></textarea>
             </div>
           </div>
@@ -184,7 +184,7 @@
             <div class="col-sm-11 d-flex align-items-center">
               <div class="pretty p-default p-round">
                 <input type="radio" [value]="'Provisional'" formControlName="type"
-                  data-test-id="radioDiagnosisStatusProvisional"
+                  data-test-id="radioSecondaryDiagnosisStatusProvisional"
                   [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null" />
                 <div class="state p-success">
                   <label>{{'Provisional'|translate}}</label>
@@ -192,7 +192,7 @@
               </div>
               <div class="pretty p-default p-round">
                 <input type="radio" [value]="'Confirmed'" formControlName="type"
-                  data-test-id="radioDiagnosisStatusConfirmed"
+                  data-test-id="radioSecondaryDiagnosisStatusConfirmed"
                   [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null" />
                 <div class="state p-success">
                   <label>{{'Confirmed'|translate}}</label>
@@ -206,14 +206,14 @@
             <label class="col-sm-1 col-form-label" for="note">{{'TNM'|translate}}</label>
             <div class="col-sm-5">
               <textarea class="form-control" rows="3" placeholder="{{'Type here'|translate}}" formControlName="tnm"
-                (keyup)="autoGrowTextZone($event)"
+                (keyup)="autoGrowTextZone($event)" data-test-id="etTNM"
                 [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"></textarea>
             </div>
 
             <label class="col-sm-1 col-form-label" for="note">{{'Other Staging'|translate}}</label>
             <div class="col-sm-5">
               <textarea class="form-control" rows="3" placeholder="{{'Type here'|translate}}"
-                formControlName="otherStaging" (keyup)="autoGrowTextZone($event)"
+                formControlName="otherStaging" (keyup)="autoGrowTextZone($event)" data-test-id="etOtherStaging"
                 [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"></textarea>
             </div>
           </div>
@@ -239,7 +239,7 @@
     <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
       [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"
       [patientAllergies]="patientAllergies" [patientCurrentMedications]="patientCurrentMedications"
-      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted"></lib-aillmtx-medication>
+      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted" data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
@@ -287,7 +287,7 @@
         <form  [formGroup]="additionalInstructionForm" (ngSubmit)="saveAdditionalInstruction()">
             <div class="form-group input-wrapper">
               <input  style="border-radius: 8px;" formControlName="value" type="text"  class="form-control input-widths" id="instructions"
-                data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
+                data-test-id="etAdditionalInstruction" (keyup)="autoGrowTextZone($event)"
                 [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"/>
               <label for="instructions">{{'Additional instructions'|translate}}</label>
             </div>
@@ -469,7 +469,7 @@
     <form class="mt-3" [formGroup]="testForm">
       <div class="form-group">
         <textarea formControlName="test" class="form-control" rows="3" placeholder="{{'Type here'|translate}}"
-          data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
+          data-test-id="etInvestigationsSecondary" (keyup)="autoGrowTextZone($event)"
           [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"></textarea>
       </div>
     </form>
@@ -549,7 +549,7 @@
                 <div class="form-group mb-0">
                   <ng-select class="visit-select custom1" appendTo=".visit-summary-tab-group" formControlName="priority_refer"
                     [clearable]="false" bindLabel="name" bindValue="name" [searchable]="false" [addTag]="false"
-                    placeholder="{{'Select or type'|translate}}" data-test-id="selectReferralFacilityVisitSummary">
+                    placeholder="{{'Select or type'|translate}}" data-test-id="selectReferralPriorityVisitSummary">
                     <ng-option *ngFor="let ref_priority of refer_priorities" [value]="ref_priority.name">
                       {{ (ref_priority.name) | translate }}
                     </ng-option>
@@ -588,7 +588,7 @@
               <td  width="26%" [attr.data-test-id]="'tdReferralTo-' + i">{{ (r.speciality) | translate }}</td>
               <td  width="26%" *ngIf="isFeatureAvailable('referralFacility', true)" [attr.data-test-id]="'tdReferralFacility-' + i" >{{ (r.facility) | translate }}</td>
               <td  width="26%" *ngIf="isFeatureAvailable('priorityOfReferral', true)" [attr.data-test-id]="'tdReferralPriority-' + i">{{ (r.priority) | translate }}</td>
-              <td  width="25%">{{ r.reason }}</td>
+              <td  width="25%" [attr.data-test-id]="'tdReferralReason-' + i">{{ r.reason }}</td>
               <td class="pr-0 pt-0">
                 <button type="button" class="float-right" mat-icon-button (click)="deleteReferral(i, r.uuid)"
                 [attr.data-test-id]="'btnDeleteReferralVisitSummary' + i"
@@ -612,7 +612,7 @@
     *ngIf="appConfigService?.patient_visit_summary?.dp_referral_secondary">
     <div class="form-group">
       <textarea formControlName="ref" class="form-control" rows="3" placeholder="{{'Type here'|translate}}"
-        data-test-id="etAI" (keyup)="autoGrowTextZone($event)"
+        data-test-id="etReferralSecondary" (keyup)="autoGrowTextZone($event)"
         [attr.disabled]="(isMCCUser || !isVisitNoteProvider || visitEnded)? 'disabled' : null"></textarea>
     </div>
   </form>
@@ -638,21 +638,21 @@
     <table class="table" aria-describedby="">
       <thead>
         <tr>
-          <th scope="col">{{'Follow Up Requested'|translate}}</th>
-          <th scope="col" *ngIf="isFeatureAvailable('followUpType')">{{'Type'|translate}}</th>
-          <th scope="col">{{'Date'|translate}}</th>
-          <th scope="col" *ngIf="isFeatureAvailable('followUpTime')">{{'Time'| translate}}</th>
-          <th scope="col">{{'Reason'|translate}}</th>
+          <th scope="col" data-test-id="thFollowUpRequested">{{'Follow Up Requested'|translate}}</th>
+          <th scope="col" *ngIf="isFeatureAvailable('followUpType')" data-test-id="thFollowUpType">{{'Type'|translate}}</th>
+          <th scope="col" data-test-id="thFollowUpDate">{{'Date'|translate}}</th>
+          <th scope="col" *ngIf="isFeatureAvailable('followUpTime')" data-test-id="thFollowUpTime">{{'Time'| translate}}</th>
+          <th scope="col" data-test-id="thFollowUpReason">{{'Reason'|translate}}</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{{ followUpForm.value.wantFollowUp }}</td>
-          <td *ngIf="isFeatureAvailable('followUpType')">{{ (followUpForm.value.followUpType) ? followUpForm.value.followUpType : '-' }}</td>
-          <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
-          <td *ngIf="isFeatureAvailable('followUpTime')">{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
-          <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
+          <td data-test-id="tdFollowUpRequested">{{ followUpForm.value.wantFollowUp }}</td>
+          <td *ngIf="isFeatureAvailable('followUpType')" data-test-id="tdFollowUpType">{{ (followUpForm.value.followUpType) ? followUpForm.value.followUpType : '-' }}</td>
+          <td data-test-id="tdFollowUpDate">{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
+          <td *ngIf="isFeatureAvailable('followUpTime')" data-test-id="tdFollowUpTime">{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
+          <td data-test-id="tdFollowUpReason">{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
           <td class="pr-0 pt-0">
             <button type="button" class="float-right" mat-icon-button (click)="deleteFollowUp()"
               data-test-id="btnDeleteFollowUp" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">

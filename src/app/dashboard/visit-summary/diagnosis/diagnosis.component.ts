@@ -803,6 +803,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
 
       // Check for duplicates
       if (!this.medicines.find(m => m.drug.toLowerCase() === formattedMedicine.drug.toLowerCase())) {
+        // Warn if similar base drug name exists (same drug, different strength/formulation)
+        const similarDrug = this.findSimilarBaseDrug(formattedMedicine.drug);
+        if (similarDrug) {
+          const baseName = this.extractBaseDrugName(formattedMedicine.drug);
+          this.toastr.warning(
+            this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+            this.translateService.instant('Duplicate Drug Warning')
+          );
+        }
         this.medicines.push(formattedMedicine);
 
         if (this.aillmtxMedicationComponent) {
@@ -847,6 +856,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       this.toastr.warning(this.translateService.instant('Medicine already added, please add another drug.'), this.translateService.instant('Already Added'));
       return;
     }
+
+    // Check for similar base drug name (same drug, different strength/formulation)
+    const similarDrug = this.findSimilarBaseDrug(this.addMedicineForm.value.drug);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     // Ensure instructRemark is never null
     const medicineData = { ...this.addMedicineForm.value };
     if (!medicineData.instructRemark) {
@@ -858,7 +878,20 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     this.addMedicineForm.reset();
     this.medicationSaved.emit(this.medicines);
   }
-  
+
+  extractBaseDrugName(drugName: string): string {
+    if (!drugName) return '';
+    const base = drugName.replace(/\s*\d.*$/, '').trim();
+    return (base || drugName.split(' ')[0]).toLowerCase();
+  }
+
+  findSimilarBaseDrug(drugName: string): string | null {
+    const baseName = this.extractBaseDrugName(drugName);
+    if (!baseName) return null;
+    const match = this.medicines.find(m => m.drug && this.extractBaseDrugName(m.drug) === baseName);
+    return match ? match.drug : null;
+  }
+
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {

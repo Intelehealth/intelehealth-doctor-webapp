@@ -816,3 +816,44 @@ export interface DropdownValuesModel {
 export interface RecordingResponse {
   recordingId: number;
 }
+
+export interface ScreeningResult {
+  confidence_score: number;
+  condition: string;
+  description: string;
+  condition_detected: string;
+  type?: string;
+}
+
+export interface LungData {
+  lung_bpm: string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+
+export interface HeartData {
+  heart_bpm: number | string;
+  breathing_rate?: number | string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+export interface DetectedCondition {
+  condition: string;
+  confidence: number;
+}
+
+export interface MeasurementPoint {
+  id: number;
+  top: string;
+  left: string;
+}

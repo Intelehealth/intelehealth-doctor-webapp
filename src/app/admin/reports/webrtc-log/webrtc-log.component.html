@@ -24,7 +24,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
-            <mat-paginator [pageSizeOptions]="[10, 20, 50]"></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[10, 20, 50]" data-test-id="matPaginatorWebrtcLog"></mat-paginator>
             <div *ngIf="data.length === 0" class="no-data text-center w-100 p-4">
                 {{'No Data Found' | translate}}.
             </div>

@@ -29,8 +29,8 @@
                       " *ngFor="
                         let conversation of !searchValue
                           ? conversations
-                          : filteredConversations
-                      " (click)="conversationSelected(conversation)">
+                          : filteredConversations; index as i
+                      " (click)="conversationSelected(conversation)" [attr.data-test-id]="'btnSelectConversation' + i">
                       <div class="chat-item-con">
                         <img src="{{ baseURL + '/personimage/' + conversation.personUuid }}" alt=""  />
                         <div>

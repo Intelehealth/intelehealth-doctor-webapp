@@ -9,7 +9,7 @@
             <div class="msg">
               <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "AI LLM" | translate }}</span>
               <div class="pretty p-switch p-fill light-green light-red">
-                <input type="checkbox" [(ngModel)]="aiLlmfeatures.is_enabled" (change)="updateAILLMStatus($event.target.checked)"/>
+                <input type="checkbox" [(ngModel)]="aiLlmfeatures.is_enabled" (change)="updateAILLMStatus($event.target.checked)" data-test-id="checkboxAILLMToggle"/>
                 <div class="state">
                   <label></label>
                 </div>
@@ -80,7 +80,7 @@
             </table>
           </div>
 
-          <mat-paginator #aiLlmPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"></mat-paginator>
+          <mat-paginator #aiLlmPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" data-test-id="matPaginatorAILLM"></mat-paginator>
           <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">
             {{ "Publish" | translate }}
           </button>
@@ -101,7 +101,7 @@
               <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "Recordings" | translate }}</span>
               <div class="pretty p-switch p-fill light-green light-red">
                 <input type="checkbox" [(ngModel)]="aiLlmRecordingfeatures.is_enabled"
-                  (change)="updateAILLMRecordingStatus($event)" />
+                  (change)="updateAILLMRecordingStatus($event)" data-test-id="checkboxAILLMRecordingToggle" />
                 <div class="state"><label></label></div>
               </div>
             </div>
@@ -175,7 +175,7 @@
           </div>
 
           <mat-paginator #aiLlmRecordingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-            aria-label="Select page of periodic elements">
+            aria-label="Select page of periodic elements" data-test-id="matPaginatorAILLMRecording">
           </mat-paginator>
 
           <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">

@@ -711,6 +711,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         },2000)
         this.visit = visit;
         this.visit.demarcation = this.visitDemarcation;
+        if (this.visit.demarcation === visitTypes.FOLLOW_UP) {
+          this.hasAILLMEnabled = false;
+        }
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
           this.visit['visitUploadTime'] = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED) ? this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'] : null;
         } else if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
@@ -1887,7 +1890,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
       this.coreService.showToast("warning", 'Drug already added, please add another drug.','Already Added','warning-toast');
       return;
-    }    
+    }
+
+    const similarDrug = this.findSimilarBaseDrug(this.addMedicineForm.value.drug, this.medicines);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     this.medicines.push({ ...this.addMedicineForm.value});
     this.addMedicineForm.reset();
   }
@@ -1903,9 +1916,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.standardMedicines.find((o: StandardMedicineModel) => o.drug === this.addStandardMedicineForm.value.drug)) {
       this.coreService.showToast("warning",'Drug already added, please add another drug.','Already Added','addmedicine-warning-toast');
       return;
-    }    
+    }
+
+    const similarDrug = this.findSimilarBaseDrug(this.addStandardMedicineForm.value.drug, this.standardMedicines);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addStandardMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     this.standardMedicines.push({ ...this.addStandardMedicineForm.value});
     this.addStandardMedicineForm.reset();
+  }
+
+  extractBaseDrugName(drugName: string): string {
+    if (!drugName) return '';
+    const base = drugName.replace(/\s*\d.*$/, '').trim();
+    return (base || drugName.split(' ')[0]).toLowerCase();
+  }
+
+  findSimilarBaseDrug(drugName: string, medicineList: any[]): string | null {
+    const baseName = this.extractBaseDrugName(drugName);
+    if (!baseName) return null;
+    const match = medicineList.find(m => m.drug && this.extractBaseDrugName(m.drug) === baseName);
+    return match ? match.drug : null;
   }
 
   /**
@@ -2301,50 +2337,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * Save followup
   * @returns {Observable<any>}
   */
-  saveFollowUp(): Observable<any> {
+  saveFollowUp() {
+    let value = 'No';
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
-      
-      if (this.followUpForm.value.uuid) {
-        return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
-      } else {
+      value = `${moment(this.followUpForm.value.followUpDate ?? new Date()).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime ?? 'NA'},Remark:${this.followUpForm.value.followUpReason || 'NA'},Type:${this.followUpForm.value.followUpType || 'NA'}`;
+    }
+    const followUpDate = this.followUpForm.value.wantFollowUp === 'Yes'
+      ? `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`
+      : null;
+
+    if (this.followUpForm.value.uuid) {
+      this.encounterService.updateObs(this.followUpForm.value.uuid, { value }).pipe(tap((response: ObsModel) => {
+        this.followUpForm.patchValue({ present: true});
+        this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
+      })).subscribe();
+    } else {
         this.encounterService.postObs({
           concept: conceptIds.conceptFollow,
           person: this.visit.patient.uuid,
           obsDatetime: new Date(),
           value: value,
           encounter: this.visitNotePresent.uuid
-        }).subscribe ( (res) => {
-            this.followUpForm.patchValue({
-            present: true,
-            wantFollowUp: 'Yes',
-            followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
-            followUpReason : this.followUpForm.value.followUpReason,
-            uuid: res.uuid,
-            followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
-          });
-        });
-      }
-    } else {
-      this.encounterService.postObs({
-        concept: conceptIds.conceptFollow,
-        person: this.visit.patient.uuid,
-        obsDatetime: new Date(),
-        value: this.followUpForm.value.wantFollowUp,
-        encounter: this.visitNotePresent.uuid
-      }).subscribe ( (res) => {
-         this.followUpForm.patchValue({
-            present: true,
-            wantFollowUp: 'No',
-            followUpDate : null,
-            followUpTime : null,
-            followUpReason :null,
-            uuid: res.uuid,
-            followUpType : null
-          });
-      });
-    }
+        }).pipe(tap((response: ObsModel) => {
+          this.followUpForm.patchValue({ present: true});
+          this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
+        })).subscribe();
+     }
   }
 
   /**
