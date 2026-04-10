@@ -313,13 +313,7 @@ export class SetupCalendarComponent implements OnInit {
     });
 
     this.daysOffSelected = [];
-    this.filteredDays = [];
-    this.days.forEach((element, i) => {
-      let index = schedule.slotSchedule.filter((slot) => element.name == slot.day);
-      if (index.length === 0) {
-      this.filteredDays.push(element);
-     }
-    });
+    this.filteredDays = [...this.days];
   }
 
   getSlotsArray(utslots: any) {
