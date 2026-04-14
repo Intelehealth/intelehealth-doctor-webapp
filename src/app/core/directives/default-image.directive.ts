@@ -4,12 +4,14 @@ import { error } from 'console';
 @Directive({
   selector: 'img[src]',
   host: {
-    '[src]': 'checkPath(src)',
-    '(error)': 'onError()'
+    '[src]': '!useDefaultImageDirective ? src : checkPath(src)',
+    '(error)': '!useDefaultImageDirective ? null : onError()'
   }
 })
 export class DefaultImageDirective {
   @Input() src: string;
+  @Input() useDefaultImageDirective: boolean = true;
+
   public defaultImg: string = 'assets/svgs/user.svg';
 
   public onError() {

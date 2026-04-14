@@ -52,7 +52,10 @@ import { AddTicketComponent } from './add-ticket/add-ticket.component';
 import { LanguageFieldUpdate } from './language-fields-update/language-fields-update.component';
 import { SubSectionsComponent } from './sub-sections/sub-sections.component';
 import { MatTableModule } from '@angular/material/table';
+import { CallHistoryComponent } from './call-history/call-history.component';
 import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
+import { LibPresciptionModule } from 'lib-presciption';
+import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/platform-fields-selecton.component'
 import { BrowserModule } from '@angular/platform-browser';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -96,7 +99,9 @@ import { MatNativeDateModule } from '@angular/material/core';
         AddTicketComponent,
         LanguageFieldUpdate,
         SubSectionsComponent,
-        PatientRegValidationsComponent
+        PatientRegValidationsComponent,
+        CallHistoryComponent,
+        PlatformFieldsSelectonComponent
     ],
     imports: [
         CommonModule,
@@ -118,6 +123,7 @@ import { MatNativeDateModule } from '@angular/material/core';
         MatProgressBarModule,
         MatTabsModule,
         MatTableModule,
+        LibPresciptionModule,
         BrowserModule,
         MatInputModule,
         MatFormFieldModule,

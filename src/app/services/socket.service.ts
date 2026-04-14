@@ -65,7 +65,7 @@ export class SocketService {
     this.drUnreadSubject.next(count);
   }
 
-   addDoctorAdminCount(count: number) {
+  addDoctorAdminCount(count: number) {
     this.doctorAdminUnreadSubject.next(count);
   }
 

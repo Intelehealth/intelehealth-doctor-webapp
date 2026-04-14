@@ -127,6 +127,7 @@
   font-size: 16px;
   padding: 24px 0px 0px 24px;
   margin-bottom: 0px;
+  white-space: break-spaces;
 
   li {
     margin-bottom: 5px;
@@ -145,6 +146,7 @@
 
     .list-item-content {
       padding: 5px 0px;
+      width: 75%;
     }
   }
 
@@ -168,7 +170,7 @@
 .table th,
 .table td {
   vertical-align: middle;
-  white-space: nowrap;
+  white-space: break-spaces;
 }
 
 .cheif-complaint-wrapper {

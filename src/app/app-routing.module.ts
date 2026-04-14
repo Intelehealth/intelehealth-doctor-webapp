@@ -1,26 +1,10 @@
-import { inject, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from './main-container/main-container.component';
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
-import { NgxPermissionsGuard, NgxRolesService } from 'ngx-permissions';
-import { AppConfigService } from './services/app-config.service';
-
-const canActivateMenu = (menu: string | number) => {
-  const sidebar_menus = inject(AppConfigService).sidebar_menus;
-  const router = inject(Router);
-  const roleService = inject(NgxRolesService);
-  const isAdmin = !!roleService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR');
-  if(!sidebar_menus || isAdmin) return true;
-
-  if(sidebar_menus && !sidebar_menus[menu]) {
-    router?.navigateByUrl('/dashboard');
-    return false
-  }
-  
-  return true;
-  
-}
+import { NgxPermissionsGuard } from 'ngx-permissions';
+import { MenuAccessGuard } from './core/guards/menu-access.guard';
 
 const routes: Routes = [
   {
@@ -51,41 +35,46 @@ const routes: Routes = [
       {
         path: 'messages',
         data: {
-          breadcrumb: 'Messages'
+          breadcrumb: 'Messages',
+          menu: 'messages'
         },
-        canActivate:[() => canActivateMenu('messages')],
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
       },
       {
         path: 'calendar',
         data: {
-          breadcrumb: 'Calendar'
+          breadcrumb: 'Calendar',
+          menu: 'calendar'
         },
-        canActivate:[() => canActivateMenu('calendar')],
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
       },
       {
         path: 'appointments',
         data: {
-          breadcrumb: 'Appointments'
+          breadcrumb: 'Appointments',
+          menu: 'appointment'
         },
-        canActivate:[() => canActivateMenu('appointment')],
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
       },
       {
         path: 'prescription',
         data: {
-          breadcrumb: 'Prescription'
+          breadcrumb: 'Prescription',
+          menu: 'prescription'
         },
-        canActivate:[() => canActivateMenu('prescription')],
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
       },
       {
         path: 'help',
         data: {
-          breadcrumb: 'Help & Support'
+          breadcrumb: 'Help & Support',
+          menu: 'help_support'
         },
-        canActivate:[() => canActivateMenu('help_support')],
+        canActivate: [MenuAccessGuard],
         loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
       },
       {

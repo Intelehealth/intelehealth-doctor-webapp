@@ -8,6 +8,7 @@ import { MobileAppLanguageModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-mobile-app-languages',
@@ -15,7 +16,9 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./mobile-app-languages.component.scss']
 })
 export class MobileAppLanguagesComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_default', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_default', 'is_enabled'];
+  platformChanges: { [id: number]: string } = {}; // key = element ID, value = platform
+
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   mobileAppLangData : MobileAppLanguageModel[];
@@ -24,7 +27,9 @@ export class MobileAppLanguagesComponent implements OnInit {
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
     private configServce: ConfigService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private coreService: CoreService,
+
   ) { }
 
   ngOnInit(): void {
@@ -76,4 +81,34 @@ export class MobileAppLanguagesComponent implements OnInit {
       this.toastr.success(this.translateService.instant("Mobile app language changes published successfully!"), this.translateService.instant("Changes published!"));
     });
   }
+
+  /**
+  * Open language field modal
+  * @return {Observable<any>} - Dialog result
+  */
+openDialog(element): void {
+  const id = element?.id;
+   const data = {
+    lang_name : element?.en_name || '',
+    platform: element?.platform || 'Mobile' // Pass the selected or default
+  };
+
+  const dialogRef = this.coreService.openPlatformSelectionFieldModal({ data });
+
+  dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
+    this.configServce.updatePlatform(id, result).subscribe(
+      (res) => {
+        element.platform = result; // Update the local data to reflect the change
+        dialogRef.close();
+        this.toastr.success(`Platform for ${element.en_name} is changed successfully.`);
+      },
+      (error) => {
+        dialogRef.close();
+        this.toastr.error(error?.message || 'Failed to update platform details.');
+      }
+    );
+  });
+}
+
+
 }

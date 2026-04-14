@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./doctor-speciality.component.scss']
 })
 export class DoctorSpecialityComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'doctor_count', 'updatedAt', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'doctor_count', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   specialityData : DoctorSpecialityModel[];

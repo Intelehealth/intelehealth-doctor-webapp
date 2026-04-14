@@ -26,7 +26,7 @@
   td.mat-cell,
   td.mat-footer-cell {
     border: none;
-    min-width: 60px;
+    width: calc(100% / 6);
     padding-right: 24px;
     white-space: nowrap;
   }

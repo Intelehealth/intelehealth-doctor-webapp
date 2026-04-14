@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
-import { LanguageModel, PatientRegistrationFieldsConfigModel, VitalModel, SpecializationModel, WebRTCConfigModel, PatientVisitSummaryConfigModel, PatientVisitSection } from '../model/model';
+import { Observable } from 'rxjs';
+import { LanguageModel, PatientRegistrationFieldsConfigModel, VitalModel, SpecializationModel, WebRTCConfigModel, PatientVisitSummaryConfigModel, PatientVisitSection, DropdownValuesModel } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AppConfigService {
   public patient_registration: PatientRegistrationFieldsConfigModel;
   public theme_config: any[];
   public patient_vitals: VitalModel[];
+  public patient_diagnostics:any[];
   public webrtc_section: boolean;
   public webrtc: WebRTCConfigModel;
   public patient_visit_summary: PatientVisitSummaryConfigModel;
@@ -25,11 +27,14 @@ export class AppConfigService {
   public abha_section: boolean;
   public sidebar_menus: { [key: string]: boolean };
   public patient_visit_sections: PatientVisitSection[]
-
+  public dropdown_values: DropdownValuesModel[]
+  public patient_diagnostics_section: boolean;
+  public ai_llm_section: boolean;
+  public ai_llm_recording_section:  boolean;
   constructor(private http: HttpClient) { }
 
   load(): Promise<any> {
-    const promise = this.http.get(`${this.baseURL}/config/getPublishedConfig`)
+    const promise = this.http.get(`${this.baseURL}/config/getPublishedConfig?ngsw-bypass=true`)
       .toPromise()
       .then((data) => {
         this.setPatientVisitSections(data)
@@ -71,5 +76,7 @@ export class AppConfigService {
   public checkPatientRegField(fieldName: any, fields: string | any[]): boolean{
     return fields.indexOf(fieldName) !== -1;
   }
-
+  fetchAllLanguage(): Observable<any> {
+    return this.http.get<any>(`${this.baseURL}/language/getallEnabledLanguages`);
+  } 
 }

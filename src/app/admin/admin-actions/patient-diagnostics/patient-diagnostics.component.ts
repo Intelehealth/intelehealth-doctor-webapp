@@ -15,7 +15,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./patient-diagnostics.component.scss']
 })
 export class PatientDiagnosticsComponent {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_mandatory', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_mandatory', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   diagnosticsData : PatientDiagnosticModel[];

@@ -33,10 +33,36 @@ export class FileDownloadComponent implements OnInit {
         this.value += 20;
       }
     }, 500);
-    
+
     if (event.type === HttpEventType.Response) {
+      if(!event?.body?.fname || 
+         event?.body?.fname?.toLowerCase()?.includes('error') || 
+         event?.body?.fname?.toLowerCase()?.includes('exception') ||
+         event?.body?.fname?.toLowerCase()?.includes('failed') ||
+         !this.isValidFileUrl(event?.body?.fname)) {
+        this.close(false);
+        return;  
+      }
       window.location.href = event.body.fname;
       this.close(true);
+    }
+  }
+
+  /**
+   * Check if the file URL is valid
+   * @param {string} url - The file URL to validate
+   * @return {boolean} - True if valid URL, false otherwise
+   */
+  private isValidFileUrl(url: string): boolean {
+    if (!url) return false;
+    
+    try {
+      const urlObj = new URL(url);
+      // Check if it's a valid HTTP/HTTPS URL
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch (error) {
+      // If URL parsing fails, it's not a valid URL
+      return false;
     }
   }
 

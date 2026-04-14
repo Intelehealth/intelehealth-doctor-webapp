@@ -26,8 +26,19 @@ export class EncounterService {
   * @param {any} json - Payload for post observattion
   * @return {Observable<any>}
   */
-  postObs(json): Observable<any> {
-    const url = `${this.baseURL}/obs`;
+  postObs(json, ref:boolean=false): Observable<any> {
+    const url = `${this.baseURL}/obs${ref ? '?v=ref':''}`;
+    return this.http.post(url, json);
+  }
+
+  /**
+  * Update observation
+  * @param {string} obsUuid - Payload for post observattion
+  * @param {any} json - Payload for post observattion
+  * @return {Observable<any>}
+  */
+  updateObs(obsUuid,json): Observable<any> {
+    const url = `${this.baseURL}/obs/${obsUuid}`;
     return this.http.post(url, json);
   }
 }

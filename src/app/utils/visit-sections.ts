@@ -30,7 +30,11 @@ export const VISIT_SECTIONS = {
     "vitals": {
         logo: "assets/svgs/vitals.svg",
         key: "vitals"
-    }
+    },
+    "diagnostics": {
+        logo: "assets/svgs/diagnosis-green.svg",
+        key: "diagnostics"
+    },
 }
 
 export const checkIsEnabled = (
@@ -79,7 +83,7 @@ export const checkIsEnabled = (
             break;
         case 'patient_interaction':
             is_enabled = false;
-        break;
+            break;
 
         default:
             // For other sections, return the initial is_enabled and expanded

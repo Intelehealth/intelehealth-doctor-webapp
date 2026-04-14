@@ -19,18 +19,19 @@ export class SessionComponent implements OnInit {
   slides: SlideModel[] = [];
 
   selectedLanguage: string = 'en';
-  languages: DataItemModel[] = [
-    {
-      id: 1,
-      name: 'English',
-      code: 'en'
-    },
-    {
-      id: 2,
-      name: 'Russian',
-      code: 'ru'
-    }
-  ];
+  languages: any;
+  // languages: DataItemModel[] = [
+  //   {
+  //     id: 1,
+  //     name: 'English',
+  //     code: 'en'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Russian',
+  //     code: 'ru'
+  //   }
+  // ];
 
   constructor(public translate: TranslateService, public router: Router, public location: Location, private appConfigService: AppConfigService) { 
   }
@@ -38,11 +39,24 @@ export class SessionComponent implements OnInit {
   ngOnInit(): void {
     this.logoImageURL = this.appConfigService.theme_config.find(obj=>obj.key==='logo')?.value;
     this.getSlideImages();
-    if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
-      this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
-    }
+    const cachedLang = getCacheData(false, languages.SELECTED_LANGUAGE) || 'en';
+    this.selectedLanguage = cachedLang;
+    this.fetchLanguages();
   }
 
+  fetchLanguages() {
+  console.log("Fetching languages");
+  this.appConfigService.fetchAllLanguage().subscribe((res) => {
+    console.log("Languages fetched successfully", res);
+    this.languages = res.languages;
+    // Only do so if there's no cached value
+    if (!getCacheData(false, languages.SELECTED_LANGUAGE) && this.languages.length > 0) {
+      this.selectedLanguage = this.languages[0].code;
+      setCacheData(languages.SELECTED_LANGUAGE, this.selectedLanguage);
+      this.translate.use(this.selectedLanguage);
+    }
+  });
+}
   /**
   * Callback for language changed event
   * @return {void}

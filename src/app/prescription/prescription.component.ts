@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
@@ -6,13 +6,15 @@ import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
 import { TranslateService } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-prescription',
   templateUrl: './prescription.component.html',
   styleUrls: ['./prescription.component.scss']
 })
-export class PrescriptionComponent implements OnInit {
+export class PrescriptionComponent implements OnInit , OnDestroy{
 
   active: number = 1;
   completedVisits: CustomVisitModel[] = [];
@@ -22,7 +24,12 @@ export class PrescriptionComponent implements OnInit {
   specialization: string = '';
   prescriptionSentCount: number = 0;
   completedVisitsCount: number = 0;
-
+  allPrescriptionSent: any[] = [];
+  allCompletedVisits: any[] = [];
+  searchTermComp: string = '';
+  searchTerm: string = '';
+  private sentSearch$ = new Subject<string>();
+  private completedSearch$ = new Subject<string>();
   constructor(
     private pageTitleService: PageTitleService, 
     private visitService: VisitService,
@@ -39,16 +46,40 @@ export class PrescriptionComponent implements OnInit {
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
+
+     // Prescription Sent search debounce
+    this.sentSearch$
+     .pipe(
+       debounceTime(400),
+       distinctUntilChanged()
+     )
+     .subscribe(term => {
+       this.searchTerm = term;
+       this.getPrescriptionSentVisits(1); // page reset
+     });
+
+    // Completed Visits search debounce
+    this.completedSearch$
+     .pipe(
+       debounceTime(400),
+       distinctUntilChanged()
+      )
+     .subscribe(term => {
+       this.searchTerm = term;
+       this.getCompletedVisits(1); // page reset
+      });
     moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   /**
   * Get completed visits for a given page number
   * @param {number} page - Page number
+  * @param {string} searchTerm - Optional search term
   * @return {void}
   */
+
   getCompletedVisits(page: number = 1) {
-    if(page == 1) this.completedVisits = [];
+    if(page == 1) this.completedVisits = []; this.allCompletedVisits = []; 
     this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: ApiResponseModel) => {
       if (cv.success) {
         this.completedVisitsCount = cv.totalCount;
@@ -68,28 +99,62 @@ export class PrescriptionComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
         }
-        this.completedVisits = this.completedVisits.concat(records);
-        this.loaded1 = true;
+        // For server-side pagination, replace data instead of concatenating
+          // master list append
+      this.allCompletedVisits = [...this.allCompletedVisits, ...records];
+      // 🔍 derive UI list
+      this.applyCompletedSearch();
+        if(!this.loaded1) {
+          this.loaded1 = true;
+        }
       }
     });
   }
 
+  applyCompletedSearch() {
+    if (!this.searchTerm) {
+      this.completedVisits = [...this.allCompletedVisits];
+      return;
+    }
+    const term = this.searchTerm.toLowerCase().trim();
+    this.completedVisits = this.allCompletedVisits.filter(visit => {
+      const name = [
+        visit.patient_name?.given_name,
+        visit.patient_name?.middle_name,
+        visit.patient_name?.family_name
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return name.includes(term);
+    });
+  }
+
+
   /**
-  * Get completed visits for a given page number
-  * @param {number} page - Page number
+  * Get completed visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
   * @return {void}
   */
-  getCompletedVisitsData(page: number) {
-    this.getCompletedVisits(page);
+  getCompletedVisitsData(params: {page: number, pageSize: number, searchTerm: string}) {
+     // Search → debounce
+   if (params.searchTerm !== undefined) {
+    this.completedSearch$.next(params.searchTerm);
+    return;
+  }
+    this.getCompletedVisits(params.page);
   }
 
   /**
   * Get prescriptions sent visits for a given page number
   * @param {number} page - Page number
+  * @param {string} searchTerm - Optional search term
+  * @param {string} searchTermComp - Optional search term
   * @return {void}
   */
   getPrescriptionSentVisits(page: number = 1) {
-    if(page == 1) this.prescriptionSent = [];
+    if(page == 1) this.prescriptionSent = [];  this.allPrescriptionSent = []; //IMPORTANT;
     this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
@@ -103,19 +168,57 @@ export class PrescriptionComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
         }
-        this.prescriptionSent = this.prescriptionSent.concat(records);
-        this.loaded2 = true;
+       // master list
+      this.allPrescriptionSent = [...this.allPrescriptionSent, ...records];
+
+      // apply search AFTER data loads5855
+      this.applySearch();
+
+        if(!this.loaded2) {;
+          this.loaded2 = true;
+        }
       }
     });
   }
 
+ /**
+  * Get FILRE DATA USING APPLY SEARCH 368
+  * */
+
+  applySearch() {
+    if (!this.searchTerm) {
+      this.prescriptionSent = [...this.allPrescriptionSent];
+      return;
+    }
+    const term = this.searchTerm.toLowerCase();
+    this.prescriptionSent = this.allPrescriptionSent.filter(visit => {
+      const name = [
+        visit.patient_name?.given_name,
+        visit.patient_name?.middle_name,
+        visit.patient_name?.family_name
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return name.includes(term);
+    });
+  }
+
   /**
-  * Get prescriptions sent visits for a given page number
-  * @param {number} page - Page number
+  * Get prescriptions sent visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
   * @return {void}
   */
-  getPrescriptionSentVisitsData(page: number) {
-    this.getPrescriptionSentVisits(page);
+
+
+ 
+  getPrescriptionSentVisitsData(params: {page: number, pageSize: number, searchTerm?: string}) {
+    // Search → debounce
+    if (params.searchTerm !== undefined) {
+      this.sentSearch$.next(params.searchTerm);
+    return;
+  }
+    this.getPrescriptionSentVisits(params.page);
   }
 
   /**
@@ -231,4 +334,8 @@ export class PrescriptionComponent implements OnInit {
     return specialization;
   }
 
+  ngOnDestroy() {
+    this.sentSearch$.complete();
+    this.completedSearch$.complete();
+  }
 }

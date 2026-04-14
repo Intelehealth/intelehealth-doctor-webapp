@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
-import { doctorDetails, visitTypes } from 'src/config/constant';
+import { conceptIds, doctorDetails, visitTypes } from 'src/config/constant';
 import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PersonAttributeModel, VisitModel, VitalModel } from 'src/app/model/model';
 import { TranslateService } from '@ngx-translate/core';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -16,6 +16,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import { calculateBMI, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -41,8 +42,6 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   eyeImages: DocImagesModel[] = [];
   additionalDocs: DocImagesModel[] = [];
   baseURL = environment.baseURL;
-  conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
-  conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   hasVitalsEnabled: boolean = false;
@@ -52,6 +51,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
 
   pvsConfigs: PatientVisitSection[] = [];
   pvsConstant = VISIT_SECTIONS;
+  sanitizedValue: SafeHtml;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -60,7 +60,9 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
     private diagnosisService: DiagnosisService,
     private coreService: CoreService,
     private translateService: TranslateService,
-    private appConfigService: AppConfigService) {
+    private appConfigService: AppConfigService,
+    private sanitizer: DomSanitizer,
+  ) {
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
       });
@@ -296,7 +298,8 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
                       const splitByDash = splitByBr[k].split('-');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
+                      this.sanitizedValue = this.sanitizer.bypassSecurityTrustHtml(splitByDash.slice(1, splitByDash.length).join('-'));
+                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: this.sanitizedValue });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -412,7 +415,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
-    this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const imageBase64 = await this.toObjectUrl(`${this.baseURL}/obs/${obs.uuid}/value`);
@@ -440,7 +443,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
-    this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const src = `${this.baseURL}/obs/${obs.uuid}/value`;

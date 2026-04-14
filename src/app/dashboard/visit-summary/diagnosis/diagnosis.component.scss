@@ -1,0 +1,594 @@
+.intel-accordion-con {
+  ::ng-deep {
+
+    .mat-expansion-panel {
+      box-shadow: none !important;
+      border-radius: 12px !important;
+      margin-bottom: 0px;
+
+      .input-group {
+        background: var(--color-offWhite);
+      }
+
+      .form-control {
+        background: var(--color-offWhite);
+      }
+
+      textarea.form-control {
+        background: var(--color-offWhite);
+      }
+
+      .ng-select-container {
+        background: var(--color-offWhite);
+      }
+    }
+
+    mat-expansion-panel:nth-child(even) {
+      background: var(--color-offWhite) !important;
+
+      .input-group {
+        background: var(--color-white);
+      }
+
+      .form-control {
+        background: var(--color-white);
+      }
+
+      textarea.form-control {
+        background: var(--color-white);
+      }
+
+      .ng-select-container {
+        background: var(--color-white);
+      }
+    }
+
+    .mat-expansion-panel.overflow-show {
+      overflow: visible;
+    }
+
+    mat-expansion-panel:nth-child(odd) {
+      background: var(--color-white);
+    }
+  }
+}
+
+.list-header {
+  font-size: 14px;
+  line-height: 150%;
+  margin-bottom: 0px;
+  font-weight: bold;
+  color: var(--color-darkestBlue);
+}
+
+.items-list {
+  font-family: DM Sans;
+  font-size: 16px;
+  padding: 0px 0px 0px 24px;
+  margin-bottom: 0px;
+
+  li {
+    margin-bottom: 5px;
+  }
+
+  li .list-item {
+    display: flex;
+    flex-wrap: nowrap;
+
+    label {
+      width: 25%;
+      min-width: 25%;
+      margin-bottom: 0px;
+      padding: 5px 0px;
+    }
+
+    .list-item-content {
+      padding: 5px 0px;
+      white-space: break-spaces;
+    }
+  }
+
+  li .list-item-col {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+  }
+}
+
+.form-group {
+  margin-bottom: 0px !important;
+  label {
+    font-size: inherit;
+    color: var(--color-darkestBlue);
+  }
+
+  .blue-btn {
+    background: var(--color-darkBlue);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-white);
+    position: relative;
+    padding: 10px 16px;
+  }
+
+  .white-btn {
+    background: var(--color-white);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-darkBlue);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid var(--color-lightGray);
+    padding: 10px 16px;
+    //margin-bottom: 30px;
+  }
+
+  .gray-btn {
+    background: var(--color-lightGray);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-darkBlue);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid var(--color-lightGray);
+    padding: 10px 16px;
+  }
+
+  .blue-btn:disabled,
+  .white-btn:disabled,
+  .gray-btn:disabled {
+    opacity: 0.5;
+   // margin-bottom: 20px;
+  }
+
+  .blue-btn:focus,
+  .white-btn:focus {
+    box-shadow: none;
+  }
+
+  .error-msg {
+    color: var(--color-red);
+  }
+}
+
+.form-control {
+  padding: 14px 16px;
+  background: var(--color-offWhite);
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: var(--color-darkestBlue);
+}
+
+textarea.form-control {
+  height: fit-content;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.input-group {
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  background: var(--color-offWhite);
+  border-radius: 8px;
+  height: 48px;
+
+  .form-control {
+    padding: 14px 16px;
+    height: 46px;
+    font-size: 16px;
+    color: var(--color-darkestBlue);
+    border: none;
+    background: transparent;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+  }
+
+  .input-group-append {
+    .input-group-text {
+      background: transparent;
+      border: none;
+      padding: 0px;
+    }
+  }
+}
+
+::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
+::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
+  height: 48px;
+  width: 100%;
+  background: var(--color-white);
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  box-shadow: none;
+
+  .ng-value-container .ng-input {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ng-clear-wrapper {
+    display: none;
+  }
+}
+
+.table {
+  margin-bottom: 0px !important;
+}
+
+.table1 th, .table1 td {
+    padding: 0.25rem;
+    padding-top: 12px;
+    padding-bottom: 6px;
+ }
+
+.borderc {
+  border-top: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+   
+@media (max-width: 768px) {
+  .items-list {
+    list-style-type: none;
+    padding: 5px 0px 0px;
+
+    li .list-item {
+      flex-direction: column;
+      align-items: flex-start;
+
+      label {
+        width: 100%;
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
+        font-weight: bold;
+        margin-top: 0.50rem;
+      }
+    }
+
+    li .list-item-col {
+      label {
+        width: 100%;
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
+        font-weight: bold;
+        margin-top: 0.50rem;
+      }
+    }
+  }
+
+  .blue-btn {
+    width: 100%;
+  }
+
+  .col-form-label {
+    font-weight: bold;
+  }
+
+  .medication-form-container {
+    input[formControlName="durationNo"] {
+      min-width: 80px !important;
+      max-width: 140px;
+    }
+
+    ng-select.visit-select.custom {
+      min-width: 100px !important;
+      flex: 1 1 180px;
+    }
+  }
+
+  .gridAlignment{
+    th {
+      margin-left: 10px;
+      &:nth-child(1) { width: 23% !important; }
+      &:nth-child(2) { width: 24% !important; }
+      &:nth-child(3) { width: 17% !important; }
+      &:nth-child(4) { width: 12% !important; }
+      &:nth-child(5) { width: 11% !important; }
+    }
+  }
+}
+
+.add-more-btn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 150%;
+  color: var(--color-darkestBlue);
+  padding: 0px;
+}
+
+.intel-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .ayu-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #5C2D91;
+    border-radius: 50%;
+  }
+
+  h6 {
+    color: #212529;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.selected-diagnoses {
+  .selected-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #F5F5F5;
+    margin-right: 8px;
+    font-size: 14px;
+
+    &.selected-primary {
+      background: #EFE8FF;
+      margin-bottom: 6px;
+    }
+
+    .remove-icon {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      margin-left: 4px;
+
+      mat-icon {
+        font-size: 16px;
+        line-height: 16px;
+        height: 16px;
+        width: 16px;
+      }
+    }
+  }
+}
+
+.medication-section {
+  padding: 16px;
+}
+
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+.med-table th,
+.med-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.instruction-cell {
+  font-size: 14px;
+  color: #444;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid transparent;
+  padding-top: 0 !important;
+}
+
+.med {
+    //padding: 0.15rem;
+    font-size: 16px;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.input-widths{
+  min-height: 100px;
+  max-height: 500px;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 12px;
+  left: 5px;
+ // background: white;
+  padding: 0 5px;
+  font-size: 16px;
+  color: #888;
+}
+
+.input-wrapper input {
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.custom-typeahead-popup, .ngb-typeahead-window {
+  max-height: 150px !important;
+  overflow-y: auto !important;
+}
+
+.custom-typeahead-popup .dropdown-item {
+  padding: 6px 12px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.diagnosis-box {
+  flex: 1;
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+}
+
+.suggested-box {
+  // flex: 1;
+  background: #F9FFFC;
+  border: 1px solid #B5F2DF;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 500px;
+  max-height: fit-content;
+
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    span {
+      margin-left: 5px;
+      font-size: 12px;
+    }
+  }
+}
+
+.custom-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #B0ADBE;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  margin-top: 3px;
+  margin-right: 9px;
+  margin-bottom: 9px;
+
+  &:checked {
+    background-color: #0FD197;
+    border: none;
+
+    &::after {
+      content: '\2713';
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.disabled-diagnosis {
+  opacity: 0.7;
+  cursor: not-allowed;
+
+  .custom-checkbox {
+    cursor: not-allowed;
+  }
+
+  // .text-muted {
+  //   opacity: 0.7;
+  //   font-size: 14px;
+  //   color: #868e96;
+  // }
+}
+
+.medication-form-container {
+  background-color: #FAF9FF !important;
+  border-radius: 8px;
+}
+
+.medication-form-container {
+  .col-md-6.d-flex.gap-2 {
+    flex: 1 1 360px;
+  }
+
+  input[formControlName="durationNo"] {
+    min-width: 140px;
+    max-width: 140px;
+  }
+
+  ng-select.visit-select.custom {
+    min-width: 110px !important;
+    flex: 1 1 180px;
+  }
+}
+
+
+.pretty {
+  min-width: fit-content;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.form-row input,
+.form-row select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #B2AFBE33;
+  flex: 1;
+  font-size: 16px;
+}
+
+.form-control,
+ng-select.form-control {
+  border-radius: 8px;
+  min-width: 0;
+}
+
+
+.form-row div {
+  border-radius: 4px;
+  flex: 1;
+  font-size: 16px;
+}
+
+::ng-deep .ng-select .ng-select-container .ng-placeholder {
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #888888;
+  opacity: 1;
+}
+
+.custom-hr {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.gridAlignment{
+  th {
+    &:nth-child(1) { width: 33.5%; }
+    &:nth-child(2) { width: 16.5%; }
+    &:nth-child(3) { width: 18%; }
+    &:nth-child(4) { width: 12.5%; }
+    &:nth-child(5) { width: 12%; }
+  }
+}

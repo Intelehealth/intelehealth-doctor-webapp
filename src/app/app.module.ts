@@ -65,7 +65,7 @@ import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
 import { AppConfigService } from "./services/app-config.service";
 import { SidebarMenuListComponent } from "./main-container/sidebar-menu-list/sidebar-menu-list.component";
-import { LOCALE_ID } from '@angular/core';
+import { LibPresciptionModule } from 'lib-presciption'
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -132,13 +132,40 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://dev.intelehealth.org:3004/api/messages/',
-        'https://dev.intelehealth.org:3004/api/support/',
-        'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
-        'https://dev.intelehealth.org:3000/api/getToken',
-        'https://dev.intelehealth.org:3000/api/startRecording',
-        'https://dev.intelehealth.org:3000/api/stopRecording',
-        'https://dev.intelehealth.org/pl/'
+        `${environment.mindmapURL}/api/messages/`,
+        `${environment.mindmapURL}/api/support/`,
+        `${environment.mindmapURL}/api/auth/validateProviderAttribute`,
+        `${environment.baseURL}/pl/`,
+        `${environment.webrtcTokenServerUrl}api/getToken`,
+        `${environment.base}/pl/`,
+        `${environment.base}/ddx`,
+        `${environment.base}/ttxv1`,
+        `${environment.mindmapURL}/appointment/getScheduledMonths`,
+        `${environment.mindmapURL}/mindmap/getNotificationStatus`,
+        `${environment.mindmapURL}/appointment/getUserSlots`,
+        `${environment.mindmapURL}/openmrs/getPriorityVisits`,
+        `${environment.mindmapURL}/openmrs/getAwaitingVisits`,
+        `${environment.mindmapURL}/openmrs/getInProgressVisits`,
+        `${environment.mindmapURL}/openmrs/getEndedVisits`,
+        `${environment.mindmapURL}/openmrs/getFollowUpVisits`,
+        `${environment.base}/openmrs/ws/rest/v1/personimage`,
+        `${environment.socketURL}/socket.io`,
+        `${environment.base}/intelehealth/ngsw.json`,
+        `${environment.base}/intelehealth/assets/phone.mp3`,
+        `${environment.configURL}/config/getPublishedConfig?ngsw-bypass=true`,
+        `${environment.configURL}/config/getPublishedConfig`,
+        `${environment.notificationURL}/subscribe`,
+        "\\/api\\/config\\/getPublishedConfig(\\?.*)?$",
+        "/\/api\/appointment\/getScheduledMonths\/.*/",
+        "/\/api\/appointment\/getUserSlots\/.*/",
+        "/\/api\/mindmap\/getNotificationStatus\/.*/",
+        "/\/api\/openmrs\/get(Priority|Awaiting|InProgress|Ended|FollowUp)Visits(\?.*)?$/",
+        "/\/openmrs\/ws\/rest\/v1\/personimage\/.*/",
+        "/\/socket\.io$/",
+        "/\/ngsw\.json(\?.*)?$/",
+        "/\/assets\/phone\.mp3$/",
+        `${environment.webrtcTokenServerUrl}api/startRecording`,
+        `${environment.webrtcTokenServerUrl}api/stopRecording`,
       ]
     }),
     NgxPermissionsModule.forRoot({
@@ -150,6 +177,7 @@ registerLocaleData(localeEn);
     FormsModule,
     ReactiveFormsModule,
     MatBottomSheetModule,
+    LibPresciptionModule.forRoot(environment),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -194,8 +222,8 @@ registerLocaleData(localeEn);
     },
     DecimalPipe,
     { 
-      provide: LOCALE_ID,
-      useValue: getCacheData(false, languages.SELECTED_LANGUAGE)
+      provide: 'environment', 
+      useValue: environment
     }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

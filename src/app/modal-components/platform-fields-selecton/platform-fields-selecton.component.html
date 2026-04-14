@@ -1,0 +1,52 @@
+<div class="title-con position-relative" mat-dialog-title>
+  <h6 class="mb-0 text-left">
+    {{ 'Platform Selection' | translate }} - {{ lang_name }}
+  </h6>
+  <div class="close-btn-con">
+    <button class="modal-close-btn" (click)="handleCancel()" data-test-id="btnClose">
+      <img src="assets/svgs/Close-icon.svg" alt="Close">
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="main-content">
+    <div class="container-fluid">
+      <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+        <!-- ✅ Platform Radio Buttons -->
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label class="mb-2 font-weight-bold">Platform</label>
+            <div class="d-flex align-items-center gap-4">
+              <div class="form-check" *ngFor="let option of platformOptions">
+                <label class="form-check-label d-flex align-items-center">
+                  <input
+                    type="radio"
+                    [value]="option"
+                    formControlName="platform"
+                    class="form-check-input mr-2"
+                  />
+                  {{ option }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="form-row mt-4">
+          <div class="col-md-12 d-flex gap-3">
+            <button mat-button type="submit" class="save-btn">
+              {{ 'Save' | translate }}
+            </button>
+            <button mat-button type="button" class="cancel-btn" (click)="handleCancel()">
+              {{ 'Cancel' | translate }}
+            </button>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+</mat-dialog-content>

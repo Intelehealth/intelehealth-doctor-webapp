@@ -26,6 +26,7 @@ import { languages, doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, SpecializationModel, UserModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 const tabs = ['Draw', 'Generate', 'Upload'];
 
@@ -70,6 +71,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+  @ViewChild('dobdp') dobdp: MatDatepicker<Date>;
+  
   dialogRef: MatDialogRef<ImageCropComponent>;
 
   fonts: DataItemModel[] = [
@@ -115,6 +118,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       id: 5,
       name: 'Bangla'
+    },
+    {
+      id: 6,
+      name: 'Marathi'
     }
   ];
 
@@ -263,12 +270,30 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
-  }
 
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email) {
+      this.phoneNumberValid = true;
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.personalInfoForm.get("emailId").clearAsyncValidators();
+    }
+  }
   ngAfterViewInit() {
     // this.signaturePad is now available
     this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
     this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
+     this.dobdp.openedStream.subscribe(() => {
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.mat-calendar-body-cell');
+      cells.forEach(cell => {
+        const label = cell.getAttribute('aria-label'); // e.g. "Mon Sep 08 2025"
+        if (label) {
+          const day = new Date(label).getDate();
+          cell.setAttribute('data-test-id', `dobdp-${day}`);
+        }
+      });
+    });
+  });
   }
 
   /**
@@ -737,23 +762,27 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'Draw':
         signature = this.signaturePad.toDataURL('image/jpeg');
         this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res) => {
-          this.personalInfoForm.patchValue({ signature });
-          this.updateProviderAttributes();
+          if (res.success && res.data.url) {
+            this.personalInfoForm.patchValue({ signature: res.data.url });
+            this.updateProviderAttributes();
+          }
         });
         break;
 
       case 'Generate':
         this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
-          if (res.success) {
-            fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
-              const reader = new FileReader();
-              reader.onload = () => {
-                signature = reader.result.toString();
-                this.personalInfoForm.patchValue({ signature });
-                this.updateProviderAttributes();
-              };
-              reader.readAsDataURL(blob);
-            });
+          if (res.success && res.data.url) {
+            this.personalInfoForm.patchValue({ signature: res.data.url });
+            this.updateProviderAttributes();
+            // fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
+            //   const reader = new FileReader();
+            //   reader.onload = () => {
+            //     signature = reader.result.toString();
+            //     this.personalInfoForm.patchValue({ signature });
+            //     this.updateProviderAttributes();
+            //   };
+            //   reader.readAsDataURL(blob);
+            // });
           }
         });
         break;
@@ -904,19 +933,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   * @return {void}
   */
   validateProviderAttribute(type: string) {
-    this.checkingPhoneValidity = true;
-    this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
-      if (res.success) {
-        if (type === doctorDetails.PHONE_NUMBER) {
-          this.phoneValid = res.data;
-        } else {
-          this.emailValid = res.data;
+    if(this.appConfigService.patient_visit_summary.allow_duplicate_phoneno_and_email){
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.phoneNumberValid = true;
+    } else {
+      this.checkingPhoneValidity = true;
+      this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
+        if (res.success) {
+          if (type === doctorDetails.PHONE_NUMBER) {
+            this.phoneValid = res.data;
+          } else {
+            this.emailValid = res.data;
+          }
+          setTimeout(() => {
+            this.checkingPhoneValidity = false;
+          }, 500);
         }
-        setTimeout(() => {
-          this.checkingPhoneValidity = false;
-        }, 500);
-      }
-    });
+      });
+    }
+    
   }
 
   ngOnDestroy(): void {

@@ -11,16 +11,20 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
+      if (request.url.includes('/ddx')) {
+        return next.handle(request);
+      }
       if ([401, 403].indexOf(err.status) != -1) {
         this.authService.logOut();
       }
 
+      const error = err?.error?.message || err?.error?.error?.message  || err?.error?.error || err?.statusText;
+      
       if ([404].indexOf(err.status) != -1) {
         this.toastr.error('Not found', '404 Not Found');
-        return throwError(err.error.message || err.error.error.message || err.statusText  || err.error.error);
+        return throwError(error);
       }
 
-      const error = err.error.message || err.error.error.message  || err.error.error || err.statusText;
       if (request.method == 'DELETE' && request.url.includes('session')) {
         return throwError(error); 
       }

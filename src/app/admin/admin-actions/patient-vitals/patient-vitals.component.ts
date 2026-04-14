@@ -16,7 +16,7 @@ import { CoreService } from 'src/app/services/core/core.service';
   styleUrls: ['./patient-vitals.component.scss']
 })
 export class PatientVitalsComponent implements OnInit {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_mandatory', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_mandatory', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   vitalsData : PatientVitalModel[];

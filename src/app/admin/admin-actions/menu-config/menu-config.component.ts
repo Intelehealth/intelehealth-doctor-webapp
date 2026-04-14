@@ -16,7 +16,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./menu-config.component.scss']
 })
 export class MenuConfigComponent {
-  displayedColumns : string[] = ['id', 'name', 'updatedAt', 'is_enabled'];
+  displayedColumns : string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   menuData : MenuConfig[];
