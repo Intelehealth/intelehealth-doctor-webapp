@@ -881,7 +881,11 @@ textarea[formControlName="followUpReason"].form-control {
 .textarea-wrapper {
   position: relative; // make this the anchor
   display: inline-block;
-  width: 50%; // so it expands with panel
+  width: 100%; // so it expands with panel
+}
+
+.textarea-wrapper.follow-up-textarea-wrapper {
+  width: 50%;
 }
 
 .apr-btn1 {

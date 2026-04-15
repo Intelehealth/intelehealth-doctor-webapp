@@ -1371,23 +1371,23 @@
                     <span class="ml-2">{{'Add more instructions'|translate}}</span>
                   </button>
                 </div>
-                <form class="extra-margin" [formGroup]="addAdditionalInstructionForm"
+                <form [formGroup]="addAdditionalInstructionForm"
                   (ngSubmit)="addAdditionalInstruction()" *ngIf="!addMoreAdditionalInstruction">
                   <div class="instructions-row">
                     <div class="form-group" class="box-adjust textarea-wrapper">
                       <textarea formControlName="note" class="form-control"
                         placeholder="{{'Add instructions'|translate}}" data-test-id="etAI"></textarea>
-                      <button type="button" class="apr-btn" *ngIf="isInstructionRejected || disableInstructionBtn"
+                      <!-- <button type="button" class="apr-btn" *ngIf="isInstructionRejected || disableInstructionBtn"
                         (click)="onApprove('instructions')" data-test-id="btnOnApprove"
                         [ngClass]="!disableInstructionBtn ? 'approve-active' : 'approve-disabled'" [disabled]="disableInstructionBtn"></button>
                       <small class="red-color pl-3" *ngIf="isInstructionRejected && !disableInstructionBtn">
                         <img src="assets/svgs/trans-error.svg" alt="" /> Please update manually the required
-                        text.</small>
+                        text.</small> -->
                     </div>
-                    <app-translation-box class="box-adjust" [hwStateData]="hwStateData" [translatedText]="instructions"
+                    <!-- <app-translation-box class="box-adjust" [hwStateData]="hwStateData" [translatedText]="instructions"
                       [tabType]="'instructions'" [clickedFromParent]="addAdditionalInstructionForm.valid" 
                       [isTranslationApr]="approvInstructionMsg" [isTextApproved]="disableInstructionBtn" (action)="handleAction($event)">
-                    </app-translation-box>
+                    </app-translation-box> -->
                   </div>
 
                   <div class="form-group mt-3">
@@ -1442,15 +1442,18 @@
                 </div>
                 <form [formGroup]="addAdviceForm" class="mt-2" *ngIf="!addMoreAdvice">
                   <div class="instructions-row">
-                    <div class="form-group" class="top-strict textarea-wrapper box-adjust">
-                      <textarea id="summary" class="form-control"
+                    <div class="form-group" class="textarea-wrapper box-adjust">
+                       <label for="note"><b>{{'Advice'|translate}}</b></label>
+                    <input type="text" class="form-control" formControlName="advice"
+                      placeholder="{{'Type here'|translate}}" [ngbTypeahead]="search" data-test-id="etAdvice" />
+                      <!-- <textarea id="summary" class="form-control"
                             formControlName="advice" [(ngModel)]="summaryText" (input)="onTextChange($event)" (keydown)="onKeyDown($event)"
                             rows="5" placeholder="Add advice">
                       </textarea>
                     <button type="button" class="apr-btn-top apr-btn" *ngIf="isAdviceRejected || disableApproveBtn"
                       (click)="onApprove('advice')" data-test-id="btnOnApprove"
                       [ngClass]="!disableApproveBtn ? 'approve-active' : 'approve-disabled'" [disabled]="disableApproveBtn">
-                    </button>              <!-- Dropdown suggestions -->
+                    </button>             
                           <div *ngIf="filteredSuggestions.length > 0" class="dropdown-suggestions">
                             <div *ngFor="let suggestion of filteredSuggestions; let i = index" [class.active]="i === selectedIndex"
                               (click)="selectSuggestion(suggestion)">
@@ -1459,17 +1462,17 @@
                           </div>
                       <small class="red-color pl-3" *ngIf="isAdviceRejected && !disableApproveBtn">
                         <img src="assets/svgs/trans-error.svg" alt="" /> Please update manually the required
-                        text.</small>
+                        text.</small> -->
                     </div>
-                    <app-translation-box class="box-adjust extra-margin" [hwStateData]="hwStateData"
+                    <!-- <app-translation-box class="box-adjust extra-margin" [hwStateData]="hwStateData"
                       [translatedText]="advice" [tabType]="'advice'" [clickedFromParent]="addAdviceForm.valid"
                       [isTranslationApr]="approvAdviceMsg" [isTextApproved]="disableApproveBtn" (action)="handleAction($event)">
-                    </app-translation-box>
+                    </app-translation-box> -->
                   </div>
                   <div class="form-group mt-3">
                     <button type="button" class="white-btn mr-2" (click)="toggleAdvice()"
                       data-test-id="btnCancelAdvice">
-                      {{'Clear'|translate}}
+                      {{'Cancel'|translate}}
                     </button>
                     <button type="button" class="gray-btn" (click)="addAdvice()"
                       [disabled]="addAdviceForm.invalid || disableAddAdvice || isAdviceRejected"
@@ -1784,10 +1787,10 @@
                           follow-up'|translate}}</label>
                         <div class="col-sm-9">
                           <div class="instructions-row">
-                            <div class="textarea-wrapper box-adjust">
+                            <div class="textarea-wrapper box-adjust follow-up-textarea-wrapper">
                               <textarea type="text" class="form-control" placeholder="{{'Enter reason'|translate}}"
                                 formControlName="followUpReason" data-test-id="etFollowUpReason"></textarea>
-                              <button type="button" class="close-btn" (click)="onClearReason()">
+                              <!-- <button type="button" class="close-btn" (click)="onClearReason()">
                                 <img src="assets/svgs/clear.svg" alt="" />
                               </button>
                               <button type="button" class="apr-btn" *ngIf="isReasonRejected || disableReasonBtn"
@@ -1796,13 +1799,13 @@
                               </button>
                               <small class="red-color pl-3" *ngIf="isReasonRejected && !disableReasonBtn">
                                 <img src="assets/svgs/trans-error.svg" alt="" /> Please update manually the required
-                                text.</small>
+                                text.</small> -->
                             </div>
-                            <app-translation-box class="box-adjust" [hwStateData]="hwStateData"
+                            <!-- <app-translation-box class="box-adjust" [hwStateData]="hwStateData"
                               [translatedText]="reason" [tabType]="'reason'"
                               [clickedFromParent]="reason !=='Enter reason' ? true : false"
                               [isTranslationApr]="approvReasonMsg" [isTextApproved]="disableReasonBtn" (action)="handleAction($event)">
-                            </app-translation-box>
+                            </app-translation-box> -->
                           </div>
                           <div class="form-group mb-0 mt-3" *ngIf="
                                             isVisitNoteProvider && !visitEnded && !visitCompleted && 
