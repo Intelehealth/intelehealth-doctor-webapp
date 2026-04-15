@@ -1,0 +1,241 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 p-0">
+      <div class="intel-card">
+        <div class="card-body">
+          <div class="py-2 d-flex align-items-center justify-content-between">
+            <button class="blue-btn" type="button" (click)="backToStage12()">Back to Stage 1/2</button>
+            <button class="icon-action-btn" type="button" (click)="printStage3()" matTooltip="Print" matTooltipPosition="below">
+              <mat-icon>print</mat-icon>
+            </button>
+          </div>
+
+          <div *ngIf="loading" class="text-center p-4">Loading Stage 3 details...</div>
+
+          <div *ngIf="!loading" class="delivery-outcome mb-3">
+            <table class="table table-bordered bg-white mb-0">
+              <tbody>
+                <tr class="sr-only">
+                  <th scope="col">Field 1</th>
+                  <th scope="col">Field 2</th>
+                  <th scope="col">Field 3</th>
+                  <th scope="col">Field 4</th>
+                </tr>
+                <tr class="delivery-title-row">
+                  <td colspan="4">DELIVERY OUTCOME REPORT</td>
+                </tr>
+                <tr>
+                  <td><span>Delivery Date:</span> {{ deliveryOutcome.deliveryDate }}</td>
+                  <td><span>Delivery Time:</span> {{ deliveryOutcome.deliveryTime }}</td>
+                  <td><span>Delivery Mode:</span> {{ deliveryOutcome.deliveryMode }}</td>
+                  <td><span>Placenta &amp; Membrane Delivery:</span> {{ deliveryOutcome.placentaMembraneDelivery }}</td>
+                </tr>
+                <tr>
+                  <td><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
+                  <td><span>Baby Status:</span> {{ deliveryOutcome.babyStatus }}</td>
+                  <td><span>Baby Gender:</span> {{ deliveryOutcome.babyGender }}</td>
+                  <td><span>Baby Weight (in grams):</span> {{ deliveryOutcome.babyWeight }}</td>
+                </tr>
+                <tr>
+                  <td><span>APGAR Score:</span> {{ deliveryOutcome.apgarScore }}</td>
+                  <td><span>Resuscitation:</span> {{ deliveryOutcome.resuscitation }}</td>
+                  <td><span>Skin-to-Skin:</span> {{ deliveryOutcome.skinToSkin }}</td>
+                  <td><span>Breast-feeding (in 1 hour):</span> {{ deliveryOutcome.breastfeedingInOneHour }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="!loading" class="table-responsive" style="overflow-x: auto; cursor: grab;">
+            <table id="stage3-print-table" class="table table-bordered bg-white stage3-table">
+              <tbody>
+                <tr class="sr-only">
+                  <th scope="col" colspan="2">Parameter</th>
+                  <th scope="col" *ngFor="let idx of colIndexes">{{ colLabels[idx] }}</th>
+                </tr>
+                <tr class="page-title-row">
+                  <td [attr.colspan]="10"><h1 class="mb-0">MATERNAL &amp; NEWBORN MONITORING (AFTER DELIVERY)</h1></td>
+                </tr>
+                <tr class="page-title-row">
+                  <td colspan="5"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
+                  <td colspan="5"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
+                </tr>
+
+                <tr class="time-header-row">
+                  <td class="param-label" colspan="2">Maternal Vitals (after delivery)</td>
+                  <ng-container *ngFor="let idx of colIndexes">
+                    <td>
+                      <div class="time-label">{{ colLabels[idx] }}</div>
+                      <small class="text-muted" *ngIf="colTimes[idx]">{{ formatColTime(colTimes[idx]) }}</small>
+                    </td>
+                  </ng-container>
+                </tr>
+
+                <ng-container *ngFor="let p of maternalParams; let pi = index">
+                  <tr *ngIf="!p.isTextarea">
+                    <td class="param-label" colspan="2">{{ p.name }}</td>
+                    <ng-container *ngFor="let idx of colIndexes">
+                      <td><div class="value-item" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                    </ng-container>
+                  </tr>
+
+                  <tr *ngIf="p.isTextarea">
+                    <td class="param-label" colspan="2">{{ p.name }}</td>
+                    <ng-container *ngFor="let idx of colIndexes">
+                      <td>
+                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.initial }} {{ ob?.value }}</div>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+
+                <tr class="section-header-row">
+                  <td [attr.colspan]="10">Newborn Condition</td>
+                </tr>
+
+                <tr class="time-header-row">
+                  <td class="param-label" colspan="2"></td>
+                  <ng-container *ngFor="let idx of colIndexes">
+                    <td>
+                      <div class="time-label">{{ colLabels[idx] }}</div>
+                      <small class="text-muted" *ngIf="colTimes[idx]">{{ formatColTime(colTimes[idx]) }}</small>
+                    </td>
+                  </ng-container>
+                </tr>
+
+                <ng-container *ngFor="let p of newbornParams; let pi = index">
+                  <tr *ngIf="!p.isTextarea">
+                    <td class="param-label" colspan="2">{{ p.name }}</td>
+                    <ng-container *ngFor="let idx of colIndexes">
+                      <td><div class="value-item" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                    </ng-container>
+                  </tr>
+
+                  <tr *ngIf="p.isTextarea">
+                    <td class="param-label" colspan="2">{{ p.name }}</td>
+                    <ng-container *ngFor="let idx of colIndexes">
+                      <td>
+                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.initial }} {{ ob?.value }}</div>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="intel-card mt-4">
+            <div class="card-header">
+              <h6 class="mb-0">SHARED DECISION MAKING - STAGE 3</h6>
+            </div>
+            <div class="card-body bg-white">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6 class="mb-2">Mother</h6>
+                  <mat-accordion class="intel-accordion-con" multi>
+                    <mat-expansion-panel [expanded]="false" #mPanel1 hideToggle>
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <div class="intel-accordion-title">
+                            <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
+                            <h6 class="mb-0 ml-2">
+                              Assessment
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();addAssessment('maternal', 9)">Add</button>
+                            </h6>
+                          </div>
+                        </mat-panel-title>
+                        <mat-icon>{{ mPanel1.expanded ? 'remove' : 'add' }}</mat-icon>
+                      </mat-expansion-panel-header>
+                      <ul class="items-list">
+                        <li *ngFor="let a of maternalAssessmentHistory">
+                          <div class="list-item">
+                            <span class="border-0">{{a.value}}</span>
+                            <div class="list-item-content">{{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel [expanded]="false" #mPanel2 hideToggle class="bg-gray">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <div class="intel-accordion-title">
+                            <img src="assets/svgs/note.svg" alt="" width="44px" />
+                            <h6 class="mb-0 ml-2">
+                              Plan
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();prescribePlan('maternal', 10)">Add</button>
+                            </h6>
+                          </div>
+                        </mat-panel-title>
+                        <mat-icon>{{ mPanel2.expanded ? 'remove' : 'add' }}</mat-icon>
+                      </mat-expansion-panel-header>
+                      <ul class="items-list">
+                        <li *ngFor="let p of maternalPlanHistory">
+                          <div class="list-item">
+                            <span class="border-0">{{p.value}}</span>
+                            <div class="list-item-content">{{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+
+                <div class="col-md-6">
+                  <h6 class="mb-2">Newborn</h6>
+                  <mat-accordion class="intel-accordion-con" multi>
+                    <mat-expansion-panel [expanded]="false" #nPanel1 hideToggle>
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <div class="intel-accordion-title">
+                            <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
+                            <h6 class="mb-0 ml-2">
+                              Assessment
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();addAssessment('newborn', 7)">Add</button>
+                            </h6>
+                          </div>
+                        </mat-panel-title>
+                        <mat-icon>{{ nPanel1.expanded ? 'remove' : 'add' }}</mat-icon>
+                      </mat-expansion-panel-header>
+                      <ul class="items-list">
+                        <li *ngFor="let a of newbornAssessmentHistory">
+                          <div class="list-item">
+                            <span class="border-0">{{a.value}}</span>
+                            <div class="list-item-content">{{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel [expanded]="false" #nPanel2 hideToggle class="bg-gray">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <div class="intel-accordion-title">
+                            <img src="assets/svgs/note.svg" alt="" width="44px" />
+                            <h6 class="mb-0 ml-2">
+                              Plan
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();prescribePlan('newborn', 8)">Add</button>
+                            </h6>
+                          </div>
+                        </mat-panel-title>
+                        <mat-icon>{{ nPanel2.expanded ? 'remove' : 'add' }}</mat-icon>
+                      </mat-expansion-panel-header>
+                      <ul class="items-list">
+                        <li *ngFor="let p of newbornPlanHistory">
+                          <div class="list-item">
+                            <span class="border-0">{{p.value}}</span>
+                            <div class="list-item-content">{{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

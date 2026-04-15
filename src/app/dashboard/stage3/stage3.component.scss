@@ -1,0 +1,79 @@
+.stage3-table {
+  min-width: 1200px;
+}
+
+.stage3-table th,
+.stage3-table td {
+  text-align: center;
+  vertical-align: middle;
+  min-width: 120px;
+}
+
+.stage3-table td.param-label {
+  text-align: left;
+  min-width: 220px;
+  font-weight: 600;
+}
+
+.page-title-row td {
+  text-align: left;
+  font-size: 14px;
+  color: #007bff;
+}
+
+.page-title-row td span {
+  color: #000;
+}
+
+.time-header-row td {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.section-header-row td {
+  background: #e7f4ea;
+  font-weight: 700;
+  text-align: left;
+}
+
+.time-label {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.value-item {
+  color: #007bff;
+  border-radius: 50%;
+  width: fit-content;
+  padding: 2px 6px;
+  min-width: 20px;
+  margin: 0 auto;
+}
+
+.obs-chip {
+  background: #eef6ff;
+  border: 1px solid #cfe5ff;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin: 2px 0;
+  font-size: 11px;
+  text-align: left;
+}
+
+.delivery-outcome .table td {
+  vertical-align: top;
+  min-width: 260px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.delivery-outcome .table td span {
+  font-weight: 600;
+}
+
+.delivery-outcome .delivery-title-row td {
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}

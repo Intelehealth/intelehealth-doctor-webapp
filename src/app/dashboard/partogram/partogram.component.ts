@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { environment } from 'src/environments/environment';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { CoreService } from 'src/app/services/core/core.service';
@@ -648,6 +649,16 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
     const visitCompleteEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'Visit Complete');
     if (visitCompleteEnc) {
+      // For Nepal: check if DELIVERY_OUTCOME_STAGE3 flag is present.
+      // If yes, navigate to the Stage 3 page instead of closing the visit.
+      const hasStage3Trigger = environment.hasStage3 &&
+        !!visitCompleteEnc.obs?.find((o: any) => o.concept?.display === 'DELIVERY_OUTCOME_STAGE3');
+
+      if (hasStage3Trigger) {
+        this.router.navigate(['/dashboard/stage3', this.visit.uuid]);
+        return;
+      }
+
       this.visitCompleted = true;
       let outOfTimeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
       let referTypeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'Refer Type');

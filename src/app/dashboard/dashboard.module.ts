@@ -27,6 +27,7 @@ import { PartogramComponent } from './partogram/partogram.component';
 import { NgxPanZoomModule } from 'ngx-panzoom';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
+import { Stage3Component } from './stage3/stage3.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { HwProfileComponent } from './hw-profile/hw-profile.component';
     GetStartedComponent,
     ChangePasswordComponent,
     PartogramComponent,
-    HwProfileComponent
+    HwProfileComponent,
+    Stage3Component
   ],
   imports: [
     CommonModule,
