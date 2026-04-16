@@ -5,6 +5,7 @@ const CLIENT = 'ezazi' as 'ezazi' | 'nepal';
 export const environment = {
   production: true,
   client: CLIENT,
+  forceNepaliCalendar: false,
   hasStage3: CLIENT === 'nepal',
   base:            `${window.location.protocol}//${window.location.host}`,
   baseURL:         `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,

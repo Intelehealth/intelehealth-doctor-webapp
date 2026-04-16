@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
+import { NepaliDate, NepaliDateService } from 'src/app/core/services/nepali-date.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -87,6 +88,32 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   phoneValid: boolean = false;
   emailValid: boolean = false;
   checkingPhoneValidity: boolean = false;
+  isNepalClient: boolean = environment.client === 'nepal' || environment.forceNepaliCalendar;
+  todayBsLabel: string = '';
+  bsYears: number[] = [];
+  bsDays: number[] = [];
+  bsBirthdate: NepaliDate = {
+    year: null,
+    month: null,
+    day: null
+  };
+  readonly bsMonths = [
+    'Baisakh',
+    'Jestha',
+    'Ashadh',
+    'Shrawan',
+    'Bhadra',
+    'Ashwin',
+    'Kartik',
+    'Mangsir',
+    'Poush',
+    'Magh',
+    'Falgun',
+    'Chaitra'
+  ].map((name, index) => ({
+    value: index + 1,
+    label: name
+  }));
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -96,7 +123,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private cookieService: CookieService,
-    private rolesService: NgxRolesService
+    private rolesService: NgxRolesService,
+    private nepaliDateService: NepaliDateService
   ) {
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -118,6 +146,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.today = moment().format('YYYY-MM-DD');
+    this.initializeNepaliBirthdate();
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));
     this.hwName = localStorage.getItem('doctorName');
@@ -198,6 +227,9 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
+      if (this.isNepalClient) {
+        this.setNepaliBirthdateFromAd(personalFormValues.birthdate);
+      }
       if (personalFormValues.phoneNumber) this.validateProviderAttribute('phoneNumber');
     }
   }
@@ -322,6 +354,11 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
 
     let pf1 = this.personalInfoForm.value;
+
+    if (this.isNepalClient && !pf1.birthdate) {
+      this.toastr.warning('Please select date of birth.', 'Date of birth');
+      return;
+    }
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
       // console.log(res1);
@@ -468,6 +505,83 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         }, 500);
       }
     });
+  }
+
+  initializeNepaliBirthdate() {
+    if (!this.isNepalClient) {
+      return;
+    }
+
+    this.bsYears = this.nepaliDateService.getSupportedBsYears();
+
+    const todayBs = this.nepaliDateService.getTodayBs();
+
+    if (todayBs) {
+      this.bsYears = this.nepaliDateService.getSupportedBsYears(todayBs.year);
+      this.todayBsLabel = this.nepaliDateService.formatBsDate(todayBs);
+
+      if (!this.bsBirthdate.year) {
+        this.bsBirthdate.year = todayBs.year;
+      }
+
+      if (!this.bsBirthdate.month) {
+        this.bsBirthdate.month = todayBs.month;
+      }
+
+      this.updateBsDays();
+    }
+  }
+
+  onNepaliBirthdateChange() {
+    this.updateBsDays();
+
+    if (!this.bsBirthdate.year || !this.bsBirthdate.month || !this.bsBirthdate.day) {
+      this.personalInfoForm.patchValue({ birthdate: null, age: null });
+      return;
+    }
+
+    const englishDate = this.nepaliDateService.bsToGregorian(
+      this.bsBirthdate.year,
+      this.bsBirthdate.month,
+      this.bsBirthdate.day
+    );
+    const birthdate = this.nepaliDateService.toGregorianIsoString(englishDate);
+
+    if (!birthdate || moment(birthdate).isAfter(moment(), 'day')) {
+      this.personalInfoForm.patchValue({ birthdate: null, age: null });
+      return;
+    }
+
+    this.personalInfoForm.patchValue({ birthdate });
+  }
+
+  setNepaliBirthdateFromAd(birthdate: string) {
+    if (!birthdate) {
+      return;
+    }
+
+    const bsDate = this.nepaliDateService.gregorianToBs(birthdate);
+
+    if (!bsDate) {
+      return;
+    }
+
+    this.bsBirthdate = { ...bsDate };
+    this.updateBsDays();
+  }
+
+  updateBsDays() {
+    if (!this.bsBirthdate.year || !this.bsBirthdate.month) {
+      this.bsDays = [];
+      return;
+    }
+
+    const daysInMonth = this.nepaliDateService.getDaysInBsMonth(this.bsBirthdate.year, this.bsBirthdate.month);
+    this.bsDays = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+
+    if (this.bsBirthdate.day && this.bsBirthdate.day > daysInMonth) {
+      this.bsBirthdate.day = null;
+    }
   }
 
   ngOnDestroy(): void {

@@ -16,6 +16,7 @@ const base = URLS[CLIENT];
 export const environment = {
   production: false,
   client: CLIENT,
+  forceNepaliCalendar: true,
   hasStage3: CLIENT === 'nepal',
   base,
   baseURL:         `${base}/openmrs/ws/rest/v1`,
