@@ -1314,7 +1314,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
     this.disableAddInstruction = true;
     this.isInstructionRejected = false;
-    this.instructions = this.addAdditionalInstructionForm.value.note;
+    this.instructions = this.addAdditionalInstructionForm.value.note + ' :: .';
     this.saveAdditionalInstructions(this.instructions);
   }
 
