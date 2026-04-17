@@ -60,6 +60,18 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     'right lower back': 15, 'left lower back': 16
   };
 
+  /** Maps compound position strings (e.g. "anteriorone", "posteriorsix") to point IDs */
+  private compoundPositionToPoint: Record<string, number> = {
+    'anteriorone': 1, 'anteriortwo': 2,
+    'anteriorthree': 3, 'anteriorfour': 4,
+    'anteriorfive': 5, 'anteriorsix': 6,
+    'lateralone': 7, 'lateraltwo': 8,
+    'lateralthree': 9, 'lateralfour': 10,
+    'posteriorone': 11, 'posteriortwo': 12,
+    'posteriorthree': 13, 'posteriorfour': 14,
+    'posteriorfive': 15, 'posteriorsix': 16
+  };
+
   // Data arrays — populated from OBS encounter data (no static placeholders)
   lungData: LungData[] = [];
   heartData: HeartData[] = [];
@@ -192,14 +204,14 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
    * Resolves the position name to a point number using reverse lookup maps.
    */
   private mapRecordingToData(rec: any, sound: string, obsPosition: string): void {
-    const position = rec.position || obsPosition || '';
+    const position = obsPosition || rec.position || '';
     const posLower = position.toLowerCase().trim();
 
     if (sound === 'heart' || rec.location === 'heart') {
       const point = this.heartPositionToPoint[posLower] ?? 0;
       this.heartData.push({
-        heart_bpm: rec.heart_bpm ?? 'N/A',
-        breathing_rate: rec.breathing_rate ?? 'N/A',
+        heart_bpm: this.normalizeNA(rec.heart_bpm),
+        breathing_rate: this.normalizeNA(rec.breathing_rate),
         location: 'heart',
         position: this.heartPositionNames[point] || position,
         point,
@@ -211,7 +223,7 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     } else if (sound === 'lung' || rec.location === 'lung') {
       const point = this.lungPositionToPoint[posLower] ?? 0;
       this.lungData.push({
-        lung_bpm: rec.lung_bpm?.toString() ?? 'N/A',
+        lung_bpm: this.normalizeNA(rec.lung_bpm),
         location: 'lung',
         position: this.lungPositionNames[point] || position,
         point,
@@ -225,6 +237,14 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     // Extract device info from the first recording that has it
     if (rec.device && !this.deviceName) this.deviceName = rec.device;
     if (rec.deviceId && !this.deviceId) this.deviceId = rec.deviceId;
+  }
+
+  /** Normalize values like null, undefined, "NA", "na", "" to a consistent "N/A". */
+  private normalizeNA(value: any): string {
+    if (value == null) return 'N/A';
+    const str = String(value).trim();
+    if (str === '' || str.toLowerCase() === 'na') return 'N/A';
+    return str;
   }
 
   //** Safely normalize screening_results with fallback to empty array.
