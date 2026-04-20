@@ -4,7 +4,7 @@
       <div class="intel-card">
         <div class="card-body">
           <div class="py-2 d-flex align-items-center justify-content-between">
-            <button class="blue-btn" type="button" (click)="backToStage12()">Back to Stage 1/2</button>
+            <button class="blue-btn" type="button" (click)="backToStage12()">View eLCG</button>
             <button class="icon-action-btn" type="button" (click)="printStage3()" matTooltip="Print" matTooltipPosition="below">
               <mat-icon>print</mat-icon>
             </button>
@@ -31,7 +31,7 @@
                   <td><span>Placenta &amp; Membrane Delivery:</span> {{ deliveryOutcome.placentaMembraneDelivery }}</td>
                 </tr>
                 <tr>
-                  <td><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
+                  <td class="amtsl-medication-cell"><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
                   <td><span>Baby Status:</span> {{ deliveryOutcome.babyStatus }}</td>
                   <td><span>Baby Gender:</span> {{ deliveryOutcome.babyGender }}</td>
                   <td><span>Baby Weight (in grams):</span> {{ deliveryOutcome.babyWeight }}</td>
@@ -53,9 +53,7 @@
                   <th scope="col" colspan="2">Parameter</th>
                   <th scope="col" *ngFor="let idx of colIndexes">{{ colLabels[idx] }}</th>
                 </tr>
-                <tr class="page-title-row">
-                  <td [attr.colspan]="10"><h1 class="mb-0">MATERNAL &amp; NEWBORN MONITORING (AFTER DELIVERY)</h1></td>
-                </tr>
+               
                 <tr class="page-title-row">
                   <td colspan="5"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
                   <td colspan="5"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
@@ -89,12 +87,10 @@
                   </tr>
                 </ng-container>
 
-                <tr class="section-header-row">
-                  <td [attr.colspan]="10">Newborn Condition</td>
-                </tr>
+              
 
                 <tr class="time-header-row">
-                  <td class="param-label" colspan="2"></td>
+                  <td class="param-label" colspan="2">Newborn Condition</td>
                   <ng-container *ngFor="let idx of colIndexes">
                     <td>
                       <div class="time-label">{{ colLabels[idx] }}</div>
@@ -126,12 +122,12 @@
 
           <div class="intel-card mt-4">
             <div class="card-header">
-              <h6 class="mb-0">SHARED DECISION MAKING - STAGE 3</h6>
+              <h6 class="mb-0">Share decision making - Early Post Partum</h6>
             </div>
             <div class="card-body bg-white">
-              <div class="row">
-                <div class="col-md-6">
-                  <h6 class="mb-2">Mother</h6>
+              <div class="row shared-decision-row">
+                <div class="col-md-6 shared-decision-col shared-decision-col-left">
+                  <h6 class="shared-section-title mb-2">Mother</h6>
                   <mat-accordion class="intel-accordion-con" multi>
                     <mat-expansion-panel [expanded]="false" #mPanel1 hideToggle>
                       <mat-expansion-panel-header>
@@ -150,7 +146,7 @@
                         <li *ngFor="let a of maternalAssessmentHistory">
                           <div class="list-item">
                             <span class="border-0">{{a.value}}</span>
-                            <div class="list-item-content">{{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                            <div class="list-item-content">{{a.initial}} ({{formatDateTimeByClient(a.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -173,7 +169,7 @@
                         <li *ngFor="let p of maternalPlanHistory">
                           <div class="list-item">
                             <span class="border-0">{{p.value}}</span>
-                            <div class="list-item-content">{{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                            <div class="list-item-content">{{p.initial}} ({{formatDateTimeByClient(p.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -181,8 +177,8 @@
                   </mat-accordion>
                 </div>
 
-                <div class="col-md-6">
-                  <h6 class="mb-2">Newborn</h6>
+                <div class="col-md-6 shared-decision-col shared-decision-col-right">
+                  <h6 class="shared-section-title mb-2">Newborn</h6>
                   <mat-accordion class="intel-accordion-con" multi>
                     <mat-expansion-panel [expanded]="false" #nPanel1 hideToggle>
                       <mat-expansion-panel-header>
@@ -201,7 +197,7 @@
                         <li *ngFor="let a of newbornAssessmentHistory">
                           <div class="list-item">
                             <span class="border-0">{{a.value}}</span>
-                            <div class="list-item-content">{{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                            <div class="list-item-content">{{a.initial}} ({{formatDateTimeByClient(a.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -224,7 +220,7 @@
                         <li *ngFor="let p of newbornPlanHistory">
                           <div class="list-item">
                             <span class="border-0">{{p.value}}</span>
-                            <div class="list-item-content">{{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})</div>
+                            <div class="list-item-content">{{p.initial}} ({{formatDateTimeByClient(p.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>

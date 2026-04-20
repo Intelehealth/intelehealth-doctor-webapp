@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as bikramSambat from 'bikram-sambat';
 
 export interface NepaliDate {
   year: number;
@@ -144,7 +145,7 @@ export class NepaliDateService {
     const yearIndex = bsYear - this.BS_YEAR_START;
 
     if (!this.BS_MONTHS_DATA[yearIndex] || bsMonth < 1 || bsMonth > 12) {
-      return null;
+      return this.bsToGregorianFallback(bsYear, bsMonth, bsDay);
     }
 
     const daysInMonth = this.getDaysInBsMonth(bsYear, bsMonth);
@@ -197,7 +198,7 @@ export class NepaliDateService {
     }
 
     if (yearIndex >= this.BS_MONTHS_DATA.length) {
-      return null;
+      return this.gregorianToBsFallback(target);
     }
 
     let bsMonth = 1;
@@ -253,6 +254,39 @@ export class NepaliDateService {
 
     date.setHours(12, 0, 0, 0);
     return date;
+  }
+
+  private gregorianToBsFallback(date: Date): NepaliDate | null {
+    try {
+      const adDateText = `${date.getFullYear()}-${this.pad(date.getMonth() + 1)}-${this.pad(date.getDate())}`;
+      const converted = bikramSambat.toBik(adDateText);
+
+      if (!converted || !converted.year || !converted.month || !converted.day) {
+        return null;
+      }
+
+      return {
+        year: converted.year,
+        month: converted.month,
+        day: converted.day
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private bsToGregorianFallback(bsYear: number, bsMonth: number, bsDay: number): Date | null {
+    try {
+      const converted = bikramSambat.toGreg(bsYear, bsMonth, bsDay);
+
+      if (!converted || !converted.year || !converted.month || !converted.day) {
+        return null;
+      }
+
+      return new Date(converted.year, converted.month - 1, converted.day, 12, 0, 0, 0);
+    } catch {
+      return null;
+    }
   }
 
   private pad(value: number): string {

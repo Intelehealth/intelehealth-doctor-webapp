@@ -8,7 +8,7 @@ const CLIENT = 'ezazi' as 'ezazi' | 'nepal';
 
 const URLS = {
   ezazi: 'https://testezazi.intelehealth.org',
-  nepal: 'https://testnepal.intelehealth.org', // TODO: replace with real Nepal URL
+  nepal: 'https://nezazi.intelehealth.org',
 };
 
 const base = URLS[CLIENT];
@@ -16,7 +16,6 @@ const base = URLS[CLIENT];
 export const environment = {
   production: false,
   client: CLIENT,
-  forceNepaliCalendar: true,
   hasStage3: CLIENT === 'nepal',
   base,
   baseURL:         `${base}/openmrs/ws/rest/v1`,
@@ -28,8 +27,8 @@ export const environment = {
   gatewayURL:      `${base}:3030/`,
   webrtcSdkServerUrl:   `wss://${new URL(base).hostname}:9090`,
   webrtcTokenServerUrl: `${base}:3000/`,
-  captchaSiteKey: "6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O",
-  siteKey:        "6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O",
+  captchaSiteKey: "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  siteKey:        "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
   externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   recordsPerPage: 50

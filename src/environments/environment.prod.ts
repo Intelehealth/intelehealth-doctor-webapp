@@ -1,11 +1,10 @@
 // ─── Change this one line before building for a client ──────────────────────
-const CLIENT = 'ezazi' as 'ezazi' | 'nepal';
+const CLIENT = 'nepal' as 'ezazi' | 'nepal';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const environment = {
   production: true,
   client: CLIENT,
-  forceNepaliCalendar: false,
   hasStage3: CLIENT === 'nepal',
   base:            `${window.location.protocol}//${window.location.host}`,
   baseURL:         `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,
@@ -17,8 +16,8 @@ export const environment = {
   gatewayURL:      `${window.location.protocol}//${window.location.hostname}:3030/`,
   webrtcSdkServerUrl:   `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
-  captchaSiteKey: "6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O",
-  siteKey:        "6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O",
+ captchaSiteKey: "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  siteKey:        "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
   externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   recordsPerPage: 50

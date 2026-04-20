@@ -174,7 +174,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneValid: boolean = false;
   emailValid: boolean = false;
   checkingPhoneValidity: boolean = false;
-  isNepalClient: boolean = environment.client === 'nepal' || environment.forceNepaliCalendar;
+  isNepalClient: boolean = environment.client === 'nepal' || globalThis?.location?.hostname?.toLowerCase().includes('nepal');
   todayBsLabel: string = '';
   bsYears: number[] = [];
   bsDays: number[] = [];

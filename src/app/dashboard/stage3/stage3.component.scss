@@ -71,9 +71,76 @@
   font-weight: 600;
 }
 
+.delivery-outcome .table td.amtsl-medication-cell {
+  white-space: pre-line;
+}
+
 .delivery-outcome .delivery-title-row td {
   text-align: center;
   font-weight: 700;
   font-size: 18px;
   letter-spacing: 0.5px;
+}
+
+.shared-section-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.shared-decision-col {
+  position: relative;
+}
+
+.shared-decision-col-left {
+  border-right: 1px solid #e3e6ef;
+  padding-right: 20px;
+}
+
+.shared-decision-col-right {
+  padding-left: 20px;
+}
+
+.blue-btn {
+  outline: none;
+  border: none;
+  background: #2E1E91;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  padding: 10px;
+}
+
+.intel-accordion-con {
+  .mat-expansion-panel {
+    background: var(--color-white);
+    box-shadow: none !important;
+    border-radius: 12px !important;
+
+    .intel-accordion-title h6 {
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+    }
+  }
+
+  .mat-expansion-panel.bg-gray {
+    background: #FAF9FF;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .shared-decision-col-left {
+    border-right: none;
+    padding-right: 15px;
+    margin-bottom: 16px;
+  }
+
+  .shared-decision-col-right {
+    padding-left: 15px;
+  }
 }

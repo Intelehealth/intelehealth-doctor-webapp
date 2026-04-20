@@ -3,14 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { environment } from 'src/environments/environment';
 
 declare const getFromStorage;
 
 const COL_OFFSETS = [0, 15, 30, 45, 75, 105, 165, 225];
-const COL_LABELS  = ['T', '+15m', '+30m', '+45m', '+1h 15m', '+1h 45m', '+2h 45m', '+3h 45m'];
+const COL_LABELS  = ['0 min', '+15m', '+30m', '+45m', '+1h 15m', '+1h 45m', '+2h 45m', '+3h 45m'];
 const NUM_COLS = 8;
 
 export interface S3Param {
@@ -26,6 +28,9 @@ export interface S3Param {
   styleUrls: ['./stage3.component.scss']
 })
 export class Stage3Component implements OnInit {
+  isNepalClient =
+    environment.client === 'nepal' ||
+    globalThis?.location?.hostname?.toLowerCase().includes('nepal');
 
   visit: any;
   patient: any;
@@ -91,6 +96,7 @@ export class Stage3Component implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly pageTitleService: PageTitleService,
+    private readonly nepaliDateService: NepaliDateService,
     private readonly coreService: CoreService,
     private readonly visitService: VisitService,
     private readonly encounterService: EncounterService,
@@ -98,7 +104,7 @@ export class Stage3Component implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: 'Stage 3 Partogram', imgUrl: '' });
+    this.pageTitleService.setTitle({ title: 'Early PostPartum Monitoring Report', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) { this.router.navigate(['/dashboard']); return; }
     this.getVisit(id);
@@ -153,15 +159,58 @@ export class Stage3Component implements OnInit {
     return String(value);
   }
 
-  private formatDate(value: any): string {
-    if (!value) {
+  private formatAmtslMedication(value: any): string {
+    if (value === undefined || value === null || value === '') {
       return '-';
     }
-    const parsed = moment(value);
-    if (!parsed.isValid()) {
-      return this.toDisplayText(value);
+
+    const extractMedicationText = (input: any): any => {
+      if (input === undefined || input === null) {
+        return input;
+      }
+
+      if (Array.isArray(input)) {
+        return input.join(', ');
+      }
+
+      if (typeof input === 'object') {
+        return input.MEDICATIONS_AMTSL || input.Medications_AMTSL || input['AMTSL Medication'] || JSON.stringify(input);
+      }
+
+      return input;
+    };
+
+    let normalized = extractMedicationText(value);
+
+    if (typeof normalized === 'string') {
+      const raw = normalized.trim();
+      if (raw.startsWith('{') || raw.startsWith('[')) {
+        try {
+          normalized = extractMedicationText(JSON.parse(raw));
+        } catch {
+          const jsonKeyMatch = raw.match(/"(?:MEDICATIONS_AMTSL|Medications_AMTSL|AMTSL Medication)"\s*:\s*"([^"]+)"/i);
+          if (jsonKeyMatch?.[1]) {
+            normalized = jsonKeyMatch[1];
+          }
+        }
+      }
     }
-    return parsed.format('DD/MM/YYYY');
+
+    const text = this.toDisplayText(normalized);
+    if (text === '-') {
+      return text;
+    }
+
+    return text
+      .split(',')
+      .map((item: string) => item.trim())
+      .filter((item: string) => !!item)
+      .join('\n');
+  }
+
+  private formatDate(value: any): string {
+    const formatted = this.formatDateByClient(value);
+    return formatted || '-';
   }
 
   private formatTime(value: any): string {
@@ -175,31 +224,86 @@ export class Stage3Component implements OnInit {
     return parsed.format('hh:mm A');
   }
 
+  private parseIncomingDate(dateValue: any): Date | null {
+    if (!dateValue) {
+      return null;
+    }
+
+    if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+      return dateValue;
+    }
+
+    const formats = [
+      moment.ISO_8601,
+      'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+      'YYYY-MM-DDTHH:mm:ssZZ',
+      'DD/MM/YYYY hh:mm A',
+      'DD/MM/YYYY HH:mm',
+      'DD/MM/YYYY'
+    ];
+
+    const parsed = moment(dateValue, formats as any, true);
+    if (parsed.isValid()) {
+      return parsed.toDate();
+    }
+
+    const fallback = new Date(dateValue);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+  }
+
+  formatDateByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    if (!this.isNepalClient) {
+      return moment(adDate).format('DD/MM/YYYY');
+    }
+
+    const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+  }
+
+  formatDateTimeByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    const datePart = this.formatDateByClient(adDate);
+    const timePart = moment(adDate).format('hh:mm a');
+    return `${datePart} ${timePart}`.trim();
+  }
+
   readDeliveryOutcome() {
+    const deliveryOutcomeEncounter = (this.visit?.encounters || []).find((encounter: any) => encounter.encounterType?.display === 'DELIVERY_OUTCOME_STAGE3');
     const visitComplete = (this.visit?.encounters || []).find((encounter: any) => encounter.encounterType?.display === 'Visit Complete');
-    if (!visitComplete) {
+    const sourceEncounter = deliveryOutcomeEncounter || visitComplete;
+
+    if (!sourceEncounter) {
       return;
     }
 
-    const deliveryDateObs = this.getObsValueByConcept(visitComplete, ['Delivery Date', 'DATE OF DELIVERY', 'Birth Date']);
-    const deliveryTimeObs = this.getObsValueByConcept(visitComplete, ['Delivery Time', 'TIME OF DELIVERY', 'Birth Time']);
-    const fallbackDateTime = visitComplete?.encounterDatetime;
+    const deliveryDateObs = this.getObsValueByConcept(sourceEncounter, ['Delivery Date', 'DATE OF DELIVERY', 'Birth Date', 'DELIVERY_DATE']);
+    const deliveryTimeObs = this.getObsValueByConcept(sourceEncounter, ['Delivery Time', 'TIME OF DELIVERY', 'Birth Time', 'DELIVERY_TIME']);
+    const fallbackDateTime = sourceEncounter?.encounterDatetime;
 
-    const apgar1 = this.getObsValueByConcept(visitComplete, ['Apgar at 1 min']);
-    const apgar5 = this.getObsValueByConcept(visitComplete, ['Apgar at 5 min']);
+    const apgar1 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 1 min']);
+    const apgar5 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 5 min']);
 
     this.deliveryOutcome.deliveryDate = this.formatDate(deliveryDateObs || fallbackDateTime);
     this.deliveryOutcome.deliveryTime = this.formatTime(deliveryTimeObs || fallbackDateTime);
-    this.deliveryOutcome.deliveryMode = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Delivery Mode', 'Mode of Delivery']));
-    this.deliveryOutcome.placentaMembraneDelivery = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Placenta & Membrane Delivery', 'Placenta and Membrane Delivery']));
-    this.deliveryOutcome.amtslMedication = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['AMTSL Medication', 'AMTSL']));
-    this.deliveryOutcome.babyStatus = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Baby status', 'Baby Status']));
-    this.deliveryOutcome.babyGender = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Sex', 'Baby Gender']));
-    this.deliveryOutcome.babyWeight = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['BirthWeight', 'Baby Weight']));
+    this.deliveryOutcome.deliveryMode = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Delivery Mode', 'Mode of Delivery', 'DELIVERY_MODE']));
+    this.deliveryOutcome.placentaMembraneDelivery = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta & Membrane Delivery', 'Placenta and Membrane Delivery', 'PLACENTA_MEMBRANE_STATUS']));
+    this.deliveryOutcome.amtslMedication = this.formatAmtslMedication(this.getObsValueByConcept(sourceEncounter, ['AMTSL Medication', 'AMTSL', 'Medications_AMTSL']));
+    this.deliveryOutcome.babyStatus = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Baby status', 'Baby Status', 'BIRTH_TYPE']));
+    this.deliveryOutcome.babyGender = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Sex', 'Baby Gender']));
+    this.deliveryOutcome.babyWeight = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['BirthWeight', 'Baby Weight']));
     this.deliveryOutcome.apgarScore = (apgar1 || apgar5) ? `${this.toDisplayText(apgar1)}/${this.toDisplayText(apgar5)}` : '-';
-    this.deliveryOutcome.resuscitation = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Resuscitation']));
-    this.deliveryOutcome.skinToSkin = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Skin-to-skin', 'Skin To Skin']));
-    this.deliveryOutcome.breastfeedingInOneHour = this.toDisplayText(this.getObsValueByConcept(visitComplete, ['Breast-feeding in 1 hour', 'Breastfeeding in 1 hour']));
+    this.deliveryOutcome.resuscitation = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Resuscitation', 'RESUSCITATION']));
+    this.deliveryOutcome.skinToSkin = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Skin-to-skin', 'Skin To Skin', 'Skin-to skin contact', 'Skin-to skin contact']));
+    this.deliveryOutcome.breastfeedingInOneHour = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Breast-feeding in 1 hour', 'Breastfeeding in 1 hour', 'BREASTFED_FIRSTHOUR']));
   }
 
   readStageData() {
@@ -217,15 +321,13 @@ export class Stage3Component implements OnInit {
     });
 
     const encs = (this.visit?.encounters || [])
-      .filter((e: any) => /^Stage3_Hour\d+$/.test(e.encounterType?.display))
+      .filter((e: any) => /^Stage3_Hour\d+(?:_\d+)?$/.test(e.encounterType?.display))
       .sort((a: any, b: any) =>
         new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime()
       );
 
-    for (const enc of encs) {
-      const match = enc.encounterType.display.match(/^Stage3_Hour(\d+)$/);
-      if (!match) continue;
-      const colIndex = Number.parseInt(match[1], 10) - 1;
+    for (const [encIndex, enc] of encs.entries()) {
+      const colIndex = encIndex;
       if (colIndex < 0 || colIndex >= NUM_COLS) continue;
 
       this.colTimes[colIndex]    = enc.encounterDatetime;
@@ -546,7 +648,7 @@ export class Stage3Component implements OnInit {
     const doc = printWindow.document;
     doc.open();
     doc.close();
-    doc.head.innerHTML = '<meta charset="utf-8"><title>Stage 3 Partogram</title><style>' + css + '</style>';
+    doc.head.innerHTML = '<meta charset="utf-8"><title>Early PostPartum Monitoring Report</title><style>' + css + '</style>';
     doc.body.innerHTML = '<table>' + tableEl.innerHTML + '</table>';
     setTimeout(() => {
       printWindow.focus();
@@ -557,15 +659,25 @@ export class Stage3Component implements OnInit {
 
   backToStage12() {
     if (this.visit?.uuid) {
-      this.router.navigate(['/dashboard/elcg', this.visit.uuid]);
+      this.router.navigate(['/dashboard/elcg', this.visit.uuid], {
+        queryParams: { fromStage3: '1' }
+      });
       return;
     }
     this.router.navigate(['/dashboard']);
   }
 
   formatColTime(time: string | null): string {
-    if (!time) return '';
-    return moment(time).format('DD/MM/YY HH:mm');
+    if (!time) {
+      return '';
+    }
+    const adDate = this.parseIncomingDate(time);
+    if (!adDate) {
+      return '';
+    }
+    const datePart = this.formatDateByClient(adDate);
+    const timePart = moment(adDate).format('HH:mm');
+    return `${datePart} ${timePart}`.trim();
   }
 
 }

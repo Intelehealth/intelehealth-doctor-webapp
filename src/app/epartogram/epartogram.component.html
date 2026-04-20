@@ -16,14 +16,14 @@
                   <td colspan="6"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
                   <td colspan="15"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
                   <td colspan="26"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span>
-                    {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
+                    {{formatDateByClient(pinfo?.ActiveLaborDiagnosed) || 'NA'}} <span>]</span></td>
                 </tr>
                 <tr class="page-title-row">
                   <td colspan="14"><span>
                       Ruptured membranes:</span>&nbsp;
                     <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp == 'U'">U</ng-container>
                     <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp != 'U'">
-                      <span>[Date</span> {{pinfo?.MembraneRupturedTimestamp|date:'dd/MM/yyyy'|noValue:'NA'}}
+                      <span>[Date</span> {{formatDateByClient(pinfo?.MembraneRupturedTimestamp) || 'NA'}}
                       <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
                     </ng-container>
                   </td>
@@ -31,8 +31,8 @@
                 </tr>
                 <tr class="page-title-row">
                   <td colspan="18"><span>Gravida:</span> {{pinfo?.Gravida|noValue:'NA'}}</td>
-                  <td colspan="18"><span>LMP:</span> {{pinfo?.LMP|noValue:'NA'}}</td>
-                  <td colspan="19"><span>EDD:</span> {{pinfo?.EDD|noValue:'NA'}}</td>
+                  <td colspan="18"><span>LMP:</span> {{formatDateByClient(pinfo?.LMP) || 'NA'}}</td>
+                  <td colspan="19"><span>EDD:</span> {{formatDateByClient(pinfo?.EDD) || 'NA'}}</td>
                 </tr>
                 <tr>
                   <td colspan="3" class="nb"></td>
@@ -40,7 +40,7 @@
                   <ng-container *ngFor="let item of timeFullStage1; let i=index;">
                     <td [ngClass]="{ 'sos': item && encuuid1Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid1Full[i].enc_uuid) }">
                       <div class="value-item" *ngIf="item">
-                        {{item|date:'dd/MM/YYYY'}} <br/> {{item|date:'hh:mm a'}}
+                        {{formatDateByClient(item)}} <br/> {{item|date:'hh:mm a'}}
                         <ng-container *ngIf="item && encuuid1Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid1Full[i].enc_uuid)">
                           <br>
                           <h5>SOS</h5>
@@ -52,7 +52,7 @@
                   <ng-container *ngFor="let item of timeFullStage2; let i=index;">
                     <td [ngClass]="{ 'sos': item && encuuid2Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid2Full[i].enc_uuid) }">
                       <div class="value-item" *ngIf="item">
-                        {{item|date:'dd/MM/YYYY'}} <br/> {{item|date:'hh:mm a'}}
+                        {{formatDateByClient(item)}} <br/> {{item|date:'hh:mm a'}}
                         <ng-container *ngIf="item && encuuid2Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid2Full[i].enc_uuid)">
                           <br>
                           <h5>SOS</h5>

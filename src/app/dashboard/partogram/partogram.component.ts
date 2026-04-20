@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
 import { environment } from 'src/environments/environment';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
@@ -26,6 +27,10 @@ declare const saveToStorage, getFromStorage;
   styleUrls: ['./partogram.component.scss']
 })
 export class PartogramComponent implements OnInit, OnDestroy {
+  isNepalClient =
+    environment.client === 'nepal' ||
+    globalThis?.location?.hostname?.toLowerCase().includes('nepal');
+  hasStage3Trigger = false;
 
   pos = { top: 0, left: 0, x: 0, y: 0 };
   ele: any;
@@ -380,9 +385,51 @@ export class PartogramComponent implements OnInit, OnDestroy {
     private socketSvc: SocketService,
     private toastr: ToastrService,
     private webrtcSvc: WebrtcService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private nepaliDateService: NepaliDateService
   ) {
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
+  }
+
+  formatDateByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    if (!this.isNepalClient) {
+      return moment(adDate).format('DD/MM/YYYY');
+    }
+
+    const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+  }
+
+  private parseIncomingDate(dateValue: any): Date | null {
+    if (!dateValue) {
+      return null;
+    }
+
+    if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+      return dateValue;
+    }
+
+    const formats = [
+      moment.ISO_8601,
+      'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+      'YYYY-MM-DDTHH:mm:ssZZ',
+      'DD/MM/YYYY hh:mm A',
+      'DD/MM/YYYY HH:mm',
+      'DD/MM/YYYY'
+    ];
+
+    const parsed = moment(dateValue, formats as any, true);
+    if (parsed.isValid()) {
+      return parsed.toDate();
+    }
+
+    const fallback = new Date(dateValue);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
   }
 
   ngOnDestroy(): void {
@@ -648,16 +695,12 @@ export class PartogramComponent implements OnInit, OnDestroy {
       }
     }
     const visitCompleteEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'Visit Complete');
+    const stage3OutcomeEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'DELIVERY_OUTCOME_STAGE3');
     if (visitCompleteEnc) {
       // For Nepal: check if DELIVERY_OUTCOME_STAGE3 flag is present.
-      // If yes, navigate to the Stage 3 page instead of closing the visit.
-      const hasStage3Trigger = environment.hasStage3 &&
-        !!visitCompleteEnc.obs?.find((o: any) => o.concept?.display === 'DELIVERY_OUTCOME_STAGE3');
-
-      if (hasStage3Trigger) {
-        this.router.navigate(['/dashboard/stage3', this.visit.uuid]);
-        return;
-      }
+      // If yes, allow manual navigation to the Stage 3 page from Stage 2.
+      this.hasStage3Trigger = environment.hasStage3 &&
+        (!!stage3OutcomeEnc || !!visitCompleteEnc.obs?.find((o: any) => o.concept?.display === 'DELIVERY_OUTCOME_STAGE3'));
 
       this.visitCompleted = true;
       let outOfTimeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
@@ -1444,6 +1487,14 @@ export class PartogramComponent implements OnInit, OnDestroy {
         }, 5000);
       }
     });
+  }
+
+  openStage3() {
+    if (!this.visit?.uuid) {
+      return;
+    }
+
+    this.router.navigate(['/dashboard/stage3', this.visit.uuid]);
   }
 
 }
