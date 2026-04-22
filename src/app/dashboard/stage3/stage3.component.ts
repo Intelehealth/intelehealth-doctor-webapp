@@ -42,6 +42,7 @@ export class Stage3Component implements OnInit {
     deliveryTime: '-',
     deliveryMode: '-',
     placentaMembraneDelivery: '-',
+    placentaDeliveryTime: '-',
     amtslMedication: '-',
     babyStatus: '-',
     babyGender: '-',
@@ -50,6 +51,10 @@ export class Stage3Component implements OnInit {
     resuscitation: '-',
     skinToSkin: '-',
     breastfeedingInOneHour: '-',
+    placentaCordAbnormality: '-',
+    perinealLaceration: '-',
+    degreeOfTear: '-',
+    congenitalDisorders: '-',
   };
 
   colTimes: (string | null)[]    = new Array(NUM_COLS).fill(null);
@@ -63,8 +68,8 @@ export class Stage3Component implements OnInit {
   // Replace placeholder UUIDs with real OpenMRS concept UUIDs for Nepal Stage3
   conceptAssessmentMother  = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   conceptPlanMother        = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-  conceptAssessmentNewborn = 'ASSESSMENT_NEWBORN_S3';
-  conceptPlanNewborn       = 'PLAN_NEWBORN_S3';
+  conceptAssessmentNewborn = '15fc4eca-7635-4e7c-baa4-20c250cfe62a';
+  conceptPlanNewborn       = 'a79853d9-e45e-41b2-8473-b19e5cae66cb';
 
   maternalParams: S3Param[] = [
     { name: 'Pulse',               conceptName: 'PULSE',             values: new Array(NUM_COLS).fill(null) },
@@ -188,7 +193,8 @@ export class Stage3Component implements OnInit {
         try {
           normalized = extractMedicationText(JSON.parse(raw));
         } catch {
-          const jsonKeyMatch = raw.match(/"(?:MEDICATIONS_AMTSL|Medications_AMTSL|AMTSL Medication)"\s*:\s*"([^"]+)"/i);
+          const regex = /"(?:MEDICATIONS_AMTSL|Medications_AMTSL|AMTSL Medication)"\s*:\s*"([^"]+)"/i;
+          const jsonKeyMatch = regex.exec(raw);
           if (jsonKeyMatch?.[1]) {
             normalized = jsonKeyMatch[1];
           }
@@ -204,8 +210,61 @@ export class Stage3Component implements OnInit {
     return text
       .split(',')
       .map((item: string) => item.trim())
-      .filter((item: string) => !!item)
+      .filter(Boolean)
       .join('\n');
+  }
+
+  private formatCongenitalDisorders(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+
+    const extractDisordersText = (input: any): string[] => {
+      if (input === undefined || input === null) {
+        return [];
+      }
+
+      if (Array.isArray(input)) {
+        return input.map(String).filter(Boolean);
+      }
+
+      if (typeof input === 'object') {
+        const congenitalArray = input.CONGENITAL_ANOMALY || input.congenital_anomaly || [];
+        const disorders: string[] = [];
+        
+        if (Array.isArray(congenitalArray)) {
+          disorders.push(...congenitalArray.map(String).filter(Boolean));
+        }
+        
+        if (input.other_text) {
+          disorders.push(String(input.other_text));
+        }
+        
+        return disorders;
+      }
+
+      if (typeof input === 'string') {
+        const raw = input.trim();
+        if (raw.startsWith('{') || raw.startsWith('[')) {
+          try {
+            return extractDisordersText(JSON.parse(raw));
+          } catch {
+            // If JSON parsing fails, return as is
+            return input.split(',').map((item: string) => item.trim()).filter(Boolean);
+          }
+        }
+        return input.split(',').map((item: string) => item.trim()).filter(Boolean);
+      }
+
+      return [];
+    };
+
+    const disorders = extractDisordersText(value);
+    if (disorders.length === 0) {
+      return '-';
+    }
+
+    return disorders.join(', ');
   }
 
   private formatDate(value: any): string {
@@ -296,6 +355,7 @@ export class Stage3Component implements OnInit {
     this.deliveryOutcome.deliveryTime = this.formatTime(deliveryTimeObs || fallbackDateTime);
     this.deliveryOutcome.deliveryMode = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Delivery Mode', 'Mode of Delivery', 'DELIVERY_MODE']));
     this.deliveryOutcome.placentaMembraneDelivery = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta & Membrane Delivery', 'Placenta and Membrane Delivery', 'PLACENTA_MEMBRANE_STATUS']));
+    this.deliveryOutcome.placentaDeliveryTime = this.formatTime(this.getObsValueByConcept(sourceEncounter, ['Placenta Delivery Time', 'PLACENTA_DELIVERY_TIME']));
     this.deliveryOutcome.amtslMedication = this.formatAmtslMedication(this.getObsValueByConcept(sourceEncounter, ['AMTSL Medication', 'AMTSL', 'Medications_AMTSL']));
     this.deliveryOutcome.babyStatus = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Baby status', 'Baby Status', 'BIRTH_TYPE']));
     this.deliveryOutcome.babyGender = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Sex', 'Baby Gender']));
@@ -304,6 +364,10 @@ export class Stage3Component implements OnInit {
     this.deliveryOutcome.resuscitation = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Resuscitation', 'RESUSCITATION']));
     this.deliveryOutcome.skinToSkin = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Skin-to-skin', 'Skin To Skin', 'Skin-to skin contact', 'Skin-to skin contact']));
     this.deliveryOutcome.breastfeedingInOneHour = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Breast-feeding in 1 hour', 'Breastfeeding in 1 hour', 'BREASTFED_FIRSTHOUR']));
+    this.deliveryOutcome.placentaCordAbnormality = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta or cord abnormality']));
+    this.deliveryOutcome.perinealLaceration = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Perineal laceration during delivery']));
+    this.deliveryOutcome.degreeOfTear = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['DEGREE_OF_TEAR', 'Degree of tear']));
+    this.deliveryOutcome.congenitalDisorders = this.formatCongenitalDisorders(this.getObsValueByConcept(sourceEncounter, ['CONGENITAL DISORDERS', 'Congenital Disorders']));
   }
 
   readStageData() {
@@ -366,7 +430,16 @@ export class Stage3Component implements OnInit {
           initial: this.getInitials(ob.creator?.person?.display)
         }];
       } else {
-        p.values[colIndex] = { value: ob.value, uuid: ob.uuid };
+        if (p.name === 'BP') {
+          const concept = this.normalizeConcept(ob?.concept?.display);
+          const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '';
+          const systolic = /systolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[0] : current);
+          const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
+          const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
+          p.values[colIndex] = { value, uuid: ob.uuid };
+        } else {
+          p.values[colIndex] = { value: ob.value, uuid: ob.uuid };
+        }
       }
       return;
     }
@@ -389,38 +462,73 @@ export class Stage3Component implements OnInit {
   }
 
   private normalizeConcept(value: any): string {
-    return String(value || '').trim().toLowerCase();
+    return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  private getParamAliases(section: 'maternal' | 'newborn', param: S3Param): string[] {
+    const aliases: string[] = [param?.conceptName, param?.name];
+
+    if (section === 'maternal') {
+      if (param.name === 'BP') {
+        aliases.push('Systolic BP', 'Diastolic BP');
+      } else if (param.name === 'Respiratory Rate') {
+        aliases.push('Respiratory rate');
+      } else if (param.name === 'Blood Loss') {
+        aliases.push('BLOOD_LOSS_MOTHER', 'Blood Loss Mother');
+      } else if (param.name === 'Uterus Contracted') {
+        aliases.push('UTERUS_CONTRACTED_MOTHER');
+      } else if (param.name === 'Urine Passed') {
+        aliases.push('URINE_PASSED_MOTHER');
+      } else if (param.name === 'Hematoma') {
+        aliases.push('HEMATOMA_MOTHER');
+      } else if (param.name === 'Complication') {
+        aliases.push('ONGOING_COMPLICATIONS_MOTHER', 'Complications Mother');
+      } else if (param.name === 'Assessment (Mother)') {
+        aliases.push('ASSESSMENT_MOTHER', 'Assessment Mother');
+      } else if (param.name === 'Plan (Mother)') {
+        aliases.push('PLAN_MOTHER', 'Plan Mother', 'Additional comments');
+      }
+    }
+
+    if (section === 'newborn') {
+      if (param.name === 'Grunting') {
+        aliases.push('GRUNTING_NEWBORN');
+      } else if (param.name === 'Chest Indrawing') {
+        aliases.push('CHEST_INDRAWING_NEWBORN');
+      } else if (param.name === 'Fast Breathing') {
+        aliases.push('FAST_BREATHING_NEWBORN');
+      } else if (param.name === 'Feet Temperature') {
+        aliases.push('FEET_WARM_NEWBORN', 'Feet Warm Newborn');
+      } else if (param.name === 'Skin Color') {
+        aliases.push('SKIN_COLOR_NEWBORN');
+      } else if (param.name === 'Umbilical Cord Oozing') {
+        aliases.push('UC_OOZING_NEWBORN', 'Umbilical Cord Oozing Newborn');
+      } else if (param.name === 'Sucking / Feeding') {
+        aliases.push('SUCKING_FEEDING_NEWBORN', 'Sucking Feeding Newborn');
+      } else if (param.name === 'Assessment (Newborn)') {
+        aliases.push('ASSESSMENT_NEWBORN', 'Assessment Newborn');
+      } else if (param.name === 'Plan (Newborn)') {
+        aliases.push('PLAN_NEWBORN', 'Plan Newborn');
+      }
+    }
+
+    return aliases
+      .map((item: string) => this.normalizeConcept(item))
+      .filter(Boolean);
   }
 
   private matchesParamObs(ob: any, param: S3Param, section: 'maternal' | 'newborn', paramIndex: number): boolean {
     const obsDisplay = this.normalizeConcept(ob?.concept?.display);
     const obsConceptUuid = this.normalizeConcept(ob?.concept?.uuid);
-    const paramDisplay = this.normalizeConcept(param?.conceptName);
-    if (obsDisplay === paramDisplay) {
+    const aliases = this.getParamAliases(section, param);
+
+    if (aliases.includes(obsDisplay)) {
       return true;
     }
 
     const conceptUuid = this.normalizeConcept(this.getConceptUuid(section, paramIndex));
     if (conceptUuid && obsConceptUuid && conceptUuid === obsConceptUuid) {
       return true;
-    }
-
-    if (section === 'maternal' && param.isTextarea) {
-      if (param.name === 'Assessment (Mother)' && ['assessment', 'assessment mother'].includes(obsDisplay)) {
-        return true;
-      }
-      if (param.name === 'Plan (Mother)' && ['plan', 'plan mother', 'additional comments'].includes(obsDisplay)) {
-        return true;
-      }
-    }
-
-    if (section === 'newborn' && param.isTextarea) {
-      if (param.name === 'Assessment (Newborn)' && ['assessment newborn'].includes(obsDisplay)) {
-        return true;
-      }
-      if (param.name === 'Plan (Newborn)' && ['plan newborn'].includes(obsDisplay)) {
-        return true;
-      }
     }
 
     return false;

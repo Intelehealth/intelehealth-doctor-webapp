@@ -696,13 +696,16 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
     const visitCompleteEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'Visit Complete');
     const stage3OutcomeEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'DELIVERY_OUTCOME_STAGE3');
-    if (visitCompleteEnc) {
-      // For Nepal: check if DELIVERY_OUTCOME_STAGE3 flag is present.
-      // If yes, allow manual navigation to the Stage 3 page from Stage 2.
-      this.hasStage3Trigger = environment.hasStage3 &&
-        (!!stage3OutcomeEnc || !!visitCompleteEnc.obs?.find((o: any) => o.concept?.display === 'DELIVERY_OUTCOME_STAGE3'));
-
+    
+    // For Nepal: check if DELIVERY_OUTCOME_STAGE3 encounter is present
+    this.hasStage3Trigger = environment.hasStage3 && !!stage3OutcomeEnc;
+    
+    // Mark visit as completed if we have either Visit Complete or Stage 3 outcome
+    if (visitCompleteEnc || stage3OutcomeEnc) {
       this.visitCompleted = true;
+    }
+    
+    if (visitCompleteEnc) {
       let outOfTimeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
       let referTypeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'Refer Type');
       if (outOfTimeIndex != -1) {

@@ -24,11 +24,21 @@
                 <tr class="delivery-title-row">
                   <td colspan="4">DELIVERY OUTCOME REPORT</td>
                 </tr>
+                <tr class="page-title-row">
+                  <td colspan="2"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
+                  <td colspan="2"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
+                </tr>
                 <tr>
                   <td><span>Delivery Date:</span> {{ deliveryOutcome.deliveryDate }}</td>
                   <td><span>Delivery Time:</span> {{ deliveryOutcome.deliveryTime }}</td>
                   <td><span>Delivery Mode:</span> {{ deliveryOutcome.deliveryMode }}</td>
                   <td><span>Placenta &amp; Membrane Delivery:</span> {{ deliveryOutcome.placentaMembraneDelivery }}</td>
+                </tr>
+                <tr>
+                  <td><span>Placenta Delivery Time:</span> {{ deliveryOutcome.placentaDeliveryTime }}</td>
+                  <td><span>Placenta/Cord Abnormality:</span> {{ deliveryOutcome.placentaCordAbnormality }}</td>
+                  <td><span>Perineal Laceration:</span> {{ deliveryOutcome.perinealLaceration }}</td>
+                  <td><span>Degree of Tear:</span> {{ deliveryOutcome.degreeOfTear }}</td>
                 </tr>
                 <tr>
                   <td class="amtsl-medication-cell"><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
@@ -42,6 +52,9 @@
                   <td><span>Skin-to-Skin:</span> {{ deliveryOutcome.skinToSkin }}</td>
                   <td><span>Breast-feeding (in 1 hour):</span> {{ deliveryOutcome.breastfeedingInOneHour }}</td>
                 </tr>
+                <tr *ngIf="deliveryOutcome.congenitalDisorders !== '-'">
+                  <td colspan="4"><span>Congenital Disorders:</span> {{ deliveryOutcome.congenitalDisorders }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -52,11 +65,6 @@
                 <tr class="sr-only">
                   <th scope="col" colspan="2">Parameter</th>
                   <th scope="col" *ngFor="let idx of colIndexes">{{ colLabels[idx] }}</th>
-                </tr>
-               
-                <tr class="page-title-row">
-                  <td colspan="5"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
-                  <td colspan="5"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
                 </tr>
 
                 <tr class="time-header-row">

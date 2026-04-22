@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 // ─── Change this one line to switch between clients locally ───────────────────
-const CLIENT = 'ezazi' as 'ezazi' | 'nepal';
+const CLIENT = 'nepal' as 'ezazi' | 'nepal';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const URLS = {
