@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { NepaliDateService } from '../core/services/nepali-date.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,9 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  isNepalClient =
+    environment.client === 'nepal' ||
+    globalThis?.location?.hostname?.toLowerCase().includes('nepal');
 
   showAll: boolean = false;
   displayedColumns1: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'cervix_plot', 'descent_plot', 'alarming_readings', 'provider'];
@@ -147,7 +151,60 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private pageTitleService: PageTitleService,
     private visitService: VisitService,
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private nepaliDateService: NepaliDateService) { }
+
+  private parseIncomingDate(dateValue: any): Date | null {
+    if (!dateValue) {
+      return null;
+    }
+
+    if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+      return dateValue;
+    }
+
+    const formats = [
+      moment.ISO_8601,
+      'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+      'YYYY-MM-DDTHH:mm:ssZZ',
+      'DD/MM/YYYY hh:mm A',
+      'DD/MM/YYYY HH:mm',
+      'DD/MM/YYYY'
+    ];
+
+    const parsed = moment(dateValue, formats as any, true);
+    if (parsed.isValid()) {
+      return parsed.toDate();
+    }
+
+    const fallback = new Date(dateValue);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+  }
+
+  formatDateByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    if (!this.isNepalClient) {
+      return moment(adDate).format('DD MMM, YYYY');
+    }
+
+    const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD MMM, YYYY');
+  }
+
+  formatDateTimeByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    const datePart = this.formatDateByClient(adDate);
+    const timePart = moment(adDate).format('hh:mm a');
+    return `${datePart} ${timePart}`.trim();
+  }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -418,7 +475,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if (hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm a');
+      return this.formatDateTimeByClient(data);
     };
     if (hours < 1) {
       return `${minutes} minutes`;

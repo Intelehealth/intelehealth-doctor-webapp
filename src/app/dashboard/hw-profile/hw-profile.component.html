@@ -130,8 +130,8 @@
                 </div>
               </div>
               <div class="form-group col-md-4">
-                <label for="birthdate">Date of birth *</label>
-                <div class="input-group">
+                <label for="birthdate">Date of birth {{ isNepalClient ? '(BS)' : '' }} *</label>
+                <div class="input-group" *ngIf="!isNepalClient">
                   <input type="text" class="form-control" formControlName="birthdate" [matDatepicker]="dobdp" [max]="today" placeholder="Enter DOB" aria-label="Birthdate"
                     aria-describedby="basic-addon1" readonly>
                   <mat-datepicker #dobdp></mat-datepicker>
@@ -142,6 +142,29 @@
                       </mat-datepicker-toggle>
                     </span>
                   </div>
+                </div>
+                <div *ngIf="isNepalClient">
+                  <div class="form-row">
+                    <div class="col-4 pr-1">
+                      <select class="form-control" [(ngModel)]="bsBirthdate.year" [ngModelOptions]="{standalone: true}" (change)="onNepaliBirthdateChange()">
+                        <option [ngValue]="null">Year</option>
+                        <option *ngFor="let year of bsYears" [ngValue]="year">{{year}}</option>
+                      </select>
+                    </div>
+                    <div class="col-4 px-1">
+                      <select class="form-control" [(ngModel)]="bsBirthdate.month" [ngModelOptions]="{standalone: true}" (change)="onNepaliBirthdateChange()">
+                        <option [ngValue]="null">Month</option>
+                        <option *ngFor="let month of bsMonths" [ngValue]="month.value">{{month.label}}</option>
+                      </select>
+                    </div>
+                    <div class="col-4 pl-1">
+                      <select class="form-control" [(ngModel)]="bsBirthdate.day" [ngModelOptions]="{standalone: true}" (change)="onNepaliBirthdateChange()">
+                        <option [ngValue]="null">Day</option>
+                        <option *ngFor="let day of bsDays" [ngValue]="day">{{day}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <small class="text-muted d-block mt-1" *ngIf="todayBsLabel">Today (BS): {{todayBsLabel}}</small>
                 </div>
                 <div *ngIf="submitted && f1.birthdate.errors">
                   <small class="error-msg" *ngIf="f1.birthdate.errors.required">Enter DOB</small>

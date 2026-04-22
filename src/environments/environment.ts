@@ -2,30 +2,34 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false,
-  base: "https://testezazi.intelehealth.org",
-  baseURL: "https://testezazi.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://testezazi.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://testezazi.intelehealth.org/openmrs",
-  mindmapURL: "https://testezazi.intelehealth.org:3004/api",
-  notificationURL: "https://testezazi.intelehealth.org:3004/notification",
-  socketURL: "https://testezazi.intelehealth.org:3004",
-  captchaSiteKey: "6Let-aosAAAAAFw3Na6BUof611gjU5Prape0ebpo",
-  siteKey: "6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O",
-  externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==', //externaluser
-  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
-  webrtcSdkServerUrl: "wss://testezazi.intelehealth.org:9090",
-  webrtcTokenServerUrl: 'https://testezazi.intelehealth.org:3000/',
-  gatewayURL: "https://testezazi.intelehealth.org:3030/",
-  recordsPerPage: 50
+// ─── Change this one line to switch between clients locally ───────────────────
+const CLIENT = 'nepal' as 'ezazi' | 'nepal';
+// ─────────────────────────────────────────────────────────────────────────────
+
+const URLS = {
+  ezazi: 'https://testezazi.intelehealth.org',
+  nepal: 'https://nezazi.intelehealth.org',
 };
 
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
+const base = URLS[CLIENT];
+
+export const environment = {
+  production: false,
+  client: CLIENT,
+  hasStage3: CLIENT === 'nepal',
+  base,
+  baseURL:         `${base}/openmrs/ws/rest/v1`,
+  baseURLCoreApp:  `${base}/openmrs/coreapps/diagnoses`,
+  baseURLLegacy:   `${base}/openmrs`,
+  mindmapURL:      `${base}:3004/api`,
+  notificationURL: `${base}:3004/notification`,
+  socketURL:       `${base}:3004`,
+  gatewayURL:      `${base}:3030/`,
+  webrtcSdkServerUrl:   `wss://${new URL(base).hostname}:9090`,
+  webrtcTokenServerUrl: `${base}:3000/`,
+  captchaSiteKey: "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  siteKey:        "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
+  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
+  recordsPerPage: 50
+};

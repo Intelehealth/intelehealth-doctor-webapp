@@ -133,6 +133,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   socketInitialize() {
+    // Skip socket initialization on Stage 3 route
+    if (this.router.url.includes('/stage3')) {
+      return;
+    }
     // If user role is admin then suscribe for support messages
     let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     this.subscription1 = this.socketService.adminUnread.subscribe(res => {

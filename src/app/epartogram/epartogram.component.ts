@@ -8,6 +8,8 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from '../services/auth.service';
+import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-epartogram',
@@ -15,6 +17,9 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./epartogram.component.scss']
 })
 export class EpartogramComponent implements OnInit {
+  isNepalClient =
+    environment.client === 'nepal' ||
+    globalThis?.location?.hostname?.toLowerCase().includes('nepal');
 
   pos = { top: 0, left: 0, x: 0, y: 0 };
   ele: any;
@@ -317,7 +322,49 @@ export class EpartogramComponent implements OnInit {
     private router: Router,
     private visitService: VisitService,
     private authService: AuthService,
-    private coreService: CoreService) { }
+    private coreService: CoreService,
+    private nepaliDateService: NepaliDateService) { }
+
+  formatDateByClient(dateValue: any): string {
+    const adDate = this.parseIncomingDate(dateValue);
+    if (!adDate) {
+      return '';
+    }
+
+    if (!this.isNepalClient) {
+      return moment(adDate).format('DD/MM/YYYY');
+    }
+
+    const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+  }
+
+  private parseIncomingDate(dateValue: any): Date | null {
+    if (!dateValue) {
+      return null;
+    }
+
+    if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+      return dateValue;
+    }
+
+    const formats = [
+      moment.ISO_8601,
+      'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+      'YYYY-MM-DDTHH:mm:ssZZ',
+      'DD/MM/YYYY hh:mm A',
+      'DD/MM/YYYY HH:mm',
+      'DD/MM/YYYY'
+    ];
+
+    const parsed = moment(dateValue, formats as any, true);
+    if (parsed.isValid()) {
+      return parsed.toDate();
+    }
+
+    const fallback = new Date(dateValue);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
