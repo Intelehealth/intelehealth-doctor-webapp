@@ -739,8 +739,8 @@ export class Stage3Component implements OnInit {
   }
 
   printStage3() {
-    const tableEl = document.getElementById('stage3-print-table');
-    if (!tableEl) { globalThis.print(); return; }
+    const printContent = document.getElementById('stage3-print-content');
+    if (!printContent) { globalThis.print(); return; }
     const printWindow = globalThis.open('', '_blank', 'width=1400,height=900');
     if (!printWindow) { globalThis.print(); return; }
     const css = [
@@ -748,6 +748,9 @@ export class Stage3Component implements OnInit {
       'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
       'table { border-collapse: collapse; }',
       'th, td { border: 1px solid #000; padding: 5px 7px; font-size: 11px; text-align: center; vertical-align: middle; white-space: nowrap; }',
+      '.delivery-outcome { margin-bottom: 12px; }',
+      '.page-title-row td, .delivery-title-row td { font-weight: bold; }',
+      'td span { font-weight: bold; }',
       '.section-header-row td { background: #c8e6c9; font-weight: bold; text-align: left; }',
       'td.param-label { text-align: left; min-width: 160px; font-weight: bold; }',
       '.obs-chip { background: #e3f2fd; border-radius: 3px; padding: 1px 3px; margin: 1px; display: inline-block; }',
@@ -757,7 +760,7 @@ export class Stage3Component implements OnInit {
     doc.open();
     doc.close();
     doc.head.innerHTML = '<meta charset="utf-8"><title>Early PostPartum Monitoring Report</title><style>' + css + '</style>';
-    doc.body.innerHTML = '<table>' + tableEl.innerHTML + '</table>';
+    doc.body.innerHTML = printContent.innerHTML;
     setTimeout(() => {
       printWindow.focus();
       printWindow.print();

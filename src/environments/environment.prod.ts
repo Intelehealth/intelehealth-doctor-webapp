@@ -1,6 +1,18 @@
-// ─── Change this one line before building for a client ──────────────────────
-const CLIENT = 'nepal' as 'ezazi' | 'nepal';
-// ─────────────────────────────────────────────────────────────────────────────
+const HOSTNAME = window.location.hostname.toLowerCase();
+const CLIENT: 'ezazi' | 'nepal' = HOSTNAME.includes('nezazi') ? 'nepal' : 'ezazi';
+
+const CAPTCHA_KEYS = {
+  ezazi: {
+    captchaSiteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
+    siteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
+  },
+  nepal: {
+    captchaSiteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
+    siteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
+  },
+};
+
+const { captchaSiteKey, siteKey } = CAPTCHA_KEYS[CLIENT];
 
 export const environment = {
   production: true,
@@ -16,8 +28,8 @@ export const environment = {
   gatewayURL:      `${window.location.protocol}//${window.location.hostname}:3030/`,
   webrtcSdkServerUrl:   `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
- captchaSiteKey: "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
-  siteKey:        "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  captchaSiteKey,
+  siteKey,
   externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   recordsPerPage: 50
