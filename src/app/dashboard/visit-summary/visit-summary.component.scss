@@ -609,6 +609,19 @@ textarea.form-control {
   overflow: scroll;
 }
 
+::ng-deep .diagnosis-select .ng-dropdown-panel .ng-option,
+::ng-deep .diagnosis-select-wrap ~ * .ng-dropdown-panel .ng-option {
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  ::ng-deep html .ng-dropdown-panel .ng-dropdown-panel-items {
+    max-height: 320px;
+  }
+}
+
 .add-more-btn {
   border: none;
   background: transparent;

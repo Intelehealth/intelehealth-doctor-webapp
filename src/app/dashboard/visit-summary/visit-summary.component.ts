@@ -2011,7 +2011,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (n >= 90 && n < 120) {
       code = '#008000';
     } else if (n >= 120 && n <= 139) {
-      code = '#d9d900';
+      code = '#ffc107';
     }
     return code;
   }
@@ -2026,7 +2026,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (n < 80) {
       code = '#008000';
     } else if (n >= 80 && n <= 99) {
-      code = '#d9d900';
+      code = '#ffc107';
     }
     return code;
   }
