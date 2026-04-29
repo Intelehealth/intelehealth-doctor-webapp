@@ -546,32 +546,6 @@ textarea.form-control {
   }
 }
 
-::ng-deep .ng-select.diagnosis-select.ng-select-single .ng-select-container {
-  height: auto !important;
-  min-height: 48px;
-  align-items: center;
-
-  .ng-value-container {
-    flex-wrap: wrap;
-    padding-top: 6px;
-    padding-bottom: 6px;
-
-    .ng-value {
-      max-width: 100%;
-      white-space: normal;
-      word-break: break-word;
-
-      .ng-value-label {
-        white-space: normal;
-        word-break: break-word;
-        overflow: visible;
-        text-overflow: clip;
-        line-height: 1.4;
-      }
-    }
-  }
-}
-
 .blue-btn {
   padding: 14px 24px;
   background: var(--color-darkBlue);
@@ -633,31 +607,6 @@ textarea.form-control {
 ::ng-deep html .ng-dropdown-panel .ng-dropdown-panel-items {
   max-height: 171px;
   overflow: scroll;
-}
-
-::ng-deep .ng-dropdown-panel {
-  width: auto !important;
-  min-width: 100% !important;
-  max-width: 90vw;
-}
-
-::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-  white-space: nowrap;
-  min-width: 100%;
-}
-
-@media (max-width: 767.98px) {
-  ::ng-deep .ng-dropdown-panel {
-    max-width: 95vw;
-  }
-
-  ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-    white-space: normal;
-    word-break: break-word;
-    line-height: 1.4;
-    padding-top: 12px;
-    padding-bottom: 12px;
-  }
 }
 
 .add-more-btn {
