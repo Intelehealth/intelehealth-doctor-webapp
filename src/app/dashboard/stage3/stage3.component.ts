@@ -214,6 +214,33 @@ export class Stage3Component implements OnInit {
       .join('\n');
   }
 
+  private formatComplication(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+
+    const raw = typeof value === 'string' ? value.trim() : value;
+
+    if (typeof raw === 'object' && !Array.isArray(raw)) {
+      const complications = raw.complications || raw.Complications || '';
+      return complications || '-';
+    }
+
+    if (typeof raw === 'string' && (raw.startsWith('{') || raw.startsWith('['))) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+          const complications = parsed.complications || parsed.Complications || '';
+          return complications || '-';
+        }
+      } catch {
+        // not JSON, return as-is
+      }
+    }
+
+    return this.toDisplayText(value);
+  }
+
   private formatCongenitalDisorders(value: any): string {
     if (value === undefined || value === null || value === '') {
       return '-';
@@ -267,9 +294,18 @@ export class Stage3Component implements OnInit {
     return disorders.join(', ');
   }
 
-  private formatDate(value: any): string {
-    const formatted = this.formatDateByClient(value);
-    return formatted || '-';
+  private formatDateYMD(value: any): string {
+    const adDate = this.parseIncomingDate(value);
+    if (!adDate) return '-';
+
+    if (this.isNepalClient) {
+      const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+      if (bsDate) {
+        return `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.day}`;
+      }
+    }
+
+    return moment(adDate).format('YYYY MMMM DD');
   }
 
   private formatTime(value: any): string {
@@ -351,7 +387,7 @@ export class Stage3Component implements OnInit {
     const apgar1 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 1 min']);
     const apgar5 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 5 min']);
 
-    this.deliveryOutcome.deliveryDate = this.formatDate(deliveryDateObs || fallbackDateTime);
+    this.deliveryOutcome.deliveryDate = this.formatDateYMD(deliveryDateObs || fallbackDateTime);
     this.deliveryOutcome.deliveryTime = this.formatTime(deliveryTimeObs || fallbackDateTime);
     this.deliveryOutcome.deliveryMode = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Delivery Mode', 'Mode of Delivery', 'DELIVERY_MODE']));
     this.deliveryOutcome.placentaMembraneDelivery = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta & Membrane Delivery', 'Placenta and Membrane Delivery', 'PLACENTA_MEMBRANE_STATUS']));
@@ -437,6 +473,8 @@ export class Stage3Component implements OnInit {
           const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
           const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
           p.values[colIndex] = { value, uuid: ob.uuid };
+        } else if (p.name === 'Complication') {
+          p.values[colIndex] = { value: this.formatComplication(ob.value), uuid: ob.uuid };
         } else {
           p.values[colIndex] = { value: ob.value, uuid: ob.uuid };
         }
@@ -554,6 +592,49 @@ export class Stage3Component implements OnInit {
       }
     }
     return -1;
+  }
+
+  isAlert(paramName: string, value: any): boolean {
+    if (value === undefined || value === null || value === '' || value === '-') return false;
+    const v = String(value).trim().toLowerCase();
+    const num = parseFloat(v);
+
+    switch (paramName) {
+      case 'Pulse':
+        return !isNaN(num) && (num < 60 || num >= 120);
+      case 'BP': {
+        const parts = String(value).split('/');
+        const sys = parseFloat(parts[0]);
+        const dia = parseFloat(parts[1]);
+        return (!isNaN(sys) && (sys < 80 || sys >= 140)) || (!isNaN(dia) && dia >= 90);
+      }
+      case 'Temperature':
+        return !isNaN(num) && (num < 95 || num >= 99.5);
+      case 'Respiratory Rate':
+        return !isNaN(num) && num > 30;
+      case 'Blood Loss':
+        return !isNaN(num) && num >= 500;
+      case 'Uterus Contracted':
+        return v === 'n' || v === 'no';
+      case 'Urine Passed':
+        return v === 'n' || v === 'no';
+      case 'Hematoma':
+        return v === 'y' || v === 'yes';
+      case 'Complication':
+        return v !== '-' && v !== 'no' && v !== 'n' && v.length > 0;
+      case 'Grunting':
+      case 'Chest Indrawing':
+      case 'Fast Breathing':
+      case 'Skin Color':
+      case 'Umbilical Cord Oozing':
+        return v === 'y' || v === 'yes';
+      case 'Feet Temperature':
+        return v === 'n' || v === 'no';
+      case 'Sucking / Feeding':
+        return v === 'n' || v === 'no';
+      default:
+        return false;
+    }
   }
 
   getTextareaHistory(param: S3Param): any[] {
@@ -747,13 +828,17 @@ export class Stage3Component implements OnInit {
       '* { box-sizing: border-box; }',
       'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
       'table { border-collapse: collapse; }',
-      'th, td { border: 1px solid #000; padding: 5px 7px; font-size: 11px; text-align: center; vertical-align: middle; white-space: nowrap; }',
+      'th, td { border: 1px solid #000; padding: 5px 7px; font-size: 11px; text-align: center; vertical-align: middle; word-wrap: break-word; }',
       '.delivery-outcome { margin-bottom: 12px; }',
+      '.delivery-outcome td { white-space: normal; }',
+      '.delivery-outcome td.amtsl-medication-cell { white-space: pre-line; }',
       '.page-title-row td, .delivery-title-row td { font-weight: bold; }',
       'td span { font-weight: bold; }',
       '.section-header-row td { background: #c8e6c9; font-weight: bold; text-align: left; }',
       'td.param-label { text-align: left; min-width: 160px; font-weight: bold; }',
       '.obs-chip { background: #e3f2fd; border-radius: 3px; padding: 1px 3px; margin: 1px; display: inline-block; }',
+      '.alert-value { color: #d32f2f; background: #ffebee; border-radius: 4px; }',
+      'table { width: 100%; table-layout: auto; }',
       '@media print { @page { size: landscape; margin: 5mm; } }'
     ].join(' ');
     const doc = printWindow.document;

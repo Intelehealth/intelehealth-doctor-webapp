@@ -348,7 +348,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   extractVisitDetail(visit: any) {
     let in_labour_duration = this.getCreatedAt(visit.date_started);
-    let stage = visit.encounters.filter((e: any) => e.type.name.includes('Stage2')).length ? 2 : 1;
+    let stage = visit.encounters.some((e: any) => /^Stage3_Hour\d+/.test(e.type.name) || e.type.name === 'DELIVERY_OUTCOME_STAGE3') ? 3
+      : visit.encounters.some((e: any) => e.type.name.includes('Stage2')) ? 2 : 1;
     let notes = [];
     let notesObj = {};
     let cervixPlotX = null;

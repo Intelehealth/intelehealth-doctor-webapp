@@ -16,13 +16,7 @@
             <div class="delivery-outcome mb-3">
               <table class="table table-bordered bg-white mb-0">
                 <tbody>
-                  <tr class="sr-only">
-                    <th scope="col">Field 1</th>
-                    <th scope="col">Field 2</th>
-                    <th scope="col">Field 3</th>
-                    <th scope="col">Field 4</th>
-                  </tr>
-                  <tr class="delivery-title-row">
+<tr class="delivery-title-row">
                     <td colspan="4">DELIVERY OUTCOME REPORT</td>
                   </tr>
                   <tr class="page-title-row">
@@ -82,7 +76,7 @@
                   <tr *ngIf="!p.isTextarea">
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
-                      <td><div class="value-item" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                      <td><div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
                     </ng-container>
                   </tr>
 
@@ -112,7 +106,7 @@
                   <tr *ngIf="!p.isTextarea">
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
-                      <td><div class="value-item" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                      <td><div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
                     </ng-container>
                   </tr>
 
