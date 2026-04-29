@@ -1040,8 +1040,8 @@
                       <div class="row">
                         <label for="select-diagnosis" class="col-sm-3 col-form-label">{{'Select
                           diagnosis'|translate}}*</label>
-                        <div class="col-sm-9 diagnosis-select-wrap">
-                          <ng-select class="visit-select custom diagnosis-select" formControlName="diagnosisName"
+                        <div class="col-sm-3">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName"
                             (search)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name"
                             [clearable]="true" [searchable]="true" placeholder="{{'Select diagnosis'|translate}}"
                             [addTag]="true" data-test-id="selectDiagnosisName">
