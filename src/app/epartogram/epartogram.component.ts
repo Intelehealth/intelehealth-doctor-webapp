@@ -661,6 +661,23 @@ export class EpartogramComponent implements OnInit {
       .filter(Boolean);
   }
 
+  private formatComplicationValue(value: any): string {
+    if (value === undefined || value === null || value === '') return '-';
+    const raw = typeof value === 'string' ? value.trim() : value;
+    if (typeof raw === 'object' && !Array.isArray(raw)) {
+      return raw.complications || raw.Complications || '-';
+    }
+    if (typeof raw === 'string' && (raw.startsWith('{') || raw.startsWith('['))) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return parsed.complications || parsed.Complications || '-';
+        }
+      } catch { }
+    }
+    return String(value);
+  }
+
   private stage3MatchesParamObs(ob: any, param: EPartogramStage3Param, section: 'maternal' | 'newborn'): boolean {
     const obsDisplay = this.stage3NormalizeConcept(ob?.concept?.display);
     const aliases = this.stage3GetParamAliases(section, param);
@@ -694,6 +711,8 @@ export class EpartogramComponent implements OnInit {
             const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
             const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
             p.values[colIndex] = { value };
+          } else if (p.name === 'Complication') {
+            p.values[colIndex] = { value: this.formatComplicationValue(ob.value) };
           } else {
             p.values[colIndex] = { value: ob.value };
           }
