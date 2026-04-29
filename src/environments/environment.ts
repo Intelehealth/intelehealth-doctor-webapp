@@ -11,7 +11,19 @@ const URLS = {
   nepal: 'https://nezazi.intelehealth.org',
 };
 
+const CAPTCHA_KEYS = {
+  ezazi: {
+    captchaSiteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
+    siteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
+  },
+  nepal: {
+    captchaSiteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
+    siteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
+  },
+};
+
 const base = URLS[CLIENT];
+const { captchaSiteKey, siteKey } = CAPTCHA_KEYS[CLIENT];
 
 export const environment = {
   production: false,
@@ -27,8 +39,8 @@ export const environment = {
   gatewayURL:      `${base}:3030/`,
   webrtcSdkServerUrl:   `wss://${new URL(base).hostname}:9090`,
   webrtcTokenServerUrl: `${base}:3000/`,
-  captchaSiteKey: "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
-  siteKey:        "6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR",
+  captchaSiteKey,
+  siteKey,
   externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   recordsPerPage: 50

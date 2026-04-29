@@ -12,55 +12,56 @@
 
           <div *ngIf="loading" class="text-center p-4">Loading Stage 3 details...</div>
 
-          <div *ngIf="!loading" class="delivery-outcome mb-3">
-            <table class="table table-bordered bg-white mb-0">
-              <tbody>
-                <tr class="sr-only">
-                  <th scope="col">Field 1</th>
-                  <th scope="col">Field 2</th>
-                  <th scope="col">Field 3</th>
-                  <th scope="col">Field 4</th>
-                </tr>
-                <tr class="delivery-title-row">
-                  <td colspan="4">DELIVERY OUTCOME REPORT</td>
-                </tr>
-                <tr class="page-title-row">
-                  <td colspan="2"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
-                  <td colspan="2"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
-                </tr>
-                <tr>
-                  <td><span>Delivery Date:</span> {{ deliveryOutcome.deliveryDate }}</td>
-                  <td><span>Delivery Time:</span> {{ deliveryOutcome.deliveryTime }}</td>
-                  <td><span>Delivery Mode:</span> {{ deliveryOutcome.deliveryMode }}</td>
-                  <td><span>Placenta &amp; Membrane Delivery:</span> {{ deliveryOutcome.placentaMembraneDelivery }}</td>
-                </tr>
-                <tr>
-                  <td><span>Placenta Delivery Time:</span> {{ deliveryOutcome.placentaDeliveryTime }}</td>
-                  <td><span>Placenta/Cord Abnormality:</span> {{ deliveryOutcome.placentaCordAbnormality }}</td>
-                  <td><span>Perineal Laceration:</span> {{ deliveryOutcome.perinealLaceration }}</td>
-                  <td><span>Degree of Tear:</span> {{ deliveryOutcome.degreeOfTear }}</td>
-                </tr>
-                <tr>
-                  <td class="amtsl-medication-cell"><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
-                  <td><span>Baby Status:</span> {{ deliveryOutcome.babyStatus }}</td>
-                  <td><span>Baby Gender:</span> {{ deliveryOutcome.babyGender }}</td>
-                  <td><span>Baby Weight (in grams):</span> {{ deliveryOutcome.babyWeight }}</td>
-                </tr>
-                <tr>
-                  <td><span>APGAR Score:</span> {{ deliveryOutcome.apgarScore }}</td>
-                  <td><span>Resuscitation:</span> {{ deliveryOutcome.resuscitation }}</td>
-                  <td><span>Skin-to-Skin:</span> {{ deliveryOutcome.skinToSkin }}</td>
-                  <td><span>Breast-feeding (in 1 hour):</span> {{ deliveryOutcome.breastfeedingInOneHour }}</td>
-                </tr>
-                <tr *ngIf="deliveryOutcome.congenitalDisorders !== '-'">
-                  <td colspan="4"><span>Congenital Disorders:</span> {{ deliveryOutcome.congenitalDisorders }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <div *ngIf="!loading" id="stage3-print-content">
+            <div class="delivery-outcome mb-3">
+              <table class="table table-bordered bg-white mb-0">
+                <tbody>
+                  <tr class="sr-only">
+                    <th scope="col">Field 1</th>
+                    <th scope="col">Field 2</th>
+                    <th scope="col">Field 3</th>
+                    <th scope="col">Field 4</th>
+                  </tr>
+                  <tr class="delivery-title-row">
+                    <td colspan="4">DELIVERY OUTCOME REPORT</td>
+                  </tr>
+                  <tr class="page-title-row">
+                    <td colspan="2"><span>Name:</span> {{ pinfo?.name | noValue:'NA' }}</td>
+                    <td colspan="2"><span>OpenMRS ID:</span> {{ pinfo?.openMrsId | noValue:'NA' }}</td>
+                  </tr>
+                  <tr>
+                    <td><span>Delivery Date:</span> {{ deliveryOutcome.deliveryDate }}</td>
+                    <td><span>Delivery Time:</span> {{ deliveryOutcome.deliveryTime }}</td>
+                    <td><span>Delivery Mode:</span> {{ deliveryOutcome.deliveryMode }}</td>
+                    <td><span>Placenta &amp; Membrane Delivery:</span> {{ deliveryOutcome.placentaMembraneDelivery }}</td>
+                  </tr>
+                  <tr>
+                    <td><span>Placenta Delivery Time:</span> {{ deliveryOutcome.placentaDeliveryTime }}</td>
+                    <td><span>Placenta/Cord Abnormality:</span> {{ deliveryOutcome.placentaCordAbnormality }}</td>
+                    <td><span>Perineal Laceration:</span> {{ deliveryOutcome.perinealLaceration }}</td>
+                    <td><span>Degree of Tear:</span> {{ deliveryOutcome.degreeOfTear }}</td>
+                  </tr>
+                  <tr>
+                    <td class="amtsl-medication-cell"><span>AMTSL Medication:</span> {{ deliveryOutcome.amtslMedication }}</td>
+                    <td><span>Baby Status:</span> {{ deliveryOutcome.babyStatus }}</td>
+                    <td><span>Baby Gender:</span> {{ deliveryOutcome.babyGender }}</td>
+                    <td><span>Baby Weight (in grams):</span> {{ deliveryOutcome.babyWeight }}</td>
+                  </tr>
+                  <tr>
+                    <td><span>APGAR Score:</span> {{ deliveryOutcome.apgarScore }}</td>
+                    <td><span>Resuscitation:</span> {{ deliveryOutcome.resuscitation }}</td>
+                    <td><span>Skin-to-Skin:</span> {{ deliveryOutcome.skinToSkin }}</td>
+                    <td><span>Breast-feeding (in 1 hour):</span> {{ deliveryOutcome.breastfeedingInOneHour }}</td>
+                  </tr>
+                  <tr *ngIf="deliveryOutcome.congenitalDisorders !== '-'">
+                    <td colspan="4"><span>Congenital Disorders:</span> {{ deliveryOutcome.congenitalDisorders }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-          <div *ngIf="!loading" class="table-responsive" style="overflow-x: auto; cursor: grab;">
-            <table id="stage3-print-table" class="table table-bordered bg-white stage3-table">
+            <div class="table-responsive" style="overflow-x: auto; cursor: grab;">
+              <table id="stage3-print-table" class="table table-bordered bg-white stage3-table">
               <tbody>
                 <tr class="sr-only">
                   <th scope="col" colspan="2">Parameter</th>
@@ -125,7 +126,8 @@
                   </tr>
                 </ng-container>
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
 
           <div class="intel-card mt-4">

@@ -11,6 +11,16 @@ import { AuthService } from '../services/auth.service';
 import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
 import { environment } from 'src/environments/environment';
 
+const STAGE3_COL_LABELS = ['0 min', '+15m', '+30m', '+45m', '+1h 15m', '+1h 45m', '+2h 45m', '+3h 45m'];
+const STAGE3_NUM_COLS = STAGE3_COL_LABELS.length;
+
+interface EPartogramStage3Param {
+  name: string;
+  conceptName: string;
+  isTextarea?: boolean;
+  values: any[];
+}
+
 @Component({
   selector: 'app-epartogram',
   templateUrl: './epartogram.component.html',
@@ -34,6 +44,57 @@ export class EpartogramComponent implements OnInit {
   birthtime: string;
   visitCompleted: boolean = false;
   assessments: any[] = [];
+  hasStage3Data = false;
+  stage3DeliveryOutcome = {
+    deliveryDate: '-',
+    deliveryTime: '-',
+    deliveryMode: '-',
+    placentaMembraneDelivery: '-',
+    placentaDeliveryTime: '-',
+    amtslMedication: '-',
+    babyStatus: '-',
+    babyGender: '-',
+    babyWeight: '-',
+    apgarScore: '-',
+    resuscitation: '-',
+    skinToSkin: '-',
+    breastfeedingInOneHour: '-',
+    placentaCordAbnormality: '-',
+    perinealLaceration: '-',
+    degreeOfTear: '-',
+    congenitalDisorders: '-',
+  };
+  stage3ColLabels = STAGE3_COL_LABELS;
+  stage3NumCols = STAGE3_NUM_COLS;
+  stage3ColIndexes = Array.from({ length: STAGE3_NUM_COLS }, (_, i) => i);
+  stage3ColTimes: (string | null)[] = new Array(STAGE3_NUM_COLS).fill(null);
+
+  stage3MaternalParams: EPartogramStage3Param[] = [
+    { name: 'Pulse',               conceptName: 'PULSE',             values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'BP',                  conceptName: 'Systolic BP',       values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Respiratory Rate',    conceptName: 'Respiratory Rate',  values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Temperature',         conceptName: 'TEMPERATURE (C)',   values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Blood Loss',          conceptName: 'Blood Loss',        values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Uterus Contracted',   conceptName: 'Uterus Contracted', values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Urine Passed',        conceptName: 'Urine Passed',      values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Hematoma',            conceptName: 'Hematoma',          values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Complication',        conceptName: 'Complication',      values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Assessment (Mother)', conceptName: 'Assessment Mother', isTextarea: true, values: new Array(STAGE3_NUM_COLS).fill(null).map(() => []) },
+    { name: 'Plan (Mother)',       conceptName: 'Plan Mother',       isTextarea: true, values: new Array(STAGE3_NUM_COLS).fill(null).map(() => []) },
+  ];
+
+  stage3NewbornParams: EPartogramStage3Param[] = [
+    { name: 'Grunting',              conceptName: 'Grunting',              values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Chest Indrawing',       conceptName: 'Chest Indrawing',       values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Fast Breathing',        conceptName: 'Fast Breathing',        values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Feet Temperature',      conceptName: 'Feet Temperature',      values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Skin Color',            conceptName: 'Skin Color',            values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Umbilical Cord Oozing', conceptName: 'Umbilical Cord Oozing', values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Sucking / Feeding',     conceptName: 'Sucking Feeding',       values: new Array(STAGE3_NUM_COLS).fill(null) },
+    { name: 'Assessment (Newborn)',  conceptName: 'Assessment Newborn',    isTextarea: true, values: new Array(STAGE3_NUM_COLS).fill(null).map(() => []) },
+    { name: 'Plan (Newborn)',        conceptName: 'Plan Newborn',          isTextarea: true, values: new Array(STAGE3_NUM_COLS).fill(null).map(() => []) },
+  ];
+
   parameters: any[] = [
     {
       name: 'Companion',
@@ -406,8 +467,255 @@ export class EpartogramComponent implements OnInit {
         this.patient = visit?.patient;
         this.readPatientAttributes();
         this.readStageData();
+        this.readStage3Data();
       }
     });
+  }
+
+  private readStage3Data() {
+    this.resetStage3Grid();
+    const encounters = this.visit?.encounters || [];
+    const deliveryOutcomeEncounter = encounters.find((encounter: any) => encounter.encounterType?.display === 'DELIVERY_OUTCOME_STAGE3');
+    const stage3Encounters = encounters.filter((e: any) => /^Stage3_Hour\d+(?:_\d+)?$/.test(e.encounterType?.display));
+    this.hasStage3Data = !!deliveryOutcomeEncounter || stage3Encounters.length > 0;
+    if (!this.hasStage3Data) {
+      return;
+    }
+
+    this.readStage3DeliveryOutcome(deliveryOutcomeEncounter);
+    this.readStage3GridData(stage3Encounters);
+  }
+
+  private resetStage3Grid() {
+    this.stage3ColTimes = new Array(STAGE3_NUM_COLS).fill(null);
+    this.stage3MaternalParams.forEach((p: EPartogramStage3Param) => {
+      p.values = p.isTextarea ? new Array(STAGE3_NUM_COLS).fill(null).map(() => []) : new Array(STAGE3_NUM_COLS).fill(null);
+    });
+    this.stage3NewbornParams.forEach((p: EPartogramStage3Param) => {
+      p.values = p.isTextarea ? new Array(STAGE3_NUM_COLS).fill(null).map(() => []) : new Array(STAGE3_NUM_COLS).fill(null);
+    });
+  }
+
+  private getObsValueByConcept(encounter: any, conceptDisplays: string[]): any {
+    const obs = (encounter?.obs || []).find((item: any) => conceptDisplays.includes(item?.concept?.display));
+    return obs?.value;
+  }
+
+  private toDisplayText(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+    return String(value);
+  }
+
+  private formatTimeValue(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+    const parsed = moment(value, [moment.ISO_8601, 'HH:mm', 'hh:mm A', 'hh:mm a'], true);
+    if (!parsed.isValid()) {
+      return this.toDisplayText(value);
+    }
+    return parsed.format('hh:mm A');
+  }
+
+  private formatAmtslMedication(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+    let normalized = value;
+    if (typeof normalized === 'string') {
+      const raw = normalized.trim();
+      if (raw.startsWith('{') || raw.startsWith('[')) {
+        try {
+          normalized = JSON.parse(raw);
+        } catch {
+          return raw;
+        }
+      }
+    }
+    if (Array.isArray(normalized)) {
+      return normalized.map(String).filter(Boolean).join(', ');
+    }
+    if (typeof normalized === 'object') {
+      return this.toDisplayText(normalized.MEDICATIONS_AMTSL || normalized.Medications_AMTSL || normalized['AMTSL Medication']);
+    }
+    return this.toDisplayText(normalized);
+  }
+
+  private formatCongenitalDisorders(value: any): string {
+    if (value === undefined || value === null || value === '') {
+      return '-';
+    }
+    let normalized = value;
+    if (typeof normalized === 'string') {
+      const raw = normalized.trim();
+      if (raw.startsWith('{') || raw.startsWith('[')) {
+        try {
+          normalized = JSON.parse(raw);
+        } catch {
+          return raw;
+        }
+      }
+    }
+    if (Array.isArray(normalized)) {
+      return normalized.map(String).filter(Boolean).join(', ');
+    }
+    if (typeof normalized === 'object') {
+      const disorders: string[] = [];
+      const congenitalArray = normalized.CONGENITAL_ANOMALY || normalized.congenital_anomaly || [];
+      if (Array.isArray(congenitalArray)) {
+        disorders.push(...congenitalArray.map(String).filter(Boolean));
+      }
+      if (normalized.other_text) {
+        disorders.push(String(normalized.other_text));
+      }
+      return disorders.length ? disorders.join(', ') : '-';
+    }
+    return this.toDisplayText(normalized);
+  }
+
+  private readStage3DeliveryOutcome(sourceEncounter: any) {
+    if (!sourceEncounter) {
+      return;
+    }
+
+    const deliveryDateObs = this.getObsValueByConcept(sourceEncounter, ['Delivery Date', 'DATE OF DELIVERY', 'Birth Date', 'DELIVERY_DATE']);
+    const deliveryTimeObs = this.getObsValueByConcept(sourceEncounter, ['Delivery Time', 'TIME OF DELIVERY', 'Birth Time', 'DELIVERY_TIME']);
+    const fallbackDateTime = sourceEncounter?.encounterDatetime;
+    const apgar1 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 1 min']);
+    const apgar5 = this.getObsValueByConcept(sourceEncounter, ['Apgar at 5 min']);
+
+    this.stage3DeliveryOutcome.deliveryDate = this.formatDateByClient(deliveryDateObs || fallbackDateTime) || '-';
+    this.stage3DeliveryOutcome.deliveryTime = this.formatTimeValue(deliveryTimeObs || fallbackDateTime);
+    this.stage3DeliveryOutcome.deliveryMode = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Delivery Mode', 'Mode of Delivery', 'DELIVERY_MODE']));
+    this.stage3DeliveryOutcome.placentaMembraneDelivery = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta & Membrane Delivery', 'Placenta and Membrane Delivery', 'PLACENTA_MEMBRANE_STATUS']));
+    this.stage3DeliveryOutcome.placentaDeliveryTime = this.formatTimeValue(this.getObsValueByConcept(sourceEncounter, ['Placenta Delivery Time', 'PLACENTA_DELIVERY_TIME']));
+    this.stage3DeliveryOutcome.amtslMedication = this.formatAmtslMedication(this.getObsValueByConcept(sourceEncounter, ['AMTSL Medication', 'AMTSL', 'Medications_AMTSL']));
+    this.stage3DeliveryOutcome.babyStatus = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Baby status', 'Baby Status', 'BIRTH_TYPE']));
+    this.stage3DeliveryOutcome.babyGender = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Sex', 'Baby Gender']));
+    this.stage3DeliveryOutcome.babyWeight = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['BirthWeight', 'Baby Weight']));
+    this.stage3DeliveryOutcome.apgarScore = (apgar1 || apgar5) ? `${this.toDisplayText(apgar1)}/${this.toDisplayText(apgar5)}` : '-';
+    this.stage3DeliveryOutcome.resuscitation = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Resuscitation', 'RESUSCITATION']));
+    this.stage3DeliveryOutcome.skinToSkin = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Skin-to-skin', 'Skin To Skin', 'Skin-to skin contact', 'Skin-to skin contact']));
+    this.stage3DeliveryOutcome.breastfeedingInOneHour = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Breast-feeding in 1 hour', 'Breastfeeding in 1 hour', 'BREASTFED_FIRSTHOUR']));
+    this.stage3DeliveryOutcome.placentaCordAbnormality = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta or cord abnormality']));
+    this.stage3DeliveryOutcome.perinealLaceration = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Perineal laceration during delivery']));
+    this.stage3DeliveryOutcome.degreeOfTear = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['DEGREE_OF_TEAR', 'Degree of tear']));
+    this.stage3DeliveryOutcome.congenitalDisorders = this.formatCongenitalDisorders(this.getObsValueByConcept(sourceEncounter, ['CONGENITAL DISORDERS', 'Congenital Disorders']));
+  }
+
+  private stage3NormalizeConcept(value: any): string {
+    return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  private stage3GetParamAliases(section: 'maternal' | 'newborn', param: EPartogramStage3Param): string[] {
+    const aliases: string[] = [param?.conceptName, param?.name];
+
+    if (section === 'maternal') {
+      if (param.name === 'BP') {
+        aliases.push('Systolic BP', 'Diastolic BP');
+      } else if (param.name === 'Respiratory Rate') {
+        aliases.push('Respiratory rate');
+      } else if (param.name === 'Blood Loss') {
+        aliases.push('BLOOD_LOSS_MOTHER', 'Blood Loss Mother');
+      } else if (param.name === 'Uterus Contracted') {
+        aliases.push('UTERUS_CONTRACTED_MOTHER');
+      } else if (param.name === 'Urine Passed') {
+        aliases.push('URINE_PASSED_MOTHER');
+      } else if (param.name === 'Hematoma') {
+        aliases.push('HEMATOMA_MOTHER');
+      } else if (param.name === 'Complication') {
+        aliases.push('ONGOING_COMPLICATIONS_MOTHER', 'Complications Mother');
+      } else if (param.name === 'Assessment (Mother)') {
+        aliases.push('ASSESSMENT_MOTHER', 'Assessment Mother');
+      } else if (param.name === 'Plan (Mother)') {
+        aliases.push('PLAN_MOTHER', 'Plan Mother', 'Additional comments');
+      }
+    }
+
+    if (section === 'newborn') {
+      if (param.name === 'Grunting') {
+        aliases.push('GRUNTING_NEWBORN');
+      } else if (param.name === 'Chest Indrawing') {
+        aliases.push('CHEST_INDRAWING_NEWBORN');
+      } else if (param.name === 'Fast Breathing') {
+        aliases.push('FAST_BREATHING_NEWBORN');
+      } else if (param.name === 'Feet Temperature') {
+        aliases.push('FEET_WARM_NEWBORN', 'Feet Warm Newborn');
+      } else if (param.name === 'Skin Color') {
+        aliases.push('SKIN_COLOR_NEWBORN');
+      } else if (param.name === 'Umbilical Cord Oozing') {
+        aliases.push('UC_OOZING_NEWBORN', 'Umbilical Cord Oozing Newborn');
+      } else if (param.name === 'Sucking / Feeding') {
+        aliases.push('SUCKING_FEEDING_NEWBORN', 'Sucking Feeding Newborn');
+      } else if (param.name === 'Assessment (Newborn)') {
+        aliases.push('ASSESSMENT_NEWBORN', 'Assessment Newborn');
+      } else if (param.name === 'Plan (Newborn)') {
+        aliases.push('PLAN_NEWBORN', 'Plan Newborn');
+      }
+    }
+
+    return aliases
+      .map((item: string) => this.stage3NormalizeConcept(item))
+      .filter(Boolean);
+  }
+
+  private stage3MatchesParamObs(ob: any, param: EPartogramStage3Param, section: 'maternal' | 'newborn'): boolean {
+    const obsDisplay = this.stage3NormalizeConcept(ob?.concept?.display);
+    const aliases = this.stage3GetParamAliases(section, param);
+    return aliases.includes(obsDisplay);
+  }
+
+  private readStage3GridData(stage3Encounters: any[]) {
+    const encs = stage3Encounters
+      .sort((a: any, b: any) => new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime())
+      .slice(0, STAGE3_NUM_COLS);
+
+    for (const [encIndex, enc] of encs.entries()) {
+      const colIndex = encIndex;
+      this.stage3ColTimes[colIndex] = enc.encounterDatetime;
+
+      for (const ob of (enc.obs || [])) {
+        let idx = this.stage3MaternalParams.findIndex((param: EPartogramStage3Param) => this.stage3MatchesParamObs(ob, param, 'maternal'));
+        if (idx >= 0) {
+          const p = this.stage3MaternalParams[idx];
+          if (p.isTextarea) {
+            if (!Array.isArray(p.values[colIndex])) {
+              p.values[colIndex] = [];
+            }
+            const displayName = ob.creator?.person?.display;
+            const initial = displayName && displayName.includes(' ') ? this.getInitials(displayName) : '';
+            p.values[colIndex] = [...p.values[colIndex], { value: ob.value, initial }];
+          } else if (p.name === 'BP') {
+            const concept = this.stage3NormalizeConcept(ob?.concept?.display);
+            const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '';
+            const systolic = /systolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[0] : current);
+            const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
+            const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
+            p.values[colIndex] = { value };
+          } else {
+            p.values[colIndex] = { value: ob.value };
+          }
+          continue;
+        }
+
+        idx = this.stage3NewbornParams.findIndex((param: EPartogramStage3Param) => this.stage3MatchesParamObs(ob, param, 'newborn'));
+        if (idx >= 0) {
+          const p = this.stage3NewbornParams[idx];
+          if (p.isTextarea) {
+            if (!Array.isArray(p.values[colIndex])) {
+              p.values[colIndex] = [];
+            }
+            const displayName = ob.creator?.person?.display;
+            const initial = displayName && displayName.includes(' ') ? this.getInitials(displayName) : '';
+            p.values[colIndex] = [...p.values[colIndex], { value: ob.value, initial }];
+          } else {
+            p.values[colIndex] = { value: ob.value };
+          }
+        }
+      }
+    }
   }
 
   readPatientAttributes() {

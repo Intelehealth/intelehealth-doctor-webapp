@@ -1218,6 +1218,107 @@
             </div>
           </div>
 
+          <div class="intel-card mt-5" *ngIf="isNepalClient && hasStage3Data">
+            <div class="card-header">
+              <h6 class="mb-0">Stage 3 - Early Postpartum Monitoring</h6>
+            </div>
+            <div class="card-body bg-white">
+              <div class="table-responsive mb-3">
+                <table class="table table-bordered mb-0">
+                  <tbody>
+                    <tr class="page-title-row">
+                      <td colspan="4"><span>DELIVERY OUTCOME REPORT</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>Delivery Date:</span> {{ stage3DeliveryOutcome.deliveryDate }}</td>
+                      <td><span>Delivery Time:</span> {{ stage3DeliveryOutcome.deliveryTime }}</td>
+                      <td><span>Delivery Mode:</span> {{ stage3DeliveryOutcome.deliveryMode }}</td>
+                      <td><span>Placenta &amp; Membrane Delivery:</span> {{ stage3DeliveryOutcome.placentaMembraneDelivery }}</td>
+                    </tr>
+                    <tr>
+                      <td><span>Placenta Delivery Time:</span> {{ stage3DeliveryOutcome.placentaDeliveryTime }}</td>
+                      <td><span>Placenta/Cord Abnormality:</span> {{ stage3DeliveryOutcome.placentaCordAbnormality }}</td>
+                      <td><span>Perineal Laceration:</span> {{ stage3DeliveryOutcome.perinealLaceration }}</td>
+                      <td><span>Degree of Tear:</span> {{ stage3DeliveryOutcome.degreeOfTear }}</td>
+                    </tr>
+                    <tr>
+                      <td><span>AMTSL Medication:</span> {{ stage3DeliveryOutcome.amtslMedication }}</td>
+                      <td><span>Baby Status:</span> {{ stage3DeliveryOutcome.babyStatus }}</td>
+                      <td><span>Baby Gender:</span> {{ stage3DeliveryOutcome.babyGender }}</td>
+                      <td><span>Baby Weight:</span> {{ stage3DeliveryOutcome.babyWeight }}</td>
+                    </tr>
+                    <tr>
+                      <td><span>APGAR Score:</span> {{ stage3DeliveryOutcome.apgarScore }}</td>
+                      <td><span>Resuscitation:</span> {{ stage3DeliveryOutcome.resuscitation }}</td>
+                      <td><span>Skin-to-Skin:</span> {{ stage3DeliveryOutcome.skinToSkin }}</td>
+                      <td><span>Breast-feeding (in 1 hour):</span> {{ stage3DeliveryOutcome.breastfeedingInOneHour }}</td>
+                    </tr>
+                    <tr *ngIf="stage3DeliveryOutcome.congenitalDisorders !== '-'">
+                      <td colspan="4"><span>Congenital Disorders:</span> {{ stage3DeliveryOutcome.congenitalDisorders }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                  <tbody>
+                    <tr class="page-title-row">
+                      <td colspan="10"><span>MOTHER CONDITION</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>Parameter</span></td>
+                      <ng-container *ngFor="let idx of stage3ColIndexes">
+                        <td>
+                          <div>{{ stage3ColLabels[idx] }}</div>
+                          <small *ngIf="stage3ColTimes[idx]" class="text-muted">{{formatDateByClient(stage3ColTimes[idx])}} {{stage3ColTimes[idx] | date:'HH:mm'}}</small>
+                        </td>
+                      </ng-container>
+                    </tr>
+                    <ng-container *ngFor="let p of stage3MaternalParams">
+                      <tr *ngIf="!p.isTextarea">
+                        <td><span>{{ p.name }}</span></td>
+                        <ng-container *ngFor="let idx of stage3ColIndexes">
+                          <td>{{ p.values[idx]?.value || '-' }}</td>
+                        </ng-container>
+                      </tr>
+                      <tr *ngIf="p.isTextarea">
+                        <td><span>{{ p.name }}</span></td>
+                        <ng-container *ngFor="let idx of stage3ColIndexes">
+                          <td>
+                            <div *ngFor="let ob of p.values[idx]">{{ ob.initial }} {{ ob.value }}</div>
+                            <div *ngIf="!p.values[idx]?.length">-</div>
+                          </td>
+                        </ng-container>
+                      </tr>
+                    </ng-container>
+
+                    <tr class="page-title-row">
+                      <td colspan="10"><span>NEWBORN CONDITION</span></td>
+                    </tr>
+                    <ng-container *ngFor="let p of stage3NewbornParams">
+                      <tr *ngIf="!p.isTextarea">
+                        <td><span>{{ p.name }}</span></td>
+                        <ng-container *ngFor="let idx of stage3ColIndexes">
+                          <td>{{ p.values[idx]?.value || '-' }}</td>
+                        </ng-container>
+                      </tr>
+                      <tr *ngIf="p.isTextarea">
+                        <td><span>{{ p.name }}</span></td>
+                        <ng-container *ngFor="let idx of stage3ColIndexes">
+                          <td>
+                            <div *ngFor="let ob of p.values[idx]">{{ ob.initial }} {{ ob.value }}</div>
+                            <div *ngIf="!p.values[idx]?.length">-</div>
+                          </td>
+                        </ng-container>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
