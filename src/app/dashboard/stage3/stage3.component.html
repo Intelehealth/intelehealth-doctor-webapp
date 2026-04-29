@@ -84,7 +84,7 @@
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
                       <td>
-                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.initial }} {{ ob?.value }}</div>
+                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.value }}</div>
                       </td>
                     </ng-container>
                   </tr>
@@ -114,7 +114,7 @@
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
                       <td>
-                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.initial }} {{ ob?.value }}</div>
+                        <div class="obs-chip" *ngFor="let ob of p.values[idx]">{{ ob?.value }}</div>
                       </td>
                     </ng-container>
                   </tr>
@@ -150,7 +150,7 @@
                         <li *ngFor="let a of maternalAssessmentHistory">
                           <div class="list-item">
                             <span class="border-0">{{a.value}}</span>
-                            <div class="list-item-content">{{a.initial}} ({{formatDateTimeByClient(a.obsDatetime)}})</div>
+                            <div class="list-item-content">({{formatDateTimeByClient(a.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -173,7 +173,7 @@
                         <li *ngFor="let p of maternalPlanHistory">
                           <div class="list-item">
                             <span class="border-0">{{p.value}}</span>
-                            <div class="list-item-content">{{p.initial}} ({{formatDateTimeByClient(p.obsDatetime)}})</div>
+                            <div class="list-item-content">({{formatDateTimeByClient(p.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -201,7 +201,7 @@
                         <li *ngFor="let a of newbornAssessmentHistory">
                           <div class="list-item">
                             <span class="border-0">{{a.value}}</span>
-                            <div class="list-item-content">{{a.initial}} ({{formatDateTimeByClient(a.obsDatetime)}})</div>
+                            <div class="list-item-content">({{formatDateTimeByClient(a.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>
@@ -224,7 +224,7 @@
                         <li *ngFor="let p of newbornPlanHistory">
                           <div class="list-item">
                             <span class="border-0">{{p.value}}</span>
-                            <div class="list-item-content">{{p.initial}} ({{formatDateTimeByClient(p.obsDatetime)}})</div>
+                            <div class="list-item-content">({{formatDateTimeByClient(p.obsDatetime)}})</div>
                           </div>
                         </li>
                       </ul>

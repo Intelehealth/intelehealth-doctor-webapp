@@ -17,7 +17,7 @@
                   <div class="list-item">
                     <label class="border-0">{{p.planValue}}</label>
                     <div class="list-item-content">
-                      {{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                      ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
                     </div>
                   </div>
                   <mat-divider></mat-divider>
@@ -34,7 +34,7 @@
                   <div class="list-item">
                     <label class="border-0">{{pm.typeOfMedicine}} {{pm.medicineName}} {{pm.strength}} {{pm.dosage}} {{pm.dosageUnit}} {{pm.frequency}} {{pm.routeOfMedicine}} for {{pm.duration}} {{pm.durationUnit}} {{pm.remark}}</label>
                     <div class="list-item-content">
-                      {{pm.initial}} ({{pm.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                      ({{pm.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
                     </div>
                   </div>
                   <mat-divider></mat-divider>
@@ -51,7 +51,7 @@
                   <div class="list-item">
                     <label class="border-0">{{po.infusionStatus|uppercase}} OXYTOCIN - {{po.strength}} U/L ({{po.infusionRate}} drops/minute)</label>
                     <div class="list-item-content">
-                      {{po.initial}} ({{po.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                      ({{po.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
                     </div>
                   </div>
                   <mat-divider></mat-divider>
@@ -68,7 +68,7 @@
                   <div class="list-item">
                     <label class="border-0">{{piv.infusionStatus|uppercase}} IV - {{piv.type}} {{piv.otherType}} ({{piv.infusionRate}} drops/minute)</label>
                     <div class="list-item-content">
-                      {{piv.initial}} ({{piv.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                      ({{piv.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
                     </div>
                   </div>
                   <mat-divider></mat-divider>
