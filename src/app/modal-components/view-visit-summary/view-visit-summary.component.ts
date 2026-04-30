@@ -1013,22 +1013,22 @@ export class ViewVisitSummaryComponent implements OnInit {
       if (n >= 90 && n < 120) {
         code = '#008000';
       } else if (n >= 120 && n <= 139) {
-        code = '#d9d900';
+        code = '#785b02';
       }
       return code;
     }
-  
+
     /**
      *  Return color code for dbp
-     * @param n 
-     * @returns 
+     * @param n
+     * @returns
      */
     getDSystolicColor(n: any) {
       let code: string = '#FF0000';
       if (n < 80) {
         code = '#008000';
       } else if (n >= 80 && n <= 99) {
-        code = '#d9d900';
+        code = '#785b02';
       }
       return code;
     }
