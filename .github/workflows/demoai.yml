@@ -22,10 +22,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           
           # Add the server to known_hosts to prevent interactive prompts
-          ssh-keyscan -H ${{ secrets.DEMOAII_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.DEMOAI_HOST }} >> ~/.ssh/known_hosts
           
           # Execute the download
-          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAII_HOST }}:/home/ubuntu/deploy/webapp/.env .env
+          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env .env
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
       - name: Build and Save Docker Image
         run: |
@@ -38,7 +38,7 @@ jobs:
       - name: Upload Image to Server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.DEMOAII_HOST }}
+          host: ${{ secrets.DEMOAI_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "webapp_image.tar.gz"
@@ -48,7 +48,7 @@ jobs:
       - name: Deploy Container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEMOAII_HOST }}
+          host: ${{ secrets.DEMOAI_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
