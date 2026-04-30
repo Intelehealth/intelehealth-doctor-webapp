@@ -1308,13 +1308,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addAdditionalInstructionForm.invalid) {
       return;
     }
-    if (this.additionalInstructions.find((o: ObsModel) => o.value.includes(this.addAdditionalInstructionForm.value.note))) {
+    if (this.additionalInstructions.find((o: ObsModel) => o.value.includes((this.addAdditionalInstructionForm.value.note).trim()))) {
       this.toastr.warning(this.translateService.instant('Additional instruction already added, please add another instruction.'), this.translateService.instant('Already Added'));
       return;
     }
     this.disableAddInstruction = true;
     this.isInstructionRejected = false;
-    this.instructions = this.addAdditionalInstructionForm.value.note;
+    this.instructions = this.addAdditionalInstructionForm.value.note + ' :: .';
+    this.saveAdditionalInstructions(this.instructions);
   }
 
   saveAdditionalInstructions(instructionsValue) {
@@ -1387,10 +1388,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   toggleAdvice() {
-    //this.addMoreAdvice = !this.addMoreAdvice;
-    this.advice = 'Add advice';
-    this.isAdviceRejected = false;
-    this.disableApproveBtn = false
+    this.addMoreAdvice = !this.addMoreAdvice;
+    // this.advice = 'Add advice';
+    // this.isAdviceRejected = false;
+    // this.disableApproveBtn = false
     this.addAdviceForm.reset();
   }
 
@@ -1420,13 +1421,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addAdviceForm.invalid) {
       return;
     }
-    if (this.advices.find((o: ObsModel) => o.value.includes(this.addAdviceForm.value.advice))) {
+    if (this.advices.find((o: ObsModel) => o.value.includes((this.addAdviceForm.value.advice).trim()))) {
       this.toastr.warning(this.translateService.instant('Advice already added, please add another advice.'), this.translateService.instant('Already Added'));
       return;
     }
     this.disableAddAdvice = true;
     this.isAdviceRejected = false;
     this.advice = this.addAdviceForm.value.advice;
+    this.saveAdvice(this.advice);
   }
 
   saveAdvice(advice: string) {
@@ -1511,7 +1513,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addTestForm.invalid) {
       return;
     }
-    if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
+    if (this.tests.find((o: TestModel) => o.value === (this.addTestForm.value.test).trim())) {
       this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1666,14 +1668,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       body.value = (this.followUpForm.value.followUpReason) ?
         `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`;
     }
-    if (this.followUpForm.value.followUpReason) {
-      this.disableAddReason = true;
-      this.isReasonRejected = false;
-      this.reason = this.followUpForm.value.followUpReason;
-    } else {
-      this.saveFollowUp(body);
-    }
-
+    // if (this.followUpForm.value.followUpReason) {
+    //   this.disableAddReason = true;
+    //   this.isReasonRejected = false;
+    //   this.reason = this.followUpForm.value.followUpReason;
+    // } else {
+    //   this.saveFollowUp(body);
+    // }
+    this.saveFollowUp(body);
   }
 
   saveFollowUp(body: { concept: string; person: string; obsDatetime: Date; value: string; encounter: string; }) {
