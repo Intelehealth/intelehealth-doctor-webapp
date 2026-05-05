@@ -1,10 +1,4 @@
-// Jhpiego palette override for the Nepal client.
-// Activated by `body.client-nepal` (set in app.component.ts).
-//
-// Primary 1   #1F6F78  Main buttons, active states, headers
-// Primary 2   #15565D  Hover, pressed states, emphasis
-// Secondary 1 #4FA3A9  Selected states, highlights
-// Secondary 2 #E6F4F5  Backgrounds, input focus, sections
+
 
 $nepal-primary:        #1F6F78;
 $nepal-primary-hover:  #15565D;
@@ -14,9 +8,7 @@ $nepal-border-soft:    #CDE7E9;
 
 body.client-nepal {
 
-  // ────────────────────────────────────────────────────────────────────
-  // Splash & login
-  // ────────────────────────────────────────────────────────────────────
+  
   .splash-screen { background: #ffffff; }
 
   .bg-banner {
@@ -33,9 +25,7 @@ body.client-nepal {
     .bg-banner .login-info-wrapper { background: $nepal-bg-soft !important; }
   }
 
-  // ────────────────────────────────────────────────────────────────────
-  // Sidebar / main container
-  // ────────────────────────────────────────────────────────────────────
+  
   .menu-items-wrapper {
     background: $nepal-bg-soft !important;
 
@@ -77,10 +67,7 @@ body.client-nepal {
     }
   }
 
-  // ────────────────────────────────────────────────────────────────────
-  // Buttons (solid primary)
-  // Catch-all selectors that match the purple buttons used across the app.
-  // ────────────────────────────────────────────────────────────────────
+
   .intel-blue-btn,
   .modal-btn.blue-btn,
   .next-btn,
@@ -102,7 +89,7 @@ body.client-nepal {
     border-color: $nepal-border-soft !important;
   }
 
-  // Bootstrap btn-primary (used in a few spots)
+ 
   .btn-primary {
     background-color: $nepal-primary !important;
     border-color: $nepal-primary !important;
@@ -116,14 +103,14 @@ body.client-nepal {
     }
   }
 
-  // Disabled state for primary buttons (border + text turn brand-colored, bg goes white)
+
   .next-btn:disabled,
   .confirm-btn:disabled {
     border-color: $nepal-primary !important;
     color: $nepal-primary !important;
   }
 
-  // Password-strength filled bars use the brand color too
+
   .strength-item.filled { background: $nepal-primary !important; }
 
   .my-button-class { color: $nepal-primary !important; }
@@ -133,9 +120,7 @@ body.client-nepal {
     color: #ffffff !important;
   }
 
-  // ────────────────────────────────────────────────────────────────────
-  // Material / form controls
-  // ────────────────────────────────────────────────────────────────────
+  
   .mat-fab.mat-accent { background-color: $nepal-primary !important; }
 
   .pretty.p-switch {
@@ -157,9 +142,7 @@ body.client-nepal {
     background-color: $nepal-primary !important;
   }
 
-  // ────────────────────────────────────────────────────────────────────
-  // Modals / accordions / cards
-  // ────────────────────────────────────────────────────────────────────
+ 
   .chatbot-container .mat-dialog-container {
     .mat-dialog-title { background: $nepal-primary !important; }
     .send-btn { background: $nepal-primary !important; }
@@ -175,9 +158,7 @@ body.client-nepal {
 
   .section-odd { background: $nepal-bg-soft !important; }
 
-  // ────────────────────────────────────────────────────────────────────
-  // Notification menu / tooltips
-  // ────────────────────────────────────────────────────────────────────
+  
   .notification-menu {
     background: $nepal-border-soft !important;
     .mat-menu-item { color: $nepal-primary !important; }
