@@ -29,6 +29,7 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 export class MainContainerComponent implements OnInit, AfterContentChecked, OnDestroy {
 
   collapsed = false;
+  isNepalClient: boolean = environment.client === 'nepal';
   baseUrl: string = environment.baseURL;
   baseURLLegacy: string = environment.baseURLLegacy;
   username: string = '';

@@ -1,0 +1,192 @@
+// Jhpiego palette override for the Nepal client.
+// Activated by `body.client-nepal` (set in app.component.ts).
+//
+// Primary 1   #1F6F78  Main buttons, active states, headers
+// Primary 2   #15565D  Hover, pressed states, emphasis
+// Secondary 1 #4FA3A9  Selected states, highlights
+// Secondary 2 #E6F4F5  Backgrounds, input focus, sections
+
+$nepal-primary:        #1F6F78;
+$nepal-primary-hover:  #15565D;
+$nepal-secondary:      #4FA3A9;
+$nepal-bg-soft:        #E6F4F5;
+$nepal-border-soft:    #CDE7E9;
+
+body.client-nepal {
+
+  // ────────────────────────────────────────────────────────────────────
+  // Splash & login
+  // ────────────────────────────────────────────────────────────────────
+  .splash-screen { background: #ffffff; }
+
+  .bg-banner {
+    background-image: none !important;
+    background-color: $nepal-bg-soft !important;
+  }
+
+  .login-info-wrapper .info-footer {
+    color: $nepal-primary !important;
+    .divider { background: $nepal-primary-hover !important; }
+  }
+
+  @media (max-width: 768px) {
+    .bg-banner .login-info-wrapper { background: $nepal-bg-soft !important; }
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Sidebar / main container
+  // ────────────────────────────────────────────────────────────────────
+  .menu-items-wrapper {
+    background: $nepal-bg-soft !important;
+
+    .sidenav-logo { min-height: 160px !important; }
+
+    .nepal-sidebar-logo {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+
+      &.collapsed {
+        width: 100%;
+        max-width: 56px;
+      }
+    }
+
+    .ezazi-logo h1 { color: $nepal-primary !important; }
+
+    .admin-nav .nav-item {
+      .nav-item-link span { color: $nepal-primary !important; }
+
+      .nav-item-link:hover,
+      .nav-item-link.active {
+        background: $nepal-primary-hover !important;
+        span { color: #ffffff !important; }
+      }
+
+      .mat-divider { border-top-color: $nepal-border-soft !important; }
+    }
+  }
+
+  .header-main {
+    .header-title .mat-icon { color: $nepal-primary !important; }
+    .input-group { background: $nepal-bg-soft !important; }
+
+    .notification-button {
+      background: $nepal-border-soft !important;
+      .mat-icon { color: $nepal-primary !important; }
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Buttons (solid primary)
+  // Catch-all selectors that match the purple buttons used across the app.
+  // ────────────────────────────────────────────────────────────────────
+  .intel-blue-btn,
+  .modal-btn.blue-btn,
+  .next-btn,
+  .confirm-btn,
+  .blue-btn,
+  .icon-action-btn,
+  .video-ctrl-btn.blue {
+    background: $nepal-primary !important;
+    border-color: $nepal-primary !important;
+    color: #ffffff !important;
+
+    &:hover,
+    &:focus,
+    &:active { background: $nepal-primary-hover !important; }
+  }
+
+  .modal-btn:not(.blue-btn) {
+    color: $nepal-primary !important;
+    border-color: $nepal-border-soft !important;
+  }
+
+  // Bootstrap btn-primary (used in a few spots)
+  .btn-primary {
+    background-color: $nepal-primary !important;
+    border-color: $nepal-primary !important;
+    color: #ffffff !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: $nepal-primary-hover !important;
+      border-color: $nepal-primary-hover !important;
+    }
+  }
+
+  // Disabled state for primary buttons (border + text turn brand-colored, bg goes white)
+  .next-btn:disabled,
+  .confirm-btn:disabled {
+    border-color: $nepal-primary !important;
+    color: $nepal-primary !important;
+  }
+
+  // Password-strength filled bars use the brand color too
+  .strength-item.filled { background: $nepal-primary !important; }
+
+  .my-button-class { color: $nepal-primary !important; }
+  .my-button-class:hover { color: $nepal-primary !important; }
+  .my-button-class.introjs-nextbutton {
+    background: $nepal-primary !important;
+    color: #ffffff !important;
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Material / form controls
+  // ────────────────────────────────────────────────────────────────────
+  .mat-fab.mat-accent { background-color: $nepal-primary !important; }
+
+  .pretty.p-switch {
+    .state label:after { background-color: $nepal-primary !important; }
+
+    &.p-fill input ~ .state:before {
+      background-color: $nepal-border-soft !important;
+      border-color: $nepal-border-soft !important;
+    }
+
+    &.p-fill input:checked ~ .state:before {
+      border-color: $nepal-primary !important;
+      background-color: $nepal-primary !important;
+    }
+  }
+
+  .mat-checkbox-checked .mat-checkbox-background,
+  .mat-checkbox-indeterminate .mat-checkbox-background {
+    background-color: $nepal-primary !important;
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Modals / accordions / cards
+  // ────────────────────────────────────────────────────────────────────
+  .chatbot-container .mat-dialog-container {
+    .mat-dialog-title { background: $nepal-primary !important; }
+    .send-btn { background: $nepal-primary !important; }
+    .mat-dialog-actions input[type="text"] { background: $nepal-bg-soft !important; }
+  }
+
+  .intel-accordion-con .mat-expansion-panel {
+    .intel-accordion-title .mat-icon { color: $nepal-primary !important; }
+    .mat-expansion-panel-content .mat-expansion-panel-body::after {
+      background: $nepal-border-soft !important;
+    }
+  }
+
+  .section-odd { background: $nepal-bg-soft !important; }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Notification menu / tooltips
+  // ────────────────────────────────────────────────────────────────────
+  .notification-menu {
+    background: $nepal-border-soft !important;
+    .mat-menu-item { color: $nepal-primary !important; }
+  }
+  .notification-menu::before { border-bottom-color: $nepal-border-soft !important; }
+
+  .my-tooltip-class {
+    .introjs-tooltip-header,
+    .introjs-tooltiptext { background: $nepal-border-soft !important; }
+    .introjs-helperNumberLayer { background: $nepal-primary !important; }
+  }
+}

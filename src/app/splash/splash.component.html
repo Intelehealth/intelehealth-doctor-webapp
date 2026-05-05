@@ -1,3 +1,6 @@
-<div class="splash-screen">
-  <img src="assets/icons/icon-192x192-20260402.png" alt="eZazi Logo" />
+<div class="splash-screen" [class.nepal]="isNepalClient">
+  <img *ngIf="isNepalClient; else ezaziLogo" src="assets/nepal/jhpiego-logo.jpeg" alt="Jhpiego Logo" class="nepal-logo" />
+  <ng-template #ezaziLogo>
+    <img src="assets/icons/icon-192x192-20260402.png" alt="eZazi Logo" />
+  </ng-template>
 </div>

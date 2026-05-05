@@ -8,10 +8,17 @@
           </button>
         </div>
         <div class="ezazi-logo d-flex flex-row justify-content-center align-items-center" *ngIf="!collapsed">
-          <img src="assets/ezazi/ezazi-logo-new.png" alt="" height="60px">
-          <!-- <h1 class="mb-0 ml-2">eZazi</h1> -->
+          <img *ngIf="isNepalClient; else ezaziSidebarLogo" class="nepal-sidebar-logo" src="assets/nepal/jhpiego-removebg-preview.png" alt="Jhpiego">
+          <ng-template #ezaziSidebarLogo>
+            <img src="assets/ezazi/ezazi-logo-new.png" alt="" height="60px">
+          </ng-template>
         </div>
-        <img src="assets/ezazi/ezazi-sm-logo.svg" alt="" width="80%" *ngIf="collapsed">
+        <ng-container *ngIf="collapsed">
+          <img *ngIf="isNepalClient; else ezaziSidebarSmLogo" class="nepal-sidebar-logo collapsed" src="assets/nepal/jhpiego-removebg-preview.png" alt="Jhpiego">
+          <ng-template #ezaziSidebarSmLogo>
+            <img src="assets/ezazi/ezazi-sm-logo.svg" alt="" width="80%">
+          </ng-template>
+        </ng-container>
       </div>
       <ul class="admin-nav">
         <li class="nav-item" (click)="toggleSidebar()" *ngxPermissionsExcept="['ORGANIZATIONAL: NURSE']">

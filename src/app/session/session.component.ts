@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../services/socket.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-session',
@@ -7,6 +8,8 @@ import { SocketService } from '../services/socket.service';
   styleUrls: ['./session.component.scss']
 })
 export class SessionComponent implements OnInit {
+
+  isNepalClient: boolean = environment.client === 'nepal';
 
   slides: any = [
     {
