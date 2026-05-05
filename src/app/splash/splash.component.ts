@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-splash',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./splash.component.scss']
 })
 export class SplashComponent implements OnInit {
+
+  isNepalClient: boolean = environment.client === 'nepal';
 
   constructor() { }
 
