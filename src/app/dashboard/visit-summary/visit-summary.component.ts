@@ -26,7 +26,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -1162,17 +1162,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string): string {
-    const years = moment().diff(birthdate, 'years');
-    const months = moment().diff(birthdate, 'months');
-    const days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} ${this.translateService.instant('years')}`;
-    } else if (months > 1) {
-      return `${months} ${this.translateService.instant('months')}`;
-    } else {
-      return `${days} ${this.translateService.instant('days')}`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**

@@ -111,7 +111,6 @@ export class WebrtcService {
           width: 355,
           height: 793,
         },
-        frameRate: 15, // Reduced frame rate for better performance
       },
       audioCaptureDefaults: {
         echoCancellation: true,

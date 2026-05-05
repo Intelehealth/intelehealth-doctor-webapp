@@ -15,7 +15,7 @@ import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
-import { calculateBMI, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
@@ -173,17 +173,8 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string) {
-    let years = moment().diff(birthdate, 'years');
-    let months = moment().diff(birthdate, 'months');
-    let days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} years`;
-    } else if (months > 1) {
-      return `${months} months`;
-    } else {
-      return `${days} days`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**
