@@ -19,8 +19,6 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   activeTab: 'heart' | 'lungs' = 'heart';
 
   selectedPosition: number | null = null;
-  selectedViewIndex: number | null = null;
-  selectedView: string | null = null;
   selectedDataSource: 'lung' | 'heart' | null = null;
   selectedPointId: number | null = null;
 
@@ -60,16 +58,16 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     'right lower back': 15, 'left lower back': 16
   };
 
-  /** Maps compound position strings (e.g. "anteriorone", "posteriorsix") to point IDs */
-  private compoundPositionToPoint: Record<string, number> = {
-    'anteriorone': 1, 'anteriortwo': 2,
-    'anteriorthree': 3, 'anteriorfour': 4,
-    'anteriorfive': 5, 'anteriorsix': 6,
-    'lateralone': 7, 'lateraltwo': 8,
-    'lateralthree': 9, 'lateralfour': 10,
-    'posteriorone': 11, 'posteriortwo': 12,
-    'posteriorthree': 13, 'posteriorfour': 14,
-    'posteriorfive': 15, 'posteriorsix': 16
+  /** Maps Ayusynk underscore-format positions (e.g. "anterior_upper_right") to chart point IDs */
+  private ayusynkLungPositionToPoint: Record<string, number> = {
+    'anterior_upper_right': 1, 'anterior_upper_left': 2,
+    'anterior_middle_right': 3, 'anterior_middle_left': 4,
+    'anterior_lower_right': 5, 'anterior_lower_left': 6,
+    'lateral_upper_right': 7, 'lateral_lower_right': 8,
+    'lateral_upper_left': 9, 'lateral_lower_left': 10,
+    'posterior_upper_right': 11, 'posterior_upper_left': 12,
+    'posterior_middle_right': 13, 'posterior_middle_left': 14,
+    'posterior_lower_right': 15, 'posterior_lower_left': 16
   };
 
   // Data arrays — populated from OBS encounter data (no static placeholders)
@@ -204,28 +202,37 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
    * Resolves the position name to a point number using reverse lookup maps.
    */
   private mapRecordingToData(rec: any, sound: string, obsPosition: string): void {
-    const position = obsPosition || rec.position || '';
-    const posLower = position.toLowerCase().trim();
+    const recLocation = (rec.location ?? '').toLowerCase().trim();
+    const isHeart = sound === 'heart' || recLocation === 'heart';
+    const isLung = sound === 'lung' || recLocation === 'lung' || recLocation === 'lungs';
 
-    if (sound === 'heart' || rec.location === 'heart') {
-      const point = this.heartPositionToPoint[posLower] ?? 0;
+    if (isHeart) {
+      // Heart: outer obsPosition is reliable ("Tricuspid", "Aortic", ...).
+      const heartKey = (obsPosition || rec.position || '').toLowerCase().trim();
+      const point = this.heartPositionToPoint[heartKey] ?? 0;
       this.heartData.push({
         heart_bpm: this.normalizeNA(rec.heart_bpm),
         breathing_rate: this.normalizeNA(rec.breathing_rate),
         location: 'heart',
-        position: this.heartPositionNames[point] || position,
+        position: this.heartPositionNames[point] || obsPosition || rec.position || '',
         point,
         report_url: rec.report_url ?? '',
         recorded_time: rec.recorded_time ?? '',
         device: rec.device ?? 'Ayusynk Digital Stethoscope',
         screening_results: this.toScreeningResults(rec.screening_results)
       });
-    } else if (sound === 'lung' || rec.location === 'lung') {
-      const point = this.lungPositionToPoint[posLower] ?? 0;
+    } else if (isLung) {
+      const innerKey = (rec.position ?? '').toLowerCase().trim();
+      const outerKey = (obsPosition ?? '').toLowerCase().trim();
+      const point =
+        this.ayusynkLungPositionToPoint[innerKey] ??
+        this.lungPositionToPoint[outerKey] ??
+        this.lungPositionToPoint[innerKey] ??
+        0;
       this.lungData.push({
         lung_bpm: this.normalizeNA(rec.lung_bpm),
         location: 'lung',
-        position: this.lungPositionNames[point] || position,
+        position: this.lungPositionNames[point] || obsPosition || rec.position || '',
         point,
         report_url: rec.report_url ?? '',
         recorded_time: rec.recorded_time ?? '',
@@ -261,21 +268,17 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   switchTab(tab: 'heart' | 'lungs'): void {
     this.activeTab = tab;
     this.selectedPosition = null;
-    this.selectedViewIndex = null;
-    this.selectedView = null;
     this.selectedDataSource = null;
     this.selectedPointId = null;
   }
 
-  handlePointClick(point: MeasurementPoint, viewIndex: number, viewName: string, dataName: string): void {
+  handlePointClick(point: MeasurementPoint, dataName: string): void {
     const source = dataName === 'lungData' ? 'lung' : 'heart';
     const dataArray = source === 'lung' ? this.lungData : this.heartData;
     const index = dataArray.findIndex(d => d.point === point.id);
 
     this.selectedPointId = point.id;
     this.selectedPosition = index !== -1 ? index : null;
-    this.selectedViewIndex = viewIndex;
-    this.selectedView = viewName;
     this.selectedDataSource = source;
     this.isPlaying = false;
   }
@@ -383,32 +386,12 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
 
     if (dataArray.length === 0) return;
 
-    let currentIndex = this.selectedPosition !== null ? this.selectedPosition : -1;
-    let nextIndex = (currentIndex + 1) % dataArray.length;
-    let nextData = dataArray[nextIndex];
-    let nextPointId = nextData.point!;
+    const currentIndex = this.selectedPosition !== null ? this.selectedPosition : -1;
+    const nextIndex = (currentIndex + 1) % dataArray.length;
+    const nextData = dataArray[nextIndex];
 
-    // Find which view and view index this point belongs to
-    let viewName = source === 'heart' ? 'heart' : '';
-    let viewIndex = 0;
-
-    if (source === 'lung') {
-      const anterior = this.anteriorPoints.findIndex(p => p.id === nextPointId);
-      const lateral = this.lateralPoints.findIndex(p => p.id === nextPointId);
-      const posterior = this.posteriorPoints.findIndex(p => p.id === nextPointId);
-
-      if (anterior !== -1) { viewName = 'anterior'; viewIndex = anterior; }
-      else if (lateral !== -1) { viewName = 'lateral'; viewIndex = lateral; }
-      else if (posterior !== -1) { viewName = 'posterior'; viewIndex = posterior; }
-    } else {
-      const heartIdx = this.heartPoints.findIndex(p => p.id === nextPointId);
-      if (heartIdx !== -1) { viewName = 'heart'; viewIndex = heartIdx; }
-    }
-
-    this.selectedPointId = nextPointId;
+    this.selectedPointId = nextData.point!;
     this.selectedPosition = nextIndex;
-    this.selectedViewIndex = viewIndex;
-    this.selectedView = viewName;
     this.selectedDataSource = source;
   }
 }
