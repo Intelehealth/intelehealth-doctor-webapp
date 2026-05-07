@@ -20,6 +20,10 @@ const routes: Routes = [
     path: 'test/chat',
     component: TestChatComponent
   },
+  {
+    path: 'dashboard/stage3',
+    loadChildren: () => import('./dashboard/stage3/stage3.module').then(m => m.Stage3Module)
+  },
   // {
   //   path: 'i/:hash',
   //   loadChildren: () => import('./prescription-download/prescription-download.module').then(m => m.PrescriptionDownloadModule),
