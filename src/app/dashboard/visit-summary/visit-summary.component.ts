@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, ElementRef, Vie
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { ProviderService } from 'src/app/services/provider.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
@@ -15,7 +16,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -25,8 +26,8 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -85,6 +86,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   existingDiagnosis: DiagnosisModel[] = [];
   advices: ObsModel[] = [];
   additionalInstructions: ObsModel;
+  // Track which items have been sent to manual APIs to prevent duplicates
+  private sentDiagnosisNames: Set<string> = new Set();
+  private sentMedicationNames: Set<string> = new Set();
   tests: TestModel[] = [];
   referrals: ReferralModel[] = [];
   pastVisits: VisitModel[] = [];
@@ -155,12 +159,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   patientRegFields: string[] = [];
   vitals: VitalModel[] = [];
   diagnostics: DiagnosticModel[] = [];
+  digitalStethoscope: DiagnosticModel[] = [];
   patientVisitSummary: PatientVisitSummaryConfigModel;
   pvsConfigs: PatientVisitSection[] = [];
   pvsConstant = VISIT_SECTIONS;
 
   hasChatEnabled: boolean = false;
-  hasVideoEnabled: boolean = false; 
+  hasVideoEnabled: boolean = false;
+  hasAudioEnabled: boolean = false;
   hasWebRTCEnabled: boolean = false;
   hasVitalsEnabled: boolean = false;
   hasPatientAddressEnabled: boolean = false;
@@ -197,26 +203,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('lazyDDxContainer', { read: ViewContainerRef, static: false }) lazyLoadDDxContainer!: ViewContainerRef;
   ddxCompRef: any;
   furtherQuestionsList: string[] = [];
-
+  showAndHideUiElement: boolean = true;
+  hasFollowUp:boolean=false;
   async lazyLoadDDx() {
     setTimeout(async () => {
-      this.lazyLoadDDxContainer?.clear();
+      if (!this.lazyLoadDDxContainer) {
+        return;
+      }
+      this.lazyLoadDDxContainer.clear();
       const { DiagnosisComponent } = await import(/* webpackChunkName: "diagnosis-aillm-ddx" */'./diagnosis/diagnosis.component');
       this.ddxCompRef = this.lazyLoadDDxContainer.createComponent(DiagnosisComponent);
       if (this.ddxCompRef) {
         this.ddxCompRef.instance.visit = this.visit;
         this.ddxCompRef.instance.patientInfo = this.patient;
+        this.ddxCompRef.instance.patientHistoryData = this.patientHistoryData;
         this.ddxCompRef.instance.isMCCUser = this.isMCCUser;
         this.ddxCompRef.instance.isVisitNoteProvider = this.isVisitNoteProvider;
         this.ddxCompRef.instance.visitEnded = this.visitEnded;
+        this.ddxCompRef.instance.visitCompleted = this.visitCompleted;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
-       this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+        this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
 
-        this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
-          if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
-            this.SaveAIDiagosisHistory(this.visit,digData);
-          }
-        })
+        // this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
+        //   if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
+        //     this.SaveAIDiagosisHistory(this.visit,digData);
+        //   }
+        // })
 
         // Subscribe to diagnosis saved event
         this.ddxCompRef.instance.diagnosisSaved.subscribe((diagnoses: any[]) => {
@@ -256,10 +268,35 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Subscribe to medication saved event
         this.ddxCompRef.instance.medicationSaved.subscribe((medicines: any[]) => {
-          this.standardMedicines = [...medicines];
+          // Merge new medications with existing ones, preserving UUIDs and saving flags
+          this.standardMedicines = medicines.map(med => {
+            const existing = this.standardMedicines.find(m => m.drug === med.drug);
+            // If exists, keep the existing one (preserves UUID and saving flag)
+            if (existing) {
+              return existing;
+            }
+            // New medication - add with AI tracking data if applicable
+            if (med.aiGenerated === true) {
+              return {
+                ...med,
+                modified: false,
+                rationale: med.rationale || [],
+                likelihood: med.likelihood,
+                originalAiData: med.originalAiData || {
+                  dose: med.dose,
+                  durationNo: med.durationNo,
+                  durationUnit: med.durationUnit,
+                  instructRemark: med.instructRemark,
+                  frequency: med.frequency
+                }
+              };
+            } else {
+              return { ...med };
+            }
+          });
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.standardMedicines = medicines;
+            this.updatedObsData.standardMedicines = this.standardMedicines;
           }
         });
         // Subscribe to advice saved event
@@ -300,6 +337,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 1000);
   }
   isWhatsappCallWarningShown = false;
+  consultationStartTime: Date; // Track consultation start time
 
   reasons = {
     'Completed': [
@@ -326,7 +364,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('reasonSelect', { static: false }) reasonSelectComponent: NgSelectComponent;
   reasonsList: { name: string }[] = [];
 
-  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours", "Twice daily before meals", "Twice daily after meals"];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -353,7 +391,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   search6 = (text$: Observable<string>) => this.mainSearch(text$, this.timingList.map((val) => val.name));
   search7 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
   search8 = (text$: Observable<string>) => this.mainSearch(text$, this.durationUnitList.map((val) => val.name));
-  search9 = (text$: Observable<string>) => this.mainSearch(text$, instructionRemarks.map((val) => val.name));
+  search9 = (text$: Observable<string>) => this.searchInstructionRemark(text$);
 
   // Add this property to the component class
   obsData = {
@@ -428,13 +466,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     public appConfigService: AppConfigService,
     private rolesService: NgxRolesService,
     private sanitizer: DomSanitizer,
-    private analytics: AnalyticsService) {
+    private analytics: AnalyticsService,
+    private providerService: ProviderService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
     });
 
     this.vitals = [...this.appConfigService.patient_vitals];
     this.diagnostics = this.appConfigService.patient_diagnostics_section ? [...this.appConfigService.patient_diagnostics] : [];
+    this.digitalStethoscope = this.appConfigService.digital_stethoscope_section ? [...this.appConfigService.digital_stethoscope] : [];
     this.specializations = [...this.appConfigService.specialization];
     this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
@@ -544,6 +584,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasWebRTCEnabled = this.appConfigService?.webrtc_section;
     this.hasChatEnabled = this.appConfigService?.webrtc?.chat;
     this.hasVideoEnabled = this.appConfigService?.webrtc?.video_call;
+    this.hasAudioEnabled = this.appConfigService?.webrtc?.audio_call;
     this.hasVitalsEnabled = this.appConfigService?.patient_vitals_section;
     this.hasPatientAddressEnabled = this.appConfigService?.patient_reg_address;
     this.hasPatientOtherEnabled = this.appConfigService?.patient_reg_other;
@@ -558,7 +599,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.formControlValueChanges();
-    
     setTimeout(()=>{
       if(this.visitNoteDiv) autoGrowAllTextAreaZone(this.visitNoteDiv.nativeElement.querySelectorAll('textarea'));
       this.trackFormChanges();
@@ -584,6 +624,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
+    this.showAndHideUiElements();
   }
 
   /**
@@ -641,13 +682,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').clearValidators();
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -672,6 +713,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         },2000)
         this.visit = visit;
         this.visit.demarcation = this.visitDemarcation;
+        if (this.visit.demarcation === visitTypes.FOLLOW_UP) {
+          this.hasAILLMEnabled = false;
+        }
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
           this.visit['visitUploadTime'] = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED) ? this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'] : null;
         } else if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
@@ -695,6 +739,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
+              // Set consultation start time from visit note encounter datetime if not already set
+              if (!this.consultationStartTime && this.visitNotePresent.encounterDatetime) {
+                this.consultationStartTime = new Date(this.visitNotePresent.encounterDatetime);
+              }
               this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
                 if (p.provider.uuid === this.provider.uuid) {
                   this.isVisitNoteProvider = true;
@@ -819,13 +867,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
   * Get vital value for a given vital uuid
   * @param {string} uuid - Vital uuid
+  * @param {string} key - Optional vital key (e.g., 'bmi', 'temp_f')
   * @return {any} - Obs value
   */
   getObsValue(uuid: string, key?: string): any {
     const v = this.vitalObs.find(e => e.concept.uuid === uuid);
-    const value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
+    let value = v?.value ? (typeof v.value == 'object') ? v.value?.display : v.value : null;
     if (!value && key === 'bmi') {
       return calculateBMI(this.vitals, this.vitalObs);
+    }
+    // Convert temperature from Celsius to Fahrenheit if key contains 'temp'
+    if (value && key && key.toLowerCase().includes('temp')) {
+      const convertedValue = convertCelsiusToFahrenheit(parseFloat(value));
+      return convertedValue !== null ? convertedValue : value;
     }
     return value
   }
@@ -864,6 +918,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                 } else {
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
+                  this.hasFollowUp = obj1.title && obj1.title.toLowerCase().includes('follow up');
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
@@ -876,7 +931,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                         //     value = `<span class="light-green">${value}</span>`;
                         //   } else {
                         //     value = `<span class="red-color">${value}</span>`;
-                        //   }
+                        //   }  
                         // } else {
                         //   if(this.checkTestNameValues(diagnostics?.testNames, value)) {
                         //     value = `<span class="light-green">${value}</span>`;
@@ -1188,7 +1243,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   referSpecialist(): void {
     if (this.referSpecialityForm.invalid) {
       this.coreService.showToast("warning", 'Please select specialization', 'Invalid!', 'warning-select-specialization-toast');
-
       return;
     }
     if (this.visitNotePresent) {
@@ -1302,12 +1356,72 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       drPersonUuid: this.provider?.person.uuid,
       patientAge: this.patient.person.age,
       patientGender: this.patient.person.gender,
-      location:this.clinicName
+      location:this.clinicName,
+      callType: callType
     });
 
     this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
       this.isCalling = false;
+    });
+  }
+
+  /**
+  * Get current doctor's phone number from provider attributes
+  * @return {string} - Doctor's phone number or empty string if not found
+  */
+  getCurrentDoctorPhoneNumber(): string {
+    if (!this.provider || !this.provider.attributes) {
+      return '';
+    }
+    
+    let doctorPhoneNumber = '';
+    this.provider.attributes.forEach((attribute) => {
+      if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
+        doctorPhoneNumber = attribute.value;
+      }
+    });
+    
+    return doctorPhoneNumber;
+  }
+
+  /**
+  * Start Kaleyra call with HW/patient
+  * @return {void}
+  */
+  startKaleyraCall(): void {
+    if (!this.hwPhoneNo) {
+      this.toastr.error('Health worker phone number is not available');
+      return;
+    }
+    if (!this.visit?.uuid) {
+      this.toastr.error('Visit ID is not available');
+      return;
+    }
+    // Get current doctor's phone number
+    const doctorPhoneNumber = this.getCurrentDoctorPhoneNumber();
+    if (!doctorPhoneNumber) {
+      this.toastr.error('Doctor phone number is not available. Please update your profile with a valid phone number.');
+      return;
+    }
+    // Show loading state
+    this.toastr.info('Initiating Kaleyra call...');
+    // Construct custom string in the format: doctoruuid:patientuuid:visituuid:nurseuuid
+    const doctorUuid = this.provider?.uuid || getCacheData(true, doctorDetails.PROVIDER)?.provider?.uuid;
+    const patientUuid = this.visit?.patient?.uuid;
+    const visitUuid = this.visit?.uuid;
+    const nurseProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+    const nurseUuid = nurseProvider && nurseProvider.provider ? nurseProvider.provider.uuid : '';
+    const custom = `${doctorUuid}:${patientUuid}`;
+    const notes = `${visitUuid}:${nurseUuid}`;
+    const caller = doctorPhoneNumber ? doctorPhoneNumber : environment.doctorPhoneNumber;
+    this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0', notes).subscribe({
+      next: (data) => {
+        this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
+      },
+      error: (error) => {
+        this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
+      }
     });
   }
 
@@ -1334,6 +1448,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   startVisitNote(): void {
+    // Capture consultation start time
+    this.consultationStartTime = new Date();
+
     const json = {
       patient: this.visit.patient.uuid,
       encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79', // Visit Note encounter
@@ -1652,7 +1769,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return; 
     }
     if (this.existingDiagnosis.find(o => o.diagnosisName.toLocaleLowerCase() === this.diagnosisForm.value.diagnosisName.toLocaleLowerCase())) {
-    this.coreService.showToast("warning", 'Diagnosis Already Exist','Duplicate Diagnosis','warning-toast');
+      this.coreService.showToast("warning", 'Diagnosis Already Exist','Duplicate Diagnosis','warning-toast');
       return;
     }
 
@@ -1778,7 +1895,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
       this.coreService.showToast("warning", 'Drug already added, please add another drug.','Already Added','warning-toast');
       return;
-    }    
+    }
+
+    const similarDrug = this.findSimilarBaseDrug(this.addMedicineForm.value.drug, this.medicines);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     this.medicines.push({ ...this.addMedicineForm.value});
     this.addMedicineForm.reset();
   }
@@ -1794,9 +1921,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.standardMedicines.find((o: StandardMedicineModel) => o.drug === this.addStandardMedicineForm.value.drug)) {
       this.coreService.showToast("warning",'Drug already added, please add another drug.','Already Added','addmedicine-warning-toast');
       return;
-    }    
+    }
+
+    const similarDrug = this.findSimilarBaseDrug(this.addStandardMedicineForm.value.drug, this.standardMedicines);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addStandardMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     this.standardMedicines.push({ ...this.addStandardMedicineForm.value});
     this.addStandardMedicineForm.reset();
+  }
+
+  extractBaseDrugName(drugName: string): string {
+    if (!drugName) return '';
+    const base = drugName.replace(/\s*\d.*$/, '').trim();
+    return (base || drugName.split(' ')[0]).toLowerCase();
+  }
+
+  findSimilarBaseDrug(drugName: string, medicineList: any[]): string | null {
+    const baseName = this.extractBaseDrugName(drugName);
+    if (!baseName) return null;
+    const match = medicineList.find(m => m.drug && this.extractBaseDrugName(m.drug) === baseName);
+    return match ? match.drug : null;
   }
 
   /**
@@ -1934,8 +2084,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     if (this.advices.find((o: ObsModel) => o.value === this.addAdviceForm.value.advice)) {
-    this.coreService.showToast("warning", 'Advice already added, please add another advice.', 'Already Added', 'add-advice-warning-toast');
-
+      this.coreService.showToast("warning", 'Advice already added, please add another advice.', 'Already Added', 'add-advice-warning-toast');
       return;
     }
     this.advices.push({ value: this.addAdviceForm.value.advice });
@@ -2030,7 +2179,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
       this.coreService.showToast("warning", 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
-
       return;
     }
     this.tests.push({value: this.addTestForm.value.test });
@@ -2112,7 +2260,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
-    this.coreService.showToast("warning", 'Referral already added, please add another referral.', 'Already Added', 'warning-referral-toast');
+      this.coreService.showToast("warning", 'Referral already added, please add another referral.', 'Already Added', 'warning-referral-toast');
       return;
     }
 
@@ -2156,14 +2304,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
-          if (obs.value.includes('Time:')) {
+          if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
-            const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            followUpTime = time ? time : null;
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
+
+            // Only try to get Time if the feature is enabled
+            if (this.isFeatureAvailable('followUpTime')) {
+              const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+              followUpTime = time ? time : null;
+            }
 
             // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
@@ -2176,7 +2328,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             present: true,
             wantFollowUp,
             followUpDate,
-            followUpTime,
+            followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
@@ -2188,7 +2340,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
   * Save followup
-  * @returns void
+  * @returns {Observable<any>}
   */
   saveFollowUp() {
     let value = 'No';
@@ -2224,7 +2376,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null });
+      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, /* followUpTime: null, */ followUpReason: null, followUpType: null });
       this.followUpDatetime = null;
     });
   }
@@ -2234,23 +2386,38 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    if (this.isFeatureAvailable('dp_diagnosis_secondary') && this.diagnosisSecondaryForm.invalid){
-    this.coreService.showToast("warning", 'Enter Diagnosis', 'Diagnosis Required', 'warning-diagnosis-toast');
+    // Skip diagnosis validation for Namco doctors
+    if (!this.showAndHideUiElement) {
+      // Namco doctor - skip to saving
+    } else if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
+      this.toastr.warning(this.translateService.instant('Enter Diagnosis'), this.translateService.instant('Diagnosis Required'));
       return false;
-    } else if (!this.isFeatureAvailable('dp_diagnosis_secondary') && this.existingDiagnosis.length === 0 ) {
-     this.coreService.showToast("warning", 'Diagnosis not added', 'Diagnosis Required', 'warning-diagnosis-not-added-toast');
+    } else if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.existingDiagnosis.length === 0 && (this.hasAILLMEnabled && (!this.ddxCompRef || (this.ddxCompRef.instance?.existingDiagnosis || []).length === 0))) {
+      this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
+      return false;
+    } else if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.existingDiagnosis.length === 0) {
+      this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
       return false;
     }
-    if (this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.present) {
-   this.coreService.showToast("warning", 'Follow-up not added', 'Follow-up Required', 'warning-followup-not-added-toast');
+
+    // Skip follow-up validation for Namco doctors
+    if (this.showAndHideUiElement && this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.wantFollowUp && this.visit?.demarcation !== visitTypes.FOLLOW_UP) {
+      this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
       return false;
     }
     this.changedFields = [];
     this.saveAllObs().subscribe({
       next: (responses) => {
         this.changesMade = false;
+        //Calculate consultation duration
+        const consultationDuration = this.consultationStartTime
+          ? (new Date().getTime() - this.consultationStartTime.getTime()) / 1000 // duration in seconds
+          : null;
+        const isFollowUpVisit = this.visit?.demarcation === visitTypes.FOLLOW_UP;
+
+        const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
         //Open Share Prescription Confirmation Modal
-        this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
+        this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion }).subscribe((res: boolean) => {
           if (res) {
             if (this.isVisitNoteProvider) {
               if (this.provider.attributes.length) {
@@ -2275,7 +2442,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       ]
                     }).subscribe((post) => {
                       this.visitCompleted = true;
-                      const followUpDate = `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`;
+                      const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
 
                       this.notifyHwForAvailablePrescription("","",followUpDate);
                       this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
@@ -2434,6 +2601,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     });
+  }
+
+  /**
+  * Check if current visit is a follow-up visit
+  * @returns {boolean} - True if current visit is a follow-up visit
+  */
+  isFollowUpVisit(): boolean {
+    return this.visit?.demarcation === visitTypes.FOLLOW_UP;
   }
 
   /**
@@ -2746,7 +2921,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatMedicineSave(medicine: StandardMedicineModel): string {
-    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''  }:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
+    // Check if medication has been modified (for AI medications)
+    this.checkMedicationModification(medicine);
+
+    const aiMeta = medicine.aiGenerated ? JSON.stringify({
+      ai: true,
+      ...(medicine.rationale?.length && { r: medicine.rationale }),
+      ...(medicine.likelihood && { l: medicine.likelihood })
+    }) : '';
+
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}:${aiMeta}`;
   }
 
   saveDiscussionSummary(): Observable<any>{
@@ -2801,6 +2985,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       // Handle medicines
       for (const medicine of this.medicines) {
         if (medicine?.uuid) continue;
+
         postObsRequests.push(
           this.encounterService.postObs({
             concept: conceptIds.conceptMed,
@@ -2856,19 +3041,40 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Handle diagnosis
       if (!this.isFeatureAvailable('dp_diagnosis_secondary')) {
-        for (const diagnosis of this.existingDiagnosis) {
+        if (!this.hasAILLMEnabled) {
+          for (const diagnosis of this.existingDiagnosis) {
+            if (diagnosis?.uuid) continue;
+
+            postObsRequests.push(
+              this.encounterService.postObs({
+                concept: conceptIds.conceptDiagnosis,
+                person: this.visit.patient.uuid,
+                obsDatetime: new Date(),
+                value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName ?? ''}:${diagnosis.diagnosisType ?? ''} & ${diagnosis.diagnosisStatus ?? ''}`,
+                encounter: this.visitNotePresent.uuid
+              }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
+            );
+            if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
+              postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode));
+            }
+          }
+        }
+      }
+
+      if (this.hasAILLMEnabled && this.ddxCompRef?.instance) {
+        for (const diagnosis of this.ddxCompRef.instance.existingDiagnosis) {
           if (diagnosis?.uuid) continue;
           postObsRequests.push(
             this.encounterService.postObs({
               concept: conceptIds.conceptDiagnosis,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName ?? ''}:${diagnosis.diagnosisType ?? ''} & ${diagnosis.diagnosisStatus ?? ''}`,
+              value: `${diagnosis.diagnosisCode ? diagnosis.diagnosisCode : 'NA'}::${diagnosis.diagnosisName}:${diagnosis.diagnosisType} & ${diagnosis.diagnosisStatus}`,
               encounter: this.visitNotePresent.uuid
             }).pipe(tap((res: ObsModel) => diagnosis.uuid = res.uuid))
           );
           if (diagnosis?.isSnomed && this.appConfigService?.patient_visit_summary?.diagnosis_snomedct) {
-            postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode));
+            postObsRequests.push(this.diagnosisService.addSnomedDiagnosis(diagnosis.diagnosisName, diagnosis.diagnosisCode))
           }
         }
       }
@@ -2989,18 +3195,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Advices - only save new advices
       if (this.changedFields.includes('addAdvice')) {
-          for (const advice of this.advices) {
-            if(advice?.uuid) continue;
-            postObsRequests.push(
-              this.encounterService.postObs({
-                concept: conceptIds.conceptAdvice,
-                person: this.visit.patient.uuid,
-                obsDatetime: new Date(),
-                value: advice.value,
-                encounter: this.visitNotePresent.uuid
-              }).pipe(tap((res:ObsModel)=>advice.uuid=res.uuid))
-            );
-          }
+        for (const advice of this.advices) {
+          if(advice?.uuid) continue;
+          postObsRequests.push(
+            this.encounterService.postObs({
+              concept: conceptIds.conceptAdvice,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: advice.value,
+              encounter: this.visitNotePresent.uuid
+            }).pipe(tap((res:ObsModel)=>advice.uuid=res.uuid))
+          );
+        }
       }
 
       // Advices - only save new advices
@@ -3015,7 +3221,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             value: test.value,
             encounter: this.visitNotePresent.uuid
           }).pipe(tap((res:ObsModel)=>test.uuid=res.uuid)));
-        } 
+        }
       }
 
       // Diagnosis - only save new diagnoses
@@ -3102,8 +3308,65 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    return postObsRequests.length > 0 ? forkJoin(postObsRequests) : of(null);
+    const diagnosisSource = this.hasAILLMEnabled && this.ddxCompRef?.instance?.existingDiagnosis
+      ? this.ddxCompRef.instance.existingDiagnosis
+      : this.existingDiagnosis;
+
+    const newlyAddedDiagnoses = !this.isFeatureAvailable('dp_diagnosis_secondary')
+      ? diagnosisSource.filter((d: DiagnosisModel) =>
+          !d.uuid && !this.sentDiagnosisNames.has(d.diagnosisName?.toLowerCase() || '')
+        )
+      : [];
+
+    // When there are new diagnoses, send full payload (all AI list + all selected)
+    const allSelectedDiagnoses = newlyAddedDiagnoses.length > 0 ? diagnosisSource : [];
+    const aiDiagnosisList = newlyAddedDiagnoses.length > 0
+      && this.hasAILLMEnabled && this.ddxCompRef?.instance?.aillmddxComponent?.diagnosisList
+      ? this.ddxCompRef.instance.aillmddxComponent.diagnosisList
+      : [];
+
+    const newlyAddedMedications = this.standardMedicines.filter((m: StandardMedicineModel) =>
+      !m.uuid && !this.sentMedicationNames.has(m.drug?.toLowerCase() || '')
+    );
+
+    // When there are new medications, send full payload (all AI list + all selected)
+    const allSelectedMedications = newlyAddedMedications.length > 0 ? this.standardMedicines : [];
+    const aiMedicationList = newlyAddedMedications.length > 0
+      && this.hasAILLMEnabled && this.ddxCompRef?.instance?.aillmtxMedicationComponent?.medicationList
+      ? this.ddxCompRef.instance.aillmtxMedicationComponent.medicationList
+      : [];
+
+    const saveObs$ = postObsRequests.length ? forkJoin(postObsRequests) : of(null);
+
+    return saveObs$.pipe(
+      switchMap(responses =>
+        forkJoin([
+          this.sendDiagnosisToManualDDxAPI(allSelectedDiagnoses, aiDiagnosisList),
+          this.sendMedicationToManualTTxAPI(allSelectedMedications, aiMedicationList)
+        ]).pipe(
+          map(() => {
+            // Add to Sets to prevent duplicate sends
+            newlyAddedDiagnoses.forEach((d: DiagnosisModel) => {
+              if (d.diagnosisName) {
+                this.sentDiagnosisNames.add(d.diagnosisName.toLowerCase());
+              }
+            });
+            newlyAddedMedications.forEach((m: StandardMedicineModel) => {
+              if (m.drug) {
+                this.sentMedicationNames.add(m.drug.toLowerCase());
+              }
+            });
+            return responses;
+          }),
+          catchError(error => {
+            console.error('Error sending data to manual APIs:', error);
+            return of(responses);
+          })
+        )
+      )
+    );
   }
+
   /**
    * Save all changes as draft
    */
@@ -3152,12 +3415,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         // Reinitialize form tracking
         this.trackFormChanges();
         
-       this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
-
+        this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
       },
       error: (error) => {
         console.error('Error saving observations', error);
-      this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
+        this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
       }
     });
   }
@@ -3517,15 +3779,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log(event)
   }
 
-  onKeyPress(event: KeyboardEvent): boolean {
-    const charCode = event.which ? event.which : event.keyCode;
-    // Allow only numbers (0-9), backspace (8), and delete (46)
-    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 8 && charCode !== 46) {
-      event.preventDefault();
-      return false;
-    }
-    return true;
-  }
 
   onCallStatusClick(value: string): void{
     if(this.patientCallStatusForm.get('callStatus').value === value){
@@ -3541,6 +3794,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.hwPhoneNo;
     } 
   }
+
+  onKeyPress(event: KeyboardEvent): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    // Allow only numbers (0-9), backspace (8), and delete (46)
+    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 8 && charCode !== 46) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
   get visitDemarcation() {
     return this.visitService.getDemarcation(this.visit?.encounters);
   }
@@ -3577,102 +3841,262 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.furtherQuestionsList = questions;
   }
 
-  SaveAIDiagosisHistory(visit:any, diagnosisData:any){
-    let checkAIDiagnosisEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.AI_DIAGNOSIS_SUPPORT);
-    if(checkAIDiagnosisEncounter){
-      let checkLLMRegenerationEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.LLM_REGENERATION);
-      if(checkLLMRegenerationEncounter){
-        this.deleteExistingLLMObs(checkLLMRegenerationEncounter.obs).subscribe(res=>{
-          this.createLLMObs(checkLLMRegenerationEncounter.uuid,diagnosisData,true).subscribe();
-        })
-      } else {
-        this.createLLMEncounter(true).subscribe(res=>{
-          if(res){
-            this.createLLMObs(res.uuid,diagnosisData,true).subscribe();
-          }
-        })
-      }
-    } else {
-      this.createLLMEncounter().subscribe(res=>{
-        if(res){
-          this.createLLMObs(res.uuid,diagnosisData).subscribe();
-        }
-      })
-    }
-  }
+  // SaveAIDiagosisHistory(visit:any, diagnosisData:any){
+  //   let checkAIDiagnosisEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.AI_DIAGNOSIS_SUPPORT);
+  //   if(checkAIDiagnosisEncounter){
+  //     let checkLLMRegenerationEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.LLM_REGENERATION);
+  //     if(checkLLMRegenerationEncounter){
+  //       this.deleteExistingLLMObs(checkLLMRegenerationEncounter.obs).subscribe(res=>{
+  //         this.createLLMObs(checkLLMRegenerationEncounter.uuid,diagnosisData,true).subscribe();
+  //       })
+  //     } else {
+  //       this.createLLMEncounter(true).subscribe(res=>{
+  //         if(res){
+  //           this.createLLMObs(res.uuid,diagnosisData,true).subscribe();
+  //         }
+  //       })
+  //     }
+  //   } else {
+  //     this.createLLMEncounter().subscribe(res=>{
+  //       if(res){
+  //         this.createLLMObs(res.uuid,diagnosisData).subscribe();
+  //       }
+  //     })
+  //   }
+  // }
 
-  deleteExistingLLMObs(obs: ObsModel[]):Observable<any>{
-    let deleteAllObs = obs.map(o=>this.diagnosisService.deleteObs(o.uuid,true))
-    return forkJoin(deleteAllObs)
-  }
+  // deleteExistingLLMObs(obs: ObsModel[]):Observable<any>{
+  //   let deleteAllObs = obs.map(o=>this.diagnosisService.deleteObs(o.uuid,true))
+  //   return forkJoin(deleteAllObs)
+  // }
 
-  createLLMEncounter(revised:boolean = false):Observable<any>{
-    const json = {
-      patient: this.visit.patient.uuid,
-      encounterType: revised ? visitEncounters.llmRegeneration : visitEncounters.aiDiagnosis, // Visit Note encounter
-      encounterProviders: [
-        {
-          provider: this.provider.uuid,
-          encounterRole: visitEncounters.doctorProviderId, // Doctor encounter role
-        },
-      ],
-      visit: this.visit.uuid,
-      encounterDatetime: new Date(Date.now() - 30000),
-    };
-    return this.encounterService.postEncounter(json);
-  }
+  // createLLMEncounter(revised:boolean = false):Observable<any>{
+  //   const json = {
+  //     patient: this.visit.patient.uuid,
+  //     encounterType: revised ? visitEncounters.llmRegeneration : visitEncounters.aiDiagnosis, // Visit Note encounter
+  //     encounterProviders: [
+  //       {
+  //         provider: this.provider.uuid,
+  //         encounterRole: visitEncounters.doctorProviderId, // Doctor encounter role
+  //       },
+  //     ],
+  //     visit: this.visit.uuid,
+  //     encounterDatetime: new Date(Date.now() - 30000),
+  //   };
+  //   return this.encounterService.postEncounter(json);
+  // }
 
-  createLLMObs(encounterUUID:string, diagnosisData:any, revised: boolean = false):Observable<any>{
-      let diagnosisObs = diagnosisData.map((diagnosisAIData:any,rank:number)=>{
-        let diagnosisRecord = {
-          concept: conceptIds.conceptLLM,
-          person: this.visit.patient.uuid,
-          obsDatetime: new Date(),
-          encounter: encounterUUID,
-          groupMembers: [
-            {
-              concept: conceptIds.conceptDiagnosisName,
-              value: diagnosisAIData.diagnosis,
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
+  // createLLMObs(encounterUUID:string, diagnosisData:any, revised: boolean = false):Observable<any>{
+  //     let diagnosisObs = diagnosisData.map((diagnosisAIData:any,rank:number)=>{
+  //       let diagnosisRecord = {
+  //         concept: conceptIds.conceptLLM,
+  //         person: this.visit.patient.uuid,
+  //         obsDatetime: new Date(),
+  //         encounter: encounterUUID,
+  //         groupMembers: [
+  //           {
+  //             concept: conceptIds.conceptDiagnosisName,
+  //             value: diagnosisAIData.diagnosis,
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
               
-            },
-            {
-              concept: conceptIds.conceptDiagnosisLikelihood,
-              value: diagnosisAIData.likelihood + " likely",
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptRationale,
-              value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptRank,
-              value: (rank+1),
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptVersion,
-              value: revised ? 'revised' : 'initial',
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptWasRegenerated,
-              value: revised,
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            }
-          ]
-        }
+  //           },
+  //           {
+  //             concept: conceptIds.conceptDiagnosisLikelihood,
+  //             value: diagnosisAIData.likelihood + " likely",
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
+  //           },
+  //           {
+  //             concept: conceptIds.conceptRationale,
+  //             value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
+  //           },
+  //           {
+  //             concept: conceptIds.conceptRank,
+  //             value: (rank+1),
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
+  //           },
+  //           {
+  //             concept: conceptIds.conceptVersion,
+  //             value: revised ? 'revised' : 'initial',
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
+  //           },
+  //           {
+  //             concept: conceptIds.conceptWasRegenerated,
+  //             value: revised,
+  //             obsDatetime: new Date(),
+  //             person: this.visit.patient.uuid,
+  //           }
+  //         ]
+  //       }
 
-        return this.encounterService.postObs(diagnosisRecord, true)
-      })
-      return forkJoin(diagnosisObs)
+  //       return this.encounterService.postObs(diagnosisRecord, true)
+  //     })
+  //     return forkJoin(diagnosisObs)
+  // }
+
+  /**
+  * Send selected diagnoses to manual DDx API
+  * @param {DiagnosisModel[]} diagnosesToSend - Array of diagnoses to send to the API
+  * @returns {Observable<any>}
+  */
+  sendDiagnosisToManualDDxAPI(selectedDiagnoses: DiagnosisModel[], aiDiagnosisList: any[]): Observable<any> {
+    const selected = selectedDiagnoses || [];
+    const aiList = aiDiagnosisList || [];
+
+    if (!selected.length && !aiList.length) {
+      return of(null);
+    }
+
+    const diagnoses: any[] = [];
+
+    // Track AI diagnosis names to reliably identify non-AI diagnoses later
+    const aiDiagNames = new Set(
+      aiList.map((d: any) => d.diagnosis?.toLowerCase() || '')
+    );
+
+    // AI diagnoses with their original rank (1, 2, 3...)
+    aiList.forEach((aiDiag: any, index: number) => {
+      const selectedDiag = selected.find(
+        d => d.diagnosisName?.toLowerCase() === aiDiag.diagnosis?.toLowerCase()
+      );
+
+      const payload: any = {
+        diagnosis: aiDiag.diagnosis || '',
+        ...(aiDiag.summarised_rationale?.length && { summarised_rationale: aiDiag.summarised_rationale }),
+        ...(aiDiag.rationale?.length && { rationale: aiDiag.rationale }),
+        ...(aiDiag.likelihood && { likelihood: aiDiag.likelihood }),
+        rank: String(index + 1),
+      };
+
+      // Doctor selected this AI diagnosis — add type/status and flag
+      if (selectedDiag) {
+        if (selectedDiag.diagnosisType) payload["Diagnosis type"] = selectedDiag.diagnosisType;
+        if (selectedDiag.diagnosisStatus) payload["Diagnosis status"] = selectedDiag.diagnosisStatus;
+        payload.ai_assisted = 'Y';
+      }
+
+      diagnoses.push(payload);
+    });
+
+    // Non-AI diagnoses: any selected diagnosis whose name is NOT in the AI list
+    let nonAiRank = 99;
+    selected
+      .filter(d => !aiDiagNames.has(d.diagnosisName?.toLowerCase() || ''))
+      .forEach(diagnosis => {
+        diagnoses.push({
+          diagnosis: diagnosis.diagnosisName || '',
+          ...(diagnosis.diagnosisType && { "Diagnosis type": diagnosis.diagnosisType }),
+          ...(diagnosis.diagnosisStatus && { "Diagnosis status": diagnosis.diagnosisStatus }),
+          rationale: [{"NA": "N/A"}],
+          rank: String(nonAiRank++),
+          ai_assisted: 'N',
+        });
+      });
+
+    return diagnoses.length
+      ? this.diagnosisService.saveManualDiagnosis({ visitUuid: this.visit.uuid, diagnoses })
+      : of(null);
+  }
+
+  /**
+  * Check if AI-generated medication has been modified
+  */
+  checkMedicationModification(medication: StandardMedicineModel): void {
+    if (!medication.aiGenerated || !medication.originalAiData) {
+      return;
+    }
+
+    const isModified =
+      medication.dose !== medication.originalAiData.dose ||
+      medication.durationNo !== medication.originalAiData.durationNo ||
+      medication.durationUnit !== medication.originalAiData.durationUnit ||
+      medication.instructRemark !== medication.originalAiData.instructRemark ||
+      medication.frequency !== medication.originalAiData.frequency;
+
+    medication.modified = isModified;
+  }
+
+  /**
+  * Send all medications (AI + manual) to manual TTx API in a single payload.
+  */
+  sendMedicationToManualTTxAPI(selectedMedications: StandardMedicineModel[], aiMedicationList: any[]): Observable<any> {
+    const selected = selectedMedications || [];
+    const aiList = aiMedicationList || [];
+
+    if (!selected.length && !aiList.length) {
+      return of(null);
+    }
+
+    const medications: any[] = [];
+    const matchedSelectedNames = new Set<string>();
+
+    // AI medications
+    aiList.forEach((aiMed: any, index: number) => {
+      const aiMedName = (aiMed.name || aiMed.drug || aiMed.medication || '').toLowerCase().trim();
+      const selectedMed = selected.find(
+        m => m.drug?.toLowerCase().trim() === aiMedName
+          || aiMedName.includes(m.drug?.toLowerCase().trim() || '')
+          || (m.drug?.toLowerCase().trim() || '').includes(aiMedName)
+      );
+
+      const payload: any = {
+        medication: aiMed.name || aiMed.drug || aiMed.medication || '',
+        ...(aiMed.rationale?.length && { rationale: Array.isArray(aiMed.rationale) ? aiMed.rationale.join('\n') : aiMed.rationale }),
+        ...(aiMed.likelihood && { likelihood: aiMed.likelihood }),
+        rank: String(index + 1),
+      };
+
+      if (selectedMed) {
+        // Doctor selected this AI medication — use doctor's values and flag
+        matchedSelectedNames.add(selectedMed.drug?.toLowerCase().trim() || '');
+        this.checkMedicationModification(selectedMed);
+        payload.dose = selectedMed.dose;
+        payload.duration = selectedMed.durationNo;
+        payload.duration_unit = selectedMed.durationUnit;
+        payload.instructions = selectedMed.instructRemark;
+        payload.frequency = selectedMed.frequency;
+        payload.ai_assisted = selectedMed.modified ? 'M' : 'Y';
+      } else {
+        // Unselected AI medication — use AI-suggested values, no ai_assisted flag
+        payload.dose = aiMed?.dosage || aiMed?.dose;
+        payload.duration = aiMed?.duration;
+        payload.duration_unit = aiMed?.duration_unit;
+        payload.instructions = aiMed?.instructions;
+        payload.frequency = aiMed?.frequency;
+      }
+
+      medications.push(payload);
+    });
+
+    // Remaining medications not in the latest AI list → always 'N' (Non-AI)
+    let nonAiRank = 99;
+    selected
+      .filter(m => !matchedSelectedNames.has(m.drug?.toLowerCase().trim() || ''))
+      .forEach(medication => {
+        medications.push({
+          medication: medication.drug || '',
+          dose: medication.dose,
+          duration: medication.durationNo,
+          duration_unit: medication.durationUnit,
+          instructions: medication.instructRemark,
+          frequency: medication.frequency,
+          ...(medication.rationale?.length
+            ? { rationale: Array.isArray(medication.rationale) ? medication.rationale.join('\n') : medication.rationale }
+            : { rationale: 'N/A' }),
+          ...(medication.likelihood && { likelihood: medication.likelihood }),
+          rank: String(nonAiRank++),
+          ai_assisted: 'N',
+        });
+      });
+
+    return medications.length
+      ? this.diagnosisService.saveManualTreatment({ visitUuid: this.visit.uuid, medications })
+      : of(null);
   }
 
   /**
@@ -3696,5 +4120,33 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
   }
-}
 
+  onNotesChanged(newNotes: ObsModel[]) {
+    this.updatedObsData.notes = [...newNotes];
+    this.checkChanges(this.updatedObsData);
+  }
+  onFamilyHistoryNotesChanged(newNotes: ObsModel[]) {
+    this.updatedObsData.familyHistoryNote = [...newNotes];
+    this.checkChanges(this.updatedObsData);
+  }
+  onPastMedicalHistoryNotesChanged(newNotes: ObsModel[]) {
+    this.updatedObsData.pastMedicalHistoryNote = [...newNotes];
+    this.checkChanges(this.updatedObsData);
+  }
+
+  /**
+  * Check if login profile then show/hide features accondingly
+  * @returns {boolean}
+  */
+  showAndHideUiElements(): boolean {
+    const doctorName = getCacheData(true, doctorDetails.USER)?.person?.display;
+    const isNamcoDoctor = doctorName && doctorName.includes('Namco');
+
+    // Hide AI features for Namco doctors
+    if (isNamcoDoctor) {
+      this.hasAILLMEnabled = false;
+    }
+
+    return this.showAndHideUiElement = !isNamcoDoctor;
+  }
+}

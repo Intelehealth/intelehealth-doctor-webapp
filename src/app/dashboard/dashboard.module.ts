@@ -36,6 +36,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruction/follow-up-instruction.component';
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
+import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactiva
     FollowupVisitsComponent,
     NotesComponent,
     FollowUpInstructionComponent,
+    DigitalStethoscopeComponent,
   ],
   imports: [
     IhLibraryModule,

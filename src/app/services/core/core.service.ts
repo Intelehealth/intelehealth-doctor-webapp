@@ -157,15 +157,12 @@ export class CoreService {
   }
 
   /**
-   * Open share prescription confirmation modal
-   * @return {Observable<any>} - Dialog result
-   */
-  openSharePrescriptionConfirmModal(): Observable<any> {
-    const dialogRef = this.dialog.open(SharePrescriptionComponent, {
-      panelClass: "modal-md",
-      hasBackdrop: true,
-      disableClose: true,
-    });
+  * Open share prescription confirmation modal
+  * @param {any} data - Optional dialog data (e.g., { isRapidCompletion: boolean })
+  * @return {Observable<any>} - Dialog result
+  */
+  openSharePrescriptionConfirmModal(data?: any): Observable<any> {
+    const dialogRef = this.dialog.open(SharePrescriptionComponent, { panelClass: 'modal-md', data, hasBackdrop: true, disableClose: true });
     return dialogRef.afterClosed();
   }
 

@@ -1,0 +1,33 @@
+<div class="container-fluid pl-0">
+    <div class="card intel-card">
+        <div class="card-header">
+            <img class="mr-2" src="assets/svgs/webrtc-report.svg" alt="" height="44px">
+            <h6 class="mb-0">Webrtc Log</h6>
+            <div class="card-header-actions">
+                <button type="button" class="action-btn bg-blue" data-test-id="btnExport" (click)="export()">
+                    {{'Export' | translate}}</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+                <ng-container *ngFor="let column of callDataColumns" [matColumnDef]="column.key">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        {{ (column?.label) | translate }}
+                    </th>
+                    <td [class]="column.class" mat-cell *matCellDef="let element">
+                        <ng-container>
+                            {{ column?.key === 'start_time' ? element['start_timeD'] :
+                            column?.key === 'end_time' ? element['end_timeD']: element[column?.key] }}
+                        </ng-container>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[10, 20, 50]" data-test-id="matPaginatorWebrtcLog"></mat-paginator>
+            <div *ngIf="data.length === 0" class="no-data text-center w-100 p-4">
+                {{'No Data Found' | translate}}.
+            </div>
+        </div>
+    </div>
+</div>

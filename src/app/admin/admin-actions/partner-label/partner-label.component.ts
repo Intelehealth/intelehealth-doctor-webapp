@@ -117,17 +117,13 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
   }
 
   onLogoFileDelete(type){
-   
-      this.themeConfigData[type] = '';
-       this.setType = type;
+    this.themeConfigData[type] = '';
+    this.setType = type;
  //  this.updateThemeConfig(type,'');
   }
 
   updateThemeConfig(key, value) {
     const formData = new FormData();
-    formData.append('key', key);
-    formData.append('value', value);
-    return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
     formData.append('key', key);
     formData.append('value', value);
     return this.configService.uploadImage(this.themeConfigURL, 'PUT', formData);
@@ -211,7 +207,7 @@ export class PartnerLabelComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  
+
   callPublish(): void {
     this.configService.publishConfig().subscribe({
       next: () => {

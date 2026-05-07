@@ -1,0 +1,69 @@
+name: Demoai-new
+on:
+  push:
+    branches:
+      - nas-ida5-development-master
+  workflow_dispatch:  # Allows manual trigger
+  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # STEP 1: Fetch the .env from the server to use during the build
+      - name: Download .env via Native SCP
+        run: |
+          # Create the .ssh directory and add the private key
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Add the server to known_hosts to prevent interactive prompts
+          ssh-keyscan -H ${{ secrets.DEMOAII_HOST }} >> ~/.ssh/known_hosts
+          
+          # Execute the download
+          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAII_HOST }}:/home/ubuntu/deploy/webapp/.env .env
+      # STEP 2: Build the Docker image (Dockerfile will now find the .env)
+      - name: Build and Save Docker Image
+        run: |
+          # Move the downloaded .env to the root if scp nested it
+          mv .env ./ || true 
+          docker build -t intelehealth-webapp:latest .
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+
+      # STEP 3: Transfer the built image back to the server
+      - name: Upload Image to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEMOAII_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "webapp_image.tar.gz"
+          target: "/home/ubuntu/deploy/webapp/"
+
+      # STEP 4: Restart the container
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEMOAII_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/deploy/webapp/
+            gunzip -c webapp_image.tar.gz | docker load
+            
+            docker stop webapp-container || true
+            docker rm webapp-container || true
+            
+            # Note: We still mount the .env at runtime just in case 
+            # your Node server (SSR) or Docker entrypoint needs it.
+            docker run -d \
+              --name webapp-container \
+              -p 81:80 \
+              --env-file /home/ubuntu/deploy/webapp/.env \
+              intelehealth-webapp:latest
+            
+            rm webapp_image.tar.gz

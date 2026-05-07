@@ -26,6 +26,7 @@
                     [value]="option"
                     formControlName="platform"
                     class="form-check-input mr-2"
+                    [attr.data-test-id]="'radioPlatform' + option"
                   />
                   {{ option }}
                 </label>
@@ -37,10 +38,10 @@
         <!-- Buttons -->
         <div class="form-row mt-4">
           <div class="col-md-12 d-flex gap-3">
-            <button mat-button type="submit" class="save-btn">
+            <button mat-button type="submit" class="save-btn" data-test-id="btnSavePlatformSelection">
               {{ 'Save' | translate }}
             </button>
-            <button mat-button type="button" class="cancel-btn" (click)="handleCancel()">
+            <button mat-button type="button" class="cancel-btn" (click)="handleCancel()" data-test-id="btnCancelPlatformSelection">
               {{ 'Cancel' | translate }}
             </button>
           </div>

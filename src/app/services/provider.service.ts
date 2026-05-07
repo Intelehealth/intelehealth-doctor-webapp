@@ -109,4 +109,18 @@ export class ProviderService {
   uploadSignature(file: string, providerId: string): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/signature/upload`, { file, providerId });
   }
+
+  /**
+  * Initiate Kaleyra click2call via backend proxy
+  * @param {string} caller - Doctor phone number
+  * @param {string} receiver - HW/patient phone number
+  * @param {string} custom - Visit ID
+  * @param {string} retry - Retry count (default '0')
+  * @return {Observable<any>}
+  */
+  kaleyraClick2Call(caller: string, receiver: string, custom: string, retry: string = '0', notes: string): Observable<any> {
+    const url = `${this.mindmapUrl}/kaleyra/click2call`;
+    const payload: any = { caller, receiver, custom, retry, notes };
+    return this.http.post(url, payload);
+  }
 }

@@ -6,8 +6,15 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './share-prescription.component.html',
 })
 export class SharePrescriptionComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
-  private dialogRef: MatDialogRef<SharePrescriptionComponent>) { }
+  isRapidCompletion: boolean = false;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  private dialogRef: MatDialogRef<SharePrescriptionComponent>) {
+    // Check if this is a rapid completion warning
+    if (data && data.isRapidCompletion) {
+      this.isRapidCompletion = true;
+    }
+  }
 
   /**
   * Close modal

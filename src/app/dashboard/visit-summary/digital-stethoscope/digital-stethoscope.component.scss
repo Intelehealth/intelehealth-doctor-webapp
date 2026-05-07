@@ -1,0 +1,808 @@
+// Digital Auscultation Component Styles
+// Reuses global CSS custom properties from variables.scss and font() mixin from main.scss
+@import "src/assets/scss/main";
+
+// local SCSS vars, as needed for SCSS functions (rgba/darken)
+$primary: #2E1E91;
+$red: #FF475D;
+$text-medium: #4B5563;
+$text-lighter: #9CA3AF;
+$border-light: #E5E7EB;
+$border-lighter: #F3F4F6;
+$blue: #2563EB;
+$blue-lighter: #EFF6FF;
+
+.digital-auscultation {
+  font-family: var(--font-family);
+  padding: 1.5rem;
+}
+
+// ==================== HEADER ====================
+.da-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.da-header-left {
+  .da-title {
+    @include font(700, 1.375rem);
+    color: var(--color-darkestBlue);
+    margin: 0 0 0.25rem 0;
+    line-height: 1.3;
+  }
+
+  .da-subtitle {
+    @include font(400, 0.8125rem);
+    color: var(--color-gray);
+    margin: 0;
+  }
+}
+
+.da-header-badges {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    @include font(600, 0.8125rem);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  .badge-heart {
+    color: var(--color-red);
+    background-color: rgba($red, 0.08);
+  }
+
+  .badge-lung {
+    color: $blue;
+    background-color: $blue-lighter;
+  }
+}
+
+// ==================== TAB TOGGLE ====================
+.tab-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 8px;
+  border: 1.5px solid $border-light;
+  background: transparent;
+  color: $text-medium;
+  font-family: var(--font-family);
+  @include font(700, 0.875rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 154px;
+  
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover:not(.active-heart):not(.active-lung) {
+    color: var(--color-darkBlue);
+    background-color: rgba($primary, 0.04);
+    border-color: rgba($primary, 0.3);
+  }
+
+  &.active-heart {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    color: var(--color-white);
+
+    svg {
+      fill: var(--color-white);
+    }
+  }
+
+  &.active-lung {
+    background-color: var(--color-darkBlue);
+    border-color: var(--color-darkBlue);
+    color: var(--color-white);
+
+    svg {
+      fill: var(--color-white);
+    }
+  }
+}
+
+// ==================== MAIN CONTENT LAYOUT ====================
+.da-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ==================== LEFT COLUMN: DIAGRAMS ====================
+.da-diagrams {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.diagram-card {
+  background-color: var(--color-offWhite);
+  border-radius: 12px;
+  padding: 0.75rem;
+  border: 1px solid $border-lighter;
+}
+
+.diagram-wrapper {
+  position: relative;
+  aspect-ratio: 1 / 1.15;
+  overflow: hidden;
+  border-radius: 8px;
+
+  .body-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+// Measurement Points
+.measurement-point {
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  color: white;
+  @include font(600, 0.75rem);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+
+  // Default: recorded state
+  background-color: #3B82F6;
+
+  &.recorded {
+    background-color: #3B82F6;
+  }
+
+  &.selected {
+    background-color: #1E1B4B;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: translate(-50%, -50%) scale(1.1);
+    z-index: 3;
+  }
+
+  &.abnormal {
+    background-color: var(--color-red);
+    box-shadow: 0 0 0 3px rgba($red, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.no-recording {
+    background-color: $text-lighter;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  &:hover:not(.selected) {
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &.selected:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+// Legend
+.diagram-legend {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0.5rem 0.375rem;
+  flex-wrap: wrap;
+  border-top: 1px solid $border-lighter;
+  margin-top: 0.5rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  @include font(400, 0.6875rem);
+  color: $text-medium;
+  white-space: nowrap;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.selected {
+    background-color: #1E1B4B;
+  }
+
+  &.recorded {
+    background-color: #3B82F6;
+  }
+
+  &.abnormal {
+    background-color: var(--color-red);
+  }
+
+  &.no-recording {
+    background-color: $text-lighter;
+  }
+}
+
+// ==================== RIGHT COLUMN: DETAILS ====================
+.da-details {
+  min-height: 400px;
+}
+
+// Top Info Row (badges left, BPM right)
+.top-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  .top-info-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .top-info-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+}
+
+.point-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  @include font(600, 0.8125rem);
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &.heart-badge {
+    background-color: var(--color-lightPink);
+    color: var(--color-red);
+  }
+
+  &.lung-badge {
+    color: $blue;
+    background-color: $blue-lighter;
+  }
+}
+
+.abnormal-detected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  @include font(600, 0.75rem);
+  background-color: var(--color-lightPink);
+  color: var(--color-red);
+}
+
+// BPM Badges
+.bpm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  @include font(600, 0.8125rem);
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &.bpm-heart {
+    color: var(--color-red);
+    background-color: rgba($red, 0.08);
+  }
+
+  &.bpm-lung {
+    color: $blue;
+    background-color: $blue-lighter;
+  }
+}
+
+// Position Name
+.position-name {
+  @include font(700, 1.25rem);
+  color: var(--color-darkestBlue);
+  margin: 0.25rem 0;
+}
+
+.recorded-info {
+  @include font(400, 0.8125rem);
+  color: var(--color-gray);
+  margin: 0 0 1.5rem 0;
+}
+
+// ==================== RECORDING DETAILS ====================
+.recording-details {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  @include font(700, 1rem);
+  color: var(--color-darkestBlue);
+  margin: 0 0 0.875rem 0;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem 1.5rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-field {
+  .detail-label {
+    @include font(400, 0.75rem);
+    color: var(--color-gray);
+    margin-bottom: 0.2rem;
+    display: block;
+  }
+
+  .detail-value {
+    @include font(600, 0.9375rem);
+    color: var(--color-darkestBlue);
+    display: block;
+
+    &.value-heart {
+      color: var(--color-red);
+    }
+
+    &.value-lung {
+      color: var(--color-darkBlue);
+    }
+  }
+
+  &.detail-full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+// ==================== GRAPHICAL INSIGHT CARD ====================
+.graphical-insight-card {
+  border: 1px solid var(--color-darkBlue);
+  background-color: var(--color-lightGray);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.gi-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+
+  svg {
+    color: var(--color-darkBlue);
+    flex-shrink: 0;
+  }
+
+  .gi-title {
+    @include font(700, 0.9375rem);
+    color: var(--color-darkestBlue);
+  }
+}
+
+.gi-description {
+  @include font(400, 0.8125rem);
+  color: var(--color-gray);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.gi-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  background-color: var(--color-darkBlue);
+  color: var(--color-white);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-family);
+  @include font(600, 0.9375rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba($primary, 0.3);
+
+  svg {
+    flex-shrink: 0;
+    stroke: var(--color-white);
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, darken($primary, 5%), var(--color-secondary));
+    box-shadow: 0 6px 16px rgba($primary, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba($primary, 0.3);
+  }
+}
+
+.gi-subtitle {
+  @include font(400, 0.75rem);
+  color: $text-lighter;
+  margin: 0.75rem 0 0 0;
+  text-align: center;
+}
+
+// ==================== AI ANALYSIS ====================
+.ai-analysis {
+  margin-bottom: 1.5rem;
+}
+
+// Detected Conditions
+.detected-conditions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.625rem;
+}
+
+.detected-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  @include font(600, 0.875rem);
+  color: var(--color-red);
+}
+
+.conditions-count {
+  @include font(400, 0.75rem);
+  color: $text-lighter;
+}
+
+.detected-conditions-list {
+  margin-bottom: 1.25rem;
+}
+
+.detected-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-lightPink);
+  border-radius: 8px;
+  margin-bottom: 0.375rem;
+
+  .detected-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-red);
+    flex-shrink: 0;
+  }
+
+  .detected-name {
+    flex: 1;
+    @include font(600, 0.875rem);
+    color: var(--color-red);
+  }
+
+  .detected-pct {
+    @include font(600, 0.875rem);
+    color: var(--color-red);
+  }
+}
+
+// All Results
+.all-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+
+  .all-results-label {
+    @include font(500, 0.875rem);
+    color: $text-medium;
+  }
+}
+
+.all-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.result-row {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid $border-lighter;
+
+  &:first-child {
+    border-top: 1px solid $border-lighter;
+  }
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .result-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.375rem;
+
+    .result-name {
+      @include font(700, 0.9375rem);
+      color: var(--color-darkestBlue);
+    }
+
+    .result-pct {
+      @include font(600, 0.875rem);
+      color: #7F7B92;
+    }
+  }
+
+  .result-bar {
+    width: 100%;
+    height: 8px;
+    background-color: $border-lighter;
+    border-radius: 50px;
+    overflow: hidden;
+
+    .result-bar-fill {
+      height: 100%;
+      border-radius: 50px;
+      background-color: var(--color-green);
+      transition: width 0.4s ease;
+    }
+  }
+}
+
+.ai-disclaimer {
+  @include font(400, 0.75rem);
+  color: $text-lighter;
+  margin: 1.25rem 0 0 0;
+  line-height: 1.5;
+}
+
+// ==================== NEXT RECORDING BUTTON ====================
+.next-recording-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.75rem 1.75rem;
+  color: var(--color-darkBlue);
+  border-radius: 8px;
+  font-family: var(--font-family);
+  @include font(700, 0.9375rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid var(--Divider, rgba(178, 175, 190, 0.20));
+  background: var(--Background, #FFF);
+
+  svg {
+    flex-shrink: 0;
+    stroke: var(--color-darkBlue);
+  }
+
+  &:hover {
+    background-color: rgba($primary, 0.06);
+    border-color: darken(rgba(178, 175, 190, 0.20), 5%);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.has-arrow {
+    svg {
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+// ==================== NO RECORDING PANEL ====================
+.no-recording-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: var(--color-offWhite);
+  border: 1.5px solid $border-light;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+
+  .no-rec-icon {
+    margin-bottom: 1rem;
+
+    svg {
+      opacity: 0.5;
+    }
+  }
+
+  .no-rec-title {
+    @include font(700, 1.125rem);
+    color: var(--color-darkestBlue);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .no-rec-position {
+    @include font(400, 0.9375rem);
+    color: $text-medium;
+    margin: 0 0 1rem 0;
+
+    strong {
+      color: var(--color-darkestBlue);
+    }
+  }
+
+  .no-rec-desc {
+    @include font(400, 0.8125rem);
+    color: var(--color-gray);
+    margin: 0 0 1.5rem 0;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+
+  .no-rec-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid $border-light;
+    margin: 0 0 1.25rem 0;
+  }
+
+  .no-rec-hint {
+    @include font(400, 0.8125rem);
+    color: var(--color-gray);
+    margin: 0 0 1.5rem 0;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+
+  .no-rec-legend {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+}
+
+// ==================== NO SELECTION PANEL ====================
+.no-selection-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 300px;
+  background-color: var(--color-offWhite);
+  border: 1.5px dashed $border-light;
+  border-radius: 16px;
+  padding: 2rem;
+
+  svg {
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
+
+  p {
+    @include font(400, 0.9375rem);
+    color: $text-lighter;
+    margin: 0;
+  }
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 900px) {
+  .digital-auscultation {
+    padding: 1rem;
+  }
+
+  .da-content {
+    grid-template-columns: 1fr;
+  }
+
+  .da-diagrams {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    .diagram-card {
+      flex: 1;
+      min-width: 220px;
+    }
+  }
+
+  .da-details {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .da-header {
+    flex-direction: column;
+  }
+
+  .tab-toggle {
+    width: 100%;
+
+    .tab-btn {
+      flex: 2;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .da-diagrams {
+    flex-direction: column;
+
+    .diagram-card {
+      min-width: unset;
+    }
+  }
+
+  .top-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .top-info-right {
+      flex-wrap: wrap;
+    }
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .no-recording-panel {
+    padding: 1.5rem 1rem;
+  }
+}

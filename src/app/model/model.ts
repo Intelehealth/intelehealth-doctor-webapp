@@ -516,7 +516,6 @@ export interface MedicineModel {
   remark?: string,
   frequency?: string,
   uuid?: string,
-
 }
 
 export interface StandardMedicineModel {
@@ -526,17 +525,18 @@ export interface StandardMedicineModel {
   durationUnit?: string,
   instructRemark?: string,
   frequency?: string,
-  uuid?: string
-}
-
-export interface StandardMedicineModel {
-  drug?: string,
-  dose?: string,
-  durationNo?: string,
-  durationUnit?: string,
-  instructRemark?: string,
-  frequency?: string,
-  uuid?: string
+  uuid?: string,
+  aiGenerated?: boolean,
+  modified?: boolean,
+  rationale?: string[],
+  likelihood?: string,
+  originalAiData?: {
+    dose?: string,
+    durationNo?: string,
+    durationUnit?: string,
+    instructRemark?: string,
+    frequency?: string
+  }
 }
 
 export interface PatientHistoryModel {
@@ -557,6 +557,9 @@ export interface DiagnosisModel {
   diagnosisCode?: string,
   isSnomed? : boolean,
   diagnosisAiGenerated?: string,
+  rationale?: string[],
+  from?: string,
+  likelihood?: string,
 }
 
 export interface DocImagesModel {
@@ -816,4 +819,45 @@ export interface RecordingResponse {
 }
 export interface RecordingResponse {
   recordingId: number;
+}
+
+export interface ScreeningResult {
+  confidence_score: number;
+  condition: string;
+  description: string;
+  condition_detected: string;
+  type?: string;
+}
+
+export interface LungData {
+  lung_bpm: string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+
+export interface HeartData {
+  heart_bpm: number | string;
+  breathing_rate?: number | string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+export interface DetectedCondition {
+  condition: string;
+  confidence: number;
+}
+
+export interface MeasurementPoint {
+  id: number;
+  top: string;
+  left: string;
 }

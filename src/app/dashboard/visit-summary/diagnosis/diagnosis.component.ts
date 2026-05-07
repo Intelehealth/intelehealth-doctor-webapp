@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT } from 'aiddx-library';
-import { isFeaturePresent } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { DiagnosticModel, DropdownItemModel, EncounterModel, ObsApiResponseModel, ObsModel, ReferralModel, TestModel } from 'src/app/model/model';
@@ -20,7 +20,7 @@ import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { DataItemModel, MedicineModel } from 'src/app/model/model';
 import instructionRemarks from 'src/app/core/data/instructionRemarks';
 import durationUnitList from 'src/app/core/data/durationUnitList';
-import { conceptIds, days, facility, refer_prioritie } from 'src/config/constant';
+import { conceptIds, days, doctorDetails, facility, refer_prioritie } from 'src/config/constant';
 import doses from '../../../core/data/dose';
 import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -84,7 +84,7 @@ class PickDateAdapter extends NativeDateAdapter {
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })
-export class DiagnosisComponent implements OnInit, OnDestroy {
+export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(AillmddxComponent) aillmddxComponent: AillmddxComponent;
   @ViewChild(AillmtxMedicationComponent) aillmtxMedicationComponent: AillmtxMedicationComponent;
   @ViewChild(AillmtxAdviceComponent) aillmtxAdviceComponent: AillmtxAdviceComponent;
@@ -93,10 +93,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @ViewChild(AillmtxFollowupComponent) aillmtxFollowupComponent: AillmtxFollowupComponent;
   @Input() visit: any;
   @Input() patientInfo: any;
+  @Input() patientHistoryData: any[] = [];
   @Output() diagnosisName: string;
   @Input() isMCCUser: boolean = false;
   @Input() isVisitNoteProvider: boolean = false;
   @Input() visitEnded: EncounterModel | string;
+  @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
@@ -105,7 +107,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @Output() referralSaved = new EventEmitter<any>();
   @Output() followUpSaved = new EventEmitter<any>();
   @Output() furtherQuestionsReceived = new EventEmitter<string[]>();
-  @Output() diagnosisReceived = new EventEmitter<any>();
+  // @Output() diagnosisReceived = new EventEmitter<any>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -158,6 +160,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   diagnostics: DiagnosticModel[] = [];
   timeList: string[] = [];
   minDate = new Date();
+  showAndHideUiElement: boolean = true;
+  patientAllergies: string = '';
+  patientCurrentMedications: string = '';
+  allergyDataStatus: 'empty' | 'present' = 'empty';
 
   constructor(
     private fb: FormBuilder,
@@ -228,7 +234,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
 
-  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours", "Twice daily before meals", "Twice daily after meals"];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -254,11 +260,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
-        if (diagnosisData && diagnosisData.length) {
-          this.diagnosisReceived.emit(diagnosisData);
-        }
-      });
+      // this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
+      //   if (diagnosisData && diagnosisData.length) {
+      //     this.diagnosisReceived.emit(diagnosisData);
+      //   }
+      // });
     }
   }
 
@@ -285,11 +291,38 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         this.visitNotePresent = visit.encounters.find(({ display = '' }) => display.includes('Visit Note'));
       }
     });
+    this.showAndHideUiElements();
+    this.extractAllergyAndMedicationData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When patientHistoryData input changes, re-extract allergy and medication data
+    if (changes['patientHistoryData'] && changes['patientHistoryData'].currentValue) {
+      this.extractAllergyAndMedicationData();
+    }
   }
 
   ngOnDestroy() {
     // Clear the cache when component is destroyed
     this.aiTxService.clearCache();
+  }
+
+  /**
+   * Extract allergy and drug history data from patient history
+   */
+  extractAllergyAndMedicationData(): void {
+    this.patientAllergies = '';
+    this.patientCurrentMedications = '';
+
+    if (!this.patientHistoryData?.length) return;
+
+    this.patientHistoryData.forEach((historySection: any) => {
+      historySection.data?.forEach((item: any) => {
+        const key = (item.key || '').toLowerCase();
+        if (key === 'allergies') this.patientAllergies = item.value || '';
+        if (key === 'drug history') this.patientCurrentMedications = item.value || '';
+      });
+    });
   }
 
   /**
@@ -301,13 +334,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        // this.followUpForm.get('followUpTime').clearValidators();
+        // this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -378,6 +411,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
           }
         }
       });
+
+      // When prescription is shared, trigger ttxfinal for medication
+      if (this.visitCompleted && this.existingDiagnosis.length > 0) {
+        this.diagnosisName = this.existingDiagnosis[0].diagnosisName;
+        this.aiTxService.clearCache();
+        this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
+      }
     });
   }
 
@@ -474,11 +514,51 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
 
       this.diagnosisSubject.next(this.selectedDiagnoses);
       const { diagnosisAiGenerated, ...restForm } = this.diagnosisForm.value;
-      const newDiagnosis = { 
-          ...restForm, 
-          diagnosisName: this.diagnosisName, 
+
+      // For AI-generated diagnoses, extract rationale and likelihood from AI diagnosis list
+      let rationale: string[] = [];
+      let from: string | undefined = undefined;
+      let likelihood: string | undefined = undefined;
+      let rank: any = undefined;
+
+      if (diagnosisAiGenerated && this.aillmddxComponent?.diagnosisList) {
+        const aiDiagnosis = this.aillmddxComponent.diagnosisList.find(
+          (d: any) => d.diagnosis?.toLowerCase() === this.diagnosisName?.toLowerCase()
+        );
+
+        // Extract rank from AI diagnosis (based on order in list)
+        if (aiDiagnosis) {
+          const diagIndex = this.aillmddxComponent.diagnosisList.indexOf(aiDiagnosis);
+          rank = diagIndex >= 0 ? (diagIndex + 1) : undefined;
+        }
+
+        // Extract likelihood
+        if (aiDiagnosis?.likelihood) {
+          likelihood = aiDiagnosis.likelihood;
+        }
+
+        if (aiDiagnosis?.rationale) {
+          if (Array.isArray(aiDiagnosis.rationale) && typeof aiDiagnosis.rationale[0] === 'string') {
+            rationale = aiDiagnosis.rationale.filter((val: string) => val && val.trim() !== '');
+          } else {
+            rationale = aiDiagnosis.rationale
+              .map((obj: any) => Object.values(obj).pop())
+              .filter((val: any) => val && val !== '.' && val.trim() !== '');
+          }
+        }
+        from = 'AI generated';
+      }
+
+      const newDiagnosis = {
+          ...restForm,
+          diagnosisName: this.diagnosisName,
           ...(diagnosisAiGenerated ? { diagnosisAiGenerated: diagnosisAiGenerated } : {}),
+          ...(rationale.length > 0 ? { rationale: rationale } : {}),
+          ...(from ? { from: from } : {}),
+          ...(likelihood ? { likelihood: likelihood } : {}),
+          ...(rank !== undefined ? { rank: rank } : {}),
       };
+
       this.existingDiagnosis.push(newDiagnosis);
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
@@ -659,18 +739,79 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     if (this.selectedMedication.length > 0) {
       const medicine = this.selectedMedication[0];
 
-      const formattedMedicine = {
+      const formattedMedicine: any = {
         drug: this.addMedicineForm.value.drug,
         dose: this.addMedicineForm.value.dose,
         frequency: this.addMedicineForm.value.frequency,
         durationNo: this.addMedicineForm.value.durationNo,
         durationUnit: this.addMedicineForm.value.durationUnit,
         instructRemark: this.addMedicineForm.value.instructRemark || '',
-        uuid: medicine.uuid
+        uuid: medicine.uuid,
+        aiGenerated: true,
+        // Store ORIGINAL AI values for modification detection
+        originalAiData: {
+          dose: medicine.dosage || medicine.dose,
+          durationNo: medicine.duration || medicine.durationNo,
+          durationUnit: medicine.duration_unit || medicine.durationUnit,
+          instructRemark: medicine.instructions || medicine.instructRemark || '',
+          frequency: medicine.frequency
+        }
       };
+
+      // Extract rationale and likelihood from AI medication component list
+      if (this.aillmtxMedicationComponent) {
+        const medicationList = (this.aillmtxMedicationComponent as any).medicationList ||
+                               (this.aillmtxMedicationComponent as any).medicineList ||
+                               (this.aillmtxMedicationComponent as any).medications;
+
+        if (medicationList && medicationList.length > 0) {
+          const drugName = formattedMedicine.drug?.toLowerCase().trim();
+          const aiMedication = medicationList.find((m: any) =>
+            m.name?.toLowerCase().trim() === drugName ||
+            m.drug?.toLowerCase().trim() === drugName ||
+            m.medication?.toLowerCase().trim() === drugName
+          );
+
+          if (aiMedication) {
+            // Extract rank from AI medication (based on order in list)
+            const medIndex = medicationList.indexOf(aiMedication);
+            formattedMedicine.rank = medIndex >= 0 ? (medIndex + 1) : 'NA';
+            if (aiMedication.rationale) {
+              if (Array.isArray(aiMedication.rationale)) {
+                const isStringArray = typeof aiMedication.rationale[0] === 'string';
+                formattedMedicine.rationale = isStringArray
+                  ? aiMedication.rationale.filter((r: string) => r?.trim())
+                  : aiMedication.rationale.map((obj: any) => Object.values(obj).pop()).filter((val: any) => val?.trim() && val !== '.');
+              } else if (typeof aiMedication.rationale === 'string') {
+                formattedMedicine.rationale = [aiMedication.rationale];
+              }
+            }
+            if (aiMedication.likelihood) {
+              formattedMedicine.likelihood = aiMedication.likelihood;
+            }
+          }
+        }
+      }
+
+      // Fallback: try to extract from medicine object directly
+      if (!formattedMedicine.rationale && medicine.rationale && medicine.rationale.length > 0) {
+        formattedMedicine.rationale = medicine.rationale.filter((r: string) => r?.trim());
+      }
+      if (!formattedMedicine.likelihood && medicine.likelihood) {
+        formattedMedicine.likelihood = medicine.likelihood;
+      }
 
       // Check for duplicates
       if (!this.medicines.find(m => m.drug.toLowerCase() === formattedMedicine.drug.toLowerCase())) {
+        // Warn if similar base drug name exists (same drug, different strength/formulation)
+        const similarDrug = this.findSimilarBaseDrug(formattedMedicine.drug);
+        if (similarDrug) {
+          const baseName = this.extractBaseDrugName(formattedMedicine.drug);
+          this.toastr.warning(
+            this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+            this.translateService.instant('Duplicate Drug Warning')
+          );
+        }
         this.medicines.push(formattedMedicine);
 
         if (this.aillmtxMedicationComponent) {
@@ -715,6 +856,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Medicine already added, please add another drug.'), this.translateService.instant('Already Added'));
       return;
     }
+
+    // Check for similar base drug name (same drug, different strength/formulation)
+    const similarDrug = this.findSimilarBaseDrug(this.addMedicineForm.value.drug);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     // Ensure instructRemark is never null
     const medicineData = { ...this.addMedicineForm.value };
     if (!medicineData.instructRemark) {
@@ -726,7 +878,20 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.addMedicineForm.reset();
     this.medicationSaved.emit(this.medicines);
   }
-  
+
+  extractBaseDrugName(drugName: string): string {
+    if (!drugName) return '';
+    const base = drugName.replace(/\s*\d.*$/, '').trim();
+    return (base || drugName.split(' ')[0]).toLowerCase();
+  }
+
+  findSimilarBaseDrug(drugName: string): string | null {
+    const baseName = this.extractBaseDrugName(drugName);
+    if (!baseName) return null;
+    const match = this.medicines.find(m => m.drug && this.extractBaseDrugName(m.drug) === baseName);
+    return match ? match.drug : null;
+  }
+
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
@@ -1142,14 +1307,18 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
-          if (obs.value.includes('Time:')) {
+          if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
-            const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            followUpTime = time ? time : null;
-            followUpReason = (remark && remark !=="null") ? remark : null;
+            followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
+
+            // Only try to get Time if the feature is enabled
+            if (this.isFeatureAvailable('followUpTime')) {
+              const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+              followUpTime = time ? time : null;
+            }
 
             // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
@@ -1162,23 +1331,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp,
             followUpDate,
-            followUpTime,
+            followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
           });
-
-          if (this.aillmtxFollowupComponent) {
-            this.aillmtxFollowupComponent.existingFollowUp = [{
-              present: true,
-              wantFollowUp,
-              followUpDate,
-              followUpTime,
-              followUpReason,
-              uuid: obs.uuid,
-              followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
-            }];
-          }
         }
       });
     });
@@ -1190,7 +1347,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -1200,7 +1357,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
           });
@@ -1216,7 +1373,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -1236,7 +1393,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
-            followUpTime : null,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -1246,7 +1403,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
               present: true,
               wantFollowUp: 'No',
               followUpDate : null,
-              followUpTime : null,
+              followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
               followUpReason : null,
               followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
             });
@@ -1386,6 +1543,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     if (this.aillmddxComponent) {
       this.aillmddxComponent.selectedDiagnosis = [...this.selectedDiagnoses];
     }
+  }
+
+  /**
+  * Check if login profile then show/hide features accondingly
+  * @returns {boolean}
+  */
+  showAndHideUiElements(): boolean {
+    const doctorName = getCacheData(true, doctorDetails.USER)?.person?.display;
+    return this.showAndHideUiElement = !doctorName || !doctorName.includes('Namco');
   }
 }
 

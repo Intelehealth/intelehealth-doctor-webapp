@@ -1,0 +1,311 @@
+<div class="digital-auscultation">
+  <!-- Header -->
+  <header class="da-header">
+    <div class="da-header-left">
+      <h2 class="da-title">Digital Auscultation</h2>
+      <p class="da-subtitle" *ngIf="deviceName || deviceId">{{ deviceName || 'N/A' }} &middot; Device ID: {{ deviceId || 'N/A' }}</p>
+    </div>
+    <div class="da-header-badges">
+      <span class="badge badge-heart">
+        <img src="assets/svgs/heart.svg" alt="Heart Icon" class="heart-icon"/>
+        {{ heartRecordingCount }} heart
+      </span>
+      <span class="badge badge-lung">
+        <img src="assets/svgs/lung.svg" alt="Lung Icon" class="lung-icon"/>
+        {{ lungRecordingCount }} lung
+      </span>
+    </div>
+  </header>
+
+  <!-- Tab Toggle -->
+  <div class="tab-toggle">
+    <button class="tab-btn" [class.active-heart]="activeTab === 'heart'" (click)="switchTab('heart')" data-test-id="btnTabHeart">
+      <img [src]="activeTab === 'heart' ? 'assets/svgs/heart-white.svg' : 'assets/svgs/heart-grey.svg'" alt="Heart Icon" class="heart-icon"/>
+      Heart
+    </button>
+    <button class="tab-btn" [class.active-lung]="activeTab === 'lungs'" (click)="switchTab('lungs')" data-test-id="btnTabLungs">
+      <img [src]="activeTab === 'lungs' ? 'assets/svgs/lung-white.svg' : 'assets/svgs/lung-grey.svg'" alt="Lung Icon" class="lung-icon"/>
+      Lungs
+    </button>
+  </div>
+
+  <!-- No Data State: shown when no OBS recordings are available -->
+  <div class="no-selection-panel" *ngIf="heartRecordingCount === 0 && lungRecordingCount === 0" style="text-align: center; padding: 2rem;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <p>No digital auscultation data available for this visit.</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="da-content" *ngIf="heartRecordingCount > 0 || lungRecordingCount > 0">
+    <!-- Left Column: Body Diagrams -->
+    <div class="da-diagrams">
+      <!-- Heart View -->
+      <ng-container *ngIf="activeTab === 'heart'">
+        <div class="diagram-card">
+          <div class="diagram-wrapper">
+            <img src="assets/images/digital-stethoscope/plainbody.png" alt="Heart Auscultation Points" class="body-image">
+            <button
+              *ngFor="let point of heartPoints; let i = index"
+              class="measurement-point"
+              [ngClass]="getPointState(point.id, 'heart')"
+              [style.top]="point.top"
+              [style.left]="point.left"
+              [attr.data-test-id]="'btnHeartPoint' + point.id"
+              (click)="handlePointClick(point, i, 'heart', 'heartData')">
+              {{ point.id }}
+            </button>
+          </div>
+          <div class="diagram-legend">
+            <span class="legend-item"><span class="legend-dot selected"></span> Selected</span>
+            <span class="legend-item"><span class="legend-dot recorded"></span> Recorded</span>
+            <span class="legend-item"><span class="legend-dot abnormal"></span> Abnormal</span>
+            <span class="legend-item"><span class="legend-dot no-recording"></span> No rec.</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Lung View -->
+      <ng-container *ngIf="activeTab === 'lungs'">
+        <!-- Anterior (Front) -->
+        <div class="diagram-card">
+          <div class="diagram-wrapper">
+            <img src="assets/images/digital-stethoscope/Front.png" alt="Anterior View" class="body-image">
+            <button
+              *ngFor="let point of anteriorPoints; let i = index"
+              class="measurement-point"
+              [ngClass]="getPointState(point.id, 'lung')"
+              [style.top]="point.top"
+              [style.left]="point.left"
+              [attr.data-test-id]="'btnLungAnteriorPoint' + point.id"
+              (click)="handlePointClick(point, i, 'anterior', 'lungData')">
+              {{ point.id }}
+            </button>
+          </div>
+          <div class="diagram-legend">
+            <span class="legend-item"><span class="legend-dot selected"></span> Selected</span>
+            <span class="legend-item"><span class="legend-dot recorded"></span> Recorded</span>
+            <span class="legend-item"><span class="legend-dot abnormal"></span> Abnormal</span>
+            <span class="legend-item"><span class="legend-dot no-recording"></span> No rec.</span>
+          </div>
+        </div>
+
+        <!-- Lateral (Sides) -->
+        <div class="diagram-card">
+          <div class="diagram-wrapper">
+            <img src="assets/images/digital-stethoscope/sides.png" alt="Lateral View" class="body-image">
+            <button
+              *ngFor="let point of lateralPoints; let i = index"
+              class="measurement-point"
+              [ngClass]="getPointState(point.id, 'lung')"
+              [style.top]="point.top"
+              [style.left]="point.left"
+              [attr.data-test-id]="'btnLungLateralPoint' + point.id"
+              (click)="handlePointClick(point, i, 'lateral', 'lungData')">
+              {{ point.id }}
+            </button>
+          </div>
+          <div class="diagram-legend">
+            <span class="legend-item"><span class="legend-dot selected"></span> Selected</span>
+            <span class="legend-item"><span class="legend-dot recorded"></span> Recorded</span>
+            <span class="legend-item"><span class="legend-dot abnormal"></span> Abnormal</span>
+            <span class="legend-item"><span class="legend-dot no-recording"></span> No rec.</span>
+          </div>
+        </div>
+
+        <!-- Posterior (Back) -->
+        <div class="diagram-card">
+          <div class="diagram-wrapper">
+            <img src="assets/images/digital-stethoscope/Back.png" alt="Posterior View" class="body-image">
+            <button
+              *ngFor="let point of posteriorPoints; let i = index"
+              class="measurement-point"
+              [ngClass]="getPointState(point.id, 'lung')"
+              [style.top]="point.top"
+              [style.left]="point.left"
+              [attr.data-test-id]="'btnLungPosteriorPoint' + point.id"
+              (click)="handlePointClick(point, i, 'posterior', 'lungData')">
+              {{ point.id }}
+            </button>
+          </div>
+          <div class="diagram-legend">
+            <span class="legend-item"><span class="legend-dot selected"></span> Selected</span>
+            <span class="legend-item"><span class="legend-dot recorded"></span> Recorded</span>
+            <span class="legend-item"><span class="legend-dot abnormal"></span> Abnormal</span>
+            <span class="legend-item"><span class="legend-dot no-recording"></span> No rec.</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Right Column: Details Panel -->
+    <div class="da-details">
+
+      <!-- State: Recording Available -->
+      <ng-container *ngIf="getSelectedData() as selectedData">
+        <!-- Top Info Row: badges left, BPM right -->
+        <div class="top-info-row">
+          <div class="top-info-left">
+            <span class="point-badge" [ngClass]="{'heart-badge': selectedDataSource === 'heart', 'lung-badge': selectedDataSource === 'lung'}">
+              <img *ngIf="selectedDataSource === 'heart'" src="assets/svgs/heart.svg" alt="Heart Icon" class="heart-icon"/>
+              <img *ngIf="selectedDataSource === 'lung'" src="assets/svgs/lung.svg" alt="Lung Icon" class="lung-icon"/>
+              {{ selectedDataSource === 'heart' ? 'Heart' : 'Lung' }} &middot; Point {{ selectedPointId }}
+            </span>
+            <span *ngIf="hasConditionForSelected()" class="abnormal-detected-badge">
+              <img src="assets/svgs/heart.svg" alt="Heart Icon" class="heart-icon"/>
+              Abnormal Detected
+            </span>
+          </div>
+          <div class="top-info-right">
+            <span class="bpm-badge bpm-heart">
+              <img src="assets/svgs/heart.svg" alt="Heart Icon" class="heart-icon"/>
+              {{ getHeartRate(selectedData) }} bpm
+            </span>
+            <span class="bpm-badge bpm-lung">
+              <img src="assets/svgs/lung.svg" alt="Lung Icon" class="lung-icon"/>
+              {{ getBreathingRate(selectedData) }} brpm
+            </span>
+          </div>
+        </div>
+
+        <!-- Position Name -->
+        <h3 class="position-name">{{ getSelectedPositionName() }}</h3>
+        <p class="recorded-info">Recorded {{ getRecordedTime(selectedData) }} &middot; {{ deviceName || 'N/A' }}</p>
+
+        <!-- Recording Details -->
+        <div class="recording-details">
+          <h4 class="section-title">Recording Details</h4>
+          <div class="details-grid">
+            <div class="detail-field">
+              <span class="detail-label">Position</span>
+              <span class="detail-value">{{ getSelectedPositionName() }} &ndash; Point {{ selectedPointId }}</span>
+            </div>
+            <div class="detail-field" *ngIf="selectedDataSource === 'heart'">
+              <span class="detail-label">Heart Rate</span>
+              <span class="detail-value value-heart">{{ getHeartRate(selectedData) }} bpm</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Breathing Rate</span>
+              <span class="detail-value value-lung">{{ getBreathingRate(selectedData) }} brpm</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Recorded</span>
+              <span class="detail-value">{{ getRecordedTime(selectedData) }}</span>
+            </div>
+            <div class="detail-field detail-full-width">
+              <span class="detail-label">Device</span>
+              <span class="detail-value">{{ deviceName || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Graphical Insight Card -->
+        <div class="graphical-insight-card">
+          <div class="gi-header">
+            <img src="assets/svgs/graphical.svg" alt="Graphical Insight"/>
+            <span class="gi-title">Graphical Insight</span>
+          </div>
+          <p class="gi-description">View waveform recording and full diagnostic report.</p>
+          <button class="gi-button" (click)="openReport()" data-test-id="btnOpenGraphicalInsight">
+            <img src="assets/svgs/polyline.svg" alt="Stroke Icon" class="stroke-icon"/>
+            Open Graphical Insight
+          </button>
+          <p class="gi-subtitle">Opens in new tab &middot; Audio playback available</p>
+        </div>
+
+        <!-- AI Analysis -->
+        <div class="ai-analysis">
+          <h4 class="section-title">AI Analysis</h4>
+
+          <!-- Detected Conditions -->
+          <ng-container *ngIf="getDetectedConditions(selectedData).length > 0">
+            <div class="detected-conditions-header">
+              <span class="detected-label">
+                <img src="assets/svgs/circle!.svg" alt="Heart Icon" class="heart-icon"/>
+                Detected Conditions
+              </span>
+              <span class="conditions-count">{{ getDetectedConditions(selectedData).length }} conditions</span>
+            </div>
+            <div class="detected-conditions-list">
+              <div *ngFor="let cond of getDetectedConditions(selectedData)" class="detected-item">
+                <span class="detected-dot"></span>
+                <span class="detected-name">{{ cond.condition }}</span>
+                <span class="detected-pct">{{ cond.confidence }}%</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- All Results (non-detected only) -->
+          <div class="all-results-header">
+            <span class="all-results-label">All Results</span>
+            <span class="conditions-count">{{ getNonDetectedResults(selectedData).length }} conditions</span>
+          </div>
+          <div class="all-results-list">
+            <div *ngFor="let result of getNonDetectedResults(selectedData)" class="result-row">
+              <div class="result-info">
+                <span class="result-name">{{ result.condition }}</span>
+                <span class="result-pct">{{ result.confidence_score }}%</span>
+              </div>
+              <div class="result-bar">
+                <div class="result-bar-fill" [style.width.%]="result.confidence_score"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="ai-disclaimer">AI analysis is indicative only. Clinical judgment is required for diagnosis.</p>
+        </div>
+
+        <!-- Next Recording Button -->
+        <button class="next-recording-btn" (click)="navigateToNextRecording()" data-test-id="btnNextRecording">
+          Next Recording
+        </button>
+      </ng-container>
+
+      <!-- State: No Recording Available -->
+      <ng-container *ngIf="selectedPointId !== null && !getSelectedData()">
+        <div class="no-recording-panel">
+          <div class="no-rec-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <h3 class="no-rec-title">No Recording Available</h3>
+          <p class="no-rec-position"><strong>{{ getSelectedPositionName() }}</strong> &ndash; Point {{ selectedPointId }}</p>
+          <p class="no-rec-desc">No auscultation recording was captured at this location during the patient visit.</p>
+          <hr class="no-rec-divider">
+          <p class="no-rec-hint">You can review other recorded locations or open the graphical insight report if available.</p>
+          <button class="next-recording-btn has-arrow" (click)="navigateToNextRecording()" data-test-id="btnNextRecordingEmpty">
+            Next Recording
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="no-rec-legend">
+            <span class="legend-item"><span class="legend-dot no-recording"></span> No recording</span>
+            <span class="legend-item"><span class="legend-dot recorded"></span> Recorded</span>
+            <span class="legend-item"><span class="legend-dot abnormal"></span> Abnormal</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- State: No Selection -->
+      <ng-container *ngIf="selectedPointId === null">
+        <div class="no-selection-panel">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <p>Select a measurement point to view recording details</p>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

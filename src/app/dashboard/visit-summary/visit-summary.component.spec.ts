@@ -5,14 +5,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-
 describe('VisitSummaryComponent', () => {
   let component: VisitSummaryComponent;
   let fixture: ComponentFixture<VisitSummaryComponent>;
-
+  
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [VisitSummaryComponent],
+      declarations: [ VisitSummaryComponent ],
       imports: [
         RouterTestingModule,
         ReactiveFormsModule,

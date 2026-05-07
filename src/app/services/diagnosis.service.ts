@@ -81,7 +81,6 @@ export class DiagnosisService {
       })
     );
   }
-
   
   getSnomedDiagnosisList(term: string): Observable<any> {
     const url = `${environment.base}/getdiags/${term}`;
@@ -124,5 +123,25 @@ export class DiagnosisService {
       });
       return false;
     }
+  }
+
+  /**
+  * Save manual diagnosis to DDx API
+  * @param {any} payload - Diagnosis payload with visitUuid, diagnoses, and ai_assisted
+  * @return {Observable<any>}
+  */
+  saveManualDiagnosis(payload: any): Observable<any> {
+    const url = `${environment.base}/ddx/manual`;
+    return this.http.post(url, payload);
+  }
+
+  /**
+  * Save manual treatment/medication to TTx API
+  * @param {any} payload - Treatment payload with visitUuid, medications, and ai_assisted
+  * @return {Observable<any>}
+  */
+  saveManualTreatment(payload: any): Observable<any> {
+    const url = `${environment.base}/ttx/manual`;
+    return this.http.post(url, payload);
   }
 }

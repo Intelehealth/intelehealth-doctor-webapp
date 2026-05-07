@@ -141,8 +141,23 @@ export function calculateBMI(vitals: any, vitalObs: any, _locale: string = 'en')
   if(height && weight) {
     const decimalPipe = new DecimalPipe(_locale)
     return decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
-  }  
+  }
   return null;
+}
+
+/**
+ * Convert Celsius to Fahrenheit
+ * @param {number} celsius - Temperature in Celsius
+ * @param {string} _locale - Locale for number formatting (default: 'en')
+ * @return {string|null} - Temperature in Fahrenheit formatted to 1 decimal place
+ */
+export function convertCelsiusToFahrenheit(celsius: number, _locale: string = 'en'): string | null {
+  if (celsius === null || celsius === undefined || isNaN(celsius)) {
+    return null;
+  }
+  const fahrenheit = (celsius * 9 / 5) + 32;
+  const decimalPipe = new DecimalPipe(_locale);
+  return decimalPipe.transform(fahrenheit, "1.1-1");
 }
 
 export function isFeaturePresent(featureName: string, notInclude = false): boolean {

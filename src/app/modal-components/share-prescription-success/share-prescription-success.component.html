@@ -6,6 +6,16 @@
     <img src="assets/svgs/success-circle.svg" alt="" width="80px" height="80px">
     <h6 class="mt-3">{{'Shared prescription successfully'|translate}}</h6>
     <p class="mt-2 text-center">{{'The prescription has been successfully sent. View prescription or go to dashboard'|translate}}</p>
+    <p class="mt-2 text-center" *ngIf="!isLoadingCounts">
+      <span>{{priorityVisitsCount}} {{'Visits remains in Priority Visits'|translate}}</span><br>
+      <span>{{awaitingVisitsCount}} {{'Visits remains in Awaiting Visits'|translate}}</span><br>
+      <span>{{inProgressVisitsCount}} {{'Visits remains in In-Progress Visits'|translate}}</span>
+    </p>
+
+    <!-- Loading State -->
+    <div class="visit-counts-loading mt-4" *ngIf="isLoadingCounts">
+      <p class="text-center text-muted">{{'Loading visit counts...'|translate}}</p>
+    </div>
   </div>
   <div class="modal-action-btn-con">
     <button class="modal-btn white-btn mr-3" type="button" (click)="close('view')" data-test-id="btnView">{{'View prescription'|translate}}</button>
