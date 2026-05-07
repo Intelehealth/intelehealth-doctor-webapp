@@ -8,7 +8,6 @@ import { ProfileComponent } from './profile/profile.component';
 import { PartogramComponent } from './partogram/partogram.component';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
-import { Stage3Component } from './stage3/stage3.component';
 
 const routes: Routes = [
   {
@@ -41,13 +40,6 @@ const routes: Routes = [
       breadcrumb: 'WHO LCG View'
     },
     component: PartogramComponent
-  },
-  {
-    path: 'stage3/:id',
-    data: {
-      breadcrumb: 'Stage 3'
-    },
-    component: Stage3Component
   },
   {
     path: 'change-password',
