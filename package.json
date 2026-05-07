@@ -3,9 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "config": "node scripts/set-env.js",
+    "config:prod": "node scripts/set-env.js --mode=production",
     "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
+    "prestart": "npm run config",
     "start": "ng serve",
+    "prebuild": "npm run config:prod",
     "build": "ng build --configuration production",
+    "pretest": "npm run config",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -73,6 +78,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.52",
     "codelyzer": "^6.0.0",
+    "dotenv": "^17.4.2",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.3.4",

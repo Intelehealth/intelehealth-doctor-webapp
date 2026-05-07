@@ -15,6 +15,19 @@
 
   <link rel="apple-touch-icon" href="/assets/icons/icon-72x72-20260402.png" />
   <link rel="manifest" href="manifest.webmanifest?v=20260402" />
+  <script>
+    
+    (function () {
+      try {
+        var host = (window.location.hostname || '').toLowerCase();
+        if (host.indexOf('nezazi') === -1) return;
+        var manifest = document.querySelector('link[rel="manifest"]');
+        if (manifest) manifest.setAttribute('href', 'manifest.nepal.webmanifest?v=20260507');
+        var apple = document.querySelector('link[rel="apple-touch-icon"]');
+        if (apple) apple.setAttribute('href', '/assets/icons/nepal/icon-192x192-20260507.png');
+      } catch (e) { /* no-op */ }
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
   <meta name="theme-color" content="#2e1e91" />
   <link rel="preconnect" href="https://fonts.gstatic.com">

@@ -1,24 +1,22 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
 
-// ─── Change this one line to switch between clients locally ───────────────────
-const CLIENT = 'nepal' as 'ezazi' | 'nepal';
-// ─────────────────────────────────────────────────────────────────────────────
 
-const URLS = {
-  ezazi: 'https://testezazi.intelehealth.org',
-  nepal: 'https://nezazi.intelehealth.org',
+import { envConfig, Client } from './environment.generated';
+
+const CLIENT = envConfig.client as Client;
+
+const URLS: Record<Client, string> = {
+  ezazi: envConfig.ezaziBaseUrl,
+  nepal: envConfig.nepalBaseUrl,
 };
 
-const CAPTCHA_KEYS = {
+const CAPTCHA_KEYS: Record<Client, { captchaSiteKey: string; siteKey: string }> = {
   ezazi: {
-    captchaSiteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
-    siteKey: '6LelRWAsAAAAAD-RkHB_lT9OT19I5ClAIHQzen7O',
+    captchaSiteKey: envConfig.ezaziCaptchaSiteKey,
+    siteKey: envConfig.ezaziCaptchaSiteKey,
   },
   nepal: {
-    captchaSiteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
-    siteKey: '6LeiTrwsAAAAAEerPKTAyD505fwTYrkl70JYImCR',
+    captchaSiteKey: envConfig.nepalCaptchaSiteKey,
+    siteKey: envConfig.nepalCaptchaSiteKey,
   },
 };
 
@@ -41,7 +39,7 @@ export const environment = {
   webrtcTokenServerUrl: `${base}:3000/`,
   captchaSiteKey,
   siteKey,
-  externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==',
-  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
-  recordsPerPage: 50
+  externalPrescriptionCred: envConfig.externalPrescriptionCred,
+  vapidPublicKey: envConfig.vapidPublicKey,
+  recordsPerPage: envConfig.recordsPerPage,
 };
