@@ -86,13 +86,16 @@ export class Stage3Component implements OnInit {
   ];
 
   newbornParams: S3Param[] = [
+    { name: 'Respiratory Rate',      conceptName: 'Respiratory Rate',      values: new Array(NUM_COLS).fill(null) },
+    { name: 'SPO2',                  conceptName: 'SPO2',                  values: new Array(NUM_COLS).fill(null) },
     { name: 'Grunting',              conceptName: 'Grunting',              values: new Array(NUM_COLS).fill(null) },
     { name: 'Chest Indrawing',       conceptName: 'Chest Indrawing',       values: new Array(NUM_COLS).fill(null) },
     { name: 'Fast Breathing',        conceptName: 'Fast Breathing',        values: new Array(NUM_COLS).fill(null) },
-    { name: 'Feet Temperature',      conceptName: 'Feet Temperature',      values: new Array(NUM_COLS).fill(null) },
+    { name: 'Feet (warm)',           conceptName: 'Feet Warm',             values: new Array(NUM_COLS).fill(null) },
     { name: 'Skin Color',            conceptName: 'Skin Color',            values: new Array(NUM_COLS).fill(null) },
     { name: 'Umbilical Cord Oozing', conceptName: 'Umbilical Cord Oozing', values: new Array(NUM_COLS).fill(null) },
     { name: 'Sucking / Feeding',     conceptName: 'Sucking Feeding',       values: new Array(NUM_COLS).fill(null) },
+    { name: 'Complications',         conceptName: 'Complication',          values: new Array(NUM_COLS).fill(null) },
     { name: 'Assessment (Newborn)',  conceptName: 'Assessment Newborn',    isTextarea: true, values: new Array(NUM_COLS).fill(null).map(() => []) },
     { name: 'Plan (Newborn)',        conceptName: 'Plan Newborn',          isTextarea: true, values: new Array(NUM_COLS).fill(null).map(() => []) },
   ];
@@ -119,10 +122,7 @@ export class Stage3Component implements OnInit {
   get user()   { return getFromStorage('user'); }
 
   getInitials(name: string): string {
-    if (!name) return '';
-    const parts = name.trim().split(' ');
-    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    return name ? name.trim() : '';
   }
 
   getVisit(uuid: string) {
@@ -493,6 +493,8 @@ export class Stage3Component implements OnInit {
           canEdit: this.userId === ob.creator?.uuid,
           initial: this.getInitials(ob.creator?.person?.display)
         }];
+      } else if (p.name === 'Complications') {
+        p.values[colIndex] = { value: this.formatComplication(ob.value), uuid: ob.uuid };
       } else {
         p.values[colIndex] = { value: ob.value, uuid: ob.uuid };
       }
@@ -529,14 +531,20 @@ export class Stage3Component implements OnInit {
     }
 
     if (section === 'newborn') {
-      if (param.name === 'Grunting') {
+      if (param.name === 'Respiratory Rate') {
+        aliases.push('RESPIRATORY_RATE_NEWBORN', 'Respiratory Rate Newborn', 'Respiratory rate', 'RESPIRATORY RATE');
+      } else if (param.name === 'SPO2') {
+        aliases.push('SPO2_NEWBORN', 'SpO2', 'Oxygen Saturation', 'SPO2 Newborn');
+      } else if (param.name === 'Complications') {
+        aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn');
+      } else if (param.name === 'Grunting') {
         aliases.push('GRUNTING_NEWBORN');
       } else if (param.name === 'Chest Indrawing') {
         aliases.push('CHEST_INDRAWING_NEWBORN');
       } else if (param.name === 'Fast Breathing') {
         aliases.push('FAST_BREATHING_NEWBORN');
-      } else if (param.name === 'Feet Temperature') {
-        aliases.push('FEET_WARM_NEWBORN', 'Feet Warm Newborn');
+      } else if (param.name === 'Feet (warm)') {
+        aliases.push('FEET_WARM_NEWBORN', 'Feet Warm Newborn', 'Feet Warm', 'Feet Temperature');
       } else if (param.name === 'Skin Color') {
         aliases.push('SKIN_COLOR_NEWBORN');
       } else if (param.name === 'Umbilical Cord Oozing') {
@@ -560,7 +568,10 @@ export class Stage3Component implements OnInit {
     const obsConceptUuid = this.normalizeConcept(ob?.concept?.uuid);
     const aliases = this.getParamAliases(section, param);
 
-    if (aliases.includes(obsDisplay)) {
+    const normalizedAliases = aliases
+      .filter(a => a)
+      .map(a => this.normalizeConcept(a));
+    if (normalizedAliases.includes(obsDisplay)) {
       return true;
     }
 
@@ -655,11 +666,11 @@ export class Stage3Component implements OnInit {
   }
 
   get newbornAssessmentHistory(): any[] {
-    return this.getTextareaHistory(this.newbornParams[7]);
+    return this.getTextareaHistory(this.newbornParams[10]);
   }
 
   get newbornPlanHistory(): any[] {
-    return this.getTextareaHistory(this.newbornParams[8]);
+    return this.getTextareaHistory(this.newbornParams[11]);
   }
 
   private findObsLocation(param: S3Param, obsUuid: string): { colIdx: number; itemIdx: number } {
@@ -863,6 +874,13 @@ export class Stage3Component implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
+  getBpPart(value: any, part: 'systolic' | 'diastolic'): string {
+    const str = value == null ? '' : String(value);
+    if (!str) return '';
+    const [s = '', d = ''] = str.split('/');
+    return part === 'systolic' ? s.trim() : d.trim();
+  }
+
   formatColTime(time: string | null): string {
     if (!time) {
       return '';
@@ -871,7 +889,15 @@ export class Stage3Component implements OnInit {
     if (!adDate) {
       return '';
     }
-    const datePart = this.formatDateByClient(adDate);
+    let datePart: string;
+    if (this.isNepalClient) {
+      const bsDate = this.nepaliDateService.gregorianToBs(adDate);
+      datePart = bsDate
+        ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+        : moment(adDate).format('YYYY/MM/DD');
+    } else {
+      datePart = moment(adDate).format('YYYY/MM/DD');
+    }
     const timePart = moment(adDate).format('HH:mm');
     return `${datePart} ${timePart}`.trim();
   }

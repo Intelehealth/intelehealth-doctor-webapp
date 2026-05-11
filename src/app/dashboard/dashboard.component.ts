@@ -188,11 +188,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     if (!this.isNepalClient) {
-      return moment(adDate).format('DD MMM, YYYY');
+      return moment(adDate).format('YYYY/MM/DD');
     }
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
-    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD MMM, YYYY');
+    return bsDate
+      ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+      : moment(adDate).format('YYYY/MM/DD');
   }
 
   formatDateTimeByClient(dateValue: any): string {

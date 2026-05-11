@@ -25,6 +25,12 @@
         if (manifest) manifest.setAttribute('href', 'manifest.nepal.webmanifest?v=20260507');
         var apple = document.querySelector('link[rel="apple-touch-icon"]');
         if (apple) apple.setAttribute('href', '/assets/icons/nepal/icon-192x192-20260507.png');
+        var favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) {
+          favicon.setAttribute('type', 'image/png');
+          favicon.setAttribute('href', '/assets/nepal/jhpiego-removebg-preview.png');
+        }
+        document.title = 'NEzazi';
       } catch (e) { /* no-op */ }
     })();
   </script>

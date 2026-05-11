@@ -398,11 +398,13 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
 
     if (!this.isNepalClient) {
-      return moment(adDate).format('DD/MM/YYYY');
+      return moment(adDate).format('YYYY/MM/DD');
     }
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
-    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+    return bsDate
+      ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+      : moment(adDate).format('YYYY/MM/DD');
   }
 
   private parseIncomingDate(dateValue: any): Date | null {
@@ -1071,9 +1073,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   getInitials(name: string) {
-    const fullName = name.split(' ');
-    const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
-    return initials.toUpperCase();
+    return name ? name.trim() : '';
   }
 
   async startCall() {
