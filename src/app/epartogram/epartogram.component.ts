@@ -393,11 +393,13 @@ export class EpartogramComponent implements OnInit {
     }
 
     if (!this.isNepalClient) {
-      return moment(adDate).format('DD/MM/YYYY');
+      return moment(adDate).format('YYYY/MM/DD');
     }
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
-    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+    return bsDate
+      ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+      : moment(adDate).format('YYYY/MM/DD');
   }
 
   private parseIncomingDate(dateValue: any): Date | null {
@@ -429,7 +431,7 @@ export class EpartogramComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.login(id);
+    if (id) { this.getVisit(id); }
     for (let x = 0; x < this.parameters.length; x++) {
       if (x == 20 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
         this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
@@ -468,6 +470,14 @@ export class EpartogramComponent implements OnInit {
         this.readPatientAttributes();
         this.readStageData();
         this.readStage3Data();
+        setTimeout(() => {
+          this.ele = document.getElementsByClassName('table-responsive')[0];
+          if (this.ele) {
+            this.ele.scrollTop = 0;
+            this.ele.scrollLeft = 0;
+            this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+          }
+        }, 1000);
       }
     });
   }
@@ -1083,9 +1093,7 @@ export class EpartogramComponent implements OnInit {
   }
 
   getInitials(name: string) {
-    const fullName = name.split(' ');
-    const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
-    return initials.toUpperCase();
+    return name ? name.trim() : '';
   }
 
   checkIfFutureEncounterExists(futureStartIndex) {

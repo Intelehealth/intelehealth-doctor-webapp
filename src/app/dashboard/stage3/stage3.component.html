@@ -76,7 +76,17 @@
                   <tr *ngIf="!p.isTextarea">
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
-                      <td><div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                      <td>
+                        <ng-container *ngIf="p.values[idx]">
+                          <div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)">
+                            <ng-container *ngIf="p.name === 'BP'; else plainBpValue">
+                              <div *ngIf="getBpPart(p.values[idx]?.value, 'systolic') as s">Systolic: {{ s }}</div>
+                              <div *ngIf="getBpPart(p.values[idx]?.value, 'diastolic') as d">Diastolic: {{ d }}</div>
+                            </ng-container>
+                            <ng-template #plainBpValue>{{ p.values[idx]?.value }}</ng-template>
+                          </div>
+                        </ng-container>
+                      </td>
                     </ng-container>
                   </tr>
 
@@ -191,7 +201,7 @@
                             <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
                             <h6 class="mb-0 ml-2">
                               Assessment
-                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();addAssessment('newborn', 7)">Add</button>
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();addAssessment('newborn', 10)">Add</button>
                             </h6>
                           </div>
                         </mat-panel-title>
@@ -214,7 +224,7 @@
                             <img src="assets/svgs/note.svg" alt="" width="44px" />
                             <h6 class="mb-0 ml-2">
                               Plan
-                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();prescribePlan('newborn', 8)">Add</button>
+                              <button class="blue-btn mr-1" type="button" (click)="$event.stopPropagation();prescribePlan('newborn', 11)">Add</button>
                             </h6>
                           </div>
                         </mat-panel-title>
