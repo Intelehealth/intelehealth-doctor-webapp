@@ -475,15 +475,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getCreatedAt(data: any) {
-    let hours = moment().diff(moment(data), 'hours');
-    let minutes = moment().diff(moment(data), 'minutes');
-    if (hours > 24) {
-      return this.formatDateTimeByClient(data);
-    };
-    if (hours < 1) {
-      return `${minutes} minutes`;
-    }
-    return `${hours} hrs`;
+    return this.formatDateTimeByClient(data);
   }
 
   getSpecialization(attr: any) {
