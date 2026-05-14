@@ -398,7 +398,7 @@ export class EpartogramComponent implements OnInit {
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
     return bsDate
-      ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+      ? `${String(bsDate.day).padStart(2, '0')} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.year} BS`
       : moment(adDate).format('YYYY/MM/DD');
   }
 
@@ -431,7 +431,7 @@ export class EpartogramComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) { this.getVisit(id); }
+    if (id) { this.login(id); }
     for (let x = 0; x < this.parameters.length; x++) {
       if (x == 20 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
         this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);

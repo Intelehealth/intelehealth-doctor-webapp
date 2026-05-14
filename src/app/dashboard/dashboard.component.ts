@@ -193,7 +193,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
     return bsDate
-      ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+      ? `${String(bsDate.day).padStart(2, '0')} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.year} BS`
       : moment(adDate).format('YYYY/MM/DD');
   }
 

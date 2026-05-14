@@ -7,6 +7,7 @@ import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
 
 declare const getFromStorage;
@@ -108,14 +109,25 @@ export class Stage3Component implements OnInit {
     private readonly coreService: CoreService,
     private readonly visitService: VisitService,
     private readonly encounterService: EncounterService,
-    private readonly toastr: ToastrService
+    private readonly toastr: ToastrService,
+    private readonly authService: AuthService
   ) { }
+
+  private loginAttempt = 0;
+  private loginExternalThenFetch(uuid: string) {
+    this.loginAttempt++;
+    this.authService.loginExternal().subscribe((res: any) => {
+      if (res?.authenticated) { this.getVisit(uuid); }
+    }, () => {
+      if (this.loginAttempt < 3) { this.loginExternalThenFetch(uuid); }
+    });
+  }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: 'Early PostPartum Monitoring Report', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) { this.router.navigate(['/dashboard']); return; }
-    this.getVisit(id);
+    if (!id) { return; }
+    this.loginExternalThenFetch(id);
   }
 
   get userId() { return getFromStorage('user')?.uuid; }
@@ -129,7 +141,7 @@ export class Stage3Component implements OnInit {
     this.loading = true;
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       this.loading = false;
-      if (!visit) { this.router.navigate(['/dashboard']); return; }
+      if (!visit) { return; }
       this.visit   = visit;
       this.patient = visit.patient;
       this.readPatientAttributes();
@@ -137,7 +149,6 @@ export class Stage3Component implements OnInit {
       this.readStageData();
     }, () => {
       this.loading = false;
-      this.router.navigate(['/dashboard']);
     });
   }
 
@@ -301,7 +312,7 @@ export class Stage3Component implements OnInit {
     if (this.isNepalClient) {
       const bsDate = this.nepaliDateService.gregorianToBs(adDate);
       if (bsDate) {
-        return `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.day}`;
+        return `${String(bsDate.day).padStart(2, '0')} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.year} BS`;
       }
     }
 
@@ -353,11 +364,11 @@ export class Stage3Component implements OnInit {
     }
 
     if (!this.isNepalClient) {
-      return moment(adDate).format('DD/MM/YYYY');
+      return moment(adDate).format('YYYY/MM/DD');
     }
 
     const bsDate = this.nepaliDateService.gregorianToBs(adDate);
-    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('DD/MM/YYYY');
+    return bsDate ? this.nepaliDateService.formatBsDate(bsDate) : moment(adDate).format('YYYY/MM/DD');
   }
 
   formatDateTimeByClient(dateValue: any): string {
@@ -893,7 +904,7 @@ export class Stage3Component implements OnInit {
     if (this.isNepalClient) {
       const bsDate = this.nepaliDateService.gregorianToBs(adDate);
       datePart = bsDate
-        ? `${bsDate.year} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${String(bsDate.day).padStart(2, '0')}`
+        ? `${String(bsDate.day).padStart(2, '0')} ${this.nepaliDateService.monthNames[bsDate.month - 1]} ${bsDate.year} BS`
         : moment(adDate).format('YYYY/MM/DD');
     } else {
       datePart = moment(adDate).format('YYYY/MM/DD');

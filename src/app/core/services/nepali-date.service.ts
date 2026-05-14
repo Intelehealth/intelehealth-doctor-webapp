@@ -226,7 +226,7 @@ export class NepaliDateService {
       return '';
     }
 
-    return `${this.pad(date.day)} ${this.monthNames[date.month - 1]} ${date.year}`;
+    return `${this.pad(date.day)} ${this.monthNames[date.month - 1]} ${date.year} BS`;
   }
 
   toGregorianIsoString(date: Date | null): string | null {
