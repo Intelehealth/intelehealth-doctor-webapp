@@ -15,12 +15,14 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     document.body.classList.add(`client-${environment.client}`);
     if (environment.client === 'nepal') {
-      document.title = 'NEzazi';
-      const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement | null;
-      if (favicon) {
-        favicon.type = 'image/png';
-        favicon.href = '/assets/nepal/jhpiego-removebg-preview.png';
-      }
+      document.title = 'eLCG नेपाल';
+      const oldFavicon = document.querySelector('link[rel="icon"]');
+      if (oldFavicon?.parentNode) { oldFavicon.parentNode.removeChild(oldFavicon); }
+      const newFavicon = document.createElement('link');
+      newFavicon.rel = 'icon';
+      newFavicon.type = 'image/png';
+      newFavicon.href = '/assets/ezazi/logo.png?v=' + Date.now();
+      document.head.appendChild(newFavicon);
       const apple = document.querySelector('link[rel="apple-touch-icon"]') as HTMLLinkElement | null;
       if (apple) apple.href = '/assets/icons/nepal/icon-192x192-20260507.png';
       const manifest = document.querySelector('link[rel="manifest"]') as HTMLLinkElement | null;

@@ -886,79 +886,6 @@
                   </ng-container> -->
                 </tr>
                 <tr>
-                  <td colspan="47" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="3" class="vrt-header"><span>SHARED DECISION-MAKING</span></td>
-                  <td colspan="3">ASSESSMENT</td>
-                  <ng-container *ngFor="let item of encuuid1; let i=index;">
-                    <td [attr.colspan]="subColsPerHourStage1[i]">
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
-                          <ng-container *ngFor="let it of getParameterValueAtIndex(22, 1, i, j)|emptyArray;">
-                            <p *ngIf="it">{{it?.value}}</p>
-                          </ng-container>
-                        </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
-                          <mat-icon>open_in_new</mat-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-
-                  <ng-container *ngFor="let item of encuuid2; let i=index;">
-                    <td [attr.colspan]="subColsPerHourStage2[i]">
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
-                          <ng-container *ngFor="let it of getParameterValueAtIndex(22, 2, i, j)|emptyArray;">
-                            <p *ngIf="it">{{it?.value}}</p>
-                          </ng-container>
-                        </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
-                          <mat-icon>open_in_new</mat-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <td colspan="46" class="divider"></td>
-                </tr>
-                <tr>
-                  <td colspan="3">PLAN</td>
-                  <ng-container *ngFor="let item of encuuid1; let i=index;">
-                    <td [attr.colspan]="subColsPerHourStage1[i]">
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
-                          <ng-container *ngFor="let it of getParameterValueAtIndex(23, 1, i, j)|emptyArray;">
-                            <p *ngIf="it">{{it?.value}}</p>
-                          </ng-container>
-                        </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
-                          <mat-icon>open_in_new</mat-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of encuuid2; let i=index;">
-                    <td [attr.colspan]="subColsPerHourStage2[i]">
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
-                          <ng-container *ngFor="let it of getParameterValueAtIndex(23, 2, i, j)|emptyArray;">
-                            <p *ngIf="it">{{it?.value}}</p>
-                          </ng-container>
-                        </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
-                          <mat-icon>open_in_new</mat-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <td colspan="47" class="divider"></td>
-                </tr>
-                <tr>
                   <td class="nb"></td>
                   <td colspan="3">INITIALS</td>
                   <ng-container *ngFor="let item of initialsStage1; let i=index;">
@@ -993,7 +920,7 @@
             </table>
           </div>
 
-          <div class="intel-card mt-5">
+          <div class="intel-card mt-5" *ngIf="false">
             <div class="card-header justify-content-between">
               <h6 class="mb-0">SHARED DECISION MAKING</h6>
               <div class="text-right">
@@ -1218,7 +1145,7 @@
             </div>
           </div>
 
-          <div class="intel-card mt-5" *ngIf="isNepalClient && hasStage3Data">
+          <div class="intel-card mt-5" *ngIf="false">
             <div class="card-header">
               <h6 class="mb-0">Stage 3 - Early Postpartum Monitoring</h6>
             </div>

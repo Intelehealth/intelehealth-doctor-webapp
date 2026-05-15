@@ -61,6 +61,16 @@ export class VisitService {
     return this.http.get(url);
   }
 
+  fetchVisitDetailsPublic(
+    uuid,
+    v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,comment,obsDatetime,concept:(uuid,display),creator:(uuid,person:(uuid,display))),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier),attributes,person:(display,gender,age,birthdate,attributes)),attributes)"
+  ): Observable<any> {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + environment.externalPrescriptionCred);
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url, { headers });
+  }
+
   fetchVisitDetails2(
     uuid,
     v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,comment,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier),attributes,person:(display,gender,age,birthdate)),attributes)"
