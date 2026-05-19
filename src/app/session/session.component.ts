@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class SessionComponent implements OnInit {
 
-  isNepalClient: boolean = environment.client === 'nepal';
+  isNepalClient: boolean = environment.client === 'nepal' && !environment.forceEzaziBranding;
 
   slides: any = [
     {

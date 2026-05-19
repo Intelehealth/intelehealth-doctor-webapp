@@ -56,6 +56,18 @@
   border-radius: 4px;
 }
 
+td.sos-col-header,
+.sos-col-header {
+  background: #d32f2f !important;
+  color: #fff !important;
+
+  .time-label,
+  small,
+  .text-muted {
+    color: #fff !important;
+  }
+}
+
 .obs-chip {
   background: #eef6ff;
   border: 1px solid #cfe5ff;

@@ -58,13 +58,14 @@ export class Stage3Component implements OnInit {
     congenitalDisorders: '-',
   };
 
-  colTimes: (string | null)[]    = new Array(NUM_COLS).fill(null);
-  colEncUuids: (string | null)[] = new Array(NUM_COLS).fill(null);
+  colTimes: (string | null)[]    = [];
+  colEncUuids: (string | null)[] = [];
+  colIsSos: boolean[]            = [];
+  colLabels: string[]            = [];
+  colIndexes: number[]           = [];
 
   colOffsets = COL_OFFSETS;
-  colLabels  = COL_LABELS;
   numCols    = NUM_COLS;
-  colIndexes = Array.from({ length: NUM_COLS }, (_, i) => i);
 
   // Replace placeholder UUIDs with real OpenMRS concept UUIDs for Nepal Stage3
   conceptAssessmentMother  = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
@@ -76,7 +77,7 @@ export class Stage3Component implements OnInit {
     { name: 'Pulse',               conceptName: 'PULSE',             values: new Array(NUM_COLS).fill(null) },
     { name: 'BP',                  conceptName: 'Systolic BP',        values: new Array(NUM_COLS).fill(null) },
     { name: 'Respiratory Rate',    conceptName: 'Respiratory Rate',   values: new Array(NUM_COLS).fill(null) },
-    { name: 'Temperature',         conceptName: 'TEMPERATURE (C)',    values: new Array(NUM_COLS).fill(null) },
+    { name: 'Temprature °f',         conceptName: 'TEMPERATURE (C)',    values: new Array(NUM_COLS).fill(null) },
     { name: 'Blood Loss',          conceptName: 'Blood Loss',         values: new Array(NUM_COLS).fill(null) },
     { name: 'Uterus Contracted',   conceptName: 'Uterus Contracted',  values: new Array(NUM_COLS).fill(null) },
     { name: 'Urine Passed',        conceptName: 'Urine Passed',       values: new Array(NUM_COLS).fill(null) },
@@ -418,41 +419,73 @@ export class Stage3Component implements OnInit {
   }
 
   readStageData() {
-    this.colTimes    = new Array(NUM_COLS).fill(null);
-    this.colEncUuids = new Array(NUM_COLS).fill(null);
-    this.maternalParams.forEach(p => {
-      p.values = p.isTextarea
-        ? new Array(NUM_COLS).fill(null).map(() => [])
-        : new Array(NUM_COLS).fill(null);
-    });
-    this.newbornParams.forEach(p => {
-      p.values = p.isTextarea
-        ? new Array(NUM_COLS).fill(null).map(() => [])
-        : new Array(NUM_COLS).fill(null);
-    });
-
-    const encs = (this.visit?.encounters || [])
+    const allEncounters = this.visit?.encounters || [];
+    const regularEncs = allEncounters
       .filter((e: any) => /^Stage3_Hour\d+(?:_\d+)?$/.test(e.encounterType?.display))
       .sort((a: any, b: any) =>
         new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime()
       );
+    const sosEncs = allEncounters
+      .filter((e: any) => e.encounterType?.display === 'LCG_SOS' &&
+        (e.obs || []).some((o: any) =>
+          o.concept?.display === 'SOS_Stage_Hour' && /^Stage3_Hour/i.test(String(o.value || ''))))
+      .sort((a: any, b: any) =>
+        new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime()
+      );
 
-    for (const [encIndex, enc] of encs.entries()) {
-      const colIndex = encIndex;
-      if (colIndex < 0 || colIndex >= NUM_COLS) continue;
+    type ColEntry = { enc: any; isSos: boolean; label: string };
+    const columns: ColEntry[] = [];
+    let regIdx = 0;
+    let sosIdx = 0;
+    while (regIdx < regularEncs.length || sosIdx < sosEncs.length) {
+      const reg = regularEncs[regIdx];
+      const sos = sosEncs[sosIdx];
+      const regT = reg ? new Date(reg.encounterDatetime).getTime() : Infinity;
+      const sosT = sos ? new Date(sos.encounterDatetime).getTime() : Infinity;
+      if (sosT < regT) {
+        columns.push({ enc: sos, isSos: true, label: 'SOS' });
+        sosIdx++;
+      } else {
+        columns.push({ enc: reg, isSos: false, label: COL_LABELS[regIdx] || `+${regIdx}` });
+        regIdx++;
+      }
+    }
 
+    const totalCols = Math.max(columns.length, NUM_COLS);
+    this.colTimes    = new Array(totalCols).fill(null);
+    this.colEncUuids = new Array(totalCols).fill(null);
+    this.colIsSos    = new Array(totalCols).fill(false);
+    this.colLabels   = new Array(totalCols).fill('');
+    for (let i = 0; i < NUM_COLS; i++) {
+      this.colLabels[i] = COL_LABELS[i];
+    }
+    this.colIndexes  = Array.from({ length: totalCols }, (_, i) => i);
+    this.maternalParams.forEach(p => {
+      p.values = p.isTextarea
+        ? new Array(totalCols).fill(null).map(() => [])
+        : new Array(totalCols).fill(null);
+    });
+    this.newbornParams.forEach(p => {
+      p.values = p.isTextarea
+        ? new Array(totalCols).fill(null).map(() => [])
+        : new Array(totalCols).fill(null);
+    });
+
+    for (let colIndex = 0; colIndex < columns.length; colIndex++) {
+      const { enc, isSos, label } = columns[colIndex];
       this.colTimes[colIndex]    = enc.encounterDatetime;
       this.colEncUuids[colIndex] = enc.uuid;
-
+      this.colIsSos[colIndex]    = isSos;
+      this.colLabels[colIndex]   = label;
       for (const ob of (enc.obs || [])) {
         this.assignObs(ob, colIndex);
       }
     }
 
     if (!this.colEncUuids.some((encUuid: string | null) => !!encUuid)) {
-      const visitCompleteEnc = (this.visit?.encounters || []).find((encounter: any) => encounter.encounterType?.display === 'Visit Complete');
+      const visitCompleteEnc = allEncounters.find((encounter: any) => encounter.encounterType?.display === 'Visit Complete');
       if (visitCompleteEnc) {
-        this.colTimes[0] = visitCompleteEnc.encounterDatetime;
+        this.colTimes[0]    = visitCompleteEnc.encounterDatetime;
         this.colEncUuids[0] = visitCompleteEnc.uuid;
         for (const observation of (visitCompleteEnc.obs || [])) {
           this.assignObs(observation, 0);
@@ -860,6 +893,9 @@ export class Stage3Component implements OnInit {
       'td.param-label { text-align: left; min-width: 160px; font-weight: bold; }',
       '.obs-chip { background: #e3f2fd; border-radius: 3px; padding: 1px 3px; margin: 1px; display: inline-block; }',
       '.alert-value { color: #d32f2f; background: #ffebee; border-radius: 4px; }',
+      '.sos-badge { display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; color: #fff; background: #d32f2f; border-radius: 8px; letter-spacing: 0.5px; }',
+      '.sos-col-header { background: #d32f2f !important; color: #fff !important; }',
+      '.sos-col-header .time-label, .sos-col-header small { color: #fff !important; }',
       'table { width: 100%; table-layout: auto; }',
       '@media print { @page { size: landscape; margin: 5mm; } }'
     ].join(' ');

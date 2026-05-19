@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     document.body.classList.add(`client-${environment.client}`);
-    if (environment.client === 'nepal') {
+    if (environment.client === 'nepal' && !environment.forceEzaziBranding) {
       document.title = 'eLCG नेपाल';
       const oldFavicon = document.querySelector('link[rel="icon"]');
       if (oldFavicon?.parentNode) { oldFavicon.parentNode.removeChild(oldFavicon); }

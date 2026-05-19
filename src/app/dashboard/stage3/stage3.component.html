@@ -65,7 +65,7 @@
                 <tr class="time-header-row">
                   <td class="param-label" colspan="2">Maternal Vitals (after delivery)</td>
                   <ng-container *ngFor="let idx of colIndexes">
-                    <td>
+                    <td [class.sos-col-header]="colIsSos[idx]">
                       <div class="time-label">{{ colLabels[idx] }}</div>
                       <small class="text-muted" *ngIf="colTimes[idx]">{{ formatColTime(colTimes[idx]) }}</small>
                     </td>
@@ -105,7 +105,7 @@
                 <tr class="time-header-row">
                   <td class="param-label" colspan="2">Newborn Condition</td>
                   <ng-container *ngFor="let idx of colIndexes">
-                    <td>
+                    <td [class.sos-col-header]="colIsSos[idx]">
                       <div class="time-label">{{ colLabels[idx] }}</div>
                       <small class="text-muted" *ngIf="colTimes[idx]">{{ formatColTime(colTimes[idx]) }}</small>
                     </td>
