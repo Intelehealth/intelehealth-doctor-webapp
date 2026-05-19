@@ -15,8 +15,13 @@
 
   <link rel="apple-touch-icon" href="/assets/icons/icon-72x72-20260402.png" />
   <link rel="manifest" href="manifest.webmanifest?v=20260402" />
+  <!--
+    Temporary: Nepal favicon/title swap on nezazi hosts is disabled while
+    `environment.forceEzaziBranding` is true so all environments show ezazi
+    branding. To restore, set forceEzaziBranding=false in environment.ts AND
+    uncomment the block below.
+
   <script>
-    
     (function () {
       try {
         var host = (window.location.hostname || '').toLowerCase();
@@ -34,6 +39,8 @@
       } catch (e) { /* no-op */ }
     })();
   </script>
+  -->
+
   <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
   <meta name="theme-color" content="#2e1e91" />
   <link rel="preconnect" href="https://fonts.gstatic.com">
