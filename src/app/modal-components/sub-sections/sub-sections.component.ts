@@ -26,7 +26,11 @@ export class SubSectionsComponent {
   * @return {void}
   */
   updateStatus(sub_section: string, status: boolean): void {
-    this.configService.updatePVSSEnabledStatus(this.section_id, sub_section, status).subscribe(res => {
+    const updateSubSectionStatus = this.data?.configType === 'ih-fhir-module'
+      ? this.configService.updateIhFhirModuleSubSectionEnabledStatus(this.section_id, sub_section, status)
+      : this.configService.updatePVSSEnabledStatus(this.section_id, sub_section, status);
+
+    updateSubSectionStatus.subscribe(res => {
       this.toastr.success(`${sub_section} has been successfully updated`, "Update successful!");
       this.updateFlag = true;
     });

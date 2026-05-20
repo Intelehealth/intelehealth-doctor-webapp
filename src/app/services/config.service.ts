@@ -391,6 +391,59 @@ export class ConfigService {
   }
 
   /**
+   * Get IH FHIR Module sections
+   * @return {Observable<any>}
+   */
+  getIhFhirModuleSections(): Observable<any> {
+    const url = `${this.baseURL}/ih-fhir-module/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Update FHIR Module status
+   * @param {number} id - id of section
+   * @param {boolean} fhir - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateIhFhirModuleEnabledStatus(id: number, fhir: boolean): Observable<any> {
+    const url = `${this.baseURL}/ih-fhir-module/updateIsEnabled/${id}`;
+    return this.http.put(url, { fhir });
+  }
+
+  /**
+   * Update IH FHIR Module section name
+   * @param {number} id - id of section
+   * @param {any} lang - update lang
+   * @return {Observable<any>}
+   */
+  updateIhFhirModuleName(id: number, lang: any): Observable<any> {
+    const url = `${this.baseURL}/ih-fhir-module/updateName/${id}`;
+    return this.http.put(url, { lang });
+  }
+
+  /**
+   * Update IH FHIR Module section order
+   * @param {any} newOrder - updated order
+   * @return {Observable<any>}
+   */
+  updateIhFhirModuleOrder(newOrder: any): Observable<any> {
+    const url = `${this.baseURL}/ih-fhir-module/update-order`;
+    return this.http.put(url, { order: newOrder });
+  }
+
+  /**
+   * Update IH FHIR Module sub-section status
+   * @param {number} id - id of section
+   * @param {string} sub_section - sub-section name
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updateIhFhirModuleSubSectionEnabledStatus(id: number, sub_section: string, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ih-fhir-module/updateSubSectionIsEnabled/${id}`;
+    return this.http.put(url, { sub_section, is_enabled });
+  }
+
+  /**
    * Get Patient Details Sections
    * @returns {Observable<any>}
    */
@@ -493,6 +546,7 @@ export class ConfigService {
     const url = `${this.baseURL}/home-screen/updateHomeScreenName/${id}`;
     return this.http.put(url, { lang });
   }
+
   /**
  * Get AI LLM
  * @return {Observable<any>}

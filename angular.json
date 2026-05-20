@@ -18,7 +18,9 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "stylePreprocessorOptions": {
-              "includePaths": ["./node_modules"]
+              "includePaths": [
+                "./node_modules"
+              ]
             },
             "allowedCommonJsDependencies": [
               "socket.io-client",
@@ -96,7 +98,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "intelehealth-ui:build"
+            "browserTarget": "intelehealth-ui:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

@@ -7,7 +7,7 @@
     "config-test": "ts-node ./src/assets/scripts/setEnv.ts --environment=test",
     "ng": "ng",
     "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
-    "start": "npm run config-dev && ng serve",
+    "start": "  npm run config-dev && ng serve --proxy-config proxy.conf.json",
     "build": "npm run config-prod && ng build --configuration production --aot",
     "test": "ng test --include src/app/admin/admin-actions/webrtc",
     "lint": "ng lint",

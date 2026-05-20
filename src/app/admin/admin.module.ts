@@ -56,6 +56,7 @@ import { PatientDetailsComponent } from './admin-actions/patient-details/patient
 import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dropdown/patient-visit-dropdown.component';
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
+import { IhFhirModuleComponent } from './admin-actions/ih-fhir-module/ih-fhir-module.component';
 
 
 // AoT requires an exported function for factories
@@ -162,6 +163,10 @@ const routes: Routes = [
             component: AiLlmComponent
           },
           {
+            path: 'ih-fhir-module',
+            component: IhFhirModuleComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -200,7 +205,8 @@ const routes: Routes = [
     PatientDetailsComponent,
     PatientVisitDropdownComponent,
     HomeScreenComponent,
-    AiLlmComponent
+    AiLlmComponent,
+    IhFhirModuleComponent
   ],
   imports: [
     CommonModule,

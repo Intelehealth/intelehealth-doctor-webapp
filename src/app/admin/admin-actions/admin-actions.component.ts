@@ -140,6 +140,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/ai-llm",
       isLocalPath: true
     },
+    {
+      title: "FHIR Module",
+      desc: "Enable FHIR module",
+      icon: "assets/svgs/patient_visit_dropdown.svg",
+      path: "admin/actions/ih-fhir-module",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,

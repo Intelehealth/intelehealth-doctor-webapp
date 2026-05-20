@@ -145,7 +145,7 @@ export class CoreService {
 
   /**
    * Open select language modal
-   * @return {Observable<any>} - Dialog result
+   * @return {Observable<any>} - Dialog esult
    */
   openSelectLanguageModal(): Observable<any> {
     const dialogRef = this.dialog.open(SelectLanguageComponent, {

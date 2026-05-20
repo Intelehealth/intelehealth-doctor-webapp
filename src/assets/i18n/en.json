@@ -5975,6 +5975,8 @@
   "Enable/Disable WebRTC": "Enable/Disable WebRTC",
   "WebRTC": "WebRTC",
   "ABHA ID": "ABHA ID",
+  "FHIR Module": "FHIR Module",
+  "Enable FHIR module": "Enable FHIR module",
   "Add to Home Screen": "Add to Home Screen",
   "Install": "Install",
   "Search Appointments": "Search Appointments",
