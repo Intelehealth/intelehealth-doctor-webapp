@@ -104,11 +104,11 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   ];
 
   get heartRecordingCount(): number {
-    return this.heartData.length;
+    return new Set(this.heartData.map(d => d.point)).size;
   }
 
   get lungRecordingCount(): number {
-    return this.lungData.length;
+    return new Set(this.lungData.map(d => d.point)).size;
   }
 
   ngOnInit(): void {
@@ -129,14 +129,18 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
 
     if (!this.encounters?.length) return;
 
-    // Collect ALL "Sound of breathing" OBS from every encounter
+    // Collect "Sound of breathing" OBS from Vitals encounter
     const stethObs: ObsModel[] = [];
+    const seenObsUuids = new Set<string>();
     for (const enc of this.encounters) {
       if (!enc.obs?.length) continue;
       for (const obs of enc.obs) {
-        if (obs.concept?.display?.toLowerCase().includes(STETHOSCOPE_CONCEPT)) {
-          stethObs.push(obs);
+        if (!obs.concept?.display?.toLowerCase().includes(STETHOSCOPE_CONCEPT)) continue;
+        if (obs.uuid) {
+          if (seenObsUuids.has(obs.uuid)) continue;
+          seenObsUuids.add(obs.uuid);
         }
+        stethObs.push(obs);
       }
     }
 
