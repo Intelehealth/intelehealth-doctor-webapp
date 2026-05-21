@@ -416,7 +416,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Temprature °f</td>
-                  <td>&#60;35.0, ≥37.5</td>
+                  <td>&#60;95.0, ≥99.5</td>
                   <ng-container *ngFor="let item of parameters[13].stage1values;">
                     <td>
                       <div class="value-item" *ngIf="item"
@@ -535,7 +535,7 @@
                   <ng-container *ngFor="let item of parameters[17].stage2values; let odd=odd;">
                     <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
                       <div class="value-item" *ngIf="item?.value == '10'||item?.value == 'P'">
-                        P
+                        {{ item?.value }}
                       </div>
                     </td>
                   </ng-container>
@@ -718,38 +718,34 @@
                 <tr>
                   <td rowspan="3" class="vrt-header"><span>MEDICATION ADMINISTRATION</span></td>
                   <td colspan="3">Oxytocin (U/L, drops/min)</td>
-                  <ng-container *ngFor="let item of parameters[19].stage1values;">
+                  <ng-container *ngFor="let cell of parameters[27].stage1values;">
                     <td colspan="1">
-                      <ng-container *ngIf="item">
-                        <div class="value-item note">
-                          <ng-container *ngIf="item?.value?.strength">
-                            <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
-                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                            <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                          </ng-container>
-                          <ng-container class="value-item" *ngIf="!item?.value?.strength">
-                            {{item?.value}}
-                          </ng-container>
-                        </div>
-                      </ng-container>
+                      <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                        <ng-container *ngIf="item?.value?.strength">
+                          <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                          <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                          <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                          <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                        </ng-container>
+                        <ng-container *ngIf="item && !item?.value?.strength">
+                          {{item?.value}}
+                        </ng-container>
+                      </div>
                     </td>
                   </ng-container>
-                  <ng-container *ngFor="let item of parameters[19].stage2values;">
+                  <ng-container *ngFor="let cell of parameters[27].stage2values;">
                     <td colspan="1">
-                      <ng-container *ngIf="item">
-                        <div class="value-item note">
-                          <ng-container *ngIf="item?.value?.strength">
-                            <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
-                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                            <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                          </ng-container>
-                          <ng-container class="value-item" *ngIf="!item?.value?.strength">
-                            {{item?.value}}
-                          </ng-container>
-                        </div>
-                      </ng-container>
+                      <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                        <ng-container *ngIf="item?.value?.strength">
+                          <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                          <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                          <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                          <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                        </ng-container>
+                        <ng-container *ngIf="item && !item?.value?.strength">
+                          {{item?.value}}
+                        </ng-container>
+                      </div>
                     </td>
                   </ng-container>
                   <!-- <ng-container *ngFor="let item of parameters[19].stage1values;">
@@ -791,22 +787,22 @@
                 </tr>
                 <tr>
                   <td colspan="3">Medicine</td>
-                  <ng-container *ngFor="let item of parameters[20].stage1values;">
-                    <td>
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
-                              {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br />
+                  <ng-container *ngFor="let cell of parameters[26].stage1values;">
+                    <td colspan="1">
+                      <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
+                        <ng-container *ngFor="let m of cell|emptyArray">
+                          <ng-container *ngIf="m">{{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
+                              {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br /></ng-container>
                         </ng-container>
                       </div>
                     </td>
                   </ng-container>
-                  <ng-container *ngFor="let item of parameters[20].stage2values;">
-                    <td>
-                      <div class="value-item note" *ngIf="item">
-                        <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
-                              {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br />
+                  <ng-container *ngFor="let cell of parameters[26].stage2values;">
+                    <td colspan="1">
+                      <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
+                        <ng-container *ngFor="let m of cell|emptyArray">
+                          <ng-container *ngIf="m">{{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
+                              {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br /></ng-container>
                         </ng-container>
                       </div>
                     </td>
@@ -814,38 +810,34 @@
                 </tr>
                 <tr>
                   <td colspan="3">IV fluids</td>
-                  <ng-container *ngFor="let item of parameters[21].stage1values;">
+                  <ng-container *ngFor="let cell of parameters[28].stage1values;">
                     <td colspan="1">
-                      <ng-container *ngIf="item">
-                        <div class="value-item note">
-                          <ng-container *ngIf="item?.value?.type">
-                            <span>Type : </span>{{item?.value?.type}}<br/>
-                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                            <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                          </ng-container>
-                          <ng-container class="value-item" *ngIf="!item?.value?.type">
-                            {{item?.value}}
-                          </ng-container>
-                        </div>
-                      </ng-container>
+                      <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                        <ng-container *ngIf="item?.value?.type">
+                          <span>Type : </span>{{item?.value?.type}}<br/>
+                          <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                          <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                          <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                        </ng-container>
+                        <ng-container *ngIf="item && !item?.value?.type">
+                          {{item?.value}}
+                        </ng-container>
+                      </div>
                     </td>
                   </ng-container>
-                  <ng-container *ngFor="let item of parameters[21].stage2values;">
+                  <ng-container *ngFor="let cell of parameters[28].stage2values;">
                     <td colspan="1">
-                      <ng-container *ngIf="item">
-                        <div class="value-item note">
-                          <ng-container *ngIf="item?.value?.type">
-                            <span>Type : </span>{{item?.value?.type}}<br/>
-                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                            <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                          </ng-container>
-                          <ng-container class="value-item" *ngIf="!item?.value?.type">
-                            {{item?.value}}
-                          </ng-container>
-                        </div>
-                      </ng-container>
+                      <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                        <ng-container *ngIf="item?.value?.type">
+                          <span>Type : </span>{{item?.value?.type}}<br/>
+                          <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                          <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                          <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                        </ng-container>
+                        <ng-container *ngIf="item && !item?.value?.type">
+                          {{item?.value}}
+                        </ng-container>
+                      </div>
                     </td>
                   </ng-container>
                   <!-- <ng-container *ngFor="let item of parameters[21].stage1values;">
@@ -886,6 +878,79 @@
                   </ng-container> -->
                 </tr>
                 <tr>
+                  <td colspan="47" class="divider"></td>
+                </tr>
+                <tr>
+                  <td rowspan="3" class="vrt-header"><span>SHARED DECISION-MAKING</span></td>
+                  <td colspan="3">ASSESSMENT</td>
+                  <ng-container *ngFor="let item of encuuid1; let i=index;">
+                    <td [attr.colspan]="subColsPerHourStage1[i]">
+                      <div class="value-item note" *ngIf="item">
+                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
+                          <ng-container *ngFor="let it of getParameterValueAtIndex(22, 1, i, j)|emptyArray;">
+                            <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                          </ng-container>
+                        </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container *ngFor="let item of encuuid2; let i=index;">
+                    <td [attr.colspan]="subColsPerHourStage2[i]">
+                      <div class="value-item note" *ngIf="item">
+                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
+                          <ng-container *ngFor="let it of getParameterValueAtIndex(22, 2, i, j)|emptyArray;">
+                            <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                          </ng-container>
+                        </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+                </tr>
+                <tr>
+                  <td colspan="46" class="divider"></td>
+                </tr>
+                <tr>
+                  <td colspan="3">PLAN</td>
+                  <ng-container *ngFor="let item of encuuid1; let i=index;">
+                    <td [attr.colspan]="subColsPerHourStage1[i]">
+                      <div class="value-item note" *ngIf="item">
+                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
+                          <ng-container *ngFor="let it of getParameterValueAtIndex(23, 1, i, j)|emptyArray;">
+                            <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                          </ng-container>
+                        </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngFor="let item of encuuid2; let i=index;">
+                    <td [attr.colspan]="subColsPerHourStage2[i]">
+                      <div class="value-item note" *ngIf="item">
+                        <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
+                          <ng-container *ngFor="let it of getParameterValueAtIndex(23, 2, i, j)|emptyArray;">
+                            <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                          </ng-container>
+                        </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+                </tr>
+                <tr>
+                  <td colspan="47" class="divider"></td>
+                </tr>
+                <tr>
                   <td class="nb"></td>
                   <td colspan="3">INITIALS</td>
                   <ng-container *ngFor="let item of initialsStage1; let i=index;">
@@ -920,108 +985,32 @@
             </table>
           </div>
 
-          <div class="intel-card mt-5" *ngIf="false">
+          <div class="intel-card mt-5">
             <div class="card-header justify-content-between">
-              <h6 class="mb-0">SHARED DECISION MAKING</h6>
+              <h6 class="mb-0">MEDICATION / OXYTOCIN / IV FLUIDS</h6>
               <div class="text-right">
-                <button
-                  *ngIf="!showAll"
-                  mat-button
-                  (click)="accordion.openAll(); showAll = !showAll"
-                  data-test-id="btnExpandMore"
-                >
+                <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll = !showAll" data-test-id="btnExpandMore">
                   <span class="text-muted">{{'Show all'}}</span>
                   <mat-icon>expand_more</mat-icon>
                 </button>
-                <button
-                  *ngIf="showAll"
-                  mat-button
-                  (click)="accordion.closeAll(); showAll = !showAll"
-                  data-test-id="btnExpandLess"
-                >
+                <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll = !showAll" data-test-id="btnExpandLess">
                   <span class="text-muted">{{'Hide all'}}</span>
                   <mat-icon>expand_less</mat-icon>
                 </button>
               </div>
             </div>
             <div class="card-body bg-white">
-
               <mat-accordion class="intel-accordion-con" multi>
-                <mat-expansion-panel [expanded]="false" #panel1 hideToggle>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      <div class="intel-accordion-title">
-                        <img
-                          src="assets/svgs/diagnosis.svg"
-                          alt=""
-                          width="44px"
-                        />
-                        <h6 class="mb-0 ml-2">
-                          {{'Assessment'}}
-                        </h6>
-                      </div>
-                    </mat-panel-title>
-                    <mat-icon>{{ panel1.expanded ? "remove" : "add" }}</mat-icon>
-                  </mat-expansion-panel-header>
-
-                  <ul class="items-list">
-                    <li *ngFor="let a of assessmentHistory; let i = index;">
-                      <div class="list-item">
-                        <label class="border-0">{{a.value}}</label>
-                        <div class="list-item-content">
-                          {{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </mat-expansion-panel>
-
-                <mat-expansion-panel [expanded]="false" #panel2 hideToggle class="bg-gray">
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      <div class="intel-accordion-title">
-                        <img
-                          src="assets/svgs/note.svg"
-                          alt=""
-                          width="44px"
-                        />
-                        <h6 class="mb-0 ml-2">
-                          {{'Plan'}}
-                        </h6>
-                      </div>
-                    </mat-panel-title>
-                    <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
-                  </mat-expansion-panel-header>
-
-                  <ul class="items-list">
-                    <li *ngFor="let p of planHistory; let i = index;">
-                      <div class="list-item">
-                        <label class="border-0">{{p.value}}</label>
-                        <div class="list-item-content">
-                          {{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </mat-expansion-panel>
-
-                <mat-expansion-panel
-                  [expanded]="false"
-                  #panel3
-                  hideToggle
-                >
+                <mat-expansion-panel [expanded]="false" #panel3 hideToggle>
                   <mat-expansion-panel-header>
                     <mat-panel-title>
                       <div class="intel-accordion-title">
                         <img src="assets/svgs/medication.svg" alt="" width="44px" />
-                        <h6 class="mb-0 ml-2">
-                          {{'Medication'}}
-                        </h6>
+                        <h6 class="mb-0 ml-2">{{'Medication'}}</h6>
                       </div>
                     </mat-panel-title>
                     <mat-icon>{{ panel3.expanded ? "remove" : "add" }}</mat-icon>
                   </mat-expansion-panel-header>
-
                   <ul class="items-list">
                     <li *ngFor="let m of medicationPrescribedHistory; let i = index;">
                       <div class="list-item">
@@ -1039,14 +1028,11 @@
                     <mat-panel-title>
                       <div class="intel-accordion-title">
                         <img src="assets/svgs/advice.svg" alt="" width="44px" />
-                        <h6 class="mb-0 ml-2">
-                          {{'Oxytocin'}}
-                        </h6>
+                        <h6 class="mb-0 ml-2">{{'Oxytocin'}}</h6>
                       </div>
                     </mat-panel-title>
                     <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
                   </mat-expansion-panel-header>
-
                   <ul class="items-list">
                     <li *ngFor="let o of oxytocinPrescribedHistory; let i = index;">
                       <div class="list-item">
@@ -1059,23 +1045,16 @@
                   </ul>
                 </mat-expansion-panel>
 
-                <mat-expansion-panel
-                  [expanded]="false"
-                  #panel5
-                  hideToggle
-                >
+                <mat-expansion-panel [expanded]="false" #panel5 hideToggle>
                   <mat-expansion-panel-header>
                     <mat-panel-title>
                       <div class="intel-accordion-title">
                         <img src="assets/svgs/referral.svg" alt="" width="44px" />
-                        <h6 class="mb-0 ml-2">
-                          {{'IV Fluids'}}
-                        </h6>
+                        <h6 class="mb-0 ml-2">{{'IV Fluids'}}</h6>
                       </div>
                     </mat-panel-title>
                     <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
                   </mat-expansion-panel-header>
-
                   <ul class="items-list">
                     <li *ngFor="let iv of ivPrescribedHistory; let i = index;">
                       <div class="list-item">
