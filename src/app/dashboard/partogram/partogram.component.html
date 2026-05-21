@@ -393,7 +393,7 @@
                     </tr>
                     <tr>
                       <td colspan="2">Temprature °F</td>
-                      <td>&#60;35.0, ≥37.5</td>
+                      <td>&#60;95.0, ≥99.5</td>
                       <ng-container *ngFor="let item of parameters[13].stage1values;">
                         <td>
                           <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -502,7 +502,7 @@
                       <ng-container *ngFor="let item of parameters[17].stage2values; let odd=odd;">
                         <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
                           <div class="value-item" *ngIf="item?.value == '10'||item?.value == 'P'">
-                            P
+                            {{ item?.value }}
                           </div>
                         </td>
                       </ng-container>
@@ -683,38 +683,34 @@
                     <tr>
                       <td rowspan="3" class="vrt-header"><span>MEDICATION ADMINISTRATION</span></td>
                       <td colspan="3">Oxytocin (U/L, drops/min)</td>
-                      <ng-container *ngFor="let item of parameters[19].stage1values;">
+                      <ng-container *ngFor="let cell of parameters[27].stage1values;">
                         <td colspan="1">
-                          <ng-container *ngIf="item">
-                            <div class="value-item note">
-                              <ng-container *ngIf="item?.value?.strength">
-                                <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
-                                <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                              </ng-container>
-                              <ng-container class="value-item" *ngIf="!item?.value?.strength">
-                                {{item?.value}}
-                              </ng-container>
-                            </div>
-                          </ng-container>
+                          <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                            <ng-container *ngIf="item?.value?.strength">
+                              <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                              <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                              <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                            </ng-container>
+                            <ng-container *ngIf="item && !item?.value?.strength">
+                              {{item?.value}}
+                            </ng-container>
+                          </div>
                         </td>
                       </ng-container>
-                      <ng-container *ngFor="let item of parameters[19].stage2values;">
+                      <ng-container *ngFor="let cell of parameters[27].stage2values;">
                         <td colspan="1">
-                          <ng-container *ngIf="item">
-                            <div class="value-item note">
-                              <ng-container *ngIf="item?.value?.strength">
-                                <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
-                                <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                              </ng-container>
-                              <ng-container class="value-item" *ngIf="!item?.value?.strength">
-                                {{item?.value}}
-                              </ng-container>
-                            </div>
-                          </ng-container>
+                          <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                            <ng-container *ngIf="item?.value?.strength">
+                              <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                              <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                              <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                            </ng-container>
+                            <ng-container *ngIf="item && !item?.value?.strength">
+                              {{item?.value}}
+                            </ng-container>
+                          </div>
                         </td>
                       </ng-container>
                       <!-- <ng-container *ngFor="let item of parameters[19].stage1values;">
@@ -753,20 +749,20 @@
                     </tr>
                     <tr>
                       <td colspan="3">Medicine</td>
-                      <ng-container *ngFor="let item of parameters[20].stage1values;">
-                        <td>
-                          <div class="value-item note" *ngIf="item">
-                            <ng-container *ngFor="let m of item">
-                              {{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/>
+                      <ng-container *ngFor="let cell of parameters[26].stage1values;">
+                        <td colspan="1">
+                          <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
+                            <ng-container *ngFor="let m of cell|emptyArray">
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                         </td>
                       </ng-container>
-                      <ng-container *ngFor="let item of parameters[20].stage2values;">
-                        <td>
-                          <div class="value-item note" *ngIf="item">
-                            <ng-container *ngFor="let m of item">
-                              {{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/>
+                      <ng-container *ngFor="let cell of parameters[26].stage2values;">
+                        <td colspan="1">
+                          <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
+                            <ng-container *ngFor="let m of cell|emptyArray">
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                         </td>
@@ -774,38 +770,34 @@
                     </tr>
                     <tr>
                       <td colspan="3">IV fluids</td>
-                      <ng-container *ngFor="let item of parameters[21].stage1values;">
+                      <ng-container *ngFor="let cell of parameters[28].stage1values;">
                         <td colspan="1">
-                          <ng-container *ngIf="item">
-                            <div class="value-item note">
-                              <ng-container *ngIf="item?.value?.type">
-                                <span>Type : </span>{{item?.value?.type}}<br/>
-                                <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                              </ng-container>
-                              <ng-container class="value-item" *ngIf="!item?.value?.type">
-                                {{item?.value}}
-                              </ng-container>
-                            </div>
-                          </ng-container>
+                          <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                            <ng-container *ngIf="item?.value?.type">
+                              <span>Type : </span>{{item?.value?.type}}<br/>
+                              <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                              <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                            </ng-container>
+                            <ng-container *ngIf="item && !item?.value?.type">
+                              {{item?.value}}
+                            </ng-container>
+                          </div>
                         </td>
                       </ng-container>
-                      <ng-container *ngFor="let item of parameters[21].stage2values;">
+                      <ng-container *ngFor="let cell of parameters[28].stage2values;">
                         <td colspan="1">
-                          <ng-container *ngIf="item">
-                            <div class="value-item note">
-                              <ng-container *ngIf="item?.value?.type">
-                                <span>Type : </span>{{item?.value?.type}}<br/>
-                                <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
-                              </ng-container>
-                              <ng-container class="value-item" *ngIf="!item?.value?.type">
-                                {{item?.value}}
-                              </ng-container>
-                            </div>
-                          </ng-container>
+                          <div class="value-item note" *ngFor="let item of cell|emptyArray">
+                            <ng-container *ngIf="item?.value?.type">
+                              <span>Type : </span>{{item?.value?.type}}<br/>
+                              <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                              <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                            </ng-container>
+                            <ng-container *ngIf="item && !item?.value?.type">
+                              {{item?.value}}
+                            </ng-container>
+                          </div>
                         </td>
                       </ng-container>
                       <!-- <ng-container *ngFor="let item of parameters[21].stage1values;">
@@ -856,7 +848,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(22, 1, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}}</p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
@@ -870,7 +862,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(22, 2, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}}</p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
@@ -883,7 +875,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}}</p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -892,7 +884,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}}</p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -908,7 +900,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(23, 1, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}}</p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
@@ -922,7 +914,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(23, 2, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}}</p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
@@ -935,7 +927,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}}</p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -944,7 +936,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}}</p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>

@@ -90,6 +90,7 @@ export class Stage3Component implements OnInit {
   newbornParams: S3Param[] = [
     { name: 'Respiratory Rate',      conceptName: 'Respiratory Rate',      values: new Array(NUM_COLS).fill(null) },
     { name: 'SPO2',                  conceptName: 'SPO2',                  values: new Array(NUM_COLS).fill(null) },
+    { name: 'Temprature °f',           conceptName: 'TEMPERATURE_NEWBORN',   values: new Array(NUM_COLS).fill(null) },
     { name: 'Grunting',              conceptName: 'Grunting',              values: new Array(NUM_COLS).fill(null) },
     { name: 'Chest Indrawing',       conceptName: 'Chest Indrawing',       values: new Array(NUM_COLS).fill(null) },
     { name: 'Fast Breathing',        conceptName: 'Fast Breathing',        values: new Array(NUM_COLS).fill(null) },
@@ -235,7 +236,7 @@ export class Stage3Component implements OnInit {
 
     if (typeof raw === 'object' && !Array.isArray(raw)) {
       const complications = raw.complications || raw.Complications || '';
-      return complications || '-';
+      return complications || 'N';
     }
 
     if (typeof raw === 'string' && (raw.startsWith('{') || raw.startsWith('['))) {
@@ -243,11 +244,15 @@ export class Stage3Component implements OnInit {
         const parsed = JSON.parse(raw);
         if (typeof parsed === 'object' && !Array.isArray(parsed)) {
           const complications = parsed.complications || parsed.Complications || '';
-          return complications || '-';
+          return complications || 'N';
         }
       } catch {
         // not JSON, return as-is
       }
+    }
+
+    if (typeof raw === 'string' && ['no', 'n', 'none'].includes(raw.toLowerCase())) {
+      return 'N';
     }
 
     return this.toDisplayText(value);
@@ -579,6 +584,8 @@ export class Stage3Component implements OnInit {
         aliases.push('RESPIRATORY_RATE_NEWBORN', 'Respiratory Rate Newborn', 'Respiratory rate', 'RESPIRATORY RATE');
       } else if (param.name === 'SPO2') {
         aliases.push('SPO2_NEWBORN', 'SpO2', 'Oxygen Saturation', 'SPO2 Newborn');
+      } else if (param.name === 'Temperature') {
+        aliases.push('TEMPERATURE (C)', 'Temperature (C)', 'TEMPERATURE_NEWBORN', 'Temperature Newborn', 'TEMP (C)');
       } else if (param.name === 'Complications') {
         aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn');
       } else if (param.name === 'Grunting') {
@@ -710,11 +717,11 @@ export class Stage3Component implements OnInit {
   }
 
   get newbornAssessmentHistory(): any[] {
-    return this.getTextareaHistory(this.newbornParams[10]);
+    return this.getTextareaHistory(this.newbornParams[11]);
   }
 
   get newbornPlanHistory(): any[] {
-    return this.getTextareaHistory(this.newbornParams[11]);
+    return this.getTextareaHistory(this.newbornParams[12]);
   }
 
   private findObsLocation(param: S3Param, obsUuid: string): { colIdx: number; itemIdx: number } {
