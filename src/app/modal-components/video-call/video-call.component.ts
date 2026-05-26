@@ -196,10 +196,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
     /**
-     *  60 seconds ringing timeout after which it will show toastr
+     *  45 seconds ringing timeout after which it will show toastr
      *  and hang up if HW not picked up
     */
-    const ringingTimeout = 60 * 1000;
+    const ringingTimeout = 45 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
   //      this.socketSvc.emitEvent('call_time_up', this.nurseId);
