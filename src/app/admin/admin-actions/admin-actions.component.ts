@@ -140,6 +140,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/ai-llm",
       isLocalPath: true
     },
+    {
+      title: "Prescription Notes",
+      desc: "Manage specialty-wise notes printed on prescriptions",
+      icon: "assets/svgs/advice.svg",
+      path: "admin/actions/prescription-notes",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,

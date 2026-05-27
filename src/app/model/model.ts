@@ -702,6 +702,16 @@ export interface PatientVisitSummaryModel {
   updatedAt?: string,
 }
 
+export interface PrescriptionNotesModel {
+  id: number,
+  specialty: string,
+  notes: string[],
+  is_enabled: boolean,
+  platform?: 'Mobile' | 'Webapp' | 'Both' | null,
+  createdAt?: string,
+  updatedAt?: string,
+}
+
 export interface PatientVisitSummaryConfigModel {
   allow_duplicate_phoneno_and_email: boolean
   appointment_button: boolean
