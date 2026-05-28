@@ -56,6 +56,7 @@ import { CallHistoryComponent } from './call-history/call-history.component';
 import { PatientRegValidationsComponent } from './patient-reg-validations/patient-reg-validations.component';
 import { LibPresciptionModule } from 'lib-presciption';
 import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/platform-fields-selecton.component'
+import { PrescriptionNotesEditComponent } from './prescription-notes-edit/prescription-notes-edit.component';
 
 @NgModule({
     declarations: [
@@ -97,7 +98,8 @@ import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/plat
         SubSectionsComponent,
         CallHistoryComponent,
         PatientRegValidationsComponent,
-        PlatformFieldsSelectonComponent
+        PlatformFieldsSelectonComponent,
+        PrescriptionNotesEditComponent
     ],
     imports: [
         CommonModule,
