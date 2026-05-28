@@ -42,7 +42,7 @@
                     <span>{{ patient?.person?.preferredName?.givenName }}</span>
                     <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
                     <span>{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
-                    <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.age) + ")" }}</span>
+                    <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.birthdate ? getAge(patient?.person.birthdate, true) : patient?.person.age) + ")" }}</span>
                   </h6>
                   <p data-test-id="etPatienOpenMRSId" *ngIf="isFeatureAvailable('tnmStaging')">{{ getPersonAttributeValue('TMH Case Number') }}</p>
                   <p data-test-id="etPatienOpenMRSId" *ngIf="!isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
@@ -57,7 +57,7 @@
               </div>
             </div>
 
-            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.age">
+            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.birthdate">
               <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
@@ -468,7 +468,7 @@
 
                       <!-- Digital Stethoscope: interactive UI -->
                       <ng-container *ngSwitchCase="pvsConstant['digital_stethoscope'].key">
-                        <app-digital-stethoscope></app-digital-stethoscope>
+                        <app-digital-stethoscope [encounters]="visit?.encounters"></app-digital-stethoscope>
                       </ng-container>
                       <!-- END Digital Stethoscope -->
 

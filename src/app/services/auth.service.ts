@@ -174,18 +174,10 @@ export class AuthService {
   * @param {RolesModel[]} roles - Array of roles
   * @return {any} - Roles and permissions object
   */
-  extractRolesAndPermissions(perm: PrivilegesModel[], roles: RolesModel[]) {
-    let extractedPermissions = perm.map((val) => {
-      return val.name;
-    });
-    let extractedRoles = roles.map((val) => {
-      return val.name.toUpperCase();
-    });
-    let rolesObj = {};
-    extractedRoles.forEach(r => {
-      rolesObj[r] = extractedPermissions;
-    });
-    return rolesObj;
+  extractRolesAndPermissions(perm: PrivilegesModel[], roles: RolesModel[]): { [key: string]: string[] } {
+    const permissions = perm?.map(p => p?.name) ?? [];
+    const roleNames = roles?.map(r => r?.name?.toUpperCase()).filter(Boolean) ?? [];
+    return roleNames.reduce((acc, name) => ({ ...acc, [name]: permissions }), {} as { [key: string]: string[] });
   }
 
   /**

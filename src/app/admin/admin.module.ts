@@ -57,6 +57,7 @@ import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dro
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
 import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
+import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
 
 
 // AoT requires an exported function for factories
@@ -163,6 +164,10 @@ const routes: Routes = [
             component: AiLlmComponent
           },
           {
+            path: 'prescription-notes',
+            component: PrescriptionNotesComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -202,7 +207,8 @@ const routes: Routes = [
     PatientVisitDropdownComponent,
     HomeScreenComponent,
     WebrtcLogComponent,
-    AiLlmComponent
+    AiLlmComponent,
+    PrescriptionNotesComponent
   ],
   imports: [
     CommonModule,

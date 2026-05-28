@@ -1,9 +1,10 @@
-name: Nasstaging-new
+name: Turn Webapp
 on:
+  workflow_dispatch:  # Allows manual trigger
   push:
     branches:
-      - nas_ida5_development_master
-  workflow_dispatch:  # Allows manual trigger
+      - development_master
+  
   
 jobs:
   build-and-deploy:
@@ -22,10 +23,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           
           # Add the server to known_hosts to prevent interactive prompts
-          ssh-keyscan -H ${{ secrets.NASSTAGINGNEW_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.TURN_HOST }} >> ~/.ssh/known_hosts
           
           # Execute the download
-          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.NASSTAGINGNEW_HOST }}:/home/ubuntu/deploy/webapp/.env .env
+          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.TURN_HOST }}:/home/ubuntu/deploy/webapp/.env .env
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
       - name: Build and Save Docker Image
         run: |
@@ -38,7 +39,7 @@ jobs:
       - name: Upload Image to Server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.NASSTAGINGNEW_HOST }}
+          host: ${{ secrets.TURN_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "webapp_image.tar.gz"
@@ -48,7 +49,7 @@ jobs:
       - name: Deploy Container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.NASSTAGINGNEW_HOST }}
+          host: ${{ secrets.TURN_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
@@ -66,4 +67,4 @@ jobs:
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
             
-            rm webapp_image.tar
+            rm /home/ubuntu/deploy/webapp/webapp_image.tar.gz

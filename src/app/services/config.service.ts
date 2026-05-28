@@ -560,4 +560,35 @@ export class ConfigService {
     const url = `${this.baseURL}/language/updatePlatform/${id}`;
     return this.http.put(url, {platform});
   }
+
+  /**
+   * Get specialty-wise prescription notes (admin view).
+   * @return {Observable<any>}
+   */
+  getPrescriptionNotes(): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Toggle is_enabled for a specialty's prescription notes.
+   * @param {number} id - id of the prescription-notes row
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updatePrescriptionNoteEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Replace the notes array (bullet list) for a specialty.
+   * @param {number} id - id of the prescription-notes row
+   * @param {string[]} notes - non-empty array of bullet strings
+   * @return {Observable<any>}
+   */
+  updatePrescriptionNotesContent(id: number, notes: string[]): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/updateNotes/${id}`;
+    return this.http.put(url, { notes });
+  }
 }

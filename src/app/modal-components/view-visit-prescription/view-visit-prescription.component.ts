@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -502,17 +502,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string) {
-    const years = moment().diff(birthdate, 'years');
-    const months = moment().diff(birthdate, 'months');
-    const days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} years`;
-    } else if (months > 1) {
-      return `${months} months`;
-    } else {
-      return `${days} days`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**
