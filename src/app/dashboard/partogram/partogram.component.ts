@@ -684,7 +684,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         this.pinfo['MembraneRupturedTimestamp'] = parsed.toISOString();
         this.membraneRupturedIsDate = true;
       } else {
-        // Not a date (e.g. 'U' = Unknown, 'I' = Intact) — show the value as stored.
+
         this.pinfo['MembraneRupturedTimestamp'] = mrVal.toUpperCase();
         this.membraneRupturedIsDate = false;
       }
