@@ -16,17 +16,19 @@ export class AppComponent implements OnInit {
     document.body.classList.add(`client-${environment.client}`);
     if (environment.client === 'nepal' && !environment.forceEzaziBranding) {
       document.title = 'eLCG नेपाल';
-      const oldFavicon = document.querySelector('link[rel="icon"]');
-      if (oldFavicon?.parentNode) { oldFavicon.parentNode.removeChild(oldFavicon); }
-      const newFavicon = document.createElement('link');
-      newFavicon.rel = 'icon';
-      newFavicon.type = 'image/png';
-      newFavicon.href = '/assets/ezazi/logo.png?v=' + Date.now();
-      document.head.appendChild(newFavicon);
+    
+      let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement | null;
+      if (!favicon) {
+        favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        document.head.appendChild(favicon);
+      }
+      favicon.type = 'image/png';
+      favicon.href = 'assets/ezazi/logo.png?v=20260507';
       const apple = document.querySelector('link[rel="apple-touch-icon"]') as HTMLLinkElement | null;
-      if (apple) apple.href = '/assets/icons/nepal/icon-192x192-20260507.png';
+      if (apple) apple.href = 'assets/ezazi/logo.png?v=20260507';
       const manifest = document.querySelector('link[rel="manifest"]') as HTMLLinkElement | null;
-      if (manifest) manifest.href = 'manifest.nepal.webmanifest?v=20260507';
+      if (manifest) manifest.href = 'manifest.nepal.webmanifest?v=20260601';
     }
     setTimeout(() => {
       this.showSplash = false;

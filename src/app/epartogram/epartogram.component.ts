@@ -360,6 +360,7 @@ export class EpartogramComponent implements OnInit {
   visitCompleteReason: string;
   outOfTimeReason: string;
   referTypeOtherReason: string;
+  membraneRupturedIsDate = false;
   birthOutcomeOther: string;
   motherDeceased: string;
   motherDeceasedReason: string;
@@ -759,7 +760,16 @@ export class EpartogramComponent implements OnInit {
       this.pinfo['ActiveLaborDiagnosed'] = moment(this.pinfo['ActiveLaborDiagnosed'], 'DD/MM/YYYY hh:mm A').toISOString();
     }
     if (this.pinfo['MembraneRupturedTimestamp']) {
-      (this.pinfo['MembraneRupturedTimestamp'] == 'U')? this.pinfo['MembraneRupturedTimestamp'] = 'U' : this.pinfo['MembraneRupturedTimestamp'] = moment(this.pinfo['MembraneRupturedTimestamp'], 'DD/MM/YYYY hh:mm A').toISOString();
+      const mrVal = String(this.pinfo['MembraneRupturedTimestamp']).trim();
+      const parsed = moment(mrVal, 'DD/MM/YYYY hh:mm A', true);
+      if (parsed.isValid()) {
+        this.pinfo['MembraneRupturedTimestamp'] = parsed.toISOString();
+        this.membraneRupturedIsDate = true;
+      } else {
+        
+        this.pinfo['MembraneRupturedTimestamp'] = mrVal.toUpperCase();
+        this.membraneRupturedIsDate = false;
+      }
     }
     this.pinfo['age'] = this.patient?.person.age;
     this.pinfo['birthdate'] = this.patient?.person.birthdate;
