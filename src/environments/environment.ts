@@ -28,7 +28,7 @@ export const environment = {
   client: CLIENT,
   hasStage3: CLIENT === 'nepal',
   
-  forceEzaziBranding: true,
+  forceEzaziBranding: false,
   base,
   baseURL:         `${base}/openmrs/ws/rest/v1`,
   baseURLCoreApp:  `${base}/openmrs/coreapps/diagnoses`,

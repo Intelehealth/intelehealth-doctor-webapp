@@ -31,10 +31,10 @@
                     <tr class="page-title-row">
                       <td colspan="14"><span>
                         Ruptured membranes:</span>&nbsp;
-                        <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp == 'U'">U</ng-container>
-                        <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp != 'U'">
+                        <ng-container *ngIf="membraneRupturedIsDate">
                           <span>[Date</span> {{formatDateByClient(pinfo?.MembraneRupturedTimestamp) || 'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
                         </ng-container>
+                        <ng-container *ngIf="!membraneRupturedIsDate">{{pinfo?.MembraneRupturedTimestamp|noValue:'NA'}}</ng-container>
                       </td>
                       <td colspan="41"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
                     </tr>
