@@ -427,8 +427,10 @@
       <form [formGroup]="addTestForm" (ngSubmit)="addTest()" *ngIf="!addMoreTest">
         <div class="form-group mt-2">
           <label for="note"><b>{{'Test'|translate}}</b></label>
-          <input type="text" class="form-control" formControlName="test" placeholder="{{'Add test to patient'|translate}}"
-            [ngbTypeahead]="search7" data-test-id="etTest" />
+          <ng-select formControlName="test" class="visit-select custom" [items]="testsList" bindLabel="display"
+            bindValue="uuid" [clearable]="false" [searchable]="true" [addTag]="addTestTag"
+            placeholder="{{'Add test to patient'|translate}}" data-test-id="etTest">
+          </ng-select>
         </div>
         <div class="form-group  mt-3">
           <button type="button" class="white-btn mr-3" (click)="toggleTest()" data-test-id="btnCancelTest">
@@ -444,7 +446,7 @@
     <ul class="items-list mt-3" *ngIf="tests.length">
       <li *ngFor="let t of tests; let i = index">
         <div class="d-flex justify-content-between">
-          <span>{{ t.value }}</span>
+          <span>{{ t.display || getTestDisplay(t.value) }}</span>
           <button mat-icon-button (click)="deleteTest(i, t.uuid)" data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
             *ngIf="isVisitNoteProvider && !visitEnded">
             <img src="assets/svgs/delete-icon.svg" alt="" />

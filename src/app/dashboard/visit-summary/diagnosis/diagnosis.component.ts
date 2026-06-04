@@ -16,7 +16,7 @@ import { DiagnosticModel, DropdownItemModel, EncounterModel, ObsApiResponseModel
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { DataItemModel, MedicineModel } from 'src/app/model/model';
 import instructionRemarks from 'src/app/core/data/instructionRemarks';
 import durationUnitList from 'src/app/core/data/durationUnitList';
@@ -24,7 +24,6 @@ import { conceptIds, days, facility, refer_prioritie } from 'src/config/constant
 import doses from '../../../core/data/dose';
 import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
-import medicines from '../../../core/data/medicines';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
@@ -130,8 +129,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   daysList: DataItemModel[] = days.daysList
   durationUnitList: DataItemModel[] = durationUnitList;
   drugNameList: DataItemModel[] = [];
+  drugSearchResults: any[] = [];
+  drugNameApiList: string[] = [];
+  drugDoseApiList: string[] = [];
+  orderEntryDoseList: string[] = [];
   advicesList: string[] = [];
-  testsList: string[] = [];
+  testsList: any[] = [];
   tests: TestModel[] = [];
   referrals: ReferralModel[] = [];
 
@@ -238,12 +241,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     )
 
   search1 = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
-  search2 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
-  search3 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
+  search2 = (text$: Observable<string>) => this.searchDrugNames(text$);
+  search3 = (text$: Observable<string>) => this.mainSearch(text$, this.getDoseSuggestions());
   search4 = (text$: Observable<string>) => this.mainSearch(text$, this.daysList.map((val) => val.name));
   search5 = (text$: Observable<string>) => this.mainSearch(text$, this.durationUnitList.map((val) => val.name));
   search6 = (text$: Observable<string>) => this.mainSearch(text$, instructionRemarks.map((val) => val.name));
-  search7 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
+  search7 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList.map((test) => test.display));
 
   ngAfterViewInit(): void {
     this.formControlValueChanges();
@@ -262,6 +265,86 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     }
   }
 
+  fetchDrugList(): void {
+    this.encounterService.searchMedicine(20).pipe(
+      catchError(() => of({ results: [] }))
+    ).subscribe((response: any) => this.setDrugSearchResults(response.results || []));
+  }
+
+  searchDrugNames(text$: Observable<string>): Observable<string[]> {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => {
+        const query = term?.trim();
+        if (!query) {
+          return of([]);
+        }
+
+        return this.encounterService.searchMedicine(20, query).pipe(
+          map((response: any) => {
+            this.setDrugSearchResults(response.results || []);
+            return this.drugNameApiList;
+          }),
+          catchError(() => of([]))
+        );
+      })
+    );
+  }
+
+  setDrugSearchResults(drugs: any[]): void {
+    this.drugSearchResults = drugs;
+    this.drugNameApiList = drugs.map((drug: any) => drug.display).filter(Boolean);
+    this.drugDoseApiList = drugs
+      .map((drug: any) => this.extractStrengthFromDrug(drug))
+      .filter((dose: string, index: number, arr: string[]) => !!dose && arr.indexOf(dose) === index);
+  }
+
+  getDoseSuggestions(): string[] {
+    const suggestions = [
+      ...this.orderEntryDoseList,
+      ...this.drugDoseApiList,
+      ...doses.map((val) => val.name)
+    ].filter(Boolean);
+
+    return suggestions.filter((value, index, arr) => arr.indexOf(value) === index);
+  }
+
+  fetchOrderEntryDoseList(): void {
+    this.encounterService.getDrugType().pipe(
+      catchError(() => of({}))
+    ).subscribe((response: any) => {
+      this.orderEntryDoseList = this.getOrderEntryDoseDisplays(response);
+    });
+  }
+
+  getOrderEntryDoseDisplays(response: any): string[] {
+    const displays = [
+      ...this.getOrderEntryDisplays(response?.drugDosingUnits),
+      ...this.getOrderEntryDisplays(response?.drugDispensingUnits),
+      ...this.getOrderEntryDisplays(response?.drugStrengths),
+      ...this.getOrderEntryDisplays(response?.drugStrengthUnits),
+      ...this.getOrderEntryDisplays(response?.strengths),
+      ...this.getOrderEntryDisplays(response?.strengthUnits)
+    ];
+
+    return displays.filter((value, index, arr) => !!value && arr.indexOf(value) === index);
+  }
+
+  getOrderEntryDisplays(items: any[] = []): string[] {
+    return items.map((item) => item?.display).filter(Boolean);
+  }
+
+  extractStrengthFromDrug(drug: any): string {
+    if (drug?.strength) {
+      return drug.strength;
+    }
+
+    const display = drug?.display || '';
+    const match = display.match(/(\(?\d+(?:\.\d+)?(?:\s*\+\s*\d+(?:\.\d+)?)*\s*(?:mg|g|gm|mcg|ml|iu|unit|units|%)\)?)/i);
+    return match ? match[1].replace(/\s+/g, ' ').trim() : '';
+  }
+
   ngOnInit() {
     this.dSearchSubject.subscribe(val => {
       this.searchDiagnosis(val);
@@ -275,9 +358,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.checkIfTestPresent();
     this.checkIfReferralPresent();
     this.checkIfFollowUpPresent();
-    medicines.forEach(med => {
-      this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
-    });
+    this.fetchDrugList();
+    this.fetchOrderEntryDoseList();
 
     // Initialize visit note encounter
     this.visitService.fetchVisitDetails(this.visit.uuid).subscribe((visit: any) => {
@@ -297,6 +379,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   formControlValueChanges(): void {
+    this.addMedicineForm.get('drug')?.valueChanges.subscribe((drugName: string) => {
+      const selectedDrug = this.drugSearchResults.find((drug) => drug.display === drugName);
+      const selectedDose = this.extractStrengthFromDrug(selectedDrug);
+      if (selectedDose) {
+        this.addMedicineForm.get('dose')?.setValue(selectedDose, { emitEvent: false });
+      }
+    });
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: string) => {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
@@ -898,11 +987,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   getTestsList(): void {
-    this.diagnosisService.concept(conceptIds.conceptInvestigationsTest).subscribe(res => {
-      const result = res.answers;
-      result.forEach((ans: { display: string; }) => {
-        this.testsList.push(this.translationService.getDropdownTranslation('tests', ans.display));
-      });
+    this.encounterService.getTestList().subscribe((res: any) => {
+      this.testsList = res.results || res.answers || [];
     });
   }
 
@@ -946,7 +1032,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     if (this.selectedTests.length > 0) {
       const test = this.selectedTests[0];
       if (!this.tests.find((o: TestModel) => o.value === test)) {
-        const newTest: TestModel = { value: test, uuid: null };
+        const newTest: TestModel = { value: test, display: this.getTestDisplay(test), uuid: null };
         this.tests.push(newTest);
         if (this.aillmtxTestComponent) {
           this.aillmtxTestComponent.existingTest = [...this.tests];
@@ -966,11 +1052,20 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       return;
     }
-    const newTest: TestModel = { value: testValue, uuid: null };
+    const newTest: TestModel = { value: testValue, display: this.getTestDisplay(testValue), uuid: null };
     this.tests.push(newTest);
     this.addTestForm.reset();
     this.testSaved.emit(this.tests);
   }
+
+  getTestDisplay(value: string): string {
+    return this.testsList.find((test) => test.uuid === value)?.display || value;
+  }
+
+  addTestTag = (display: string): any => ({
+    uuid: display,
+    display
+  });
 
   /**
   * Delete test for a given index and uuid
@@ -1388,4 +1483,3 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     }
   }
 }
-

@@ -143,7 +143,9 @@ export interface DataItemModel {
   name: string,
   code?: string,
   text?: string,
-  shortName?: string
+  shortName?: string,
+  uuid?: string,
+  display?: string
 }
 
 export interface MindmapKeyModel {
@@ -505,7 +507,8 @@ export interface ReferralModel {
 
 export interface TestModel {
   uuid?: string,
-  value?: string
+  value?: string,
+  display?: string
 }
 
 export interface MedicineModel {

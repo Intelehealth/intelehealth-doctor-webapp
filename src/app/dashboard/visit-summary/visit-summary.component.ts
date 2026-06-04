@@ -12,10 +12,9 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { MatAccordion } from '@angular/material/expansion';
-import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -26,7 +25,7 @@ import { VideoCallComponent } from 'src/app/modal-components/video-call/video-ca
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
 import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -93,7 +92,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   specializations: SpecializationModel[] = [];
   referSpecializations: DropdownItemModel[] = [];
   refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
-  strengthList: DataItemModel[] = strength.strengthList
   daysList: DataItemModel[] = days.daysList
   timingList: DataItemModel[] = timing.timingList
   durationUnitList: DataItemModel[] = durationUnitList;
@@ -101,7 +99,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   timeList: string[] = [];
   drugNameList: DataItemModel[] = [];
   advicesList: string[] = [];
-  testsList: string[] = [];
+  testsList: any[] = [];
 
   visitEnded: EncounterModel | string;
   visitCompleted: EncounterModel | boolean;
@@ -325,6 +323,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   reasonsList: { name: string }[] = [];
 
   frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+  drugStrengthSuggestions: DataItemModel[] = [];
+  drugSearchResults: any[] = [];
+  drugNameApiList: string[] = [];
+  drugStrengthUnits: DataItemModel[] = [];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -344,9 +346,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   } 
 
   search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
-  search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
-  search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
-  search4 = (text$: Observable<string>) => this.mainSearch(text$, this.strengthList.map((val) => val.name));
+  search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList.map((test) => test.display));
+  search3 = (text$: Observable<string>) => this.searchDrugNames(text$);
+  search4 = (text$: Observable<string>) => this.mainSearch(text$, this.drugStrengthSuggestions.map((val) => val.name));
   search5 = (text$: Observable<string>) => this.mainSearch(text$, this.daysList.map((val) => val.name));
   search6 = (text$: Observable<string>) => this.mainSearch(text$, this.timingList.map((val) => val.name));
   search7 = (text$: Observable<string>) => this.mainSearch(text$, doses.map((val) => val.name));
@@ -568,14 +570,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
-    medicines.forEach(med => {
-      this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
-    });
-    
     // Reset changed fields and disable save as draft on page refresh
     this.updatedObsData = {...this.obsData};
     this.changesMade = false;
     
+    this.fetchDrugList();
+    this.fetchOrderEntryStrengthList();
     this.getVisit(id);
     this.getInstructionRemarks();
     this.formControlValueChanges();
@@ -655,6 +655,103 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.timeList = [];
       }
     });
+    this.addMedicineForm.get('drug').valueChanges.subscribe((drugName: string) => {
+      const selectedDrug = this.drugSearchResults.find((drug) => drug.display === drugName);
+      const selectedStrength = this.extractStrengthFromDrug(selectedDrug);
+      if (selectedStrength && !this.drugStrengthUnits.length) {
+        this.addMedicineForm.get('strength').setValue(selectedStrength, { emitEvent: false });
+      }
+    });
+  }
+
+  setDrugStrengthSuggestions(drugs: any[]): void {
+    this.drugStrengthSuggestions = drugs
+      .map((drug) => this.extractStrengthFromDrug(drug))
+      .filter((strengthValue, index, arr) => !!strengthValue && arr.indexOf(strengthValue) === index)
+      .map((strengthValue, index) => ({
+        id: index + 1,
+        name: strengthValue,
+        display: strengthValue,
+        uuid: strengthValue
+      }));
+  }
+
+  fetchOrderEntryStrengthList(): void {
+    this.encounterService.getDrugType().pipe(
+      catchError(() => of({}))
+    ).subscribe((response: any) => {
+      this.drugStrengthUnits = this.getOrderEntryOptions(this.getOrderEntryDrugDosingUnits(response));
+    });
+  }
+
+  getOrderEntryDrugDosingUnits(response: any): any[] {
+    return response?.drugDosingUnits || response?.data?.drugDosingUnits || response?.result?.drugDosingUnits || [];
+  }
+
+  getOrderEntryOptions(items: any[] = []): DataItemModel[] {
+    return items
+      .filter((item, index, arr) => item?.display && arr.findIndex((option) => option?.uuid === item?.uuid) === index)
+      .map((item, index) => ({
+        id: index + 1,
+        name: item.display,
+        display: item.display,
+        uuid: item.uuid
+      }));
+  }
+
+  getDrugDosingUnitDisplay(value: string): string {
+    return this.drugStrengthUnits.find((item) => item.uuid === value)?.display || value;
+  }
+
+  addDrugDosingUnitTag = (display: string): DataItemModel => ({
+    id: Date.now(),
+    name: display,
+    display,
+    uuid: display
+  });
+
+  fetchDrugList(): void {
+    this.encounterService.searchMedicine(20).pipe(
+      catchError(() => of({ results: [] }))
+    ).subscribe((response: any) => this.setDrugSearchResults(response.results || []));
+  }
+
+  searchDrugNames(text$: Observable<string>): Observable<string[]> {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => {
+        const query = term?.trim();
+        if (!query) {
+          return of([]);
+        }
+
+        return this.encounterService.searchMedicine(20, query).pipe(
+          map((response: any) => {
+            const drugs = response.results || [];
+            this.setDrugSearchResults(drugs);
+            return this.drugNameApiList;
+          }),
+          catchError(() => of([]))
+        );
+      })
+    );
+  }
+
+  setDrugSearchResults(drugs: any[]): void {
+    this.drugSearchResults = drugs;
+    this.drugNameApiList = drugs.map((drug: any) => drug.display).filter(Boolean);
+    this.setDrugStrengthSuggestions(drugs);
+  }
+
+  extractStrengthFromDrug(drug: any): string {
+    if (drug?.strength) {
+      return drug.strength;
+    }
+
+    const display = drug?.display || '';
+    const match = display.match(/(\(?\d+(?:\.\d+)?(?:\s*\+\s*\d+(?:\.\d+)?)*\s*(?:mg|g|gm|mcg|ml|iu|unit|units|%)\)?)/i);
+    return match ? match[1].replace(/\s+/g, ' ').trim() : '';
   }
 
   /**
@@ -1854,12 +1951,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   getFrequencyList(): void {
-    this.diagnosisService.concept(conceptIds.conceptFrequencyList).subscribe(res => {
-      const result = res.answers;
-      this.frequencyList = [];
-      result.forEach((ans: { display: string; }) => {
-        this.frequencyList.push(ans.display);
-      });
+    this.encounterService.getDrugType().subscribe((res: any) => {
+      const result = res.orderFrequencies || [];
+      this.frequencyList = result.map((frequency: { display: string; }) => frequency.display);
     });
   }
 
@@ -1964,11 +2058,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   getTestsList(): void {
-    this.diagnosisService.concept(conceptIds.conceptInvestigationsTest).subscribe(res => {
-      const result = res.answers;
-      result.forEach((ans: { display: string; }) => {
-        this.testsList.push(this.translationService.getDropdownTranslation('tests', ans.display));
-      });
+    this.encounterService.getTestList().subscribe((res: any) => {
+      this.testsList = res.results || res.answers || [];
     });
   }
 
@@ -2028,9 +2119,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
       return;
     }
-    this.tests.push({value: this.addTestForm.value.test });
+    this.tests.push({
+      value: this.addTestForm.value.test,
+      display: this.getTestDisplay(this.addTestForm.value.test)
+    });
     this.addTestForm.reset();
   }
+
+  getTestDisplay(value: string): string {
+    return this.testsList.find((test) => test.uuid === value)?.display || value;
+  }
+
+  addTestTag = (display: string): any => ({
+    uuid: display,
+    display
+  });
 
 
   /**
@@ -3686,4 +3789,3 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 }
-

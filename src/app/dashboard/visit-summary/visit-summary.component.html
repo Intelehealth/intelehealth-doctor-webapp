@@ -1464,7 +1464,7 @@
                               {{ m.drug }}
                             </td>
                             <td data-test-id="{{ 'tdStrength' + i }}">
-                              {{ m.strength }}
+                              {{ getDrugDosingUnitDisplay(m.strength) }}
                             </td>
                             <td data-test-id="{{ 'tdDays' + i }}">
                               {{ m.days }}
@@ -1560,18 +1560,21 @@
                               </div>
                             </td>
                             <td>
-                              <div class="form-group mb-0">
-                                <input
-                                  formControlName="strength"
-                                  type="text"
-                                  class="form-control"
-                                  placeholder="{{
-                                    'Enter strength' | translate
-                                  }}*"
-                                  [ngbTypeahead]="search4"
-                                  data-test-id="etDrugStrength"
-                                />
-                              </div>
+                              <ng-select
+                                appendTo=".visit-summary-tab-group"
+                                formControlName="strength"
+                                class="visit-select custom"
+                                [items]="drugStrengthUnits.length ? drugStrengthUnits : drugStrengthSuggestions"
+                                bindLabel="display"
+                                bindValue="uuid"
+                                [clearable]="false"
+                                [searchable]="true"
+                                [addTag]="addDrugDosingUnitTag"
+                                placeholder="{{
+                                  'Enter strength' | translate
+                                }}*"
+                                data-test-id="etDrugStrength"
+                              ></ng-select>
                             </td>
                             <td>
                               <div class="form-group mb-0">
@@ -2010,7 +2013,7 @@
   <ul class="items-list" *ngIf="tests.length" data-test-id="ulTestsList">
     <li *ngFor="let t of tests; let i = index" [attr.data-test-id]="'liTestRow' + i">
       <div class="d-flex justify-content-between" [attr.data-test-id]="'divTestRow' + i">
-        <span [attr.data-test-id]="'txtInvestigation' + i">{{ t.value }}</span>
+        <span [attr.data-test-id]="'txtInvestigation' + i">{{ t.display || getTestDisplay(t.value) }}</span>
         <button
           mat-icon-button
           (click)="deleteTest(i, t.uuid)"
@@ -2051,14 +2054,18 @@
     >
       <div class="form-group" data-test-id="divInputTest">
         <label for="note" data-test-id="labelTest"><b>{{ "Test" | translate }}*</b></label>
-        <input
-          type="text"
-          class="form-control"
+        <ng-select
           formControlName="test"
+          class="visit-select custom"
+          [items]="testsList"
+          bindLabel="display"
+          bindValue="uuid"
+          [clearable]="false"
+          [searchable]="true"
+          [addTag]="addTestTag"
           placeholder="{{ 'Type here' | translate }}"
-          [ngbTypeahead]="search2"
           data-test-id="etTest"
-        />
+        ></ng-select>
       </div>
 
       <div class="form-group" data-test-id="divTestFormActions">
