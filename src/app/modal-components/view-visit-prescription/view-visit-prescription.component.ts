@@ -340,24 +340,19 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    const medicationOrders = this.visitService.getMedicationOrdersFromVisit(
+      this.visit,
+      this.appConfigService.patient_visit_summary?.standard_medication
+    );
+    if(this.appConfigService.patient_visit_summary?.standard_medication){
+      this.standardMedicines = medicationOrders;
+    } else {
+      this.medicines = medicationOrders;
+    }
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':')) {
-            if(this.appConfigService.patient_visit_summary?.standard_medication){
-              this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
-            } else {
-              this.medicines.push({
-                drug: obs.value?.split(':')[0],
-                strength: obs.value?.split(':')[1],
-                days: obs.value?.split(':')[2],
-                timing: obs.value?.split(':')[3],
-                remark: obs.value?.split(':')[4],
-                frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : '',
-                uuid: obs.uuid
-              });
-            }
-          } else {
+          if (!obs.value?.includes(':')) {
             this.additionalInstructions.push(obs);
           }
         }
@@ -388,11 +383,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfTestPresent() {
-    this.tests = [];
+    this.tests = this.visitService.getTestOrdersFromVisit(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid && !this.tests.length) {
             this.tests.push(obs);
           }
         });

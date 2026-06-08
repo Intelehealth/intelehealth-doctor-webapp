@@ -274,7 +274,15 @@ export const visitAttributeTypes = {
 }
 
 export const visitEncounters = {
-  aiDiagnosis: '0efaa89c-4cb2-4e6c-8229-2987c86d165f',
+  aiDiagnosis: '850cb3e8-9f8e-4c81-a1f9-c72395ae399b', // ← fix this
   doctorProviderId: '73bbb069-9781-4afc-a9d1-54b6b2270e03',
-  llmRegeneration: 'de08edc3-bbcc-46cb-a3df-4b4ff17af0d0'
+  visitNote: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
+  llmRegeneration: 'de08edc3-bbcc-46cb-a3df-4b4ff17af0d0', 
+}
+
+export const orderDefaults = {
+  outpatientCareSetting: '6f0c9a92-6f24-11e3-af88-005056821db0', // ✅ confirmed
+  daysDurationUnit: '1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',       // ✅ confirmed
+  tabletQuantityUnit: '1513AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',     // ✅ confirmed
+  medicationDoseQuantityUnit: '162335AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 }

@@ -747,6 +747,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   addMedicine(): void {
     if (this.selectedMedication.length > 0) {
       const medicine = this.selectedMedication[0];
+      const selectedDrug = this.drugSearchResults.find((drug) => drug.display === this.addMedicineForm.value.drug);
 
       const formattedMedicine = {
         drug: this.addMedicineForm.value.drug,
@@ -755,7 +756,9 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         durationNo: this.addMedicineForm.value.durationNo,
         durationUnit: this.addMedicineForm.value.durationUnit,
         instructRemark: this.addMedicineForm.value.instructRemark || '',
-        uuid: medicine.uuid
+        drugUuid: selectedDrug?.uuid || medicine.drugUuid,
+        drugConceptUuid: selectedDrug?.concept?.uuid || medicine.drugConceptUuid,
+        dosageFormUuid: selectedDrug?.dosageForm?.uuid || medicine.dosageFormUuid
       };
 
       // Check for duplicates
@@ -805,7 +808,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       return;
     }
     // Ensure instructRemark is never null
-    const medicineData = { ...this.addMedicineForm.value };
+    const selectedDrug = this.drugSearchResults.find((drug) => drug.display === this.addMedicineForm.value.drug);
+    const medicineData = {
+      ...this.addMedicineForm.value,
+      drugUuid: selectedDrug?.uuid,
+      drugConceptUuid: selectedDrug?.concept?.uuid,
+      dosageFormUuid: selectedDrug?.dosageForm?.uuid
+    };
     if (!medicineData.instructRemark) {
       medicineData.instructRemark = '';
     }
@@ -817,16 +826,14 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   }
   
   checkIfMedicationPresent(): void {
-    this.medicines = [];
+    this.medicines = this.visitService.getMedicationOrdersFromVisit(this.visit, true);
+    if (this.aillmtxMedicationComponent) {
+      this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
+    }
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(':') && !this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
-            this.medicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
-            if (this.aillmtxMedicationComponent) {
-              this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
-            }
-          } else {
+          if (!obs.value?.includes(':')) {
             this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
           }
         }
@@ -862,7 +869,16 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deleteMedicine(index: number, uuid: string): void {
-    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+    if (!uuid) {
+      this.medicines.splice(index, 1);
+      if (this.aillmtxMedicationComponent) {
+        this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
+      }
+      this.medicationSaved.emit(this.medicines);
+      return;
+    }
+
+    this.encounterService.deleteOrder(uuid).subscribe(() => {
       this.medicines.splice(index, 1);
       if (this.aillmtxMedicationComponent) {
         this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
@@ -1006,18 +1022,16 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfTestPresent(): void {
-    this.tests = [];
+    this.tests = this.visitService.getTestOrdersFromVisit(this.visit);
+    if (this.aillmtxTestComponent) {
+      this.aillmtxTestComponent.existingTest = [...this.tests];
+    }
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             if(this.appConfigService.patient_visit_summary.dp_investigations_secondary) {
               this.testForm.patchValue({uuid:obs.uuid, test:obs.value})
-            } else {
-              this.tests.push(obs);
-              if (this.aillmtxTestComponent) {
-                this.aillmtxTestComponent.existingTest = [...this.tests];
-              }
             }
           }
         });
@@ -1074,7 +1088,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deleteTest(index: number, uuid: string): void {
-    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+    this.encounterService.deleteOrder(uuid).subscribe(() => {
       this.tests.splice(index, 1);
       if (this.aillmtxTestComponent) {
         this.aillmtxTestComponent.existingTest = [...this.tests];

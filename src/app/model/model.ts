@@ -402,8 +402,10 @@ export interface EncounterModel {
   encounterDatetime?: string,
   encounterProviders?: EncounterProviderModel[],
   encounterType?: {
+    uuid?: string,
     display?: string
   },
+  orders?: any[],
   obs: ObsModel[]
 }
 
@@ -472,6 +474,7 @@ export interface VisitModel {
   display?: string,
   encounters?: EncounterModel[],
   location?: {
+    uuid?: string,
     display?: string
   },
   patient?: PatientModel,
@@ -508,7 +511,8 @@ export interface ReferralModel {
 export interface TestModel {
   uuid?: string,
   value?: string,
-  display?: string
+  display?: string,
+  conceptUuid?: string
 }
 
 export interface MedicineModel {
@@ -519,6 +523,9 @@ export interface MedicineModel {
   remark?: string,
   frequency?: string,
   uuid?: string,
+  drugUuid?: string,
+  drugConceptUuid?: string,
+  dosageFormUuid?: string,
 
 }
 
@@ -529,18 +536,12 @@ export interface StandardMedicineModel {
   durationUnit?: string,
   instructRemark?: string,
   frequency?: string,
-  uuid?: string
+  uuid?: string,
+  drugUuid?: string,
+  drugConceptUuid?: string,
+  dosageFormUuid?: string
 }
 
-export interface StandardMedicineModel {
-  drug?: string,
-  dose?: string,
-  durationNo?: string,
-  durationUnit?: string,
-  instructRemark?: string,
-  frequency?: string,
-  uuid?: string
-}
 
 export interface PatientHistoryModel {
   title?: string,

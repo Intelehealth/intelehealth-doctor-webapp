@@ -13,7 +13,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { MatAccordion } from '@angular/material/expansion';
 import doses from '../../core/data/dose';
-import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
@@ -25,7 +25,7 @@ import { VideoCallComponent } from 'src/app/modal-components/video-call/video-ca
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
 import { calculateBMI, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
-import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes, visitEncounters, orderDefaults } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -271,7 +271,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tests = [...tests];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.tests = tests;
+            this.updatedObsData.addTests = tests;
           }
         });
         // Subscribe to referral saved event
@@ -680,12 +680,31 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.encounterService.getDrugType().pipe(
       catchError(() => of({}))
     ).subscribe((response: any) => {
-      this.drugStrengthUnits = this.getOrderEntryOptions(this.getOrderEntryDrugDosingUnits(response));
+      this.drugStrengthUnits = this.getOrderEntryOptions(this.getOrderEntryDoseUnits(response));
     });
   }
 
+  getOrderConfigItems(response: any, keys: string[]): any[] {
+    for (const key of keys) {
+      const items = response?.[key] || response?.data?.[key] || response?.result?.[key];
+      if (Array.isArray(items) && items.length) {
+        return items;
+      }
+    }
+
+    return [];
+  }
+
+  getOrderEntryDoseUnits(response: any): any[] {
+    return this.getOrderConfigItems(response, ['doseUnits', 'drugDosingUnits']);
+  }
+
+  getOrderEntryQuantityUnits(response: any): any[] {
+    return this.getOrderConfigItems(response, ['quantityUnits', 'drugDispensingUnits', 'dispensingUnits']);
+  }
+
   getOrderEntryDrugDosingUnits(response: any): any[] {
-    return response?.drugDosingUnits || response?.data?.drugDosingUnits || response?.result?.drugDosingUnits || [];
+    return this.getOrderEntryDoseUnits(response);
   }
 
   getOrderEntryOptions(items: any[] = []): DataItemModel[] {
@@ -711,7 +730,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   });
 
   fetchDrugList(): void {
-    this.encounterService.searchMedicine(20).pipe(
+    this.encounterService.searchMedicine('').pipe(
       catchError(() => of({ results: [] }))
     ).subscribe((response: any) => this.setDrugSearchResults(response.results || []));
   }
@@ -726,7 +745,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           return of([]);
         }
 
-        return this.encounterService.searchMedicine(20, query).pipe(
+        return this.encounterService.searchMedicine(query).pipe(
           map((response: any) => {
             const drugs = response.results || [];
             this.setDrugSearchResults(drugs);
@@ -1838,22 +1857,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    const medicationOrders = this.visitService.getMedicationOrdersFromVisit(
+      this.visit,
+      this.appConfigService.patient_visit_summary?.standard_medication
+    );
+    if(this.appConfigService.patient_visit_summary?.standard_medication){
+      this.standardMedicines = medicationOrders;
+    } else {
+      this.medicines = medicationOrders;
+    }
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if(this.appConfigService.patient_visit_summary?.standard_medication){
-            this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
-          } else {
-            this.medicines.push({
-              drug: obs.value?.split(':')[0],
-              strength: obs.value?.split(':')[1],
-              days: obs.value?.split(':')[2],
-              timing: obs.value?.split(':')[3],
-              remark: obs.value?.split(':')[4],
-              frequency: obs.value?.split(':')[5] ? obs.value?.split(':')[5] : "",
-              uuid: obs.uuid
-            });
-          }
+          if (!obs.value?.includes(':')) this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
         }
       });
     });
@@ -1871,7 +1887,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.coreService.showToast("warning", 'Drug already added, please add another drug.','Already Added','warning-toast');
       return;
     }    
-    this.medicines.push({ ...this.addMedicineForm.value});
+    const selectedDrug = this.drugSearchResults.find((drug) => drug.display === this.addMedicineForm.value.drug);
+    this.medicines.push({
+      ...this.addMedicineForm.value,
+      drugUuid: selectedDrug?.uuid,
+      drugConceptUuid: selectedDrug?.concept?.uuid,
+      dosageFormUuid: selectedDrug?.dosageForm?.uuid
+    });
     this.addMedicineForm.reset();
   }
 
@@ -1887,7 +1909,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.coreService.showToast("warning",'Drug already added, please add another drug.','Already Added','addmedicine-warning-toast');
       return;
     }    
-    this.standardMedicines.push({ ...this.addStandardMedicineForm.value});
+    const selectedDrug = this.drugSearchResults.find((drug) => drug.display === this.addStandardMedicineForm.value.drug);
+    this.standardMedicines.push({
+      ...this.addStandardMedicineForm.value,
+      drugUuid: selectedDrug?.uuid,
+      drugConceptUuid: selectedDrug?.concept?.uuid,
+      dosageFormUuid: selectedDrug?.dosageForm?.uuid
+    });
     this.addStandardMedicineForm.reset();
   }
 
@@ -1923,7 +1951,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   deleteMedicine(index: number, uuid: string): void {
-    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+    if (!uuid) {
+      if(this.appConfigService?.patient_visit_summary?.standard_medication){
+        this.standardMedicines.splice(index, 1);
+      } else {
+        this.medicines.splice(index, 1);
+      }
+      return;
+    }
+
+    this.encounterService.deleteOrder(uuid).subscribe(() => {
       if(this.appConfigService?.patient_visit_summary?.standard_medication){
         this.standardMedicines.splice(index, 1);
       } else {
@@ -2077,7 +2114,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   checkIfTestPresent(): void {
-    this.tests = [];
+    this.tests = this.visitService.getTestOrdersFromVisit(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
@@ -2143,22 +2180,65 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   saveTest(): Observable<any> {
     if(this.testForm.value.uuid){
       if(this.testForm.valid && this.obsData.test !== this.testForm.value.test)
-        return this.encounterService.updateObs(this.testForm.value.uuid,{
-          value: this.testForm.value.test,
-        })
+        return this.saveTestOrders([{ value: this.testForm.value.test }]).pipe(
+          switchMap((response: any) => this.encounterService.deleteOrder(this.testForm.value.uuid).pipe(map(() => response))),
+          tap((response: any) => this.testForm.patchValue({ uuid: response?.orders?.[0]?.uuid || this.testForm.value.uuid }))
+        );
       else
-        return this.diagnosisService.deleteObs(this.testForm.value.uuid).pipe(tap((response: ObsModel) => this.testForm.patchValue({ uuid: null })));
+        return this.encounterService.deleteOrder(this.testForm.value.uuid).pipe(tap(() => this.testForm.patchValue({ uuid: null })));
     } else if (this.testForm.valid) {
-      return this.encounterService.postObs({
-        concept: conceptIds.conceptTest,
-        person: this.visit.patient.uuid,
-        obsDatetime: new Date(),
-        value: this.testForm.value.test,
-        encounter: this.visitNotePresent.uuid,
-      }).pipe(tap((response: ObsModel) => this.testForm.patchValue({ uuid: response.uuid })));
+      return this.saveTestOrders([{ value: this.testForm.value.test }]).pipe(
+        tap((response: any) => this.testForm.patchValue({ uuid: response?.orders?.[0]?.uuid }))
+      );
     } else {
       return of(false)
     }
+  }
+
+  saveTestOrders(tests: TestModel[] = this.tests.filter((test) => !test?.uuid)): Observable<any> {
+    const pending = tests.filter((test) => !test?.uuid || tests.length === 1);
+    if (!pending.length) return of(null);
+
+    const invalidTests = pending.filter((test) => !this.isKnownTestConcept(test.value));
+    if (invalidTests.length) {
+      this.coreService.showToast("warning", 'Select a valid test from the list before saving.', 'Test Required', 'warning-test-concept-required-toast');
+      return throwError(new Error('Test order requires a selected test concept UUID.'));
+    }
+
+    const encounterType = this.visitNotePresent?.encounterType?.uuid || visitEncounters.visitNote;
+    const location = this.visit.location?.uuid;
+    if (!location) {
+      this.coreService.showToast("warning", 'Visit location is missing. Test order was not saved.', 'Test Not Saved', 'warning-test-location-required-toast');
+      return throwError(new Error('Test order encounter requires a location UUID.'));
+    }
+
+    const payload = {
+      patient: this.visit.patient.uuid,
+      location,
+      encounterType,
+      encounterDatetime: new Date().toISOString(),
+      visit: this.visit.uuid,
+      obs: [],
+      orders: pending.map((test) => ({
+        action: 'NEW',
+        type: 'testorder',
+        patient: this.visit.patient.uuid,
+        encounter: null,
+        careSetting: orderDefaults.outpatientCareSetting,
+        orderer: this.provider.uuid,
+        concept: test.value,
+        instructions: ''
+      }))
+    };
+
+    return this.encounterService.addEncounter(payload).pipe(tap((response: any) => {
+      const savedOrders = response?.orders || [];
+      pending.forEach((test, index) => test.uuid = savedOrders[index]?.uuid || test.uuid);
+    }));
+  }
+
+  isKnownTestConcept(value: string): boolean {
+    return !!this.testsList.find((test) => test.uuid === value);
   }
 
   /**
@@ -2168,7 +2248,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   deleteTest(index: number, uuid: string): void {
-    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+    this.encounterService.deleteOrder(uuid).subscribe(() => {
       this.tests.splice(index, 1);
     });
   }
@@ -2841,6 +2921,242 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''  }:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
   }
 
+  saveMedicationOrders(): Observable<any> {
+    const unsavedMedicines = [
+      ...this.medicines.filter((medicine) => !medicine?.uuid),
+      ...this.standardMedicines.filter((medicine) => !medicine?.uuid)
+    ];
+    const invalidMedicines = unsavedMedicines.filter((medicine) => !medicine?.drugUuid || !medicine?.drugConceptUuid);
+    if (invalidMedicines.length) {
+      this.coreService.showToast("warning", 'Select a valid drug from the medication list before saving.', 'Medication Required', 'warning-medication-drug-required-toast');
+      return throwError(new Error('Medication order requires selected drug and concept UUIDs.'));
+    }
+
+    const pending = [
+      ...this.medicines
+        .filter((medicine) => !medicine?.uuid && medicine?.drugUuid && medicine?.drugConceptUuid)
+        .map((medicine) => ({ medicine, standard: false })),
+      ...this.standardMedicines
+        .filter((medicine) => !medicine?.uuid && medicine?.drugUuid && medicine?.drugConceptUuid)
+        .map((medicine) => ({ medicine, standard: true }))
+    ];
+
+    if (!pending.length) return of(null);
+
+    const encounterType = visitEncounters.visitNote;
+    const orderer = this.getOrdererUuid();
+
+    if (!encounterType || !orderer) {
+      this.coreService.showToast("warning", 'Medication order configuration is incomplete. Please contact an administrator.', 'Medication Not Saved', 'warning-medication-order-config-toast');
+      return throwError(new Error('Medication order requires encounter type and orderer UUIDs.'));
+    }
+
+    const encounterPayload = {
+      patient: this.visit.patient.uuid,
+      location: this.visit.location?.uuid,
+      encounterType,
+      encounterDatetime: new Date().toISOString(),
+      visit: this.visit.uuid,
+      obs: [],
+      orders: pending.map(({ medicine, standard }) => this.buildMedicationOrder(medicine, standard, orderer))
+    };
+
+    const invalidPayloadFields = this.getNullOrUndefinedPayloadFields(encounterPayload);
+    if (invalidPayloadFields.length) {
+      console.error('[DrugOrder] Payload has null/undefined fields:', invalidPayloadFields);
+      console.error('[DrugOrder] Invalid payload:', JSON.stringify(encounterPayload, null, 2));
+      this.coreService.showToast("warning", 'Medication order payload is incomplete. Please contact an administrator.', 'Medication Not Saved', 'warning-medication-order-payload-toast');
+      return throwError(new Error(`Medication order payload has missing fields: ${invalidPayloadFields.join(', ')}`));
+    }
+
+    return this.encounterService.postEncounter(encounterPayload).pipe(
+      tap((response: any) => {
+        const savedOrders = response?.orders || [];
+        pending.forEach(({ medicine }, index) => medicine.uuid = savedOrders[index]?.uuid || medicine.uuid);
+      }),
+      catchError((error) => {
+        console.error('[DrugOrder] Encounter save FAILED');
+        console.error('[DrugOrder] Payload sent:', JSON.stringify(encounterPayload, null, 2));
+        console.error('[DrugOrder] Server error status:', error?.status);
+        console.error('[DrugOrder] Server error body:', error?.error);
+        return throwError(error);
+      })
+    );
+  }
+
+  buildMedicationOrder(
+    medicine: MedicineModel | StandardMedicineModel,
+    standard: boolean,
+    orderer: string
+  ): any {
+    const duration = this.getMedicationDuration(medicine, standard) || 7;
+    const doseUnits = standard ? (medicine as StandardMedicineModel).dose : (medicine as MedicineModel).strength;
+    const order: any = {
+      action: 'NEW',
+      patient: this.visit.patient.uuid,
+      type: 'drugorder',
+      careSetting: orderDefaults.outpatientCareSetting,
+      orderer,
+      encounter: null,
+      drug: medicine.drugUuid,
+      dose: null,
+      doseUnits,
+      asNeeded: false,
+      asNeededCondition: null,
+      numRefills: 0,
+      quantity: 0,
+      quantityUnits: doseUnits,
+      duration,
+      durationUnits: orderDefaults.daysDurationUnit,
+      dosingType: 'org.openmrs.FreeTextDosingInstructions',
+      dosingInstructions: this.getMedicationDosingInstructions(medicine, standard),
+      concept: medicine.drugConceptUuid,
+      orderReasonNonCoded: ''
+    };
+
+    return order;
+  }
+
+  getMedicationDosingInstructions(medicine: MedicineModel | StandardMedicineModel, standard: boolean): string {
+    if (standard) {
+      const m = medicine as StandardMedicineModel;
+      return `${m.dose || ''}:${m.instructRemark || ''}`;
+    } else {
+      const m = medicine as MedicineModel;
+      return `${m.timing || ''}:${m.remark || ''}`;
+    }
+  }
+
+  getMedicationDuration(medicine: MedicineModel | StandardMedicineModel, standard: boolean): number | null {
+    const duration = standard ? (medicine as StandardMedicineModel).durationNo : (medicine as MedicineModel).days;
+    const parsedDuration = Number(duration);
+    return Number.isFinite(parsedDuration) && parsedDuration > 0 ? parsedDuration : null;
+  }
+
+  getMedicationDurationUnitDisplay(medicine: MedicineModel | StandardMedicineModel, standard: boolean): string {
+    return standard ? (medicine as StandardMedicineModel).durationUnit || 'Days' : 'Days';
+  }
+
+  findOrderConfigItem(items: any[] = [], display?: string): any {
+    if (!display) return null;
+    const normalizedDisplay = this.normalizeOrderConfigText(display);
+    return items.find((item) => {
+      const itemDisplay = this.normalizeOrderConfigText(item?.display || item?.name || item?.uuid);
+      return itemDisplay === normalizedDisplay || itemDisplay.includes(normalizedDisplay) || normalizedDisplay.includes(itemDisplay);
+    });
+  }
+
+  findOrderConfigUuid(items: any[] = [], display?: string): string {
+    return this.findOrderConfigItem(items, display)?.uuid || items[0]?.uuid;
+  }
+
+  findCareSettingUuid(orderConfig: any): string {
+    const careSettings = orderConfig?.careSettings || orderConfig?.orderCareSettings || [];
+    const careSetting = this.findOrderConfigItem(careSettings, 'Outpatient')?.uuid
+      || this.findOrderConfigItem(careSettings, 'Out Patient')?.uuid
+      || careSettings[0]?.uuid;
+
+    return careSetting || orderDefaults.outpatientCareSetting;
+  }
+
+  findDurationUnitUuid(orderConfig: any, display: string = 'Days'): string {
+    const durationUnits = orderConfig?.durationUnits || orderConfig?.drugDurationUnits || [];
+    const durationUnit = this.findOrderConfigItem(durationUnits, display)?.uuid
+      || this.findOrderConfigItem(durationUnits, 'Days')?.uuid
+      || this.findOrderConfigItem(durationUnits, 'Day')?.uuid
+      || durationUnits[0]?.uuid;
+
+    return durationUnit || orderDefaults.daysDurationUnit;
+  }
+
+  findDoseUnitUuid(orderConfig: any, medicine: MedicineModel | StandardMedicineModel, standard: boolean): string {
+    const dosingUnits = this.getOrderEntryDoseUnits(orderConfig);
+    const selectedDose = standard ? (medicine as StandardMedicineModel).dose : (medicine as MedicineModel).strength;
+    const doseUnit = this.findOrderConfigItem(dosingUnits, selectedDose)?.uuid
+      || this.findOrderConfigItem(dosingUnits, 'Tablet')?.uuid
+      || dosingUnits[0]?.uuid;
+
+    return doseUnit || orderDefaults.medicationDoseQuantityUnit;
+  }
+
+  /**
+   * Resolve the quantityUnits UUID for a drug order.
+   * Prefers the drug's own dosage form UUID from orderConfig dispensing units,
+   * falling back to an API unit match and then the default configured unit.
+   */
+  findQuantityUnitUuid(orderConfig: any, medicine: MedicineModel | StandardMedicineModel): string {
+    const dispensingUnits = this.getOrderEntryQuantityUnits(orderConfig);
+    // Try to match by the drug's dosage form UUID
+    const byDosageForm = dispensingUnits.find((u: any) => u?.uuid === (medicine as any)?.dosageFormUuid);
+    if (byDosageForm?.uuid) return byDosageForm.uuid;
+    const selectedQuantityUnit = (medicine as StandardMedicineModel).durationUnit || (medicine as MedicineModel).strength;
+    const bySelectedUnit = this.findOrderConfigItem(dispensingUnits, selectedQuantityUnit);
+    if (bySelectedUnit?.uuid) return bySelectedUnit.uuid;
+    // Try to match by display name "Tablet"
+    const byName = this.findOrderConfigItem(dispensingUnits, 'Tablet');
+    if (byName?.uuid) return byName.uuid;
+    return dispensingUnits[0]?.uuid || orderDefaults.medicationDoseQuantityUnit;
+  }
+
+  getOrdererUuid(): string {
+    const currentUser = getCacheData(true, 'currentUser');
+    return currentUser?.currentProvider?.uuid
+      || this.provider?.uuid
+      || getCacheData(true, doctorDetails.PROVIDER)?.uuid
+      || currentUser?.provider?.uuid
+      || currentUser?.user?.provider?.uuid
+      || currentUser?.user?.uuid;
+  }
+
+  getNullOrUndefinedPayloadFields(value: any, path: string = 'payload'): string[] {
+    const allowedNullFields = [
+      /\.encounter$/,
+      /\.dose$/,
+      /\.asNeededCondition$/
+    ];
+    if (allowedNullFields.some((pattern) => pattern.test(path))) return [];
+    if (value === null || value === undefined) return [path];
+    if (Array.isArray(value)) {
+      return value.reduce((fields: string[], item, index) => {
+        return fields.concat(this.getNullOrUndefinedPayloadFields(item, `${path}[${index}]`));
+      }, []);
+    }
+    if (typeof value === 'object') {
+      return Object.keys(value).reduce((fields: string[], key) => {
+        return fields.concat(this.getNullOrUndefinedPayloadFields(value[key], `${path}.${key}`));
+      }, []);
+    }
+    return [];
+  }
+
+  /**
+   * Return the number of doses per day for a given frequency display string.
+   * Used to auto-calculate quantity = doses_per_day × duration.
+   */
+  getFrequencyPerDay(frequency: any): number {
+    const display = `${frequency?.display || frequency || ''}`.toLowerCase();
+    if (display.includes('once') || display.includes('1/day') || display.includes('od')) return 1;
+    if (display.includes('twice') || display.includes('2/day') || display.includes('bid')) return 2;
+    if (display.includes('three') || display.includes('3/day') || display.includes('tid') || display.includes('tds')) return 3;
+    if (display.includes('four') || display.includes('4/day') || display.includes('qid')) return 4;
+    return 1; // default to once daily
+  }
+
+  /**
+   * Calculate total quantity = frequency_per_day × duration (in days).
+   * Returns null when duration is unknown.
+   */
+  calculateQuantity(medicine: MedicineModel | StandardMedicineModel, standard: boolean, frequency: any): number | null {
+    const duration = this.getMedicationDuration(medicine, standard);
+    if (!duration) return null;
+    const perDay = this.getFrequencyPerDay(frequency);
+    return perDay * duration;
+  }
+
+  normalizeOrderConfigText(value?: string): string {
+    return `${value || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
   saveDiscussionSummary(): Observable<any>{
     if(this.discussionSummaryForm.value.uuid){
       if(this.discussionSummaryForm.valid)
@@ -2873,7 +3189,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.savePatientInteraction(),
         this.saveAdditionalInstruction(),
         this.saveTest(),
-        this.savePatientInteractionComment()
+        this.savePatientInteractionComment(),
+        this.saveMedicationOrders(),
+        this.saveTestOrders()
       );
 
       // Conditional observations based on config
@@ -2890,34 +3208,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         postObsRequests.push(this.saveCallStatus());
       }
 
-      // Handle medicines
-      for (const medicine of this.medicines) {
-        if (medicine?.uuid) continue;
-        postObsRequests.push(
-          this.encounterService.postObs({
-            concept: conceptIds.conceptMed,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: `${medicine.drug ?? ''}:${medicine.strength ?? ''}:${medicine.days ?? ''}:${medicine.timing ?? ''}:${medicine.remark ?? ''}:${medicine.frequency ?? ''}`,
-            encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
-        );
-      }
-
-      // Handle standard medicines
-      for (const medicine of this.standardMedicines) {
-        if (medicine?.uuid) continue;
-        postObsRequests.push(
-          this.encounterService.postObs({
-            concept: conceptIds.conceptMed,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: this.formatMedicineSave(medicine),
-            encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
-        );
-      }
-
       // Handle advices
       for (const advice of this.advices) {
         if (advice?.uuid) continue;
@@ -2929,20 +3219,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             value: advice.value,
             encounter: this.visitNotePresent.uuid
           }).pipe(tap((res: ObsModel) => advice.uuid = res.uuid))
-        );
-      }
-
-      // Handle tests
-      for (const test of this.tests) {
-        if (test?.uuid) continue;
-        postObsRequests.push(
-          this.encounterService.postObs({
-            concept: conceptIds.conceptTest,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: test.value,
-            encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res: ObsModel) => test.uuid = res.uuid))
         );
       }
 
@@ -3047,36 +3323,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-      // Handle medicines if addMedicine is in changedFields
-      if (this.changedFields.includes('addMedicine')) {
-        for (const medicine of this.medicines) {
-          if (medicine?.uuid) continue;
-          postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptMed,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: `${medicine.drug ?? ''}:${medicine.strength ?? ''}:${medicine.days ?? ''}:${medicine.timing ?? ''}:${medicine.remark ?? ''}:${medicine.frequency ?? ''}`,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
-          );
-        }
-      }
-
-      // Handle standardMedicines if addStandardMedicine is in changedFields
-      if (this.changedFields.includes('addStandardMedicine')) {
-        for (const medicine of this.standardMedicines) {
-          if (medicine?.uuid) continue;
-          postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptMed,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: this.formatMedicineSave(medicine),
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res: ObsModel) => medicine.uuid = res.uuid))
-          );
-        }
+      if (this.changedFields.includes('addMedicine') || this.changedFields.includes('addStandardMedicine')) {
+        postObsRequests.push(this.saveMedicationOrders());
       }
 
       // Advices - only save new advices
@@ -3097,17 +3345,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Advices - only save new advices
       if (this.changedFields.includes('addTests')) {
-        for (const test of this.tests) {
-          if(test?.uuid) continue;
-          postObsRequests.push(
-          this.encounterService.postObs({
-            concept: conceptIds.conceptTest,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: test.value,
-            encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res:ObsModel)=>test.uuid=res.uuid)));
-        } 
+        postObsRequests.push(this.saveTestOrders());
       }
 
       // Diagnosis - only save new diagnoses

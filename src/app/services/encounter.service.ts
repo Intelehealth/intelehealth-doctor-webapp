@@ -21,6 +21,10 @@ export class EncounterService {
     return this.http.post(url, json);
   }
 
+  addEncounter(json): Observable<any> {
+    return this.postEncounter(json);
+  }
+
   /**
   * Post observation
   * @param {any} json - Payload for post observattion
@@ -42,14 +46,23 @@ export class EncounterService {
     return this.http.post(url, json);
   }
 
-  searchMedicine(limit: number = 20, query: string = ''): Observable<any> {
+  deleteOrder(orderUuid: string): Observable<any> {
+    const url = `${this.baseURL}/order/${orderUuid}`;
+    return this.http.delete(url);
+  }
+
+  searchMedicine(term?: string): Observable<any>;
+  searchMedicine(limit?: number, query?: string): Observable<any>;
+  searchMedicine(limitOrTerm: number | string = 20, query: string = ''): Observable<any> {
     const url = `${this.baseURL}/drug`;
+    const limit = typeof limitOrTerm === 'number' ? limitOrTerm : 20;
+    const term = typeof limitOrTerm === 'string' ? limitOrTerm : query;
     let params = new HttpParams()
       .set('limit', String(limit))
       .set('v', 'custom:(uuid,display,name,strength,dosageForm:(display,uuid),concept:(display,uuid))');
 
-    if (query?.trim()) {
-      params = params.set('q', query.trim());
+    if (term?.trim()) {
+      params = params.set('q', term.trim());
     }
 
     return this.http.get(url, { params });

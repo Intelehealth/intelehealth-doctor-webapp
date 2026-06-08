@@ -49,7 +49,7 @@ export class VisitService {
   */
   fetchVisitDetails(
     uuid,
-    v = "custom:(location:(display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
+    v = "custom:(location:(uuid,display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(uuid,display),obs:(display,uuid,value,concept:(uuid,display)),orders:(uuid,display,type,action,voided,dateStopped,duration,durationUnits:(uuid,display),dosingInstructions,instructions,frequency:(uuid,display),drug:(uuid,display,name,strength,concept:(uuid,display)),concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
@@ -64,7 +64,7 @@ export class VisitService {
   */
   fetchVisitDetails2(
     uuid: string,
-    v: string = "custom:(location:(display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
+    v: string = "custom:(location:(uuid,display),uuid,display,startDatetime,dateCreated,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(uuid,display),obs:(display,uuid,value,concept:(uuid,display)),orders:(uuid,display,type,action,voided,dateStopped,duration,durationUnits:(uuid,display),dosingInstructions,instructions,frequency:(uuid,display),drug:(uuid,display,name,strength,concept:(uuid,display)),concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),attributes,person:(display,gender,age)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     let headers: HttpHeaders = new HttpHeaders();
@@ -304,5 +304,118 @@ export class VisitService {
     };
     if (uuid) med.uuid = uuid;
     return med;
+  }
+
+  getMedicationOrdersFromVisit(visit: any, standardMedication = false): any[] {
+    return (visit?.encounters || [])
+      .reduce((orders: any[], encounter: any) => orders.concat(encounter?.orders || []), [])
+      .filter((order: any) => this.isDrugOrder(order))
+      .map((order: any) => this.formatMedicationOrderDisplay(order, standardMedication));
+  }
+
+  getTestOrdersFromVisit(visit: any): any[] {
+    return (visit?.encounters || [])
+      .reduce((orders: any[], encounter: any) => orders.concat(encounter?.orders || []), [])
+      .filter((order: any) => this.isTestOrder(order))
+      .map((order: any) => ({
+        uuid: order?.uuid,
+        value: order?.concept?.uuid,
+        display: this.getOrderDisplay(order?.concept) || order?.display || order?.value
+      }));
+  }
+
+  formatMedicationOrderDisplay(order: any, standardMedication = false): any {
+    const instructions = this.parseDosingInstructions(order?.dosingInstructions || order?.instructions || '');
+    const duration = order?.duration ?? order?.durationNo ?? '';
+    const frequency = this.getOrderDisplay(order?.frequency) || instructions.frequency || '';
+    const base = {
+      drug: this.getOrderDisplay(order?.drug) || this.getOrderDisplay(order?.concept) || order?.display || '',
+      frequency,
+      uuid: order?.uuid,
+      drugUuid: order?.drug?.uuid,
+      drugConceptUuid: order?.concept?.uuid || order?.drug?.concept?.uuid,
+      dosageFormUuid: order?.drug?.dosageForm?.uuid
+    };
+
+    if (standardMedication) {
+      return {
+        ...base,
+        dose: instructions.strength,
+        durationNo: duration,
+        durationUnit: this.getOrderDisplay(order?.durationUnits) || instructions.timing || '',
+        instructRemark: instructions.remarks
+      };
+    }
+
+    return {
+      ...base,
+      strength: instructions.strength,
+      days: duration,
+      timing: instructions.timing,
+      remark: instructions.remarks
+    };
+  }
+
+  parseDosingInstructions(value: string): any {
+    const instructions = value || '';
+
+    // Pipe-delimited: strength|timing|frequency|remarks
+    if (instructions.includes('|')) {
+      const splitValue = instructions.split('|').map((item) => item.trim());
+      return {
+        strength: splitValue[0] || '',
+        timing: splitValue[1] || '',
+        frequency: splitValue[2] || '',
+        remarks: (splitValue.slice(3).join(' | ') || '').replace(/^Remarks:\s*/i, '')
+      };
+    }
+
+    // Hyphen-delimited: strength - frequency - remarks  (produced by getMedicationDosingInstructions)
+    if (instructions.includes(' - ')) {
+      const parts = instructions.split(' - ').map((item) => item.trim());
+      return {
+        strength: parts[0] || '',
+        timing: '',
+        frequency: parts[1] || '',
+        remarks: parts.slice(2).join(' - ') || ''
+      };
+    }
+
+    // Colon-delimited encounter payload: timing:remarks for regular medicines,
+    // or dose:remarks for standard medicines.
+    const splitValue = instructions.split(':');
+    if (splitValue.length === 2) {
+      const firstValue = splitValue[0] || '';
+      const isTimingValue = /^\d+\s*-\s*\d+\s*-\s*\d+/.test(firstValue);
+      return {
+        strength: isTimingValue ? '' : firstValue,
+        timing: isTimingValue ? firstValue : '',
+        frequency: '',
+        remarks: splitValue[1] || ''
+      };
+    }
+
+    // Colon-delimited legacy: strength:timing:frequency:remarks
+    return {
+      strength: splitValue[0] || '',
+      timing: splitValue[1] || '',
+      frequency: splitValue[2] || '',
+      remarks: splitValue.slice(3).join(':') || ''
+    };
+  }
+
+  getOrderDisplay(value: any): string {
+    if (!value) return '';
+    return value.display || value.name || value.uuid || value;
+  }
+
+  isDrugOrder(order: any): boolean {
+    const type = order?.type || order?.orderType?.display || order?.orderType?.name || '';
+    return !order?.voided && !order?.dateStopped && `${type}`.toLowerCase().includes('drug');
+  }
+
+  isTestOrder(order: any): boolean {
+    const type = order?.type || order?.orderType?.display || order?.orderType?.name || '';
+    return !order?.voided && !order?.dateStopped && `${type}`.toLowerCase().includes('test');
   }
 }
