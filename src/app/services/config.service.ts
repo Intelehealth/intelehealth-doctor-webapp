@@ -402,12 +402,13 @@ export class ConfigService {
   /**
    * Update FHIR Module status
    * @param {number} id - id of section
-   * @param {boolean} fhir - enabled status true/false
+   * @param {string} statusKey - module key to update
+   * @param {boolean} status - enabled status true/false
    * @return {Observable<any>}
    */
-  updateIhFhirModuleEnabledStatus(id: number, fhir: boolean): Observable<any> {
+  updateIhFhirModuleEnabledStatus(id: number, statusKey: string, status: boolean): Observable<any> {
     const url = `${this.baseURL}/ih-fhir-module/updateIsEnabled/${id}`;
-    return this.http.put(url, { fhir });
+    return this.http.put(url, { [statusKey]: status });
   }
 
   /**

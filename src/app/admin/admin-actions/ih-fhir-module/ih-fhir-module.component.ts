@@ -4,7 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
-import { PatientVisitSection } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
@@ -15,7 +14,7 @@ import { languages } from 'src/config/constant';
   styleUrls: ['./ih-fhir-module.component.scss']
 })
 export class IhFhirModuleComponent {
-  displayedColumns: string[] = ['id', 'name', 'platform', 'updatedAt', 'fhir'];
+  displayedColumns: string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   fhirData: any[];
@@ -60,16 +59,36 @@ export class IhFhirModuleComponent {
   }
 
   private normalizeFhirModule(item: any): any {
+    const ignoredKeys = [
+      'id',
+      'name',
+      'lang',
+      'key',
+      'platform',
+      'updatedAt',
+      'updated_at',
+      'createdAt',
+      'created_at',
+      'is_editable',
+      'is_enabled',
+      'is_locked',
+      'order',
+      'sub_sections'
+    ];
+    const statusKey = Object.keys(item || {}).find(key => !ignoredKeys.includes(key) && typeof item[key] === 'boolean') || item?.key || 'fhir';
+    const isEnabled = typeof item?.[statusKey] === 'boolean' ? item[statusKey] : Boolean(item?.is_enabled);
+
     return {
       ...item,
       platform: item?.platform || 'Web',
       updatedAt: item?.updatedAt || item?.updated_at,
-      fhir: item?.fhir
+      statusKey,
+      is_enabled: isEnabled
     };
   }
 
-  updateStatus(id: number, status: boolean): void {
-    this.configService.updateIhFhirModuleEnabledStatus(id, status).subscribe(res => {
+  updateStatus(element: any, status: boolean): void {
+    this.configService.updateIhFhirModuleEnabledStatus(element.id, element.statusKey, status).subscribe(res => {
       this.toastr.success('FHIR Module has been successfully updated', 'Update successful!');
       this.getFhirModule();
     }, err => {
