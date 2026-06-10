@@ -1056,7 +1056,7 @@ export class DashboardComponent implements OnInit {
   */
   getAppointments() {
     this.appointments = [];
-    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.isMCCUser ? this.specialization : null)
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('month').format('DD/MM/YYYY'), moment().endOf('month').format('DD/MM/YYYY'), this.isMCCUser ? this.specialization : null)
       .subscribe((res: ApiResponseModel) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: AppointmentModel) => {
@@ -1700,15 +1700,15 @@ export class DashboardComponent implements OnInit {
     const futureSlots$ = this.appointmentService.getUserSlots(
       uuid,
       moment().add(1, 'day').format('DD/MM/YYYY'),
-      moment().add(1, 'year').format('DD/MM/YYYY'),
+      moment().add(1, 'month').format('DD/MM/YYYY'),
       spec,
       false
     );
   
     const allSlots$ = this.appointmentService.getUserSlots(
       uuid,
-      moment().add(-1, 'year').format('DD/MM/YYYY'),
-      moment().add(1, 'year').format('DD/MM/YYYY'),
+      moment().add(-1, 'month').format('DD/MM/YYYY'),
+      moment().add(1, 'month').format('DD/MM/YYYY'),
       spec,
       true
     );
