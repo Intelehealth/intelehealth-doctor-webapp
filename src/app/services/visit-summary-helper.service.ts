@@ -53,7 +53,13 @@ export class VisitSummaryHelperService {
   };
 
   checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
-    return encounters.find(({ display = '' }) => display.includes(visitType));
+    return encounters.find((encounter: EncounterModel) => {
+      const display = encounter?.display || '';
+      const encounterTypeDisplay = encounter?.encounterType?.display || '';
+      const legacyTypeName = (encounter as any)?.type?.name || '';
+
+      return [display, encounterTypeDisplay, legacyTypeName].some((value: string) => value.includes(visitType));
+    });
   };
 
   checkIfAttributeExists(attrs: VisitAttributeModel[], attribute = 'Visit Speciality') {

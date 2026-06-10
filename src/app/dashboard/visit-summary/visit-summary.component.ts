@@ -809,11 +809,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
-              this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
-                if (p.provider.uuid === this.provider.uuid) {
-                  this.isVisitNoteProvider = true;
-                }
-              });
+              this.isVisitNoteProvider = this.isCurrentProviderEncounter(this.visitNotePresent);
+              this.logVisitNoteProviderDebug(this.visitNotePresent);
+              if (this.isVisitNoteProvider) {
+                setCacheData(visitTypes.VISIT_NOTE_PROVIDER, JSON.stringify(this.visitNotePresent));
+              }
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfMedicationPresent();
@@ -859,6 +859,62 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }, (error) => {
       this.router.navigate(['/dashboard']);
+    });
+  }
+
+  private isCurrentProviderEncounter(encounter: EncounterModel): boolean {
+    const providerUuid = this.provider?.uuid;
+    const encounterProviders = encounter?.encounterProviders || [];
+    const cachedVisitNote = getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER);
+    const isInProgressVisitWithoutProviderData = this.visitStatus === visitTypes.IN_PROGRESS_VISIT && encounterProviders.length === 0;
+
+    return encounterProviders.some((p: EncounterProviderModel) => p?.provider?.uuid === providerUuid)
+      || (cachedVisitNote?.uuid && cachedVisitNote.uuid === encounter?.uuid)
+      || (cachedVisitNote?.encounterProviders || []).some((p: EncounterProviderModel) => p?.provider?.uuid === providerUuid)
+      || isInProgressVisitWithoutProviderData;
+  }
+
+  private logVisitNoteProviderDebug(encounter: EncounterModel): void {
+    const providerUuid = this.provider?.uuid;
+    const encounterProviders = encounter?.encounterProviders || [];
+    const cachedVisitNote = getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER);
+    const visitNoteProviderUuids = encounterProviders.map((p: EncounterProviderModel) => p?.provider?.uuid).filter(Boolean);
+    const cachedVisitNoteProviderUuids = (cachedVisitNote?.encounterProviders || [])
+      .map((p: EncounterProviderModel) => p?.provider?.uuid)
+      .filter(Boolean);
+    const directProviderMatch = visitNoteProviderUuids.includes(providerUuid);
+    const cachedEncounterMatch = !!cachedVisitNote?.uuid && cachedVisitNote.uuid === encounter?.uuid;
+    const cachedProviderMatch = cachedVisitNoteProviderUuids.includes(providerUuid);
+    const isInProgressVisitWithoutProviderData = this.visitStatus === visitTypes.IN_PROGRESS_VISIT && visitNoteProviderUuids.length === 0;
+
+    console.log('[VisitSummary] Visit note provider debug', {
+      visitUuid: this.visit?.uuid,
+      visitStatus: this.visitStatus,
+      shouldShowSharePrescription: !this.isMCCUser && !!this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider,
+      shouldShowSaveAsDraft: !this.isMCCUser && !!this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      reasonIfFalse: this.isVisitNoteProvider ? null : {
+        missingLoggedInProviderUuid: !providerUuid,
+        noVisitNoteEncounterProviders: visitNoteProviderUuids.length === 0,
+        providerUuidMismatch: !!providerUuid && visitNoteProviderUuids.length > 0 && !directProviderMatch,
+        cachedVisitNoteUuidMismatch: !!cachedVisitNote?.uuid && cachedVisitNote.uuid !== encounter?.uuid,
+        noCachedVisitNote: !cachedVisitNote?.uuid,
+        inProgressVisitWithoutProviderData: isInProgressVisitWithoutProviderData,
+        isMCCUser: this.isMCCUser,
+        visitEnded: !!this.visitEnded,
+        visitCompleted: !!this.visitCompleted
+      },
+      loggedInProviderUuid: providerUuid,
+      visitNoteUuid: encounter?.uuid,
+      visitNoteProviderUuids,
+      cachedVisitNoteUuid: cachedVisitNote?.uuid,
+      cachedVisitNoteProviderUuids,
+      directProviderMatch,
+      cachedEncounterMatch,
+      cachedProviderMatch,
+      visitCompleted: this.visitCompleted,
+      visitEnded: this.visitEnded,
+      isMCCUser: this.isMCCUser
     });
   }
 
@@ -1459,6 +1515,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.encounterService.postEncounter(json).subscribe((response) => {
       this.visitNotePresent = response;
+      this.isVisitNoteProvider = true;
+      setCacheData(visitTypes.VISIT_NOTE_PROVIDER, JSON.stringify(response));
       // save diagnosis from case summary
       if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
         let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
