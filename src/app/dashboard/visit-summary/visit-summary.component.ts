@@ -807,7 +807,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
+            console.log('Attribute display:', attribute.display, attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false);
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
+              console.log('Setting hwPhoneNo from attribute value:', attribute.value);
               this.hwPhoneNo = attribute.value;
             }
           }
