@@ -1924,12 +1924,35 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.medicines = medicationOrders;
     }
+    this.enrichMedicationOrders(medicationOrders);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if (!obs.value?.includes(':')) this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
         }
       });
+    });
+  }
+
+  enrichMedicationOrders(medicationOrders: any[]): void {
+    const orderRequests = medicationOrders
+      .filter((medicine) => medicine?.uuid)
+      .map((medicine) => this.encounterService.getDrugOrder(medicine.uuid).pipe(
+        map((order) => this.visitService.formatMedicationOrderDisplay(
+          order,
+          this.appConfigService.patient_visit_summary?.standard_medication
+        )),
+        catchError(() => of(medicine))
+      ));
+
+    if (!orderRequests.length) return;
+
+    forkJoin(orderRequests).subscribe((orders: any[]) => {
+      if (this.appConfigService.patient_visit_summary?.standard_medication) {
+        this.standardMedicines = orders;
+      } else {
+        this.medicines = orders;
+      }
     });
   }
 
@@ -3078,10 +3101,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   getMedicationDosingInstructions(medicine: MedicineModel | StandardMedicineModel, standard: boolean): string {
     if (standard) {
       const m = medicine as StandardMedicineModel;
-      return `${m.dose || ''}:${m.instructRemark || ''}`;
+      return `${m.dose || ''}||${m.frequency || ''}|${m.instructRemark || ''}`;
     } else {
       const m = medicine as MedicineModel;
-      return `${m.timing || ''}:${m.remark || ''}`;
+      return `${m.strength || ''}|${m.timing || ''}|${m.frequency || ''}|${m.remark || ''}`;
     }
   }
 

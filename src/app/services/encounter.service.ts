@@ -51,6 +51,13 @@ export class EncounterService {
     return this.http.delete(url);
   }
 
+  getDrugOrder(orderUuid: string): Observable<any> {
+    const url = `${this.baseURL}/order/${orderUuid}`;
+    const params = new HttpParams()
+      .set('v', 'custom:(uuid,display,orderType:(uuid,display,name),action,voided,dateStopped,instructions,dosingInstructions,doseUnits:(uuid,display),quantityUnits:(uuid,display),duration,durationUnits:(uuid,display),frequency:(uuid,display),drug:(uuid,display,strength,dosageForm:(uuid,display),concept:(uuid,display)),concept:(uuid,display))');
+    return this.http.get(url, { params });
+  }
+
   searchMedicine(term?: string): Observable<any>;
   searchMedicine(limit?: number, query?: string): Observable<any>;
   searchMedicine(limitOrTerm: number | string = 20, query: string = ''): Observable<any> {

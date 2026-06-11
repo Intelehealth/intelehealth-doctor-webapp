@@ -328,6 +328,11 @@ export class VisitService {
     const instructions = this.parseDosingInstructions(order?.dosingInstructions || order?.instructions || '');
     const duration = order?.duration ?? order?.durationNo ?? '';
     const frequency = this.getOrderDisplay(order?.frequency) || instructions.frequency || '';
+    const doseUnit = this.getOrderDisplay(order?.doseUnits)
+      || this.getOrderDisplay(order?.quantityUnits)
+      || this.getOrderDisplay(order?.drug?.dosageForm)
+      || order?.drug?.strength
+      || '';
     const base = {
       drug: this.getOrderDisplay(order?.drug) || this.getOrderDisplay(order?.concept) || order?.display || '',
       frequency,
@@ -340,7 +345,7 @@ export class VisitService {
     if (standardMedication) {
       return {
         ...base,
-        dose: instructions.strength,
+        dose: instructions.strength || doseUnit,
         durationNo: duration,
         durationUnit: this.getOrderDisplay(order?.durationUnits) || instructions.timing || '',
         instructRemark: instructions.remarks
@@ -349,7 +354,7 @@ export class VisitService {
 
     return {
       ...base,
-      strength: instructions.strength,
+      strength: instructions.strength || doseUnit,
       days: duration,
       timing: instructions.timing,
       remark: instructions.remarks
