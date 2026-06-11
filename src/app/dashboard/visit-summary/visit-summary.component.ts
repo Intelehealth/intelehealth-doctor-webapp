@@ -807,7 +807,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -1377,6 +1377,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   startKaleyraCall(): void {
     if (!this.hwPhoneNo) {
+      console.log('Health worker phone number is not available', this.hwPhoneNo);
       this.toastr.error('Health worker phone number is not available');
       return;
     }
