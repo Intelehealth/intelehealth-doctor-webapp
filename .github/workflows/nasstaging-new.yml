@@ -62,7 +62,7 @@ jobs:
             # your Node server (SSR) or Docker entrypoint needs it.
             docker run -d \
               --name webapp-container \
-              -p 80:81 \
+              -p 81:81 \
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
             
