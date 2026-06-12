@@ -1,0 +1,165 @@
+# Webapp Deploy
+#
+# Builds and deploys the webapp Docker image to one or more remote hosts.
+# Each host has its own .env which is baked into the image at build time,
+# so the image is built PER HOST inside the matrix job (no shared artifact).
+#
+# Triggers:
+#   - push to development_master → deploys to ALL hosts
+#   - workflow_dispatch (manual) → deploys to selected hosts via checkboxes
+#
+# Jobs:
+#   1. prepare-matrix     Decides which environments to deploy based on trigger/inputs
+#   2. build-and-deploy   Matrix job — fetches the host's .env, builds its image,
+#                         ships it and restarts the container on each host in parallel
+#
+# Required secrets:
+#   DEV_HOST, TURN_HOST   — SSH hostnames/IPs
+#   REMOTE_USER           — SSH username (same for all hosts)
+#   SSH_PRIVATE_KEY       — SSH private key (same .pem for all hosts)
+#
+# To add a new host: add a secret for the hostname, map it in the deploy job env block,
+# add a case in "Resolve host", add a boolean input, and add it to the push matrix.
+
+name: Turn Webapp
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_dev:
+        description: 'Deploy to DEV host'
+        type: boolean
+        default: true
+      deploy_turn:
+        description: 'Deploy to TURN host'
+        type: boolean
+        default: false
+  push:
+    branches: [development_master]
+
+env:
+  DOCKER_IMAGE_NAME: intelehealth-webapp
+  CONTAINER_NAME: webapp-container
+
+jobs:
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Build deployment matrix
+        id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            # On push, deploy to all hosts
+            matrix='{"include":[{"environment":"dev"},{"environment":"turn"}]}'
+          else
+            # On manual dispatch, deploy only to selected hosts
+            includes='[]'
+            if [ "${{ inputs.deploy_dev }}" == "true" ]; then
+              includes=$(echo "$includes" | jq '. += [{"environment":"dev"}]')
+            fi
+            if [ "${{ inputs.deploy_turn }}" == "true" ]; then
+              includes=$(echo "$includes" | jq '. += [{"environment":"turn"}]')
+            fi
+            matrix="{\"include\":$includes}"
+          fi
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  build-and-deploy:
+    needs: prepare-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
+      fail-fast: false  # a failure on one host should not cancel the others
+    env:
+      REMOTE_PORT: 22
+      ENV_FILE_PATH: /home/ubuntu/deploy/webapp/.env
+      REMOTE_DEPLOY_DIR: /home/ubuntu/deploy/webapp
+      # All host secrets mapped upfront — dynamic secret refs aren't supported in GitHub Actions
+      DEV_HOST: ${{ secrets.DEV_HOST }}
+      TURN_HOST: ${{ secrets.TURN_HOST }}
+      REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    steps:
+      - name: Resolve host for environment
+        run: |
+          case "${{ matrix.environment }}" in
+            dev)  echo "REMOTE_HOST=$DEV_HOST"  >> $GITHUB_ENV ;;
+            turn) echo "REMOTE_HOST=$TURN_HOST" >> $GITHUB_ENV ;;
+            *)    echo "Unknown environment: ${{ matrix.environment }}"; exit 1 ;;
+          esac
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      # The .env is baked into the image at build time, so fetch it from
+      # THIS host before building — each environment gets its own image.
+      - name: Download .env from ${{ matrix.environment }} host
+        run: |
+          scp -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -P $REMOTE_PORT \
+              $REMOTE_USER@$REMOTE_HOST:$ENV_FILE_PATH .env
+
+      - name: Build Docker image for ${{ matrix.environment }}
+        run: |
+          docker build -t $DOCKER_IMAGE_NAME:${{ github.sha }} .
+          docker save $DOCKER_IMAGE_NAME:${{ github.sha }} > app-image.tar
+
+      - name: Deploy to ${{ matrix.environment }} host
+        run: |
+          # Copy Docker image to remote host
+          scp -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -P $REMOTE_PORT \
+              app-image.tar \
+              $REMOTE_USER@$REMOTE_HOST:/tmp/
+
+          # SSH into remote host and deploy
+          ssh -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -p $REMOTE_PORT \
+              $REMOTE_USER@$REMOTE_HOST <<EOF
+            DOCKER_IMAGE_NAME="${{ env.DOCKER_IMAGE_NAME }}"
+            CONTAINER_NAME="${{ env.CONTAINER_NAME }}"
+            ENV_FILE_PATH="${{ env.ENV_FILE_PATH }}"
+
+            docker load -i /tmp/app-image.tar
+            rm /tmp/app-image.tar
+
+            docker stop \$CONTAINER_NAME || true
+            docker rm \$CONTAINER_NAME || true
+
+            if [ ! -f "\$ENV_FILE_PATH" ]; then
+              echo "Error: .env file not found at \$ENV_FILE_PATH"
+              exit 1
+            fi
+
+            # Note: We still mount the .env at runtime just in case
+            # your Node server (SSR) or Docker entrypoint needs it.
+            docker run -d \
+              --name \$CONTAINER_NAME \
+              --restart unless-stopped \
+              -p 81:80 \
+              --env-file \$ENV_FILE_PATH \
+              \$DOCKER_IMAGE_NAME:${{ github.sha }}
+
+            docker image prune -f
+            echo "Webapp deployment to ${{ matrix.environment }} completed successfully"
+          EOF
+
+      - name: Verify deployment on ${{ matrix.environment }}
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -p $REMOTE_PORT \
+              $REMOTE_USER@$REMOTE_HOST \
+              "docker ps | grep $CONTAINER_NAME && echo 'Webapp deployment on ${{ matrix.environment }} successful!'"
