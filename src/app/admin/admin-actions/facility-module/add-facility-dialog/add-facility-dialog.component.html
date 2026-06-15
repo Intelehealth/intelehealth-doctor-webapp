@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>
+  {{ data ? ('Update Facility' | translate) : ('Add New Facility' | translate) }}
+</h1>
+<div mat-dialog-content class="dialog-content">
+  <form class="facility-form" [formGroup]="facilityModuleForm" (ngSubmit)="addFacilityModule()">
+    <div class="input-field-group">
+      <label>{{ 'Facility' | translate }}</label>
+      <select class="visit-select" formControlName="facilityUuid">
+        <option value="" disabled>{{ 'Select facility' | translate }}</option>
+        <option *ngFor="let facility of referralFacilityList" [value]="facility.uuid">
+          {{ facility.display | translate }}
+        </option>
+      </select>
+      <small class="text-danger" *ngIf="submitted && f.facilityUuid.errors">*{{ 'Required' | translate }}</small>
+    </div>
+
+    <div class="input-field-group">
+      <label>{{ 'Prescription API' | translate }}</label>
+      <input type="text" formControlName="prescriptionApi" placeholder="{{ 'Enter Prescription API' | translate }}" />
+      <small class="text-danger" *ngIf="submitted && f.prescriptionApi.errors">*{{ 'Required' | translate }}</small>
+    </div>
+
+    <div class="input-field-group">
+      <label>{{ 'Referral API' | translate }}</label>
+      <input type="text" formControlName="referralApi" placeholder="{{ 'Enter Referral API' | translate }}" />
+      <small class="text-danger" *ngIf="submitted && f.referralApi.errors">*{{ 'Required' | translate }}</small>
+    </div>
+
+    <div class="input-field-group">
+      <label>{{ 'Appointment API' | translate }}</label>
+      <input type="text" formControlName="appointmentApi" placeholder="{{ 'Enter Appointment API' | translate }}" />
+      <small class="text-danger" *ngIf="submitted && f.appointmentApi.errors">*{{ 'Required' | translate }}</small>
+    </div>
+
+    <div class="input-field-group">
+      <label>{{ 'Status' | translate }}</label>
+      <select formControlName="status">
+        <option [ngValue]="true">{{ 'Active' | translate }}</option>
+        <option [ngValue]="false">{{ 'Inactive' | translate }}</option>
+      </select>
+      <small class="text-danger" *ngIf="submitted && f.status.errors">*{{ 'Required' | translate }}</small>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <button mat-raised-button type="button" (click)="close()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="facilityModuleForm.invalid">
+        {{ data ? ('Update' | translate) : ('Add Facility' | translate) }}
+      </button>
+    </div>
+  </form>
+</div>

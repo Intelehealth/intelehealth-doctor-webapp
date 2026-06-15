@@ -57,6 +57,9 @@ import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dro
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
 import { IhFhirModuleComponent } from './admin-actions/ih-fhir-module/ih-fhir-module.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { FacilityModuleComponent } from './admin-actions/facility-module/facility-module.component';
+import { AddFacilityDialogComponent } from './admin-actions/facility-module/add-facility-dialog/add-facility-dialog.component';
 
 
 // AoT requires an exported function for factories
@@ -167,6 +170,10 @@ const routes: Routes = [
             component: IhFhirModuleComponent
           },
           {
+            path: 'facility-module',
+            component: FacilityModuleComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -206,7 +213,9 @@ const routes: Routes = [
     PatientVisitDropdownComponent,
     HomeScreenComponent,
     AiLlmComponent,
-    IhFhirModuleComponent
+    IhFhirModuleComponent,
+    FacilityModuleComponent,
+    AddFacilityDialogComponent
   ],
   imports: [
     CommonModule,
@@ -251,7 +260,8 @@ const routes: Routes = [
     NgbNavModule,
     SharedModule,
     MatProgressSpinnerModule,
-    DragDropModule
+    DragDropModule,
+    MatDialogModule
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },

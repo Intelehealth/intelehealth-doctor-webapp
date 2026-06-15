@@ -277,6 +277,13 @@
         flex-direction: row;
         padding: 0px 20px;
 
+        .sidebar-facility-icon {
+          color: var(--color-white);
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+        }
+
         span {
           font-family: 'DM Sans';
           font-style: normal;

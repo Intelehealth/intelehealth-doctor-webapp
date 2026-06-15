@@ -112,3 +112,16 @@
     <span data-test-id="labelReport">{{'Report' | translate}}</span>
   </a>
 </li>
+
+<li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()"
+    data-test-id="listItemFacilityModule">
+  <a class="nav-item-link" routerLink="/admin/actions/facility-module" routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkFacilityModule">
+    <svg class="sidebar-facility-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" data-test-id="iconFacilityModule">
+      <path d="M10 2.5L17.5 10L10 17.5L2.5 10L10 2.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M10 6.25V13.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="10" cy="10" r="1.65" fill="currentColor"/>
+    </svg>
+    <span data-test-id="labelFacilityModule">{{'Facility module' | translate}}</span>
+  </a>
+</li>

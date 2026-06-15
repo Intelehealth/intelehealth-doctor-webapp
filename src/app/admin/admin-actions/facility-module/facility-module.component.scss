@@ -1,0 +1,61 @@
+.facility-module-card {
+  .card-header {
+    padding: 16px 24px 20px;
+    border-bottom: 1px solid rgba(49, 31, 151, 0.18);
+  }
+
+  .card-body {
+    padding: 0 24px 16px;
+  }
+}
+
+.add-facility-button-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.mat-elevation-z8 {
+  box-shadow: none;
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  font-family: DM Sans;
+}
+
+th.mat-header-cell {
+  border: none;
+  font-size: 14px !important;
+  font-weight: 700;
+  color: var(--color-gray);
+  height: 21px;
+}
+
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  border: none;
+  min-width: 60px;
+  padding-right: 24px;
+  white-space: nowrap;
+}
+
+td.mat-cell {
+  font-size: 16px;
+}
+
+tr.mat-row,
+tr.mat-footer-row {
+  height: 88px;
+  border-radius: 8px;
+}
+
+tr.mat-row:nth-child(even) {
+  background: #f7f7fa;
+}
+
+.no-modules-card {
+  color: var(--color-gray);
+}

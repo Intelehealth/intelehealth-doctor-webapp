@@ -1,0 +1,59 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card facility-module-card">
+        <div class="card-header">
+          <div class="add-facility-button-container">
+            <button mat-raised-button color="primary" (click)="openAddFacilityDialog()">
+              {{ 'Add New Facility' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="modules?.length; else noModules">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="modules" matTableResponsive>
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>{{ 'ID' | translate }}</th>
+                <td mat-cell *matCellDef="let module">{{ module.id }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="facilityName">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Facility Name' | translate }}</th>
+                <td mat-cell *matCellDef="let module">{{ module.facilityName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="prescriptionApi">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Prescription Api' | translate }}</th>
+                <td mat-cell *matCellDef="let module">{{ module.prescriptionApi }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="appointmentApi">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Appointment Api' | translate }}</th>
+                <td mat-cell *matCellDef="let module">{{ module.appointmentApi }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Action' | translate }}</th>
+                <td mat-cell *matCellDef="let module">
+                  <button mat-raised-button color="primary" (click)="openEditFacilityDialog(module)">
+                    {{ 'Edit' | translate }}
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </div>
+
+        <ng-template #noModules>
+          <div class="card-body no-modules-card">
+            {{ 'No modules available' | translate }}
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
