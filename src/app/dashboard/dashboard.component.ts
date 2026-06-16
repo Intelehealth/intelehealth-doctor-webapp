@@ -244,10 +244,6 @@ getAwaitingVisits(page: number = 1) {
           visit.patient_name.family_name;
         visit.location = visit.sanch;
         visit.openMrsId = visit.patient?.identifier;
-
-        // A visit is a follow-up whenever its chief complaint indicates one,
-        // regardless of the patient verdict. This ensures every Follow-Up
-        // visit appears only in the Follow-up section, not Awaiting (PROD-185).
         const isFollowUp = visit.cheif_complaint.some((x) => x.includes("Follow"));
 
         if (isFollowUp) newFollowups.push(visit);
