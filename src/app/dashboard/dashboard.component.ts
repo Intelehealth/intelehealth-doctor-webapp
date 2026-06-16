@@ -554,13 +554,12 @@ getAwaitingVisits(page: number = 1) {
                 e.encounterType.display == visitTypes.VISIT_COMPLETE
             )[0]
             .encounterProviders[0].display.split(":")[0];
-          visit.cheif_complaint = this.visitService.getCheifComplaint1(
-            recentVisit[0]
-          );
-          this.followupVisits.push(visit);
+
         }
+        this.followupVisits.push(visit);
         this.filteredFollowUpVisits = this.followupVisits.filter((visit) => {
           return (
+            !visit.encounter_provider ||
             visit.encounter_provider ==
             getCacheData(false, doctorDetails.DOCTOR_NAME)
           );
