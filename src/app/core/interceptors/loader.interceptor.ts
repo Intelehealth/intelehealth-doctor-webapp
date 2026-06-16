@@ -28,7 +28,8 @@ export class LoaderInterceptor implements HttpInterceptor {
         '/translate',
         '/saveTranslation',
         '/ncd',
-        '/ncdsummary'
+        '/ncdsummary',
+        '/concept'
     ];
 
     const shouldSkip = excludedPatterns.some(pattern =>

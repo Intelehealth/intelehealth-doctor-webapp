@@ -245,11 +245,10 @@ getAwaitingVisits(page: number = 1) {
         visit.location = visit.sanch;
         visit.openMrsId = visit.patient?.identifier;
 
-        const isFollowUp =
-          visit.cheif_complaint.some((x) => x.includes("Follow")) &&
-          !this.visitService
-            .getPatientVerdict(visit)
-            .includes("Patient is feeling better");
+        // A visit is a follow-up whenever its chief complaint indicates one,
+        // regardless of the patient verdict. This ensures every Follow-Up
+        // visit appears only in the Follow-up section, not Awaiting (PROD-185).
+        const isFollowUp = visit.cheif_complaint.some((x) => x.includes("Follow"));
 
         if (isFollowUp) newFollowups.push(visit);
 
@@ -257,20 +256,26 @@ getAwaitingVisits(page: number = 1) {
       });
 
       this.getFollowUpVisits(newFollowups);
-      this.awaitingVisitsCount = res.totalCount;
+
+      // Exclude follow-up visits from the awaiting list so a re-uploaded
+      // follow-up patient appears only in the Follow-up section (PROD-185).
+      const awaitingOnly = processed.filter((visit) => !visit.isFollowUp);
+      // Reduce the backend count by the follow-ups removed from the loaded
+      // page(s). Count may still drift slightly for pages not yet loaded.
+      this.awaitingVisitsCount = res.totalCount - (processed.length - awaitingOnly.length);
 
       if (this.currentSort.active === "visit_created") {
         // For visit_created sorting, accumulate all loaded pages
         if (isInitialPage) {
-          this.awaitingVisits = [...processed];
+          this.awaitingVisits = [...awaitingOnly];
         } else {
-          this.awaitingVisits.push(...processed);
+          this.awaitingVisits.push(...awaitingOnly);
         }
         this.dataSource3.sort = this.awaitingMatSort;
         this.dataSource3.data = this.awaitingVisits;
 
       } else {
-        this.awaitingVisits.push(...processed);
+        this.awaitingVisits.push(...awaitingOnly);
         this.dataSource3.sort = this.awaitingMatSort;
         this.applySorting();
       }
@@ -279,7 +284,7 @@ getAwaitingVisits(page: number = 1) {
         this.dataSource3.paginator = this.tempPaginator2;
         this.tempPaginator2.pageIndex = 0;
       } else {
-        this.tempPaginator2.length = res.totalCount;
+        this.tempPaginator2.length = this.awaitingVisitsCount;
         this.tempPaginator2.nextPage();
       }
     });
