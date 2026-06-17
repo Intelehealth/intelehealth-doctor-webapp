@@ -14,6 +14,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       if (request.url.includes('/ddx')) {
         return next.handle(request);
       }
+      if (request.method == 'DELETE' && request.url.includes('session')) {
+        const error = err?.error?.message || err?.error?.error?.message  || err?.error?.error || err?.statusText;
+        return throwError(error);
+      }
       if ([401, 403].indexOf(err.status) != -1) {
         this.authService.logOut();
       }
@@ -25,9 +29,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         return throwError(error);
       }
 
-      if (request.method == 'DELETE' && request.url.includes('session')) {
-        return throwError(error); 
-      }
       if (error == 'OK' || err?.url.includes('/abha/')) {
         return throwError(error);
       }

@@ -2,7 +2,8 @@
   <div class="close-btn-con">
     <button
       class="modal-close-btn"
-      (click)="close(false)"
+      type="button"
+      [mat-dialog-close]="false"
       data-test-id="btnCloseConfirmationModal"
     >
       <img src="assets/svgs/CloseX.svg" alt="" />
@@ -29,7 +30,7 @@
     <button
       class="modal-btn white-btn mr-3"
       type="button"
-      (click)="close(false)"
+      [mat-dialog-close]="false"
       data-test-id="btnCancelConfirmationModal"
     >
       {{ data.cancelBtnText | translate }}
@@ -37,7 +38,7 @@
     <button
       class="modal-btn blue-btn"
       type="button"
-      (click)="close(true)"
+      [mat-dialog-close]="true"
       data-test-id="btnSubmitConfirmationModal"
     >
       {{ data.confirmBtnText | translate }}

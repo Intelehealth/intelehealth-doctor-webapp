@@ -4,7 +4,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { catchError, map, mergeMap } from "rxjs/operators";
-import { BehaviorSubject, Observable, throwError } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 import examples from 'libphonenumber-js/examples.mobile.json';
@@ -75,8 +75,7 @@ export class AuthService {
     setCacheData('xsddsdass', credBase64);
     this.cookieService.deleteAll();
     return this.http.delete(`${this.baseUrl}/session`).pipe(
-      catchError((err) => throwError(err)),
-      map(res => res),
+      catchError(() => of(null)),
       mergeMap((item) => {
         let headers: HttpHeaders = new HttpHeaders();
         headers = headers.append('Authorization', 'Basic ' + credBase64);
@@ -139,21 +138,26 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(() => {
-      deleteCacheData('currentUser');
-      deleteCacheData(doctorDetails.USER);
-      deleteCacheData(doctorDetails.PROVIDER);
-      deleteCacheData(doctorDetails.DOCTOR_NAME);
-      deleteCacheData(doctorDetails.ROLE);
-      deleteCacheData('xsddsdass');
-      deleteCacheData('token');
-      deleteCacheData('socketQuery');
-      this.cookieService.deleteAll();
-      this.currentUserSubject.next(null);
-      this.permissionsService.flushPermissions();
-      this.rolesService.flushRoles();
-      this.router.navigate(['/session/login']);
-    });
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(
+      () => this.clearSessionAndRedirect(),
+      () => this.clearSessionAndRedirect()
+    );
+  }
+
+  private clearSessionAndRedirect(): void {
+    deleteCacheData('currentUser');
+    deleteCacheData(doctorDetails.USER);
+    deleteCacheData(doctorDetails.PROVIDER);
+    deleteCacheData(doctorDetails.DOCTOR_NAME);
+    deleteCacheData(doctorDetails.ROLE);
+    deleteCacheData('xsddsdass');
+    deleteCacheData('token');
+    deleteCacheData('socketQuery');
+    this.cookieService.deleteAll();
+    this.currentUserSubject.next(null);
+    this.permissionsService.flushPermissions();
+    this.rolesService.flushRoles();
+    this.router.navigate(['/session/login']);
   }
 
   /**

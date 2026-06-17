@@ -339,8 +339,9 @@ export class DashboardComponent implements OnInit {
         label: "Name",
         key: "patient_name",
         formatHtml: (element)=> { 
+          const patientGender = this.translateValue(element?.patientGender);
           return `
-            <span class="font-bold ml-2">${element?.patientName} (${this.translateService.instant(element?.patientGender)})</span>
+            <span class="font-bold ml-2">${element?.patientName || ''}${patientGender ? ` (${patientGender})` : ''}</span>
           `
         },
       },
@@ -675,6 +676,10 @@ export class DashboardComponent implements OnInit {
       startDate: new FormControl(null, Validators.required),
       endDate: new FormControl(null, Validators.required),
     });
+  }
+
+  private translateValue(key: string): string {
+    return key ? this.translateService.instant(key) : '';
   }
     
   ngOnInit(): void {
