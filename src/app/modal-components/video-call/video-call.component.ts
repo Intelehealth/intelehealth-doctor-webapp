@@ -38,6 +38,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   room = "";
   initiator = "dr";
   nurseId: string = null;
+  hwPersonUuid: string = null;
   connectToDrId = "";
   isStreamAvailable: any;
   localStream: MediaStream;
@@ -106,6 +107,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
+    this.hwPersonUuid = (patientVisitProvider?.provider as any)?.person?.uuid;
     this.connectToDrId = this.data.connectToDrId;
     this.callType = this.data.callType;
     if (this.data.initiator) this.initiator = this.data.initiator;
@@ -319,6 +321,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.analytics.logEvent('on-call-connect', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
+    this.socketSvc.emitHwEvent("call", {
+      ...this.socketSvc.incomingCallData,
+      nurseId: this.hwPersonUuid || this.nurseId,
+      patientName: this.data?.patientName,
+      patientOpenMrsId: this.data?.patientOpenMrsId
+    });
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
