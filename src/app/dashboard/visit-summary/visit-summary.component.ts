@@ -371,6 +371,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   getVisit(uuid: string) {
+    // Reset per-visit state so a stale value can't carry across visits when the
+    // component is reused (cause of the intermittent "Another doctor is viewing
+
+    this.isVisitNoteProvider = false;
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
         this.visit = visit;
@@ -396,8 +400,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
+              // Robustly compare provider UUIDs: handle provider being an object
+              // ({uuid}) or a raw UUID string, and guard against this.provider
+              // not being loaded yet - avoids falsely flagging the logged-in
+              // doctor as "another doctor" (PROD-169).
+              const myUuid = this.provider?.uuid;
               this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
-                if (p.provider.uuid === this.provider.uuid) {
+                const noteProviderUuid = (p?.provider as any)?.uuid ?? p?.provider;
+                if (myUuid && noteProviderUuid && noteProviderUuid === myUuid) {
                   this.isVisitNoteProvider = true;
                 }
               });
