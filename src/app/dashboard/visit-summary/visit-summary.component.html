@@ -728,6 +728,13 @@
             </mat-accordion>
           </mat-tab>
 
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <span data-test-id="mtShrHistory">SHR History</span>
+            </ng-template>
+            <app-shr-history [patientUuid]="patient?.uuid" [active]="selectedTabIndex === 1"></app-shr-history>
+          </mat-tab>
+
           <mat-tab *ngIf="isFeatureAvailable('pastVisitHistory')">
             <ng-template mat-tab-label>
               <span data-test-id="mtPast">{{'Past visit history' | translate}}</span>

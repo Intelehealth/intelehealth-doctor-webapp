@@ -427,6 +427,7 @@ export interface ObsModel {
       uuid?: string
     }
   }
+  groupMembers?: ObsModel[],
   comment?: string
 }
 

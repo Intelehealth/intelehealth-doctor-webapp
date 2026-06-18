@@ -49,7 +49,10 @@ export class NotesComponent implements OnInit {
     this.diagnosisSvc.getObs(this._visit.patient.uuid, this.conceptId).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this._visit.uuid) {
-          this.notes.push(obs);
+          this.notes.push({
+            ...obs,
+            value: obs.value || obs.groupMembers?.find(member => member.value)?.value
+          });
         }
       });
     });
