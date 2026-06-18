@@ -27,6 +27,7 @@ import { formatDate } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { TableGridComponent } from 'ih-library';
 
 
 export const PICK_FORMATS = {
@@ -48,6 +49,110 @@ class PickDateAdapter extends NativeDateAdapter {
     }
   }
 };
+
+function getVisitTimestamp(data: string): moment.Moment {
+  let visitTime = moment(data);
+
+  if (visitTime.isAfter(moment()) && data?.endsWith('Z')) {
+    visitTime = moment(data.replace(/Z$/, ''));
+  }
+
+  return visitTime;
+}
+
+function getCreatedAtFromVisitTimestamp(data: string, translateService: TranslateService) {
+  const visitTime = getVisitTimestamp(data);
+  const now = moment();
+  let hours = now.diff(visitTime, 'hours');
+  let minutes = now.diff(visitTime, 'minutes');
+
+  if (minutes < 0) {
+    hours = 0;
+    minutes = 0;
+  }
+
+  if (hours > 24) {
+    return visitTime.format('DD MMM, YYYY');
+  };
+  if (hours < 1) {
+    return `${minutes} ${translateService.instant("Minutes ago")}`;
+  }
+  return `${hours} ${translateService.instant("Hours ago")}`;
+}
+
+function applyTableGridUtcTimestampPatch() {
+  const tableGridPrototype = TableGridComponent.prototype as any;
+  if (tableGridPrototype.__utcTimestampPatchApplied) {
+    return;
+  }
+
+  tableGridPrototype.getCreatedAt = function (data: string) {
+    return getCreatedAtFromVisitTimestamp(data, this.translateService);
+  };
+
+  tableGridPrototype.getEncounterCreated = function (visit: CustomVisitModel, encounterName: string) {
+    let created_at = '';
+    const encounters = visit.encounters;
+    encounters.forEach((encounter: CustomEncounterModel) => {
+      const display = encounter.type?.name;
+      if (display.match(encounterName) !== null) {
+        created_at = this.getCreatedAt(encounter.encounter_datetime);
+      }
+    });
+    return created_at;
+  };
+
+  tableGridPrototype.processVisitData = function (visit: any, encounterType: string) {
+    visit.cheif_complaint = this.getCheifComplaint(visit);
+    visit.visit_created = visit?.date_created
+      ? this.getCreatedAt(visit.date_created)
+      : this.getEncounterCreated(visit, encounterType || visitTypes.ADULTINITIAL);
+    visit.person.age = this.calculateAge(visit.person.birthdate);
+    visit.location = visit?.location?.name;
+    visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+
+    if (encounterType === visitTypes.VISIT_NOTE) {
+      visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
+    }
+
+    if (encounterType === visitTypes.COMPLETED_VISIT) {
+      visit.completed = visit?.date_created
+        ? this.getCreatedAt(visit.date_created)
+        : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+    }
+
+    if (encounterType === visitTypes.FLAGGED) {
+      visit.visit_created = visit?.date_created
+        ? this.getCreatedAt(visit.date_created)
+        : this.getEncounterCreated(visit, visitTypes.FLAGGED);
+    }
+
+    visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number")?.value;
+    visit.patient_type = this.getDemarcation(visit?.encounters);
+    return visit;
+  };
+
+  tableGridPrototype.processFollowUpVisitData = function (visit: any) {
+    if (!visit?.encounters?.length) {
+      return null;
+    }
+
+    visit.cheif_complaint = this.getCheifComplaint(visit);
+    visit.visit_created = visit?.date_created
+      ? this.getCreatedAt(visit.date_created)
+      : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+    visit.person.age = this.calculateAge(visit.person.birthdate);
+    visit.completed = this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+    visit.followUp = this.processFollowUpDate(this.getEncounterObs(visit.encounters, visitTypes.VISIT_NOTE, 163345)?.value_text);
+    visit.location = visit?.location?.name;
+    visit.age = visit?.person?.age + ' ' + this.translateService.instant('y');
+    return visit;
+  };
+
+  tableGridPrototype.__utcTimestampPatchApplied = true;
+}
+
+applyTableGridUtcTimestampPatch();
 
 @Component({
   selector: 'app-dashboard',
@@ -770,7 +875,7 @@ export class DashboardComponent implements OnInit {
             if (visit?.encounters?.length) {
               this.followUpVisitsCount += 1;
               visit.cheif_complaint = this.getCheifComplaint(visit);
-              visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+              visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
               visit.person.age = this.calculateAge(visit.person.birthdate);
               visit.completed = this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
               visit.followUp = this.getEncounterObs(visit.encounters, visitTypes.VISIT_NOTE, 163345/*Follow-up*/)?.value_text;
@@ -802,9 +907,9 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < res.data.length; i++) {
           let visit = res.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.COMPLETED_VISIT);
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          visit.completed = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z', '+0530')) : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
+          visit.completed = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.VISIT_COMPLETE);
           visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number");
           this.completedVisits.push(visit);
         }
@@ -837,7 +942,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           visit.patient_type = this.visitService.getDemarcation(visit?.encounters);
           this.awaitingVisits.push(visit);
@@ -894,7 +999,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
@@ -950,7 +1055,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           visit.TMH_patient_id = this.getAttributeData(visit, "TMH Case Number");
@@ -1081,7 +1186,7 @@ export class DashboardComponent implements OnInit {
     encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
-        created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
+        created_at = this.getCreatedAt(encounter.encounter_datetime);
       }
     });
     return created_at;
@@ -1147,15 +1252,7 @@ export class DashboardComponent implements OnInit {
   * @return {string} - Created time in words from the date
   */
   getCreatedAt(data: string) {
-    let hours = moment().diff(moment(data), 'hours');
-    let minutes = moment().diff(moment(data), 'minutes');
-    if (hours > 24) {
-      return moment(data).format('DD MMM, YYYY');
-    };
-    if (hours < 1) {
-      return `${minutes} ${this.translateService.instant("Minutes ago")}`;
-    }
-    return `${hours} ${this.translateService.instant("Hours ago")}`;
+    return getCreatedAtFromVisitTimestamp(data, this.translateService);
   }
 
   /**
