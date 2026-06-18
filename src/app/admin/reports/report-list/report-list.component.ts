@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { CoreService } from 'src/app/services/core/core.service';
@@ -56,7 +57,8 @@ export class ReportListComponent implements OnInit {
   displayedColumns: string[] = ['name', 'buttonName'];
   constructor( private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private modalService: CoreService) { }
+    private modalService: CoreService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
@@ -109,7 +111,11 @@ export class ReportListComponent implements OnInit {
   }
 
   reportSuccess() {
-    this.modalService.openReportSuccessDialog().subscribe(() => {
+    this.modalService.openReportSuccessDialog().subscribe((res: any) => {
+      // 'dashboard' = "Go to home" button -> navigate to the dashboard.
+      if (res === 'dashboard') {
+        this.router.navigate(['/dashboard']);
+      }
     });
   }
 
