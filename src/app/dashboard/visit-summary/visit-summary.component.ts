@@ -138,6 +138,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   addTestForm: FormGroup;
   addReferralForm: FormGroup;
   followUpForm: FormGroup;
+  savingFollowUp = false;
 
   displayedColumns: string[] = ['action', 'created_on', 'consulted_by', 'cheif_complaint', 'summary', 'prescription', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
@@ -1661,7 +1662,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * Save followup
   * @returns {void}
   */
-  addFollowUp() {
+  addFollowUp() {  
+    if (this.followUpForm.value.present || this.followUpForm.value.uuid || this.savingFollowUp) {
+      return;
+    }
     let body = {
       concept: conceptIds.conceptFollow,
       person: this.visit.patient.uuid,
@@ -1690,11 +1694,23 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   saveFollowUp(body: { concept: string; person: string; obsDatetime: Date; value: string; encounter: string; }) {
     if (this.isVisitNoteProvider) {
-      this.encounterService.postObs(body).subscribe((res: ObsModel) => {
-        if (res) {
-          this.followUpForm.patchValue({ present: true, uuid: res.uuid });
+
+      if (this.savingFollowUp) {
+        return;
+      }
+      this.savingFollowUp = true;
+      this.encounterService.postObs(body).subscribe({
+        next: (res: ObsModel) => {
+          if (res) {
+            this.followUpForm.patchValue({ present: true, uuid: res.uuid });
+          }
+          this.disableReasonBtn = false;
+          this.savingFollowUp = false;
+        },
+        error: () => {
+          this.disableReasonBtn = false;
+          this.savingFollowUp = false;
         }
-        this.disableReasonBtn = false;
       });
     } else {
       this.toastr.warning("Another doctor is viewing this case");
