@@ -1288,6 +1288,6 @@
 </div>
 
 <div class="webrtc-controls">
-  <img class="img shadow" src="assets/svgs/video-square.svg" (click)="startCall()" alt=""/>
+  <img *ngIf="!isNepalClient" class="img shadow" src="assets/svgs/video-square.svg" (click)="startCall()" alt=""/>
   <img class="img shadow" src="assets/svgs/chat-square.svg" (click)="startChat()" alt=""/>
 </div>
