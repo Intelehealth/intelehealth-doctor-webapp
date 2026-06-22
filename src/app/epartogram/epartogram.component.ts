@@ -717,11 +717,16 @@ export class EpartogramComponent implements OnInit {
             p.values[colIndex] = [...p.values[colIndex], { value: ob.value, initial }];
           } else if (p.name === 'BP') {
             const concept = this.stage3NormalizeConcept(ob?.concept?.display);
-            const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '';
-            const systolic = /systolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[0] : current);
-            const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
-            const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
-            p.values[colIndex] = { value };
+            // Always keep BP as "systolic/diastolic" so the two obs can arrive in any
+            // order without the previously-stored half being lost.
+            const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '/';
+            let [systolic = '', diastolic = ''] = current.split('/');
+            if (/systolicbp/.test(concept)) {
+              systolic = String(ob.value);
+            } else if (/diastolicbp/.test(concept)) {
+              diastolic = String(ob.value);
+            }
+            p.values[colIndex] = { value: `${systolic}/${diastolic}` };
           } else if (p.name === 'Complication') {
             p.values[colIndex] = { value: this.formatComplicationValue(ob.value) };
           } else {

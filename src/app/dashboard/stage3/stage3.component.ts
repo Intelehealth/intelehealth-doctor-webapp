@@ -517,11 +517,16 @@ export class Stage3Component implements OnInit {
       } else {
         if (p.name === 'BP') {
           const concept = this.normalizeConcept(ob?.concept?.display);
-          const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '';
-          const systolic = /systolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[0] : current);
-          const diastolic = /diastolicbp/.test(concept) ? String(ob.value) : (current.includes('/') ? current.split('/')[1] : '');
-          const value = systolic && diastolic ? `${systolic}/${diastolic}` : (systolic || diastolic);
-          p.values[colIndex] = { value, uuid: ob.uuid };
+          // Always keep BP as "systolic/diastolic" so the two obs can arrive in any
+          // order without the previously-stored half being lost.
+          const current = p.values[colIndex]?.value ? String(p.values[colIndex].value) : '/';
+          let [systolic = '', diastolic = ''] = current.split('/');
+          if (/systolicbp/.test(concept)) {
+            systolic = String(ob.value);
+          } else if (/diastolicbp/.test(concept)) {
+            diastolic = String(ob.value);
+          }
+          p.values[colIndex] = { value: `${systolic}/${diastolic}`, uuid: ob.uuid };
         } else if (p.name === 'Complication') {
           p.values[colIndex] = { value: this.formatComplication(ob.value), uuid: ob.uuid };
         } else {
@@ -670,7 +675,7 @@ export class Stage3Component implements OnInit {
         const dia = parseFloat(parts[1]);
         return (!isNaN(sys) && (sys < 80 || sys >= 140)) || (!isNaN(dia) && dia >= 90);
       }
-      case 'Temperature':
+      case 'Temprature °f':
         return !isNaN(num) && (num < 95 || num >= 99.5);
       case 'Respiratory Rate':
         return !isNaN(num) && num > 30;
