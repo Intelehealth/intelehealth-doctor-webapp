@@ -680,13 +680,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        this.followUpForm.get('followUpTime').setValidators(Validators.required);
+        this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').clearValidators();
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        this.followUpForm.get('followUpTime').clearValidators();
+        this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -2300,13 +2300,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
 
-            // Only try to get Time if the feature is enabled
             if (this.isFeatureAvailable('followUpTime')) {
               const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
               followUpTime = time ? time : null;
             }
 
-            // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
               const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
               followUpType = type && type !== 'null' ? type : null;
@@ -2375,10 +2373,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    // Skip diagnosis validation for Namco doctors
-    if (!this.showAndHideUiElement) {
-      // Namco doctor - skip to saving
-    } else if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
+    if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
       this.toastr.warning(this.translateService.instant('Enter Diagnosis'), this.translateService.instant('Diagnosis Required'));
       return false;
     } else if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.existingDiagnosis.length === 0 && (this.hasAILLMEnabled && (!this.ddxCompRef || (this.ddxCompRef.instance?.existingDiagnosis || []).length === 0))) {
@@ -2780,6 +2775,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && !this.showAndHideUiElement) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 

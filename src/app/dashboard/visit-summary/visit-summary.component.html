@@ -93,23 +93,25 @@
                 <div class="contact-info">
                   <p data-test-id="etPhoneNumber">
                     {{ getPhoneNumber(true) }}
-                    <a
-                      href="{{ getWhatsAppLink() }}"
-                      target="_blank"
-                      class="icon-btn"
-                      data-test-id="linkWhatsApp"
-                      (click)="startWhatsAppCall(true)"
-                    >
-                      <img src="assets/svgs/whatsapp-icon.svg" alt="" />
-                    </a>
-                    <a
-                      href="tel:{{ getPhoneNumber() }}"
-                      target="_blank"
-                      class="icon-btn"
-                      data-test-id="linkPhoneNumber"
-                    >
-                      <img src="assets/svgs/phone-circle.svg" alt="" />
-                    </a>
+                    <ng-container *ngIf="showAndHideUiElement">
+                      <a
+                        href="{{ getWhatsAppLink() }}"
+                        target="_blank"
+                        class="icon-btn"
+                        data-test-id="linkWhatsApp"
+                        (click)="startWhatsAppCall(true)"
+                      >
+                        <img src="assets/svgs/whatsapp-icon.svg" alt="" />
+                      </a>
+                      <a
+                        href="tel:{{ getPhoneNumber() }}"
+                        target="_blank"
+                        class="icon-btn"
+                        data-test-id="linkPhoneNumber"
+                      >
+                        <img src="assets/svgs/phone-circle.svg" alt="" />
+                      </a>
+                    </ng-container>
                   </p>
                 </div>
               </div>
@@ -1239,7 +1241,7 @@
             </ng-template>
 
             <app-notes #notes [title]="'Note'" [expanded]="showAndHideUiElement ? true : false" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
-              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled && showAndHideUiElement"  (notesChanged)="onNotesChanged($event)"></app-notes>
+              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)"></app-notes>
 
             <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel5 hideToggle class="overflow-show"
               *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled" data-test-id="expansionPanelAdvice">
@@ -2311,7 +2313,7 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType')">
+                    <li *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}
@@ -2399,9 +2401,9 @@
                   <thead>
                     <tr>
                       <th scope="col" data-test-id="lblFollowUpRequested">{{'Follow Up Requested'|translate}}</th>
-                      <th scope="col" *ngIf="isFeatureAvailable('followUpType')" data-test-id="lblFollowUpTypeTable">{{'Type'|translate}}</th>
+                      <th scope="col" *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement" data-test-id="lblFollowUpTypeTable">{{'Type'|translate}}</th>
                       <th scope="col" data-test-id="lblFollowUpDateTable">{{'Date'|translate}}</th>
-                      <!-- <th scope="col" data-test-id="lblFollowUpTimeTable">{{'Time'| translate}}</th> -->
+                      <th scope="col" *ngIf="isFeatureAvailable('followUpTime') && !this.showAndHideUiElement" data-test-id="lblFollowUpTimeTable">{{'Time'| translate}}</th>
                       <th scope="col" data-test-id="lblFollowUpReasonTable">{{'Reason'|translate}}</th>
                       <th scope="col"></th>
                     </tr>
@@ -2409,9 +2411,9 @@
                   <tbody>
                     <tr>
                       <td data-test-id="valFollowUpRequested">{{ followUpForm.value.wantFollowUp }}</td>
-                      <td *ngIf="isFeatureAvailable('followUpType')" data-test-id="valFollowUpType">{{ followUpForm.value.followUpType || '-' }}</td>
+                      <td *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement" data-test-id="valFollowUpType">{{ followUpForm.value.followUpType || '-' }}</td>
                       <td data-test-id="valFollowUpDate">{{ followUpForm.value.followUpDate ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
-                      <!-- <td data-test-id="valFollowUpTime">{{ followUpForm.value.followUpTime || '-' }}</td> -->
+                      <td *ngIf="isFeatureAvailable('followUpTime') && !this.showAndHideUiElement" data-test-id="valFollowUpTime">{{ followUpForm.value.followUpTime || '-' }}</td>
                       <td data-test-id="valFollowUpReason">{{ followUpForm.value.followUpReason || '-' }}</td>
                       <td class="pr-0">
                         <button type="button" class="float-right" mat-icon-button (click)="deleteFollowUp()"
