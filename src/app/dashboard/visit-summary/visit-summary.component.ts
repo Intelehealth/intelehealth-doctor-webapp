@@ -1991,23 +1991,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getLocationAndSetSanch() {
     this.visitService.getLocations().subscribe((res: any) => {
       this.getStateByVillage(this.clinicName, res);
-      const state = res.states.find(state => state?.name === this.patient?.person.preferredAddress.stateProvince);
-      if (state) {
-        let districtName = '-', sanchName = '-';
-        state.districts.forEach(district => {
+  
+      let stateName = '-', districtName = '-', sanchName = '-';
+      res.states.forEach(state => {
+        state.districts?.forEach(district => {
           district.sanchs
             ?.forEach(sanch => {
-              const village = sanch.villages.find(vilg => vilg.name === this.patient?.person.preferredAddress?.cityVillage);
+              const village = sanch.villages?.find(vilg => vilg.name === this.clinicName);
               if (village) {
+                stateName = state.name;
                 sanchName = sanch.name;
                 districtName = district.name;
               }
             });
         });
-        this.patient["person"]["preferredAddress"]["country"] = 'India';
-        this.patient["person"]["preferredAddress"]["countyDistrict"] = districtName;
-        this.patient["person"]["preferredAddress"]["sanch"] = sanchName;
-      }
+      });
+      this.patient["person"]["preferredAddress"]["country"] = 'India';
+      this.patient["person"]["preferredAddress"]["stateProvince"] = stateName;
+      this.patient["person"]["preferredAddress"]["countyDistrict"] = districtName;
+      this.patient["person"]["preferredAddress"]["sanch"] = sanchName;
     })
   }
 
