@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { HelperService } from 'src/app/services/helper.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from '../services/auth.service';
 import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
@@ -385,6 +386,7 @@ export class EpartogramComponent implements OnInit {
     private visitService: VisitService,
     private authService: AuthService,
     private coreService: CoreService,
+    private helperService: HelperService,
     private nepaliDateService: NepaliDateService) { }
 
   formatDateByClient(dateValue: any): string {
@@ -781,6 +783,8 @@ export class EpartogramComponent implements OnInit {
     this.pinfo['name'] = this.patient?.person.display;
     this.pinfo['gender'] = this.patient?.person.gender;
     this.pinfo['openMrsId'] = this.patient?.identifiers[0]?.identifier;
+    const hospitalId  = this.patient?.attributes?.find((a: any) => a.attributeType.display === 'Hospital ID');
+    if (hospitalId) { this.pinfo['HospitalID'] = hospitalId.value; }
     const providerAttributes = this.visit.encounters[0]?.encounterProviders[0]?.provider?.attributes;
     if (providerAttributes?.length) {
       let attr = providerAttributes.find((o: any) => o.attributeType.display == 'whatsapp');
@@ -1109,6 +1113,10 @@ export class EpartogramComponent implements OnInit {
 
   getInitials(name: string) {
     return name ? name.trim() : '';
+  }
+
+  printPartogram() {
+    this.helperService.printPartogram('epartogram-print-table');
   }
 
   checkIfFutureEncounterExists(futureStartIndex) {

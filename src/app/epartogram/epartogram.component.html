@@ -3,8 +3,13 @@
     <div class="col-md-12 p-0">
       <div class="intel-card">
         <div class="card-body">
+          <div class="py-2 d-flex align-items-center justify-content-end">
+            <button class="icon-action-btn" type="button" (click)="printPartogram()" matTooltip="Print" matTooltipPosition="below">
+              <mat-icon>print</mat-icon>
+            </button>
+          </div>
           <div class="table-responsive d-flex">
-            <table class="table table-bordered bg-white">
+            <table id="epartogram-print-table" class="table table-bordered bg-white">
               <tbody>
                 <tr class="page-title-row">
                   <td colspan="55">
@@ -12,7 +17,8 @@
                   </td>
                 </tr>
                 <tr class="page-title-row">
-                  <td colspan="8"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                  <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                  <td colspan="6"><span> Hospital ID:</span> {{pinfo?.HospitalID|noValue:'NA'}}</td>
                   <td colspan="6"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
                   <td colspan="15"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
                   <td colspan="26"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span>

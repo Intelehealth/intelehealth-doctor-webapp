@@ -23,7 +23,8 @@
                       <td colspan="55"><h1 class="mb-0">WHO LABOUR CARE GUIDE VIEW</h1></td>
                     </tr>
                     <tr class="page-title-row">
-                      <td colspan="8"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                      <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                      <td colspan="6"><span> Hospital ID:</span> {{pinfo?.HospitalID|noValue:'NA'}}</td>
                       <td colspan="6"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
                       <td colspan="15"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
                       <td colspan="26"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{formatDateByClient(pinfo?.ActiveLaborDiagnosed) || 'NA'}} <span>]</span></td>
