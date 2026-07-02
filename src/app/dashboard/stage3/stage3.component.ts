@@ -592,7 +592,7 @@ export class Stage3Component implements OnInit {
       } else if (param.name === 'Temperature') {
         aliases.push('TEMPERATURE (C)', 'Temperature (C)', 'TEMPERATURE_NEWBORN', 'Temperature Newborn', 'TEMP (C)');
       } else if (param.name === 'Complications') {
-        aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn');
+        aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn', 'ONGOING_COMPLICATIONS_NEWBORN');
       } else if (param.name === 'Grunting') {
         aliases.push('GRUNTING_NEWBORN');
       } else if (param.name === 'Chest Indrawing') {
@@ -679,6 +679,8 @@ export class Stage3Component implements OnInit {
         return !isNaN(num) && (num < 95 || num >= 99.5);
       case 'Respiratory Rate':
         return !isNaN(num) && num > 30;
+      case 'SPO2':
+        return !isNaN(num) && num < 92;  
       case 'Blood Loss':
         return !isNaN(num) && num >= 500;
       case 'Uterus Contracted':
@@ -889,8 +891,6 @@ export class Stage3Component implements OnInit {
   printStage3() {
     const printContent = document.getElementById('stage3-print-content');
     if (!printContent) { globalThis.print(); return; }
-    const printWindow = globalThis.open('', '_blank', 'width=1400,height=900');
-    if (!printWindow) { globalThis.print(); return; }
     const css = [
       '* { box-sizing: border-box; }',
       'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
@@ -909,18 +909,73 @@ export class Stage3Component implements OnInit {
       '.sos-col-header { background: #d32f2f !important; color: #fff !important; }',
       '.sos-col-header .time-label, .sos-col-header small { color: #fff !important; }',
       'table { width: 100%; table-layout: auto; }',
-      '@media print { @page { size: landscape; margin: 5mm; } }'
+      // The on-screen grid lives in an overflow-x:auto scroller which would clip
+      // the right-hand columns in print; let it show its full width instead.
+      '.table-responsive { overflow: visible !important; }',
+      // Let the (wide) grid take its natural width so we can measure it and zoom
+      // it down to fit the page — otherwise width:100% squeezes/clips columns.
+      '#stage3-print-table { width: auto; table-layout: auto; }',
+      '@media print { @page { size: portrait; margin: 5mm; } }'
     ].join(' ');
-    const doc = printWindow.document;
-    doc.open();
-    doc.close();
-    doc.head.innerHTML = '<meta charset="utf-8"><title>Early PostPartum Monitoring Report</title><style>' + css + '</style>';
-    doc.body.innerHTML = printContent.innerHTML;
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    }, 300);
+   const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    // Off-screen but with a real size so the grid lays out and measures
+    // correctly (a 0x0 iframe reports wrong widths).
+    iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1200px;height:1600px;border:0;';
+    document.body.appendChild(iframe);
+
+    const frameWin = iframe.contentWindow;
+    const frameDoc = frameWin?.document;
+    if (!frameWin || !frameDoc) {
+      iframe.remove();
+      globalThis.print();
+      return;
+    }
+
+    const reportTitle = 'Delivery Outcome Report';
+    frameDoc.open();
+    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body>' + printContent.innerHTML + '</body></html>');
+    frameDoc.close();
+
+    // The browser derives the Save-as-PDF filename from the top-level page's
+    // document.title (not the iframe's), so temporarily switch it to the report
+    // name for the print and restore it afterwards.
+    const prevDocTitle = document.title;
+    const cleanup = () => {
+      document.title = prevDocTitle;
+      if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+    };
+    frameWin.onafterprint = cleanup;
+
+    const fitAndPrint = () => {
+      const grid = frameDoc.getElementById('stage3-print-table');
+      if (grid) {
+        // A4 portrait printable width at 96dpi with 5mm margins (~756px); stay a
+        // little under. Zoom shrinks the LAYOUT box, so all columns fit the page.
+        const printableWidth = 750;
+        (grid.style as any).zoom = '1';
+        const gridWidth = grid.scrollWidth;
+        const scale = gridWidth > printableWidth ? printableWidth / gridWidth : 1;
+        (grid.style as any).zoom = String(scale);
+      }
+      // Set the filename (via document.title) just before opening the dialog.
+      document.title = reportTitle;
+      frameWin.focus();
+      frameWin.print();
+      // Fallback cleanup in case onafterprint never fires (some mobile browsers).
+      setTimeout(cleanup, 60000);
+    };
+
+    // Wait for fonts to load before measuring so the width is accurate.
+    const fonts = (frameDoc as any).fonts;
+    let started = false;
+    const run = () => { if (!started) { started = true; fitAndPrint(); } };
+    if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+      fonts.ready.then(() => setTimeout(run, 150));
+      setTimeout(run, 2000);
+    } else {
+      setTimeout(run, 500);
+    }
   }
 
   backToStage12() {

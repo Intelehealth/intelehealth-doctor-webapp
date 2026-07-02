@@ -90,8 +90,7 @@ export class HelperService {
     mat-icon { font-family: 'Material Icons'; font-size: 18px; display: inline-block; vertical-align: middle; }
     @media print {
       @page { size: landscape; margin: 5mm; }
-      html, body { margin: 0; padding: 0; overflow: hidden; }
-      #print-wrapper { page-break-inside: avoid; break-inside: avoid; }
+      html, body { margin: 0; padding: 0; }
     }
   `;
 
@@ -106,15 +105,23 @@ export class HelperService {
       globalThis.print();
       return;
     }
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    // Off-screen but with a real size so the table lays out and measures
+    // correctly (a 0x0 iframe reports wrong widths).
+    iframe.style.cssText = "position:fixed;left:-10000px;top:0;width:1400px;height:1600px;border:0;";
+    document.body.appendChild(iframe);
 
-    const printWindow = globalThis.open("", "_blank", "width=1400,height=900");
-    if (!printWindow) {
+    const frameWin = iframe.contentWindow;
+    const frameDoc = frameWin?.document;
+    if (!frameWin || !frameDoc) {
+      iframe.remove();
       globalThis.print();
       return;
     }
 
-    printWindow.document.open();
-    printWindow.document.write(`<!DOCTYPE html>
+    frameDoc.open();
+    frameDoc.write(`<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -126,43 +133,70 @@ export class HelperService {
     <div id="print-wrapper">
       <table class="table table-bordered bg-white">${tableEl.innerHTML}</table>
     </div>
-    <script>
-      function applyScale() {
-        var wrapper = document.getElementById('print-wrapper');
-        var table = wrapper ? wrapper.querySelector('table') : null;
-        if (!table) return;
-        // A4 landscape printable width at 96dpi with 5mm margins each side; use 1080 to be safe
-        var printableWidth = 1080;
-        var tableWidth = table.scrollWidth;
-        var scale = tableWidth > printableWidth ? printableWidth / tableWidth : 1;
-        wrapper.style.transform = 'scale(' + scale + ')';
-        wrapper.style.transformOrigin = 'top left';
-        // getBoundingClientRect reflects the actual rendered size after transform
-        var scaledHeight = Math.ceil(wrapper.getBoundingClientRect().height);
-        document.documentElement.style.height = scaledHeight + 'px';
-        document.body.style.height = scaledHeight + 'px';
-        document.body.style.overflow = 'hidden';
-      }
-      window.onload = function() {
-        applyScale();
-        setTimeout(function() {
-          window.focus();
-          window.print();
-          window.close();
-        }, 400);
-      };
-    <\/script>
   </body>
 </html>`);
-    printWindow.document.close();
+    frameDoc.close();
 
-    // Fallback in case onload doesn't fire
-    setTimeout(() => {
-      if (!printWindow.closed) {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
+    // The browser derives the Save-as-PDF filename from the top-level page's
+    // document.title (not the iframe's), so temporarily switch it to the report
+    // name for the print and restore it afterwards.
+    const prevDocTitle = document.title;
+    const cleanup = () => {
+      document.title = prevDocTitle;
+      if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+    };
+    frameWin.onafterprint = cleanup;
+
+    const scaleAndPrint = () => {
+      const wrapper = frameDoc.getElementById("print-wrapper");
+      const table = wrapper ? (wrapper.querySelector("table") as HTMLElement | null) : null;
+      if (wrapper && table) {
+        // A4 landscape printable area at 96dpi with 5mm margins (~1085 x 756);
+        // stay a little under to avoid spilling onto a second/blank page.
+        const printableWidth = 1080;
+        const printableHeight = 740;
+
+        // Measure the natural (unscaled) size of the whole guide. scrollWidth/
+        // scrollHeight give the real content size regardless of the iframe size.
+        wrapper.style.display = "inline-block";
+        wrapper.style.transform = "none";
+        wrapper.style.margin = "0";
+        const naturalWidth = table.scrollWidth;
+        const naturalHeight = table.scrollHeight;
+
+        // Fit the whole guide onto one page in BOTH dimensions (never enlarge).
+        let scale = Math.min(printableWidth / naturalWidth, printableHeight / naturalHeight);
+        if (scale > 1) { scale = 1; }
+
+        // Use `transform: scale()` (not `zoom`) so the table borders scale down
+        // with the content and stay thin rather than looking bold. A transform
+        // doesn't shrink the layout box, so collapse the reserved space with
+        // negative margins — that keeps it to one page with nothing clipped.
+        wrapper.style.transformOrigin = "top left";
+        wrapper.style.transform = "scale(" + scale + ")";
+        wrapper.style.marginRight = ((scale - 1) * naturalWidth) + "px";
+        wrapper.style.marginBottom = ((scale - 1) * naturalHeight) + "px";
       }
-    }, 3000);
+      // Set the filename (via document.title) just before opening the dialog.
+      document.title = title || prevDocTitle;
+      frameWin.focus();
+      frameWin.print();
+      // Fallback cleanup in case onafterprint never fires (some mobile browsers).
+      setTimeout(cleanup, 60000);
+    };
+
+    // Wait for fonts (including the async Material Icons webfont) to load before
+    // measuring — otherwise the table is measured shorter than it prints and the
+    // bottom gets clipped. Falls back to a timeout if the Font Loading API is
+    // unavailable or never resolves.
+    const fonts = (frameDoc as any).fonts;
+    let started = false;
+    const run = () => { if (!started) { started = true; scaleAndPrint(); } };
+    if (fonts && fonts.ready && typeof fonts.ready.then === "function") {
+      fonts.ready.then(() => setTimeout(run, 150));
+      setTimeout(run, 2000);
+    } else {
+      setTimeout(run, 600);
+    }
   }
 }
