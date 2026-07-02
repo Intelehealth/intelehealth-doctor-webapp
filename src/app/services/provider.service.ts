@@ -17,6 +17,10 @@ export class ProviderService {
     return this.http.get(`${this.baseUrl}/providerattributetype`);
   }
 
+  getLoginLocations(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/location`, { params: { tag: 'Login Location' } });
+  }
+
   updatePerson(target_person_uuid: string, gender: string, age: number, birthdate: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/person/${target_person_uuid}`, { gender, age, birthdate });
   }

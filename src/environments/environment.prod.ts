@@ -1,7 +1,7 @@
 import { envConfig, Client } from './environment.generated';
 
 const HOSTNAME = window.location.hostname.toLowerCase();
-const CLIENT: Client = HOSTNAME.includes('nezazi') ? 'nepal' : 'ezazi';
+const CLIENT: Client = HOSTNAME.includes('nepalezazi') ? 'nepal' : 'ezazi';
 
 const CAPTCHA_KEYS: Record<Client, { captchaSiteKey: string; siteKey: string }> = {
   ezazi: {

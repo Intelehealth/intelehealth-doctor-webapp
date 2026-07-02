@@ -70,6 +70,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       name: 'Labor Ward'
     }
   ];
+  facilities: any[] = [];
   phoneNumberValid: boolean = false;
   whatsAppNumberValid: boolean = false;
   phoneNumber: string = '';
@@ -138,7 +139,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
       emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', JSON.parse(localStorage.getItem('provider')).uuid)]),
-      provider_ward: new FormControl('Labor Ward', [Validators.required])
+      provider_ward: new FormControl('Labor Ward', [Validators.required]),
+      facility_name: new FormControl(null, [Validators.required])
     });
   }
 
@@ -153,6 +155,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
+    this.getLoginLocations();
     this.getProviderAttributeTypes();
     this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
       if (val) {
@@ -185,6 +188,18 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         this.patchFormValues();
       }
     });
+  }
+
+  getLoginLocations() {
+    this.providerService.getLoginLocations().subscribe((res: any) => {
+      if (res?.results?.length) {
+        this.facilities = res.results;
+      }
+    });
+  }
+
+  getFacilityName(uuid: string) {
+    return this.facilities.find((facility: any) => facility.uuid === uuid)?.display;
   }
 
   patchFormValues() {
@@ -221,6 +236,9 @@ export class HwProfileComponent implements OnInit, OnDestroy {
             break;
           case 'provider_ward':
             personalFormValues.provider_ward = this.getAttributeValue(attrType.uuid, attrType.display) || 'Labor Ward';
+            break;
+          case 'facility_name':
+            personalFormValues.facility_name = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           default:
             break;
@@ -437,6 +455,9 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         case 'provider_ward':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          break;
+        case 'facility_name':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         default:

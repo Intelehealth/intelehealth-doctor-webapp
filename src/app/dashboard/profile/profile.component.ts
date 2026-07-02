@@ -143,6 +143,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
+  facilities: any[] = [];
+
   signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
     'minWidth': 5,
     'canvasWidth': 300,
@@ -234,6 +236,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       specialization: new FormControl(null, [Validators.required]),
       registrationNumber: new FormControl(null, [Validators.required]),
       provider_ward: new FormControl('Labor Ward', [Validators.required]),
+      facility_name: new FormControl(null, [Validators.required]),
     });
 
     this.professionalInfoForm = new FormGroup({
@@ -260,6 +263,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
+    this.getLoginLocations();
     this.getProviderAttributeTypes();
     this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
       if (val) {
@@ -350,6 +354,18 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  getLoginLocations() {
+    this.providerService.getLoginLocations().subscribe((res: any) => {
+      if (res?.results?.length) {
+        this.facilities = res.results;
+      }
+    });
+  }
+
+  getFacilityName(uuid: string) {
+    return this.facilities.find((facility: any) => facility.uuid === uuid)?.display;
+  }
+
   patchFormValues() {
     if (this.provider) {
 
@@ -428,6 +444,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'provider_ward':
             personalFormValues.provider_ward = this.getAttributeValue(attrType.uuid, attrType.display) || 'Labor Ward';
+            break;
+          case 'facility_name':
+            personalFormValues.facility_name = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           default:
             break;
@@ -771,6 +790,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         case 'provider_ward':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          break;
+        case 'facility_name':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         default:
