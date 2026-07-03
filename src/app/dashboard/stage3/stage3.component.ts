@@ -8,7 +8,10 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { HelperService } from 'src/app/services/helper.service';
 import { environment } from 'src/environments/environment';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 declare const getFromStorage;
 
@@ -112,7 +115,8 @@ export class Stage3Component implements OnInit {
     private readonly visitService: VisitService,
     private readonly encounterService: EncounterService,
     private readonly toastr: ToastrService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly helperService: HelperService
   ) { }
 
   private loginAttempt = 0;
@@ -690,12 +694,14 @@ export class Stage3Component implements OnInit {
       case 'Hematoma':
         return v === 'y' || v === 'yes';
       case 'Complication':
+      case 'Complications':
         return v !== '-' && v !== 'no' && v !== 'n' && v.length > 0;
       case 'Grunting':
       case 'Chest Indrawing':
       case 'Fast Breathing':
       case 'Skin Color':
       case 'Umbilical Cord Oozing':
+      case 'Feet (warm)':  
         return v === 'y' || v === 'yes';
       case 'Feet Temperature':
         return v === 'n' || v === 'no';
@@ -888,9 +894,9 @@ export class Stage3Component implements OnInit {
     });
   }
 
-  printStage3() {
+  async printStage3() {
     const printContent = document.getElementById('stage3-print-content');
-    if (!printContent) { globalThis.print(); return; }
+    if (!printContent) { return; }
     const css = [
       '* { box-sizing: border-box; }',
       'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
@@ -928,53 +934,82 @@ export class Stage3Component implements OnInit {
     const frameDoc = frameWin?.document;
     if (!frameWin || !frameDoc) {
       iframe.remove();
-      globalThis.print();
       return;
     }
 
     const reportTitle = 'Delivery Outcome Report';
     frameDoc.open();
-    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body>' + printContent.innerHTML + '</body></html>');
+    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body><div id="stage3-print-root">' + printContent.innerHTML + '</div></body></html>');
     frameDoc.close();
 
-    // The browser derives the Save-as-PDF filename from the top-level page's
-    // document.title (not the iframe's), so temporarily switch it to the report
-    // name for the print and restore it afterwards.
-    const prevDocTitle = document.title;
     const cleanup = () => {
-      document.title = prevDocTitle;
       if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
     };
-    frameWin.onafterprint = cleanup;
 
-    const fitAndPrint = () => {
-      const grid = frameDoc.getElementById('stage3-print-table');
-      if (grid) {
-        // A4 portrait printable width at 96dpi with 5mm margins (~756px); stay a
-        // little under. Zoom shrinks the LAYOUT box, so all columns fit the page.
-        const printableWidth = 750;
-        (grid.style as any).zoom = '1';
-        const gridWidth = grid.scrollWidth;
-        const scale = gridWidth > printableWidth ? printableWidth / gridWidth : 1;
-        (grid.style as any).zoom = String(scale);
+    // Wait for fonts to load before rasterising so the width/height is accurate.
+    const waitForFonts = () => new Promise<void>((resolve) => {
+      const fonts = (frameDoc as any).fonts;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+        fonts.ready.then(() => setTimeout(finish, 150));
+        setTimeout(finish, 2000);
+      } else {
+        setTimeout(finish, 500);
       }
-      // Set the filename (via document.title) just before opening the dialog.
-      document.title = reportTitle;
-      frameWin.focus();
-      frameWin.print();
-      // Fallback cleanup in case onafterprint never fires (some mobile browsers).
-      setTimeout(cleanup, 60000);
-    };
+    });
 
-    // Wait for fonts to load before measuring so the width is accurate.
-    const fonts = (frameDoc as any).fonts;
-    let started = false;
-    const run = () => { if (!started) { started = true; fitAndPrint(); } };
-    if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
-      fonts.ready.then(() => setTimeout(run, 150));
-      setTimeout(run, 2000);
-    } else {
-      setTimeout(run, 500);
+    // We render to a PDF and save it rather than calling window.print(), because
+    // the web app runs inside the Intelehealth mobile wrappers (Android WebView /
+    // iOS WKWebView) where JS-initiated printing is a no-op. A downloadable PDF
+    // lets the OS handle printing/sharing.
+    try {
+      await waitForFonts();
+
+      const root = (frameDoc.getElementById('stage3-print-root') as HTMLElement | null) || frameDoc.body;
+      const naturalWidth = root.scrollWidth;
+      const naturalHeight = root.scrollHeight;
+
+      // Cap the raster resolution so a wide report doesn't blow up memory on
+      // low-end devices, while keeping text crisp on smaller ones (never < 1x).
+      const captureScale = Math.max(1, Math.min(2, 2400 / naturalWidth));
+
+      const canvas = await html2canvas(root, {
+        backgroundColor: '#ffffff',
+        scale: captureScale,
+        useCORS: true,
+        windowWidth: naturalWidth,
+        windowHeight: naturalHeight,
+      });
+
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14; // ~5mm
+      const maxWidth = pageWidth - margin * 2;
+
+      // Fit to page width; paginate down the height so tall reports aren't
+      // squashed onto a single page.
+      const imgWidth = maxWidth;
+      const imgHeight = (canvas.height / canvas.width) * imgWidth;
+      const imgData = canvas.toDataURL('image/png');
+
+      let heightLeft = imgHeight;
+      let position = margin;
+      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - margin * 2);
+      while (heightLeft > 0) {
+        pdf.addPage();
+        position = margin - (imgHeight - heightLeft);
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - margin * 2);
+      }
+
+      await this.helperService.deliverPdf(pdf, reportTitle + '.pdf', reportTitle);
+    } catch (err) {
+      console.error('Failed to generate Stage 3 PDF', err);
+    } finally {
+      cleanup();
     }
   }
 

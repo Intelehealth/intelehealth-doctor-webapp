@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Injectable({
   providedIn: "root",
@@ -92,17 +94,55 @@ export class HelperService {
       @page { size: landscape; margin: 5mm; }
       html, body { margin: 0; padding: 0; }
     }
+
+    /*
+     * html2canvas (used to rasterise this table into the PDF) has NO support for
+     * CSS 'writing-mode'. It positions each word using the browser's vertical
+     * layout but paints the glyphs horizontally and then applies the element's
+     * 'transform: rotate(180deg)', which flips the text upside-down/reversed in
+     * the PDF. Since faithful vertical text is impossible here, force these
+     * rotated cells back to normal horizontal, left-to-right flow so the values
+     * render upright and legible. These overrides are last so they win by source
+     * order; they only affect the off-screen PDF render, never the on-screen view.
+     */
+    .value-item.vertical,
+    .value-item.note {
+      writing-mode: horizontal-tb !important;
+      transform: none !important;
+      max-height: none !important;
+      white-space: normal !important;
+      text-align: left;
+    }
+    .vrt-header span {
+      writing-mode: horizontal-tb !important;
+      transform: none !important;
+      max-height: none !important;
+      white-space: normal !important;
+      display: block;
+    }
+    .vrt-header { min-width: 90px; max-width: 120px; }
+    .birth-outcome-con {
+      writing-mode: horizontal-tb !important;
+      transform: translate(-50%, -50%) !important;
+      max-height: none !important;
+      white-space: normal !important;
+      width: max-content;
+      max-width: 140px;
+    }
   `;
 
   /**
-   * Opens the partogram table (identified by `tableId`) in a new window, scales it
-   * to fit A4 landscape and triggers the browser print dialog. Shared by the
-   * partogram and epartogram views.
+   * Renders the partogram table (identified by `tableId`) to a single A4-landscape
+   * PDF and saves it to the device. Shared by the partogram and epartogram views.
+   *
+   * We generate a PDF rather than calling `window.print()` because the web app is
+   * loaded inside the Intelehealth mobile wrappers (Android WebView / iOS
+   * WKWebView), where JS-initiated printing is a no-op — the webview has no print
+   * subsystem to invoke. A downloadable PDF lets the OS handle printing/sharing.
    */
-  printPartogram(tableId: string, title: string = "Partogram") {
+  async printPartogram(tableId: string, title: string = "Partogram") {
     const tableEl = document.getElementById(tableId);
     if (!tableEl) {
-      globalThis.print();
       return;
     }
     const iframe = document.createElement("iframe");
@@ -116,7 +156,6 @@ export class HelperService {
     const frameDoc = frameWin?.document;
     if (!frameWin || !frameDoc) {
       iframe.remove();
-      globalThis.print();
       return;
     }
 
@@ -137,66 +176,100 @@ export class HelperService {
 </html>`);
     frameDoc.close();
 
-    // The browser derives the Save-as-PDF filename from the top-level page's
-    // document.title (not the iframe's), so temporarily switch it to the report
-    // name for the print and restore it afterwards.
-    const prevDocTitle = document.title;
     const cleanup = () => {
-      document.title = prevDocTitle;
       if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
-    };
-    frameWin.onafterprint = cleanup;
-
-    const scaleAndPrint = () => {
-      const wrapper = frameDoc.getElementById("print-wrapper");
-      const table = wrapper ? (wrapper.querySelector("table") as HTMLElement | null) : null;
-      if (wrapper && table) {
-        // A4 landscape printable area at 96dpi with 5mm margins (~1085 x 756);
-        // stay a little under to avoid spilling onto a second/blank page.
-        const printableWidth = 1080;
-        const printableHeight = 740;
-
-        // Measure the natural (unscaled) size of the whole guide. scrollWidth/
-        // scrollHeight give the real content size regardless of the iframe size.
-        wrapper.style.display = "inline-block";
-        wrapper.style.transform = "none";
-        wrapper.style.margin = "0";
-        const naturalWidth = table.scrollWidth;
-        const naturalHeight = table.scrollHeight;
-
-        // Fit the whole guide onto one page in BOTH dimensions (never enlarge).
-        let scale = Math.min(printableWidth / naturalWidth, printableHeight / naturalHeight);
-        if (scale > 1) { scale = 1; }
-
-        // Use `transform: scale()` (not `zoom`) so the table borders scale down
-        // with the content and stay thin rather than looking bold. A transform
-        // doesn't shrink the layout box, so collapse the reserved space with
-        // negative margins — that keeps it to one page with nothing clipped.
-        wrapper.style.transformOrigin = "top left";
-        wrapper.style.transform = "scale(" + scale + ")";
-        wrapper.style.marginRight = ((scale - 1) * naturalWidth) + "px";
-        wrapper.style.marginBottom = ((scale - 1) * naturalHeight) + "px";
-      }
-      // Set the filename (via document.title) just before opening the dialog.
-      document.title = title || prevDocTitle;
-      frameWin.focus();
-      frameWin.print();
-      // Fallback cleanup in case onafterprint never fires (some mobile browsers).
-      setTimeout(cleanup, 60000);
     };
 
     // Wait for fonts (including the async Material Icons webfont) to load before
-    // measuring — otherwise the table is measured shorter than it prints and the
-    // bottom gets clipped. Falls back to a timeout if the Font Loading API is
+    // rasterising — otherwise the table is captured shorter than it renders and
+    // the bottom gets clipped. Falls back to a timeout if the Font Loading API is
     // unavailable or never resolves.
-    const fonts = (frameDoc as any).fonts;
-    let started = false;
-    const run = () => { if (!started) { started = true; scaleAndPrint(); } };
-    if (fonts && fonts.ready && typeof fonts.ready.then === "function") {
-      fonts.ready.then(() => setTimeout(run, 150));
-      setTimeout(run, 2000);
-    } else {
-      setTimeout(run, 600);
+    const waitForFonts = () => new Promise<void>((resolve) => {
+      const fonts = (frameDoc as any).fonts;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      if (fonts && fonts.ready && typeof fonts.ready.then === "function") {
+        fonts.ready.then(() => setTimeout(finish, 150));
+        setTimeout(finish, 2000);
+      } else {
+        setTimeout(finish, 600);
+      }
+    });
+
+    try {
+      await waitForFonts();
+
+      const wrapper = (frameDoc.getElementById("print-wrapper") as HTMLElement | null) || frameDoc.body;
+      const naturalWidth = wrapper.scrollWidth;
+      const naturalHeight = wrapper.scrollHeight;
+
+      // Cap the raster resolution so a very wide guide doesn't blow up memory on
+      // low-end devices, while keeping text crisp on smaller ones (never < 1x).
+      const captureScale = Math.max(1, Math.min(2, 3000 / naturalWidth));
+
+      const canvas = await html2canvas(wrapper, {
+        backgroundColor: "#ffffff",
+        scale: captureScale,
+        useCORS: true,
+        windowWidth: naturalWidth,
+        windowHeight: naturalHeight,
+      });
+
+      const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14; // ~5mm
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - margin * 2;
+
+      // Fit the whole guide onto one page in BOTH dimensions, preserving aspect.
+      const imgRatio = canvas.width / canvas.height;
+      let renderWidth = maxWidth;
+      let renderHeight = renderWidth / imgRatio;
+      if (renderHeight > maxHeight) {
+        renderHeight = maxHeight;
+        renderWidth = renderHeight * imgRatio;
+      }
+      const offsetX = (pageWidth - renderWidth) / 2;
+      const offsetY = (pageHeight - renderHeight) / 2;
+
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", offsetX, offsetY, renderWidth, renderHeight);
+      await this.deliverPdf(pdf, `${title || "Partogram"}.pdf`, title || "Partogram");
+    } catch (err) {
+      console.error("Failed to generate partogram PDF", err);
+    } finally {
+      cleanup();
     }
+  }
+
+  /**
+   * Hands a generated PDF to the OS. On mobile (and any browser that supports
+   * sharing files) this opens the native share sheet, which includes a "Print"
+   * action (AirPrint on iOS, Print on Android) as well as Save/share targets —
+   * this is how the user reaches a real print option inside the webview, where
+   * `window.print()` does nothing. Falls back to a plain file download when file
+   * sharing isn't available or the share is dismissed with an error.
+   */
+  async deliverPdf(pdf: jsPDF, filename: string, title: string = "Report") {
+    const nav = navigator as any;
+    try {
+      const blob = pdf.output("blob");
+      const file = new File([blob], filename, { type: "application/pdf" });
+      if (nav.canShare && nav.canShare({ files: [file] })) {
+        try {
+          await nav.share({ files: [file], title });
+          return;
+        } catch (err) {
+          // User dismissed the share sheet — don't also trigger a download.
+          if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
+            return;
+          }
+          // Any other share failure falls through to a download below.
+        }
+      }
+    } catch (err) {
+      console.error("PDF share failed, falling back to download", err);
+    }
+    pdf.save(filename);
   }
 }

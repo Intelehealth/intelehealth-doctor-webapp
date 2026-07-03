@@ -622,9 +622,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
         if (this.birthOutcome == 'Other' || this.birthOutcome == 'OTHER') {
           this.birthOutcomeOther = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
         }
-        this.motherDeceased = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
-        if (this.motherDeceased == 'YES') {
-          this.motherDeceasedReason = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
+        this.motherDeceased = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
+        if (this.motherDeceased) {
+          this.motherDeceasedReason = this.motherDeceased;
         }
       }
 

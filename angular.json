@@ -24,7 +24,9 @@
               "pdfjs-dist/build/pdf",
               "pdfjs-dist/web/pdf_viewer",
               "intro.js/intro.js",
-              "moment"
+              "moment",
+              "jspdf",
+              "html2canvas"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",
