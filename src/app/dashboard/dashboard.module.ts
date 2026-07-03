@@ -39,6 +39,7 @@ import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruct
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
 import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
+import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -59,6 +60,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     NotesComponent,
     FollowUpInstructionComponent,
     DigitalStethoscopeComponent,
+    VisitSummaryV2Component,
   ],
   imports: [
     IhLibraryModule,
