@@ -628,11 +628,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
         }
       }
 
-      this.apgar1 = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Apgar at 1 min')?.value;
-      this.apgar5 = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
-      this.birthWeight = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
-      this.babyStatus = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Baby status')?.value;
-      this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
+      this.apgar1 = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Apgar at 1 min')?.value;
+      this.apgar5 = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
+      this.birthWeight = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
+      this.babyStatus = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'BIRTH_TYPE')?.value;
+      this.babyGender = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
 
       setTimeout(() => {
         document.querySelector('#vcd').scrollIntoView();

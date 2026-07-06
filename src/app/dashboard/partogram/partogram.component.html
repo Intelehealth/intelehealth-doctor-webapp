@@ -1258,9 +1258,9 @@
                       <tr>
                         <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Newborn</td>
                       </tr>
-                      <ng-container *ngIf="motherDeceased != 'YES'||(motherDeceased == 'YES' && birthOutcome)">
+                      <ng-container>
                         <tr>
-                          <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                          <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{babyStatus}}</td>
                           <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                         </tr>
                         <tr *ngIf="birthOutcome !== 'Other'&&birthOutcome !== 'OTHER'">
