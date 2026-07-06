@@ -701,9 +701,9 @@ export class Stage3Component implements OnInit {
       case 'Fast Breathing':
       case 'Skin Color':
       case 'Umbilical Cord Oozing':
-      case 'Feet (warm)':  
         return v === 'y' || v === 'yes';
       case 'Feet Temperature':
+      case 'Feet (warm)':    
         return v === 'n' || v === 'no';
       case 'Sucking / Feeding':
         return v === 'n' || v === 'no';
