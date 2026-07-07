@@ -2440,6 +2440,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
 
                       this.notifyHwForAvailablePrescription("","",followUpDate);
+                      // Prescription just shared -> notify the patient on WhatsApp
+                      // via Turn, only on a Turn-enabled server (environment flag).
+                      if (environment.isTurnServer) {
+                        this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+                      }
                       this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
                       if (this.appConfigService.abha_section) {

@@ -93,6 +93,29 @@ export class MindmapService {
     return this.http.post(`${environment.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
   }
 
+  /**
+  * Notify the patient on WhatsApp (via the Turn microservice) that their
+  * prescription is ready. Gated by the environment.isTurnServer flag: only runs
+  * when that flag is true, so environments that don't enable it keep their
+  * existing behaviour with no change. turn-io resolves the patient's phone from
+  * the visit itself, so it only needs the visit_uuid. Fire-and-forget.
+  * @param {string} visitUuid - OpenMRS visit uuid of the shared prescription
+  * @return {void}
+  */
+  notifyPrescriptionOnTurn(visitUuid: string): void {
+    const isTurnServer = (environment as any).isTurnServer === true;
+    const turnUrl = (environment as any).turnNotifyURL;
+    if (!isTurnServer || !turnUrl || !visitUuid) {
+      return;
+    }
+    this.http
+      .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, { visit_uuid: visitUuid })
+      .subscribe({
+        next: () => console.log('Turn prescription notify sent'),
+        error: (err) => console.error('Turn prescription notify failed:', err)
+      });
+  }
+
 
   /**
   * Send notification to health worker for available prescription
