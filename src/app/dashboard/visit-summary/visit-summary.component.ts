@@ -2441,7 +2441,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
                       this.notifyHwForAvailablePrescription("","",followUpDate);
                       // Prescription just shared -> notify the patient on WhatsApp
-                      // via Turn, only on a Turn-enabled server (environment flag).
                       if (environment.isTurnServer) {
                         this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
                       }

@@ -95,10 +95,7 @@ export class MindmapService {
 
   /**
   * Notify the patient on WhatsApp (via the Turn microservice) that their
-  * prescription is ready. Gated by the environment.isTurnServer flag: only runs
-  * when that flag is true, so environments that don't enable it keep their
-  * existing behaviour with no change. turn-io resolves the patient's phone from
-  * the visit itself, so it only needs the visit_uuid. Fire-and-forget.
+  * prescription is ready.
   * @param {string} visitUuid - OpenMRS visit uuid of the shared prescription
   * @return {void}
   */
