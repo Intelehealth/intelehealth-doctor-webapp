@@ -101,7 +101,7 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
     MatSnackBarModule,
     HttpClientModule,
     MatMenuModule,
-    ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
+    ServiceWorkerModule.register(environment.serviceWorkerPath, {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),

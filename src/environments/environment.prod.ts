@@ -16,6 +16,13 @@ const CAPTCHA_KEYS: Record<Client, { captchaSiteKey: string; siteKey: string }> 
 
 const { captchaSiteKey, siteKey } = CAPTCHA_KEYS[CLIENT];
 
+/* Base directory the app is deployed under (e.g. `/` on nepalezazi, `/intelehealth/`
+ on path-based deployments). With HashLocationStrategy this always equals the deploy
+ base, so registering the service worker here keeps its scope covering the app.*/
+const DEPLOY_BASE = window.location.pathname.endsWith('/')
+  ? window.location.pathname
+  : window.location.pathname.replace(/[^/]*$/, '');
+
 export const environment = {
   production: true,
   client: CLIENT,
@@ -37,4 +44,5 @@ export const environment = {
   externalPrescriptionCred: envConfig.externalPrescriptionCred,
   vapidPublicKey: envConfig.vapidPublicKey,
   recordsPerPage: envConfig.recordsPerPage,
+  serviceWorkerPath: `${DEPLOY_BASE}custom-service-worker.js`,
 };

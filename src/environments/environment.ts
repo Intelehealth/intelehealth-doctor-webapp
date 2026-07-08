@@ -44,4 +44,5 @@ export const environment = {
   externalPrescriptionCred: envConfig.externalPrescriptionCred,
   vapidPublicKey: envConfig.vapidPublicKey,
   recordsPerPage: envConfig.recordsPerPage,
+  serviceWorkerPath: 'custom-service-worker.js',
 };
