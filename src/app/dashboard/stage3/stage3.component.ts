@@ -40,6 +40,7 @@ export class Stage3Component implements OnInit {
   patient: any;
   pinfo: any = {};
   loading = false;
+  showViewElcg = false;
 
   deliveryOutcome = {
     deliveryDate: '-',
@@ -117,7 +118,9 @@ export class Stage3Component implements OnInit {
     private readonly toastr: ToastrService,
     private readonly authService: AuthService,
     private readonly helperService: HelperService
-  ) { }
+  ) {
+     this.showViewElcg = !!this.router.getCurrentNavigation()?.extras?.state?.['fromVisitSummary'];
+  }
 
   private loginAttempt = 0;
   private loginExternalThenFetch(uuid: string) {

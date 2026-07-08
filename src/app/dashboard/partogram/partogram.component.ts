@@ -1395,7 +1395,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.router.navigate(['/dashboard/stage3', this.visit.uuid]);
+    this.router.navigate(['/dashboard/stage3', this.visit.uuid], {
+      state: { fromVisitSummary: true }
+    });
   }
 
 }
