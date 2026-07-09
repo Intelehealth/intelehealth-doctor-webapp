@@ -2496,6 +2496,20 @@
         *ngIf="visitNotePresent && visitCompleted" data-test-id="btnViewPrescription">
         {{'View Prescription'|translate}}
       </button>
+
+      <div class="magic-link-wrap" *ngIf="isTurnServer && isVisitNoteProvider && !visitEnded && hasWebRTCEnabled">
+        <button type="button" class="blue-btn mb-2" *ngIf="!magicLinkUrl" (click)="onGenerateMagicLink()"
+          [disabled]="generatingMagicLink" data-test-id="btnGenerateMagicLink">
+          {{ (generatingMagicLink ? 'Generating link...' : 'Generate video call link') | translate }}
+        </button>
+        <div class="magic-link-box" *ngIf="magicLinkUrl">
+          <input type="text" class="magic-link-input" [value]="magicLinkUrl" readonly
+            (focus)="$any($event.target).select()" data-test-id="inputMagicLink" />
+          <button type="button" class="blue-btn m-0" (click)="copyMagicLink()" data-test-id="btnCopyMagicLink">
+            {{ 'Copy' | translate }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

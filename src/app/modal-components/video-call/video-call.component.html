@@ -32,12 +32,6 @@
           "
           class="main-container"
         >
-          <div *ngIf="isReconnecting" class="reconnecting-banner">
-            <div class="reconnecting-content">
-              <div class="reconnecting-spinner"></div>
-              <span class="reconnecting-text">Reconnecting...</span>
-            </div>
-          </div>
           <div class="remote-con" [class.minimized]="_minimized" [class.video-on]="!_remoteVideoOff">
             <div class="network-status-container" [ngClass]="networkQualityClass(localConnectionQuality)">
               <div class="network-bars">
@@ -69,15 +63,6 @@
               </div>
             </div>
             <div class="video-controls">
-              <button
-                type="button"
-                class="video-ctrl-btn red"
-                (click)="endCallInRoom();setFlag();"
-                data-test-id="btnEnd"
-               [class.minimized]="_minimized"
-              >
-                <img src="assets/svgs/call-end.svg" alt="" />
-              </button>
               <button
                 type="button"
                 class="video-ctrl-btn"
@@ -113,6 +98,15 @@
                   alt=""
                 />
                 <span class="ctrl-indicator" *ngIf="cameraIssue" title="Camera issue">!</span>
+              </button>
+              <button
+                type="button"
+                class="video-ctrl-btn red"
+                (click)="endCallInRoom();setFlag();"
+                data-test-id="btnEnd"
+               [class.minimized]="_minimized"
+              >
+                <img src="assets/svgs/call-end.svg" alt="" />
               </button>
             </div>
               <button
