@@ -1123,3 +1123,34 @@ th.mat-header-cell:last-child {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.magic-link-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.magic-link-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid #d7dce5;
+  border-radius: 8px;
+  background: #f7f9fc;
+}
+
+.magic-link-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: #4a5568;
+  text-overflow: ellipsis;
+}
