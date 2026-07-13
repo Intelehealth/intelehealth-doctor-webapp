@@ -5,7 +5,7 @@
         <div class="card-body">
           <div class="py-2 d-flex align-items-center" [class.justify-content-between]="showViewElcg" [class.justify-content-end]="!showViewElcg">
             <button *ngIf="showViewElcg" class="blue-btn" type="button" (click)="backToStage12()">View eLCG</button>
-            <button class="icon-action-btn" type="button" (click)="printStage3Native()" matTooltip="Print" matTooltipPosition="below">
+            <button *ngIf="showViewElcg" class="icon-action-btn" type="button" (click)="printStage3Native()" matTooltip="Print" matTooltipPosition="below">
               <mat-icon>print</mat-icon>
             </button>
           </div>
@@ -134,7 +134,7 @@
             </div>
           </div>
 
-          <div class="intel-card mt-4" *ngIf="userId">
+          <div class="intel-card mt-4" *ngIf="userId && showViewElcg">
             <div class="card-header">
               <h6 class="mb-0">Share decision making - Early Post Partum</h6>
             </div>

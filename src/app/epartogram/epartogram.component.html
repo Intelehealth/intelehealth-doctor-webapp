@@ -3,11 +3,11 @@
     <div class="col-md-12 p-0">
       <div class="intel-card">
         <div class="card-body">
-          <div class="py-2 d-flex align-items-center justify-content-end">
+          <!-- <div class="py-2 d-flex align-items-center justify-content-end">
             <button class="icon-action-btn" type="button" (click)="printPartogram()" matTooltip="Print" matTooltipPosition="below">
               <mat-icon>print</mat-icon>
             </button>
-          </div>
+          </div> -->
           <div class="table-responsive d-flex">
             <table id="epartogram-print-table" class="table table-bordered bg-white">
               <tbody>
@@ -953,9 +953,9 @@
                             <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                           </ng-container>
                         </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
+                        <!-- <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
                           <mat-icon>open_in_new</mat-icon>
-                        </button>
+                        </button> -->
                       </div>
                     </td>
                   </ng-container>
@@ -968,9 +968,9 @@
                             <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                           </ng-container>
                         </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
+                        <!-- <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
                           <mat-icon>open_in_new</mat-icon>
-                        </button>
+                        </button> -->
                       </div>
                     </td>
                   </ng-container>
@@ -988,9 +988,9 @@
                             <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                           </ng-container>
                         </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
+                        <!-- <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
                           <mat-icon>open_in_new</mat-icon>
-                        </button>
+                        </button> -->
                       </div>
                     </td>
                   </ng-container>
@@ -1002,9 +1002,9 @@
                             <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
                           </ng-container>
                         </ng-container>
-                        <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
+                        <!-- <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
                           <mat-icon>open_in_new</mat-icon>
-                        </button>
+                        </button> -->
                       </div>
                     </td>
                   </ng-container>
@@ -1047,7 +1047,7 @@
             </table>
           </div>
 
-          <div class="intel-card mt-5">
+          <!-- <div class="intel-card mt-5">
             <div class="card-header justify-content-between">
               <h6 class="mb-0">MEDICATION / OXYTOCIN / IV FLUIDS</h6>
               <div class="text-right">
@@ -1130,8 +1130,7 @@
                 </mat-expansion-panel>
               </mat-accordion>
             </div>
-          </div>
-
+          </div> 
           <div class="intel-card mt-5" *ngIf="visitCompleted" id="vcd">
             <div class="card-header">
               <h6 class="mb-0">Visit Complete Details</h6>
@@ -1187,10 +1186,13 @@
           </div>
 
           <div class="intel-card mt-5" *ngIf="false">
-            <div class="card-header">
+            <div class="card-header d-flex align-items-center justify-content-between">
               <h6 class="mb-0">Stage 3 - Early Postpartum Monitoring</h6>
+              <button class="icon-action-btn" type="button" (click)="printStage3()" matTooltip="Print" matTooltipPosition="below">
+                <mat-icon>print</mat-icon>
+              </button>
             </div>
-            <div class="card-body bg-white">
+            <div id="stage3-print-table" class="card-body bg-white">
               <div class="table-responsive mb-3">
                 <table class="table table-bordered mb-0">
                   <tbody>
@@ -1285,7 +1287,7 @@
                 </table>
               </div>
             </div>
-          </div>
+          </div>-->
 
         </div>
       </div>

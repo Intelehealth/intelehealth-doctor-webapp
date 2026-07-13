@@ -477,7 +477,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   printPartogram() {
-    this.helperService.printPartogram('partogram-print-table');
+    this.helperService.printPartogramNative('partogram-print-table');
   }
 
   ngOnInit(): void {

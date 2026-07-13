@@ -1116,7 +1116,11 @@ export class EpartogramComponent implements OnInit {
   }
 
   printPartogram() {
-    this.helperService.printPartogram('epartogram-print-table');
+    this.helperService.printPartogramNative('epartogram-print-table');
+  }
+
+  printStage3() {
+    this.helperService.printSectionNative('stage3-print-table', 'Delivery Outcome Report');
   }
 
   checkIfFutureEncounterExists(futureStartIndex) {

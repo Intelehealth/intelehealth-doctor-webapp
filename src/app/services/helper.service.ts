@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 
 @Injectable({
   providedIn: "root",
@@ -94,57 +93,53 @@ export class HelperService {
       @page { size: landscape; margin: 5mm; }
       html, body { margin: 0; padding: 0; }
     }
-
-    /*
-     * html2canvas (used to rasterise this table into the PDF) has NO support for
-     * CSS 'writing-mode'. It positions each word using the browser's vertical
-     * layout but paints the glyphs horizontally and then applies the element's
-     * 'transform: rotate(180deg)', which flips the text upside-down/reversed in
-     * the PDF. Since faithful vertical text is impossible here, force these
-     * rotated cells back to normal horizontal, left-to-right flow so the values
-     * render upright and legible. These overrides are last so they win by source
-     * order; they only affect the off-screen PDF render, never the on-screen view.
-     */
-    .value-item.vertical,
-    .value-item.note {
-      writing-mode: horizontal-tb !important;
-      transform: none !important;
-      max-height: none !important;
-      white-space: normal !important;
-      text-align: left;
-    }
-    .vrt-header span {
-      writing-mode: horizontal-tb !important;
-      transform: none !important;
-      max-height: none !important;
-      white-space: normal !important;
-      display: block;
-    }
-    .vrt-header { min-width: 90px; max-width: 120px; }
-    .birth-outcome-con {
-      writing-mode: horizontal-tb !important;
-      transform: translate(-50%, -50%) !important;
-      max-height: none !important;
-      white-space: normal !important;
-      width: max-content;
-      max-width: 140px;
-    }
   `;
 
+
   /**
-   * Renders the partogram table (identified by `tableId`) to a single A4-landscape
-   * PDF and saves it to the device. Shared by the partogram and epartogram views.
+   * Prints the partogram table (identified by `tableId`) via the browser's native
+   * print dialog (`window.print()`). Used by the epartogram print button.
    *
-   * We generate a PDF rather than calling `window.print()` because the web app is
-   * loaded inside the Intelehealth mobile wrappers (Android WebView / iOS
-   * WKWebView), where JS-initiated printing is a no-op — the webview has no print
-   * subsystem to invoke. A downloadable PDF lets the OS handle printing/sharing.
+   * The table is written into an off-screen iframe with the shared print CSS and
+   * printed from there so the surrounding app chrome is excluded. The browser's
+   * print engine renders CSS 'writing-mode' correctly, so vertical text is
+   * preserved.
    */
-  async printPartogram(tableId: string, title: string = "Partogram") {
+  async printPartogramNative(tableId: string, title: string = "Partogram") {
     const tableEl = document.getElementById(tableId);
     if (!tableEl) {
       return;
     }
+    // The target IS a <table>, so re-wrap its rows in a fresh table element.
+    await this.printHtmlNative(
+      `<table class="table table-bordered bg-white">${tableEl.innerHTML}</table>`,
+      title
+    );
+  }
+
+  /**
+   * Prints an arbitrary section (identified by `elementId`) via the browser's
+   * native print dialog. Unlike `printPartogramNative`, the element's markup is
+   * printed as-is, so it works for sections containing several tables (e.g. the
+   * epartogram Stage 3 view).
+   */
+  async printSectionNative(elementId: string, title: string = "Partogram") {
+    const el = document.getElementById(elementId);
+    if (!el) {
+      return;
+    }
+    await this.printHtmlNative(el.innerHTML, title);
+  }
+
+  /**
+   * Writes `bodyHtml` into an off-screen iframe with the shared print CSS and
+   * invokes the browser's native print dialog (`window.print()`) from there, so
+   * the surrounding app chrome is excluded. Shared by the native-print helpers.
+   *
+   * A real print engine renders CSS 'writing-mode' correctly, so vertical text
+   * is preserved.
+   */
+  private async printHtmlNative(bodyHtml: string, title: string = "Partogram") {
     const iframe = document.createElement("iframe");
     iframe.setAttribute("aria-hidden", "true");
     // Off-screen but with a real size so the table lays out and measures
@@ -169,9 +164,7 @@ export class HelperService {
     <style>${this.partogramPrintCss}</style>
   </head>
   <body>
-    <div id="print-wrapper">
-      <table class="table table-bordered bg-white">${tableEl.innerHTML}</table>
-    </div>
+    <div id="print-wrapper">${bodyHtml}</div>
   </body>
 </html>`);
     frameDoc.close();
@@ -181,9 +174,8 @@ export class HelperService {
     };
 
     // Wait for fonts (including the async Material Icons webfont) to load before
-    // rasterising — otherwise the table is captured shorter than it renders and
-    // the bottom gets clipped. Falls back to a timeout if the Font Loading API is
-    // unavailable or never resolves.
+    // printing — otherwise the print preview is captured before glyphs render.
+    // Falls back to a timeout if the Font Loading API is unavailable.
     const waitForFonts = () => new Promise<void>((resolve) => {
       const fonts = (frameDoc as any).fonts;
       let done = false;
@@ -196,48 +188,29 @@ export class HelperService {
       }
     });
 
+    const prevTitle = document.title;
+
     try {
       await waitForFonts();
+      // Remove the iframe and restore the page title once the print dialog is
+      // dismissed. Guard against 'afterprint' never firing (some browsers) with a
+      // fallback timeout.
+      let cleaned = false;
+      const cleanupOnce = () => {
+        if (cleaned) { return; }
+        cleaned = true;
+        document.title = prevTitle;
+        cleanup();
+      };
+      frameWin.addEventListener("afterprint", cleanupOnce);
+      setTimeout(cleanupOnce, 60000);
 
-      const wrapper = (frameDoc.getElementById("print-wrapper") as HTMLElement | null) || frameDoc.body;
-      const naturalWidth = wrapper.scrollWidth;
-      const naturalHeight = wrapper.scrollHeight;
-
-      // Cap the raster resolution so a very wide guide doesn't blow up memory on
-      // low-end devices, while keeping text crisp on smaller ones (never < 1x).
-      const captureScale = Math.max(1, Math.min(2, 3000 / naturalWidth));
-
-      const canvas = await html2canvas(wrapper, {
-        backgroundColor: "#ffffff",
-        scale: captureScale,
-        useCORS: true,
-        windowWidth: naturalWidth,
-        windowHeight: naturalHeight,
-      });
-
-      const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 14; // ~5mm
-      const maxWidth = pageWidth - margin * 2;
-      const maxHeight = pageHeight - margin * 2;
-
-      // Fit the whole guide onto one page in BOTH dimensions, preserving aspect.
-      const imgRatio = canvas.width / canvas.height;
-      let renderWidth = maxWidth;
-      let renderHeight = renderWidth / imgRatio;
-      if (renderHeight > maxHeight) {
-        renderHeight = maxHeight;
-        renderWidth = renderHeight * imgRatio;
-      }
-      const offsetX = (pageWidth - renderWidth) / 2;
-      const offsetY = (pageHeight - renderHeight) / 2;
-
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", offsetX, offsetY, renderWidth, renderHeight);
-      await this.deliverPdf(pdf, `${title || "Partogram"}.pdf`, title || "Partogram");
+      document.title = title;
+      frameWin.focus();
+      frameWin.print();
     } catch (err) {
-      console.error("Failed to generate partogram PDF", err);
-    } finally {
+      console.error("Failed to print partogram", err);
+      document.title = prevTitle;
       cleanup();
     }
   }

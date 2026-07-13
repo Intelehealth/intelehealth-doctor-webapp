@@ -1016,6 +1016,95 @@ export class Stage3Component implements OnInit {
     }
   }
 
+  /**
+   * Prints the Stage 3 report via the browser's native print dialog
+   * (window.print()). Kept alongside `printStage3()` (which generates a PDF for
+   * the mobile webview) so a real print option is available in desktop browsers.
+   */
+  printStage3Native() {
+    const printContent = document.getElementById('stage3-print-content');
+    if (!printContent) { return; }
+    const css = [
+      '* { box-sizing: border-box; }',
+      'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
+      'table { border-collapse: collapse; }',
+      'th, td { border: 1px solid #000; padding: 5px 7px; font-size: 11px; text-align: center; vertical-align: middle; word-wrap: break-word; }',
+      '.delivery-outcome { margin-bottom: 12px; }',
+      '.delivery-outcome td { white-space: normal; }',
+      '.delivery-outcome td.amtsl-medication-cell { white-space: pre-line; }',
+      '.page-title-row td, .delivery-title-row td { font-weight: bold; }',
+      'td span { font-weight: bold; }',
+      '.section-header-row td { background: #c8e6c9; font-weight: bold; text-align: left; }',
+      'td.param-label { text-align: left; min-width: 160px; font-weight: bold; }',
+      '.obs-chip { background: #e3f2fd; border-radius: 3px; padding: 1px 3px; margin: 1px; display: inline-block; }',
+      '.alert-value { color: #d32f2f; background: #ffebee; border-radius: 4px; }',
+      '.sos-badge { display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; color: #fff; background: #d32f2f; border-radius: 8px; letter-spacing: 0.5px; }',
+      '.sos-col-header { background: #d32f2f !important; color: #fff !important; }',
+      '.sos-col-header .time-label, .sos-col-header small { color: #fff !important; }',
+      'table { width: 100%; table-layout: auto; }',
+      '.table-responsive { overflow: visible !important; }',
+      '#stage3-print-table { width: auto; table-layout: auto; }',
+      '@media print { @page { size: portrait; margin: 5mm; } }'
+    ].join(' ');
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    // Off-screen but with a real size so the grid lays out and measures correctly.
+    iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1200px;height:1600px;border:0;';
+    document.body.appendChild(iframe);
+
+    const frameWin = iframe.contentWindow;
+    const frameDoc = frameWin?.document;
+    if (!frameWin || !frameDoc) {
+      iframe.remove();
+      return;
+    }
+
+    const reportTitle = 'Delivery Outcome Report';
+    frameDoc.open();
+    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body><div id="stage3-print-root">' + printContent.innerHTML + '</div></body></html>');
+    frameDoc.close();
+
+    const cleanup = () => {
+      if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+    };
+
+    // Wait for fonts to load before printing so the layout is complete.
+    const waitForFonts = () => new Promise<void>((resolve) => {
+      const fonts = (frameDoc as any).fonts;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+        fonts.ready.then(() => setTimeout(finish, 150));
+        setTimeout(finish, 2000);
+      } else {
+        setTimeout(finish, 500);
+      }
+    });
+
+    const prevTitle = document.title;
+
+    waitForFonts().then(() => {
+      let cleaned = false;
+      const cleanupOnce = () => {
+        if (cleaned) { return; }
+        cleaned = true;
+        document.title = prevTitle;
+        cleanup();
+      };
+      frameWin.addEventListener('afterprint', cleanupOnce);
+      setTimeout(cleanupOnce, 60000);
+
+      document.title = reportTitle;
+      frameWin.focus();
+      frameWin.print();
+    }).catch((err) => {
+      console.error('Failed to print Stage 3 report', err);
+      document.title = prevTitle;
+      cleanup();
+    });
+  }
+
   backToStage12() {
     if (this.visit?.uuid) {
       this.router.navigate(['/dashboard/elcg', this.visit.uuid], {
