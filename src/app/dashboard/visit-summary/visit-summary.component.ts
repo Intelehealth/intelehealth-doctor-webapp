@@ -680,13 +680,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -2903,13 +2907,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Check if medication has been modified (for AI medications)
     this.checkMedicationModification(medicine);
 
-    const aiMeta = medicine.aiGenerated ? JSON.stringify({
-      ai: true,
-      ...(medicine.rationale?.length && { r: medicine.rationale }),
-      ...(medicine.likelihood && { l: medicine.likelihood })
-    }) : '';
-
-    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}:${aiMeta}`;
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
   }
 
   saveDiscussionSummary(): Observable<any>{

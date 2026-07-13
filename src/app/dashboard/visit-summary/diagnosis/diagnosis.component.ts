@@ -334,13 +334,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
