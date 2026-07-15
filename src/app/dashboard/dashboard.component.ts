@@ -36,6 +36,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   completedCases: any = [];
 
   specialization: string = '';
+  facilityUuid: string = '';
   priorityVisitsCount: number = 0;
   inprogressVisitsCount: number = 0;
   completedVisitsCount: number = 0;
@@ -214,6 +215,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
+        this.facilityUuid = this.getFacilityUuid(provider.attributes);
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
@@ -232,7 +234,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getPriorityVisits(page: number = 1) {
     if(page == 1) this.priorityCases = [];
-    this.visitService.getPriorityVisits(page).subscribe((pv: any) => {
+    this.visitService.getPriorityVisits(page, this.facilityUuid).subscribe((pv: any) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
         this.priorityRecordsFetched += this.offset;
@@ -270,7 +272,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getInProgressVisits(page: number = 1) {
     if(page == 1) this.normalCases = [];
-    this.visitService.getInProgressVisits(page).subscribe((iv: any) => {
+    this.visitService.getInProgressVisits(page, this.facilityUuid).subscribe((iv: any) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
         this.inprogressRecordsFetched += this.offset;
@@ -308,7 +310,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getCompletedVisits(page: number = 1) {
     if(page == 1) this.completedCases = [];
-    this.visitService.getCompletedVisits(page).subscribe((com: any) => {
+    this.visitService.getCompletedVisits(page, this.facilityUuid).subscribe((com: any) => {
       if (com.success) {
         this.completedVisitsCount = com.totalCount;
         this.completedRecordsFetched += this.offset;
@@ -486,6 +488,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
     return specialization;
+  }
+
+  getFacilityUuid(attr: any) {
+    let facilityUuid = '';
+    attr.forEach((a: any) => {
+      if (a.attributeType.display == 'facility_name' && !a.voided) {
+        facilityUuid = a.value;
+      }
+    });
+    return facilityUuid;
   }
 
   onImgError(event: any) {

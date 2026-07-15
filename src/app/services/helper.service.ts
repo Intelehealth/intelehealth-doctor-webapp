@@ -43,7 +43,7 @@ export class HelperService {
   }
 
   private readonly partogramPrintCss = `
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { margin: 0; padding: 0; font-family: 'DM Sans', Arial, sans-serif; }
     #print-wrapper { display: inline-block; transform-origin: top left; }
     table { width: max-content; border-collapse: collapse; font-family: 'DM Sans', Arial, sans-serif; table-layout: auto; }
@@ -88,7 +88,7 @@ export class HelperService {
     .flex-column { flex-direction: column; }
     h1 { font-size: 22px; font-weight: bold; text-align: center; margin: 0; }
     h5 { font-size: 14px; font-weight: bold; margin: 0; }
-    mat-icon { font-family: 'Material Icons'; font-size: 18px; display: inline-block; vertical-align: middle; }
+    button[mat-icon-button], .mat-icon-button, .mat-mdc-icon-button, .mat-mdc-button-touch-target, .mat-mdc-button-ripple, .mat-mdc-focus-indicator { display: none !important; }
     @media print {
       @page { size: landscape; margin: 5mm; }
       html, body { margin: 0; padding: 0; }
@@ -192,6 +192,18 @@ export class HelperService {
 
     try {
       await waitForFonts();
+      const wrapper = frameDoc.getElementById("print-wrapper");
+      if (wrapper) {
+        const PRINTABLE_WIDTH_PX = ((297 - 10) * 96) / 25.4;
+        const contentWidth = wrapper.scrollWidth;
+        if (contentWidth > PRINTABLE_WIDTH_PX) {
+          const scale = PRINTABLE_WIDTH_PX / contentWidth;
+          wrapper.style.transform = `scale(${scale})`;
+          // A transform doesn't shrink the layout box, so reserve the scaled
+          // height to avoid a trailing blank page.
+          wrapper.style.height = `${wrapper.scrollHeight * scale}px`;
+        }
+      }
       // Remove the iframe and restore the page title once the print dialog is
       // dismissed. Guard against 'afterprint' never firing (some browsers) with a
       // fallback timeout.

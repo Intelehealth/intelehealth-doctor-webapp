@@ -324,6 +324,8 @@ export class PartogramComponent implements OnInit, OnDestroy {
   outOfTimeReason: string;
   referTypeOtherReason: string;
   membraneRupturedIsDate = false;
+  // 'Membrane Ruptured Timestamp' carries a status code instead of a time when there is no rupture to record.
+  readonly membraneStatusText: { [code: string]: string } = { I: 'Intact', U: 'Unknown' };
   birthOutcomeOther: string;
   motherDeceased: string;
   motherDeceasedReason: string;
@@ -565,13 +567,13 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
     if (this.pinfo['MembraneRupturedTimestamp']) {
       const mrVal = String(this.pinfo['MembraneRupturedTimestamp']).trim();
-      const parsed = moment(mrVal, 'DD/MM/YYYY hh:mm A', true);
+      const parsed = moment(mrVal, [moment.ISO_8601, 'DD/MM/YYYY hh:mm A', 'DD/MM/YYYY HH:mm', 'DD/MM/YYYY'] as any, true);
       if (parsed.isValid()) {
         this.pinfo['MembraneRupturedTimestamp'] = parsed.toISOString();
         this.membraneRupturedIsDate = true;
       } else {
-
-        this.pinfo['MembraneRupturedTimestamp'] = mrVal.toUpperCase();
+        const code = mrVal.toUpperCase();
+        this.pinfo['MembraneRupturedTimestamp'] = this.membraneStatusText[code] || code;
         this.membraneRupturedIsDate = false;
       }
     }

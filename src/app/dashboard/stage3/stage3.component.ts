@@ -668,7 +668,7 @@ export class Stage3Component implements OnInit {
     return -1;
   }
 
-  isAlert(paramName: string, value: any): boolean {
+  isAlert(section: 'maternal' | 'newborn', paramName: string, value: any): boolean {
     if (value === undefined || value === null || value === '' || value === '-') return false;
     const v = String(value).trim().toLowerCase();
     const num = parseFloat(v);
@@ -683,11 +683,14 @@ export class Stage3Component implements OnInit {
         return (!isNaN(sys) && (sys < 80 || sys >= 140)) || (!isNaN(dia) && dia >= 90);
       }
       case 'Temprature °f':
-        return !isNaN(num) && (num < 95 || num >= 99.5);
+        if (isNaN(num)) return false;
+        return section === 'newborn'
+          ? (num < 97.7 || num > 99.5)
+          : (num < 95 || num >= 99.5);
       case 'Respiratory Rate':
-        return !isNaN(num) && num > 30;
+        return !isNaN(num) && num > (section === 'newborn' ? 60 : 30);
       case 'SPO2':
-        return !isNaN(num) && num < 92;  
+        return !isNaN(num) && num < 92;
       case 'Blood Loss':
         return !isNaN(num) && num >= 500;
       case 'Uterus Contracted':

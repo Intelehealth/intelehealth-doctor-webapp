@@ -78,7 +78,7 @@
                     <ng-container *ngFor="let idx of colIndexes">
                       <td>
                         <ng-container *ngIf="p.values[idx]">
-                          <div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)">
+                          <div class="value-item" [class.alert-value]="isAlert('maternal', p.name, p.values[idx]?.value)">
                             <ng-container *ngIf="p.name === 'BP'; else plainBpValue">
                               <div *ngIf="getBpPart(p.values[idx]?.value, 'systolic') as s">Systolic: {{ s }}</div>
                               <div *ngIf="getBpPart(p.values[idx]?.value, 'diastolic') as d">Diastolic: {{ d }}</div>
@@ -116,7 +116,7 @@
                   <tr *ngIf="!p.isTextarea">
                     <td class="param-label" colspan="2">{{ p.name }}</td>
                     <ng-container *ngFor="let idx of colIndexes">
-                      <td><div class="value-item" [class.alert-value]="isAlert(p.name, p.values[idx]?.value)" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
+                      <td><div class="value-item" [class.alert-value]="isAlert('newborn', p.name, p.values[idx]?.value)" *ngIf="p.values[idx]">{{ p.values[idx]?.value }}</div></td>
                     </ng-container>
                   </tr>
 
