@@ -1,0 +1,178 @@
+<section id="section-consultation" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/consultation-details.svg" alt="" />
+    <span>Consultation details</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-detail-grid">
+    <div class="vs2-detail-row" *ngFor="let row of consultationDetails">
+      <span class="vs2-detail-label">{{ row.label }}</span>
+      <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value }}</span>
+    </div>
+  </div>
+</section>
+
+<section id="section-checkup" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/check-up-reason.svg" alt="" />
+    <span>Check-up reason</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <h4 class="vs2-subhead">Chief complaint</h4>
+  <div class="vs2-complaint-chips">
+    <span class="vs2-chip vs2-chip-solid" *ngFor="let c of chiefComplaints">{{ c }}</span>
+  </div>
+
+  <div class="vs2-complaint-block" *ngFor="let detail of complaintDetails">
+    <h4 class="vs2-subhead vs2-subhead-strong">{{ detail.title }}</h4>
+    <div class="vs2-detail-list">
+      <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of detail.rows">
+        <span class="vs2-detail-label">{{ row.label }}</span>
+        <span class="vs2-detail-value">{{ row.value }}</span>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vs2-subhead vs2-subhead-strong">Associated symptoms</h4>
+  <div class="vs2-symptom-group" *ngFor="let grp of associatedSymptoms">
+    <div class="vs2-symptom-label">{{ grp.label }}:</div>
+    <p class="vs2-symptom-text">{{ grp.text }}</p>
+  </div>
+</section>
+
+<section id="section-history" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/medical-history.svg" alt="" />
+    <span>Medical history</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <h4 class="vs2-subhead">Patient history</h4>
+  <div class="vs2-detail-list">
+    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of patientHistory">
+      <span class="vs2-detail-label">{{ row.label }}</span>
+      <span class="vs2-detail-value">{{ row.value }}</span>
+    </div>
+  </div>
+
+  <h4 class="vs2-subhead vs2-subhead-strong">Family history</h4>
+  <div class="vs2-detail-list">
+    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of familyHistory">
+      <span class="vs2-detail-label">{{ row.label }}</span>
+      <span class="vs2-detail-value">{{ row.value }}</span>
+    </div>
+  </div>
+</section>
+
+<section id="section-vitals" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
+    <span>Vitals</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-vitals-grid">
+    <div class="vs2-vital-cell" *ngFor="let v of vitals">
+      <span class="vs2-vital-label">{{ v.label }}</span>
+      <span class="vs2-vital-value">{{ v.value }}</span>
+    </div>
+  </div>
+</section>
+
+<section id="section-physical" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/physical-examination.svg" alt="" />
+    <span>Physical examination</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <h4 class="vs2-subhead">General exams</h4>
+  <div class="vs2-detail-list">
+    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of generalExams">
+      <span class="vs2-detail-label">{{ row.label }}</span>
+      <span class="vs2-detail-value">{{ row.value }}</span>
+    </div>
+    <div class="vs2-detail-row vs2-detail-row-wide">
+      <span class="vs2-detail-label">Eye images</span>
+      <div class="vs2-thumb-row">
+        <div class="vs2-thumb" *ngFor="let img of eyeImages">
+          <img [src]="img" alt="eye image" onerror="this.style.display='none'" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vs2-subhead vs2-subhead-strong">Abdomen</h4>
+  <ul class="vs2-bullet-list">
+    <li *ngFor="let f of abdomenFindings">{{ f }}</li>
+  </ul>
+</section>
+
+<section id="section-documents" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/additional-documents.svg" alt="" />
+    <span>Additional documents</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-doc-row">
+    <ng-container *ngFor="let doc of documents">
+      <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'">
+        <img [src]="doc.src" alt="document" onerror="this.style.display='none'" />
+      </div>
+      <div class="vs2-doc-pdf" *ngIf="doc.type === 'pdf'">
+        <span class="vs2-pdf-icon"><mat-icon>picture_as_pdf</mat-icon></span>
+        <span class="vs2-pdf-name">{{ doc.name }}</span>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-refer" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/refer-to-specialist.svg" alt="" />
+    <span>Refer to specialist</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-refer-row">
+    <span class="vs2-detail-label vs2-no-bullet">Refer to another speciality</span>
+    <label class="vs2-radio">
+      <input type="radio" name="refer" [value]="true" [(ngModel)]="referToSpecialist" /> Yes
+    </label>
+    <label class="vs2-radio">
+      <input type="radio" name="refer" [value]="false" [(ngModel)]="referToSpecialist" /> No
+    </label>
+  </div>
+
+  <ng-container *ngIf="referToSpecialist">
+    <div class="vs2-refer-row">
+      <span class="vs2-detail-label vs2-no-bullet">Specialization</span>
+      <ng-select
+        class="vs2-ng-select"
+        [items]="specializations"
+        [(ngModel)]="selectedSpecialization"
+        [searchable]="true"
+        [clearable]="false"
+        placeholder="Select specialization">
+      </ng-select>
+    </div>
+    <button class="vs2-btn-primary" (click)="reassign.emit(selectedSpecialization)">Re-assign</button>
+  </ng-container>
+
+  <ng-container *ngIf="!referToSpecialist">
+    <div class="vs2-note-box">
+      <span class="vs2-note-label">Note:</span>
+      <span class="vs2-note-text">{{ chwNote }}</span>
+    </div>
+    <button class="vs2-btn-primary" (click)="startVisit.emit()">Start Visit Note</button>
+  </ng-container>
+</section>

@@ -40,6 +40,11 @@ import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
 import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
 import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
+import { PatientHeaderCardComponent } from './visit-summary-v2/patient-header-card/patient-header-card.component';
+import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-sidebar.component';
+import { CurrentVisitDetailsComponent } from './visit-summary-v2/current-visit-details/current-visit-details.component';
+import { DoctorNoteComponent } from './visit-summary-v2/doctor-note/doctor-note.component';
+import { PastVisitsComponent } from './visit-summary-v2/past-visits/past-visits.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -61,6 +66,11 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     FollowUpInstructionComponent,
     DigitalStethoscopeComponent,
     VisitSummaryV2Component,
+    PatientHeaderCardComponent,
+    VisitSidebarComponent,
+    CurrentVisitDetailsComponent,
+    DoctorNoteComponent,
+    PastVisitsComponent,
   ],
   imports: [
     IhLibraryModule,

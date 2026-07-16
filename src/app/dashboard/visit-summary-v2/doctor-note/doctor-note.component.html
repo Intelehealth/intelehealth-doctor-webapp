@@ -1,0 +1,448 @@
+<div id="section-doctor-note" class="vs2-content-header vs2-dn-header">
+  <h2>Doctor's Note</h2>
+  <mat-icon>expand_less</mat-icon>
+</div>
+
+<section id="section-dn-interaction" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
+    <span>Patient interaction</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Connect with patient</span>
+    <button class="vs2-link-pill">
+      <img src="assets/svgs/phone-green.svg" alt="" /> Click here to connect with the patient
+    </button>
+  </div>
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Have you spoken with the patient directly?</span>
+    <label class="vs2-radio"><input type="radio" name="spoken" [value]="true" [(ngModel)]="spokenToPatient" /> Yes</label>
+    <label class="vs2-radio"><input type="radio" name="spoken" [value]="false" [(ngModel)]="spokenToPatient" /> No</label>
+  </div>
+  <button class="vs2-btn-primary">Save</button>
+</section>
+
+<section id="section-dn-diagnosis" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/diagnosis.svg" alt="" />
+    <span>Diagnosis</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <h4 class="vs2-subhead vs2-subhead-purple">Add Diagnosis</h4>
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Do you have enough information to diagnose?</span>
+    <label class="vs2-radio"><input type="radio" name="enoughInfo" [value]="true" [(ngModel)]="hasEnoughInfo" /> Yes</label>
+    <label class="vs2-radio"><input type="radio" name="enoughInfo" [value]="false" [(ngModel)]="hasEnoughInfo" /> No</label>
+  </div>
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Select diagnosis</span>
+    <ng-select
+      class="vs2-ng-select"
+      [items]="diagnosisResults"
+      [(ngModel)]="selectedDiagnosis"
+      bindLabel="name"
+      [searchable]="true"
+      [clearable]="true"
+      [addTag]="false"
+      [minTermLength]="3"
+      typeToSearchText="Type at least 3 characters"
+      (search)="onDiagnosisSearch($event)"
+      placeholder="Search diagnosis">
+    </ng-select>
+  </div>
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Diagnosis type</span>
+    <label class="vs2-radio"><input type="radio" name="dxType" value="Primary" [(ngModel)]="newDiagnosisType" /> Primary</label>
+    <label class="vs2-radio"><input type="radio" name="dxType" value="Secondary" [(ngModel)]="newDiagnosisType" /> Secondary</label>
+  </div>
+  <div class="vs2-form-row">
+    <span class="vs2-field-label">Select</span>
+    <label class="vs2-radio"><input type="radio" name="dxStatus" value="Provisional" [(ngModel)]="newDiagnosisStatus" /> Provisional</label>
+    <label class="vs2-radio"><input type="radio" name="dxStatus" value="Confirmed" [(ngModel)]="newDiagnosisStatus" /> Confirmed</label>
+  </div>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelDiagnosis()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addDiagnosis()">Add</button>
+  </div>
+
+  <ng-container *ngIf="addedDiagnoses.length">
+    <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">Added Diagnosis</h4>
+    <div class="vs2-added-item" *ngFor="let dx of addedDiagnoses; let i = index">
+      <div class="vs2-added-row">
+        <span class="vs2-added-name">{{ dx.name }}</span>
+        <span class="vs2-added-actions">
+          <mat-icon class="vs2-edit-icon" (click)="editDiagnosis(i)">edit</mat-icon>
+          <mat-icon class="vs2-delete-icon" (click)="deleteDiagnosis(i, dx.uuid)">delete_outline</mat-icon>
+        </span>
+      </div>
+      <div class="vs2-added-chips">
+        <span class="vs2-chip vs2-chip-solid-sm">{{ dx.type }}</span>
+        <span class="vs2-chip vs2-chip-grey">{{ dx.status }}</span>
+      </div>
+    </div>
+  </ng-container>
+</section>
+
+<section id="section-dn-note" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
+    <span>Note/Outcome</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-list-item" *ngFor="let n of outcomeNotes; let i = index">
+    <span class="vs2-detail-label">{{ n.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteNote(i, n.uuid)">delete_outline</mat-icon>
+  </div>
+
+  <label class="vs2-field-label vs2-mt">Note<span class="vs2-req">*</span>
+    <label class="vs2-check"><input type="checkbox" [(ngModel)]="noteSharedWithPatient" /> that shared with patient</label>
+  </label>
+  <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newNoteText"></textarea>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelNote()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addNote()">Add note</button>
+  </div>
+</section>
+
+<section id="section-dn-medication" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/medication.svg" alt="" />
+    <span>Medication</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <h4 class="vs2-subhead vs2-subhead-purple">Add Medication</h4>
+  <div class="vs2-med-grid">
+    <div class="vs2-field">
+      <span class="vs2-field-label">Drug name</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="drugOptions"
+        [(ngModel)]="newMedicine.drug"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Dosage</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="doseOptions"
+        [(ngModel)]="newMedicine.dose"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Enter">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Frequency</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="frequencyOptions"
+        [(ngModel)]="newMedicine.frequency"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Duration (no.)</span>
+      <input class="vs2-input" placeholder="Enter" [(ngModel)]="newMedicine.durationNo" />
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Duration (units)</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="durationUnitOptions"
+        [(ngModel)]="newMedicine.durationUnit"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Instruction (Remarks)</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="instructionOptions"
+        [(ngModel)]="newMedicine.instructRemark"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+  </div>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelMedicine()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addMedicine()">Add</button>
+  </div>
+
+  <ng-container *ngIf="addedMedicines.length">
+    <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">Added Medication</h4>
+    <div class="vs2-table vs2-med-table">
+      <div class="vs2-table-head">
+        <span>Drug name</span>
+        <span>Dosage</span>
+        <span>Frequency</span>
+        <span>Duration (no.)</span>
+        <span>Duration (units)</span>
+        <span>Instructions</span>
+        <span></span>
+      </div>
+      <div class="vs2-table-row" *ngFor="let m of addedMedicines; let i = index">
+        <span>{{ m.drug }}</span>
+        <span>{{ m.dose }}</span>
+        <span>{{ m.frequency }}</span>
+        <span>{{ m.durationNo }}</span>
+        <span>{{ m.durationUnit }}</span>
+        <span>{{ m.instructRemark }}</span>
+        <span class="vs2-added-actions">
+          <mat-icon class="vs2-edit-icon" (click)="editMedicine(i)">edit</mat-icon>
+          <mat-icon class="vs2-delete-icon" (click)="deleteMedicine(i, m.uuid)">delete_outline</mat-icon>
+        </span>
+      </div>
+    </div>
+  </ng-container>
+
+  <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">Additional instructions</h4>
+  <div class="vs2-list-item" *ngFor="let n of medInstructions; let i = index">
+    <span class="vs2-detail-label">{{ n.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteMedInstruction(i, n.uuid)">delete_outline</mat-icon>
+  </div>
+  <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="medInstructionText"></textarea>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelMedInstruction()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addMedInstruction()">Add note</button>
+  </div>
+</section>
+
+<section id="section-dn-advice" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/advice.svg" alt="" />
+    <span>Advice</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-list-item" *ngFor="let a of advices; let i = index">
+    <span class="vs2-detail-label">{{ a.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteAdvice(i, a.uuid)">delete_outline</mat-icon>
+  </div>
+
+  <span class="vs2-field-label">Advice<span class="vs2-req">*</span></span>
+  <ng-select
+    class="vs2-ng-select vs2-ng-select-grid"
+    [items]="adviceOptions"
+    [(ngModel)]="newAdviceText"
+    [addTag]="true"
+    [searchable]="true"
+    [clearable]="true"
+    placeholder="Add advice to patient">
+  </ng-select>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelAdvice()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addAdvice()">Add Advice</button>
+  </div>
+</section>
+
+<section id="section-dn-test" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
+    <span>Test</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-list-item" *ngFor="let t of tests; let i = index">
+    <span class="vs2-detail-label">{{ t.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
+  </div>
+
+  <span class="vs2-field-label">Test<span class="vs2-req">*</span></span>
+  <ng-select
+    class="vs2-ng-select vs2-ng-select-grid"
+    [items]="testOptions"
+    [(ngModel)]="newTestText"
+    [addTag]="true"
+    [searchable]="true"
+    [clearable]="true"
+    placeholder="Add test to patient">
+  </ng-select>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addTest()">Add Test</button>
+  </div>
+</section>
+
+<section id="section-dn-referral" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
+    <span>Referral-Out</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-med-grid vs2-ref-grid">
+    <div class="vs2-field">
+      <span class="vs2-field-label">Referral to</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="referralSpecialityOptions"
+        [(ngModel)]="newReferral.speciality"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Referral facility</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="facilityOptions"
+        [(ngModel)]="newReferral.facility"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Priority of referral</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="referralPriorities"
+        [(ngModel)]="newReferral.priority"
+        [addTag]="false"
+        [searchable]="false"
+        [clearable]="true"
+        placeholder="Select or type">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Remarks</span>
+      <input class="vs2-input" placeholder="Enter" [(ngModel)]="newReferral.reason" />
+    </div>
+  </div>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelReferral()">Cancel</button>
+    <button class="vs2-btn-add" (click)="addReferral()">Save</button>
+  </div>
+
+  <ng-container *ngIf="referrals.length">
+    <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">Added Referral</h4>
+    <div class="vs2-added-item" *ngFor="let r of referrals; let i = index">
+      <div class="vs2-added-row">
+        <span class="vs2-added-name">{{ r.speciality }}</span>
+        <span class="vs2-added-actions">
+          <mat-icon class="vs2-delete-icon" (click)="deleteReferral(i, r.uuid)">delete_outline</mat-icon>
+        </span>
+      </div>
+      <div class="vs2-added-chips">
+        <span class="vs2-chip vs2-chip-grey" *ngIf="r.facility">{{ r.facility }}</span>
+        <span class="vs2-chip vs2-chip-solid-sm" *ngIf="r.priority">{{ r.priority }}</span>
+        <span class="vs2-chip vs2-chip-grey" *ngIf="r.reason && r.reason !== '-'">{{ r.reason }}</span>
+      </div>
+    </div>
+  </ng-container>
+</section>
+
+<section id="section-dn-followup" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/follow-up.svg" alt="" />
+    <span>Follow-up</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-table vs2-fu-note-table" *ngIf="followUpUuid">
+    <div class="vs2-table-head">
+      <span>Follow Up Requested</span>
+      <span>Type</span>
+      <span>Date</span>
+      <span>Time</span>
+      <span>Reason</span>
+      <span></span>
+    </div>
+    <div class="vs2-table-row">
+      <span>Yes</span>
+      <span>{{ followUpType || '-' }}</span>
+      <span>{{ followUpDate ? (followUpDate | date : 'dd MMMM yyyy') : '-' }}</span>
+      <span>{{ followUpTime || '-' }}</span>
+      <span>{{ followUpReason || '-' }}</span>
+      <span class="vs2-added-actions">
+        <mat-icon class="vs2-delete-icon" (click)="deleteFollowUp()">delete_outline</mat-icon>
+      </span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!followUpUuid">
+    <div class="vs2-form-row">
+      <span class="vs2-field-label">Do you want to have follow up with the patient</span>
+      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" /> Yes</label>
+      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="saveFollowUp()" /> No</label>
+    </div>
+    <ng-container *ngIf="wantFollowUp">
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Follow-up type</span>
+        <label class="vs2-radio"><input type="radio" name="followUpType" value="In person" [(ngModel)]="followUpType" /> In person</label>
+        <label class="vs2-radio"><input type="radio" name="followUpType" value="Telemedicine" [(ngModel)]="followUpType" /> Telemedicine</label>
+      </div>
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
+        <input class="vs2-input vs2-date" type="date" [min]="minFollowUpDate" [(ngModel)]="followUpDate" (ngModelChange)="onFollowUpDateChange()" />
+      </div>
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Select time<span class="vs2-req">*</span></span>
+        <ng-select
+          class="vs2-ng-select"
+          [items]="followUpTimeSlots"
+          [(ngModel)]="followUpTime"
+          [searchable]="true"
+          [clearable]="false"
+          placeholder="Select time">
+        </ng-select>
+      </div>
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Reason for follow-up</span>
+        <input class="vs2-input" placeholder="Type here" [(ngModel)]="followUpReason" />
+      </div>
+      <button class="vs2-btn-primary" (click)="saveFollowUp()">Save</button>
+    </ng-container>
+  </ng-container>
+</section>
+
+<section id="section-dn-documents" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
+    <span>Additional documents</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <div class="vs2-list-item" *ngFor="let doc of uploadedDocs">
+    <span class="vs2-detail-label">{{ doc.name }}</span>
+    <mat-icon class="vs2-delete-icon">delete_outline</mat-icon>
+  </div>
+
+  <div class="vs2-dropzone">
+    <mat-icon>cloud_upload</mat-icon>
+    <span class="vs2-dropzone-text">Drag &amp; drop files or <a href="javascript:void(0)">Browse</a></span>
+    <span class="vs2-dropzone-hint">Supported formats: Images, JPEG, PNG, GIF, PDF, DOC, Excel, PPT</span>
+  </div>
+  <button class="vs2-btn-primary vs2-mt" (click)="sharePrescription()">Share Prescription</button>
+</section>

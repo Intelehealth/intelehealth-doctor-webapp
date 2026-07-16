@@ -1,4 +1,3 @@
-// Visit Summary V2 — design tokens
 $navy: #1d1b3a;
 $purple: #2e1e91;
 $purple-soft: #efe8ff;
@@ -12,9 +11,9 @@ $border: #ecebf1;
 $page-bg: #f5f6fa;
 $card-bg: #ffffff;
 $section-bg: #f7f8fc;
-$app-header-h: 72px; // sticky app header height in MainContainerComponent
+$app-header-h: 72px; 
 
-:host {
+app-visit-summary-v2 {
   display: block;
   background: $page-bg;
   min-height: 100%;
@@ -22,8 +21,14 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   color: $navy;
 }
 
-/* Fill the viewport below the sticky app header; the page itself does not
-   scroll — only the content panel inside does. */
+app-patient-header-card,
+app-visit-sidebar,
+app-current-visit-details,
+app-doctor-note,
+app-past-visits {
+  display: contents;
+}
+
 .vs2-page {
   padding: 16px 20px;
   max-width: 1280px;
@@ -35,15 +40,19 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   box-sizing: border-box;
 }
 
-/* ---------- Patient header card ---------- */
 .vs2-patient-card {
   flex: 0 0 auto;
   background: $card-bg;
   border-radius: 14px;
   padding: 18px 22px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+}
+
+.vs2-patient-top {
+  display: flex;
+  justify-content: space-between;
 }
 
 .vs2-patient-left {
@@ -110,7 +119,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   align-items: center;
 }
 
-/* chips */
 .vs2-chip {
   display: inline-flex;
   align-items: center;
@@ -136,6 +144,11 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   color: $grey-text;
 }
 
+.vs2-chip-yellow {
+  background: #fff6e0;
+  color: #9a6a00;
+}
+
 .vs2-chip-solid {
   background: $purple;
   color: #fff;
@@ -144,7 +157,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   font-size: 13px;
 }
 
-/* patient right */
 .vs2-patient-right {
   display: flex;
   flex-direction: column;
@@ -203,7 +215,92 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* ---------- Top tabs (fixed header above the scrolling content) ---------- */
+.vs2-patient-full {
+  display: flex;
+  gap: 48px;
+  margin-top: 16px;
+  padding-top: 18px;
+  border-top: 1px solid $border;
+}
+
+.vs2-full-left {
+  flex: 0 0 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.vs2-full-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vs2-allergies-wrap {
+  flex-wrap: wrap;
+}
+
+.vs2-full-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vs2-contact-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.vs2-full-right {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vs2-full-toprow {
+  display: flex;
+  gap: 80px;
+}
+
+.vs2-full-tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid $border;
+}
+
+.vs2-full-tab {
+  background: none;
+  border: none;
+  padding: 8px 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $grey-text;
+  cursor: pointer;
+  position: relative;
+
+  &.active {
+    color: $purple;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 3px;
+      border-radius: 3px;
+      background: $purple;
+    }
+  }
+}
+
+.vs2-full-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 32px;
+}
+
 .vs2-top-tabs {
   flex: 0 0 auto;
   display: flex;
@@ -238,7 +335,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* ---------- Body (fills remaining height; children scroll, not the page) ---------- */
 .vs2-body {
   flex: 1 1 auto;
   min-height: 0;
@@ -248,7 +344,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   overflow: hidden;
 }
 
-/* sidebar — fixed; scrolls internally only if its own content overflows */
 .vs2-sidebar {
   flex: 0 0 280px;
   background: $card-bg;
@@ -315,7 +410,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* green round section icon (SVG already includes the green circle) */
 .vs2-section-icon-img {
   width: 36px;
   height: 36px;
@@ -323,7 +417,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   display: block;
 }
 
-/* ---------- Right column (fixed tabs on top, scrolling content below) ---------- */
 .vs2-right {
   flex: 1 1 auto;
   min-width: 0;
@@ -332,7 +425,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   flex-direction: column;
 }
 
-/* ---------- Content (the only part that scrolls) ---------- */
 .vs2-content {
   flex: 1 1 auto;
   min-height: 0;
@@ -384,7 +476,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   margin: 12px 0 16px;
 }
 
-/* consultation 2-col detail grid */
 .vs2-detail-grid {
   background: $section-bg;
   border-radius: 10px;
@@ -429,7 +520,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* check-up reason */
 .vs2-subhead {
   font-size: 15px;
   font-weight: 700;
@@ -459,7 +549,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   font-style: italic;
 }
 
-/* associated symptoms */
 .vs2-symptom-group {
   margin-bottom: 12px;
 }
@@ -486,7 +575,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   color: $navy;
 }
 
-/* vitals grid */
 .vs2-vitals-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -528,7 +616,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   color: $navy;
 }
 
-/* thumbnails (physical exam eye images) */
 .vs2-thumb-row,
 .vs2-doc-row {
   display: flex;
@@ -556,7 +643,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   height: 84px;
 }
 
-/* abdomen bullet list */
 .vs2-bullet-list {
   list-style: none;
   padding: 0;
@@ -578,7 +664,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* documents pdf card */
 .vs2-doc-pdf {
   width: 100px;
   height: 84px;
@@ -606,7 +691,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   line-height: 1.3;
 }
 
-/* refer to specialist */
 .vs2-refer-row {
   display: flex;
   align-items: center;
@@ -646,7 +730,62 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   background: #fff;
 }
 
-/* CHW disclaimer note (shown when No is selected) */
+.vs2-ng-select {
+  min-width: 240px;
+  font-size: 14px;
+
+  &.vs2-ng-select-grid {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .ng-select-container {
+    min-height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $navy;
+    background: #fff;
+  }
+
+  &.ng-select-focused:not(.ng-select-opened) .ng-select-container,
+  &.ng-select-opened .ng-select-container {
+    border-color: $purple;
+    box-shadow: 0 0 0 2px rgba(46, 30, 145, 0.12);
+  }
+
+  .ng-value {
+    color: $navy;
+  }
+
+  .ng-placeholder {
+    color: $grey-text;
+  }
+
+  .ng-dropdown-panel {
+    border: 1px solid $border;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(29, 27, 58, 0.12);
+    overflow: hidden;
+
+    .ng-option {
+      font-size: 14px;
+      color: $navy;
+      padding: 9px 12px;
+
+      &.ng-option-marked {
+        background: $section-bg;
+      }
+
+      &.ng-option-selected,
+      &.ng-option-selected.ng-option-marked {
+        background: $purple-soft;
+        color: $purple;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
 .vs2-note-box {
   background: #fffdf5;
   border: 1px solid #f3ead0;
@@ -684,7 +823,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* ============ DOCTOR'S NOTE ============ */
 .vs2-dn-header {
   margin-top: 32px;
   padding-top: 20px;
@@ -736,7 +874,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* green "connect" pill */
 .vs2-link-pill {
   display: inline-flex;
   align-items: center;
@@ -756,10 +893,9 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* field with label above input (grid cells) */
 .vs2-med-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -817,7 +953,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* existing list item (note / instruction) with delete */
 .vs2-list-item {
   display: flex;
   align-items: flex-start;
@@ -840,7 +975,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   margin-top: 14px;
 }
 
-/* button row + variants */
 .vs2-btn-row {
   display: flex;
   gap: 12px;
@@ -873,7 +1007,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* added diagnosis card */
 .vs2-added-item {
   padding: 12px 0;
   border-bottom: 1px solid $border;
@@ -923,7 +1056,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   font-size: 12px;
 }
 
-/* added medication table */
 .vs2-table {
   border: 1px solid $border;
   border-radius: 10px;
@@ -941,7 +1073,14 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
 .vs2-med-table {
   .vs2-table-head,
   .vs2-table-row {
-    grid-template-columns: 1.6fr 1fr 1fr 1fr 1.4fr 0.7fr;
+    grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 1.4fr 0.7fr;
+  }
+}
+
+.vs2-fu-note-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.4fr 1fr 1.2fr 1fr 1.6fr 0.5fr;
   }
 }
 
@@ -980,7 +1119,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* ============ PAST VISITS TIMELINE (sidebar) ============ */
 .vs2-timeline {
   margin-top: 14px;
 }
@@ -1016,7 +1154,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   align-items: stretch;
 }
 
-/* left rail with connecting line + dot */
 .vs2-timeline-rail {
   flex: 0 0 16px;
   display: flex;
@@ -1043,8 +1180,7 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   border-radius: 50%;
   background: #d9d5e8;
   margin-top: 6px;
-  box-shadow: 0 0 0 4px $card-bg; /* mask the line behind the dot */
-}
+  box-shadow: 0 0 0 4px $card-bg;}
 
 .vs2-timeline-item.active .vs2-timeline-dot {
   width: 16px;
@@ -1091,12 +1227,10 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
   }
 }
 
-/* consulted doctor: label without bullet, wider */
 .vs2-no-bullet-row {
   grid-template-columns: 150px 1fr;
 }
 
-/* dropzone */
 .vs2-dropzone {
   border: 1.5px dashed #cfc8ec;
   border-radius: 12px;
@@ -1133,7 +1267,6 @@ $app-header-h: 72px; // sticky app header height in MainContainerComponent
 }
 
 @media (max-width: 980px) {
-  /* On small screens revert to a normal, naturally-scrolling page */
   .vs2-page {
     height: auto;
     overflow: visible;

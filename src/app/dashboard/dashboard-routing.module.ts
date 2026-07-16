@@ -56,6 +56,13 @@ const routes: Routes = [
     data: {
       breadcrumb: 'Visit Summary'
     },
+    component: VisitSummaryV2Component
+  },
+  {
+    path: 'visit-summary-old/:id',
+    data: {
+      breadcrumb: 'Visit Summary'
+    },
     component: VisitSummaryComponent,
     canDeactivate: [CanDeactivateVisitSummary]
   },
