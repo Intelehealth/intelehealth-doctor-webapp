@@ -34,6 +34,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { formatDate } from '@angular/common';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
+import { ReferralConsentComponent } from '../referral-consent/referral-consent.component';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -73,7 +74,8 @@ class PickDateAdapter extends NativeDateAdapter {
     NgbTypeaheadModule,
     MatDatepickerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ReferralConsentComponent
   ],
   providers: [
     AiddxService,
@@ -100,6 +102,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @Input() visitEnded: EncounterModel | string;
   @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
+  @Input() referralConsentForm: FormGroup;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
   @Output() adviceSaved = new EventEmitter<any>();

@@ -124,6 +124,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hwInteractionUuid: String;
   patientInteractionUuid: String;
+  referralConsentForm: FormGroup;
   patientCallStatusForm: FormGroup;
   diagnosisForm: FormGroup;
   addMedicineForm: FormGroup;
@@ -221,6 +222,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.visitCompleted = this.visitCompleted;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
         this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+        this.ddxCompRef.instance.referralConsentForm = this.referralConsentForm;
 
         // this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
         //   if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
@@ -413,6 +415,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     patientInteractionComment: null,
     hwInteraction: null,
     patientInteraction: null,
+    referralConsent: null,
     medicine: []
   };
 
@@ -564,6 +567,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.discussionSummaryForm = new FormGroup({
       uuid: new FormControl(null),
       value: new FormControl(null, [Validators.required])
+    })
+
+    this.referralConsentForm = new FormGroup({
+      uuid: new FormControl(null),
+      decision: new FormControl(null, [Validators.required]),
+      consent: new FormControl(null)
     })
 
     this.patientInteractionCommentForm = new FormGroup({
@@ -760,6 +769,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.checkIfReferralConsentPresent();
               this.checkIfPatientCallDurationPresent(visit.attributes)
               this.checkIfCallStatusPresent(visit.attributes)
               this.checkIfDiscussionSummaryPresent();
@@ -1496,6 +1506,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+  * Check if a referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, is present for this visit
+  * @returns {void}
+  */
+  checkIfReferralConsentPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferralConsent)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            const [decision, consent] = obs.value.split(':');
+            this.referralConsentForm.patchValue({ uuid: obs.uuid, decision, consent: consent || null });
+          }
+        });
+      });
+  }
+
   saveDDxNotes(): void {
     if (this.patientInteractionNotesForm.value.uuid) {
       this.encounterService.updateObs(this.patientInteractionNotesForm.value.uuid, {
@@ -1570,6 +1596,36 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.visitService.updateAttribute(this.visit.uuid, this.patientInteractionUuid, payload);
     else
       return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientInteractionUuid = res.uuid));
+  };
+
+  /**
+  * Format the referral decision + (optional) patient consent into a single obs value
+  * @returns {string}
+  */
+  formatReferralConsentValue(): string {
+    const { decision, consent } = this.referralConsentForm.value;
+    return consent ? `${decision}:${consent}` : decision;
+  }
+
+  /**
+  * Save the referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, as a single observation
+  * @returns {Observable<any>}
+  */
+  saveReferralConsent(): Observable<any> {
+    if (this.referralConsentForm.value.uuid) {
+      if (this.referralConsentForm.valid)
+        return this.encounterService.updateObs(this.referralConsentForm.value.uuid, { value: this.formatReferralConsentValue() });
+      return of(false);
+    } else if (this.referralConsentForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptReferralConsent,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.formatReferralConsentValue(),
+        encounter: this.visitNotePresent.uuid
+      }).pipe(tap((res: ObsModel) => this.referralConsentForm.patchValue({ uuid: res.uuid })));
+    }
+    return of(false);
   };
 
   /**
@@ -2393,6 +2449,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
       return false;
     }
+
+    if (!this.referralConsentForm.value.decision) {
+      this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
+      return false;
+    }
+
+    if (this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+      this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
+      return false;
+    }
     this.changedFields = [];
     this.saveAllObs().subscribe({
       next: (responses) => {
@@ -2942,7 +3008,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.savePatientInteraction(),
         this.saveAdditionalInstruction(),
         this.saveTest(),
-        this.savePatientInteractionComment()
+        this.savePatientInteractionComment(),
+        this.saveReferralConsent()
       );
 
       // Conditional observations based on config
@@ -3125,6 +3192,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         additionalInstruction: () => this.saveAdditionalInstruction(),
         test: () => this.saveTest(),
         patientInteractionComment: () => this.savePatientInteractionComment(),
+        referralConsent: () => this.saveReferralConsent(),
         diagnosisSecondary: () => this.isFeatureAvailable('dp_diagnosis_secondary') ? this.saveDiagnosisSecondary() : of(null),
         discussionSummary: () => this.isFeatureAvailable('dp_discussion_summary') ? this.saveDiscussionSummary() : of(null),
         followUpInstruction: () => this.isFeatureAvailable('follow-up-instruction') ? this.followUpInstructionComponentRef.addInstructions() : of(null),
@@ -3382,6 +3450,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           patientInteractionComment: null,
           hwInteraction: null,
           patientInteraction: null,
+          referralConsent: null,
           medicine: []
         };
         
@@ -3586,12 +3655,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Track test form
     if (this.testForm) {
       this.obsData.test = this.testForm.value.test;
-      
+
       this.formSubscriptions.push(
         this.testForm.valueChanges.subscribe(() => {
           const newValue = this.testForm.value.test;
           if (newValue !== this.obsData.test) {
             this.updatedObsData.test = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track referral decision form (decision + patient consent, stored as one observation)
+    if (this.referralConsentForm) {
+      this.obsData.referralConsent = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+
+      this.formSubscriptions.push(
+        this.referralConsentForm.valueChanges.subscribe(() => {
+          const newValue = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.referralConsent)) {
+            this.updatedObsData.referralConsent = newValue;
             this.checkChanges(this.updatedObsData);
           }
         })

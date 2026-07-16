@@ -39,6 +39,7 @@ import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruct
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
 import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
+import { ReferralConsentComponent } from './visit-summary/referral-consent/referral-consent.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -94,7 +95,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
       }
     }),
     MatProgressSpinnerModule,
-    SharedModule
+    SharedModule,
+    ReferralConsentComponent
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
