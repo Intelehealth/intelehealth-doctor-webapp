@@ -145,7 +145,7 @@
                     <tr *ngIf="visitCompleted">
                       <td [attr.colspan]="3 + totalStage1Cols" class="divider2"></td>
                       <td [attr.colspan]="totalStage2Cols" class="divider2">
-                        <div class="birth-outcome-con">
+                        <div *ngIf="!hasStage3Trigger" class="birth-outcome-con">
                           <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Newborn'">
                             <div style="white-space: pre-wrap;">
                               {{visitCompleteReason}}

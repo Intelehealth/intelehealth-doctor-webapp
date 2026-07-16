@@ -119,7 +119,7 @@ export class Stage3Component implements OnInit {
     private readonly authService: AuthService,
     private readonly helperService: HelperService
   ) {
-     this.showViewElcg = !!this.router.getCurrentNavigation()?.extras?.state?.['fromVisitSummary'];
+     this.showViewElcg = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
 
   private loginAttempt = 0;
