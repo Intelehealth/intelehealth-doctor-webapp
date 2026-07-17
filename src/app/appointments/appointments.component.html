@@ -125,11 +125,18 @@
                       (click)="reschedule(element)">
                       {{'Reschedule' | translate}}
                     </button>
-                    <button class="action-btn pink-btn" 
-                      [attr.data-test-id]="'btnCancel'+j" 
-                      type="button"  
+                    <button class="action-btn pink-btn"
+                      [attr.data-test-id]="'btnCancel'+j"
+                      type="button"
                       (click)="cancel(element)">
                       {{'Cancel' | translate}}
+                    </button>
+                    <button *ngIf="isTurnServer"
+                      class="action-btn blue-btn ml-2"
+                      [attr.data-test-id]="'btnStartCall'+j"
+                      type="button"
+                      (click)="startCall(element)">
+                      {{'Start call' | translate}}
                     </button>
                   </div>
                 </td>
