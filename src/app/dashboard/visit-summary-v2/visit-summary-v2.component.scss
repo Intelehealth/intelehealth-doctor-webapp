@@ -1,0 +1,1304 @@
+$navy: #1d1b3a;
+$purple: #2e1e91;
+$purple-soft: #efe8ff;
+$green: #34c08a;
+$green-soft: #e6fff3;
+$red: #e54848;
+$red-soft: #fde9e9;
+$grey-text: #7f7b92;
+$grey-soft: #eceaf0;
+$border: #ecebf1;
+$page-bg: #f5f6fa;
+$card-bg: #ffffff;
+$section-bg: #f7f8fc;
+$app-header-h: 72px; 
+
+app-visit-summary-v2 {
+  display: block;
+  background: $page-bg;
+  min-height: 100%;
+  font-family: 'lato', sans-serif;
+  color: $navy;
+}
+
+app-patient-header-card,
+app-visit-sidebar,
+app-current-visit-details,
+app-doctor-note,
+app-past-visits {
+  display: contents;
+}
+
+.vs2-page {
+  padding: 16px 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+  height: calc(100vh - #{$app-header-h});
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.vs2-patient-card {
+  flex: 0 0 auto;
+  background: $card-bg;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+}
+
+.vs2-patient-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vs2-patient-left {
+  display: flex;
+  gap: 16px;
+}
+
+.vs2-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: $grey-soft;
+}
+
+.vs2-patient-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vs2-patient-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: $navy;
+}
+
+.vs2-patient-id {
+  color: $grey-text;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.vs2-patient-meta {
+  display: flex;
+  gap: 36px;
+  margin-top: 14px;
+}
+
+.vs2-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.vs2-meta-label {
+  color: $grey-text;
+  font-size: 12px;
+}
+
+.vs2-meta-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: $navy;
+
+  &.vs2-meta-value-purple {
+    color: $purple;
+  }
+}
+
+.vs2-allergies {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vs2-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 14px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vs2-chip-purple {
+  background: $purple-soft;
+  color: $purple;
+}
+
+.vs2-chip-red {
+  background: $red-soft;
+  color: $red;
+}
+
+.vs2-chip-grey {
+  background: $grey-soft;
+  color: $grey-text;
+}
+
+.vs2-chip-yellow {
+  background: #fff6e0;
+  color: #9a6a00;
+}
+
+.vs2-chip-solid {
+  background: $purple;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.vs2-patient-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.vs2-contact-label {
+  color: $grey-text;
+  font-size: 12px;
+}
+
+.vs2-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.vs2-contact-no {
+  font-size: 16px;
+  font-weight: 700;
+  color: $navy;
+}
+
+.vs2-call-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: $green-soft;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $green;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.vs2-view-full {
+  color: $purple;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.vs2-patient-full {
+  display: flex;
+  gap: 48px;
+  margin-top: 16px;
+  padding-top: 18px;
+  border-top: 1px solid $border;
+}
+
+.vs2-full-left {
+  flex: 0 0 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.vs2-full-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vs2-allergies-wrap {
+  flex-wrap: wrap;
+}
+
+.vs2-full-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vs2-contact-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.vs2-full-right {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vs2-full-toprow {
+  display: flex;
+  gap: 80px;
+}
+
+.vs2-full-tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid $border;
+}
+
+.vs2-full-tab {
+  background: none;
+  border: none;
+  padding: 8px 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $grey-text;
+  cursor: pointer;
+  position: relative;
+
+  &.active {
+    color: $purple;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 3px;
+      border-radius: 3px;
+      background: $purple;
+    }
+  }
+}
+
+.vs2-full-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 32px;
+}
+
+.vs2-top-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid $border;
+  margin: 0 0 16px;
+}
+
+.vs2-top-tab {
+  background: none;
+  border: none;
+  padding: 10px 2px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $grey-text;
+  cursor: pointer;
+  position: relative;
+
+  &.active {
+    color: $navy;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 3px;
+      border-radius: 3px;
+      background: $purple;
+    }
+  }
+}
+
+.vs2-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 20px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.vs2-sidebar {
+  flex: 0 0 280px;
+  background: $card-bg;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.vs2-scope-toggle {
+  display: flex;
+  background: #f3f2f7;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.vs2-scope-btn {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $grey-text;
+  cursor: pointer;
+
+  &.active {
+    background: #fff;
+    color: $purple;
+    box-shadow: 0 1px 4px rgba(29, 27, 58, 0.1);
+  }
+}
+
+.vs2-section-nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+.vs2-section-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: none;
+  padding: 10px 8px;
+  cursor: pointer;
+  border-radius: 9px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: $navy;
+
+  &.active {
+    background: #f7f8fc;
+  }
+
+  &:hover {
+    background: #f7f8fc;
+  }
+}
+
+.vs2-section-icon-img {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: block;
+}
+
+.vs2-right {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.vs2-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  background: $card-bg;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+}
+
+.vs2-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: $navy;
+  }
+
+  mat-icon {
+    color: $grey-text;
+  }
+}
+
+.vs2-section-card {
+  margin-top: 22px;
+}
+
+.vs2-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: $navy;
+
+  .vs2-chevron {
+    margin-left: auto;
+    color: $grey-text;
+  }
+}
+
+.vs2-divider {
+  height: 1px;
+  background: $border;
+  margin: 12px 0 16px;
+}
+
+.vs2-detail-grid {
+  background: $section-bg;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 40px;
+}
+
+.vs2-detail-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: baseline;
+  gap: 12px;
+
+  &.vs2-detail-row-wide {
+    grid-template-columns: 190px 1fr;
+  }
+}
+
+.vs2-detail-label {
+  color: $grey-text;
+  font-size: 14px;
+  position: relative;
+  padding-left: 14px;
+
+  &::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: $grey-text;
+  }
+}
+
+.vs2-detail-value {
+  font-size: 14px;
+  color: $navy;
+
+  &.vs2-highlight {
+    color: $red;
+    font-weight: 600;
+  }
+}
+
+.vs2-subhead {
+  font-size: 15px;
+  font-weight: 700;
+  color: $navy;
+  margin: 4px 0 12px;
+
+  &.vs2-subhead-strong {
+    margin-top: 20px;
+  }
+}
+
+.vs2-complaint-chips {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.vs2-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vs2-placeholder {
+  color: $grey-text;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.vs2-symptom-group {
+  margin-bottom: 12px;
+}
+
+.vs2-symptom-label {
+  color: $grey-text;
+  font-size: 14px;
+  position: relative;
+  padding-left: 14px;
+  margin-bottom: 4px;
+
+  &::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: $grey-text;
+  }
+}
+
+.vs2-symptom-text {
+  margin: 0 0 0 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: $navy;
+}
+
+.vs2-vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid $border;
+  border-left: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vs2-vital-cell {
+  border-right: 1px solid $border;
+  border-bottom: 1px solid $border;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    border-radius: 3px;
+    background: $green;
+  }
+}
+
+.vs2-vital-label {
+  color: $grey-text;
+  font-size: 13px;
+}
+
+.vs2-vital-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: $navy;
+}
+
+.vs2-thumb-row,
+.vs2-doc-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vs2-thumb,
+.vs2-doc-thumb {
+  width: 64px;
+  height: 54px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: $grey-soft;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.vs2-doc-thumb {
+  width: 100px;
+  height: 84px;
+}
+
+.vs2-bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: $navy;
+
+    &::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: $grey-text;
+    }
+  }
+}
+
+.vs2-doc-pdf {
+  width: 100px;
+  height: 84px;
+  border-radius: 8px;
+  background: $purple-soft;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  text-align: center;
+}
+
+.vs2-pdf-icon mat-icon {
+  color: $purple;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.vs2-pdf-name {
+  font-size: 11px;
+  color: $navy;
+  line-height: 1.3;
+}
+
+.vs2-refer-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.vs2-no-bullet {
+  padding-left: 0;
+  min-width: 190px;
+
+  &::before {
+    content: none;
+  }
+}
+
+.vs2-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: $navy;
+  cursor: pointer;
+
+  input {
+    accent-color: $purple;
+  }
+}
+
+.vs2-select {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: $navy;
+  min-width: 200px;
+  background: #fff;
+}
+
+.vs2-ng-select {
+  min-width: 240px;
+  font-size: 14px;
+
+  &.vs2-ng-select-grid {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .ng-select-container {
+    min-height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $navy;
+    background: #fff;
+  }
+
+  &.ng-select-focused:not(.ng-select-opened) .ng-select-container,
+  &.ng-select-opened .ng-select-container {
+    border-color: $purple;
+    box-shadow: 0 0 0 2px rgba(46, 30, 145, 0.12);
+  }
+
+  .ng-value {
+    color: $navy;
+  }
+
+  .ng-placeholder {
+    color: $grey-text;
+  }
+
+  .ng-dropdown-panel {
+    border: 1px solid $border;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(29, 27, 58, 0.12);
+    overflow: hidden;
+
+    .ng-option {
+      font-size: 14px;
+      color: $navy;
+      padding: 9px 12px;
+
+      &.ng-option-marked {
+        background: $section-bg;
+      }
+
+      &.ng-option-selected,
+      &.ng-option-selected.ng-option-marked {
+        background: $purple-soft;
+        color: $purple;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.vs2-note-box {
+  background: #fffdf5;
+  border: 1px solid #f3ead0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: $grey-text;
+}
+
+.vs2-note-label {
+  color: $red;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.vs2-note-text {
+  color: $grey-text;
+}
+
+.vs2-btn-primary {
+  background: $purple;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+
+  &:hover {
+    background: darken($purple, 6%);
+  }
+}
+
+.vs2-dn-header {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid $border;
+}
+
+.vs2-nav-group-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: $grey-text;
+  margin: 16px 0 6px 8px;
+}
+
+.vs2-subhead-purple {
+  color: $purple;
+}
+
+.vs2-form-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.vs2-field-label {
+  font-size: 14px;
+  color: $navy;
+  font-weight: 600;
+  min-width: 200px;
+}
+
+.vs2-req {
+  color: $red;
+  margin-left: 2px;
+}
+
+.vs2-check {
+  font-weight: 400;
+  color: $grey-text;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+
+  input {
+    accent-color: $purple;
+  }
+}
+
+.vs2-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $green-soft;
+  color: #1f9d6e;
+  border: 1px solid #bdeedd;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.vs2-med-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.vs2-ref-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.vs2-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .vs2-field-label {
+    min-width: 0;
+    font-weight: 600;
+  }
+}
+
+.vs2-input {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: $navy;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #b2afbe;
+  }
+}
+
+.vs2-date {
+  max-width: 220px;
+}
+
+.vs2-textarea {
+  width: 100%;
+  min-height: 70px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: $navy;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  margin: 8px 0 14px;
+  background: #faf9fd;
+
+  &::placeholder {
+    color: #b2afbe;
+  }
+}
+
+.vs2-list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  margin-bottom: 6px;
+}
+
+.vs2-delete-icon {
+  color: $red;
+  cursor: pointer;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.vs2-mt {
+  margin-top: 14px;
+}
+
+.vs2-btn-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.vs2-btn-cancel {
+  background: none;
+  border: none;
+  color: $grey-text;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 16px;
+}
+
+.vs2-btn-add {
+  background: $purple-soft;
+  color: $purple;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: darken($purple-soft, 4%);
+  }
+}
+
+.vs2-added-item {
+  padding: 12px 0;
+  border-bottom: 1px solid $border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.vs2-added-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vs2-added-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: $navy;
+}
+
+.vs2-added-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vs2-edit-icon {
+  color: $purple;
+  cursor: pointer;
+  font-size: 19px;
+  width: 19px;
+  height: 19px;
+}
+
+.vs2-added-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.vs2-chip-solid-sm {
+  background: $purple;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-size: 12px;
+}
+
+.vs2-table {
+  border: 1px solid $border;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.vs2-table-head,
+.vs2-table-row {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.vs2-med-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 1.4fr 0.7fr;
+  }
+}
+
+.vs2-fu-note-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.4fr 1fr 1.2fr 1fr 1.6fr 0.5fr;
+  }
+}
+
+.vs2-table-head {
+  background: $section-bg;
+  font-size: 13px;
+  font-weight: 700;
+  color: $grey-text;
+}
+
+.vs2-table-row {
+  border-top: 1px solid $border;
+  font-size: 14px;
+  color: $navy;
+}
+
+.vs2-dx-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 2.4fr 1fr 1fr;
+  }
+}
+
+.vs2-presc-med-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.8fr 1fr 1fr 1fr 1.4fr;
+  }
+}
+
+.vs2-ref-table,
+.vs2-fu-table {
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.vs2-timeline {
+  margin-top: 14px;
+}
+
+.vs2-timeline-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: $grey-text;
+  margin: 16px 0 8px 2px;
+}
+
+.vs2-timeline-badge {
+  background: $purple;
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.vs2-timeline-item {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  align-items: stretch;
+}
+
+.vs2-timeline-rail {
+  flex: 0 0 16px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -8px;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: $border;
+  }
+}
+
+.vs2-timeline-dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #d9d5e8;
+  margin-top: 6px;
+  box-shadow: 0 0 0 4px $card-bg;}
+
+.vs2-timeline-item.active .vs2-timeline-dot {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 4px solid $purple;
+}
+
+.vs2-timeline-card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: #f7f8fc;
+  margin-bottom: 8px;
+}
+
+.vs2-timeline-item.active .vs2-timeline-card {
+  background: #fff;
+  border-color: $purple;
+  box-shadow: 0 2px 10px rgba(46, 30, 145, 0.08);
+}
+
+.vs2-timeline-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $navy;
+}
+
+.vs2-timeline-med {
+  font-size: 13px;
+  color: $grey-text;
+}
+
+.vs2-timeline-by {
+  font-size: 13px;
+  color: $purple;
+
+  &.referred {
+    color: $red;
+  }
+}
+
+.vs2-no-bullet-row {
+  grid-template-columns: 150px 1fr;
+}
+
+.vs2-dropzone {
+  border: 1.5px dashed #cfc8ec;
+  border-radius: 12px;
+  background: #faf9fd;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+
+  mat-icon {
+    color: $purple;
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.vs2-dropzone-text {
+  font-size: 14px;
+  color: $navy;
+
+  a {
+    color: $purple;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+.vs2-dropzone-hint {
+  font-size: 12px;
+  color: $grey-text;
+}
+
+@media (max-width: 980px) {
+  .vs2-page {
+    height: auto;
+    overflow: visible;
+  }
+  .vs2-body {
+    flex-direction: column;
+    overflow: visible;
+  }
+  .vs2-sidebar {
+    flex-basis: auto;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .vs2-right {
+    height: auto;
+  }
+  .vs2-content {
+    overflow: visible;
+  }
+  .vs2-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .vs2-med-grid,
+  .vs2-ref-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .vs2-table {
+    overflow-x: auto;
+  }
+  .vs2-table-head,
+  .vs2-table-row {
+    min-width: 560px;
+  }
+}

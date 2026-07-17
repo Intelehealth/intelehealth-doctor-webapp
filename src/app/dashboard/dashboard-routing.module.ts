@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
+import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { OpenChatComponent } from './open-chat/open-chat.component';
@@ -55,8 +56,22 @@ const routes: Routes = [
     data: {
       breadcrumb: 'Visit Summary'
     },
+    component: VisitSummaryV2Component
+  },
+  {
+    path: 'visit-summary-old/:id',
+    data: {
+      breadcrumb: 'Visit Summary'
+    },
     component: VisitSummaryComponent,
     canDeactivate: [CanDeactivateVisitSummary]
+  },
+  {
+    path: 'visit-summary-v2/:id',
+    data: {
+      breadcrumb: 'Visit Summary'
+    },
+    component: VisitSummaryV2Component
   },
   {
     path: 'open-chat/:id',
