@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
@@ -32,6 +33,7 @@ export class AppointmentsComponent implements OnInit {
   appointments: AppointmentModel[] = [];
   patientRegFields: string[] = [];
   isMCCUser = false;
+  isTurnServer: boolean = environment.isTurnServer;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
@@ -54,7 +56,8 @@ export class AppointmentsComponent implements OnInit {
     private translateService: TranslateService,
     private mindmapService: MindmapService,
     private appConfigService: AppConfigService,
-    private rolesService: NgxRolesService) { 
+    private router: Router,
+    private rolesService: NgxRolesService) {
       this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
@@ -141,6 +144,19 @@ export class AppointmentsComponent implements OnInit {
       return `${minutes} minutes`;
     }
     return `${hours} hrs`;
+  }
+
+  startCall(appointment: AppointmentModel) {
+    if (!appointment?.visitUuid) {
+      this.toastr.error(
+        this.translateService.instant('This appointment has no visit linked to it.'),
+        this.translateService.instant('Cannot start call')
+      );
+      return;
+    }
+    this.router.navigate(['/dashboard/visit-summary', appointment.visitUuid], {
+      queryParams: { startCall: 'video' }
+    });
   }
 
   /**

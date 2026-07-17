@@ -151,6 +151,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   additionalNotes = '';
   isCalling: boolean = false;
+  autoCallStarted: boolean = false;
 
   openChatFlag: boolean = false;
 
@@ -741,6 +742,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // check if Patient Exit Survey exists for this visit
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
+            this.maybeAutoStartCall();
             if (this.visitNotePresent) {
               // Set consultation start time from visit note encounter datetime if not already set
               if (!this.consultationStartTime && this.visitNotePresent.encounterDatetime) {
@@ -1321,6 +1323,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.dialogRef1 = undefined;
       this.isCalling = false;
     });
+  }
+
+  maybeAutoStartCall(): void {
+    if (!environment.isTurnServer || this.autoCallStarted) {
+      return;
+    }
+    if (this.route.snapshot.queryParamMap.get('startCall') !== 'video') {
+      return;
+    }
+    this.autoCallStarted = true;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true
+    });
+    this.startCall('video');
   }
 
   /**
