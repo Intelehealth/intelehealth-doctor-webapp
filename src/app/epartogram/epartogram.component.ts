@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { HelperService } from 'src/app/services/helper.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from '../services/auth.service';
 import { NepaliDateService } from 'src/app/core/services/nepali-date.service';
@@ -361,6 +362,8 @@ export class EpartogramComponent implements OnInit {
   outOfTimeReason: string;
   referTypeOtherReason: string;
   membraneRupturedIsDate = false;
+  // 'Membrane Ruptured Timestamp' carries a status code instead of a time when there is no rupture to record.
+  readonly membraneStatusText: { [code: string]: string } = { I: 'Intact', U: 'Unknown' };
   birthOutcomeOther: string;
   motherDeceased: string;
   motherDeceasedReason: string;
@@ -385,6 +388,7 @@ export class EpartogramComponent implements OnInit {
     private visitService: VisitService,
     private authService: AuthService,
     private coreService: CoreService,
+    private helperService: HelperService,
     private nepaliDateService: NepaliDateService) { }
 
   formatDateByClient(dateValue: any): string {
@@ -766,13 +770,13 @@ export class EpartogramComponent implements OnInit {
     }
     if (this.pinfo['MembraneRupturedTimestamp']) {
       const mrVal = String(this.pinfo['MembraneRupturedTimestamp']).trim();
-      const parsed = moment(mrVal, 'DD/MM/YYYY hh:mm A', true);
+      const parsed = moment(mrVal, [moment.ISO_8601, 'DD/MM/YYYY hh:mm A', 'DD/MM/YYYY HH:mm', 'DD/MM/YYYY'] as any, true);
       if (parsed.isValid()) {
         this.pinfo['MembraneRupturedTimestamp'] = parsed.toISOString();
         this.membraneRupturedIsDate = true;
       } else {
-        
-        this.pinfo['MembraneRupturedTimestamp'] = mrVal.toUpperCase();
+        const code = mrVal.toUpperCase();
+        this.pinfo['MembraneRupturedTimestamp'] = this.membraneStatusText[code] || code;
         this.membraneRupturedIsDate = false;
       }
     }
@@ -781,6 +785,8 @@ export class EpartogramComponent implements OnInit {
     this.pinfo['name'] = this.patient?.person.display;
     this.pinfo['gender'] = this.patient?.person.gender;
     this.pinfo['openMrsId'] = this.patient?.identifiers[0]?.identifier;
+    const hospitalId  = this.patient?.attributes?.find((a: any) => a.attributeType.display === 'Hospital ID');
+    if (hospitalId) { this.pinfo['HospitalID'] = hospitalId.value; }
     const providerAttributes = this.visit.encounters[0]?.encounterProviders[0]?.provider?.attributes;
     if (providerAttributes?.length) {
       let attr = providerAttributes.find((o: any) => o.attributeType.display == 'whatsapp');
@@ -1109,6 +1115,14 @@ export class EpartogramComponent implements OnInit {
 
   getInitials(name: string) {
     return name ? name.trim() : '';
+  }
+
+  printPartogram() {
+    this.helperService.printPartogramNative('epartogram-print-table');
+  }
+
+  printStage3() {
+    this.helperService.printSectionNative('stage3-print-table', 'Delivery Outcome Report');
   }
 
   checkIfFutureEncounterExists(futureStartIndex) {

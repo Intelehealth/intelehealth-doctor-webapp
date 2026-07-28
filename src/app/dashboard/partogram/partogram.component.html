@@ -23,7 +23,8 @@
                       <td colspan="55"><h1 class="mb-0">WHO LABOUR CARE GUIDE VIEW</h1></td>
                     </tr>
                     <tr class="page-title-row">
-                      <td colspan="8"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                      <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                      <td colspan="6"><span> Hospital ID:</span> {{pinfo?.HospitalID|noValue:'NA'}}</td>
                       <td colspan="6"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
                       <td colspan="15"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
                       <td colspan="26"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{formatDateByClient(pinfo?.ActiveLaborDiagnosed) || 'NA'}} <span>]</span></td>
@@ -144,7 +145,7 @@
                     <tr *ngIf="visitCompleted">
                       <td [attr.colspan]="3 + totalStage1Cols" class="divider2"></td>
                       <td [attr.colspan]="totalStage2Cols" class="divider2">
-                        <div class="birth-outcome-con">
+                        <div *ngIf="!hasStage3Trigger" class="birth-outcome-con">
                           <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Newborn'">
                             <div style="white-space: pre-wrap;">
                               {{visitCompleteReason}}
@@ -174,9 +175,9 @@
                               </div>
                               <div class="d-flex align-items-center justify-content-center">
                                 <div>
-                                  {{motherDeceased == 'YES' ? 'Mother Status: Death' : 'Mother Status: Healthy'}}
+                                  {{motherDeceased ? 'Mother Status: Death' : 'Mother Status: Healthy'}}
                                 </div>
-                                <ng-container *ngIf="motherDeceased == 'YES'">
+                                <ng-container *ngIf="motherDeceased">
                                   <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="motherDeceasedReason" matTooltipPosition="right">info_outline</mat-icon>
                                 </ng-container>
                               </div>
@@ -1257,9 +1258,9 @@
                       <tr>
                         <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Newborn</td>
                       </tr>
-                      <ng-container *ngIf="motherDeceased != 'YES'||(motherDeceased == 'YES' && birthOutcome)">
+                      <ng-container>
                         <tr>
-                          <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                          <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{babyStatus}}</td>
                           <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                         </tr>
                         <tr *ngIf="birthOutcome !== 'Other'&&birthOutcome !== 'OTHER'">
@@ -1271,8 +1272,8 @@
                         </tr>
                       </ng-container>
                       <tr>
-                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5" class="text-nowrap"><span>Mother Status :</span> {{ motherDeceased == 'YES' ? 'Death' : 'Healthy' }}</td>
-                        <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Death Reason:</span> {{motherDeceasedReason}}</td>
+                        <td [attr.colspan]="motherDeceased ? 1 : 5" class="text-nowrap"><span>Mother Status :</span> {{ motherDeceased ? 'Death' : 'Healthy' }}</td>
+                        <td colspan="4" *ngIf="motherDeceased"><span>Mother Death Reason:</span> {{motherDeceasedReason}}</td>
                       </tr>
                     </ng-container>
                   </tbody>

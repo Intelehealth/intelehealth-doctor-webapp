@@ -8,7 +8,10 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { HelperService } from 'src/app/services/helper.service';
 import { environment } from 'src/environments/environment';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 declare const getFromStorage;
 
@@ -37,6 +40,7 @@ export class Stage3Component implements OnInit {
   patient: any;
   pinfo: any = {};
   loading = false;
+  showViewElcg = false;
 
   deliveryOutcome = {
     deliveryDate: '-',
@@ -112,8 +116,11 @@ export class Stage3Component implements OnInit {
     private readonly visitService: VisitService,
     private readonly encounterService: EncounterService,
     private readonly toastr: ToastrService,
-    private readonly authService: AuthService
-  ) { }
+    private readonly authService: AuthService,
+    private readonly helperService: HelperService
+  ) {
+     this.showViewElcg = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
 
   private loginAttempt = 0;
   private loginExternalThenFetch(uuid: string) {
@@ -592,7 +599,7 @@ export class Stage3Component implements OnInit {
       } else if (param.name === 'Temperature') {
         aliases.push('TEMPERATURE (C)', 'Temperature (C)', 'TEMPERATURE_NEWBORN', 'Temperature Newborn', 'TEMP (C)');
       } else if (param.name === 'Complications') {
-        aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn');
+        aliases.push('COMPLICATION_NEWBORN', 'Complication Newborn', 'Complication', 'Complications Newborn', 'ONGOING_COMPLICATIONS_NEWBORN');
       } else if (param.name === 'Grunting') {
         aliases.push('GRUNTING_NEWBORN');
       } else if (param.name === 'Chest Indrawing') {
@@ -661,7 +668,7 @@ export class Stage3Component implements OnInit {
     return -1;
   }
 
-  isAlert(paramName: string, value: any): boolean {
+  isAlert(section: 'maternal' | 'newborn', paramName: string, value: any): boolean {
     if (value === undefined || value === null || value === '' || value === '-') return false;
     const v = String(value).trim().toLowerCase();
     const num = parseFloat(v);
@@ -676,9 +683,14 @@ export class Stage3Component implements OnInit {
         return (!isNaN(sys) && (sys < 80 || sys >= 140)) || (!isNaN(dia) && dia >= 90);
       }
       case 'Temprature °f':
-        return !isNaN(num) && (num < 95 || num >= 99.5);
+        if (isNaN(num)) return false;
+        return section === 'newborn'
+          ? (num < 97.7 || num > 99.5)
+          : (num < 95 || num >= 99.5);
       case 'Respiratory Rate':
-        return !isNaN(num) && num > 30;
+        return !isNaN(num) && num > (section === 'newborn' ? 60 : 30);
+      case 'SPO2':
+        return !isNaN(num) && num < 92;
       case 'Blood Loss':
         return !isNaN(num) && num >= 500;
       case 'Uterus Contracted':
@@ -688,6 +700,7 @@ export class Stage3Component implements OnInit {
       case 'Hematoma':
         return v === 'y' || v === 'yes';
       case 'Complication':
+      case 'Complications':
         return v !== '-' && v !== 'no' && v !== 'n' && v.length > 0;
       case 'Grunting':
       case 'Chest Indrawing':
@@ -696,6 +709,7 @@ export class Stage3Component implements OnInit {
       case 'Umbilical Cord Oozing':
         return v === 'y' || v === 'yes';
       case 'Feet Temperature':
+      case 'Feet (warm)':    
         return v === 'n' || v === 'no';
       case 'Sucking / Feeding':
         return v === 'n' || v === 'no';
@@ -886,11 +900,9 @@ export class Stage3Component implements OnInit {
     });
   }
 
-  printStage3() {
+  async printStage3() {
     const printContent = document.getElementById('stage3-print-content');
-    if (!printContent) { globalThis.print(); return; }
-    const printWindow = globalThis.open('', '_blank', 'width=1400,height=900');
-    if (!printWindow) { globalThis.print(); return; }
+    if (!printContent) { return; }
     const css = [
       '* { box-sizing: border-box; }',
       'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
@@ -909,18 +921,191 @@ export class Stage3Component implements OnInit {
       '.sos-col-header { background: #d32f2f !important; color: #fff !important; }',
       '.sos-col-header .time-label, .sos-col-header small { color: #fff !important; }',
       'table { width: 100%; table-layout: auto; }',
-      '@media print { @page { size: landscape; margin: 5mm; } }'
+      // The on-screen grid lives in an overflow-x:auto scroller which would clip
+      // the right-hand columns in print; let it show its full width instead.
+      '.table-responsive { overflow: visible !important; }',
+      // Let the (wide) grid take its natural width so we can measure it and zoom
+      // it down to fit the page — otherwise width:100% squeezes/clips columns.
+      '#stage3-print-table { width: auto; table-layout: auto; }',
+      '@media print { @page { size: portrait; margin: 5mm; } }'
     ].join(' ');
-    const doc = printWindow.document;
-    doc.open();
-    doc.close();
-    doc.head.innerHTML = '<meta charset="utf-8"><title>Early PostPartum Monitoring Report</title><style>' + css + '</style>';
-    doc.body.innerHTML = printContent.innerHTML;
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    }, 300);
+   const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    // Off-screen but with a real size so the grid lays out and measures
+    // correctly (a 0x0 iframe reports wrong widths).
+    iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1200px;height:1600px;border:0;';
+    document.body.appendChild(iframe);
+
+    const frameWin = iframe.contentWindow;
+    const frameDoc = frameWin?.document;
+    if (!frameWin || !frameDoc) {
+      iframe.remove();
+      return;
+    }
+
+    const reportTitle = 'Delivery Outcome Report';
+    frameDoc.open();
+    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body><div id="stage3-print-root">' + printContent.innerHTML + '</div></body></html>');
+    frameDoc.close();
+
+    const cleanup = () => {
+      if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+    };
+
+    // Wait for fonts to load before rasterising so the width/height is accurate.
+    const waitForFonts = () => new Promise<void>((resolve) => {
+      const fonts = (frameDoc as any).fonts;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+        fonts.ready.then(() => setTimeout(finish, 150));
+        setTimeout(finish, 2000);
+      } else {
+        setTimeout(finish, 500);
+      }
+    });
+
+    // We render to a PDF and save it rather than calling window.print(), because
+    // the web app runs inside the Intelehealth mobile wrappers (Android WebView /
+    // iOS WKWebView) where JS-initiated printing is a no-op. A downloadable PDF
+    // lets the OS handle printing/sharing.
+    try {
+      await waitForFonts();
+
+      const root = (frameDoc.getElementById('stage3-print-root') as HTMLElement | null) || frameDoc.body;
+      const naturalWidth = root.scrollWidth;
+      const naturalHeight = root.scrollHeight;
+
+      // Cap the raster resolution so a wide report doesn't blow up memory on
+      // low-end devices, while keeping text crisp on smaller ones (never < 1x).
+      const captureScale = Math.max(1, Math.min(2, 2400 / naturalWidth));
+
+      const canvas = await html2canvas(root, {
+        backgroundColor: '#ffffff',
+        scale: captureScale,
+        useCORS: true,
+        windowWidth: naturalWidth,
+        windowHeight: naturalHeight,
+      });
+
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14; // ~5mm
+      const maxWidth = pageWidth - margin * 2;
+
+      // Fit to page width; paginate down the height so tall reports aren't
+      // squashed onto a single page.
+      const imgWidth = maxWidth;
+      const imgHeight = (canvas.height / canvas.width) * imgWidth;
+      const imgData = canvas.toDataURL('image/png');
+
+      let heightLeft = imgHeight;
+      let position = margin;
+      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - margin * 2);
+      while (heightLeft > 0) {
+        pdf.addPage();
+        position = margin - (imgHeight - heightLeft);
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - margin * 2);
+      }
+
+      await this.helperService.deliverPdf(pdf, reportTitle + '.pdf', reportTitle);
+    } catch (err) {
+      console.error('Failed to generate Stage 3 PDF', err);
+    } finally {
+      cleanup();
+    }
+  }
+
+  /**
+   * Prints the Stage 3 report via the browser's native print dialog
+   * (window.print()). Kept alongside `printStage3()` (which generates a PDF for
+   * the mobile webview) so a real print option is available in desktop browsers.
+   */
+  printStage3Native() {
+    const printContent = document.getElementById('stage3-print-content');
+    if (!printContent) { return; }
+    const css = [
+      '* { box-sizing: border-box; }',
+      'body { margin: 0; padding: 8px; font-family: Arial, sans-serif; }',
+      'table { border-collapse: collapse; }',
+      'th, td { border: 1px solid #000; padding: 5px 7px; font-size: 11px; text-align: center; vertical-align: middle; word-wrap: break-word; }',
+      '.delivery-outcome { margin-bottom: 12px; }',
+      '.delivery-outcome td { white-space: normal; }',
+      '.delivery-outcome td.amtsl-medication-cell { white-space: pre-line; }',
+      '.page-title-row td, .delivery-title-row td { font-weight: bold; }',
+      'td span { font-weight: bold; }',
+      '.section-header-row td { background: #c8e6c9; font-weight: bold; text-align: left; }',
+      'td.param-label { text-align: left; min-width: 160px; font-weight: bold; }',
+      '.obs-chip { background: #e3f2fd; border-radius: 3px; padding: 1px 3px; margin: 1px; display: inline-block; }',
+      '.alert-value { color: #d32f2f; background: #ffebee; border-radius: 4px; }',
+      '.sos-badge { display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; color: #fff; background: #d32f2f; border-radius: 8px; letter-spacing: 0.5px; }',
+      '.sos-col-header { background: #d32f2f !important; color: #fff !important; }',
+      '.sos-col-header .time-label, .sos-col-header small { color: #fff !important; }',
+      'table { width: 100%; table-layout: auto; }',
+      '.table-responsive { overflow: visible !important; }',
+      '#stage3-print-table { width: auto; table-layout: auto; }',
+      '@media print { @page { size: portrait; margin: 5mm; } }'
+    ].join(' ');
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    // Off-screen but with a real size so the grid lays out and measures correctly.
+    iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1200px;height:1600px;border:0;';
+    document.body.appendChild(iframe);
+
+    const frameWin = iframe.contentWindow;
+    const frameDoc = frameWin?.document;
+    if (!frameWin || !frameDoc) {
+      iframe.remove();
+      return;
+    }
+
+    const reportTitle = 'Delivery Outcome Report';
+    frameDoc.open();
+    frameDoc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + reportTitle + '</title><style>' + css + '</style></head><body><div id="stage3-print-root">' + printContent.innerHTML + '</div></body></html>');
+    frameDoc.close();
+
+    const cleanup = () => {
+      if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+    };
+
+    // Wait for fonts to load before printing so the layout is complete.
+    const waitForFonts = () => new Promise<void>((resolve) => {
+      const fonts = (frameDoc as any).fonts;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+        fonts.ready.then(() => setTimeout(finish, 150));
+        setTimeout(finish, 2000);
+      } else {
+        setTimeout(finish, 500);
+      }
+    });
+
+    const prevTitle = document.title;
+
+    waitForFonts().then(() => {
+      let cleaned = false;
+      const cleanupOnce = () => {
+        if (cleaned) { return; }
+        cleaned = true;
+        document.title = prevTitle;
+        cleanup();
+      };
+      frameWin.addEventListener('afterprint', cleanupOnce);
+      setTimeout(cleanupOnce, 60000);
+
+      document.title = reportTitle;
+      frameWin.focus();
+      frameWin.print();
+    }).catch((err) => {
+      console.error('Failed to print Stage 3 report', err);
+      document.title = prevTitle;
+      cleanup();
+    });
   }
 
   backToStage12() {

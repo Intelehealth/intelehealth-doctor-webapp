@@ -136,15 +136,18 @@ export class VisitService {
     return whatsappLink;
   }
 
-  getPriorityVisits(page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?limit=${this.recordsPerPage}&page=${page}`);
+  getPriorityVisits(page: number = 1, facilityUuid: string = ''): Observable<any> {
+    const facilityParam = facilityUuid ? `&facilityUuid=${facilityUuid}` : '';
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?limit=${this.recordsPerPage}&page=${page}${facilityParam}`);
   }
 
-  getInProgressVisits(page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?limit=${this.recordsPerPage}&page=${page}`);
+  getInProgressVisits(page: number = 1, facilityUuid: string = ''): Observable<any> {
+    const facilityParam = facilityUuid ? `&facilityUuid=${facilityUuid}` : '';
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?limit=${this.recordsPerPage}&page=${page}${facilityParam}`);
   }
 
-  getCompletedVisits(page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?limit=${this.recordsPerPage}&page=${page}`);
+  getCompletedVisits(page: number = 1, facilityUuid: string = ''): Observable<any> {
+    const facilityParam = facilityUuid ? `&facilityUuid=${facilityUuid}` : '';
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?limit=${this.recordsPerPage}&page=${page}${facilityParam}`);
   }
 }
