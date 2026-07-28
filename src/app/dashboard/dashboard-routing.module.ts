@@ -11,6 +11,7 @@ import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { OpenChatComponent } from './open-chat/open-chat.component';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
+import { environment } from 'src/environments/environment';
 
 export function redirectToFunc(rejectedPermissionName: string, activateRouteSnapshot: ActivatedRouteSnapshot, routerStateSnapshot: RouterStateSnapshot) {
   if (rejectedPermissionName == 'ORGANIZATIONAL: SYSTEM ADMINISTRATOR') {
@@ -52,11 +53,14 @@ const routes: Routes = [
     component: GetStartedComponent
   },
   {
+   
     path: 'visit-summary/:id',
     data: {
       breadcrumb: 'Visit Summary'
     },
-    component: VisitSummaryV2Component
+    ...(environment.isTurnServer
+      ? { component: VisitSummaryComponent, canDeactivate: [CanDeactivateVisitSummary] }
+      : { component: VisitSummaryV2Component })
   },
   {
     path: 'visit-summary-old/:id',
