@@ -161,9 +161,17 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  patientInfo(id, v = 'custom:(uuid,attributes,identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,address3,address6,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))'): Observable<any> {
+  patientInfo(id, v?: string): Observable<any> {
+    // On Turn deployments, expand `identifiers` to include identifierType.display
+    // so getPatientIdentifier('OpenMRS ID') can resolve the ID (otherwise the
+    // Visit Summary header / prescription show "NA"). Non-Turn servers keep the
+    // original flat `identifiers` representation, gated by environment.isTurnServer.
+    const identifiersRep = environment.isTurnServer
+      ? 'identifiers:(identifier,identifierType:(name,uuid,display))'
+      : 'identifiers';
+    const defaultV = `custom:(uuid,attributes,${identifiersRep},person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,address3,address6,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))`;
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=${v}`;
+    const url = `${this.baseURL}/patient/${id}?v=${v || defaultV}`;
     return this.http.get(url);
   }
 
