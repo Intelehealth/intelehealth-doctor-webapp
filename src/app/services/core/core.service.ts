@@ -256,6 +256,8 @@ export class CoreService {
       data,
       hasBackdrop: true,
       disableClose: true,
+      // Allows the page behind to keep scrolling while the call window is minimized
+      scrollStrategy: new NoopScrollStrategy(),
     });
     return dialogRef;
   }

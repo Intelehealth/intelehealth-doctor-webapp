@@ -1302,3 +1302,24 @@ app-past-visits {
     min-width: 560px;
   }
 }
+
+.vs2-webrtc-controls {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .vs2-webrtc-btn {
+    cursor: pointer;
+    border-radius: 25px;
+    margin-bottom: 10px;
+    background-color: var(--color-darkBlue);
+  }
+
+  .vs2-webrtc-btn-audio {
+    width: 44px;
+  }
+}

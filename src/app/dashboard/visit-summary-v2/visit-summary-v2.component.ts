@@ -1,9 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VisitModel } from 'src/app/model/model';
-import { doctorDetails } from 'src/config/constant';
+import { PatientModel, VisitModel } from 'src/app/model/model';
+import { doctorDetails, visitTypes } from 'src/config/constant';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { CoreService } from 'src/app/services/core/core.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
+import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import {
   ComplaintDetail, DetailRow, DocItem, Patient, PastVisit,
   SectionNavItem, SymptomGroup, TimelineGroup, VitalCell
@@ -16,7 +20,7 @@ import { CurrentVisitData, VisitSummaryV2Service } from './visit-summary-v2.serv
   styleUrls: ['./visit-summary-v2.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class VisitSummaryV2Component implements OnInit {
+export class VisitSummaryV2Component implements OnInit, OnDestroy {
   visitId = '';
 
   topTabs = ['Current visits', 'Doctor\'s Note'];
@@ -90,17 +94,141 @@ export class VisitSummaryV2Component implements OnInit {
   patientUuid = '';
   private providerUuid = '';
 
+  patientModel!: PatientModel;
+  clinicName = '';
+  visitEnded = false;
+  isVisitNoteProvider = false;
+  hasWebRTCEnabled = false;
+  hasAudioEnabled = false;
+  hasVideoEnabled = false;
+  hasChatEnabled = false;
+  isCalling = false;
+  private openChatFlag = false;
+  private callDialogRef: MatDialogRef<any> | undefined;
+  private chatDialogRef: MatDialogRef<any> | undefined;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private coreService: CoreService,
-    private v2Service: VisitSummaryV2Service
-  ) {}
+    private v2Service: VisitSummaryV2Service,
+    private appConfigService: AppConfigService,
+    private analytics: AnalyticsService,
+    private visitSummaryService: VisitSummaryHelperService
+  ) {
+    this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
+  }
 
   ngOnInit(): void {
     this.visitId = this.route.snapshot.paramMap.get('id') || '';
     this.providerUuid = getCacheData(true, doctorDetails.PROVIDER)?.uuid || '';
+    this.hasWebRTCEnabled = !!this.appConfigService?.webrtc_section;
+    this.hasAudioEnabled = !!this.appConfigService?.webrtc?.audio_call;
+    this.hasVideoEnabled = !!this.appConfigService?.webrtc?.video_call;
+    this.hasChatEnabled = !!this.appConfigService?.webrtc?.chat;
     this.loadVisit();
+  }
+
+  ngOnDestroy(): void {
+    if (this.callDialogRef) {
+      this.callDialogRef.close();
+      this.callDialogRef = undefined;
+    }
+    if (this.chatDialogRef) {
+      this.chatDialogRef.close();
+      this.chatDialogRef = undefined;
+    }
+  }
+
+  get canStartCall(): boolean {
+    return this.hasWebRTCEnabled && this.isVisitNoteProvider && !this.visitEnded && !this.isCalling;
+  }
+
+  /**
+  * Start chat with HW/patient
+  * @return {void}
+  */
+  startChat(): void {
+    if (this.chatDialogRef) {
+      this.chatDialogRef.close();
+      this.chatDialogRef = undefined;
+      this.isCalling = false;
+      return;
+    }
+    if (!this.visit || !this.patientModel) { return; }
+
+    this.isCalling = true;
+    this.chatDialogRef = this.coreService.openChatBoxModal({
+      patientId: this.visit.patient?.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.patientModel.person?.display,
+      patientPersonUuid: this.patientModel.person?.uuid,
+      patientOpenMrsId: this.patient?.openMrsId
+    });
+
+    this.chatDialogRef.afterClosed().subscribe(() => {
+      this.chatDialogRef = undefined;
+      this.isCalling = false;
+    });
+  }
+
+  /**
+  * Auto-open the chat box when navigated here with the openChat state flag
+  * @return {void}
+  */
+  private checkOpenChatBoxFlag(): void {
+    if (this.openChatFlag && this.hasWebRTCEnabled && this.hasChatEnabled) {
+      this.openChatFlag = false;
+      setTimeout(() => this.startChat(), 1000);
+    }
+  }
+
+  /**
+  * Start audio/video call with HW/patient
+  * @param {string} callType - 'audio' | 'video'
+  * @return {void}
+  */
+  startCall(callType: string): void {
+    if (this.callDialogRef) {
+      this.callDialogRef.close();
+      this.callDialogRef = undefined;
+      this.isCalling = false;
+      return;
+    }
+    if (!this.visit || !this.patientModel) { return; }
+
+    const visitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+    this.analytics.logEvent('start_call', 'engagement', 'call_button', 1, {
+      doctorUserId: this.visitSummaryService.userId,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.patient?.openMrsId,
+      hwName: visitProvider?.display?.split(':')?.[0],
+      hwId: visitProvider?.provider?.uuid || null,
+      visitId: this.visit.uuid,
+      location: this.clinicName,
+      callType
+    });
+
+    this.isCalling = true;
+    this.callDialogRef = this.coreService.openVideoCallModal({
+      patientId: this.visit.patient?.uuid,
+      visitId: this.visit.uuid,
+      connectToDrId: this.visitSummaryService.userId,
+      patientName: this.patientModel.person?.display,
+      patientPersonUuid: this.patientModel.person?.uuid,
+      patientOpenMrsId: this.patient?.openMrsId,
+      initiator: 'dr',
+      drPersonUuid: getCacheData(true, doctorDetails.PROVIDER)?.person?.uuid,
+      patientAge: this.patientModel.person?.age,
+      patientGender: this.patientModel.person?.gender,
+      location: this.clinicName,
+      callType
+    });
+
+    this.callDialogRef.afterClosed().subscribe(() => {
+      this.callDialogRef = undefined;
+      this.isCalling = false;
+    });
   }
 
   private loadVisit(): void {
@@ -118,6 +246,10 @@ export class VisitSummaryV2Component implements OnInit {
     this.visitNoteStarted = data.visitNoteExists;
     this.specializations = data.specializations;
     this.patient = data.patient;
+    this.patientModel = data.patientModel;
+    this.clinicName = data.clinicName;
+    this.visitEnded = data.visitEnded;
+    this.isVisitNoteProvider = !!this.providerUuid && data.visitNoteProviderUuids.includes(this.providerUuid);
     this.consultationDetails = data.consultationDetails;
     this.chiefComplaints = data.chiefComplaints;
     this.complaintDetails = data.complaintDetails;
@@ -129,6 +261,7 @@ export class VisitSummaryV2Component implements OnInit {
     this.abdomenFindings = data.abdomenFindings;
     this.eyeImages = data.eyeImages;
     this.documents = data.documents;
+    this.checkOpenChatBoxFlag();
     this.loadPastVisits();
   }
 
