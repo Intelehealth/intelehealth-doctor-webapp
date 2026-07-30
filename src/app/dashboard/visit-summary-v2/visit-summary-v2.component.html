@@ -73,4 +73,13 @@
 
     </div>
   </div>
+
+  <div class="vs2-webrtc-controls" *ngIf="canStartCall">
+    <img *ngIf="hasAudioEnabled" class="vs2-webrtc-btn vs2-webrtc-btn-audio" src="assets/svgs/audio-call.svg"
+         alt="Start Audio Call" data-test-id="imgStartAudioCall" (click)="startCall('audio')" />
+    <img *ngIf="hasVideoEnabled" class="vs2-webrtc-btn" src="assets/svgs/video-frame.svg"
+         alt="Start Video Call" data-test-id="imgStartVideoCall" (click)="startCall('video')" />
+    <img *ngIf="hasChatEnabled" class="vs2-webrtc-btn" src="assets/svgs/chat-icon-blue-circle.svg"
+         alt="Start Chat" data-test-id="imgStartChat" (click)="startChat()" />
+  </div>
 </div>

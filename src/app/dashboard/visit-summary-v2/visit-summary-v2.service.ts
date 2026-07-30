@@ -48,6 +48,10 @@ export interface CurrentVisitData {
   patientUuid: string;
   specializations: string[];
   patient: Patient;
+  patientModel: PatientModel;
+  clinicName: string;
+  visitEnded: boolean;
+  visitNoteProviderUuids: string[];
   consultationDetails: DetailRow[];
   chiefComplaints: string[];
   complaintDetails: ComplaintDetail[];
@@ -586,6 +590,10 @@ export class VisitSummaryV2Service {
       patientUuid: visit.patient?.uuid || '',
       specializations: ((this.appConfigService as any).specialization || []).map((s: any) => s.name).filter(Boolean),
       patient: this.buildPatient(patient, vitals, patientHistory),
+      patientModel: patient,
+      clinicName,
+      visitEnded: !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
+      visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
       consultationDetails: this.buildConsultationDetails(visit, appointment, visitStatus, clinicName),
       chiefComplaints,
       complaintDetails,

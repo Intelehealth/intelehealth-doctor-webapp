@@ -840,8 +840,25 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.dialogRef.removePanelClass('minimized');
       this.dialogRef.updatePosition(null);
     }
+    this.setBackdropClickThrough(this._minimized);
     this.analytics.logEvent('toggle_window', 'engagement', 'window_button', 1, this.buildAnalyticsEventPayload());
 
+  }
+
+  /**
+  * Make the dialog backdrop transparent and click-through so the app behind
+  * stays usable while the call window is minimized
+  * @param {boolean} clickThrough - Whether the backdrop should be click-through
+  * @return {void}
+  */
+  private setBackdropClickThrough(clickThrough: boolean): void {
+    const container = document.querySelector('.cdk-overlay-container');
+    if (!container) { return; }
+    if (clickThrough) {
+      container.classList.add('vc-call-minimized');
+    } else {
+      container.classList.remove('vc-call-minimized');
+    }
   }
 
   /**
@@ -895,6 +912,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     
     this.webrtcSvc.disconnect();
     this.webrtcSvc.token = '';
+    this.setBackdropClickThrough(false);
   }
 
   checkPatientRegField(fieldName: string): boolean {
