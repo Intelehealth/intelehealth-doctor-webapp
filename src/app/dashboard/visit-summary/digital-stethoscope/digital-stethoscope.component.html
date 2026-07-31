@@ -36,7 +36,7 @@
       <line x1="12" y1="16" x2="12" y2="12"></line>
       <line x1="12" y1="8" x2="12.01" y2="8"></line>
     </svg>
-    <p>No digital auscultation data available for this visit.</p>
+    <p>Digital auscultation is not indicated for this chief complaint.</p>
   </div>
 
   <!-- Main Content -->
@@ -49,13 +49,13 @@
           <div class="diagram-wrapper">
             <img src="assets/images/digital-stethoscope/plainbody.png" alt="Heart Auscultation Points" class="body-image">
             <button
-              *ngFor="let point of heartPoints; let i = index"
+              *ngFor="let point of heartPoints"
               class="measurement-point"
               [ngClass]="getPointState(point.id, 'heart')"
               [style.top]="point.top"
               [style.left]="point.left"
               [attr.data-test-id]="'btnHeartPoint' + point.id"
-              (click)="handlePointClick(point, i, 'heart', 'heartData')">
+              (click)="handlePointClick(point, 'heartData')">
               {{ point.id }}
             </button>
           </div>
@@ -75,13 +75,13 @@
           <div class="diagram-wrapper">
             <img src="assets/images/digital-stethoscope/Front.png" alt="Anterior View" class="body-image">
             <button
-              *ngFor="let point of anteriorPoints; let i = index"
+              *ngFor="let point of anteriorPoints"
               class="measurement-point"
               [ngClass]="getPointState(point.id, 'lung')"
               [style.top]="point.top"
               [style.left]="point.left"
               [attr.data-test-id]="'btnLungAnteriorPoint' + point.id"
-              (click)="handlePointClick(point, i, 'anterior', 'lungData')">
+              (click)="handlePointClick(point, 'lungData')">
               {{ point.id }}
             </button>
           </div>
@@ -98,13 +98,13 @@
           <div class="diagram-wrapper">
             <img src="assets/images/digital-stethoscope/sides.png" alt="Lateral View" class="body-image">
             <button
-              *ngFor="let point of lateralPoints; let i = index"
+              *ngFor="let point of lateralPoints"
               class="measurement-point"
               [ngClass]="getPointState(point.id, 'lung')"
               [style.top]="point.top"
               [style.left]="point.left"
               [attr.data-test-id]="'btnLungLateralPoint' + point.id"
-              (click)="handlePointClick(point, i, 'lateral', 'lungData')">
+              (click)="handlePointClick(point, 'lungData')">
               {{ point.id }}
             </button>
           </div>
@@ -121,13 +121,13 @@
           <div class="diagram-wrapper">
             <img src="assets/images/digital-stethoscope/Back.png" alt="Posterior View" class="body-image">
             <button
-              *ngFor="let point of posteriorPoints; let i = index"
+              *ngFor="let point of posteriorPoints"
               class="measurement-point"
               [ngClass]="getPointState(point.id, 'lung')"
               [style.top]="point.top"
               [style.left]="point.left"
               [attr.data-test-id]="'btnLungPosteriorPoint' + point.id"
-              (click)="handlePointClick(point, i, 'posterior', 'lungData')">
+              (click)="handlePointClick(point, 'lungData')">
               {{ point.id }}
             </button>
           </div>

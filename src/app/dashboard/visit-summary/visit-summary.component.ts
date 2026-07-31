@@ -27,7 +27,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -125,6 +125,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hwInteractionUuid: String;
   patientInteractionUuid: String;
+  referralConsentForm: FormGroup;
   patientCallStatusForm: FormGroup;
   diagnosisForm: FormGroup;
   addMedicineForm: FormGroup;
@@ -226,6 +227,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.visitCompleted = this.visitCompleted;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
         this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+        this.ddxCompRef.instance.referralConsentForm = this.referralConsentForm;
 
         // this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
         //   if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
@@ -418,6 +420,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     patientInteractionComment: null,
     hwInteraction: null,
     patientInteraction: null,
+    referralConsent: null,
     medicine: []
   };
 
@@ -572,6 +575,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       value: new FormControl(null, [Validators.required])
     })
 
+    this.referralConsentForm = new FormGroup({
+      uuid: new FormControl(null),
+      decision: new FormControl(null, [Validators.required]),
+      consent: new FormControl(null)
+    })
+
     this.patientInteractionCommentForm = new FormGroup({
       uuid: new FormControl(null),
       value: new FormControl(null, [Validators.required])
@@ -686,13 +695,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').clearValidators();
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -763,6 +776,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.checkIfReferralConsentPresent();
               this.checkIfPatientCallDurationPresent(visit.attributes)
               this.checkIfCallStatusPresent(visit.attributes)
               this.checkIfDiscussionSummaryPresent();
@@ -814,7 +828,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
+            console.log('Attribute display:', attribute.display, attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false);
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
+              console.log('Setting hwPhoneNo from attribute value:', attribute.value);
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -1169,17 +1185,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string): string {
-    const years = moment().diff(birthdate, 'years');
-    const months = moment().diff(birthdate, 'months');
-    const days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} ${this.translateService.instant('years')}`;
-    } else if (months > 1) {
-      return `${months} ${this.translateService.instant('months')}`;
-    } else {
-      return `${days} ${this.translateService.instant('days')}`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**
@@ -1433,6 +1440,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   startKaleyraCall(): void {
     if (!this.hwPhoneNo) {
+      console.log('Health worker phone number is not available', this.hwPhoneNo);
       this.toastr.error('Health worker phone number is not available');
       return;
     }
@@ -1545,6 +1553,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+  * Check if a referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, is present for this visit
+  * @returns {void}
+  */
+  checkIfReferralConsentPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferralConsent)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            const [decision, consent] = obs.value.split(':');
+            this.referralConsentForm.patchValue({ uuid: obs.uuid, decision, consent: consent || null });
+          }
+        });
+      });
+  }
+
   saveDDxNotes(): void {
     if (this.patientInteractionNotesForm.value.uuid) {
       this.encounterService.updateObs(this.patientInteractionNotesForm.value.uuid, {
@@ -1619,6 +1643,36 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.visitService.updateAttribute(this.visit.uuid, this.patientInteractionUuid, payload);
     else
       return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientInteractionUuid = res.uuid));
+  };
+
+  /**
+  * Format the referral decision + (optional) patient consent into a single obs value
+  * @returns {string}
+  */
+  formatReferralConsentValue(): string {
+    const { decision, consent } = this.referralConsentForm.value;
+    return consent ? `${decision}:${consent}` : decision;
+  }
+
+  /**
+  * Save the referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, as a single observation
+  * @returns {Observable<any>}
+  */
+  saveReferralConsent(): Observable<any> {
+    if (this.referralConsentForm.value.uuid) {
+      if (this.referralConsentForm.valid)
+        return this.encounterService.updateObs(this.referralConsentForm.value.uuid, { value: this.formatReferralConsentValue() });
+      return of(false);
+    } else if (this.referralConsentForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptReferralConsent,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.formatReferralConsentValue(),
+        encounter: this.visitNotePresent.uuid
+      }).pipe(tap((res: ObsModel) => this.referralConsentForm.patchValue({ uuid: res.uuid })));
+    }
+    return of(false);
   };
 
   /**
@@ -2353,13 +2407,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
 
-            // Only try to get Time if the feature is enabled
             if (this.isFeatureAvailable('followUpTime')) {
               const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
               followUpTime = time ? time : null;
             }
 
-            // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
               const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
               followUpType = type && type !== 'null' ? type : null;
@@ -2428,10 +2480,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    // Skip diagnosis validation for Namco doctors
-    if (!this.showAndHideUiElement) {
-      // Namco doctor - skip to saving
-    } else if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
+    if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
       this.toastr.warning(this.translateService.instant('Enter Diagnosis'), this.translateService.instant('Diagnosis Required'));
       return false;
     } else if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.existingDiagnosis.length === 0 && (this.hasAILLMEnabled && (!this.ddxCompRef || (this.ddxCompRef.instance?.existingDiagnosis || []).length === 0))) {
@@ -2445,6 +2494,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Skip follow-up validation for Namco doctors
     if (this.showAndHideUiElement && this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.wantFollowUp && this.visit?.demarcation !== visitTypes.FOLLOW_UP) {
       this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
+      return false;
+    }
+
+    if (!this.referralConsentForm.value.decision) {
+      this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
+      return false;
+    }
+
+    if (this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+      this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
     this.changedFields = [];
@@ -2838,6 +2897,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && !this.showAndHideUiElement) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -2965,13 +3025,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Check if medication has been modified (for AI medications)
     this.checkMedicationModification(medicine);
 
-    const aiMeta = medicine.aiGenerated ? JSON.stringify({
-      ai: true,
-      ...(medicine.rationale?.length && { r: medicine.rationale }),
-      ...(medicine.likelihood && { l: medicine.likelihood })
-    }) : '';
-
-    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}:${aiMeta}`;
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
   }
 
   saveDiscussionSummary(): Observable<any>{
@@ -3006,7 +3060,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.savePatientInteraction(),
         this.saveAdditionalInstruction(),
         this.saveTest(),
-        this.savePatientInteractionComment()
+        this.savePatientInteractionComment(),
+        this.saveReferralConsent()
       );
 
       // Conditional observations based on config
@@ -3189,6 +3244,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         additionalInstruction: () => this.saveAdditionalInstruction(),
         test: () => this.saveTest(),
         patientInteractionComment: () => this.savePatientInteractionComment(),
+        referralConsent: () => this.saveReferralConsent(),
         diagnosisSecondary: () => this.isFeatureAvailable('dp_diagnosis_secondary') ? this.saveDiagnosisSecondary() : of(null),
         discussionSummary: () => this.isFeatureAvailable('dp_discussion_summary') ? this.saveDiscussionSummary() : of(null),
         followUpInstruction: () => this.isFeatureAvailable('follow-up-instruction') ? this.followUpInstructionComponentRef.addInstructions() : of(null),
@@ -3446,6 +3502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           patientInteractionComment: null,
           hwInteraction: null,
           patientInteraction: null,
+          referralConsent: null,
           medicine: []
         };
         
@@ -3650,12 +3707,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Track test form
     if (this.testForm) {
       this.obsData.test = this.testForm.value.test;
-      
+
       this.formSubscriptions.push(
         this.testForm.valueChanges.subscribe(() => {
           const newValue = this.testForm.value.test;
           if (newValue !== this.obsData.test) {
             this.updatedObsData.test = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track referral decision form (decision + patient consent, stored as one observation)
+    if (this.referralConsentForm) {
+      this.obsData.referralConsent = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+
+      this.formSubscriptions.push(
+        this.referralConsentForm.valueChanges.subscribe(() => {
+          const newValue = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.referralConsent)) {
+            this.updatedObsData.referralConsent = newValue;
             this.checkChanges(this.updatedObsData);
           }
         })

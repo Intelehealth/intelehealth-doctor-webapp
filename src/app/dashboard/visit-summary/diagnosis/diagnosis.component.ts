@@ -34,6 +34,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { formatDate } from '@angular/common';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
+import { ReferralConsentComponent } from '../referral-consent/referral-consent.component';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -73,7 +74,8 @@ class PickDateAdapter extends NativeDateAdapter {
     NgbTypeaheadModule,
     MatDatepickerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ReferralConsentComponent
   ],
   providers: [
     AiddxService,
@@ -100,6 +102,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @Input() visitEnded: EncounterModel | string;
   @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
+  @Input() referralConsentForm: FormGroup;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
   @Output() adviceSaved = new EventEmitter<any>();
@@ -334,13 +337,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').clearValidators();
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -505,12 +512,6 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       
       // Clear the cache before making new treatment calls
       this.aiTxService.clearCache();
-      
-      this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-      this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-      this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-      this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-      this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
       this.diagnosisSubject.next(this.selectedDiagnoses);
       const { diagnosisAiGenerated, ...restForm } = this.diagnosisForm.value;
@@ -560,6 +561,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       };
 
       this.existingDiagnosis.push(newDiagnosis);
+      this.getTTxWithRetry();
+
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
       this.diagnosisForm.controls.diagnosisType.reset();
@@ -580,17 +583,24 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     
     // Clear the cache before making new treatment calls
     this.aiTxService.clearCache();
-    
-    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-    this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-    this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
     const { diagnosisAiGenerated: _ignore, ...rest } = this.diagnosisForm.value;
     this.existingDiagnosis.push({ ...rest, diagnosisName: this.diagnosisName });
+    
+    this.getTTxWithRetry();
+    
     this.diagnosisForm.reset();
     this.diagnosisSaved.emit(this.existingDiagnosis);
+  }
+
+  getTTxWithRetry(): void {
+    const multiDDx = this.existingDiagnosis.map(d => d.diagnosisName).join(', ');
+
+    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(multiDDx);
+    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(multiDDx);
+    this.aillmtxTestComponent?.getAITestWithRetry(multiDDx);
+    this.aillmtxReferralComponent?.getAIReferralWithRetry(multiDDx);
+    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(multiDDx);
   }
 
   deleteDiagnosis(index: number, uuid: string): void {
@@ -611,6 +621,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && !this.showAndHideUiElement) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 

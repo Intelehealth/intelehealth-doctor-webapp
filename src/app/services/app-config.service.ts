@@ -33,6 +33,8 @@ export class AppConfigService {
   public patient_diagnostics_section: boolean;
   public ai_llm_section: boolean;
   public ai_llm_recording_section:  boolean;
+  public prescription_notes_section: boolean;
+  public prescription_notes: { specialty: string; notes: string[]; is_enabled: boolean }[];
   constructor(private http: HttpClient) { }
 
   load(): Promise<any> {

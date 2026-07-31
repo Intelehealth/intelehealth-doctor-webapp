@@ -19,13 +19,8 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   activeTab: 'heart' | 'lungs' = 'heart';
 
   selectedPosition: number | null = null;
-  selectedViewIndex: number | null = null;
-  selectedView: string | null = null;
   selectedDataSource: 'lung' | 'heart' | null = null;
   selectedPointId: number | null = null;
-
-  isPlaying: boolean = false;
-  speed: number = 1.0;
 
   deviceName = '';
   deviceId = '';
@@ -49,18 +44,30 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     'aortic': 1, 'pulmonic': 2, 'tricuspid': 3, 'mitral': 4
   };
 
-  private lungPositionToPoint: Record<string, number> = {
-    'right upper lobe': 1, 'left upper lobe': 2,
-    'right mid lobe': 3, 'left mid lobe': 4,
-    'right lower lobe': 5, 'left lower lobe': 6,
-    'right lateral upper': 7, 'right lateral lower': 8,
-    'left lateral upper': 9, 'left lateral lower': 10,
-    'right upper back': 11, 'left upper back': 12,
-    'right mid back': 13, 'left mid back': 14,
-    'right lower back': 15, 'left lower back': 16
+  // User-selected position from the mobile app — authoritative.
+  private outerLungPositionToPoint: Record<string, number> = {
+    'anterior-1-left-top':      2,  'anterior-2-right-top':     1,
+    'anterior-3-left-middle':   4,  'anterior-4-right-middle':  3,
+    'anterior-5-left-lower':    6,  'anterior-6-right-lower':   5,
+    'lateral-1-left-top':       9,  'lateral-2-left-lower':    10,
+    'lateral-3-right-top':      7,  'lateral-4-right-lower':    8,
+    'posterior-1-left-top':    12,  'posterior-2-right-top':   11,
+    'posterior-3-left-middle': 14,  'posterior-4-right-middle': 13,
+    'posterior-5-left-lower':  16,  'posterior-6-right-lower':  15
   };
 
-  // Data arrays — populated from OBS encounter data (no static placeholders)
+  // Ayusynk ML model's sound classification — fallback only.
+  private ayusynkLungPositionToPoint: Record<string, number> = {
+    'anterior_upper_right': 1, 'anterior_upper_left': 2,
+    'anterior_middle_right': 3, 'anterior_middle_left': 4,
+    'anterior_lower_right': 5, 'anterior_lower_left': 6,
+    'lateral_upper_right': 7, 'lateral_lower_right': 8,
+    'lateral_upper_left': 9, 'lateral_lower_left': 10,
+    'posterior_upper_right': 11, 'posterior_upper_left': 12,
+    'posterior_middle_right': 13, 'posterior_middle_left': 14,
+    'posterior_lower_right': 15, 'posterior_lower_left': 16
+  };
+
   lungData: LungData[] = [];
   heartData: HeartData[] = [];
 
@@ -97,19 +104,11 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   ];
 
   get heartRecordingCount(): number {
-    return this.heartData.length;
+    return new Set(this.heartData.map(d => d.point)).size;
   }
 
   get lungRecordingCount(): number {
-    return this.lungData.length;
-  }
-
-  get allLungPointIds(): number[] {
-    const ids = new Set<number>();
-    this.anteriorPoints.forEach(p => ids.add(p.id));
-    this.lateralPoints.forEach(p => ids.add(p.id));
-    this.posteriorPoints.forEach(p => ids.add(p.id));
-    return Array.from(ids).sort((a, b) => a - b);
+    return new Set(this.lungData.map(d => d.point)).size;
   }
 
   ngOnInit(): void {
@@ -130,14 +129,18 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
 
     if (!this.encounters?.length) return;
 
-    // Collect ALL "Sound of breathing" OBS from every encounter
+    // Collect "Sound of breathing" OBS from Vitals encounter
     const stethObs: ObsModel[] = [];
+    const seenObsUuids = new Set<string>();
     for (const enc of this.encounters) {
       if (!enc.obs?.length) continue;
       for (const obs of enc.obs) {
-        if (obs.concept?.display?.toLowerCase().includes(STETHOSCOPE_CONCEPT)) {
-          stethObs.push(obs);
+        if (!obs.concept?.display?.toLowerCase().includes(STETHOSCOPE_CONCEPT)) continue;
+        if (obs.uuid) {
+          if (seenObsUuids.has(obs.uuid)) continue;
+          seenObsUuids.add(obs.uuid);
         }
+        stethObs.push(obs);
       }
     }
 
@@ -165,9 +168,7 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     }
   }
 
-  /**
-   * Parse an OBS value — handles JSON strings, coded objects, and plain values.
-   */
+  // Parse an OBS value — handles JSON strings, coded objects, and plain values.
   private parseObsValue(value: any): any {
     if (!value) return null;
 
@@ -179,7 +180,6 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
       return null;
     }
 
-    // Already an object (OpenMRS sometimes pre-parses)
     if (typeof value === 'object') {
       return value;
     }
@@ -192,28 +192,36 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
    * Resolves the position name to a point number using reverse lookup maps.
    */
   private mapRecordingToData(rec: any, sound: string, obsPosition: string): void {
-    const position = rec.position || obsPosition || '';
-    const posLower = position.toLowerCase().trim();
+    const recLocation = (rec.location ?? '').toLowerCase().trim();
+    const isHeart = sound === 'heart' || recLocation === 'heart';
+    const isLung = sound === 'lung' || recLocation === 'lung' || recLocation === 'lungs';
 
-    if (sound === 'heart' || rec.location === 'heart') {
-      const point = this.heartPositionToPoint[posLower] ?? 0;
+    if (isHeart) {
+      const heartKey = (obsPosition || rec.position || '').toLowerCase().trim();
+      const point = this.heartPositionToPoint[heartKey] ?? 0;
       this.heartData.push({
-        heart_bpm: rec.heart_bpm ?? 'N/A',
-        breathing_rate: rec.breathing_rate ?? 'N/A',
+        heart_bpm: this.normalizeNA(rec.heart_bpm),
+        breathing_rate: this.normalizeNA(rec.breathing_rate),
         location: 'heart',
-        position: this.heartPositionNames[point] || position,
+        position: this.heartPositionNames[point] || obsPosition || rec.position || '',
         point,
         report_url: rec.report_url ?? '',
         recorded_time: rec.recorded_time ?? '',
         device: rec.device ?? 'Ayusynk Digital Stethoscope',
         screening_results: this.toScreeningResults(rec.screening_results)
       });
-    } else if (sound === 'lung' || rec.location === 'lung') {
-      const point = this.lungPositionToPoint[posLower] ?? 0;
+    } else if (isLung) {
+      // Prefer the outer (user-selected) position; fall back to the ML inner key.
+      const outerKey = (obsPosition ?? '').toLowerCase().trim();
+      const innerKey = (rec.position ?? '').toLowerCase().trim();
+      const point =
+        this.outerLungPositionToPoint[outerKey] ??
+        this.ayusynkLungPositionToPoint[innerKey] ??
+        0;
       this.lungData.push({
-        lung_bpm: rec.lung_bpm?.toString() ?? 'N/A',
+        lung_bpm: this.normalizeNA(rec.lung_bpm),
         location: 'lung',
-        position: this.lungPositionNames[point] || position,
+        position: this.lungPositionNames[point] || obsPosition || rec.position || '',
         point,
         report_url: rec.report_url ?? '',
         recorded_time: rec.recorded_time ?? '',
@@ -222,12 +230,17 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
       });
     }
 
-    // Extract device info from the first recording that has it
     if (rec.device && !this.deviceName) this.deviceName = rec.device;
     if (rec.deviceId && !this.deviceId) this.deviceId = rec.deviceId;
   }
 
-  //** Safely normalize screening_results with fallback to empty array.
+  private normalizeNA(value: any): string {
+    if (value == null) return 'N/A';
+    const str = String(value).trim();
+    if (str === '' || str.toLowerCase() === 'na') return 'N/A';
+    return str;
+  }
+
   private toScreeningResults(results: any): ScreeningResult[] {
     if (!Array.isArray(results)) return [];
     return results.map((r: any) => ({
@@ -241,23 +254,18 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
   switchTab(tab: 'heart' | 'lungs'): void {
     this.activeTab = tab;
     this.selectedPosition = null;
-    this.selectedViewIndex = null;
-    this.selectedView = null;
     this.selectedDataSource = null;
     this.selectedPointId = null;
   }
 
-  handlePointClick(point: MeasurementPoint, viewIndex: number, viewName: string, dataName: string): void {
+  handlePointClick(point: MeasurementPoint, dataName: string): void {
     const source = dataName === 'lungData' ? 'lung' : 'heart';
     const dataArray = source === 'lung' ? this.lungData : this.heartData;
     const index = dataArray.findIndex(d => d.point === point.id);
 
     this.selectedPointId = point.id;
     this.selectedPosition = index !== -1 ? index : null;
-    this.selectedViewIndex = viewIndex;
-    this.selectedView = viewName;
     this.selectedDataSource = source;
-    this.isPlaying = false;
   }
 
   getPointState(pointId: number, source: 'lung' | 'heart'): string {
@@ -270,21 +278,6 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     if (!data) return 'no-recording';
     if (this.getDetectedConditions(data).length > 0) return 'abnormal';
     return 'recorded';
-  }
-
-  hasRecording(pointId: number, source: 'lung' | 'heart'): boolean {
-    return source === 'lung'
-      ? this.lungData.some(d => d.point === pointId)
-      : this.heartData.some(d => d.point === pointId);
-  }
-
-  togglePlayPause(): void {
-    this.isPlaying = !this.isPlaying;
-  }
-
-  onSpeedChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.speed = parseFloat(target.value);
   }
 
   openReport(): void {
@@ -303,13 +296,6 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
       }));
   }
 
-  hasCondition(pointId: number, source: 'lung' | 'heart'): boolean {
-    const data = source === 'lung'
-      ? this.lungData.find(d => d.point === pointId)
-      : this.heartData.find(d => d.point === pointId);
-    return data ? this.getDetectedConditions(data).length > 0 : false;
-  }
-
   getSelectedData(): AnyData | null {
     if (this.selectedPosition === null || this.selectedDataSource === null) {
       return null;
@@ -317,10 +303,6 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
     return this.selectedDataSource === 'lung'
       ? this.lungData[this.selectedPosition]
       : this.heartData[this.selectedPosition];
-  }
-
-  getSelectedBpm(data: AnyData): string | number {
-    return 'heart_bpm' in data ? data.heart_bpm : data.lung_bpm;
   }
 
   getSelectedPositionName(): string {
@@ -363,32 +345,12 @@ export class DigitalStethoscopeComponent implements OnInit, OnChanges {
 
     if (dataArray.length === 0) return;
 
-    let currentIndex = this.selectedPosition !== null ? this.selectedPosition : -1;
-    let nextIndex = (currentIndex + 1) % dataArray.length;
-    let nextData = dataArray[nextIndex];
-    let nextPointId = nextData.point!;
+    const currentIndex = this.selectedPosition !== null ? this.selectedPosition : -1;
+    const nextIndex = (currentIndex + 1) % dataArray.length;
+    const nextData = dataArray[nextIndex];
 
-    // Find which view and view index this point belongs to
-    let viewName = source === 'heart' ? 'heart' : '';
-    let viewIndex = 0;
-
-    if (source === 'lung') {
-      const anterior = this.anteriorPoints.findIndex(p => p.id === nextPointId);
-      const lateral = this.lateralPoints.findIndex(p => p.id === nextPointId);
-      const posterior = this.posteriorPoints.findIndex(p => p.id === nextPointId);
-
-      if (anterior !== -1) { viewName = 'anterior'; viewIndex = anterior; }
-      else if (lateral !== -1) { viewName = 'lateral'; viewIndex = lateral; }
-      else if (posterior !== -1) { viewName = 'posterior'; viewIndex = posterior; }
-    } else {
-      const heartIdx = this.heartPoints.findIndex(p => p.id === nextPointId);
-      if (heartIdx !== -1) { viewName = 'heart'; viewIndex = heartIdx; }
-    }
-
-    this.selectedPointId = nextPointId;
+    this.selectedPointId = nextData.point!;
     this.selectedPosition = nextIndex;
-    this.selectedViewIndex = viewIndex;
-    this.selectedView = viewName;
     this.selectedDataSource = source;
   }
 }

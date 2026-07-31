@@ -166,6 +166,36 @@ export function isFeaturePresent(featureName: string, notInclude = false): boole
   return featureList.includes(featureName);
 }
 
+export function getAge(birthdate: string, translateService?: { instant: (key: string) => string }, short = false): string {
+  if (!birthdate) return '';
+  const now = moment();
+  const dob = moment(birthdate);
+  if (!dob.isValid() || dob.isAfter(now)) return '';
+
+  const years = now.diff(dob, 'years');
+  const totalMonths = now.diff(dob, 'months');
+  const days = now.diff(dob, 'days');
+
+  const t = (key: string) => translateService ? translateService.instant(key) : key;
+  const y = short ? 'y,' : t('years');
+  const m = short ? 'm' : t('months');
+  const d = short ? 'd' : t('days');
+
+  if (days <= 28) {
+    return `${days || 1} ${d}`;
+  } else if (totalMonths < 24) {
+    return `${totalMonths || 1} ${m}`;
+  } else if (years < 18) {
+    const remainingMonths = totalMonths - (years * 12);
+    if (remainingMonths > 0) {
+      return `${years} ${y} ${remainingMonths} ${m}`;
+    }
+    return `${years} ${y.replace(',', '')}`;
+  } else {
+    return `${years} ${y.replace(',', '')}`;
+  }
+}
+
 export function getCallDuration(given_seconds: number){
   let dateObj = new Date(given_seconds * 1000);
   let hours = dateObj.getUTCHours();

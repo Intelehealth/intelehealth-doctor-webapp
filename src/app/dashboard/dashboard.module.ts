@@ -39,6 +39,7 @@ import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruct
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
 import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
+import { ReferralConsentComponent } from './visit-summary/referral-consent/referral-consent.component';
 import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
 import { PatientHeaderCardComponent } from './visit-summary-v2/patient-header-card/patient-header-card.component';
 import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-sidebar.component';
@@ -106,7 +107,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
       }
     }),
     MatProgressSpinnerModule,
-    SharedModule
+    SharedModule,
+    ReferralConsentComponent
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },

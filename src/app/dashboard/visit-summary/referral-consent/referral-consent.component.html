@@ -1,0 +1,80 @@
+<mat-expansion-panel [expanded]="true" #panelReferralConsent hideToggle
+  id="referralConsentFormTemplate" data-test-id="expansionPanelReferralConsent">
+  <mat-expansion-panel-header data-test-id="expansionPanelHeaderReferralConsent">
+    <mat-panel-title>
+      <div class="intel-accordion-title" data-test-id="accordionTitleReferralConsent">
+        <img src="assets/svgs/patient-interaction.svg" alt="" width="44px"
+          data-test-id="iconReferralConsent" />
+        <h6 class="mb-0 ml-2" data-test-id="titleReferralConsent">{{ 'Referral Consent' | translate }}</h6>
+      </div>
+    </mat-panel-title>
+    <mat-icon data-test-id="expansionToggleIconReferralConsent">{{ panelReferralConsent.expanded ? "remove" : "add" }}</mat-icon>
+  </mat-expansion-panel-header>
+
+  <form [formGroup]="referralConsentForm" data-test-id="formReferralConsent">
+    <ul class="items-list" data-test-id="referralConsentList">
+      <li data-test-id="itemReferralType">
+        <div class="row">
+          <label class="col-sm-3 col-form-label" data-test-id="labelReferralType">
+            {{ 'Where should this patient be referred?' | translate }}
+          </label>
+          <div class="col-sm-9 d-flex justify-content-between align-items-center" data-test-id="divReferralTypeOptions">
+            <div class="d-flex align-items-center">
+              <div class="pretty p-default p-round" data-test-id="wrapperReferralNamco">
+                <input type="radio" value="NAMCO" formControlName="decision" data-test-id="radioReferralNamco"
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                <div class="state p-success" data-test-id="stateReferralNamco">
+                  <label data-test-id="labelReferralNamco">{{ 'Refer to NAMCO' | translate }}</label>
+                </div>
+              </div>
+              <div class="pretty p-default p-round" data-test-id="wrapperReferralPhc">
+                <input type="radio" value="PHC" formControlName="decision" data-test-id="radioReferralPhc"
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                <div class="state p-success" data-test-id="stateReferralPhc">
+                  <label data-test-id="labelReferralPhc">{{ 'Refer to PHC' | translate }}</label>
+                </div>
+              </div>
+              <div class="pretty p-default p-round" data-test-id="wrapperReferralNone">
+                <input type="radio" value="No referral" formControlName="decision" data-test-id="radioReferralNone"
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                <div class="state p-success" data-test-id="stateReferralNone">
+                  <label data-test-id="labelReferralNone">{{ 'No referral needed' | translate }}</label>
+                </div>
+              </div>
+            </div>
+            <button mat-icon-button (click)="deleteReferralConsent()"
+              *ngIf="referralConsentForm.value.uuid && !isMCCUser && isVisitNoteProvider && !visitEnded"
+              data-test-id="btnDeleteReferralConsent">
+              <img src="assets/svgs/delete-icon.svg" alt="" data-test-id="imgDeleteReferralConsent" />
+            </button>
+          </div>
+        </div>
+      </li>
+      <li *ngIf="referralConsentForm.value.decision === 'NAMCO'" data-test-id="itemReferralConsent">
+        <div class="row">
+          <label class="col-sm-3 col-form-label" data-test-id="labelReferralConsent">
+            {{ 'Has the patient consented to this referral?' | translate }}
+          </label>
+          <div class="col-sm-9 d-flex align-items-center" data-test-id="divReferralConsentOptions">
+            <div class="pretty p-default p-round" data-test-id="wrapperReferralConsentYes">
+              <input type="radio" value="{{ 'Yes' | translate }}" formControlName="consent"
+                data-test-id="radioReferralConsentYes"
+                [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+              <div class="state p-success" data-test-id="stateReferralConsentYes">
+                <label data-test-id="labelReferralConsentYes">{{ 'Yes' | translate }}</label>
+              </div>
+            </div>
+            <div class="pretty p-default p-round" data-test-id="wrapperReferralConsentNo">
+              <input type="radio" value="{{ 'No' | translate }}" formControlName="consent"
+                data-test-id="radioReferralConsentNo"
+                [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+              <div class="state p-success" data-test-id="stateReferralConsentNo">
+                <label data-test-id="labelReferralConsentNo">{{ 'No' | translate }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </form>
+</mat-expansion-panel>

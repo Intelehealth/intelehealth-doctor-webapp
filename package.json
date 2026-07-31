@@ -51,7 +51,7 @@
     "intl-tel-input": "^17.0.19",
     "jquery": "^3.5.1",
     "jspdf": "^4.0.0",
-    "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.0.17",
+    "lib-presciption": "github:Intelehealth/intelehealth-doctor-webapp-download-prescription#build_0.2.1",
     "libphonenumber-js": "^1.10.18",
     "livekit-client": "^2.15.8",
     "markdown-it": "^14.1.0",

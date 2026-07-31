@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "webapp_image.tar.gz"
-          target: "/home/ubuntu/deploy/webapp/"
+          target: "/tmp"
 
       # STEP 4: Restart the container
       - name: Deploy Container
@@ -52,7 +52,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/deploy/webapp/
+            cd /tmp
             gunzip -c webapp_image.tar.gz | docker load
             
             docker stop webapp-container || true
@@ -66,4 +66,4 @@ jobs:
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
             
-            rm webapp_image.tar
+           
