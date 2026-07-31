@@ -2512,12 +2512,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
 
-    if (!this.referralConsentForm.value.decision) {
+    // Turn servers hide the Referral Consent section, so skip its validation too
+    // (otherwise the visit can never be completed -- the field can't be filled).
+    if (!environment.isTurnServer && !this.referralConsentForm.value.decision) {
       this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
       return false;
     }
 
-    if (this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+    if (!environment.isTurnServer && this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
       this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
