@@ -32,6 +32,16 @@ export class SearchedPatientsComponent {
   }
 
   /**
+  * Clean a patient's display name by dropping a trailing "." placeholder family
+  * name (used when a patient was registered without a surname).
+  * @param {string} display - person.display from OpenMRS
+  * @return {string}
+  */
+  cleanName(display: string): string {
+    return (display || '').replace(/\s*\.\s*$/, '').trim();
+  }
+
+  /**
   * View visit details
   * @param {string} uuid - visit uuid
   * @return {void}
