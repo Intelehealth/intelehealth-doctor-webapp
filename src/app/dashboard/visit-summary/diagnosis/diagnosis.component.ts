@@ -512,12 +512,6 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       
       // Clear the cache before making new treatment calls
       this.aiTxService.clearCache();
-      
-      this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-      this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-      this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-      this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-      this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
       this.diagnosisSubject.next(this.selectedDiagnoses);
       const { diagnosisAiGenerated, ...restForm } = this.diagnosisForm.value;
@@ -567,6 +561,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       };
 
       this.existingDiagnosis.push(newDiagnosis);
+      this.getTTxWithRetry();
+
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
       this.diagnosisForm.controls.diagnosisType.reset();
@@ -587,17 +583,24 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     
     // Clear the cache before making new treatment calls
     this.aiTxService.clearCache();
-    
-    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-    this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-    this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
     const { diagnosisAiGenerated: _ignore, ...rest } = this.diagnosisForm.value;
     this.existingDiagnosis.push({ ...rest, diagnosisName: this.diagnosisName });
+    
+    this.getTTxWithRetry();
+    
     this.diagnosisForm.reset();
     this.diagnosisSaved.emit(this.existingDiagnosis);
+  }
+
+  getTTxWithRetry(): void {
+    const multiDDx = this.existingDiagnosis.map(d => d.diagnosisName).join(', ');
+
+    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(multiDDx);
+    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(multiDDx);
+    this.aillmtxTestComponent?.getAITestWithRetry(multiDDx);
+    this.aillmtxReferralComponent?.getAIReferralWithRetry(multiDDx);
+    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(multiDDx);
   }
 
   deleteDiagnosis(index: number, uuid: string): void {
