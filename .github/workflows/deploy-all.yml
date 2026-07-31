@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [dev, turn]
+        target: [dev, turn, ttxai]
     concurrency:
       group: webapp-deploy-${{ matrix.target }}
       cancel-in-progress: false
@@ -31,6 +31,9 @@ jobs:
             turn)
               echo "host=${{ secrets.TURN_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
+            ttxai)
+              echo "host=${{ secrets.TTXAI_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;  
             *)
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
