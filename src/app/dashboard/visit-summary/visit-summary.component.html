@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" [class.turn-server-scroll]="isTurnServer">
   <div class="row">
     <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment && checkIfDateOldThanOneDay(visitAppointment).includes('Due')">
       <div class="appointment-banner">
@@ -41,8 +41,13 @@
                   <h6 data-test-id="etPatientName">
                     <span>{{ patient?.person?.preferredName?.givenName }}</span>
                     <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
+<<<<<<< Updated upstream
                     <span>{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
                     <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.birthdate ? getAge(patient?.person.birthdate, true) : patient?.person.age) + ")" }}</span>
+=======
+                    <span *ngIf="patient?.person?.preferredName?.familyName && patient?.person?.preferredName?.familyName !== '.'">Shaheen :  {{ ' ' + patient?.person?.preferredName?.familyName }}</span>
+                    <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.age) + ")" }}</span>
+>>>>>>> Stashed changes
                   </h6>
                   <p data-test-id="etPatienOpenMRSId" *ngIf="isFeatureAvailable('tnmStaging')">{{ getPersonAttributeValue('TMH Case Number') }}</p>
                   <p data-test-id="etPatienOpenMRSId" *ngIf="!isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
