@@ -1,0 +1,85 @@
+<div class="vs2-page">
+
+  <app-patient-header-card *ngIf="patient" [patient]="patient"></app-patient-header-card>
+
+  <div class="vs2-body">
+
+    <app-visit-sidebar
+      [visitScopeTabs]="visitScopeTabs"
+      [activeVisitScope]="activeVisitScope"
+      [sections]="sections"
+      [doctorNoteNav]="doctorNoteNav"
+      [activeSection]="activeSection"
+      [visitNoteStarted]="visitNoteStarted"
+      [pastVisitsTimeline]="pastVisitsTimeline"
+      [activePastVisitKey]="activePastVisitKey"
+      (scopeChange)="setVisitScope($event)"
+      (sectionSelect)="selectSection($event)"
+      (pastVisitSelect)="selectPastVisit($event)">
+    </app-visit-sidebar>
+
+    <div class="vs2-right">
+
+      <ng-container *ngIf="activeVisitScope === 'Current visits'">
+
+        <div class="vs2-top-tabs">
+          <button
+            *ngFor="let tab of visibleTopTabs"
+            class="vs2-top-tab"
+            [class.active]="activeTopTab === tab"
+            (click)="setTopTab(tab)">
+            {{ tab }}
+          </button>
+        </div>
+
+        <main class="vs2-content">
+
+          <div class="vs2-content-header">
+            <h2>{{ activeVisitScope }}</h2>
+            <mat-icon>expand_less</mat-icon>
+          </div>
+
+          <app-current-visit-details
+            [consultationDetails]="consultationDetails"
+            [chiefComplaints]="chiefComplaints"
+            [complaintDetails]="complaintDetails"
+            [associatedSymptoms]="associatedSymptoms"
+            [patientHistory]="patientHistory"
+            [familyHistory]="familyHistory"
+            [vitals]="vitals"
+            [generalExams]="generalExams"
+            [eyeImages]="eyeImages"
+            [abdomenFindings]="abdomenFindings"
+            [documents]="documents"
+            [chwNote]="chwNote"
+            [specializations]="specializations"
+            (startVisit)="startVisitNote()"
+            (reassign)="reassignVisit($event)">
+          </app-current-visit-details>
+
+          <app-doctor-note
+            *ngIf="visitNoteStarted"
+            [patientUuid]="patientUuid"
+            [visitUuid]="visitId"
+            [visitNoteUuid]="visitNoteUuid">
+          </app-doctor-note>
+
+        </main>
+      </ng-container>
+
+      <ng-container *ngIf="activeVisitScope === 'Past Visits'">
+        <app-past-visits *ngIf="activePastVisit" [visit]="activePastVisit"></app-past-visits>
+      </ng-container>
+
+    </div>
+  </div>
+
+  <div class="vs2-webrtc-controls" *ngIf="canStartCall">
+    <img *ngIf="hasAudioEnabled" class="vs2-webrtc-btn vs2-webrtc-btn-audio" src="assets/svgs/audio-call.svg"
+         alt="Start Audio Call" data-test-id="imgStartAudioCall" (click)="startCall('audio')" />
+    <img *ngIf="hasVideoEnabled" class="vs2-webrtc-btn" src="assets/svgs/video-frame.svg"
+         alt="Start Video Call" data-test-id="imgStartVideoCall" (click)="startCall('video')" />
+    <img *ngIf="hasChatEnabled" class="vs2-webrtc-btn" src="assets/svgs/chat-icon-blue-circle.svg"
+         alt="Start Chat" data-test-id="imgStartChat" (click)="startChat()" />
+  </div>
+</div>

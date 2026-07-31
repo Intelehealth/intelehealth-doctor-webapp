@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
@@ -151,6 +152,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   additionalNotes = '';
   isCalling: boolean = false;
+  autoCallStarted: boolean = false;
 
   openChatFlag: boolean = false;
 
@@ -174,6 +176,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   collapsed: boolean = false;
   isMCCUser: boolean = false;
+  isTurnServer: boolean = environment.isTurnServer;
+  magicLinkUrl: string = null;
+  generatingMagicLink: boolean = false;
   brandName = environment.brandName === 'KCDO';
   diagnosticList;
   sanitizedValue: SafeHtml;
@@ -468,6 +473,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     private rolesService: NgxRolesService,
     private sanitizer: DomSanitizer,
     private analytics: AnalyticsService,
+    private webrtcSvc: WebrtcService,
     private providerService: ProviderService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
@@ -749,6 +755,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // check if Patient Exit Survey exists for this visit
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
+            this.maybeAutoStartCall();
             if (this.visitNotePresent) {
               // Set consultation start time from visit note encounter datetime if not already set
               if (!this.consultationStartTime && this.visitNotePresent.encounterDatetime) {
@@ -1325,6 +1332,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  maybeAutoStartCall(): void {
+    if (!environment.isTurnServer || this.autoCallStarted) {
+      return;
+    }
+    if (this.route.snapshot.queryParamMap.get('startCall') !== 'video') {
+      return;
+    }
+    this.autoCallStarted = true;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true
+    });
+    this.startCall('video');
+  }
+
   /**
   * Start video call with HW/patient
   * @return {void}
@@ -1365,6 +1388,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
       this.isCalling = false;
+    });
+  }
+
+  onGenerateMagicLink() {
+    if (this.generatingMagicLink || !this.visit?.uuid) return;
+    this.generatingMagicLink = true;
+    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME) || this.provider?.person?.display;
+    this.webrtcSvc.generateMagicLink(this.visit.uuid, this.visit.patient?.uuid, doctorName, this.patient?.person?.display).subscribe((res: any) => {
+      this.generatingMagicLink = false;
+      if (res?.success && res?.url) {
+        this.magicLinkUrl = res.url;
+      } else {
+        this.toastr.error(res?.message || 'Could not generate the video call link.');
+      }
+    }, () => {
+      this.generatingMagicLink = false;
+      this.toastr.error('Could not generate the video call link.');
+    });
+  }
+
+  copyMagicLink() {
+    if (!this.magicLinkUrl) return;
+    navigator.clipboard.writeText(this.magicLinkUrl).finally(() => {
+      this.translationService.getTranslation('Video call magic link copied', '', true);
     });
   }
 
@@ -2497,8 +2544,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                     }).subscribe((post) => {
                       this.visitCompleted = true;
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
-
+                      // Prescription just shared -> notify the patient on WhatsApp
+                      console.log("calling turn prescription.....");
+                      if (environment.isTurnServer) {
+                        this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+                      }
                       this.notifyHwForAvailablePrescription("","",followUpDate);
+                    
                       this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
                       if (this.appConfigService.abha_section) {

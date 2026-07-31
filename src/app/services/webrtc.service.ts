@@ -34,11 +34,6 @@ export class WebrtcService {
   private remoteElement: ElementRef | string | any;
   public visitHolderId: null;
 
-  // Connection state streams for UI/components to subscribe
-  public isReconnecting$ = new BehaviorSubject<boolean>(false);
-  public signalReconnecting$ = new Subject<void>();
-  // Synchronous flag for quick checks in components
-  public isCurrentlyReconnecting: boolean = false;
   // Connection quality streams
   public localConnectionQuality$ = new BehaviorSubject<ConnectionQuality | null>(null);
 
@@ -69,6 +64,15 @@ export class WebrtcService {
         this.appToken = res?.appToken;
         return res;
       }));
+  }
+
+  generateMagicLink(visitUuid: string, roomId: string, doctorName?: string, patientName?: string) {
+    return this.http.post(`${environment.webrtcTokenServerUrl}api/magic-link`, {
+      visitUuid,
+      roomId,
+      doctorName,
+      patientName,
+    });
   }
 
   startRecording(payload) {
@@ -150,21 +154,6 @@ export class WebrtcService {
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-      // Reconnection-related events
-      .on(RoomEvent.SignalReconnecting, () => {
-        console.info("Signal (websocket) is reconnecting");
-        this.signalReconnecting$.next();
-      })
-      .on(RoomEvent.Reconnecting, () => {
-        console.warn("⚠️ Reconnecting...");
-        this.isCurrentlyReconnecting = true;
-        this.isReconnecting$.next(true);
-      })
-      .on(RoomEvent.Reconnected, () => {
-        console.log("🔄 Reconnected!");    
-        this.isCurrentlyReconnecting = false;
-        this.isReconnecting$.next(false);
-      })
       .on(RoomEvent.ConnectionQualityChanged, (quality: ConnectionQuality, participant: Participant) => {
         // Emit per-participant quality updates for UI consumption
         if ((participant as any)?.isLocal) {
@@ -221,9 +210,15 @@ export class WebrtcService {
     }
 
     if (track.kind === Track.Kind.Audio) {
+      try {
+        this.remoteContainer.querySelectorAll('audio').forEach((a: any) => a.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     } else if (track.kind === Track.Kind.Video) {
       element.style.height = '100%';
+      try {
+        this.remoteContainer.querySelectorAll('video').forEach((v: any) => v.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     }
   }
@@ -233,8 +228,8 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    // remove tracks from all attached elements
-    track?.detach();
+    const detached: any = track?.detach();
+    (Array.isArray(detached) ? detached : [detached]).forEach((el: any) => el?.remove?.());
   }
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
@@ -256,8 +251,9 @@ export class WebrtcService {
    * Method to toggle local video
    */
   public toggleVideo() {
-    this.room.localParticipant.setCameraEnabled(!this.room.localParticipant.isCameraEnabled);
-    return this.room.localParticipant.isCameraEnabled;
+    const next = !this.room.localParticipant.isCameraEnabled;
+    this.room.localParticipant.setCameraEnabled(next).catch(() => {});
+    return !next;
   }
 
 
@@ -265,8 +261,9 @@ export class WebrtcService {
    * Method to toggle local audio
    */
   public toggleAudio() {
-    this.room.localParticipant.setMicrophoneEnabled(!this.room.localParticipant.isMicrophoneEnabled);
-    return this.room.localParticipant.isMicrophoneEnabled;
+    const next = !this.room.localParticipant.isMicrophoneEnabled;
+    this.room.localParticipant.setMicrophoneEnabled(next).catch(() => {});
+    return !next;
   }
 
   handleDisconnect() {
@@ -294,6 +291,17 @@ export class WebrtcService {
       this.room.localParticipant.unpublishTrack(mic, true);
     }
 
+    this.stopAllLocalTracks();
+  }
+
+  private stopAllLocalTracks() {
+    try {
+      this.room?.localParticipant?.trackPublications?.forEach((pub: any) => {
+        pub?.track?.stop?.();
+        const mst = pub?.track?.mediaStreamTrack;
+        if (mst && mst.readyState !== 'ended') mst.stop();
+      });
+    } catch (e) {}
   }
 
   get remoteContainer() {

@@ -28,7 +28,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       if (request.method == 'DELETE' && request.url.includes('session')) {
         return throwError(error); 
       }
-      if (error == 'OK' || err?.url.includes('/abha/')) {
+      if (error == 'OK' || err?.url?.includes?.('/abha/')) {
         return throwError(error);
       }
       this.toastr.error(error);
