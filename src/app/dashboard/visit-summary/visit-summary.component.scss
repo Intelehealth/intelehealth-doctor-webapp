@@ -37,7 +37,8 @@
   }
 }
 
-// Sticky patient info container
+// Sticky patient info (non-Turn servers only). The card pins to the top while
+// the rest scrolls.
 [data-test-id="patientInfoMainContainer"] {
   position: sticky;
   top: 64px;
@@ -46,6 +47,15 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
   border-radius: 12px;
+}
+
+// On Turn servers the whole page scrolls -- the patient-info card scrolls away
+// with the rest of the content instead of sticking.
+.turn-server-scroll [data-test-id="patientInfoMainContainer"] {
+  position: static;
+  top: auto;
+  z-index: auto;
+  box-shadow: none;
 }
 
 .patient-info-wrapper {
