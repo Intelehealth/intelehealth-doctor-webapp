@@ -22,7 +22,7 @@
 
         <!-- Patient Name, Gender, Age -->
         <div class="col-6" data-test-id="patientDetails">
-          <span data-test-id="patientName">{{ value.person.display }}</span>
+          <span data-test-id="patientName">{{ cleanName(value.person.display) }}</span>
           <span class="gender" data-test-id="patientGenderAge">
             ({{ value.person.gender | translate }}, {{ value.person.age }})
           </span>
