@@ -1,22 +1,45 @@
 name: Deploy Webapp Unilateral
-
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Host to deploy to"
+        type: choice
+        default: all
+        options:
+          - all
+          - dev
+          - turn
+          - ttxai
   push:
     branches:
       - development_master
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.set.outputs.targets }}
+    steps:
+      - name: Determine targets
+        id: set
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
+            echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
+          else
+            echo 'targets=["dev","turn","ttxai"]' >> "$GITHUB_OUTPUT"
+          fi
+
   build-and-deploy:
+    needs: set-matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [dev, turn, ttxai]
+        target: ${{ fromJSON(needs.set-matrix.outputs.targets) }}
     concurrency:
       group: webapp-deploy-${{ matrix.target }}
       cancel-in-progress: false
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -33,7 +56,7 @@ jobs:
               ;;
             ttxai)
               echo "host=${{ secrets.TTXAI_HOST }}" >> "$GITHUB_OUTPUT"
-              ;;  
+              ;;
             *)
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
@@ -76,14 +99,11 @@ jobs:
           script: |
             cd /home/ubuntu/deploy/webapp/
             gunzip -c webapp_image.tar.gz | docker load
-
             docker stop webapp-container || true
             docker rm webapp-container || true
-
             docker run -d \
               --name webapp-container \
               -p 81:80 \
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
-
             rm /home/ubuntu/deploy/webapp/webapp_image.tar.gz
