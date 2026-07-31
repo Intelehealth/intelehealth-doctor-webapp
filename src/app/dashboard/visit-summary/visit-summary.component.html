@@ -1361,7 +1361,9 @@
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
             </ng-container>
 
-            <app-referral-consent *ngIf="!hasAILLMEnabled" [referralConsentForm]="referralConsentForm"
+            <!-- Referral Consent is hidden on Turn servers (referral workflow not used there);
+                 other servers keep the original ai_llm_section-driven behavior. -->
+            <app-referral-consent *ngIf="!hasAILLMEnabled && !isTurnServer" [referralConsentForm]="referralConsentForm"
               [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
             </app-referral-consent>
 
