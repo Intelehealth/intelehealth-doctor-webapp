@@ -742,6 +742,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
+            // Debug: what patientInfo() actually returned for identifiers. If
+            // typeDisplay is undefined here, the fetch representation didn't
+            // expand identifiers (isTurnServer flag / build), so the header shows NA.
+            console.log('[patientInfo] OpenMRS ID =>',
+              patient?.identifiers?.find((i: any) => i?.identifierType?.display === 'OpenMRS ID')?.identifier || '(not found)',
+              '| identifiers:', JSON.stringify(patient?.identifiers?.map((i: any) => ({
+                identifier: i?.identifier, typeDisplay: i?.identifierType?.display,
+              }))));
             this.clinicName = visit.location.display;
 
             if (this.appConfigService.abha_section) {
