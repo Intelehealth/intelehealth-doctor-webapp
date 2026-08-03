@@ -195,7 +195,7 @@
                 <label for="phoneNumber">Phone Number *</label>
                 <input type="text"
                   ng2TelInput
-                  [ng2TelInputOptions]="{initialCountry: isNepalClient ? 'np' : 'in', separateDialCode: true, autoHideDialCode: false}"
+                  [ng2TelInputOptions]="{initialCountry: initialCountryIso2, separateDialCode: true, autoHideDialCode: false}"
                   (hasError)="hasError($event, 'phoneNumber')"
                   (ng2TelOutput)="getNumber($event, 'phoneNumber')"
                   (intlTelInputObject)="telInputObject($event, 'phoneNumber')"
@@ -223,7 +223,7 @@
                 <label for="whatsapp">WhatsApp Number *</label>
                 <input type="text"
                   ng2TelInput
-                  [ng2TelInputOptions]="{initialCountry: isNepalClient ? 'np' : 'in', separateDialCode: true, autoHideDialCode: false}"
+                  [ng2TelInputOptions]="{initialCountry: initialCountryIso2, separateDialCode: true, autoHideDialCode: false}"
                   (hasError)="hasError($event, 'whatsAppNumber')"
                   (ng2TelOutput)="getNumber($event, 'whatsAppNumber')"
                   (intlTelInputObject)="telInputObject($event, 'whatsAppNumber')"

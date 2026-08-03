@@ -18,6 +18,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { NepaliDate, NepaliDateService } from 'src/app/core/services/nepali-date.service';
+import { CountryCode } from 'libphonenumber-js';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -168,8 +169,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   whatsAppObj: any;
   subscription1: Subscription;
   subscription2: Subscription;
-  maxTelLegth1: number = 10;
-  maxTelLegth2: number = 10;
+  readonly defaultTelLength: number = 10;
+  maxTelLegth1: number = this.defaultTelLength;
+  maxTelLegth2: number = this.defaultTelLength;
   oldPhoneNumber: string = '';
   today: any;
   editMode: boolean = false;
@@ -177,6 +179,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   emailValid: boolean = false;
   checkingPhoneValidity: boolean = false;
   isNepalClient: boolean = environment.client === 'nepal' || globalThis?.location?.hostname?.toLowerCase().includes('nepal');
+  initialCountryIso2: string = this.isNepalClient ? 'np' : 'in';
   todayBsLabel: string = '';
   bsYears: number[] = [];
   bsDays: number[] = [];
@@ -265,20 +268,45 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formControlValueChanges();
     this.getLoginLocations();
     this.getProviderAttributeTypes();
-    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
-      if (val) {
-        if (val.length > this.maxTelLegth1) {
-          this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
-        }
-      }
+    this.maxTelLegth1 = this.getMaxTelLength(this.initialCountryIso2);
+    this.maxTelLegth2 = this.maxTelLegth1;
+    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe(() => {
+      this.capTelNumber('phoneNumber', this.maxTelLegth1);
     });
-    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
-      if (val) {
-        if (val.length > this.maxTelLegth2) {
-          this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
-        }
-      }
+    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe(() => {
+      this.capTelNumber('whatsapp', this.maxTelLegth2);
     });
+  }
+
+  /**
+   * Digits the given country accepts, taken from its example number's mask.
+   * The mask's separators are spaces, so they're dropped to leave a digit count.
+   */
+  getMaxTelLength(iso2: string): number {
+    try {
+      return this.authService
+        .getInternationalMaskByCountryCode(iso2.toUpperCase() as CountryCode, false)
+        .filter((o) => o != ' ').length;
+    } catch {
+      return this.defaultTelLength;
+    }
+  }
+
+  /**
+   * intl-tel-input rewrites the input to its display format (Nepal renders 9841234567
+   * as 984-1234567), so the separators reach this control too. maxLength counts digits
+   * only, so strip them before capping or a full number gets cut down to an invalid one.
+   */
+  capTelNumber(controlName: string, maxLength: number) {
+    const control = this.personalInfoForm.get(controlName);
+    const val = control?.value;
+    if (!val) {
+      return;
+    }
+    const digits = val.toString().replace(/\D/g, '').substring(0, maxLength);
+    if (digits !== val) {
+      control?.setValue(digits, { emitEvent: false });
+    }
   }
 
   ngAfterViewInit() {
@@ -527,6 +555,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasError(event: any, errorFor: string) {
     // console.log(event);
+    // isValidNumber() answers null until intl-tel-input's utils script has loaded. That means
+    // "not known yet", not "invalid" — blurring the field before it lands must not fail a good
+    // number, because nothing re-validates it afterwards.
+    if (event === null || event === undefined) {
+      return;
+    }
     switch (errorFor) {
       case 'phoneNumber':
         this.phoneNumberValid = event;
@@ -571,13 +605,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
-        this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
+        this.maxTelLegth1 = this.getMaxTelLength(event.iso2);
+        this.capTelNumber('phoneNumber', this.maxTelLegth1);
         break;
       case 'whatsAppNumber':
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
-        this.maxTelLegth2 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
+        this.maxTelLegth2 = this.getMaxTelLength(event.iso2);
+        this.capTelNumber('whatsapp', this.maxTelLegth2);
         break;
     }
   }
