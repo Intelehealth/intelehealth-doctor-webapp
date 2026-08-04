@@ -1533,6 +1533,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }).subscribe({
         next: (res: ObsModel) => {
           this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          // Drop the previous suggestions so the loader replaces them and stale questions
+          // can't linger if the regenerated response comes back without any.
+          this.furtherQuestionsList = [];
           this.ddxCompRef.instance.saveDDxNotes();
         }
       });
@@ -1546,6 +1549,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }).subscribe({
         next: (res: ObsModel) => {
           this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          // Drop the previous suggestions so the loader replaces them and stale questions
+          // can't linger if the regenerated response comes back without any.
+          this.furtherQuestionsList = [];
           this.ddxCompRef.instance.saveDDxNotes();
         }
       });
@@ -3900,6 +3906,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   // Add this method to receive questions from AILLMDDX
   onFurtherQuestionsReceived(questions: string[]) {
     this.furtherQuestionsList = questions;
+  }
+
+  /**
+  * Loading state of the AI (Ayu) suggestions, mirrored from the lazily created DDx component.
+  * Lets the "Ayu suggested questions" box render the same loader the diagnosis panel shows
+  * while the DDx call is in flight, instead of staying hidden until the response arrives.
+  * @return {boolean}
+  */
+  get ayuSuggestionsLoading(): boolean {
+    return !!this.ddxCompRef?.instance?.aillmddxComponent?.isLoading;
   }
 
   // SaveAIDiagosisHistory(visit:any, diagnosisData:any){

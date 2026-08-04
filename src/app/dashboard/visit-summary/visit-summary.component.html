@@ -849,7 +849,10 @@
       </button>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" #visitNoteDiv *ngIf="visitNotePresent && selectedTabIndex == 0">
+    <!-- Kept mounted and hidden (not *ngIf'd) so the lazily created DDx/prescription component
+         and unsaved form state survive switching to the Past Visit History tab and back. -->
+    <div class="col-md-12 p-0 mb-5" #visitNoteDiv *ngIf="visitNotePresent"
+      [style.display]="selectedTabIndex == 0 ? null : 'none'">
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con" multi>
@@ -1028,14 +1031,31 @@
                 </div>
 
                 <!-- Further Questions Section -->
-                <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
+                <div *ngIf="ayuSuggestionsLoading || furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
                   <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divSuggestionsHeader">
                     <h4 data-test-id="h4SuggestedQuestions"><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" data-test-id="imgAyuIcon"/> Ayu suggested questions</h4>
                     <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
                   </div>
-                  <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index" [attr.data-test-id]="'divQuestion' + i">
-                    <span class="ml-2" [attr.data-test-id]="'spanQuestion' + i"> {{i+1}}. {{ question }}</span>
+
+                  <!-- Same bouncing-dots loader the ddx plugin shows for diagnosis, so the box
+                       appears immediately while the AI call is in flight instead of popping in late. -->
+                  <div *ngIf="ayuSuggestionsLoading; else ayuQuestionsList" class="ayu-suggestions-loader text-center"
+                    data-test-id="divSuggestionsLoader">
+                    <button type="button" class="stats-loading" disabled data-test-id="btnSuggestionsLoader">
+                      <div class="eins"></div>
+                      <div class="zwei"></div>
+                      <div class="drei"></div>
+                    </button>
+                    <div class="mt-3">
+                      <span class="loading-text" data-test-id="spanSuggestionsLoaderText">{{ 'Please wait while the results are being generated.' | translate }}</span>
+                    </div>
                   </div>
+
+                  <ng-template #ayuQuestionsList>
+                    <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index" [attr.data-test-id]="'divQuestion' + i">
+                      <span class="ml-2" [attr.data-test-id]="'spanQuestion' + i"> {{i+1}}. {{ question }}</span>
+                    </div>
+                  </ng-template>
                 </div>
               </div>
             </div>

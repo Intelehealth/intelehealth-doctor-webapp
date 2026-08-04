@@ -1060,6 +1060,64 @@ th.mat-header-cell:last-child {
       margin-bottom: 6px;
     }
 
+    // Loader for the Ayu suggestion box, matching the bouncing-dots loader the
+    // ddx plugin renders inside the diagnosis panel.
+    .ayu-suggestions-loader {
+      padding: 24px 0;
+
+      .stats-loading {
+        padding: 6px 24px;
+        background: var(--color-lightGray, #f4f2f7);
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-darkBlue);
+        cursor: default;
+
+        div {
+          background: #0060ff;
+          display: inline-block;
+          height: 8px;
+          width: 8px;
+          border-radius: 100%;
+          animation: bouncedelay 1.4s infinite ease-in-out;
+          animation-fill-mode: both;
+        }
+
+        div.eins {
+          animation-delay: -0.32s;
+        }
+
+        div.zwei {
+          animation-delay: -0.16s;
+        }
+      }
+
+      .loading-text {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 18px;
+        color: #7f7b92;
+      }
+    }
+
+    @keyframes bouncedelay {
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
   .notes-textarea {
     width: 100%;
     min-height: 100px;
