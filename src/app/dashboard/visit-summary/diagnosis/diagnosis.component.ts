@@ -561,7 +561,6 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       };
 
       this.existingDiagnosis.push(newDiagnosis);
-      this.getTTxWithRetry();
 
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
@@ -586,11 +585,70 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
 
     const { diagnosisAiGenerated: _ignore, ...rest } = this.diagnosisForm.value;
     this.existingDiagnosis.push({ ...rest, diagnosisName: this.diagnosisName });
-    
-    this.getTTxWithRetry();
-    
+
     this.diagnosisForm.reset();
     this.diagnosisSaved.emit(this.existingDiagnosis);
+  }
+
+  private getAiDiagnosisMeta(diagnosisName: string): any {
+    const list = this.aillmddxComponent?.diagnosisList;
+    const aiDiagnosis = list?.find(
+      (d: any) => d.diagnosis?.toLowerCase() === diagnosisName?.toLowerCase()
+    );
+    if (!aiDiagnosis) return {};
+
+    let rationale: string[] = [];
+    if (aiDiagnosis?.rationale) {
+      if (Array.isArray(aiDiagnosis.rationale) && typeof aiDiagnosis.rationale[0] === 'string') {
+        rationale = aiDiagnosis.rationale.filter((val: string) => val && val.trim() !== '');
+      } else {
+        rationale = aiDiagnosis.rationale
+          .map((obj: any) => Object.values(obj).pop())
+          .filter((val: any) => val && val !== '.' && val.trim() !== '');
+      }
+    }
+
+    const diagIndex = list.indexOf(aiDiagnosis);
+    return {
+      from: 'AI generated',
+      ...(aiDiagnosis?.likelihood ? { likelihood: aiDiagnosis.likelihood } : {}),
+      ...(diagIndex >= 0 ? { rank: diagIndex + 1 } : {}),
+      ...(rationale.length > 0 ? { rationale } : {}),
+    };
+  }
+
+  get isTreatmentLoading(): boolean {
+    return !!(
+      this.aillmtxMedicationComponent?.isLoading ||
+      this.aillmtxAdviceComponent?.isLoading ||
+      this.aillmtxTestComponent?.isLoading ||
+      this.aillmtxReferralComponent?.isLoading ||
+      this.aillmtxFollowupComponent?.isLoading
+    );
+  }
+
+  confirmAndSuggestTreatment(): void {
+    if (this.isTreatmentLoading) return;
+
+    (this.selectedDiagnoses || []).forEach((name: string) => {
+      const exists = this.existingDiagnosis.some(
+        (d) => d.diagnosisName?.toLowerCase() === name?.toLowerCase()
+      );
+      if (!exists) {
+        this.existingDiagnosis.push({
+          diagnosisName: name,
+          diagnosisType: 'Primary',
+          diagnosisStatus: 'Provisional',
+          ...this.getAiDiagnosisMeta(name),
+        });
+      }
+    });
+
+    if (!this.existingDiagnosis.length) return;
+
+    this.diagnosisSaved.emit(this.existingDiagnosis);
+    this.aiTxService.clearCache();
+    this.getTTxWithRetry();
   }
 
   getTTxWithRetry(): void {

@@ -128,6 +128,22 @@
                 <span class="text-muted ms-2" [attr.data-test-id]="'spanAyuDiagnosisLikelihood' + i">({{ diagnosis.likelihood }} likely)</span>
               </label>
             </div>
+            <div class="confirm-treatment-wrap" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
+              <button type="button" class="confirm-treatment-btn"
+                [disabled]="isTreatmentLoading || (selectedDiagnoses.length === 0 && existingDiagnosis.length === 0)"
+                (click)="confirmAndSuggestTreatment()"
+                data-test-id="btnConfirmSuggestTreatment">
+                <ng-container *ngIf="!isTreatmentLoading">
+                  <img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" />
+                  {{ 'Confirm & Suggest Treatment Plan' | translate }}
+                </ng-container>
+                <ng-container *ngIf="isTreatmentLoading">
+                  <span class="confirm-spinner mr-2"></span>
+                  {{ 'Suggesting treatment plan...' | translate }}
+                </ng-container>
+              </button>
+              <p class="confirm-treatment-hint">{{ 'This will call AI APIs to suggest the treatment plan.' | translate }}</p>
+            </div>
           </div>
         </div>
       </form>
