@@ -630,11 +630,12 @@ export class PartogramComponent implements OnInit, OnDestroy {
         }
       }
 
-      this.apgar1 = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Apgar at 1 min')?.value;
-      this.apgar5 = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
-      this.birthWeight = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
-      this.babyStatus = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'BIRTH_TYPE')?.value;
-      this.babyGender = stage3OutcomeEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
+      // A visit can be completed without a Stage 3 outcome (e.g. self discharge), so guard the lookup.
+      this.apgar1 = stage3OutcomeEnc?.obs.find((o: any) => o.concept.display == 'Apgar at 1 min')?.value;
+      this.apgar5 = stage3OutcomeEnc?.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
+      this.birthWeight = stage3OutcomeEnc?.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
+      this.babyStatus = stage3OutcomeEnc?.obs.find((o: any) => o.concept.display == 'BIRTH_TYPE')?.value;
+      this.babyGender = stage3OutcomeEnc?.obs.find((o: any) => o.concept.display == 'Sex')?.value;
 
       setTimeout(() => {
         document.querySelector('#vcd').scrollIntoView();
