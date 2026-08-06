@@ -119,9 +119,8 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload for notification:",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Reschedule notification sent successfully'),
+      next: () => {},
       error: (err) => console.error('Failed to send reschedule notification:', err)
     });
   }
@@ -130,7 +129,6 @@ export class MindmapService {
   * @returns {void}
   */
   notifyHwForCancelAppointment(appointment): void {
-    console.log("inside cancell notification");
     const hwUuid = appointment?.hwUUID;
 
     if (!hwUuid) {
@@ -151,9 +149,8 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload===",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Cancel notification sent successfully'),
+      next: () => {},
       error: (err) => console.error('Failed to send cancel notification:', err)
     });
   }

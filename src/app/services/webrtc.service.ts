@@ -131,7 +131,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setCameraEnabled(true);
         } catch (error) {
-          console.log("camera enable error", error)
           try { handleMediaError({ source: 'camera', error }); } catch(_e) {}
         }
 
@@ -139,7 +138,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setMicrophoneEnabled(true);
         } catch (error) {
-          console.log("microphone enable error", error)
           try { handleMediaError({ source: 'microphone', error }); } catch(_e) {}
         }
       })
@@ -152,7 +150,6 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
       // Reconnection-related events
       .on(RoomEvent.SignalReconnecting, () => {
-        console.info("Signal (websocket) is reconnecting");
         this.signalReconnecting$.next();
       })
       .on(RoomEvent.Reconnecting, () => {
@@ -161,7 +158,6 @@ export class WebrtcService {
         this.isReconnecting$.next(true);
       })
       .on(RoomEvent.Reconnected, () => {
-        console.log("🔄 Reconnected!");    
         this.isCurrentlyReconnecting = false;
         this.isReconnecting$.next(false);
       })
@@ -169,7 +165,6 @@ export class WebrtcService {
         // Emit per-participant quality updates for UI consumption
         if ((participant as any)?.isLocal) {
           this.localConnectionQuality$.next(quality);
-          console.log(quality, " : localConnectionQuality");
         }
       });
 
@@ -351,7 +346,6 @@ export class WebrtcService {
   }
 
   autoStartRecording(payload){
-    console.log("calling auto egress recording api...");
      return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
   }
 

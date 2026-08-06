@@ -155,7 +155,6 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
-    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 

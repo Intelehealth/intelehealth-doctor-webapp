@@ -828,9 +828,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            console.log('Attribute display:', attribute.display, attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false);
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
-              console.log('Setting hwPhoneNo from attribute value:', attribute.value);
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -1400,7 +1398,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   startKaleyraCall(): void {
     if (!this.hwPhoneNo) {
-      console.log('Health worker phone number is not available', this.hwPhoneNo);
       this.toastr.error('Health worker phone number is not available');
       return;
     }
@@ -2736,9 +2733,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         followupDatetime: followupDatetime
       }
     }
-    console.log("payload from web app==",payload);
     this.mindmapService.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Notification sent successfully'),
+      next: () => {},
       error: (err) => console.error('Failed to send notification:', err)
     });
   }
@@ -3856,7 +3852,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   pageClick(event: any): void{
-    console.log(event)
   }
 
 

@@ -196,7 +196,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
-    console.log("this.webrtcSvc.token",this.webrtcSvc.token);
     if (!this.webrtcSvc.token) return;
     // Attach reconnection handlers BEFORE creating the room to catch early events
     this.attachRoomReconnectionHandlers();
@@ -677,7 +676,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
           const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
           if (timeDiffSec > 0) {
           const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
-          console.log('Video bitrate (bps):', bitrate);
 
           this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 200 kbps
           }
@@ -708,7 +706,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     const isReconnectingSub = this.webrtcSvc.isReconnecting$.subscribe((isReconnecting) => {
-      console.log('Reconnection state changed:', isReconnecting);
       this.ngZone.run(() => {
         this.isReconnecting = isReconnecting;        
         if (isReconnecting) {
@@ -766,7 +763,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             callDuration: this.callDuration,
             error: err
           });
-            console.log("stop recoding error", err)
           });
       }
     }, 0);
