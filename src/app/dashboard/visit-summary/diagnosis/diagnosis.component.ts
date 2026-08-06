@@ -911,7 +911,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
             }
           } else {
-            this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
+            this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value }, { emitEvent: false });
           }
         }
       });

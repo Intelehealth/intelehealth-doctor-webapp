@@ -333,6 +333,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.updatedObsData.followUp = followUp;
           }
         });
+        // Subscribe to additional instruction saved event
+        this.ddxCompRef.instance.additionalInstructionForm?.valueChanges.subscribe(() => {
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.additionalInstruction = this.ddxCompRef.instance.additionalInstructionForm.value.value;
+          }
+        });
       }
     }, 1000);
   }
@@ -2018,14 +2025,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
     } else if (this.additionalInstructionForm.valid) {
       return this.encounterService.postObs({
-        concept: conceptIds.conceptAdvice,
+        concept: conceptIds.conceptMed,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
         value: this.additionalInstructionForm.value.value,
         encounter: this.visitNotePresent.uuid
       }).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: response.uuid })));
     } else {
-      return of(false)
+      return of(false);
     }
   }
 
@@ -3006,6 +3013,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   saveAllObs(): Observable<any> {
     const postObsRequests = [];
 
+    // Additional instructions for AI-LLM visits are entered in the dynamically-loaded
+    if (this.hasAILLMEnabled && this.ddxCompRef?.instance) {
+      postObsRequests.push(this.ddxCompRef.instance.saveAdditionalInstruction());
+    }
+
     // If changedFields is empty, save all fields
     if (!this.changedFields.length) {
       // Basic observations
@@ -3768,6 +3780,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         })
       );
     }
+    this.updatedObsData = {...this.obsData};
   }
 
   /**

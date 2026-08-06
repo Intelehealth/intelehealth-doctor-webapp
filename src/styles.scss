@@ -413,6 +413,10 @@ body.font-lato td {
 
 /* Tooltip CSS */
 
+.mat-drawer {
+  overflow-y: unset !important;
+}
+
 .info-message-tooltip {
   font-family: DM Sans;
   font-size: 12px;
