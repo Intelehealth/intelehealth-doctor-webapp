@@ -86,6 +86,7 @@ export const facility = {
     { id : 8 , name : 'HWC'},
     { id : 8 , name : 'Government District Hospital'},
     { id : 8 , name : 'Private Hospital'},
+    { id : 8 , name : 'NAMCO Hospital'},
   ]
 };
 
