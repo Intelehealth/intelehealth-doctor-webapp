@@ -2439,6 +2439,72 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+  * If this visit's saved Referral Consent is NAMCO/Yes and a referral to any
+  * Namco specialisation (e.g. "Namco _ Dermatology", "Namco_Orthopaedic") at
+  * "Namco Hospital" has been added, create a Referral encounter and copy this
+  * visit's Initial (dr first) Visit Note obs onto it.
+  * Does not read/write the Referral Consent or Referral capture logic itself.
+  * @returns {Observable<any>}
+  */
+  createReferralEncounterForNamco(): Observable<any> {
+    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
+    const hasNamcoReferral = this.referrals.some((r: ReferralModel) =>
+      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
+      (r.facility || '').trim().toLowerCase() === 'namco hospital'
+    );
+
+    if (!isNamcoConsented || !hasNamcoReferral || !this.visitNotePresent) {
+      return of(null);
+    }
+
+    // Re-fetch the visit rather than reusing this.visitNotePresent/this.visit.encounters —
+    // those are the in-memory snapshot from the last getVisit() call and don't yet include
+    // the obs saveAllObs() just persisted moments earlier in this same sharePrescription().
+    return this.visitService.fetchVisitDetails(this.visit.uuid).pipe(
+      switchMap((freshVisit: VisitModel) => {
+        const freshVisitNote = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, visitTypes.VISIT_NOTE);
+        const existingReferralEncounter = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, 'Referral');
+        if (!freshVisitNote || existingReferralEncounter) {
+          return of(null);
+        }
+
+        const json = {
+          patient: this.visit.patient.uuid,
+          encounterType: '95f4ae7f-6caa-4c66-950f-7f3d6072ce56', // Referral encounter
+          encounterProviders: [
+            {
+              provider: this.provider.uuid,
+              encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+            },
+          ],
+          visit: this.visit.uuid,
+          encounterDatetime: new Date(),
+        };
+
+        return this.encounterService.postEncounter(json).pipe(
+          switchMap((referralEncounter: EncounterModel) => {
+            const visitNoteObs = freshVisitNote.obs || [];
+            if (!visitNoteObs.length) {
+              return of(referralEncounter);
+            }
+            return forkJoin(
+              visitNoteObs.map((obs: ObsModel) =>
+                this.encounterService.postObs({
+                  concept: obs.concept.uuid,
+                  person: this.visit.patient.uuid,
+                  obsDatetime: new Date(),
+                  value: this.visitService.getData(obs)?.value,
+                  encounter: referralEncounter.uuid
+                })
+              )
+            ).pipe(map(() => referralEncounter));
+          })
+        );
+      })
+    );
+  }
+
+  /**
   * Share prescription
   * @returns {boolean}
   */
@@ -2483,100 +2549,117 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         //Open Share Prescription Confirmation Modal
         this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion }).subscribe((res: boolean) => {
           if (res) {
-            if (this.isVisitNoteProvider) {
-              if (this.provider.attributes.length) {
-                if (navigator.onLine) {
-                  if (!this.visitCompleted) {
-                    this.encounterService.postEncounter({
-                      patient: this.visit.patient.uuid,
-                      encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                      encounterProviders: [
-                        {
-                          provider: this.provider.uuid,
-                          encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                        },
-                      ],
-                      visit: this.visit.uuid,
-                      encounterDatetime: new Date(Date.now() - 30000),
-                      obs: [
-                        {
-                          concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                          value: JSON.stringify(this.getDoctorDetails()),
-                        },
-                      ]
-                    }).subscribe((post) => {
-                      this.visitCompleted = true;
-                      const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
+            // Runs the existing visit-completion flow (Visit Complete encounter + prescription share).
+            // Only called when this save did NOT just create a Referral encounter — a visit that's
+            // being referred to a specialist stays open instead of being completed here.
+            const completeVisit = () => {
+              if (this.isVisitNoteProvider) {
+                if (this.provider.attributes.length) {
+                  if (navigator.onLine) {
+                    if (!this.visitCompleted) {
+                      this.encounterService.postEncounter({
+                        patient: this.visit.patient.uuid,
+                        encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+                        encounterProviders: [
+                          {
+                            provider: this.provider.uuid,
+                            encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+                          },
+                        ],
+                        visit: this.visit.uuid,
+                        encounterDatetime: new Date(Date.now() - 30000),
+                        obs: [
+                          {
+                            concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+                            value: JSON.stringify(this.getDoctorDetails()),
+                          },
+                        ]
+                      }).subscribe((post) => {
+                        this.visitCompleted = true;
+                        const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
 
-                      this.notifyHwForAvailablePrescription("","",followUpDate);
-                      this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+                        this.notifyHwForAvailablePrescription("","",followUpDate);
+                        this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
-                      if (this.appConfigService.abha_section) {
-                        this.updateAbhaDetails(post.uuid);
-                      }
+                        if (this.appConfigService.abha_section) {
+                          this.updateAbhaDetails(post.uuid);
+                        }
 
-                      this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                        next: (linkSvcRes: ApiResponseModel) => {
-                          const link = linkSvcRes.data.hash;
-                          this.visitService.postAttribute(
-                            this.visit.uuid,
-                            {
-                              attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                              value: `/i/${link}`,
-                            }).subscribe();
-                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                            if (result === 'view') {
-                              // Open visit summary modal here....
-                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                            } else if (result === 'dashboard') {
-                              this.router.navigate(['/dashboard']);
-                            }
-                          });
-                        },
-                        error: (err) => {
-                        this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
-                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                            if (result === 'view') {
-                              // Open visit summary modal here....
-                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                            } else if (result === 'dashboard') {
-                              this.router.navigate(['/dashboard']);
-                            }
-                          });
+                        this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                          next: (linkSvcRes: ApiResponseModel) => {
+                            const link = linkSvcRes.data.hash;
+                            this.visitService.postAttribute(
+                              this.visit.uuid,
+                              {
+                                attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+                                value: `/i/${link}`,
+                              }).subscribe();
+                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                              if (result === 'view') {
+                                // Open visit summary modal here....
+                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                              } else if (result === 'dashboard') {
+                                this.router.navigate(['/dashboard']);
+                              }
+                            });
+                          },
+                          error: (err) => {
+                          this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
+                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                              if (result === 'view') {
+                                // Open visit summary modal here....
+                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                              } else if (result === 'dashboard') {
+                                this.router.navigate(['/dashboard']);
+                              }
+                            });
+                          }
+                        });
+                      });
+                    } else {
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                        if (result === 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result === 'dashboard') {
+                          this.router.navigate(['/dashboard']);
                         }
                       });
-                    });
+                    }
                   } else {
-                    this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                      if (result === 'view') {
-                        // Open visit summary modal here....
-                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                      } else if (result === 'dashboard') {
-                        this.router.navigate(['/dashboard']);
+                    this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                      if (c) {
+                        // Do nothing
                       }
                     });
                   }
                 } else {
-                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
                     if (c) {
-                      // Do nothing
+                      this.router.navigate(['/dashboard/profile']);
                     }
                   });
                 }
               } else {
-                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
                   if (c) {
-                    this.router.navigate(['/dashboard/profile']);
+                    this.router.navigate(['/dashboard']);
                   }
                 });
               }
-            } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
-                if (c) {
-                  this.router.navigate(['/dashboard']);
+            };
+
+            this.createReferralEncounterForNamco().subscribe({
+              next: (referralEncounter) => {
+                if (!referralEncounter) {
+                  completeVisit();
                 }
-              });
-            }
+              },
+              error: (error) => {
+                console.error('Error creating Referral encounter', error);
+                completeVisit();
+              }
+            });
           }
         });
       },
