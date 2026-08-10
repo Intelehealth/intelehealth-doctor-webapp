@@ -461,6 +461,7 @@ export class CoreService {
     title: string;
     field1: string;
     field2: string;
+    field3: string;
     cancelBtnText: string;
     confirmBtnText: string;
   }): Observable<any> {
