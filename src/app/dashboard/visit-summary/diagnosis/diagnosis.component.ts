@@ -35,6 +35,8 @@ import { MatInputModule } from '@angular/material/input';
 import { formatDate } from '@angular/common';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ReferralConsentComponent } from '../referral-consent/referral-consent.component';
+import { InsightService } from 'src/app/services/insight.service';
+import { insightEvents } from 'src/config/insight-events';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -178,7 +180,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     private encounterService: EncounterService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private insight: InsightService
   ) {
     this.diagnosisForm = this.fb.group({
       diagnosisName: ['', Validators.required],
@@ -698,6 +701,18 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         uuid: uuid
       };
     }
+  }
+
+  onRationaleOpened(payload?: any): void {
+    this.insight.record({
+      event_name: insightEvents.DDX_RATIONALE_OPENED,
+      entity_type: 'visit',
+      entity_id: this.visit?.uuid,
+      properties: {
+        diagnosis_count: payload?.diagnosis_count,
+        doctor_name: getCacheData(true, doctorDetails.USER)?.person?.display
+      }
+    });
   }
 
   onAIDiagnosisSelected(): void {

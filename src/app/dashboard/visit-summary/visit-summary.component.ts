@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { ProviderService } from 'src/app/services/provider.service';
+import { InsightService } from 'src/app/services/insight.service';
+import { insightEvents } from 'src/config/insight-events';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
@@ -474,7 +476,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     private sanitizer: DomSanitizer,
     private analytics: AnalyticsService,
     private webrtcSvc: WebrtcService,
-    private providerService: ProviderService) {
+    private providerService: ProviderService,
+    private insight: InsightService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
     });
@@ -623,6 +626,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
+    this.insight.record({ event_name: insightEvents.VISIT_SUMMARY_VIEWED, entity_type: 'visit', entity_id: id });
     medicines.forEach(med => {
       this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
     });
