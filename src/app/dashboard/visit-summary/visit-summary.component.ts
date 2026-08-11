@@ -749,11 +749,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // Debug: what patientInfo() actually returned for identifiers. If
             // typeDisplay is undefined here, the fetch representation didn't
             // expand identifiers (isTurnServer flag / build), so the header shows NA.
-            console.log('[patientInfo] OpenMRS ID =>',
-              patient?.identifiers?.find((i: any) => i?.identifierType?.display === 'OpenMRS ID')?.identifier || '(not found)',
-              '| identifiers:', JSON.stringify(patient?.identifiers?.map((i: any) => ({
-                identifier: i?.identifier, typeDisplay: i?.identifierType?.display,
-              }))));
             this.clinicName = visit.location.display;
 
             if (this.appConfigService.abha_section) {
@@ -840,9 +835,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            console.log('Attribute display:', attribute.display, attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false);
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
-              console.log('Setting hwPhoneNo from attribute value:', attribute.value);
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -878,13 +871,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     }
-    // Debug: shows why the OpenMRS ID may render "NA". Logs what identifiers the
-    // patient actually carries and whether identifierType.display is present
-    // (missing => the fetch representation didn't expand identifiers).
-    console.log('[getPatientIdentifier]', identifierType, '=>', identifier || '(empty)',
-      '| identifiers:', JSON.stringify(this.patient?.identifiers?.map((i: any) => ({
-        identifier: i?.identifier, typeDisplay: i?.identifierType?.display,
-      }))));
     return identifier;
   }
 
@@ -1459,7 +1445,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   startKaleyraCall(): void {
     if (!this.hwPhoneNo) {
-      console.log('Health worker phone number is not available', this.hwPhoneNo);
       this.toastr.error('Health worker phone number is not available');
       return;
     }
@@ -2566,7 +2551,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       this.visitCompleted = true;
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
                       // Prescription just shared -> notify the patient on WhatsApp
-                      console.log("calling turn prescription.....");
                       if (environment.isTurnServer) {
                         this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
                       }
@@ -2796,9 +2780,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         followupDatetime: followupDatetime
       }
     }
-    console.log("payload from web app==",payload);
     this.mindmapService.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Notification sent successfully'),
+      next: () => {},
       error: (err) => console.error('Failed to send notification:', err)
     });
   }
@@ -3910,7 +3893,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   pageClick(event: any): void{
-    console.log(event)
   }
 
 
