@@ -871,9 +871,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     }
-    // Debug: shows why the OpenMRS ID may render "NA". Logs what identifiers the
-    // patient actually carries and whether identifierType.display is present
-    // (missing => the fetch representation didn't expand identifiers).
     return identifier;
   }
 
