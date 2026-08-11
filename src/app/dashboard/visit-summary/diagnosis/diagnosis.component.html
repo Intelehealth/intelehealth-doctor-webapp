@@ -15,6 +15,7 @@
 
   <ng-container *ngIf="hasAILLMEnabled">
     <app-aillmddx [patientInfo]="patientInfo" [visit]="visit" (diagnosisSelected)="onAIDiagnosisSelected()"
+      (rationaleOpened)="onRationaleOpened($event)"
       [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"
       [visitCompleted]="visitCompleted" data-test-id="appAillmddxComponent"></app-aillmddx>
   </ng-container>

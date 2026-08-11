@@ -22,6 +22,13 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
+      title: "Insights",
+      desc: "AI usage & engagement insights",
+      icon: "assets/svgs/ayu-new.svg",
+      path: "admin/actions/insights",
+      isLocalPath: true
+    },
+    {
       title: "System Admin",
       desc: "Redirect to System Admin portal",
       icon: "assets/svgs/system-admin.svg",
@@ -157,6 +164,9 @@ export class AdminActionsComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
+    if (!(environment as any).insightsEnabled) {
+      this.itemList = this.itemList.filter((i) => i.path !== 'admin/actions/insights');
+    }
   }
 
   onModifyClick(item: { isLocalPath: any; path: string | URL; }){
