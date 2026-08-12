@@ -362,7 +362,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.emitEvent('call-connected', this.incomingData);
     this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
-    if(this.callType === 'video' && this.isVideoRecordingEnabled) {
+    if(this.callType === 'video' && this.isVideoRecordingEnabled && !this.recodingStarted) {
+      this.recodingStarted = true;
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -376,11 +377,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       })
       .toPromise()
       .then((res: RecordingResponse) => {
-        this.recodingStarted = true
         this.tableId = res.recordingId
         this.analytics.logEvent('call-recoding-started', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
       })
       .catch(err => {
+      this.recodingStarted = false;
       this.analytics.logEvent('call-recoding-error', 'engagement', 'call_button', 1, {
         doctorUserId: this.data?.connectToDrId,
         doctorName: this.doctorName,
