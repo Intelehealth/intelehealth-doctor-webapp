@@ -87,7 +87,7 @@ const environmentFileContent = `
     gaMeasurementId: '${process.env.GAMEASUREMENTID}',
     kaleyraApiKey: '${process.env.KALEYRA_API_KEY}',
     doctorPhoneNumber: '${process.env.DOCTOR_PHONE_NUMBER}',
-    isTurnServer: ${process.env.IS_TURN_SERVER_ON},
+    isTurnServer: ${process.env.IS_TURN_SERVER},
   };
 `;
 
