@@ -749,7 +749,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // Debug: what patientInfo() actually returned for identifiers. If
             // typeDisplay is undefined here, the fetch representation didn't
             // expand identifiers (isTurnServer flag / build), so the header shows NA.
-            this.clinicName = visit.location.display;
+            this.clinicName = visit.location?.display || '';
 
             if (this.appConfigService.abha_section) {
               // check if abha number / abha address exists for this patient
@@ -829,11 +829,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getVisitProvider(encounters: EncounterModel[]): void {
     encounters.forEach((encounter: EncounterModel) => {
-      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
-        this.providerName = encounter.encounterProviders[0].provider.person.display;
+      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null && encounter.encounterProviders?.length) {
+        this.providerName = encounter.encounterProviders[0].provider?.person?.display || '';
         // store visit provider in local-Storage
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
-        encounter.encounterProviders[0].provider.attributes.forEach(
+        encounter.encounterProviders[0].provider?.attributes?.forEach(
           (attribute) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
               this.hwPhoneNo = attribute.value;
