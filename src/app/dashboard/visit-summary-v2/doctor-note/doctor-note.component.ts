@@ -2,11 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { doctorDetails, facility, refer_prioritie } from 'src/config/constant';
-import medicines from 'src/app/core/data/medicines';
-import doses from 'src/app/core/data/dose';
-import durationUnits from 'src/app/core/data/durationUnitList';
-import instructionRemarks from 'src/app/core/data/instructionRemarks';
+import { doctorDetails } from 'src/config/constant';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { CoreService } from 'src/app/services/core/core.service';
 import {
@@ -17,6 +13,15 @@ import {
   AdviceBundle, AiDiagnosisState, AiDiagnosisSuggestion, AiMedicationState, AiMedicationSuggestion,
   AyuSuggestedQuestion, SelectedDiagnosis, SelectedMedicine
 } from '../visit-summary-v2.models';
+import {
+  ADVICE_BUNDLES, AI_SUGGESTION_DELAY_MS, CONTEXT_CHIPS, DAY_OPTIONS, DEFAULT_AI_CLINICAL_SUMMARY,
+  DEFAULT_AI_DIAGNOSIS_SUGGESTIONS, DEFAULT_AI_MEDICATION_SUGGESTIONS, DEFAULT_AYU_SUGGESTED_QUESTIONS,
+  DEFAULT_DIAGNOSIS_CODE, DEFAULT_DIAGNOSIS_STATUS, DEFAULT_DIAGNOSIS_TYPE, DEFAULT_MEDICINE_DURATION_UNIT,
+  DIAGNOSIS_SEARCH_DEBOUNCE_MS, DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_STATUSES, DIAGNOSIS_TYPES,
+  DOSE_OPTIONS, DRUG_OPTIONS, DURATION_UNIT_OPTIONS, FACILITY_OPTIONS, FREQUENCY_OPTIONS,
+  INSTRUCTION_OPTIONS, QUICK_ADVICES, QUICK_DIAGNOSES, QUICK_MEDICINES, REFERRAL_PRIORITIES,
+  TIMING_OPTIONS
+} from './doctor-note.constants';
 
 @Component({
   selector: 'app-doctor-note',
@@ -29,13 +34,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() visitNoteUuid!: string;
   @Input() patientPhoneNo = '';
 
+  readonly contextChips = CONTEXT_CHIPS;
+  readonly diagnosisTypes = DIAGNOSIS_TYPES;
+  readonly diagnosisStatuses = DIAGNOSIS_STATUSES;
+  readonly quickDiagnoses = QUICK_DIAGNOSES;
+  readonly drugOptions = DRUG_OPTIONS;
+  readonly doseOptions = DOSE_OPTIONS;
+  readonly durationUnitOptions = DURATION_UNIT_OPTIONS;
+  readonly instructionOptions = INSTRUCTION_OPTIONS;
+  readonly frequencyOptions = FREQUENCY_OPTIONS;
+  readonly quickMedicines = QUICK_MEDICINES;
+  readonly timingOptions = TIMING_OPTIONS;
+  readonly dayOptions = DAY_OPTIONS;
+  readonly quickAdvices = QUICK_ADVICES;
+  readonly adviceBundles = ADVICE_BUNDLES;
+  readonly facilityOptions = FACILITY_OPTIONS;
+  readonly referralPriorities = REFERRAL_PRIORITIES;
+
   spokenToPatient = true;
   ayuQuestionsExpanded = false;
-  ayuSuggestedQuestions: AyuSuggestedQuestion[] = [
-    { category: 'Symptom Timing', question: 'Does the patient experience headaches more in the morning or evening?', answer: 'No' },
-    { category: 'Associated Symptoms', question: 'Is there any visual disturbance (blurred vision, seeing spots)?', answer: 'Seeing Spots', editing: true },
-    { category: 'Clinical Signs', question: 'Has the patient noticed sudden weight gain in the past week?', answer: '' }
-  ];
+  ayuSuggestedQuestions: AyuSuggestedQuestion[] = DEFAULT_AYU_SUGGESTED_QUESTIONS.map(q => ({ ...q }));
   ayuRefineText = '';
 
   hasEnoughInfo = true;
@@ -44,28 +62,18 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   aiSummaryExpanded = false;
   improveExpanded = true;
   improveContextText = '';
-  contextChips = ['Pregnancy', 'Travel History', 'Immunocompromised', 'Weight Loss', 'Chronic Disease'];
   selectedContextChips: string[] = [];
   whySuggestion: AiDiagnosisSuggestion | null = null;
-  diagnosisTypes = ['Primary', 'Secondary'];
-  diagnosisStatuses = ['Provisional', 'Confirmed', 'Under Evaluation'];
-  quickDiagnoses = ['Viral Fever', 'Hypertension', 'UTI', 'Diabetes', 'Pregnancy'];
   selectedDiagnoses: SelectedDiagnosis[] = [];
 
-  aiClinicalSummary = 'The most likely diagnoses for this patient are Urinary Tract Infection (UTI), Viral Fever, and Anemia, given the symptoms of burning sensation during urination, prolonged fever with chills and night sweats, and signs of anemia like pale pallor and pale nails. These conditions are common in rural India and can be managed with appropriate treatment. The presence of significant vital sign abnormalities suggests the need for further evaluation.';
-  aiSuggestions: AiDiagnosisSuggestion[] = [
-    { name: 'Dengue', likelihood: 'High', reasons: ['Fever for 3 days', 'Body Ache Reported', 'Elevated Temperature (102 °F)'] },
-    { name: 'Viral Fever', likelihood: 'High', reasons: ['Fever for 3 days', 'Body Ache Reported', 'Elevated Temperature (102 °F)'] },
-    { name: 'URI', likelihood: 'Moderate', reasons: ['Sore throat reported', 'Nasal congestion'] },
-    { name: 'Malaria', likelihood: 'Less', reasons: ['Fever with chills', 'Endemic area'] },
-    { name: 'Typhiod', likelihood: 'Less', reasons: ['Prolonged fever', 'Abdominal discomfort'] }
-  ];
+  aiClinicalSummary = DEFAULT_AI_CLINICAL_SUMMARY;
+  aiSuggestions: AiDiagnosisSuggestion[] = [...DEFAULT_AI_DIAGNOSIS_SUGGESTIONS];
 
   selectedDiagnosis: DiagnosisOption | null = null;
   diagnosisResults: DiagnosisOption[] = [];
   private diagnosisSearch$ = new Subject<string>();
-  newDiagnosisType = 'Primary';
-  newDiagnosisStatus = 'Provisional';
+  newDiagnosisType = DEFAULT_DIAGNOSIS_TYPE;
+  newDiagnosisStatus = DEFAULT_DIAGNOSIS_STATUS;
   addedDiagnoses: DraftDiagnosis[] = [];
   private editDiagnosisUuid = '';
   private editDiagnosisIndex = -1;
@@ -74,29 +82,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   newNoteText = '';
   outcomeNotes: DraftTextItem[] = [];
 
-  drugOptions: string[] = medicines.map(m => m.name);
-  doseOptions: string[] = doses.map(d => d.name);
-  durationUnitOptions: string[] = durationUnits.map(u => u.name);
-  instructionOptions: string[] = instructionRemarks.map(i => i.name);
-  frequencyOptions: string[] = [
-    'Once daily', 'Twice daily', 'Three times daily', 'Four times daily',
-    'Every 30 minutes', 'Every hour', 'Every four hours', 'Every eight hours',
-    'Twice daily before meals', 'Twice daily after meals'
-  ];
   aiMedicationState: AiMedicationState = 'ready';
   whyMedication: AiMedicationSuggestion | null = null;
   searchedDrug: string | null = null;
   selectedMedicines: SelectedMedicine[] = [];
-  quickMedicines = ['Paracetamol', 'Lisinopril', 'Nitrofurantoin', 'Metformin', 'Prenatal vitamins'];
-  timingOptions = ['1 - 0 - 0', '0 - 1 - 0', '0 - 0 - 1', '1 - 0 - 1', '1 - 1 - 1'];
-  dayOptions = ['3', '5', '7', '10', '15', '30'];
 
-  aiMedicationSuggestions: AiMedicationSuggestion[] = [
-    { name: 'Cetirizine', label: 'Cetirizine 100mg', likelihood: 'High', reasons: ['Fast relief from allergy symptoms.', 'Non-drowsy formula', 'Suitable for daily use'] },
-    { name: 'Zylip 150mg', label: 'Zylip 150mg', likelihood: 'High', reasons: ['Matches the suggested diagnosis', 'Well tolerated at this dose'] },
-    { name: 'Azicip 500mg', label: 'Azicip 500mg', likelihood: 'Moderate', reasons: ['Covers likely bacterial cause', 'Short course option'] },
-    { name: 'Dolo 500mg', label: 'Dolo 500mg', likelihood: 'Less', reasons: ['Symptomatic fever relief only'] }
-  ];
+  aiMedicationSuggestions: AiMedicationSuggestion[] = [...DEFAULT_AI_MEDICATION_SUGGESTIONS];
 
   newMedicine: { drug: string | null; dose: string | null; frequency: string | null; durationNo: string; durationUnit: string | null; instructRemark: string | null } =
     { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
@@ -111,45 +102,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   advices: DraftAdvice[] = [];
   selectedAdvices: string[] = [];
   openBundle: AdviceBundle | null = null;
-  quickAdvices = ['Light Exercise', 'Drink 2-3 liters of water', 'Use Lukewarm water', 'Follow up in 7 days'];
-  adviceBundles: AdviceBundle[] = [
-    {
-      name: 'Pregnancy',
-      items: ['Daily fetal movement count', 'Take iron and calcium supplements regularly', 'Attend all scheduled ANC visits',
-        'Stay hydrated', 'Avoid heavy lifting', 'Sleep on your left side', 'Report vaginal bleeding immediately']
-    },
-    {
-      name: 'Hypertension',
-      items: ['Monitor BP twice daily', 'Reduce salt intake', 'Avoid smoking and alcohol', 'Light exercise 30 min daily',
-        'Take medication at same time daily']
-    },
-    {
-      name: 'Fever',
-      items: ['Drink 2-3 liters of fluids daily', 'Take complete bed rest for 3-5 days', 'Monitor temperature twice daily',
-        'Use lukeward water', 'Return if fever exceeds 103°F']
-    },
-    {
-      name: 'Diabetes',
-      items: ['Monitor blood glucose daily', 'Avoid high-sugar foods', 'Walk 30 minutes daily after meals',
-        'Maintain regular meal timing', 'Inspect feet daily for cuts']
-    },
-    {
-      name: 'Lifestyle',
-      items: ['Stay hydrated', 'Take adequate rest', 'Light exercise 30 min daily', 'Eat balanced diet', 'Get 7-8 hours sleep']
-    },
-    {
-      name: 'Follow-up',
-      items: ['Follow up in 5-7 days', 'Complete medication course', 'Report if symptoms worsen', 'Schedule next appointment']
-    }
-  ];
 
   newTestText: string | null = null;
   testOptions: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
-  facilityOptions: string[] = facility.facilities.map(f => f.name);
-  referralPriorities: string[] = refer_prioritie.refer_priorities.map(p => p.name);
   newReferral: { speciality: string | null; facility: string | null; priority: string | null; reason: string } =
     { speciality: null, facility: null, priority: null, reason: '' };
   referrals: DraftReferral[] = [];
@@ -195,9 +153,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.diagnosisSearch$.pipe(
-      debounceTime(300),
+      debounceTime(DIAGNOSIS_SEARCH_DEBOUNCE_MS),
       distinctUntilChanged(),
-      switchMap(term => term && term.length >= 3 ? this.v2Service.searchDiagnosis(term) : of([]))
+      switchMap(term => term && term.length >= DIAGNOSIS_SEARCH_MIN_LENGTH ? this.v2Service.searchDiagnosis(term) : of([]))
     ).subscribe(results => { this.diagnosisResults = results; });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
@@ -253,13 +211,13 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.toggleSelectedDiagnosis(name, 'manual');
   }
 
-  private toggleSelectedDiagnosis(name: string, source: 'ai' | 'manual', code = 'NA'): void {
+  private toggleSelectedDiagnosis(name: string, source: 'ai' | 'manual', code = DEFAULT_DIAGNOSIS_CODE): void {
     const index = this.selectedDiagnoses.findIndex(d => d.name.toLowerCase() === name.toLowerCase());
     if (index > -1) {
       this.selectedDiagnoses.splice(index, 1);
       return;
     }
-    this.selectedDiagnoses.push({ name, code, source, type: 'Primary', status: 'Provisional' });
+    this.selectedDiagnoses.push({ name, code, source, type: DEFAULT_DIAGNOSIS_TYPE, status: DEFAULT_DIAGNOSIS_STATUS });
   }
 
   toggleWhy(suggestion: AiDiagnosisSuggestion, event: Event): void {
@@ -269,7 +227,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   onDiagnosisPicked(option: DiagnosisOption | null): void {
     if (!option?.name) { return; }
-    this.toggleSelectedDiagnosis(option.name, 'manual', option.code || 'NA');
+    this.toggleSelectedDiagnosis(option.name, 'manual', option.code || DEFAULT_DIAGNOSIS_CODE);
     this.selectedDiagnosis = null;
   }
 
@@ -280,7 +238,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   submitSelectedDiagnoses(): void {
     if (!this.canWrite()) { return; }
     [...this.selectedDiagnoses].forEach(dx => {
-      const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || 'NA' };
+      const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
       this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).subscribe(res => {
         this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
         const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
@@ -305,7 +263,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   updateAiSuggestions(): void {
     this.aiDiagnosisState = 'loading';
     this.whySuggestion = null;
-    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, 1500);
+    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
   }
 
   addDiagnosisManually(): void {
@@ -316,7 +274,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   retryAiDiagnosis(): void {
     this.aiDiagnosisState = 'loading';
-    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, 1500);
+    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
   }
 
   addDiagnosis(): void {
@@ -325,7 +283,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       name: this.selectedDiagnosis.name,
       type: this.newDiagnosisType,
       status: this.newDiagnosisStatus,
-      code: this.selectedDiagnosis.code || 'NA'
+      code: this.selectedDiagnosis.code || DEFAULT_DIAGNOSIS_CODE
     };
     this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, dx, this.editDiagnosisUuid || undefined).subscribe(res => {
       const item = { ...dx, uuid: res?.uuid || this.editDiagnosisUuid };
@@ -340,7 +298,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   editDiagnosis(index: number): void {
     const dx = this.addedDiagnoses[index];
-    this.selectedDiagnosis = { name: dx.name, code: dx.code || 'NA' };
+    this.selectedDiagnosis = { name: dx.name, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
     this.diagnosisResults = [this.selectedDiagnosis];
     this.newDiagnosisType = dx.type;
     this.newDiagnosisStatus = dx.status;
@@ -351,8 +309,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   cancelDiagnosis(): void {
     this.selectedDiagnosis = null;
     this.diagnosisResults = [];
-    this.newDiagnosisType = 'Primary';
-    this.newDiagnosisStatus = 'Provisional';
+    this.newDiagnosisType = DEFAULT_DIAGNOSIS_TYPE;
+    this.newDiagnosisStatus = DEFAULT_DIAGNOSIS_STATUS;
     this.editDiagnosisIndex = -1;
     this.editDiagnosisUuid = '';
   }
@@ -425,7 +383,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         dose: m.strength,
         frequency: m.timing,
         durationNo: m.days,
-        durationUnit: 'Days',
+        durationUnit: DEFAULT_MEDICINE_DURATION_UNIT,
         instructRemark: m.remarks
       };
       this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
@@ -443,7 +401,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   retryAiMedication(): void {
     this.aiMedicationState = 'loading';
-    setTimeout(() => { this.aiMedicationState = 'ready'; }, 1500);
+    setTimeout(() => { this.aiMedicationState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
   }
 
   addMedicine(): void {
