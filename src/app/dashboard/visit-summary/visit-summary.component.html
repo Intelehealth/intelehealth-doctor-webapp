@@ -67,7 +67,7 @@
               </div>
             </div>
 
-            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+            <div class="patient-info-section p-3" *ngIf="!isTurnServer && checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
               <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatientAge">{{'Date of birth'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
