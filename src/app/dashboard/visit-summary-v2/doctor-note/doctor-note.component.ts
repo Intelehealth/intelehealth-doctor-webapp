@@ -2,17 +2,26 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { doctorDetails, facility, refer_prioritie } from 'src/config/constant';
-import medicines from 'src/app/core/data/medicines';
-import doses from 'src/app/core/data/dose';
-import durationUnits from 'src/app/core/data/durationUnitList';
-import instructionRemarks from 'src/app/core/data/instructionRemarks';
+import { doctorDetails } from 'src/config/constant';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { CoreService } from 'src/app/services/core/core.service';
 import {
   DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftMedication, DraftReferral,
   DraftTest, DraftTextItem, VisitSummaryV2Service
 } from '../visit-summary-v2.service';
+import {
+  AdviceBundle, AiDiagnosisState, AiDiagnosisSuggestion, AiMedicationState, AiMedicationSuggestion,
+  AyuSuggestedQuestion, SelectedDiagnosis, SelectedMedicine
+} from '../visit-summary-v2.models';
+import {
+  ADVICE_BUNDLES, AI_SUGGESTION_DELAY_MS, CONTEXT_CHIPS, DAY_OPTIONS, DEFAULT_AI_CLINICAL_SUMMARY,
+  DEFAULT_AI_DIAGNOSIS_SUGGESTIONS, DEFAULT_AI_MEDICATION_SUGGESTIONS, DEFAULT_AYU_SUGGESTED_QUESTIONS,
+  DEFAULT_DIAGNOSIS_CODE, DEFAULT_DIAGNOSIS_STATUS, DEFAULT_DIAGNOSIS_TYPE, DEFAULT_MEDICINE_DURATION_UNIT,
+  DIAGNOSIS_SEARCH_DEBOUNCE_MS, DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_STATUSES, DIAGNOSIS_TYPES,
+  DOSE_OPTIONS, DRUG_OPTIONS, DURATION_UNIT_OPTIONS, FACILITY_OPTIONS, FREQUENCY_OPTIONS,
+  INSTRUCTION_OPTIONS, QUICK_ADVICES, QUICK_DIAGNOSES, QUICK_MEDICINES, REFERRAL_PRIORITIES,
+  TIMING_OPTIONS
+} from './doctor-note.constants';
 
 @Component({
   selector: 'app-doctor-note',
@@ -23,15 +32,48 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() patientUuid!: string;
   @Input() visitUuid!: string;
   @Input() visitNoteUuid!: string;
+  @Input() patientPhoneNo = '';
+
+  readonly contextChips = CONTEXT_CHIPS;
+  readonly diagnosisTypes = DIAGNOSIS_TYPES;
+  readonly diagnosisStatuses = DIAGNOSIS_STATUSES;
+  readonly quickDiagnoses = QUICK_DIAGNOSES;
+  readonly drugOptions = DRUG_OPTIONS;
+  readonly doseOptions = DOSE_OPTIONS;
+  readonly durationUnitOptions = DURATION_UNIT_OPTIONS;
+  readonly instructionOptions = INSTRUCTION_OPTIONS;
+  readonly frequencyOptions = FREQUENCY_OPTIONS;
+  readonly quickMedicines = QUICK_MEDICINES;
+  readonly timingOptions = TIMING_OPTIONS;
+  readonly dayOptions = DAY_OPTIONS;
+  readonly quickAdvices = QUICK_ADVICES;
+  readonly adviceBundles = ADVICE_BUNDLES;
+  readonly facilityOptions = FACILITY_OPTIONS;
+  readonly referralPriorities = REFERRAL_PRIORITIES;
 
   spokenToPatient = true;
+  ayuQuestionsExpanded = false;
+  ayuSuggestedQuestions: AyuSuggestedQuestion[] = DEFAULT_AYU_SUGGESTED_QUESTIONS.map(q => ({ ...q }));
+  ayuRefineText = '';
 
   hasEnoughInfo = true;
+
+  aiDiagnosisState: AiDiagnosisState = 'ready';
+  aiSummaryExpanded = false;
+  improveExpanded = true;
+  improveContextText = '';
+  selectedContextChips: string[] = [];
+  whySuggestion: AiDiagnosisSuggestion | null = null;
+  selectedDiagnoses: SelectedDiagnosis[] = [];
+
+  aiClinicalSummary = DEFAULT_AI_CLINICAL_SUMMARY;
+  aiSuggestions: AiDiagnosisSuggestion[] = [...DEFAULT_AI_DIAGNOSIS_SUGGESTIONS];
+
   selectedDiagnosis: DiagnosisOption | null = null;
   diagnosisResults: DiagnosisOption[] = [];
   private diagnosisSearch$ = new Subject<string>();
-  newDiagnosisType = 'Primary';
-  newDiagnosisStatus = 'Provisional';
+  newDiagnosisType = DEFAULT_DIAGNOSIS_TYPE;
+  newDiagnosisStatus = DEFAULT_DIAGNOSIS_STATUS;
   addedDiagnoses: DraftDiagnosis[] = [];
   private editDiagnosisUuid = '';
   private editDiagnosisIndex = -1;
@@ -40,15 +82,13 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   newNoteText = '';
   outcomeNotes: DraftTextItem[] = [];
 
-  drugOptions: string[] = medicines.map(m => m.name);
-  doseOptions: string[] = doses.map(d => d.name);
-  durationUnitOptions: string[] = durationUnits.map(u => u.name);
-  instructionOptions: string[] = instructionRemarks.map(i => i.name);
-  frequencyOptions: string[] = [
-    'Once daily', 'Twice daily', 'Three times daily', 'Four times daily',
-    'Every 30 minutes', 'Every hour', 'Every four hours', 'Every eight hours',
-    'Twice daily before meals', 'Twice daily after meals'
-  ];
+  aiMedicationState: AiMedicationState = 'ready';
+  whyMedication: AiMedicationSuggestion | null = null;
+  searchedDrug: string | null = null;
+  selectedMedicines: SelectedMedicine[] = [];
+
+  aiMedicationSuggestions: AiMedicationSuggestion[] = [...DEFAULT_AI_MEDICATION_SUGGESTIONS];
+
   newMedicine: { drug: string | null; dose: string | null; frequency: string | null; durationNo: string; durationUnit: string | null; instructRemark: string | null } =
     { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
   addedMedicines: DraftMedication[] = [];
@@ -60,14 +100,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   newAdviceText: string | null = null;
   adviceOptions: string[] = [];
   advices: DraftAdvice[] = [];
+  selectedAdvices: string[] = [];
+  openBundle: AdviceBundle | null = null;
 
   newTestText: string | null = null;
   testOptions: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
-  facilityOptions: string[] = facility.facilities.map(f => f.name);
-  referralPriorities: string[] = refer_prioritie.refer_priorities.map(p => p.name);
   newReferral: { speciality: string | null; facility: string | null; priority: string | null; reason: string } =
     { speciality: null, facility: null, priority: null, reason: '' };
   referrals: DraftReferral[] = [];
@@ -91,11 +131,31 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     private router: Router
   ) {}
 
+  get whatsAppLink(): string | null {
+    if (!this.patientPhoneNo) {
+      return null;
+    }
+    return `https://wa.me/${this.patientPhoneNo.replace(/[^\d]/g, '')}`;
+  }
+
+  answerAyuQuestion(q: AyuSuggestedQuestion, answer: string): void {
+    q.answer = answer;
+    q.editing = false;
+  }
+
+  editAyuQuestion(q: AyuSuggestedQuestion): void {
+    q.editing = true;
+  }
+
+  saveAyuQuestions(): void {
+    this.ayuSuggestedQuestions.forEach(q => { q.editing = false; });
+  }
+
   ngOnInit(): void {
     this.diagnosisSearch$.pipe(
-      debounceTime(300),
+      debounceTime(DIAGNOSIS_SEARCH_DEBOUNCE_MS),
       distinctUntilChanged(),
-      switchMap(term => term && term.length >= 3 ? this.v2Service.searchDiagnosis(term) : of([]))
+      switchMap(term => term && term.length >= DIAGNOSIS_SEARCH_MIN_LENGTH ? this.v2Service.searchDiagnosis(term) : of([]))
     ).subscribe(results => { this.diagnosisResults = results; });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
@@ -139,13 +199,91 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.diagnosisSearch$.next(event.term);
   }
 
+  isDiagnosisSelected(name: string): boolean {
+    return this.selectedDiagnoses.some(d => d.name.toLowerCase() === name.toLowerCase());
+  }
+
+  toggleAiSuggestion(suggestion: AiDiagnosisSuggestion): void {
+    this.toggleSelectedDiagnosis(suggestion.name, 'ai');
+  }
+
+  toggleQuickDiagnosis(name: string): void {
+    this.toggleSelectedDiagnosis(name, 'manual');
+  }
+
+  private toggleSelectedDiagnosis(name: string, source: 'ai' | 'manual', code = DEFAULT_DIAGNOSIS_CODE): void {
+    const index = this.selectedDiagnoses.findIndex(d => d.name.toLowerCase() === name.toLowerCase());
+    if (index > -1) {
+      this.selectedDiagnoses.splice(index, 1);
+      return;
+    }
+    this.selectedDiagnoses.push({ name, code, source, type: DEFAULT_DIAGNOSIS_TYPE, status: DEFAULT_DIAGNOSIS_STATUS });
+  }
+
+  toggleWhy(suggestion: AiDiagnosisSuggestion, event: Event): void {
+    event.stopPropagation();
+    this.whySuggestion = this.whySuggestion === suggestion ? null : suggestion;
+  }
+
+  onDiagnosisPicked(option: DiagnosisOption | null): void {
+    if (!option?.name) { return; }
+    this.toggleSelectedDiagnosis(option.name, 'manual', option.code || DEFAULT_DIAGNOSIS_CODE);
+    this.selectedDiagnosis = null;
+  }
+
+  removeSelectedDiagnosis(index: number): void {
+    this.selectedDiagnoses.splice(index, 1);
+  }
+
+  submitSelectedDiagnoses(): void {
+    if (!this.canWrite()) { return; }
+    [...this.selectedDiagnoses].forEach(dx => {
+      const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
+      this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).subscribe(res => {
+        this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
+        const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
+        if (index > -1) { this.selectedDiagnoses.splice(index, 1); }
+      });
+    });
+  }
+
+  isContextChipOn(chip: string): boolean {
+    return this.selectedContextChips.includes(chip);
+  }
+
+  toggleContextChip(chip: string): void {
+    const index = this.selectedContextChips.indexOf(chip);
+    if (index > -1) {
+      this.selectedContextChips.splice(index, 1);
+    } else {
+      this.selectedContextChips.push(chip);
+    }
+  }
+
+  updateAiSuggestions(): void {
+    this.aiDiagnosisState = 'loading';
+    this.whySuggestion = null;
+    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
+  }
+
+  addDiagnosisManually(): void {
+    this.aiDiagnosisState = 'ready';
+    this.aiSuggestions = [];
+    this.aiClinicalSummary = '';
+  }
+
+  retryAiDiagnosis(): void {
+    this.aiDiagnosisState = 'loading';
+    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
+  }
+
   addDiagnosis(): void {
     if (!this.selectedDiagnosis?.name || !this.canWrite()) { return; }
     const dx = {
       name: this.selectedDiagnosis.name,
       type: this.newDiagnosisType,
       status: this.newDiagnosisStatus,
-      code: this.selectedDiagnosis.code || 'NA'
+      code: this.selectedDiagnosis.code || DEFAULT_DIAGNOSIS_CODE
     };
     this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, dx, this.editDiagnosisUuid || undefined).subscribe(res => {
       const item = { ...dx, uuid: res?.uuid || this.editDiagnosisUuid };
@@ -160,7 +298,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   editDiagnosis(index: number): void {
     const dx = this.addedDiagnoses[index];
-    this.selectedDiagnosis = { name: dx.name, code: dx.code || 'NA' };
+    this.selectedDiagnosis = { name: dx.name, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
     this.diagnosisResults = [this.selectedDiagnosis];
     this.newDiagnosisType = dx.type;
     this.newDiagnosisStatus = dx.status;
@@ -171,14 +309,99 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   cancelDiagnosis(): void {
     this.selectedDiagnosis = null;
     this.diagnosisResults = [];
-    this.newDiagnosisType = 'Primary';
-    this.newDiagnosisStatus = 'Provisional';
+    this.newDiagnosisType = DEFAULT_DIAGNOSIS_TYPE;
+    this.newDiagnosisStatus = DEFAULT_DIAGNOSIS_STATUS;
     this.editDiagnosisIndex = -1;
     this.editDiagnosisUuid = '';
   }
 
   deleteDiagnosis(index: number, uuid?: string): void {
     this.removeItem(this.addedDiagnoses, index, uuid);
+  }
+
+  get medicationPanelState(): AiMedicationState {
+    const hasDiagnosis = this.selectedDiagnoses.length > 0 || this.addedDiagnoses.length > 0;
+    return !hasDiagnosis && this.aiMedicationState === 'ready' ? 'no-diagnosis' : this.aiMedicationState;
+  }
+
+  get canSubmitMedicines(): boolean {
+    return this.selectedMedicines.length > 0 &&
+      this.selectedMedicines.every(m => !!m.timing && !!m.strength && !!m.days);
+  }
+
+  isMedicineSelected(name: string): boolean {
+    return this.selectedMedicines.some(m => m.drug.toLowerCase() === name.toLowerCase());
+  }
+
+  toggleAiMedication(suggestion: AiMedicationSuggestion): void {
+    this.toggleSelectedMedicine(suggestion.name, 'ai');
+  }
+
+  toggleQuickMedicine(name: string): void {
+    this.toggleSelectedMedicine(name, 'manual');
+  }
+
+  private toggleSelectedMedicine(drug: string, source: 'ai' | 'manual'): void {
+    const index = this.selectedMedicines.findIndex(m => m.drug.toLowerCase() === drug.toLowerCase());
+    if (index > -1) {
+      this.selectedMedicines.splice(index, 1);
+      return;
+    }
+    this.selectedMedicines.push({ drug, source, timing: '', strength: '', days: '', remarks: '', editing: true });
+  }
+
+  toggleMedicationWhy(suggestion: AiMedicationSuggestion, event: Event): void {
+    event.stopPropagation();
+    this.whyMedication = this.whyMedication === suggestion ? null : suggestion;
+  }
+
+  onMedicinePicked(drug: string | null): void {
+    if (!drug) { return; }
+    this.toggleSelectedMedicine(drug, 'manual');
+    this.searchedDrug = null;
+  }
+
+  cancelMedicineEdit(index: number): void {
+    const m = this.selectedMedicines[index];
+    if (!m) { return; }
+    if (!m.timing && !m.strength && !m.days && !m.remarks) {
+      this.selectedMedicines.splice(index, 1);
+      return;
+    }
+    m.editing = false;
+  }
+
+  removeSelectedMedicine(index: number): void {
+    this.selectedMedicines.splice(index, 1);
+  }
+
+  submitSelectedMedicines(): void {
+    if (!this.canWrite() || !this.canSubmitMedicines) { return; }
+    [...this.selectedMedicines].forEach(m => {
+      const med = {
+        drug: m.drug,
+        dose: m.strength,
+        frequency: m.timing,
+        durationNo: m.days,
+        durationUnit: DEFAULT_MEDICINE_DURATION_UNIT,
+        instructRemark: m.remarks
+      };
+      this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
+        this.addedMedicines.push({ ...med, uuid: res?.uuid || '' });
+        const index = this.selectedMedicines.findIndex(x => x.drug === m.drug);
+        if (index > -1) { this.selectedMedicines.splice(index, 1); }
+      });
+    });
+  }
+
+  addMedicationManually(): void {
+    this.aiMedicationState = 'ready';
+    this.aiMedicationSuggestions = [];
+  }
+
+  retryAiMedication(): void {
+    this.aiMedicationState = 'loading';
+    setTimeout(() => { this.aiMedicationState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
   }
 
   addMedicine(): void {
@@ -220,16 +443,45 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.removeItem(this.addedMedicines, index, uuid);
   }
 
-  addAdvice(): void {
-    if (!this.newAdviceText || !this.canWrite()) { return; }
-    const value = this.newAdviceText;
-    if (this.advices.find(a => a.value === value)) {
+  toggleBundle(bundle: AdviceBundle): void {
+    this.openBundle = this.openBundle === bundle ? null : bundle;
+  }
+
+  isAdviceSelected(value: string): boolean {
+    return this.selectedAdvices.includes(value) || this.advices.some(a => a.value === value);
+  }
+
+  toggleAdvice(value: string): void {
+    if (this.advices.some(a => a.value === value)) {
       this.coreService.showToast('warning', 'Advice already added, please add another advice.', 'Already Added', 'warning-advice-toast');
       return;
     }
-    this.v2Service.saveAdvice(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
-      this.advices.push({ value, uuid: res?.uuid || '' });
-      this.newAdviceText = null;
+    const index = this.selectedAdvices.indexOf(value);
+    if (index > -1) {
+      this.selectedAdvices.splice(index, 1);
+    } else {
+      this.selectedAdvices.push(value);
+    }
+  }
+
+  onAdvicePicked(value: string | null): void {
+    if (!value) { return; }
+    this.toggleAdvice(value);
+    this.newAdviceText = null;
+  }
+
+  removeSelectedAdvice(index: number): void {
+    this.selectedAdvices.splice(index, 1);
+  }
+
+  addAdvice(): void {
+    if (!this.selectedAdvices.length || !this.canWrite()) { return; }
+    [...this.selectedAdvices].forEach(value => {
+      this.v2Service.saveAdvice(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
+        this.advices.push({ value, uuid: res?.uuid || '' });
+        const index = this.selectedAdvices.indexOf(value);
+        if (index > -1) { this.selectedAdvices.splice(index, 1); }
+      });
     });
   }
 
@@ -239,6 +491,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   cancelAdvice(): void {
     this.newAdviceText = null;
+    this.selectedAdvices = [];
+    this.openBundle = null;
   }
 
   addTest(): void {

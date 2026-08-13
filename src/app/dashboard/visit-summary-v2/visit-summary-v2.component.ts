@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { CoreService } from 'src/app/services/core/core.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { AnalyticsService } from 'src/app/services/analytics.service';
@@ -138,6 +138,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
       this.chatDialogRef.close();
       this.chatDialogRef = undefined;
     }
+    deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
   }
 
   get canStartCall(): boolean {
@@ -261,8 +262,18 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.abdomenFindings = data.abdomenFindings;
     this.eyeImages = data.eyeImages;
     this.documents = data.documents;
+    this.cacheVisitProvider(this.visit);
     this.checkOpenChatBoxFlag();
     this.loadPastVisits();
+  }
+
+
+  private cacheVisitProvider(visit: VisitModel): void {
+    const encounter = (visit?.encounters || []).find(e => e.display?.match(visitTypes.ADULTINITIAL) !== null);
+    const visitProvider = encounter?.encounterProviders?.[0];
+    if (visitProvider) {
+      setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(visitProvider));
+    }
   }
 
   private loadPastVisits(): void {

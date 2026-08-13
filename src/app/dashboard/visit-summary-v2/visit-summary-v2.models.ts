@@ -100,3 +100,54 @@ export interface Patient {
   address: DetailRow[];
   other: DetailRow[];
 }
+
+export type AiDiagnosisState = 'loading' | 'error' | 'ready';
+
+export type AiMedicationState = 'loading' | 'error' | 'no-diagnosis' | 'ready';
+
+export type SuggestionLikelihood = 'High' | 'Moderate' | 'Less';
+
+export type SuggestionSource = 'ai' | 'manual';
+
+export interface AiDiagnosisSuggestion {
+  name: string;
+  likelihood: SuggestionLikelihood;
+  reasons: string[];
+}
+
+export interface AiMedicationSuggestion {
+  name: string;
+  label: string;
+  likelihood: SuggestionLikelihood;
+  reasons: string[];
+}
+
+export interface SelectedDiagnosis {
+  name: string;
+  code: string;
+  source: SuggestionSource;
+  type: string;
+  status: string;
+}
+
+export interface SelectedMedicine {
+  drug: string;
+  source: SuggestionSource;
+  timing: string;
+  strength: string;
+  days: string;
+  remarks: string;
+  editing?: boolean;
+}
+
+export interface AyuSuggestedQuestion {
+  category: string;
+  question: string;
+  answer: string;
+  editing?: boolean;
+}
+
+export interface AdviceBundle {
+  name: string;
+  items: string[];
+}

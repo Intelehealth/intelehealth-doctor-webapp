@@ -60,6 +60,7 @@
           <app-doctor-note
             *ngIf="visitNoteStarted"
             [patientUuid]="patientUuid"
+            [patientPhoneNo]="patient?.contactNo"
             [visitUuid]="visitId"
             [visitNoteUuid]="visitNoteUuid">
           </app-doctor-note>
