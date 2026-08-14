@@ -26,9 +26,24 @@
         💡 <b>Ayu AI:</b> These questions help fill diagnostic gaps. Answer what you know—skip the rest.
       </div>
 
+      <div class="vs2-ayu-status" *ngIf="aiDiagnosisState === 'loading'">
+        <mat-spinner diameter="18"></mat-spinner>
+        <span>Fetching suggested questions..</span>
+      </div>
+
+      <div class="vs2-ayu-status vs2-ayu-status-error" *ngIf="aiDiagnosisState === 'error'">
+        <mat-icon>error</mat-icon>
+        <span>We couldn't fetch the suggested questions.</span>
+        <button class="vs2-ayu-add" (click)="retryAiDiagnosis()">Try again</button>
+      </div>
+
+      <div class="vs2-ayu-status" *ngIf="aiDiagnosisState === 'ready' && !ayuSuggestedQuestions.length">
+        <span>No suggested questions for this visit.</span>
+      </div>
+
       <div class="vs2-ayu-question" *ngFor="let q of ayuSuggestedQuestions; let i = index">
         <div class="vs2-ayu-q-top">
-          <span class="vs2-ayu-tag">{{ q.category }}</span>
+          <span class="vs2-ayu-tag" *ngIf="q.category">{{ q.category }}</span>
           <span class="vs2-ayu-q-actions">
             <ng-container *ngIf="!q.answer && !q.editing">
               <button class="vs2-ayu-yes" (click)="answerAyuQuestion(q, 'Yes')">Yes</button>
@@ -39,6 +54,7 @@
           </span>
         </div>
         <p class="vs2-ayu-q-text">{{ q.question }}</p>
+        <p class="vs2-ayu-q-hint" *ngIf="q.hint">{{ q.hint }}</p>
         <input class="vs2-input vs2-ayu-answer-input" *ngIf="q.editing" [(ngModel)]="q.answer"
           [ngModelOptions]="{ standalone: true }" placeholder="Type your answer"
           (blur)="q.editing = false" (keyup.enter)="q.editing = false" />
@@ -462,6 +478,16 @@
   </div>
   <div class="vs2-divider"></div>
 
+  <ng-container *ngIf="aiAdvices.length">
+    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Advice</h4>
+    <div class="vs2-dx-quick-row">
+      <button class="vs2-dx-quick" *ngFor="let a of aiAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(a)"
+        (click)="toggleAdvice(a)">
+        <mat-icon>{{ isAdviceSelected(a) ? 'check' : 'add' }}</mat-icon> {{ a }}
+      </button>
+    </div>
+  </ng-container>
+
   <h4 class="vs2-selected-title vs2-bundle-title">Advice Bundles</h4>
 
   <div class="vs2-bundle-row">
@@ -526,6 +552,16 @@
   </div>
   <div class="vs2-divider"></div>
 
+  <ng-container *ngIf="aiTests.length">
+    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Tests</h4>
+    <div class="vs2-dx-quick-row">
+      <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestAdded(t)"
+        (click)="addAiTest(t)">
+        <mat-icon>{{ isTestAdded(t) ? 'check' : 'add' }}</mat-icon> {{ t }}
+      </button>
+    </div>
+  </ng-container>
+
   <div class="vs2-list-item" *ngFor="let t of tests; let i = index">
     <span class="vs2-detail-label">{{ t.value }}</span>
     <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
@@ -554,6 +590,15 @@
     <mat-icon class="vs2-chevron">expand_less</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+
+  <ng-container *ngIf="aiReferrals.length">
+    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Referral</h4>
+    <div class="vs2-dx-quick-row">
+      <button class="vs2-dx-quick" *ngFor="let r of aiReferrals" (click)="applyAiReferral(r)">
+        <mat-icon>add</mat-icon> {{ r.speciality }}<ng-container *ngIf="r.facility"> - {{ r.facility }}</ng-container>
+      </button>
+    </div>
+  </ng-container>
 
   <div class="vs2-med-grid vs2-ref-grid">
     <div class="vs2-field">
@@ -627,6 +672,13 @@
     <mat-icon class="vs2-chevron">expand_less</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+
+  <div class="vs2-ai-followup" *ngIf="aiFollowUp">
+    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
+    <button class="vs2-dx-quick" (click)="applyAiFollowUp()">
+      <mat-icon>add</mat-icon> {{ aiFollowUp.duration }}<ng-container *ngIf="aiFollowUp.reason"> - {{ aiFollowUp.reason }}</ng-container>
+    </button>
+  </div>
 
   <div class="vs2-table vs2-fu-note-table" *ngIf="followUpUuid">
     <div class="vs2-table-head">

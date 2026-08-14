@@ -120,6 +120,25 @@ export interface AiMedicationSuggestion {
   label: string;
   likelihood: SuggestionLikelihood;
   reasons: string[];
+  timing?: string;
+  strength?: string;
+  days?: string;
+  durationUnit?: string;
+  remarks?: string;
+}
+
+export interface AiFollowUp {
+  required: boolean;
+  duration: string;
+  reason: string;
+}
+
+export interface AiTreatmentResult {
+  medicines: AiMedicationSuggestion[];
+  advices: string[];
+  tests: string[];
+  referrals: { speciality: string; facility: string; priority: string; reason: string }[];
+  followUp: AiFollowUp | null;
 }
 
 export interface SelectedDiagnosis {
@@ -136,6 +155,7 @@ export interface SelectedMedicine {
   timing: string;
   strength: string;
   days: string;
+  durationUnit?: string;
   remarks: string;
   editing?: boolean;
 }
@@ -143,6 +163,7 @@ export interface SelectedMedicine {
 export interface AyuSuggestedQuestion {
   category: string;
   question: string;
+  hint?: string;
   answer: string;
   editing?: boolean;
 }
@@ -150,4 +171,10 @@ export interface AyuSuggestedQuestion {
 export interface AdviceBundle {
   name: string;
   items: string[];
+}
+
+export interface AiDiagnosisResult {
+  summary: string;
+  suggestions: AiDiagnosisSuggestion[];
+  questions: AyuSuggestedQuestion[];
 }
