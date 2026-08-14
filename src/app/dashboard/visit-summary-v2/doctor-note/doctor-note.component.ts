@@ -4,18 +4,18 @@ import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import {
   DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftMedication, DraftReferral,
   DraftTest, DraftTextItem, VisitSummaryV2Service
 } from '../visit-summary-v2.service';
 import {
-  AdviceBundle, AiDiagnosisState, AiDiagnosisSuggestion, AiMedicationState, AiMedicationSuggestion,
+  AdviceBundle, AiDiagnosisState, AiDiagnosisSuggestion, AiFollowUp, AiMedicationState, AiMedicationSuggestion,
   AyuSuggestedQuestion, SelectedDiagnosis, SelectedMedicine
 } from '../visit-summary-v2.models';
 import {
-  ADVICE_BUNDLES, AI_SUGGESTION_DELAY_MS, CONTEXT_CHIPS, DAY_OPTIONS, DEFAULT_AI_CLINICAL_SUMMARY,
-  DEFAULT_AI_DIAGNOSIS_SUGGESTIONS, DEFAULT_AI_MEDICATION_SUGGESTIONS, DEFAULT_AYU_SUGGESTED_QUESTIONS,
+  ADVICE_BUNDLES, CONTEXT_CHIPS, DAY_OPTIONS,
   DEFAULT_DIAGNOSIS_CODE, DEFAULT_DIAGNOSIS_STATUS, DEFAULT_DIAGNOSIS_TYPE, DEFAULT_MEDICINE_DURATION_UNIT,
   DIAGNOSIS_SEARCH_DEBOUNCE_MS, DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_STATUSES, DIAGNOSIS_TYPES,
   DOSE_OPTIONS, DRUG_OPTIONS, DURATION_UNIT_OPTIONS, FACILITY_OPTIONS, FREQUENCY_OPTIONS,
@@ -33,6 +33,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() visitUuid!: string;
   @Input() visitNoteUuid!: string;
   @Input() patientPhoneNo = '';
+  @Input() visit!: VisitModel;
+  @Input() patientInfo!: PatientModel;
+  @Input() visitCompleted = false;
 
   readonly contextChips = CONTEXT_CHIPS;
   readonly diagnosisTypes = DIAGNOSIS_TYPES;
@@ -53,12 +56,13 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   spokenToPatient = true;
   ayuQuestionsExpanded = false;
-  ayuSuggestedQuestions: AyuSuggestedQuestion[] = DEFAULT_AYU_SUGGESTED_QUESTIONS.map(q => ({ ...q }));
+  ayuSuggestedQuestions: AyuSuggestedQuestion[] = [];
   ayuRefineText = '';
+  private ayuNoteUuid = '';
 
   hasEnoughInfo = true;
 
-  aiDiagnosisState: AiDiagnosisState = 'ready';
+  aiDiagnosisState: AiDiagnosisState = 'loading';
   aiSummaryExpanded = false;
   improveExpanded = true;
   improveContextText = '';
@@ -66,8 +70,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   whySuggestion: AiDiagnosisSuggestion | null = null;
   selectedDiagnoses: SelectedDiagnosis[] = [];
 
-  aiClinicalSummary = DEFAULT_AI_CLINICAL_SUMMARY;
-  aiSuggestions: AiDiagnosisSuggestion[] = [...DEFAULT_AI_DIAGNOSIS_SUGGESTIONS];
+  aiClinicalSummary = '';
+  aiSuggestions: AiDiagnosisSuggestion[] = [];
 
   selectedDiagnosis: DiagnosisOption | null = null;
   diagnosisResults: DiagnosisOption[] = [];
@@ -87,7 +91,11 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   searchedDrug: string | null = null;
   selectedMedicines: SelectedMedicine[] = [];
 
-  aiMedicationSuggestions: AiMedicationSuggestion[] = [...DEFAULT_AI_MEDICATION_SUGGESTIONS];
+  aiMedicationSuggestions: AiMedicationSuggestion[] = [];
+  aiAdvices: string[] = [];
+  aiTests: string[] = [];
+  aiReferrals: { speciality: string; facility: string; priority: string; reason: string }[] = [];
+  aiFollowUp: AiFollowUp | null = null;
 
   newMedicine: { drug: string | null; dose: string | null; frequency: string | null; durationNo: string; durationUnit: string | null; instructRemark: string | null } =
     { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
@@ -149,6 +157,30 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   saveAyuQuestions(): void {
     this.ayuSuggestedQuestions.forEach(q => { q.editing = false; });
+    const notes = this.buildAyuNotes();
+    if (!notes || !this.canWrite()) { return; }
+    this.v2Service.saveInteractionNote(this.patientUuid, this.visitNoteUuid, notes, this.ayuNoteUuid).subscribe(res => {
+      this.ayuNoteUuid = res?.uuid || this.ayuNoteUuid;
+      this.loadAiDiagnosis(notes);
+    });
+  }
+
+  private buildAyuNotes(): string {
+    const answered = this.ayuSuggestedQuestions
+      .filter(q => !!q.answer)
+      .map(q => `${q.question} ${q.answer}`);
+    return [...answered, this.ayuRefineText].filter(Boolean).join('\n');
+  }
+
+  private loadInteractionNote(): void {
+    this.aiDiagnosisState = 'loading';
+    this.v2Service.loadInteractionNote(this.patientUuid, this.visitUuid).subscribe({
+      next: note => {
+        this.ayuNoteUuid = note.uuid;
+        this.loadAiDiagnosis(note.value);
+      },
+      error: () => this.loadAiDiagnosis()
+    });
   }
 
   ngOnInit(): void {
@@ -167,6 +199,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['visitUuid'] || changes['patientUuid']) && this.patientUuid && this.visitUuid) {
       this.loadDraft();
+    }
+    if ((changes['visit'] || changes['patientInfo']) && this.visit && this.patientInfo) {
+      this.loadInteractionNote();
     }
   }
 
@@ -187,6 +222,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.followUpType = draft.followUp.type || null;
         this.followUpUuid = draft.followUp.uuid;
         this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
+      }
+      if (this.addedDiagnoses.length) {
+        this.loadAiTreatment();
       }
     });
   }
@@ -243,7 +281,27 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
         const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
         if (index > -1) { this.selectedDiagnoses.splice(index, 1); }
+        this.loadAiTreatment();
       });
+    });
+  }
+
+  private loadAiTreatment(): void {
+    const diagnosis = this.addedDiagnoses.map(d => d.name).join(', ');
+    if (!diagnosis || !this.visit || !this.patientInfo) { return; }
+    this.aiMedicationState = 'loading';
+    this.v2Service.loadAiTreatment(this.patientInfo, this.visit, diagnosis, this.visitCompleted).subscribe({
+      next: result => {
+        this.aiMedicationSuggestions = result.medicines;
+        this.aiAdvices = result.advices;
+        this.aiTests = result.tests;
+        this.aiReferrals = result.referrals;
+        this.aiFollowUp = result.followUp;
+        this.aiMedicationState = 'ready';
+      },
+      error: () => {
+        this.aiMedicationState = 'error';
+      }
     });
   }
 
@@ -261,9 +319,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   updateAiSuggestions(): void {
-    this.aiDiagnosisState = 'loading';
     this.whySuggestion = null;
-    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
+    this.loadAiDiagnosis(this.buildAiNotes());
   }
 
   addDiagnosisManually(): void {
@@ -273,8 +330,28 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiDiagnosis(): void {
+    this.loadAiDiagnosis(this.buildAiNotes());
+  }
+
+  private buildAiNotes(): string {
+    return [this.buildAyuNotes(), this.improveContextText, ...this.selectedContextChips]
+      .filter(Boolean).join('\n');
+  }
+
+  private loadAiDiagnosis(notes = ''): void {
+    if (!this.visit || !this.patientInfo) { return; }
     this.aiDiagnosisState = 'loading';
-    setTimeout(() => { this.aiDiagnosisState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
+    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted).subscribe({
+      next: result => {
+        this.aiClinicalSummary = result.summary;
+        this.aiSuggestions = result.suggestions;
+        this.ayuSuggestedQuestions = result.questions;
+        this.aiDiagnosisState = 'ready';
+      },
+      error: () => {
+        this.aiDiagnosisState = 'error';
+      }
+    });
   }
 
   addDiagnosis(): void {
@@ -334,20 +411,29 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   toggleAiMedication(suggestion: AiMedicationSuggestion): void {
-    this.toggleSelectedMedicine(suggestion.name, 'ai');
+    this.toggleSelectedMedicine(suggestion.name, 'ai', suggestion);
   }
 
   toggleQuickMedicine(name: string): void {
     this.toggleSelectedMedicine(name, 'manual');
   }
 
-  private toggleSelectedMedicine(drug: string, source: 'ai' | 'manual'): void {
+  private toggleSelectedMedicine(drug: string, source: 'ai' | 'manual', suggestion?: AiMedicationSuggestion): void {
     const index = this.selectedMedicines.findIndex(m => m.drug.toLowerCase() === drug.toLowerCase());
     if (index > -1) {
       this.selectedMedicines.splice(index, 1);
       return;
     }
-    this.selectedMedicines.push({ drug, source, timing: '', strength: '', days: '', remarks: '', editing: true });
+    this.selectedMedicines.push({
+      drug,
+      source,
+      timing: suggestion?.timing || '',
+      strength: suggestion?.strength || '',
+      days: suggestion?.days || '',
+      durationUnit: suggestion?.durationUnit || '',
+      remarks: suggestion?.remarks || '',
+      editing: !suggestion?.timing || !suggestion?.strength || !suggestion?.days
+    });
   }
 
   toggleMedicationWhy(suggestion: AiMedicationSuggestion, event: Event): void {
@@ -383,7 +469,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         dose: m.strength,
         frequency: m.timing,
         durationNo: m.days,
-        durationUnit: DEFAULT_MEDICINE_DURATION_UNIT,
+        durationUnit: m.durationUnit || DEFAULT_MEDICINE_DURATION_UNIT,
         instructRemark: m.remarks
       };
       this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
@@ -400,8 +486,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiMedication(): void {
-    this.aiMedicationState = 'loading';
-    setTimeout(() => { this.aiMedicationState = 'ready'; }, AI_SUGGESTION_DELAY_MS);
+    this.loadAiTreatment();
   }
 
   addMedicine(): void {
@@ -493,6 +578,31 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.newAdviceText = null;
     this.selectedAdvices = [];
     this.openBundle = null;
+  }
+
+  isTestAdded(value: string): boolean {
+    return this.tests.some(t => t.value.toLowerCase() === value.toLowerCase());
+  }
+
+  addAiTest(value: string): void {
+    if (this.isTestAdded(value)) { return; }
+    this.newTestText = value;
+    this.addTest();
+  }
+
+  applyAiReferral(referral: { speciality: string; facility: string; priority: string; reason: string }): void {
+    this.newReferral = {
+      speciality: referral.speciality || null,
+      facility: referral.facility || null,
+      priority: this.newReferral.priority,
+      reason: referral.reason || ''
+    };
+  }
+
+  applyAiFollowUp(): void {
+    if (!this.aiFollowUp) { return; }
+    this.wantFollowUp = true;
+    this.followUpReason = this.aiFollowUp.reason || this.followUpReason;
   }
 
   addTest(): void {

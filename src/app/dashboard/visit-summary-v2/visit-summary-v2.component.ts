@@ -198,7 +198,16 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     }
     if (!this.visit || !this.patientModel) { return; }
 
+    this.cacheVisitProvider(this.visit);
     const visitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+    if (!visitProvider?.provider?.uuid) {
+      this.coreService.openConfirmationDialog({
+        confirmationMsg: 'This visit has no health worker linked to it, so the call cannot be connected.',
+        cancelBtnText: 'Close',
+        confirmBtnText: 'Ok'
+      });
+      return;
+    }
     this.analytics.logEvent('start_call', 'engagement', 'call_button', 1, {
       doctorUserId: this.visitSummaryService.userId,
       doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,

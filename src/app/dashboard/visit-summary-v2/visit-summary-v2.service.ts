@@ -16,10 +16,13 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { LinkService } from 'src/app/services/link.service';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { AiddxService, AiTxService } from 'aiddx-library';
 import {
-  ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData,
+  AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
+  ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
+import { AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE } from './doctor-note/doctor-note.constants';
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
 export interface DiagnosisOption { name: string; code: string; }
@@ -76,8 +79,127 @@ export class VisitSummaryV2Service {
     private encounterService: EncounterService,
     private linkService: LinkService,
     private helper: VisitSummaryHelperService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private aiddxService: AiddxService,
+    private aiTxService: AiTxService
   ) {}
+
+  loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
+    return this.diagnosisService.getObs(patientUuid, conceptIds.conceptNote).pipe(
+      catchError(() => of({ results: [] } as ObsApiResponseModel)),
+      map((res: ObsApiResponseModel) => {
+        const obs = (res.results || []).filter((o: ObsModel) => o.encounter?.visit?.uuid === visitUuid).pop();
+        return { value: obs?.value || '', uuid: obs?.uuid || '' };
+      })
+    );
+  }
+
+  saveInteractionNote(patientUuid: string, encounterUuid: string, value: string, existingUuid?: string): Observable<ObsModel> {
+    return this.writeObs(conceptIds.conceptNote, patientUuid, encounterUuid, value, existingUuid);
+  }
+
+  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
+    const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
+    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared).pipe(
+      map((res: any) => this.buildAiDiagnosisResult(res))
+    );
+  }
+
+  private buildAiDiagnosisResult(res: any): AiDiagnosisResult {
+    const results = res?.result?.data?.result || [];
+    const questions = res?.result?.data?.further_questions || [];
+    return {
+      summary: res?.conclusion || res?.result?.data?.conclusion || '',
+      suggestions: results.map((r: any) => ({
+        name: r?.diagnosis || '',
+        likelihood: this.mapLikelihood(r?.likelihood),
+        reasons: this.buildRationale(r)
+      })).filter((s: AiDiagnosisSuggestion) => !!s.name),
+      questions: questions.map((q: any) => {
+        const key = Object.keys(q || {})[0] || '';
+        const text = q?.[key] || '';
+        const hint = text.match(/\(([^)]*)\)\s*$/);
+        return {
+          category: /^\d+$/.test(key) ? '' : key,
+          question: hint ? text.replace(hint[0], '').trim() : text,
+          hint: hint ? hint[1] : '',
+          answer: ''
+        };
+      }).filter((q: AyuSuggestedQuestion) => !!q.question)
+    };
+  }
+
+  private mapLikelihood(value: string): SuggestionLikelihood {
+    const likelihood = (value || '').toLowerCase();
+    if (likelihood.includes('high')) { return 'High'; }
+    if (likelihood.includes('moderate') || likelihood.includes('medium')) { return 'Moderate'; }
+    return 'Less';
+  }
+
+  loadAiTreatment(patientInfo: PatientModel, visit: VisitModel, diagnosis: string, prescriptionShared = false): Observable<AiTreatmentResult> {
+    const casehistory = this.aiTxService.getTxPayload(patientInfo, visit);
+    this.aiTxService.clearCache();
+    return this.aiTxService.getAITTx(casehistory, diagnosis, visit?.uuid, prescriptionShared).pipe(
+      map((res: any) => this.buildAiTreatmentResult(res))
+    );
+  }
+
+  private buildAiTreatmentResult(res: any): AiTreatmentResult {
+    const data = res?.result?.data || {};
+    return {
+      medicines: (data.medications || data.result || []).map((m: any) => ({
+        name: m?.name || '',
+        label: m?.name || '',
+        likelihood: this.mapConfidence(m?.confidence),
+        reasons: this.toReasonList(m?.rationale),
+        timing: m?.frequency || '',
+        strength: m?.dosage || '',
+        days: m?.duration ? `${m.duration}` : '',
+        durationUnit: m?.duration_unit || '',
+        remarks: m?.instructions || ''
+      })).filter((m: AiMedicationSuggestion) => !!m.name),
+      advices: (data.medical_advice || []).map((a: any) => a?.v || a).filter(Boolean),
+      tests: (data.tests_to_be_done || []).map((t: any) => t?.test_name || t).filter(Boolean),
+      referrals: (data.referral || []).map((r: any) => ({
+        speciality: r?.referral_to || '',
+        facility: r?.referral_facility || '',
+        priority: '',
+        reason: r?.remark || ''
+      })).filter((r: any) => !!r.speciality),
+      followUp: (data.follow_up || []).filter((f: any) => f?.follow_up_duration).map((f: any) => ({
+        required: f?.follow_up_required,
+        duration: f?.follow_up_duration || '',
+        reason: f?.reason_for_follow_up || ''
+      }))[0] || null
+    };
+  }
+
+  private mapConfidence(value: any): SuggestionLikelihood {
+    if (typeof value === 'string') { return this.mapLikelihood(value); }
+    const confidence = Number(value);
+    if (isNaN(confidence)) { return 'Less'; }
+    const score = confidence > 1 ? confidence / 100 : confidence;
+    if (score >= AI_CONFIDENCE_HIGH) { return 'High'; }
+    if (score >= AI_CONFIDENCE_MODERATE) { return 'Moderate'; }
+    return 'Less';
+  }
+
+  private toReasonList(rationale: any): string[] {
+    if (!rationale) { return []; }
+    if (Array.isArray(rationale)) {
+      return rationale.reduce((acc: string[], r: any) =>
+        acc.concat(typeof r === 'string' ? [r] : Object.values(r || {}) as string[]), []);
+    }
+    return [`${rationale}`];
+  }
+
+  private buildRationale(result: any): string[] {
+    if (result?.summarised_rationale?.length) { return result.summarised_rationale; }
+    if (Array.isArray(result?.rationale)) {
+      return result.rationale.flatMap((r: any) => Object.values(r || {})) as string[];
+    }
+    return [];
+  }
 
   loadCurrentVisit(uuid: string): Observable<CurrentVisitData> {
     return this.visitService.fetchVisitDetails(uuid).pipe(

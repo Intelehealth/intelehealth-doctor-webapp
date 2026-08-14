@@ -3,9 +3,8 @@ import medicines from 'src/app/core/data/medicines';
 import doses from 'src/app/core/data/dose';
 import durationUnits from 'src/app/core/data/durationUnitList';
 import instructionRemarks from 'src/app/core/data/instructionRemarks';
-import { AdviceBundle, AiDiagnosisSuggestion, AiMedicationSuggestion, AyuSuggestedQuestion } from '../visit-summary-v2.models';
+import { AdviceBundle } from '../visit-summary-v2.models';
 
-export const AI_SUGGESTION_DELAY_MS = 1500;
 export const DIAGNOSIS_SEARCH_DEBOUNCE_MS = 300;
 export const DIAGNOSIS_SEARCH_MIN_LENGTH = 3;
 export const DEFAULT_DIAGNOSIS_CODE = 'NA';
@@ -67,25 +66,7 @@ export const ADVICE_BUNDLES: AdviceBundle[] = [
   }
 ];
 
-export const DEFAULT_AI_CLINICAL_SUMMARY = 'The most likely diagnoses for this patient are Urinary Tract Infection (UTI), Viral Fever, and Anemia, given the symptoms of burning sensation during urination, prolonged fever with chills and night sweats, and signs of anemia like pale pallor and pale nails. These conditions are common in rural India and can be managed with appropriate treatment. The presence of significant vital sign abnormalities suggests the need for further evaluation.';
 
-export const DEFAULT_AI_DIAGNOSIS_SUGGESTIONS: AiDiagnosisSuggestion[] = [
-  { name: 'Dengue', likelihood: 'High', reasons: ['Fever for 3 days', 'Body Ache Reported', 'Elevated Temperature (102 °F)'] },
-  { name: 'Viral Fever', likelihood: 'High', reasons: ['Fever for 3 days', 'Body Ache Reported', 'Elevated Temperature (102 °F)'] },
-  { name: 'URI', likelihood: 'Moderate', reasons: ['Sore throat reported', 'Nasal congestion'] },
-  { name: 'Malaria', likelihood: 'Less', reasons: ['Fever with chills', 'Endemic area'] },
-  { name: 'Typhiod', likelihood: 'Less', reasons: ['Prolonged fever', 'Abdominal discomfort'] }
-];
+export const AI_CONFIDENCE_HIGH = 0.7;
 
-export const DEFAULT_AI_MEDICATION_SUGGESTIONS: AiMedicationSuggestion[] = [
-  { name: 'Cetirizine', label: 'Cetirizine 100mg', likelihood: 'High', reasons: ['Fast relief from allergy symptoms.', 'Non-drowsy formula', 'Suitable for daily use'] },
-  { name: 'Zylip 150mg', label: 'Zylip 150mg', likelihood: 'High', reasons: ['Matches the suggested diagnosis', 'Well tolerated at this dose'] },
-  { name: 'Azicip 500mg', label: 'Azicip 500mg', likelihood: 'Moderate', reasons: ['Covers likely bacterial cause', 'Short course option'] },
-  { name: 'Dolo 500mg', label: 'Dolo 500mg', likelihood: 'Less', reasons: ['Symptomatic fever relief only'] }
-];
-
-export const DEFAULT_AYU_SUGGESTED_QUESTIONS: AyuSuggestedQuestion[] = [
-  { category: 'Symptom Timing', question: 'Does the patient experience headaches more in the morning or evening?', answer: 'No' },
-  { category: 'Associated Symptoms', question: 'Is there any visual disturbance (blurred vision, seeing spots)?', answer: 'Seeing Spots', editing: true },
-  { category: 'Clinical Signs', question: 'Has the patient noticed sudden weight gain in the past week?', answer: '' }
-];
+export const AI_CONFIDENCE_MODERATE = 0.4;

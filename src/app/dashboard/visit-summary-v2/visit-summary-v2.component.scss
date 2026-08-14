@@ -899,6 +899,33 @@ app-past-visits {
   }
 }
 
+.vs2-ayu-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: $grey-text;
+
+  &.vs2-ayu-status-error {
+    color: $red;
+
+    mat-icon {
+      color: $red;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    button {
+      margin-left: auto;
+    }
+  }
+}
+
 .vs2-ayu-question {
   background: #fff;
   border-radius: 10px;
@@ -976,6 +1003,12 @@ app-past-visits {
   font-size: 14px;
   color: $navy;
   margin: 0 0 4px;
+}
+
+.vs2-ayu-q-hint {
+  font-size: 12px;
+  color: $grey-text;
+  margin: 0 0 6px;
 }
 
 .vs2-ayu-answer {
