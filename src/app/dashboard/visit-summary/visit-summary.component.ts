@@ -1519,6 +1519,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.encounterService.postEncounter(json).subscribe((response) => {
       this.visitNotePresent = response;
+      this.notifyHwForVisitStarted();
       // save diagnosis from case summary
       if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
         let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
@@ -2753,6 +2754,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getImagesBySection(section: string): Array<DocImagesModel> {
     return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  notifyHwForVisitStarted(): void {
+    const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
+    this.mindmapService.notifyHwForVisitStarted(hwUuid, {
+      visitUuid: this.visit?.uuid,
+      patientUuid: this.patient?.uuid,
+      patientOpenMrsId: this.getPatientIdentifier("OpenMRS ID"),
+      doctorUuid: this.provider?.uuid
+    });
   }
 
   /**
