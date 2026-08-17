@@ -114,6 +114,18 @@ export class MindmapService {
   }
 
 
+  notifyHwForVisitStarted(hwUuid: string, data: any): void {
+    if (!hwUuid) {
+      console.warn('Cannot send visit started notification: Health worker UUID is not available');
+      return;
+    }
+
+    this.notifyApp(hwUuid, { silent: true, type: 'visit_started', data }).subscribe({
+      next: () => {},
+      error: (err) => console.error('Failed to send visit started notification:', err)
+    });
+  }
+
   /**
   * Send notification to health worker for available prescription
   * @returns {void}

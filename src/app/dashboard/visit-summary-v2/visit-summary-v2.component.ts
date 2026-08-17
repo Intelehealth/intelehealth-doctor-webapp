@@ -13,6 +13,7 @@ import {
   SectionNavItem, SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import { CurrentVisitData, VisitSummaryV2Service } from './visit-summary-v2.service';
+import { MindmapService } from 'src/app/services/mindmap.service';
 
 @Component({
   selector: 'app-visit-summary-v2',
@@ -114,7 +115,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     private v2Service: VisitSummaryV2Service,
     private appConfigService: AppConfigService,
     private analytics: AnalyticsService,
-    private visitSummaryService: VisitSummaryHelperService
+    private visitSummaryService: VisitSummaryHelperService,
+    private mindmapService: MindmapService
   ) {
     this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
   }
@@ -322,10 +324,21 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   startVisitNote(): void {
     if (!this.visit) { return; }
     this.v2Service.createVisitNote(this.visit, this.providerUuid).subscribe(() => {
+      this.notifyHwForVisitStarted();
       this.visitNoteExists = true;
       this.visitNoteStarted = true;
       this.loadVisit();
       setTimeout(() => this.setTopTab('Doctor\'s Note'));
+    });
+  }
+
+  private notifyHwForVisitStarted(): void {
+    const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
+    this.mindmapService.notifyHwForVisitStarted(hwUuid, {
+      visitUuid: this.visit?.uuid,
+      patientUuid: this.patientUuid,
+      patientOpenMrsId: this.patient?.openMrsId,
+      doctorUuid: this.providerUuid
     });
   }
 
