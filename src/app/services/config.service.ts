@@ -295,6 +295,16 @@ export class ConfigService {
     return this.http.put(url, { is_enabled });
   }
 
+  /**
+   * Get a single feature config by its key
+   * @param {string} key - feature key
+   * @return {Observable<any>}
+   */
+  getFeatureByKey(key: string): Observable<any> {
+    const url = `${this.baseURL}/feature/getByKey/${key}`;
+    return this.http.get(url);
+  }
+
   /*
    * Get patient visit summary sections
    * @return {Observable<any>}
