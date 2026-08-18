@@ -1398,7 +1398,7 @@
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
             </ng-container>
 
-            <app-referral-consent *ngIf="!hasAILLMEnabled" [referralConsentForm]="referralConsentForm"
+            <app-referral-consent *ngIf="!hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
               [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
             </app-referral-consent>
 

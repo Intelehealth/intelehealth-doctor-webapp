@@ -476,7 +476,7 @@
   </ng-container>
 </mat-expansion-panel>
 
-<app-referral-consent *ngIf="referralConsentForm" [referralConsentForm]="referralConsentForm"
+<app-referral-consent *ngIf="referralConsentForm && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
   [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
 </app-referral-consent>
 

@@ -2441,21 +2441,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
   * If this visit's saved Referral Consent is NAMCO/Yes and a referral to any
   * Namco specialisation (e.g. "Namco _ Dermatology", "Namco_Orthopaedic") at
-  * "Namco Hospital" has been added, create a Referral encounter and copy this
-  * visit's Initial (dr first) Visit Note obs onto it.
+  * "Namco Hospital" has been added, create a Referral encounter, copy this
+  * visit's Initial (dr first) Visit Note obs onto it, and set the visit's
+  * "Routing Specialization" attribute so the specialist doctor's queue picks it up.
   * Does not read/write the Referral Consent or Referral capture logic itself.
+  * Gated by the admin-configurable `namco_referral_section` feature flag — when disabled,
+  * NAMCO referrals fall through to the normal Visit Complete flow like any other referral.
   * @returns {Observable<any>}
   */
   createReferralEncounterForNamco(): Observable<any> {
+    if (!this.appConfigService.namco_referral_section) {
+      return of(null);
+    }
+
     const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
-    const hasNamcoReferral = this.referrals.some((r: ReferralModel) =>
+    const namcoReferral = this.referrals.find((r: ReferralModel) =>
       (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
       (r.facility || '').trim().toLowerCase() === 'namco hospital'
     );
 
-    if (!isNamcoConsented || !hasNamcoReferral || !this.visitNotePresent) {
+    if (!isNamcoConsented || !namcoReferral || !this.visitNotePresent) {
       return of(null);
     }
+
+    const routingSpecialization = (namcoReferral.speciality || '').trim();
 
     // Re-fetch the visit rather than reusing this.visitNotePresent/this.visit.encounters —
     // those are the in-memory snapshot from the last getVisit() call and don't yet include
@@ -2464,7 +2473,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       switchMap((freshVisit: VisitModel) => {
         const freshVisitNote = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, visitTypes.VISIT_NOTE);
         const existingReferralEncounter = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, 'Referral');
-        if (!freshVisitNote || existingReferralEncounter) {
+        // Reuse the existing Referral encounter rather than creating a duplicate — but still
+        // report a truthy result so the caller skips Visit Complete (the visit is already referred).
+        if (existingReferralEncounter) {
+          return this.saveRoutingSpecialization(freshVisit.attributes || [], routingSpecialization).pipe(map(() => existingReferralEncounter));
+        }
+        if (!freshVisitNote) {
           return of(null);
         }
 
@@ -2484,10 +2498,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.encounterService.postEncounter(json).pipe(
           switchMap((referralEncounter: EncounterModel) => {
             const visitNoteObs = freshVisitNote.obs || [];
-            if (!visitNoteObs.length) {
-              return of(referralEncounter);
-            }
-            return forkJoin(
+            const copyObs = !visitNoteObs.length ? of(referralEncounter) : forkJoin(
               visitNoteObs.map((obs: ObsModel) =>
                 this.encounterService.postObs({
                   concept: obs.concept.uuid,
@@ -2498,10 +2509,34 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                 })
               )
             ).pipe(map(() => referralEncounter));
+
+            return copyObs.pipe(
+              switchMap((encounter: EncounterModel) =>
+                this.saveRoutingSpecialization(freshVisit.attributes || [], routingSpecialization).pipe(map(() => encounter))
+              )
+            );
           })
         );
       })
     );
+  }
+
+  /**
+  * Set the visit's "Routing Specialization" attribute to the given specialization, so the
+  * second (specialist) doctor's queue picks up this visit — mirrors how the "Visit Speciality"
+  * attribute routes a visit to the first doctor, but kept as a separate attribute type so the
+  * first doctor's own speciality attribute is never overwritten by a mid-visit referral.
+  * @param {VisitAttributeModel[]} attributes - Visit attributes to check for an existing value
+  * @param {string} specialization - Specialization to route this visit to
+  * @returns {Observable<any>}
+  */
+  saveRoutingSpecialization(attributes: VisitAttributeModel[], specialization: string): Observable<any> {
+    const routingSpecializationAttributeType = '8128ee6a-af76-4c79-8c99-b7de54e13f8d'; // Routing Specialization
+    const attr = this.visitSummaryService.checkIfAttributeExists(attributes, 'Routing Specialization');
+    if (attr) {
+      return this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: routingSpecializationAttributeType, value: specialization });
+    }
+    return this.visitService.postAttribute(this.visit.uuid, { attributeType: routingSpecializationAttributeType, value: specialization });
   }
 
   /**
@@ -2526,12 +2561,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
 
-    if (!this.referralConsentForm.value.decision) {
+    if (this.appConfigService.namco_referral_section && !this.referralConsentForm.value.decision) {
       this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
       return false;
     }
 
-    if (this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+    if (this.appConfigService.namco_referral_section && this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
       this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
