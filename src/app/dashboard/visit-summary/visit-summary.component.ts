@@ -296,7 +296,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           });
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.standardMedicines = this.standardMedicines;
+            this.updatedObsData.addStandardMedicine = this.standardMedicines;
           }
         });
         // Subscribe to advice saved event
@@ -304,7 +304,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.advices = [...advices];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.advice = advices;
+            this.updatedObsData.addAdvice = advices;
           }
         });
         // Subscribe to test saved event
@@ -312,7 +312,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tests = [...tests];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.tests = tests;
+            this.updatedObsData.addTests = tests;
           }
         });
         // Subscribe to referral saved event
@@ -320,7 +320,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.referrals = [...referrals];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.referrals = referrals;
+            this.updatedObsData.addReferral = referrals;
           }
         });
         // Subscribe to follow-up saved event
@@ -3695,7 +3695,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       
       this.formSubscriptions.push(
         this.addStandardMedicineForm.valueChanges.subscribe(() => {
-          const newValue = [...this.medicines];
+          const newValue = [...this.standardMedicines];
           if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addStandardMedicine)) {
             this.updatedObsData.addStandardMedicine = newValue;
             this.checkChanges(this.updatedObsData);
