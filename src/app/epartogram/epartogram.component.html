@@ -29,7 +29,7 @@
                       Ruptured membranes:</span>&nbsp;
                     <ng-container *ngIf="membraneRupturedIsDate">
                       <span>[Date</span> {{formatDateByClient(pinfo?.MembraneRupturedTimestamp) || 'NA'}}
-                      <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
+                      <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'HH:mm'|noValue:'NA'}}<span>]</span>
                     </ng-container>
                     <ng-container *ngIf="!membraneRupturedIsDate">{{pinfo?.MembraneRupturedTimestamp|noValue:'NA'}}</ng-container>
                   </td>

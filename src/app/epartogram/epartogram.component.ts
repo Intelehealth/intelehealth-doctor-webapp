@@ -578,12 +578,16 @@ export class EpartogramComponent implements OnInit {
     }
     if (typeof normalized === 'object') {
       const disorders: string[] = [];
-      const congenitalArray = normalized.CONGENITAL_ANOMALY || normalized.congenital_anomaly || [];
-      if (Array.isArray(congenitalArray)) {
-        disorders.push(...congenitalArray.map(String).filter(Boolean));
+      const congenitalValue = normalized.CONGENITAL_ANOMALY ?? normalized.congenital_anomaly;
+      if (Array.isArray(congenitalValue)) {
+        disorders.push(...congenitalValue.map(String).filter(Boolean));
       }
       if (normalized.other_text) {
         disorders.push(String(normalized.other_text));
+      }
+      // Plain answer (e.g. "No"/"Yes") with no selected disorders: show the answer itself
+      if (!disorders.length && typeof congenitalValue === 'string' && congenitalValue.trim()) {
+        disorders.push(congenitalValue.trim());
       }
       return disorders.length ? disorders.join(', ') : '-';
     }

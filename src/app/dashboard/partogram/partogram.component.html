@@ -33,7 +33,7 @@
                       <td colspan="14"><span>
                         Ruptured membranes:</span>&nbsp;
                         <ng-container *ngIf="membraneRupturedIsDate">
-                          <span>[Date</span> {{formatDateByClient(pinfo?.MembraneRupturedTimestamp) || 'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
+                          <span>[Date</span> {{formatDateByClient(pinfo?.MembraneRupturedTimestamp) || 'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'HH:mm'|noValue:'NA'}}<span>]</span>
                         </ng-container>
                         <ng-container *ngIf="!membraneRupturedIsDate">{{pinfo?.MembraneRupturedTimestamp|noValue:'NA'}}</ng-container>
                       </td>
@@ -50,7 +50,7 @@
                       <ng-container *ngFor="let item of timeFullStage1; let i=index;">
                         <td [ngClass]="{ 'sos': item && encuuid1Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid1Full[i].enc_uuid) }">
                           <div class="value-item" *ngIf="item">
-                            {{formatDateByClient(item)}} <br/> {{item|date:'hh:mm a'}}
+                            {{formatDateByClient(item)}} <br/> {{item|date:'HH:mm'}}
                             <ng-container *ngIf="item && encuuid1Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid1Full[i].enc_uuid)">
                               <br>
                               <h5>SOS</h5>
@@ -62,7 +62,7 @@
                       <ng-container *ngFor="let item of timeFullStage2; let i=index;">
                         <td [ngClass]="{ 'sos': item && encuuid2Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid2Full[i].enc_uuid) }">
                           <div class="value-item" *ngIf="item">
-                            {{formatDateByClient(item)}} <br/> {{item|date:'hh:mm a'}}
+                            {{formatDateByClient(item)}} <br/> {{item|date:'HH:mm'}}
                             <ng-container *ngIf="item && encuuid2Full[i]?.enc_uuid && sosEncounterUUIDs.has(encuuid2Full[i].enc_uuid)">
                               <br>
                               <h5>SOS</h5>
@@ -691,7 +691,7 @@
                               <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
                               <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="item && !item?.value?.strength">
                               {{item?.value}}
@@ -702,7 +702,7 @@
                               <span>Strength : </span>{{nurseItem?.value?.strength}} U/L<br/>
                               <span>Infusion Rate : </span>{{nurseItem?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{nurseItem?.value?.infusionStatus}}<br/>
-                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="!nurseItem?.value?.strength">
                               {{nurseItem?.value}}
@@ -717,7 +717,7 @@
                               <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
                               <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="item && !item?.value?.strength">
                               {{item?.value}}
@@ -728,7 +728,7 @@
                               <span>Strength : </span>{{nurseItem?.value?.strength}} U/L<br/>
                               <span>Infusion Rate : </span>{{nurseItem?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{nurseItem?.value?.infusionStatus}}<br/>
-                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="!nurseItem?.value?.strength">
                               {{nurseItem?.value}}
@@ -776,12 +776,12 @@
                         <td colspan="1">
                           <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
                             <ng-container *ngFor="let m of cell|emptyArray">
-                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'HH:mm'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                           <div class="value-item note" *ngIf="(parameters[20].stage1values[i]|emptyArray)?.length">
                             <ng-container *ngFor="let m of parameters[20].stage1values[i]|emptyArray">
-                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'HH:mm'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                         </td>
@@ -790,12 +790,12 @@
                         <td colspan="1">
                           <div class="value-item note" *ngIf="(cell|emptyArray)?.length">
                             <ng-container *ngFor="let m of cell|emptyArray">
-                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'HH:mm'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                           <div class="value-item note" *ngIf="(parameters[20].stage2values[i]|emptyArray)?.length">
                             <ng-container *ngFor="let m of parameters[20].stage2values[i]|emptyArray">
-                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/></ng-container>
+                              <ng-container *ngIf="m">{{m?.value?.replaceAll('::',' ')}} <small><i>({{m?.initial}} {{m?.obsDatetime|date:'HH:mm'}})</i></small><br/></ng-container>
                             </ng-container>
                           </div>
                         </td>
@@ -810,7 +810,7 @@
                               <span>Type : </span>{{item?.value?.type}}<br/>
                               <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="item && !item?.value?.type">
                               {{item?.value}}
@@ -821,7 +821,7 @@
                               <span>Type : </span>{{nurseItem?.value?.type}}<br/>
                               <span>Infusion Rate : </span>{{nurseItem?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{nurseItem?.value?.infusionStatus}}<br/>
-                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="!nurseItem?.value?.type">
                               {{nurseItem?.value}}
@@ -836,7 +836,7 @@
                               <span>Type : </span>{{item?.value?.type}}<br/>
                               <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
-                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{item?.initial}} {{item?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="item && !item?.value?.type">
                               {{item?.value}}
@@ -847,7 +847,7 @@
                               <span>Type : </span>{{nurseItem?.value?.type}}<br/>
                               <span>Infusion Rate : </span>{{nurseItem?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{nurseItem?.value?.infusionStatus}}<br/>
-                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'hh:mm a'}})</i></small>
+                              <small><i>({{nurseItem?.initial}} {{nurseItem?.obsDatetime|date:'HH:mm'}})</i></small>
                             </ng-container>
                             <ng-container *ngIf="!nurseItem?.value?.type">
                               {{nurseItem?.value}}
@@ -903,7 +903,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(22, 1, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
@@ -917,7 +917,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(22, 2, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
@@ -930,7 +930,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -939,7 +939,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -955,7 +955,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage1[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(23, 1, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(1, i)">
@@ -969,7 +969,7 @@
                           <div class="value-item note" *ngIf="item">
                             <ng-container *ngFor="let subCol of getSubColArray(subColsPerHourStage2[i]); let j=index;">
                               <ng-container *ngFor="let it of getParameterValueAtIndex(23, 2, i, j)|emptyArray;">
-                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                                <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                               </ng-container>
                             </ng-container>
                             <button mat-icon-button aria-label="Open in new tab" (click)="viewPlan(2, i)">
@@ -982,7 +982,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -991,7 +991,7 @@
                         <td [ngClass]="{ 'brn': !odd, 'bln': odd }">
                           <div class="value-item note">
                             <ng-container *ngFor="let it of item;">
-                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'hh:mm a'}}</ng-container>)</i></small></p>
+                              <p *ngIf="it">{{it?.value}} <small *ngIf="it?.initial"><i>({{it?.initial}}<ng-container *ngIf="it?.obsDatetime"> {{it?.obsDatetime|date:'HH:mm'}}</ng-container>)</i></small></p>
                             </ng-container>
                           </div>
                         </td>
@@ -1080,7 +1080,7 @@
                       <div class="list-item">
                         <label class="border-0">{{a.value}}</label>
                         <div class="list-item-content">
-                          {{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                          {{a.initial}} ({{a.obsDatetime|date: 'dd-MM-YYYY HH:mm'}})
                         </div>
                       </div>
                     </li>
@@ -1110,7 +1110,7 @@
                       <div class="list-item">
                         <label class="border-0">{{p.value}}</label>
                         <div class="list-item-content">
-                          {{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                          {{p.initial}} ({{p.obsDatetime|date: 'dd-MM-YYYY HH:mm'}})
                         </div>
                       </div>
                     </li>
@@ -1147,7 +1147,7 @@
                           </ng-container>
                         </label>
                         <div class="list-item-content">
-                          {{m.initial}} ({{m.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                          {{m.initial}} ({{m.obsDatetime|date: 'dd-MM-YYYY HH:mm'}})
                         </div>
                       </div>
                     </li>
@@ -1180,7 +1180,7 @@
                           </ng-container>
                         </label>
                         <div class="list-item-content">
-                          {{o.initial}} ({{o.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                          {{o.initial}} ({{o.obsDatetime|date: 'dd-MM-YYYY HH:mm'}})
                         </div>
                       </div>
                     </li>
@@ -1217,7 +1217,7 @@
                           </ng-container>
                         </label>
                         <div class="list-item-content">
-                          {{iv.initial}} ({{iv.obsDatetime|date: 'dd-MM-YYYY hh:mm a'}})
+                          {{iv.initial}} ({{iv.obsDatetime|date: 'dd-MM-YYYY HH:mm'}})
                         </div>
                       </div>
                     </li>
