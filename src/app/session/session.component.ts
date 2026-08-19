@@ -45,9 +45,7 @@ export class SessionComponent implements OnInit {
   }
 
   fetchLanguages() {
-  console.log("Fetching languages");
   this.appConfigService.fetchAllLanguage().subscribe((res) => {
-    console.log("Languages fetched successfully", res);
     this.languages = res.languages;
     // Only do so if there's no cached value
     if (!getCacheData(false, languages.SELECTED_LANGUAGE) && this.languages.length > 0) {

@@ -28,10 +28,8 @@ fs.readdir(DIRECTORY, (err, files) => {
     const filesToDelete = files.filter(file => FILE_PREFIXES_TO_DELETE.some(prefix => file.startsWith(prefix)));
 
     if (!filesToDelete.length) {
-        console.log(`No files to delete.`);
         return;
     }
-    console.log(`Active features: ${featuresList.join(', ')}`);
     filesToDelete.forEach(file => {
         fs.unlink(path.join(DIRECTORY, file), err => {
             if (err) console.error(`Failed to delete ${file}: ${err}`);

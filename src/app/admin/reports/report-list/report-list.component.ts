@@ -32,6 +32,7 @@ export class ReportListComponent {
       title: element.name,
       field1: 'Start date',
       field2: 'End date',
+      field3: element.id === 2 ? 'Email address' : '',
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };

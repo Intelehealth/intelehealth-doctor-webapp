@@ -23,12 +23,21 @@
       </div>
       <div class="input-field-group" data-test-id="groupExpiryDate">
         <label data-test-id="labelExpiryDate">{{ 'Expiry Date' | translate }}</label>
-        <input
-          type="date"
-          [min]="today"
-          formControlName="expiryDate"
-          data-test-id="etExpiryDateAddLicense"
-        >
+        <div class="input-wrapper">
+          <input
+            type="text"
+            [min]="today"
+            [matDatepicker]="picker"
+            formControlName="expiryDate"
+            placeholder="{{'Select date' | translate}}"
+            readonly
+            data-test-id="etExpiryDateAddLicense"
+          >
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="picker" class="datepicker-icon">
+            <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+          </mat-datepicker-toggle>
+        </div>
         <small class="text-danger" *ngIf="submitted && f.expiryDate.errors" data-test-id="errorExpiryDateRequired">
           *{{ 'Required' | translate }}
         </small>

@@ -124,6 +124,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hwInteractionUuid: String;
   patientInteractionUuid: String;
+  referralConsentForm: FormGroup;
   patientCallStatusForm: FormGroup;
   diagnosisForm: FormGroup;
   addMedicineForm: FormGroup;
@@ -221,6 +222,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.visitCompleted = this.visitCompleted;
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
         this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
+        this.ddxCompRef.instance.referralConsentForm = this.referralConsentForm;
 
         // this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
         //   if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
@@ -294,7 +296,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           });
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.standardMedicines = this.standardMedicines;
+            this.updatedObsData.addStandardMedicine = this.standardMedicines;
           }
         });
         // Subscribe to advice saved event
@@ -302,7 +304,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.advices = [...advices];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.advice = advices;
+            this.updatedObsData.addAdvice = advices;
           }
         });
         // Subscribe to test saved event
@@ -310,7 +312,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tests = [...tests];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.tests = tests;
+            this.updatedObsData.addTests = tests;
           }
         });
         // Subscribe to referral saved event
@@ -318,7 +320,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.referrals = [...referrals];
           this.changesMade = true;
           if (this.updatedObsData) {
-            this.updatedObsData.referrals = referrals;
+            this.updatedObsData.addReferral = referrals;
           }
         });
         // Subscribe to follow-up saved event
@@ -329,6 +331,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           this.changesMade = true;
           if (this.updatedObsData) {
             this.updatedObsData.followUp = followUp;
+          }
+        });
+        // Subscribe to additional instruction saved event
+        this.ddxCompRef.instance.additionalInstructionForm?.valueChanges.subscribe(() => {
+          this.changesMade = true;
+          if (this.updatedObsData) {
+            this.updatedObsData.additionalInstruction = this.ddxCompRef.instance.additionalInstructionForm.value.value;
           }
         });
       }
@@ -413,6 +422,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     patientInteractionComment: null,
     hwInteraction: null,
     patientInteraction: null,
+    referralConsent: null,
     medicine: []
   };
 
@@ -566,6 +576,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       value: new FormControl(null, [Validators.required])
     })
 
+    this.referralConsentForm = new FormGroup({
+      uuid: new FormControl(null),
+      decision: new FormControl(null, [Validators.required]),
+      consent: new FormControl(null)
+    })
+
     this.patientInteractionCommentForm = new FormGroup({
       uuid: new FormControl(null),
       value: new FormControl(null, [Validators.required])
@@ -680,13 +696,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        // this.followUpForm.get('followUpTime').clearValidators();
-        // this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -756,6 +776,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
+              this.checkIfReferralConsentPresent();
               this.checkIfPatientCallDurationPresent(visit.attributes)
               this.checkIfCallStatusPresent(visit.attributes)
               this.checkIfDiscussionSummaryPresent();
@@ -807,7 +828,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -1489,6 +1510,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+  * Check if a referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, is present for this visit
+  * @returns {void}
+  */
+  checkIfReferralConsentPresent(): void {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferralConsent)
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            const [decision, consent] = obs.value.split(':');
+            this.referralConsentForm.patchValue({ uuid: obs.uuid, decision, consent: consent || null });
+          }
+        });
+      });
+  }
+
   saveDDxNotes(): void {
     if (this.patientInteractionNotesForm.value.uuid) {
       this.encounterService.updateObs(this.patientInteractionNotesForm.value.uuid, {
@@ -1500,6 +1537,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }).subscribe({
         next: (res: ObsModel) => {
           this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          // Drop the previous suggestions so the loader replaces them and stale questions
+          // can't linger if the regenerated response comes back without any.
+          this.furtherQuestionsList = [];
           this.ddxCompRef.instance.saveDDxNotes();
         }
       });
@@ -1513,6 +1553,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       }).subscribe({
         next: (res: ObsModel) => {
           this.patientInteractionNotesForm.patchValue({ uuid: res.uuid })
+          // Drop the previous suggestions so the loader replaces them and stale questions
+          // can't linger if the regenerated response comes back without any.
+          this.furtherQuestionsList = [];
           this.ddxCompRef.instance.saveDDxNotes();
         }
       });
@@ -1563,6 +1606,36 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.visitService.updateAttribute(this.visit.uuid, this.patientInteractionUuid, payload);
     else
       return this.visitService.postAttribute(this.visit.uuid, payload).pipe(tap((res: VisitAttributeModel) => this.patientInteractionUuid = res.uuid));
+  };
+
+  /**
+  * Format the referral decision + (optional) patient consent into a single obs value
+  * @returns {string}
+  */
+  formatReferralConsentValue(): string {
+    const { decision, consent } = this.referralConsentForm.value;
+    return consent ? `${decision}:${consent}` : decision;
+  }
+
+  /**
+  * Save the referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, as a single observation
+  * @returns {Observable<any>}
+  */
+  saveReferralConsent(): Observable<any> {
+    if (this.referralConsentForm.value.uuid) {
+      if (this.referralConsentForm.valid)
+        return this.encounterService.updateObs(this.referralConsentForm.value.uuid, { value: this.formatReferralConsentValue() });
+      return of(false);
+    } else if (this.referralConsentForm.valid) {
+      return this.encounterService.postObs({
+        concept: conceptIds.conceptReferralConsent,
+        person: this.visit.patient.uuid,
+        obsDatetime: new Date(),
+        value: this.formatReferralConsentValue(),
+        encounter: this.visitNotePresent.uuid
+      }).pipe(tap((res: ObsModel) => this.referralConsentForm.patchValue({ uuid: res.uuid })));
+    }
+    return of(false);
   };
 
   /**
@@ -1949,14 +2022,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
     } else if (this.additionalInstructionForm.valid) {
       return this.encounterService.postObs({
-        concept: conceptIds.conceptAdvice,
+        concept: conceptIds.conceptMed,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
         value: this.additionalInstructionForm.value.value,
         encounter: this.visitNotePresent.uuid
       }).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: response.uuid })));
     } else {
-      return of(false)
+      return of(false);
     }
   }
 
@@ -2297,13 +2370,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
 
-            // Only try to get Time if the feature is enabled
             if (this.isFeatureAvailable('followUpTime')) {
               const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
               followUpTime = time ? time : null;
             }
 
-            // Only try to get Type if the feature is enabled
             if (this.isFeatureAvailable('followUpType')) {
               const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
               followUpType = type && type !== 'null' ? type : null;
@@ -2368,14 +2439,112 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+  * If this visit's saved Referral Consent is NAMCO/Yes and a referral to any
+  * Namco specialisation (e.g. "Namco _ Dermatology", "Namco_Orthopaedic") at
+  * "Namco Hospital" has been added, create a Referral encounter, copy this
+  * visit's Initial (dr first) Visit Note obs onto it, and set the visit's
+  * "Routing Specialization" attribute so the specialist doctor's queue picks it up.
+  * Does not read/write the Referral Consent or Referral capture logic itself.
+  * Gated by the admin-configurable `namco_referral_section` feature flag — when disabled,
+  * NAMCO referrals fall through to the normal Visit Complete flow like any other referral.
+  * @returns {Observable<any>}
+  */
+  createReferralEncounterForNamco(): Observable<any> {
+    if (!this.appConfigService.namco_referral_section) {
+      return of(null);
+    }
+
+    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
+    const namcoReferral = this.referrals.find((r: ReferralModel) =>
+      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
+      (r.facility || '').trim().toLowerCase() === 'namco hospital'
+    );
+
+    if (!isNamcoConsented || !namcoReferral || !this.visitNotePresent) {
+      return of(null);
+    }
+
+    const routingSpecialization = (namcoReferral.speciality || '').trim();
+
+    // Re-fetch the visit rather than reusing this.visitNotePresent/this.visit.encounters —
+    // those are the in-memory snapshot from the last getVisit() call and don't yet include
+    // the obs saveAllObs() just persisted moments earlier in this same sharePrescription().
+    return this.visitService.fetchVisitDetails(this.visit.uuid).pipe(
+      switchMap((freshVisit: VisitModel) => {
+        const freshVisitNote = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, visitTypes.VISIT_NOTE);
+        const existingReferralEncounter = this.visitSummaryService.checkIfEncounterExists(freshVisit.encounters, 'Referral');
+        // Reuse the existing Referral encounter rather than creating a duplicate — but still
+        // report a truthy result so the caller skips Visit Complete (the visit is already referred).
+        if (existingReferralEncounter) {
+          return this.saveRoutingSpecialization(freshVisit.attributes || [], routingSpecialization).pipe(map(() => existingReferralEncounter));
+        }
+        if (!freshVisitNote) {
+          return of(null);
+        }
+
+        const json = {
+          patient: this.visit.patient.uuid,
+          encounterType: '95f4ae7f-6caa-4c66-950f-7f3d6072ce56', // Referral encounter
+          encounterProviders: [
+            {
+              provider: this.provider.uuid,
+              encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+            },
+          ],
+          visit: this.visit.uuid,
+          encounterDatetime: new Date(),
+        };
+
+        return this.encounterService.postEncounter(json).pipe(
+          switchMap((referralEncounter: EncounterModel) => {
+            const visitNoteObs = freshVisitNote.obs || [];
+            const copyObs = !visitNoteObs.length ? of(referralEncounter) : forkJoin(
+              visitNoteObs.map((obs: ObsModel) =>
+                this.encounterService.postObs({
+                  concept: obs.concept.uuid,
+                  person: this.visit.patient.uuid,
+                  obsDatetime: new Date(),
+                  value: this.visitService.getData(obs)?.value,
+                  encounter: referralEncounter.uuid
+                })
+              )
+            ).pipe(map(() => referralEncounter));
+
+            return copyObs.pipe(
+              switchMap((encounter: EncounterModel) =>
+                this.saveRoutingSpecialization(freshVisit.attributes || [], routingSpecialization).pipe(map(() => encounter))
+              )
+            );
+          })
+        );
+      })
+    );
+  }
+
+  /**
+  * Set the visit's "Routing Specialization" attribute to the given specialization, so the
+  * second (specialist) doctor's queue picks up this visit — mirrors how the "Visit Speciality"
+  * attribute routes a visit to the first doctor, but kept as a separate attribute type so the
+  * first doctor's own speciality attribute is never overwritten by a mid-visit referral.
+  * @param {VisitAttributeModel[]} attributes - Visit attributes to check for an existing value
+  * @param {string} specialization - Specialization to route this visit to
+  * @returns {Observable<any>}
+  */
+  saveRoutingSpecialization(attributes: VisitAttributeModel[], specialization: string): Observable<any> {
+    const routingSpecializationAttributeType = '8128ee6a-af76-4c79-8c99-b7de54e13f8d'; // Routing Specialization
+    const attr = this.visitSummaryService.checkIfAttributeExists(attributes, 'Routing Specialization');
+    if (attr) {
+      return this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: routingSpecializationAttributeType, value: specialization });
+    }
+    return this.visitService.postAttribute(this.visit.uuid, { attributeType: routingSpecializationAttributeType, value: specialization });
+  }
+
+  /**
   * Share prescription
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    // Skip diagnosis validation for Namco doctors
-    if (!this.showAndHideUiElement) {
-      // Namco doctor - skip to saving
-    } else if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
+    if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
       this.toastr.warning(this.translateService.instant('Enter Diagnosis'), this.translateService.instant('Diagnosis Required'));
       return false;
     } else if (!this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.existingDiagnosis.length === 0 && (this.hasAILLMEnabled && (!this.ddxCompRef || (this.ddxCompRef.instance?.existingDiagnosis || []).length === 0))) {
@@ -2389,6 +2558,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Skip follow-up validation for Namco doctors
     if (this.showAndHideUiElement && this.isFeatureAvailable('visitFollowUp') && !this.followUpForm.value.wantFollowUp && this.visit?.demarcation !== visitTypes.FOLLOW_UP) {
       this.toastr.warning(this.translateService.instant('Follow-up not added'), this.translateService.instant('Follow-up Required'));
+      return false;
+    }
+
+    if (this.appConfigService.namco_referral_section && !this.referralConsentForm.value.decision) {
+      this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
+      return false;
+    }
+
+    if (this.appConfigService.namco_referral_section && this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+      this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
     this.changedFields = [];
@@ -2405,100 +2584,117 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         //Open Share Prescription Confirmation Modal
         this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion }).subscribe((res: boolean) => {
           if (res) {
-            if (this.isVisitNoteProvider) {
-              if (this.provider.attributes.length) {
-                if (navigator.onLine) {
-                  if (!this.visitCompleted) {
-                    this.encounterService.postEncounter({
-                      patient: this.visit.patient.uuid,
-                      encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                      encounterProviders: [
-                        {
-                          provider: this.provider.uuid,
-                          encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                        },
-                      ],
-                      visit: this.visit.uuid,
-                      encounterDatetime: new Date(Date.now() - 30000),
-                      obs: [
-                        {
-                          concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                          value: JSON.stringify(this.getDoctorDetails()),
-                        },
-                      ]
-                    }).subscribe((post) => {
-                      this.visitCompleted = true;
-                      const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
+            // Runs the existing visit-completion flow (Visit Complete encounter + prescription share).
+            // Only called when this save did NOT just create a Referral encounter — a visit that's
+            // being referred to a specialist stays open instead of being completed here.
+            const completeVisit = () => {
+              if (this.isVisitNoteProvider) {
+                if (this.provider.attributes.length) {
+                  if (navigator.onLine) {
+                    if (!this.visitCompleted) {
+                      this.encounterService.postEncounter({
+                        patient: this.visit.patient.uuid,
+                        encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+                        encounterProviders: [
+                          {
+                            provider: this.provider.uuid,
+                            encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+                          },
+                        ],
+                        visit: this.visit.uuid,
+                        encounterDatetime: new Date(Date.now() - 30000),
+                        obs: [
+                          {
+                            concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+                            value: JSON.stringify(this.getDoctorDetails()),
+                          },
+                        ]
+                      }).subscribe((post) => {
+                        this.visitCompleted = true;
+                        const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
 
-                      this.notifyHwForAvailablePrescription("","",followUpDate);
-                      this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+                        this.notifyHwForAvailablePrescription("","",followUpDate);
+                        this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
-                      if (this.appConfigService.abha_section) {
-                        this.updateAbhaDetails(post.uuid);
-                      }
+                        if (this.appConfigService.abha_section) {
+                          this.updateAbhaDetails(post.uuid);
+                        }
 
-                      this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                        next: (linkSvcRes: ApiResponseModel) => {
-                          const link = linkSvcRes.data.hash;
-                          this.visitService.postAttribute(
-                            this.visit.uuid,
-                            {
-                              attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                              value: `/i/${link}`,
-                            }).subscribe();
-                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                            if (result === 'view') {
-                              // Open visit summary modal here....
-                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                            } else if (result === 'dashboard') {
-                              this.router.navigate(['/dashboard']);
-                            }
-                          });
-                        },
-                        error: (err) => {
-                        this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
-                          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                            if (result === 'view') {
-                              // Open visit summary modal here....
-                              this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                            } else if (result === 'dashboard') {
-                              this.router.navigate(['/dashboard']);
-                            }
-                          });
+                        this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                          next: (linkSvcRes: ApiResponseModel) => {
+                            const link = linkSvcRes.data.hash;
+                            this.visitService.postAttribute(
+                              this.visit.uuid,
+                              {
+                                attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+                                value: `/i/${link}`,
+                              }).subscribe();
+                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                              if (result === 'view') {
+                                // Open visit summary modal here....
+                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                              } else if (result === 'dashboard') {
+                                this.router.navigate(['/dashboard']);
+                              }
+                            });
+                          },
+                          error: (err) => {
+                          this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
+                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                              if (result === 'view') {
+                                // Open visit summary modal here....
+                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                              } else if (result === 'dashboard') {
+                                this.router.navigate(['/dashboard']);
+                              }
+                            });
+                          }
+                        });
+                      });
+                    } else {
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                        if (result === 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result === 'dashboard') {
+                          this.router.navigate(['/dashboard']);
                         }
                       });
-                    });
+                    }
                   } else {
-                    this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                      if (result === 'view') {
-                        // Open visit summary modal here....
-                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                      } else if (result === 'dashboard') {
-                        this.router.navigate(['/dashboard']);
+                    this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                      if (c) {
+                        // Do nothing
                       }
                     });
                   }
                 } else {
-                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
                     if (c) {
-                      // Do nothing
+                      this.router.navigate(['/dashboard/profile']);
                     }
                   });
                 }
               } else {
-                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
                   if (c) {
-                    this.router.navigate(['/dashboard/profile']);
+                    this.router.navigate(['/dashboard']);
                   }
                 });
               }
-            } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
-                if (c) {
-                  this.router.navigate(['/dashboard']);
+            };
+
+            this.createReferralEncounterForNamco().subscribe({
+              next: (referralEncounter) => {
+                if (!referralEncounter) {
+                  completeVisit();
                 }
-              });
-            }
+              },
+              error: (error) => {
+                console.error('Error creating Referral encounter', error);
+                completeVisit();
+              }
+            });
           }
         });
       },
@@ -2655,9 +2851,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         followupDatetime: followupDatetime
       }
     }
-    console.log("payload from web app==",payload);
     this.mindmapService.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Notification sent successfully'),
+      next: () => {},
       error: (err) => console.error('Failed to send notification:', err)
     });
   }
@@ -2777,6 +2972,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && !this.showAndHideUiElement) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -2904,13 +3100,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Check if medication has been modified (for AI medications)
     this.checkMedicationModification(medicine);
 
-    const aiMeta = medicine.aiGenerated ? JSON.stringify({
-      ai: true,
-      ...(medicine.rationale?.length && { r: medicine.rationale }),
-      ...(medicine.likelihood && { l: medicine.likelihood })
-    }) : '';
-
-    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}:${aiMeta}`;
+    return `${medicine.drug ?? ''}:${medicine.dose ?? ''}:${medicine.durationNo ?? ''}:${medicine.durationUnit ?? ''}:${medicine.instructRemark ?? ''}:${medicine.frequency ?? ''}`;
   }
 
   saveDiscussionSummary(): Observable<any>{
@@ -2937,6 +3127,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   saveAllObs(): Observable<any> {
     const postObsRequests = [];
 
+    // Additional instructions for AI-LLM visits are entered in the dynamically-loaded
+    if (this.hasAILLMEnabled && this.ddxCompRef?.instance) {
+      postObsRequests.push(this.ddxCompRef.instance.saveAdditionalInstruction());
+    }
+
     // If changedFields is empty, save all fields
     if (!this.changedFields.length) {
       // Basic observations
@@ -2945,7 +3140,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.savePatientInteraction(),
         this.saveAdditionalInstruction(),
         this.saveTest(),
-        this.savePatientInteractionComment()
+        this.savePatientInteractionComment(),
+        this.saveReferralConsent()
       );
 
       // Conditional observations based on config
@@ -3128,6 +3324,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         additionalInstruction: () => this.saveAdditionalInstruction(),
         test: () => this.saveTest(),
         patientInteractionComment: () => this.savePatientInteractionComment(),
+        referralConsent: () => this.saveReferralConsent(),
         diagnosisSecondary: () => this.isFeatureAvailable('dp_diagnosis_secondary') ? this.saveDiagnosisSecondary() : of(null),
         discussionSummary: () => this.isFeatureAvailable('dp_discussion_summary') ? this.saveDiscussionSummary() : of(null),
         followUpInstruction: () => this.isFeatureAvailable('follow-up-instruction') ? this.followUpInstructionComponentRef.addInstructions() : of(null),
@@ -3385,6 +3582,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           patientInteractionComment: null,
           hwInteraction: null,
           patientInteraction: null,
+          referralConsent: null,
           medicine: []
         };
         
@@ -3532,7 +3730,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       
       this.formSubscriptions.push(
         this.addStandardMedicineForm.valueChanges.subscribe(() => {
-          const newValue = [...this.medicines];
+          const newValue = [...this.standardMedicines];
           if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.addStandardMedicine)) {
             this.updatedObsData.addStandardMedicine = newValue;
             this.checkChanges(this.updatedObsData);
@@ -3589,12 +3787,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Track test form
     if (this.testForm) {
       this.obsData.test = this.testForm.value.test;
-      
+
       this.formSubscriptions.push(
         this.testForm.valueChanges.subscribe(() => {
           const newValue = this.testForm.value.test;
           if (newValue !== this.obsData.test) {
             this.updatedObsData.test = newValue;
+            this.checkChanges(this.updatedObsData);
+          }
+        })
+      );
+    }
+
+    // Track referral decision form (decision + patient consent, stored as one observation)
+    if (this.referralConsentForm) {
+      this.obsData.referralConsent = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+
+      this.formSubscriptions.push(
+        this.referralConsentForm.valueChanges.subscribe(() => {
+          const newValue = { decision: this.referralConsentForm.value.decision, consent: this.referralConsentForm.value.consent };
+          if (JSON.stringify(newValue) !== JSON.stringify(this.obsData.referralConsent)) {
+            this.updatedObsData.referralConsent = newValue;
             this.checkChanges(this.updatedObsData);
           }
         })
@@ -3681,6 +3894,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         })
       );
     }
+    this.updatedObsData = {...this.obsData};
   }
 
   /**
@@ -3756,7 +3970,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   pageClick(event: any): void{
-    console.log(event)
   }
 
 
@@ -3819,6 +4032,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   // Add this method to receive questions from AILLMDDX
   onFurtherQuestionsReceived(questions: string[]) {
     this.furtherQuestionsList = questions;
+  }
+
+  /**
+  * Loading state of the AI (Ayu) suggestions, mirrored from the lazily created DDx component.
+  * Lets the "Ayu suggested questions" box render the same loader the diagnosis panel shows
+  * while the DDx call is in flight, instead of staying hidden until the response arrives.
+  * @return {boolean}
+  */
+  get ayuSuggestionsLoading(): boolean {
+    return !!this.ddxCompRef?.instance?.aillmddxComponent?.isLoading;
   }
 
   // SaveAIDiagosisHistory(visit:any, diagnosisData:any){

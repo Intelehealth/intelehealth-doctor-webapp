@@ -58,6 +58,7 @@ import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.com
 import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
+import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
 
 
 // AoT requires an exported function for factories
@@ -168,6 +169,10 @@ const routes: Routes = [
             component: PrescriptionNotesComponent
           },
           {
+            path: 'namco-referral',
+            component: NamcoReferralComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -208,7 +213,8 @@ const routes: Routes = [
     HomeScreenComponent,
     WebrtcLogComponent,
     AiLlmComponent,
-    PrescriptionNotesComponent
+    PrescriptionNotesComponent,
+    NamcoReferralComponent
   ],
   imports: [
     CommonModule,

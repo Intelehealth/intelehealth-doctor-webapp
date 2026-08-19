@@ -22,11 +22,11 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" data-test-id="patientInfoMainContainer">
+    <div class="col-md-12 p-0 mb-3" data-test-id="patientInfoMainContainer">
       <div class="intel-card" data-test-id="patientInfoCard">
         <div class="card-body" data-test-id="patientInfoCardBody">
           <div class="row patient-info-wrapper" *ngIf="patient" data-test-id="patientInfoWrapper">
-            <div class="patient-info-section p-3" data-test-id="sectionPatientPhoto">
+            <div class="patient-info-section p-1" data-test-id="sectionPatientPhoto">
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
@@ -50,117 +50,139 @@
               </div>
             </div>
 
-            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Gender') && patient?.person.gender">
-              <div class="patient-info-item mb-3">
+            <div class="patient-info-section p-1" *ngIf="!(appConfigService?.abha_section && patient?.person?.abhaNumber) && checkPatientRegField('Gender') && patient?.person.gender">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatientGender">{{'Gender'|translate}}</h6>
                 <p data-test-id="etPatientGender">{{ genderData[patient?.person.gender] | translate }}</p>
               </div>
             </div>
 
-            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Age') && patient?.person.birthdate">
-              <div class="patient-info-item mb-3">
+            <div class="patient-info-section p-1" *ngIf="!(appConfigService?.abha_section && patient?.person?.abhaNumber) && checkPatientRegField('Age') && patient?.person.birthdate">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatientAge">{{'Age'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate ? getAge(patient?.person.birthdate) : patient?.person.age + ' years'  }}</p>
               </div>
             </div>
 
-            <div class="patient-info-section p-3" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="patient-info-section p-1" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatientAge">{{'Date of birth'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
               </div>
             </div>
 
             <ng-container *ngFor="let v of vitals">
-              <div class="patient-info-section p-3" *ngIf="(v.name === 'Weight' || v.name === 'Weight (kg)' || v.key === 'weight') && getObsValue(v.uuid, v.key)">
-                <div class="patient-info-item mb-3">
+              <div class="patient-info-section p-1" *ngIf="(v.name === 'Weight' || v.name === 'Weight (kg)' || v.key === 'weight') && getObsValue(v.uuid, v.key)">
+                <div class="patient-info-item">
                   <h6 data-test-id="etPatientWeight">{{'Weight (in kg)'|translate}}</h6>
                   <p data-test-id="etPatientWeightValue">{{ getObsValue(v.uuid, v.key) }}</p>
                 </div>
               </div>
             </ng-container>
 
-            <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Request ID') && getPersonAttributeValue('Request ID') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-2 patient-info-section p-1" *ngIf="checkPatientRegField('Request ID') && getPersonAttributeValue('Request ID') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Request ID' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Request ID') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Phone Number') && getPhoneNumber()" data-test-id="etPatientPhoneNumber">
+            <div class="col-md-1.5 patient-info-section p-1" *ngIf="appConfigService?.abha_section && patient?.person?.abhaNumber" data-test-id="etPatientAbhaNumber">
+              <div class="patient-info-item">
+                <h6 data-test-id="etPatient">{{'ABHA Number' | translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person?.abhaNumber ?? 'N/A' }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-1.5 patient-info-section p-1" *ngIf="appConfigService?.abha_section && patient?.person?.abhaAddress" data-test-id="etPatientAbhaAddress">
+              <div class="patient-info-item">
+                <h6 data-test-id="etPatient">{{'ABHA Address' | translate}}</h6>
+                <p data-test-id="etPatient">{{ patient?.person?.abhaAddress ?? 'N/A' }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-1.5 patient-info-section p-1" *ngIf="checkPatientRegField('Phone Number') && getPhoneNumber()" data-test-id="etPatientPhoneNumber">
               <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Phone Number'| translate}}</h6>
                 <div class="contact-info">
                   <p data-test-id="etPhoneNumber">
                     {{ getPhoneNumber(true) }}
-                    <a
-                      href="{{ getWhatsAppLink() }}"
-                      target="_blank"
-                      class="icon-btn"
-                      data-test-id="linkWhatsApp"
-                      (click)="startWhatsAppCall(true)"
-                    >
-                      <img src="assets/svgs/whatsapp-icon.svg" alt="" />
-                    </a>
-                    <a
-                      href="tel:{{ getPhoneNumber() }}"
-                      target="_blank"
-                      class="icon-btn"
-                      data-test-id="linkPhoneNumber"
-                    >
-                      <img src="assets/svgs/phone-circle.svg" alt="" />
-                    </a>
+                    <ng-container *ngIf="showAndHideUiElement">
+                      <a
+                        href="{{ getWhatsAppLink() }}"
+                        target="_blank"
+                        class="icon-btn"
+                        data-test-id="linkWhatsApp"
+                        (click)="startWhatsAppCall(true)"
+                      >
+                        <img src="assets/svgs/whatsapp-icon.svg" width="28px" height="28px" alt="" />
+                      </a>
+                      <a
+                        href="tel:{{ getPhoneNumber() }}"
+                        target="_blank"
+                        class="icon-btn"
+                        data-test-id="linkPhoneNumber"
+                      >
+                        <img src="assets/svgs/phone-circle.svg" width="28px" height="28px" alt="" />
+                      </a>
+                    </ng-container>
                   </p>
                 </div>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Guardian Type') && getPersonAttributeValue('Guardian Type') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Guardian Type') && getPersonAttributeValue('Guardian Type') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Guardian Type' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Guardian Type') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Guardian Name') && getPersonAttributeValue('Guardian Name') !== 'NA'" data-test-id="etGuardianName">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Guardian Name') && getPersonAttributeValue('Guardian Name') !== 'NA'" data-test-id="etGuardianName">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Guardian Name' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Guardian Name') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Emergency Contact Name') && getPersonAttributeValue('Emergency Contact Name') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Emergency Contact Name') && getPersonAttributeValue('Emergency Contact Name') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Emergency Contact Name' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Emergency Contact Name') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Emergency Contact Number') && getPersonAttributeValue('Emergency Contact Number') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Emergency Contact Number') && getPersonAttributeValue('Emergency Contact Number') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Emergency Contact Number' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Emergency Contact Number') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Contact Type') && getPersonAttributeValue('Contact Type') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Contact Type') && getPersonAttributeValue('Contact Type') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Contact Type' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Emergency Contact Type') }}</p>
               </div>
             </div>
 
-            <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Email') && getPersonAttributeValue('Email') !== 'NA'">
-              <div class="patient-info-item mb-3">
+            <div class="col-md-3 patient-info-section p-1" *ngIf="checkPatientRegField('Email') && getPersonAttributeValue('Email') !== 'NA'">
+              <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Email' | translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue('Email') }}</p>
               </div>
             </div>
+
+            <div class="patient-info-section">
+              <button (click)="collapsedButton()" class="btn" *ngIf="hasPatientAddressEnabled || hasPatientOtherEnabled" data-test-id="btnCollapseButton">
+                <img [src]="getUrl()" alt="">
+              </button>
+            </div>
           </div>
 
-          <button (click)="collapsedButton()" class="btn" *ngIf="hasPatientAddressEnabled || hasPatientOtherEnabled" data-test-id="btnCollapseButton">
+          <!-- <button (click)="collapsedButton()" class="btn" *ngIf="hasPatientAddressEnabled || hasPatientOtherEnabled" data-test-id="btnCollapseButton">
             <img [src]="getUrl()" alt="">
-          </button>
+          </button> -->
 
           <mat-tab-group class="patient-tab-group" mat-align-tabs="start" *ngIf="collapsed">
             <mat-tab label="{{'Address'| translate}}" *ngIf="hasPatientAddressEnabled">
@@ -204,35 +226,35 @@
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Village/Town/City') && patient?.person?.preferredAddress?.cityVillage">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Village/Town/City' | translate}}</h6>
                     <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('District') && patient?.person?.preferredAddress?.countyDistrict">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'District' | translate}}</h6>
                     <p data-test-id="etPatient">{{ patient?.person.preferredAddress.countyDistrict }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('State') && patient?.person?.preferredAddress?.stateProvince">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'State' | translate}}</h6>
                     <p data-test-id="etPatient">{{ patient?.person.preferredAddress.stateProvince }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Country') && patient?.person?.preferredAddress?.country">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Country' | translate}}</h6>
                     <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.country }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Postal Code') && patient?.person?.preferredAddress?.postalCode">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Postal Code' | translate}}</h6>
                     <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.postalCode }}</p>
                   </div>
@@ -243,35 +265,35 @@
             <mat-tab label="{{'Other' | translate}}" *ngIf="hasPatientOtherEnabled">
               <div class="rows patient-info-wrapper">
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Occupation') && getPersonAttributeValue('occupation') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Occupation' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('occupation') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Education') && getPersonAttributeValue('Education Level') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Education' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Education Level') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('National ID') && getPersonAttributeValue('NationalID') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'National ID' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('NationalID') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Economic Category') && getPersonAttributeValue('Economic Status') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Economic Category' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Economic Status') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Social Category') && getPersonAttributeValue('Caste') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Social Category' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Caste') }}</p>
                   </div>
@@ -285,21 +307,21 @@
                 </div> -->
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Discipline') && getPersonAttributeValue('Discipline') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Discipline' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Discipline') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Department') && getPersonAttributeValue('Department') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Department' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Department') }}</p>
                   </div>
                 </div>
 
                 <div class="col-md-3 patient-info-section p-3" *ngIf="checkPatientRegField('Relative Phone Number') && getPersonAttributeValue('Relative Phone Number') !== 'NA'">
-                  <div class="patient-info-item mb-3">
+                  <div class="patient-info-item">
                     <h6 data-test-id="etPatient">{{'Relative Phone Number' | translate}}</h6>
                     <p data-test-id="etPatient">{{ getPersonAttributeValue('Relative Phone Number') }}</p>
                   </div>
@@ -847,7 +869,10 @@
       </button>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" #visitNoteDiv *ngIf="visitNotePresent && selectedTabIndex == 0">
+    <!-- Kept mounted and hidden (not *ngIf'd) so the lazily created DDx/prescription component
+         and unsaved form state survive switching to the Past Visit History tab and back. -->
+    <div class="col-md-12 p-0 mb-5" #visitNoteDiv *ngIf="visitNotePresent"
+      [style.display]="selectedTabIndex == 0 ? null : 'none'">
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con" multi>
@@ -1026,14 +1051,31 @@
                 </div>
 
                 <!-- Further Questions Section -->
-                <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
+                <div *ngIf="ayuSuggestionsLoading || furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
                   <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divSuggestionsHeader">
                     <h4 data-test-id="h4SuggestedQuestions"><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" data-test-id="imgAyuIcon"/> Ayu suggested questions</h4>
                     <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
                   </div>
-                  <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index" [attr.data-test-id]="'divQuestion' + i">
-                    <span class="ml-2" [attr.data-test-id]="'spanQuestion' + i"> {{i+1}}. {{ question }}</span>
+
+                  <!-- Same bouncing-dots loader the ddx plugin shows for diagnosis, so the box
+                       appears immediately while the AI call is in flight instead of popping in late. -->
+                  <div *ngIf="ayuSuggestionsLoading; else ayuQuestionsList" class="ayu-suggestions-loader text-center"
+                    data-test-id="divSuggestionsLoader">
+                    <button type="button" class="stats-loading" disabled data-test-id="btnSuggestionsLoader">
+                      <div class="eins"></div>
+                      <div class="zwei"></div>
+                      <div class="drei"></div>
+                    </button>
+                    <div class="mt-3">
+                      <span class="loading-text" data-test-id="spanSuggestionsLoaderText">{{ 'Please wait while the results are being generated.' | translate }}</span>
+                    </div>
                   </div>
+
+                  <ng-template #ayuQuestionsList>
+                    <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index" [attr.data-test-id]="'divQuestion' + i">
+                      <span class="ml-2" [attr.data-test-id]="'spanQuestion' + i"> {{i+1}}. {{ question }}</span>
+                    </div>
+                  </ng-template>
                 </div>
               </div>
             </div>
@@ -1239,7 +1281,7 @@
             </ng-template>
 
             <app-notes #notes [title]="'Note'" [expanded]="showAndHideUiElement ? true : false" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
-              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled && showAndHideUiElement"  (notesChanged)="onNotesChanged($event)"></app-notes>
+              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)"></app-notes>
 
             <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel5 hideToggle class="overflow-show"
               *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled" data-test-id="expansionPanelAdvice">
@@ -1355,6 +1397,10 @@
             <ng-container *ngIf="brandName">
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
             </ng-container>
+
+            <app-referral-consent *ngIf="!hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
+              [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
+            </app-referral-consent>
 
             <ng-template #tplDrRcom>
               <mat-expansion-panel
@@ -2099,6 +2145,7 @@
               >
               </app-follow-up-instruction>
             </ng-template>
+
             <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
               <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
                 <mat-panel-title data-test-id="matPanelTitleReferral">
@@ -2311,7 +2358,7 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType')">
+                    <li *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}
@@ -2399,9 +2446,9 @@
                   <thead>
                     <tr>
                       <th scope="col" data-test-id="lblFollowUpRequested">{{'Follow Up Requested'|translate}}</th>
-                      <th scope="col" *ngIf="isFeatureAvailable('followUpType')" data-test-id="lblFollowUpTypeTable">{{'Type'|translate}}</th>
+                      <th scope="col" *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement" data-test-id="lblFollowUpTypeTable">{{'Type'|translate}}</th>
                       <th scope="col" data-test-id="lblFollowUpDateTable">{{'Date'|translate}}</th>
-                      <!-- <th scope="col" data-test-id="lblFollowUpTimeTable">{{'Time'| translate}}</th> -->
+                      <th scope="col" *ngIf="isFeatureAvailable('followUpTime') && !this.showAndHideUiElement" data-test-id="lblFollowUpTimeTable">{{'Time'| translate}}</th>
                       <th scope="col" data-test-id="lblFollowUpReasonTable">{{'Reason'|translate}}</th>
                       <th scope="col"></th>
                     </tr>
@@ -2409,9 +2456,9 @@
                   <tbody>
                     <tr>
                       <td data-test-id="valFollowUpRequested">{{ followUpForm.value.wantFollowUp }}</td>
-                      <td *ngIf="isFeatureAvailable('followUpType')" data-test-id="valFollowUpType">{{ followUpForm.value.followUpType || '-' }}</td>
+                      <td *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement" data-test-id="valFollowUpType">{{ followUpForm.value.followUpType || '-' }}</td>
                       <td data-test-id="valFollowUpDate">{{ followUpForm.value.followUpDate ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
-                      <!-- <td data-test-id="valFollowUpTime">{{ followUpForm.value.followUpTime || '-' }}</td> -->
+                      <td *ngIf="isFeatureAvailable('followUpTime') && !this.showAndHideUiElement" data-test-id="valFollowUpTime">{{ followUpForm.value.followUpTime || '-' }}</td>
                       <td data-test-id="valFollowUpReason">{{ followUpForm.value.followUpReason || '-' }}</td>
                       <td class="pr-0">
                         <button type="button" class="float-right" mat-icon-button (click)="deleteFollowUp()"

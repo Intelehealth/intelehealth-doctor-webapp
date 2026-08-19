@@ -7,6 +7,9 @@
       ],
       "ih-library": [
         "dist/ih-library"
+      ],
+      "lib-presciption": [
+        "dist/lib-presciption"
       ]
     },
     "baseUrl": "./",

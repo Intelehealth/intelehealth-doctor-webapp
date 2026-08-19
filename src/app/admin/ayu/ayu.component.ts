@@ -93,7 +93,6 @@ export class AyuComponent implements OnInit {
         this.expiryDate = expiry;
       },
       (err) => {
-        console.log("Something went wrong");
       }
     );
   }

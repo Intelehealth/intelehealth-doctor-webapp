@@ -682,6 +682,9 @@ export class DashboardComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
     let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
+      if (provider.person?.display?.toLowerCase().includes('namco')) {
+        this.pvs.priority_visit_section = false;
+      }
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
       } else {

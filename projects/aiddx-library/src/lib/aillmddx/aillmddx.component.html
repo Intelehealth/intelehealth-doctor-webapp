@@ -26,7 +26,7 @@
 </ng-container>
 
 <div class="intel-expansion-con mt-3">
-  <mat-expansion-panel [expanded]="true" class="ayu-report-panel" *ngIf="diagnosisList.length">
+  <mat-expansion-panel [expanded]="reportExpanded" (opened)="onReportOpened()" class="ayu-report-panel" *ngIf="diagnosisList.length">
     <mat-expansion-panel-header class="custom-header">
       <mat-panel-title>
         <div class="intel-accordion-title">
@@ -47,7 +47,7 @@
             <div class="header">
             <h2> Rationale </h2>
           </div>
-          <div class="diagnosis-box">
+          <div class="diagnosis-box" [class.full-width]="!conclusion?.trim?.()">
             <div *ngFor="let rationale of diagnosisList; let i = index"
              [ngClass]="{ 'rationale-item': i < diagnosisList.length-1 }" class=" mb-2">
               <div>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Right: Conclusion and Questions -->
-        <div class="right-section">
+        <div class="right-section" *ngIf="conclusion?.trim?.()">
           <div class="report-box">
             <h3 style="font-weight: bold;">Conclusion</h3>
             {{conclusion}}

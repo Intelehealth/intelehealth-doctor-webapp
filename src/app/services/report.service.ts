@@ -15,8 +15,14 @@ export class ReoportService {
     }
 
     if (body.reportId === 2) {
-      return this.http.get(
-        `${environment.base}/vl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+      return this.http.post(
+        `${environment.base}/vl`,
+        {
+          startDate: body.selectedData.value.field1,
+          endDate: body.selectedData.value.field2,
+          receiver: body.selectedData.value.field3
+        },
+        { reportProgress: true, observe: "events" });
     }
   }
 

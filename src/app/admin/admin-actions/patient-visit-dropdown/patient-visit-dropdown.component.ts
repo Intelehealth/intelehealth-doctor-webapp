@@ -62,11 +62,10 @@ export class PatientVisitDropdownComponent {
 
     getAllDropdownFeilds():void {
       this.configService.getPatientVisitDropdownFields().subscribe(res=>{
-        // console.log("dropdown resposne",res.dropdown)
         this.patientFieldsData = res.dropdown
          this.allSectionData['advice'] = res.dropdown.advice;
-        //  this.allSectionData['advice'] = { id:0 , is_enabled:true };
-        //this.allSectionData['diagnosis'] = res.dropdown.diagnosis;
+        // this.allSectionData['advice'] = { id:0 , is_enabled:true };
+        // this.allSectionData['diagnosis'] = res.dropdown.diagnosis;
         this.allSectionData['medication'] = res.dropdown.medication;
         this.allSectionData['refer specialisation'] = res.dropdown['refer specialisation'];
         this.allSectionData['referral facility'] = res.dropdown['referral facility'];
@@ -110,7 +109,6 @@ export class PatientVisitDropdownComponent {
 
   sortData(sortOption) {
   const currTabName = this.tabList[this.currentTabIndex].toLocaleLowerCase();
-  console.log("Current tab:", currTabName);
 
   const data = this.patientFieldsData[currTabName]?.slice() || [];
 

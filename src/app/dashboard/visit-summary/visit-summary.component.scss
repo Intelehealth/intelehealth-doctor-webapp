@@ -52,9 +52,10 @@
   font-family: DM Sans;
 
   .patient-info-section {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
     // border-right: 1px solid rgba(178, 175, 190, 0.2);
+    flex-shrink: 0;
 
     .patient-img-item {
       display: flex;
@@ -70,7 +71,7 @@
 
       h6 {
         margin-bottom: 0px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         line-height: 150%;
         color: var(--color-darkestBlue);
@@ -79,7 +80,7 @@
       p {
         margin-bottom: 0px;
         color: var(--color-gray);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
       }
     }
@@ -87,17 +88,18 @@
     .patient-info-item {
       h6 {
         margin-bottom: 0px;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
         color: var(--color-gray);
+        white-space: nowrap;
       }
 
       p {
         margin-bottom: 0px;
         color: var(--color-darkestBlue);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
-        word-break: break-all;
+        white-space: nowrap;
       }
     }
   }
@@ -110,17 +112,15 @@
 .row.patient-info-wrapper {
   display: flex;
   flex-wrap: nowrap;
-  gap: 20px;
+  // gap: 20px;
   justify-content: space-between;
+  overflow-x: auto;
 }
 
 .icon-btn {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
   border-radius: 50%;
   text-decoration: none;
-  margin: 5px;
+  margin: 2px;
 }
 
 ::ng-deep .visit-summary-tab-group.mat-tab-group {
@@ -912,8 +912,8 @@ th.mat-header-cell:last-child {
 
 .btn{
   position: absolute;
-  right: 50px;
-  top: 60px;
+  right: 20px;
+  top: 42px;
   border: none;
   background: none;
   outline: none;
@@ -1058,6 +1058,64 @@ th.mat-header-cell:last-child {
 
     .suggestions-box li {
       margin-bottom: 6px;
+    }
+
+    // Loader for the Ayu suggestion box, matching the bouncing-dots loader the
+    // ddx plugin renders inside the diagnosis panel.
+    .ayu-suggestions-loader {
+      padding: 24px 0;
+
+      .stats-loading {
+        padding: 6px 24px;
+        background: var(--color-lightGray, #f4f2f7);
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-darkBlue);
+        cursor: default;
+
+        div {
+          background: #0060ff;
+          display: inline-block;
+          height: 8px;
+          width: 8px;
+          border-radius: 100%;
+          animation: bouncedelay 1.4s infinite ease-in-out;
+          animation-fill-mode: both;
+        }
+
+        div.eins {
+          animation-delay: -0.32s;
+        }
+
+        div.zwei {
+          animation-delay: -0.16s;
+        }
+      }
+
+      .loading-text {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 18px;
+        color: #7f7b92;
+      }
+    }
+
+    @keyframes bouncedelay {
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
   .notes-textarea {

@@ -147,6 +147,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/prescription-notes",
       isLocalPath: true
     },
+    {
+      title: "Namco Referral",
+      desc: "Manage Namco Referral functionality",
+      icon: "assets/svgs/referral.svg",
+      path: "admin/actions/namco-referral",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,
