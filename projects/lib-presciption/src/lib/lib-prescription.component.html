@@ -45,20 +45,6 @@
           </div>
         </div>
 
-        <div class="col-md-2 patient-info-section p-3" *ngIf="appConfigService?.abha_section && patient?.person?.abhaNumber" data-test-id="etPatientAbhaNumber">
-          <div class="patient-info-item mb-3">
-            <h6 data-test-id="etPatient">{{'ABHA Number' | translate}}</h6>
-            <p data-test-id="etPatient">{{ patient?.person?.abhaNumber }}</p>
-          </div>
-        </div>
-
-        <div class="col-md-2 patient-info-section p-3" *ngIf="appConfigService?.abha_section && patient?.person?.abhaAddress" data-test-id="etPatientAbhaAddress">
-          <div class="patient-info-item mb-3">
-            <h6 data-test-id="etPatient">{{'ABHA Address' | translate}}</h6>
-            <p data-test-id="etPatient">{{ patient?.person?.abhaAddress }}</p>
-          </div>
-        </div>
-
         <div class="col-md-2 patient-info-section p-3" *ngIf="checkPatientRegField('Gender') && patient?.person.gender">
           <div class="patient-info-item mb-3">
             <h6 data-test-id="etPatientGender">{{'Gender'|translate}}</h6>
@@ -96,6 +82,20 @@
                 {{ getPersonAttributeValue("Telephone Number") }}
               </p>
             </div>
+          </div>
+        </div>
+
+        <div class="col-md-2 patient-info-section p-3" *ngIf="appConfigService?.abha_section && patient?.person?.abhaNumber" data-test-id="etPatientAbhaNumber">
+          <div class="patient-info-item mb-3">
+            <h6 data-test-id="etPatient">{{'ABHA Number' | translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person?.abhaNumber }}</p>
+          </div>
+        </div>
+
+        <div class="col-md-2 patient-info-section p-3" *ngIf="appConfigService?.abha_section && patient?.person?.abhaAddress" data-test-id="etPatientAbhaAddress">
+          <div class="patient-info-item mb-3">
+            <h6 data-test-id="etPatient">{{'ABHA Address' | translate}}</h6>
+            <p data-test-id="etPatient">{{ patient?.person?.abhaAddress }}</p>
           </div>
         </div>
 

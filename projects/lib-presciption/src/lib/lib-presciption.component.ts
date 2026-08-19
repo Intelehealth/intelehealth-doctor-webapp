@@ -938,22 +938,6 @@ ngOnInit(): void {
     };
 
     let other = [];
-    if (this.appConfigService?.abha_section && this.patient?.person?.abhaNumber) {
-      other.push({
-        stack: [
-          { text: 'ABHA Number', style: 'subsubheader' },
-          { text: this.patient.person.abhaNumber, style: 'pval' }
-        ]
-      });
-    }
-    if (this.appConfigService?.abha_section && this.patient?.person?.abhaAddress) {
-      other.push({
-        stack: [
-          { text: 'ABHA Address', style: 'subsubheader' },
-          { text: this.patient.person.abhaAddress, style: 'pval' }
-        ]
-      });
-    }
     this.appConfigService.patient_registration['personal'].forEach((e: PatientRegistrationFieldsModel) => {
       let value: any;
       switch (e.name) {
@@ -997,6 +981,24 @@ ngOnInit(): void {
             { text: value, style: 'pval' }
           ]
         });
+      }
+      if (e.name === 'Phone Number') {
+        if (this.appConfigService?.abha_section && this.patient?.person?.abhaNumber) {
+          other.push({
+            stack: [
+              { text: 'ABHA Number', style: 'subsubheader' },
+              { text: this.patient.person.abhaNumber, style: 'pval' }
+            ]
+          });
+        }
+        if (this.appConfigService?.abha_section && this.patient?.person?.abhaAddress) {
+          other.push({
+            stack: [
+              { text: 'ABHA Address', style: 'subsubheader' },
+              { text: this.patient.person.abhaAddress, style: 'pval' }
+            ]
+          });
+        }
       }
     });
     const chunkSize = 4;
