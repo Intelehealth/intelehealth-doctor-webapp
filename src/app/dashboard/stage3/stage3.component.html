@@ -47,8 +47,9 @@
                     <td><span>Skin-to-Skin:</span> {{ deliveryOutcome.skinToSkin }}</td>
                     <td><span>Breast-feeding (in 1 hour):</span> {{ deliveryOutcome.breastfeedingInOneHour }}</td>
                   </tr>
-                  <tr *ngIf="deliveryOutcome.congenitalDisorders !== '-'">
-                    <td colspan="4"><span>Congenital Disorders:</span> {{ deliveryOutcome.congenitalDisorders }}</td>
+                  <tr>
+                    <td [attr.colspan]="deliveryOutcome.congenitalDisorders !== '-' ? 2 : 4"><span>Gestation (weeks):</span> {{ deliveryOutcome.gestationWeeks }}</td>
+                    <td *ngIf="deliveryOutcome.congenitalDisorders !== '-'" [attr.colspan]="deliveryOutcome.gestationWeeks !== '-' ? 2 : 4"><span>Congenital Disorders:</span> {{ deliveryOutcome.congenitalDisorders }}</td>
                   </tr>
                 </tbody>
               </table>

@@ -59,6 +59,7 @@ export class Stage3Component implements OnInit {
     placentaCordAbnormality: '-',
     perinealLaceration: '-',
     degreeOfTear: '-',
+    gestationWeeks: '-',
     congenitalDisorders: '-',
   };
 
@@ -239,10 +240,29 @@ export class Stage3Component implements OnInit {
       return '-';
     }
 
+    const buildComplicationsText = (input: any): string => {
+      const complicationsRaw = input.complications || input.Complications || '';
+      const otherValue = input['other value'] || input['Other value'] || '';
+
+      if (!complicationsRaw) {
+        return '';
+      }
+
+      if (!otherValue) {
+        return complicationsRaw;
+      }
+
+      return String(complicationsRaw)
+        .split(',')
+        .map((item: string) => item.trim())
+        .map((item: string) => (item.toLowerCase() === 'other' ? String(otherValue) : item))
+        .join(', ');
+    };
+
     const raw = typeof value === 'string' ? value.trim() : value;
 
     if (typeof raw === 'object' && !Array.isArray(raw)) {
-      const complications = raw.complications || raw.Complications || '';
+      const complications = buildComplicationsText(raw);
       return complications || 'N';
     }
 
@@ -250,7 +270,7 @@ export class Stage3Component implements OnInit {
       try {
         const parsed = JSON.parse(raw);
         if (typeof parsed === 'object' && !Array.isArray(parsed)) {
-          const complications = parsed.complications || parsed.Complications || '';
+          const complications = buildComplicationsText(parsed);
           return complications || 'N';
         }
       } catch {
@@ -290,7 +310,11 @@ export class Stage3Component implements OnInit {
         if (input.other_text) {
           disorders.push(String(input.other_text));
         }
-        
+
+        if (!disorders.length && typeof congenitalArray === 'string' && congenitalArray.trim()) {
+          disorders.push(congenitalArray.trim());
+        }
+
         return disorders;
       }
 
@@ -427,6 +451,7 @@ export class Stage3Component implements OnInit {
     this.deliveryOutcome.placentaCordAbnormality = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Placenta or cord abnormality']));
     this.deliveryOutcome.perinealLaceration = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['Perineal laceration during delivery']));
     this.deliveryOutcome.degreeOfTear = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['DEGREE_OF_TEAR', 'Degree of tear']));
+    this.deliveryOutcome.gestationWeeks = this.toDisplayText(this.getObsValueByConcept(sourceEncounter, ['PREGNANCY', 'Pregnancy']));
     this.deliveryOutcome.congenitalDisorders = this.formatCongenitalDisorders(this.getObsValueByConcept(sourceEncounter, ['CONGENITAL DISORDERS', 'Congenital Disorders']));
   }
 
