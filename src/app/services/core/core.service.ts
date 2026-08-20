@@ -11,6 +11,7 @@ import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/canc
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { ConfirmDayOffComponent } from 'src/app/modal-components/confirm-day-off/confirm-day-off.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
+import { ReportAiIssueComponent, ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
 import { ConfirmOpenmrsIdComponent } from 'src/app/modal-components/confirm-openmrs-id/confirm-openmrs-id.component';
 import { FileDownloadComponent } from 'src/app/modal-components/file-download/file-download.component';
@@ -70,6 +71,21 @@ export class CoreService {
       disableClose: true,
     });
     return dialogRef;
+  }
+
+  /**
+   * Open "Report an AI issue" modal
+   * @param {ReportAiIssueDialogData} data - Dialog data
+   * @return {Observable<any>} - Dialog close result
+   */
+  openReportAiIssueModal(data: ReportAiIssueDialogData): Observable<any> {
+    const dialogRef = this.dialog.open(ReportAiIssueComponent, {
+      panelClass: "modal-md",
+      data,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef.afterClosed();
   }
 
   /**

@@ -1070,6 +1070,20 @@ th.mat-header-cell:last-child {
       margin-bottom: 6px;
     }
 
+    .report-issue-btn {
+      background: none;
+      border: none;
+      outline: none;
+      padding: 2px 4px;
+      cursor: pointer;
+      line-height: 0;
+      opacity: 0.75;
+    }
+
+    .report-issue-btn:hover {
+      opacity: 1;
+    }
+
   .notes-textarea {
     width: 100%;
     min-height: 100px;

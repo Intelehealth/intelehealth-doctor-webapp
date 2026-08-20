@@ -462,6 +462,22 @@ textarea.form-control {
     padding-top: 14px;
   }
 
+  .report-issue-btn,
+  .report-issue-btn-sm {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+    cursor: pointer;
+    line-height: 0;
+    opacity: 0.75;
+  }
+
+  .report-issue-btn:hover,
+  .report-issue-btn-sm:hover {
+    opacity: 1;
+  }
+
   .confirm-treatment-btn {
     display: flex;
     align-items: center;
