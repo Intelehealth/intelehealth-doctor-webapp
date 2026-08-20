@@ -3,7 +3,7 @@ import { EMPTY, forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { visitTypes, conceptIds, doctorDetails } from 'src/config/constant';
+import { visitTypes, conceptIds, doctorDetails, visitAttributeTypes } from 'src/config/constant';
 import { calculateBMI, convertCelsiusToFahrenheit } from 'src/app/utils/utility-functions';
 import {
   ApiResponseModel, EncounterModel, ObsApiResponseModel, ObsModel,
@@ -96,6 +96,26 @@ export class VisitSummaryV2Service {
 
   saveInteractionNote(patientUuid: string, encounterUuid: string, value: string, existingUuid?: string): Observable<ObsModel> {
     return this.writeObs(conceptIds.conceptNote, patientUuid, encounterUuid, value, existingUuid);
+  }
+
+  /**
+  * Read the 'Patient Interaction' visit attribute for a visit
+  */
+  getPatientInteraction(visit: VisitModel): { value: string; uuid: string } {
+    const attr = (visit?.attributes || []).find(
+      (a: any) => a?.attributeType?.display === visitTypes.PATIENT_INTERACTION
+    );
+    return { value: (attr as any)?.value || '', uuid: (attr as any)?.uuid || '' };
+  }
+
+  /**
+  * Create or update the 'Patient Interaction' visit attribute
+  */
+  savePatientInteraction(visitUuid: string, value: string, existingUuid?: string): Observable<any> {
+    const payload = { attributeType: visitAttributeTypes.PatientInteraction, value };
+    return existingUuid
+      ? this.visitService.updateAttribute(visitUuid, existingUuid, payload)
+      : this.visitService.postAttribute(visitUuid, payload);
   }
 
   loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
@@ -274,7 +294,7 @@ export class VisitSummaryV2Service {
 
   private buildPastConsultation(visit: VisitModel): DetailRow[] {
     return [
-      { label: 'Visit ID', value: (visit.uuid || '').toUpperCase() },
+      { label: 'Visit ID', value: this.maskVisitId(visit.uuid) },
       { label: 'Visit started', value: this.formatDateTime(visit.startDatetime) },
       { label: 'Status', value: this.getVisitStatus(visit.encounters || []) }
     ];
@@ -284,7 +304,7 @@ export class VisitSummaryV2Service {
     const diagnosis = this.obsByConcept(encounters, conceptIds.conceptDiagnosis)
       .map(o => this.diagnosisFromValue(o.value)).filter(d => d.name);
     const meds = this.obsByConcept(encounters, conceptIds.conceptMed).map(o => this.medFromValue(o.value));
-    const notes = this.obsByConcept(encounters, conceptIds.conceptNote).map(o => o.value);
+    const notes = this.obsByConcept(encounters, conceptIds.conceptNote).map(o => o.value).filter(v => !!v && !!String(v).trim());
     const advice = this.obsByConcept(encounters, conceptIds.conceptAdvice).filter(o => !o.value.includes('</a>')).map(o => o.value);
     const tests = this.obsByConcept(encounters, conceptIds.conceptTest).map(o => o.value);
     const instructions = this.obsByConcept(encounters, conceptIds.conceptFollowUpInstruction).map(o => o.value);
@@ -741,18 +761,20 @@ export class VisitSummaryV2Service {
 
     const allergyNames = this.parseAllergyNames(allergyRow?.value);
     const contactNo = this.personAttr(patient, 'Telephone Number');
+    const gender = this.mapGender(p?.gender);
+    const isMale = gender === 'Male';
 
     return {
       name: name || (p?.display || ''),
-      gender: this.mapGender(p?.gender),
-      tag: pregnancyRow && !/^\s*(no|not)\b/i.test(pregnancyRow.value || '') ? 'Pregnant' : '',
+      gender,
+      tag: !isMale && pregnancyRow && !/^\s*(no|not)\b/i.test(pregnancyRow.value || '') ? 'Pregnant' : '',
       openMrsId: this.patientIdentifier(patient, 'OpenMRS ID'),
       avatar: `${this.baseURL}/personimage/${p?.uuid}`,
       age: p?.age != null ? `${p.age} Years` : '',
       weight: weightVital?.value ? `${weightVital.value}Kg` : '',
-      allergies: allergyNames,
-      extraAllergiesCount: 0,
-      pregnancy: pregnancyRow?.value || '',
+      allergies: allergyNames.slice(0, 2),
+      extraAllergiesCount: Math.max(allergyNames.length - 2, 0),
+      pregnancy: isMale ? '' : (pregnancyRow?.value || ''),
       contactNo: contactNo !== 'NA' ? contactNo : '',
       occupation: this.valOrEmpty(this.personAttr(patient, 'occupation')),
       dateOfBirth: this.formatDate(p?.birthdate),
@@ -789,7 +811,7 @@ export class VisitSummaryV2Service {
   ): DetailRow[] {
     const apptDate = appointment?.data?.slotJsDate;
     return [
-      { label: 'Visit ID', value: (visit.uuid || '').toUpperCase() },
+      { label: 'Visit ID', value: this.maskVisitId(visit.uuid) },
       { label: 'Appointment on', value: apptDate ? this.formatDate(apptDate) : 'No appointment' },
       { label: 'Visit created', value: this.formatDateTime(visit.startDatetime) },
       { label: 'Status', value: visitStatus, highlight: visitStatus === visitTypes.PRIORITY_VISIT },
@@ -811,10 +833,13 @@ export class VisitSummaryV2Service {
   private buildVitals(encounters: EncounterModel[]): VitalCell[] {
     const vitalObs = this.getVitalObs(encounters);
     const config: VitalModel[] = [...(this.appConfigService.patient_vitals || [])];
-    return config.map(v => ({
-      label: v.name,
-      value: this.getObsValue(v.uuid, v.key, vitalObs, config) ?? ''
-    }));
+    return config.map(v => {
+      const value = this.getObsValue(v.uuid, v.key, vitalObs, config);
+      return {
+        label: v.name,
+        value: value ?? (/blood\s*group/i.test(v.name || '') ? 'NA' : '')
+      };
+    });
   }
 
   private getVitalObs(encounters: EncounterModel[]): ObsModel[] {
@@ -1013,6 +1038,11 @@ export class VisitSummaryV2Service {
 
   private valOrEmpty(v: string): string {
     return v && v !== 'NA' ? v : '';
+  }
+
+  private maskVisitId(uuid: string): string {
+    if (!uuid) { return ''; }
+    return uuid.replace(uuid.substring(0, uuid.length - 4), '*****').toUpperCase();
   }
 
   private titleCase(s: string): string {

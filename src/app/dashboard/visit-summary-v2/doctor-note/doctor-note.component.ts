@@ -55,6 +55,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   readonly referralPriorities = REFERRAL_PRIORITIES;
 
   spokenToPatient = true;
+  patientInteractionUuid = '';
+  prescriptionShared = false;
+  savingPatientInteraction = false;
   ayuQuestionsExpanded = false;
   ayuSuggestedQuestions: AyuSuggestedQuestion[] = [];
   ayuRefineText = '';
@@ -82,7 +85,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   private editDiagnosisUuid = '';
   private editDiagnosisIndex = -1;
 
-  noteSharedWithPatient = true;
   newNoteText = '';
   outcomeNotes: DraftTextItem[] = [];
 
@@ -127,6 +129,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   followUpReason = '';
   followUpUuid = '';
   followUpTimeSlots: string[] = [];
+  readonly quickFollowUpDays = [3, 7, 10, 30];
   minFollowUpDate = new Date().toISOString().slice(0, 10);
 
   uploadedDocs: { name: string }[] = [];
@@ -172,6 +175,32 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     return [...answered, this.ayuRefineText].filter(Boolean).join('\n');
   }
 
+  savePatientInteraction(): void {
+    if (!this.visitUuid || this.savingPatientInteraction) { return; }
+    this.savingPatientInteraction = true;
+    this.v2Service.savePatientInteraction(
+      this.visitUuid, this.spokenToPatient ? 'Yes' : 'No', this.patientInteractionUuid
+    ).subscribe({
+      next: (res: any) => {
+        this.patientInteractionUuid = res?.uuid || this.patientInteractionUuid;
+        this.savingPatientInteraction = false;
+        this.coreService.showToast('success', 'Patient interaction saved', 'Saved', 'success-patient-interaction-toast');
+      },
+      error: () => {
+        this.savingPatientInteraction = false;
+        this.coreService.showToast('error', 'Could not save patient interaction', 'Error', 'error-patient-interaction-toast');
+      }
+    });
+  }
+
+  private loadPatientInteraction(): void {
+    const attr = this.v2Service.getPatientInteraction(this.visit);
+    this.patientInteractionUuid = attr.uuid;
+    if (attr.value) {
+      this.spokenToPatient = attr.value.toLowerCase() === 'yes';
+    }
+  }
+
   private loadInteractionNote(): void {
     this.aiDiagnosisState = 'loading';
     this.v2Service.loadInteractionNote(this.patientUuid, this.visitUuid).subscribe({
@@ -197,8 +226,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['visitCompleted'] && this.visitCompleted) {
+      this.prescriptionShared = true;
+    }
     if ((changes['visitUuid'] || changes['patientUuid']) && this.patientUuid && this.visitUuid) {
       this.loadDraft();
+    }
+    if (changes['visit'] && this.visit) {
+      this.loadPatientInteraction();
     }
     if ((changes['visit'] || changes['patientInfo']) && this.visit && this.patientInfo) {
       this.loadInteractionNote();
@@ -706,6 +741,20 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       .subscribe(res => { this.followUpUuid = res?.uuid || this.followUpUuid; });
   }
 
+  applyQuickFollowUp(days: number): void {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    this.followUpDate = date.toISOString().slice(0, 10);
+    this.onFollowUpDateChange();
+  }
+
+  isQuickFollowUpActive(days: number): boolean {
+    if (!this.followUpDate) { return false; }
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date.toISOString().slice(0, 10) === this.followUpDate;
+  }
+
   onFollowUpDateChange(): void {
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
     if (this.followUpTime && !this.followUpTimeSlots.includes(this.followUpTime)) {
@@ -733,17 +782,33 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     }
     this.coreService.openSharePrescriptionConfirmModal().subscribe((confirmed: boolean) => {
       if (!confirmed) { return; }
-      this.v2Service.completeVisit(this.visitUuid, this.patientUuid, this.provider).subscribe((res) => {
-        if (res) {
-          this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-            if (result === 'view') {
-              this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
-            } else if (result === 'dashboard') {
-              this.router.navigate(['/dashboard']);
-            }
-          });
-        }
-      });
+      this.completeVisitAndShare();
+    });
+  }
+
+  private completeVisitAndShare(): void {
+    this.v2Service.completeVisit(this.visitUuid, this.patientUuid, this.provider).subscribe({
+      next: (res) => {
+        if (!res) { this.showSharePrescriptionError(); return; }
+        this.prescriptionShared = true;
+        this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+          if (result === 'view') {
+            this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
+          } else if (result === 'dashboard') {
+            this.router.navigate(['/dashboard']);
+          }
+        });
+      },
+      error: () => this.showSharePrescriptionError()
+    });
+  }
+
+  private showSharePrescriptionError(): void {
+    this.coreService.openSharePrescriptionErrorModal({
+      msg: 'Unable to send prescription due to poor network connection. Please try again or come back later',
+      confirmBtnText: 'Try again'
+    }).subscribe((retry: boolean) => {
+      if (retry) { this.completeVisitAndShare(); }
     });
   }
 

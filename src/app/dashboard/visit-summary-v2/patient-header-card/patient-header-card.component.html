@@ -21,11 +21,14 @@
         <div class="vs2-meta-item">
           <span class="vs2-meta-label">Allergies</span>
           <div class="vs2-allergies">
-            <span class="vs2-chip vs2-chip-red" *ngFor="let a of patient.allergies">{{ a }}</span>
-            <span class="vs2-chip vs2-chip-grey" *ngIf="patient.extraAllergiesCount">+{{ patient.extraAllergiesCount }} more</span>
+            <span class="vs2-chip vs2-chip-red" *ngFor="let a of visibleAllergies">{{ a }}</span>
+            <button type="button" class="vs2-chip vs2-chip-grey vs2-chip-btn"
+                    *ngIf="patient.extraAllergiesCount"
+                    (click)="toggleAllAllergies()">{{ showAllAllergies ? 'Show less' : '+' + patient.extraAllergiesCount + ' more' }}</button>
+            <span class="vs2-meta-value" *ngIf="!patient.allergies?.length">NA</span>
           </div>
         </div>
-        <div class="vs2-meta-item">
+        <div class="vs2-meta-item" *ngIf="patient.pregnancy">
           <span class="vs2-meta-label">Pregnancy</span>
           <span class="vs2-meta-value vs2-meta-value-purple">{{ patient.pregnancy }}</span>
         </div>
@@ -56,6 +59,7 @@
           <span class="vs2-chip"
                 [ngClass]="a.severe ? 'vs2-chip-red' : 'vs2-chip-yellow'"
                 *ngFor="let a of patient.allAllergies">{{ a.name }}</span>
+          <span class="vs2-meta-value" *ngIf="!patient.allAllergies?.length">NA</span>
         </div>
       </div>
 
