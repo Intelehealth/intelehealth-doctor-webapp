@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { PastVisit } from '../visit-summary-v2.models';
+import { DocItem, PastVisit } from '../visit-summary-v2.models';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-past-visits',
@@ -11,6 +12,25 @@ export class PastVisitsComponent {
 
   pastTopTabs = ['Past visits', 'Prescription'];
   activePastTab = 'Past visits';
+
+  constructor(private coreService: CoreService) {}
+
+  previewEyeImages(index: number): void {
+    this.coreService.openImagesPreviewModal({
+      startIndex: index,
+      source: (this.visit?.eyeImages || []).map(src => ({ src }))
+    }).subscribe();
+  }
+
+  previewDocument(doc: DocItem): void {
+    const images = (this.visit?.documents || []).filter(d => d.type === 'image');
+    const startIndex = images.indexOf(doc);
+    if (startIndex < 0) { return; }
+    this.coreService.openImagesPreviewModal({
+      startIndex,
+      source: images.map(d => ({ src: d.src }))
+    }).subscribe();
+  }
 
   setPastTab(tab: string): void {
     this.activePastTab = tab;

@@ -99,7 +99,7 @@
       </div>
     </li>
   </ul>
-  <button class="vs2-btn-soft">Save</button>
+  <button class="vs2-btn-soft" [disabled]="savingPatientInteraction" (click)="savePatientInteraction()">Save</button>
 </section>
 
 <section id="section-dn-diagnosis" class="vs2-section-card">
@@ -279,12 +279,12 @@
   </div>
 
   <label class="vs2-field-label vs2-mt">Note<span class="vs2-req">*</span>
-    <label class="vs2-check"><input type="checkbox" [(ngModel)]="noteSharedWithPatient" /> that shared with patient</label>
+    <span class="vs2-field-hint">(Not shared with the patient)</span>
   </label>
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newNoteText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelNote()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addNote()">Add note</button>
+    <button class="vs2-btn-add" (click)="addNote()">Add</button>
   </div>
 </section>
 
@@ -466,7 +466,7 @@
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="medInstructionText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelMedInstruction()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addMedInstruction()">Add note</button>
+    <button class="vs2-btn-add" (click)="addMedInstruction()">Add</button>
   </div>
 </section>
 
@@ -638,7 +638,7 @@
       </ng-select>
     </div>
     <div class="vs2-field">
-      <span class="vs2-field-label">Remarks</span>
+      <span class="vs2-field-label">Referral For (Reason)</span>
       <input class="vs2-input" placeholder="Enter" [(ngModel)]="newReferral.reason" />
     </div>
   </div>
@@ -709,9 +709,13 @@
     </div>
     <ng-container *ngIf="wantFollowUp">
       <div class="vs2-form-row">
-        <span class="vs2-field-label">Follow-up type</span>
-        <label class="vs2-radio"><input type="radio" name="followUpType" value="In person" [(ngModel)]="followUpType" /> In person</label>
-        <label class="vs2-radio"><input type="radio" name="followUpType" value="Telemedicine" [(ngModel)]="followUpType" /> Telemedicine</label>
+        <span class="vs2-field-label">Quick follow-up</span>
+        <span class="vs2-quick-fu">
+          <button type="button" class="vs2-chip vs2-chip-purple vs2-chip-btn"
+                  *ngFor="let d of quickFollowUpDays"
+                  [class.active]="isQuickFollowUpActive(d)"
+                  (click)="applyQuickFollowUp(d)">{{ d }} Days</button>
+        </span>
       </div>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
@@ -755,5 +759,7 @@
     <span class="vs2-dropzone-text">Drag &amp; drop files or <a href="javascript:void(0)">Browse</a></span>
     <span class="vs2-dropzone-hint">Supported formats: Images, JPEG, PNG, GIF, PDF, DOC, Excel, PPT</span>
   </div>
-  <button class="vs2-btn-primary vs2-mt" (click)="sharePrescription()">Share Prescription</button>
+  <button class="vs2-btn-primary vs2-mt" (click)="sharePrescription()">
+    {{ prescriptionShared ? 'Update Prescription' : 'Share Prescription' }}
+  </button>
 </section>

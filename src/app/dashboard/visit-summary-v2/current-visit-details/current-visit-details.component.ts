@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   ComplaintDetail, DetailRow, DocItem, SymptomGroup, VitalCell
 } from '../visit-summary-v2.models';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-current-visit-details',
@@ -21,6 +22,7 @@ export class CurrentVisitDetailsComponent {
   @Input() abdomenFindings: string[] = [];
   @Input() documents: DocItem[] = [];
   @Input() chwNote = '';
+  @Input() visitNoteStarted = false;
   @Input() specializations: string[] = [];
 
   referToSpecialist = true;
@@ -28,4 +30,23 @@ export class CurrentVisitDetailsComponent {
 
   @Output() startVisit = new EventEmitter<void>();
   @Output() reassign = new EventEmitter<string>();
+
+  constructor(private coreService: CoreService) {}
+
+  previewEyeImages(index: number): void {
+    this.coreService.openImagesPreviewModal({
+      startIndex: index,
+      source: this.eyeImages.map(src => ({ src }))
+    }).subscribe();
+  }
+
+  previewDocument(doc: DocItem): void {
+    const images = this.documents.filter(d => d.type === 'image');
+    const startIndex = images.indexOf(doc);
+    if (startIndex < 0) { return; }
+    this.coreService.openImagesPreviewModal({
+      startIndex,
+      source: images.map(d => ({ src: d.src }))
+    }).subscribe();
+  }
 }

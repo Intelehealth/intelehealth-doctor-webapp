@@ -17,19 +17,6 @@
 
   <section class="vs2-section-card">
     <div class="vs2-section-title">
-      <img class="vs2-section-icon-img" src="assets/svgs/diagnosis-green.svg" alt="" />
-      <span>Past Diagnostics</span>
-      <mat-icon class="vs2-chevron">expand_less</mat-icon>
-    </div>
-    <div class="vs2-divider"></div>
-    <h4 class="vs2-subhead">Past diagnostics</h4>
-    <div class="vs2-complaint-chips">
-      <span class="vs2-chip vs2-chip-solid">{{ visit.diagnosis }}</span>
-    </div>
-  </section>
-
-  <section class="vs2-section-card">
-    <div class="vs2-section-title">
       <img class="vs2-section-icon-img" src="assets/svgs/consultation-details.svg" alt="" />
       <span>Past Consultation details</span>
       <mat-icon class="vs2-chevron">expand_less</mat-icon>
@@ -115,25 +102,30 @@
       <mat-icon class="vs2-chevron">expand_less</mat-icon>
     </div>
     <div class="vs2-divider"></div>
-    <h4 class="vs2-subhead">General exams</h4>
-    <div class="vs2-detail-list">
-      <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of visit.generalExams">
-        <span class="vs2-detail-label">{{ row.label }}</span>
-        <span class="vs2-detail-value">{{ row.value }}</span>
-      </div>
-      <div class="vs2-detail-row vs2-detail-row-wide">
-        <span class="vs2-detail-label">Eye images</span>
-        <div class="vs2-thumb-row">
-          <div class="vs2-thumb" *ngFor="let img of visit.eyeImages">
-            <img [src]="img" alt="" onerror="this.style.display='none'" />
+    <ng-container *ngIf="visit.generalExams?.length || visit.eyeImages?.length">
+      <h4 class="vs2-subhead">General exams</h4>
+      <div class="vs2-detail-list">
+        <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of visit.generalExams">
+          <span class="vs2-detail-label">{{ row.label }}</span>
+          <span class="vs2-detail-value">{{ row.value }}</span>
+        </div>
+        <div class="vs2-detail-row vs2-detail-row-wide" *ngIf="visit.eyeImages?.length">
+          <span class="vs2-detail-label">Eye images</span>
+          <div class="vs2-thumb-row">
+            <div class="vs2-thumb" *ngFor="let img of visit.eyeImages; let i = index" (click)="previewEyeImages(i)">
+              <img [src]="img" alt="" onerror="this.style.display='none'" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <h4 class="vs2-subhead vs2-subhead-strong">Abdomen</h4>
-    <ul class="vs2-bullet-list">
-      <li *ngFor="let f of visit.abdomenFindings">{{ f }}</li>
-    </ul>
+    </ng-container>
+
+    <ng-container *ngIf="visit.abdomenFindings?.length">
+      <h4 class="vs2-subhead vs2-subhead-strong">Abdomen</h4>
+      <ul class="vs2-bullet-list">
+        <li *ngFor="let f of visit.abdomenFindings">{{ f }}</li>
+      </ul>
+    </ng-container>
   </section>
 
   <section class="vs2-section-card">
@@ -145,7 +137,7 @@
     <div class="vs2-divider"></div>
     <div class="vs2-doc-row">
       <ng-container *ngFor="let doc of visit.documents">
-        <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'">
+        <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'" (click)="previewDocument(doc)">
           <img [src]="doc.src" alt="" onerror="this.style.display='none'" />
         </div>
         <div class="vs2-doc-pdf" *ngIf="doc.type === 'pdf'">
@@ -205,7 +197,7 @@
     </div>
   </section>
 
-  <section class="vs2-section-card">
+  <section class="vs2-section-card" *ngIf="visit.prescription?.notes?.length">
     <div class="vs2-section-title">
       <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
       <span>Note</span>
