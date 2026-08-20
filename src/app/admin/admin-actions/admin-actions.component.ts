@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { NgxRolesService } from 'ngx-permissions';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
@@ -154,11 +155,19 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/prescription-notes",
       isLocalPath: true
     },
+    {
+      title: "AI Issue Reports",
+      desc: "Review AI-generated suggestions flagged by doctors",
+      icon: "assets/svgs/alert-triangle.svg",
+      path: "admin/actions/ai-issue-reports",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,
     private translateService: TranslateService,
-    private router: Router
+    private router: Router,
+    private rolesService: NgxRolesService
   ) { }
 
   ngOnInit(): void {
@@ -166,6 +175,9 @@ export class AdminActionsComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
     if (!(environment as any).insightsEnabled) {
       this.itemList = this.itemList.filter((i) => i.path !== 'admin/actions/insights');
+    }
+    if (!this.rolesService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR')) {
+      this.itemList = this.itemList.filter((i) => i.path !== 'admin/actions/ai-issue-reports');
     }
   }
 

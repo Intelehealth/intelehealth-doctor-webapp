@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/alert-triangle.svg" alt="" height="30px" />
+          <div>
+            <h6 class="mb-0">{{ 'AI Issue Reports' | translate }}</h6>
+            <div class="msg">
+              <span>{{ 'AI-generated suggestions flagged by doctors as incorrect, unsafe or not relevant.' | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="filters d-flex gap-3 mb-3" *ngIf="!forbidden">
+            <select class="form-control" style="max-width: 220px;" [(ngModel)]="status" (ngModelChange)="onFilterChange()" data-test-id="selectAiIssueStatusFilter">
+              <option value="">{{ 'All statuses' | translate }}</option>
+              <option *ngFor="let s of statusOptions" [value]="s">{{ s | translate }}</option>
+            </select>
+            <select class="form-control" style="max-width: 220px;" [(ngModel)]="aiSurface" (ngModelChange)="onFilterChange()" data-test-id="selectAiIssueSurfaceFilter">
+              <option value="">{{ 'All surfaces' | translate }}</option>
+              <option *ngFor="let s of surfaceOptions" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+
+          <p *ngIf="forbidden" class="text-danger" data-test-id="lblAiIssueReportsForbidden">
+            {{ 'You do not have permission to view this page.' | translate }}
+          </p>
+
+          <div class="mat-elevation-z8" *ngIf="!forbidden">
+            <table mat-table [dataSource]="rows" matTableResponsive data-test-id="tblAiIssueReports">
+              <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Reported' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.createdAt | date:'dd MMM, yyyy hh:mm a' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="ai_surface">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Surface' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.ai_surface }}</td>
+              </ng-container>
+              <ng-container matColumnDef="reason">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Reason' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.reason }}</td>
+              </ng-container>
+              <ng-container matColumnDef="suggestion_ref">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Suggestion' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.suggestion_ref || '-' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="details">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Details' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.details || '-' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Status' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.status }}</td>
+              </ng-container>
+              <ng-container matColumnDef="visit_uuid">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Visit' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.visit_uuid }}</td>
+              </ng-container>
+              <ng-container matColumnDef="doctor_uuid">
+                <th mat-header-cell *matHeaderCellDef>{{ 'Doctor' | translate }}</th>
+                <td mat-cell *matCellDef="let r">{{ r.doctor_uuid }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <p *ngIf="!loading && !rows.length" class="text-center py-4" data-test-id="lblAiIssueReportsEmpty">
+              {{ 'No reports found' | translate }}
+            </p>
+
+            <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="[10, 20, 50]"
+              showFirstLastButtons (page)="onPageChange($event)"
+              aria-label="Select page of AI issue reports" data-test-id="matPaginatorAiIssueReports">
+            </mat-paginator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

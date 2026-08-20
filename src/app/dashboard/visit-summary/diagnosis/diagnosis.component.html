@@ -16,6 +16,7 @@
   <ng-container *ngIf="hasAILLMEnabled">
     <app-aillmddx [patientInfo]="patientInfo" [visit]="visit" (diagnosisSelected)="onAIDiagnosisSelected()"
       (rationaleOpened)="onRationaleOpened($event)"
+      (reportIssue)="openReportIssue('ddx')"
       [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"
       [visitCompleted]="visitCompleted" data-test-id="appAillmddxComponent"></app-aillmddx>
   </ng-container>
@@ -114,6 +115,10 @@
           <div class="suggested-box" *ngIf="aillmddxComponent?.diagnosisList.length > 0" data-test-id="divAyuSuggestedDiagnosisBox">
             <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divAyuSuggestedDiagnosisHeader">
               <h4 style="font-weight: bold;" data-test-id="h4AyuSuggestedDiagnosis"><img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" data-test-id="imgAyuDdxIcon" /> Ayu suggested diagnosis</h4>
+              <button type="button" class="report-issue-btn" (click)="openReportIssue('ddx')"
+                title="{{ 'Report an issue with these suggestions' | translate }}" data-test-id="btnReportDdxPanelIssue">
+                <img src="assets/svgs/alert-triangle.svg" alt="" width="22" height="22" />
+              </button>
             </div>
             <div *ngFor="let diagnosis of aillmddxComponent?.diagnosisList; let i = index"
               class="d-flex align-items-center mb-2"
@@ -256,7 +261,13 @@
     <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
       [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"
       [patientAllergies]="patientAllergies" [patientCurrentMedications]="patientCurrentMedications"
-      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted" data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
+      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted"
+      (reportPanelIssue)="openReportIssue('ttx_medication')"
+      (reportSuggestionIssue)="onMedicationSuggestionReport($event)"
+      [treatmentLoading]="isTreatmentLoading"
+      [treatmentDisabled]="isTreatmentLoading || (selectedDiagnoses.length === 0 && existingDiagnosis.length === 0)"
+      (requestTreatmentPlan)="confirmAndSuggestTreatment()"
+      data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"

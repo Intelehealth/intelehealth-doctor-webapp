@@ -1032,9 +1032,12 @@
 
                 <!-- Further Questions Section -->
                 <div *ngIf="furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
-                  <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divSuggestionsHeader">
+                  <div style="margin-top: 0;display: flex;justify-content: space-between;align-items: flex-start;" data-test-id="divSuggestionsHeader">
                     <h4 data-test-id="h4SuggestedQuestions"><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" data-test-id="imgAyuIcon"/> Ayu suggested questions</h4>
-                    <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
+                    <button type="button" class="report-issue-btn" (click)="openReportIssue('ddx_questions')"
+                      title="{{ 'Report an issue with these suggestions' | translate }}" data-test-id="btnReportQuestionsIssue">
+                      <img src="assets/svgs/alert-triangle.svg" alt="" width="22" height="22" />
+                    </button>
                   </div>
                   <div class="question-list mb-2" *ngFor="let question of furtherQuestionsList; let i = index" [attr.data-test-id]="'divQuestion' + i">
                     <span class="ml-2" [attr.data-test-id]="'spanQuestion' + i"> {{i+1}}. {{ question }}</span>
