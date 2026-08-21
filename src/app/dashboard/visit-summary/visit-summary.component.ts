@@ -489,7 +489,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.specializations = [...this.appConfigService.specialization];
     this.referSpecializations = [
       ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
-      { id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true },
+      ...(environment.isTurnServer ? [{ id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true }] : []),
     ];
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
@@ -2502,7 +2502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    if (this.addReferralForm.value.speciality === this.OTHERS_SPECIALITY && !this.addReferralForm.value.reason) {
+    if (environment.isTurnServer && this.addReferralForm.value.speciality === this.OTHERS_SPECIALITY && !this.addReferralForm.value.reason) {
       this.toastr.warning(this.translateService.instant('Please specify the specialty in Remarks'), this.translateService.instant('Remarks Required'));
       return false;
     }
