@@ -99,6 +99,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   facilities: DataItemModel[] = facility.facilities
   specializations: SpecializationModel[] = [];
   referSpecializations: DropdownItemModel[] = [];
+  readonly OTHERS_SPECIALITY = 'Others';
   refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
   strengthList: DataItemModel[] = strength.strengthList
   daysList: DataItemModel[] = days.daysList
@@ -486,7 +487,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.diagnostics = this.appConfigService.patient_diagnostics_section ? [...this.appConfigService.patient_diagnostics] : [];
     this.digitalStethoscope = this.appConfigService.digital_stethoscope_section ? [...this.appConfigService.digital_stethoscope] : [];
     this.specializations = [...this.appConfigService.specialization];
-    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.referSpecializations = [
+      ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
+      { id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true },
+    ];
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
@@ -548,6 +552,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       speciality: new FormControl(null, [Validators.required]),
       priority_refer: new FormControl('Elective', !this.isFeatureAvailable('priorityOfReferral') ? [Validators.required] : []),
       reason: new FormControl(null)
+    });
+
+    // "Others" needs the doctor to type what specialty they mean, in Remarks.
+    this.addReferralForm.get('speciality').valueChanges.subscribe((speciality) => {
+      const reasonControl = this.addReferralForm.get('reason');
+      if (speciality === this.OTHERS_SPECIALITY) {
+        reasonControl.setValidators([Validators.required]);
+      } else {
+        reasonControl.clearValidators();
+      }
+      reasonControl.updateValueAndValidity();
     });
 
     this.followUpForm = new FormGroup({
