@@ -149,7 +149,7 @@ export class Stage3Component implements OnInit {
 
   getVisit(uuid: string) {
     this.loading = true;
-    this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
+    this.visitService.fetchVisitDetailsPublic(uuid).subscribe((visit: any) => {
       this.loading = false;
       if (!visit) { return; }
       this.visit   = visit;

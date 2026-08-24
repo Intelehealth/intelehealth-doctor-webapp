@@ -468,7 +468,7 @@ export class EpartogramComponent implements OnInit {
   }
 
   getVisit(uuid: string) {
-    this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
+   this.visitService.fetchVisitDetailsPublic(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
         this.patient = visit?.patient;
@@ -835,7 +835,7 @@ export class EpartogramComponent implements OnInit {
       this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
 
       setTimeout(() => {
-        document.querySelector('#vcd').scrollIntoView();
+        document.querySelector('#vcd')?.scrollIntoView();
       }, 500);
     }
   }

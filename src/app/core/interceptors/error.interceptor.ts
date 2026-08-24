@@ -18,6 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           this.authService.logOut();
         }
         // location.reload(true);
+         return throwError(err.error?.message || err.statusText);
       }
 
       if ([404].indexOf(err.status) != -1) {
