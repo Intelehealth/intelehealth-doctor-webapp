@@ -2326,13 +2326,13 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType')">
+                    <li *ngIf="isFeatureAvailable('followUpType') && !isTurnServer">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}
                         </label>
                         <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round" *ngIf="!isTurnServer">
+                          <div class="pretty p-default p-round">
                             <input type="radio" value="{{'In person' | translate}}" formControlName="followUpType"
                               data-test-id="radioFollowUpInperson" />
                             <div class="state p-success">
@@ -2348,7 +2348,7 @@
                           </div>
                         </div>
                       </div>
-                    </li>    
+                    </li>
                     <li>
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpDate">
