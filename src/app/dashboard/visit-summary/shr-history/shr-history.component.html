@@ -1,0 +1,295 @@
+<div class="shr-history">
+  <section class="patient-header" *ngIf="!loading && patient">
+    <div>
+      <span class="eyebrow">Shared Health Record</span>
+      <h5>{{ patient.shrPatientDisplay || patient.openmrsPatientDisplay || 'Patient name not available' }}</h5>
+    </div>
+    <dl>
+      <div>
+        <dt>CRUID</dt>
+        <dd>{{ patient.cruid || 'Not available' }}</dd>
+      </div>
+      <div>
+        <dt>SHR Patient ID</dt>
+        <dd>{{ patient.shrPatientId || 'Not available' }}</dd>
+      </div>
+      <div>
+        <dt>Timeline records</dt>
+        <dd>{{ totalCount }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <form class="shr-filter" [formGroup]="filterForm" (ngSubmit)="search()" data-test-id="formShrHistoryFilter">
+    <div class="filter-grid">
+      <div class="filter-field">
+        <label>From</label>
+        <input type="date" formControlName="fromDate" />
+      </div>
+
+      <div class="filter-field">
+        <label>To</label>
+        <input type="date" formControlName="toDate" />
+      </div>
+
+      <div class="filter-field">
+        <label>Clinical status</label>
+        <select formControlName="status">
+          <option *ngFor="let status of statusList" [value]="status.value">{{ status.label }}</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label>Sort</label>
+        <select formControlName="sort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label>Records per page</label>
+        <select formControlName="limit">
+          <option *ngFor="let limit of limitOptions" [value]="limit">{{ limit }}</option>
+        </select>
+      </div>
+
+      <div class="filter-field snomed-field">
+        <label>SNOMED condition code</label>
+        <div class="snomed-input">
+          <input type="text" formControlName="snomedText" placeholder="Search condition or code..."
+            (input)="onConceptSearch($event.target.value)" />
+          <button type="button" class="link-btn" *ngIf="filterForm.get('snomedText').value" (click)="clearConcept()">
+            Clear
+          </button>
+        </div>
+        <div class="concept-dropdown" *ngIf="conceptSuggestions.length">
+          <button type="button" *ngFor="let concept of conceptSuggestions" (click)="selectConcept(concept)">
+            <span>{{ concept.display }}</span>
+            <small>{{ concept.code || 'No mapped code' }}</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="record-type-field">
+        <label>Record types <small>(no selection shows all)</small></label>
+        <div class="record-types">
+          <label *ngFor="let type of recordTypes" [ngClass]="getRecordTypeClass(type.value)"
+            [class.selected]="isRecordTypeSelected(type.value)">
+            <input type="checkbox" [checked]="isRecordTypeSelected(type.value)"
+              (change)="onRecordTypeChange(type.value, $event.target.checked)" />
+            <span>{{ type.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="shr-actions">
+        <button type="submit" class="search-btn" [disabled]="loading">
+          <mat-icon>search</mat-icon><span>Search</span>
+        </button>
+        <button type="button" class="reset-btn" (click)="loadDefaultHistory()" [disabled]="loading">
+          <mat-icon>refresh</mat-icon><span>Reset</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="shr-error" *ngIf="!loading && errorMessage">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div class="shr-summary-bar" *ngIf="!loading && records.length">
+    <div class="summary-copy">
+      <strong>{{ records.length }}</strong>
+      <span class="summary-total">of {{ totalCount }} records</span>
+      <span class="summary-separator"></span>
+      {{ getSortSummary() }}
+    </div>
+    <button type="button" class="download-all-btn" (click)="downloadAllRecords()" [disabled]="downloading">
+      <mat-icon>picture_as_pdf</mat-icon>
+      <span>{{ downloading ? 'Preparing PDF...' : 'Export PDF' }}</span>
+    </button>
+  </div>
+
+  <div class="shr-loading" *ngIf="loading">
+    <mat-spinner diameter="36"></mat-spinner>
+    <span>Loading SHR history...</span>
+  </div>
+
+  <div class="shr-empty" *ngIf="!loading && patientNotFound && !errorMessage">
+    <h6>Patient not found in SHR</h6>
+    <p>No shared health record is linked to this OpenMRS patient.</p>
+  </div>
+
+  <div class="shr-empty" *ngIf="!loading && !patientNotFound && !errorMessage && !records.length">
+    <h6>No matching SHR records</h6>
+    <p>There are no timeline records for the selected filters.</p>
+  </div>
+
+  <div class="shr-timeline" *ngIf="!loading && records.length">
+    <article class="timeline-card" *ngFor="let record of records; trackBy: trackByRecordId"
+      [ngClass]="getRecordTypeClass(record.recordType)">
+      <div class="timeline-header">
+        <div class="facility-line">
+          <span class="timeline-marker"></span>
+          <div>
+            <h6>{{ record.facility }}</h6>
+            <p>
+              {{ record.date | date: 'dd MMM yyyy, h:mm a' }}
+              <span></span>{{ record.doctor }}
+              <ng-container *ngIf="record.doctorSpecialization">
+                <span class="dot-sep">·</span>{{ record.doctorSpecialization }}
+              </ng-container>
+              <ng-container *ngIf="record.doctorQualification">
+                <span class="dot-sep">·</span><em>{{ record.doctorQualification }}</em>
+              </ng-container>
+              <ng-container *ngIf="record.visitType"><span></span>{{ record.visitType }}</ng-container>
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-badges">
+          <span class="type-badge family-history-only" *ngIf="record.isFamilyHistoryVisit">Family History</span>
+          <span class="type-badge" *ngFor="let type of record.recordTypes" [ngClass]="getRecordTypeClass(type)">
+            {{ getRecordTypeLabel(type) }}
+          </span>
+          <span class="status-badge" *ngIf="record.status" [ngClass]="getStatusClass(record.status)">
+            {{ record.status | titlecase }}
+          </span>
+        </div>
+      </div>
+
+      <div class="record-grid" *ngIf="record.source || record.diagnoses.length || record.medications.length || record.vitals.length || record.observations.length || record.labs.length || record.serviceRequests.length || record.familyHistory.length || record.documents.length || record.provenance.length">
+        <section class="record-section" *ngIf="record.diagnoses.length">
+          <h6>Diagnoses</h6>
+          <div class="clinical-item" *ngFor="let item of record.diagnoses">
+            <strong>
+              {{ item.name }}
+              <span class="rank-badge" *ngIf="item.rank">#{{ item.rank }}</span>
+            </strong>
+            <div class="clinical-meta">
+              <span class="status-badge" *ngIf="item.clinicalStatus" [ngClass]="getStatusClass(item.clinicalStatus)">{{ item.clinicalStatus | titlecase }}</span>
+              <span class="status-badge" *ngIf="item.verificationStatus" [ngClass]="getStatusClass(item.verificationStatus)">{{ item.verificationStatus | titlecase }}</span>
+              <small *ngIf="item.asserter">Asserted by {{ item.asserter }}</small>
+            </div>
+            <div class="diagnosis-note" *ngIf="item.note" [innerHTML]="formatClinicalNote(item.note)"></div>
+          </div>
+        </section>
+
+        <section class="record-section" *ngIf="record.medications.length">
+          <h6>Medications</h6>
+          <div class="clinical-item" *ngFor="let item of record.medications">
+            <div class="clinical-title">
+              <strong>{{ item.name }}</strong>
+              <span class="status-badge" *ngIf="item.status" [ngClass]="getStatusClass(item.status)">{{ item.status | titlecase }}</span>
+            </div>
+            <p *ngIf="item.dosage">{{ item.dosage }}</p>
+            <small *ngIf="item.requester">Requested by {{ item.requester }}</small>
+          </div>
+        </section>
+
+        <section class="record-section" *ngIf="record.vitals.length">
+          <h6>Vitals</h6>
+          <div class="lab-row" *ngFor="let vital of record.vitals">
+            <span>{{ vital.name }}</span>
+            <strong *ngIf="vital.value" [class.abnormal]="vital.abnormal">{{ vital.value }}</strong>
+          </div>
+        </section>
+
+        <section class="record-section observation-section" *ngIf="record.observations.length">
+          <h6>Observations</h6>
+          <div class="lab-row" *ngFor="let observation of record.observations">
+            <span>{{ observation.name }}</span>
+            <strong *ngIf="observation.value" [class.abnormal]="observation.abnormal">{{ observation.value }}</strong>
+          </div>
+        </section>
+
+        <section class="record-section lab-section" *ngIf="record.labs.length">
+          <h6>Laboratory results</h6>
+          <div class="clinical-order" *ngFor="let lab of record.labs">
+            <div class="lab-row">
+              <span>{{ lab.name }}</span>
+              <strong *ngIf="lab.value" [class.abnormal]="lab.abnormal">{{ lab.value }}</strong>
+              <span class="order-status" *ngIf="lab.status" [ngClass]="getStatusClass(lab.status)">{{ lab.status | titlecase }}</span>
+            </div>
+            <small *ngIf="lab.requester">Requested by {{ lab.requester }}</small>
+          </div>
+        </section>
+
+        <section class="record-section lab-section" *ngIf="record.serviceRequests.length">
+          <h6>Orders and referrals</h6>
+          <div class="clinical-order" *ngFor="let order of record.serviceRequests">
+            <div class="clinical-title">
+              <strong>{{ order.name }}</strong>
+              <span class="order-status" *ngIf="order.status" [ngClass]="getStatusClass(order.status)">{{ order.status | titlecase }}</span>
+            </div>
+            <p *ngIf="order.category || order.priority">
+              <span *ngIf="order.category">{{ order.category }}</span>
+              <span *ngIf="order.category && order.priority"> · </span>
+              <span *ngIf="order.priority">{{ order.priority | titlecase }} priority</span>
+            </p>
+            <small *ngIf="order.requester">Requested by {{ order.requester }}</small>
+          </div>
+        </section>
+
+        <section class="record-section family-section" *ngIf="record.familyHistory.length">
+          <h6>Family history</h6>
+          <div class="family-history-item" *ngFor="let item of record.familyHistory">
+            <div class="family-header">
+              <span class="family-relation">{{ item.relationship || item.label }}</span>
+              <span class="status-badge" *ngIf="item.status" [ngClass]="getStatusClass(item.status)">{{ item.status | titlecase }}</span>
+            </div>
+            <ul *ngIf="item.conditions.length">
+              <li *ngFor="let cond of item.conditions">{{ cond }}</li>
+            </ul>
+            <div class="family-note" *ngIf="item.note" [innerHTML]="formatClinicalNote(item.note)"></div>
+          </div>
+        </section>
+
+        <section class="record-section documents-section" *ngIf="record.documents.length">
+          <h6>Documents & Media</h6>
+          <div class="documents-grid">
+            <div *ngFor="let item of record.documents" class="document-item">
+              <!-- If image, show styled image container with light box/link -->
+              <div class="media-card" *ngIf="item.isImage">
+                <a [href]="item.url" target="_blank" class="image-link" matTooltip="Click to view full size image">
+                  <img [src]="item.url" [alt]="item.title" class="timeline-img" />
+                  <span class="image-overlay">
+                    <mat-icon>open_in_new</mat-icon>
+                    <span>{{ item.title }}</span>
+                  </span>
+                </a>
+              </div>
+              
+              <!-- If not image, show document chip -->
+              <a [href]="item.url" target="_blank" class="document-chip-link" *ngIf="!item.isImage" [class.disabled]="!item.url">
+                <div class="document-chip">
+                  <mat-icon>description</mat-icon>
+                  <div>
+                    <strong>{{ item.title }}</strong>
+                    <small *ngIf="item.contentType || item.size">
+                      {{ item.contentType }}<span *ngIf="item.contentType && item.size"> · </span><span *ngIf="item.size">{{ item.size }} bytes</span>
+                    </small>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section class="record-section provenance-section" *ngIf="record.source || record.provenance.length">
+          <h6>Source</h6>
+          <p>Source: {{ (record.source || record.provenance[0]?.organization || 'Not available') | titlecase }}</p>
+        </section>
+      </div>
+    </article>
+  </div>
+
+  <div class="shr-pagination" *ngIf="!loading && records.length && getPageCount() > 1">
+    <button type="button" class="pager-btn" [disabled]="!previousUrl" (click)="goToPage(previousUrl)">Prev</button>
+    <span class="page-number active">{{ currentPage }}</span>
+    <span class="page-copy">Page {{ currentPage }} of {{ getPageCount() }} ({{ totalCount }} records)</span>
+    <button type="button" class="pager-btn primary" [disabled]="!nextUrl" (click)="goToPage(nextUrl)">Next</button>
+  </div>
+</div>

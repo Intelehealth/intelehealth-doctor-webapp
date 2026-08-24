@@ -41,7 +41,7 @@
                 <td mat-cell *matCellDef="let element">
                   <div>
                     <div class="pretty p-switch p-fill">
-                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateStatus(element, $event.target.checked)" data-test-id="checkboxFhirToggleStatus"/>
+                      <input type="checkbox" [checked]="element.is_enabled" [disabled]="element._updating" (change)="updateStatus(element, $any($event.target).checked)" data-test-id="checkboxFhirToggleStatus"/>
                       <div class="state">
                         <label></label>
                       </div>

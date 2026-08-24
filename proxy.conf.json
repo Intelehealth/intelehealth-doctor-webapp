@@ -1,0 +1,8 @@
+{
+  "/openmrs": {
+    "target": "https://intelehealth-prod-master-new.mpower-social.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

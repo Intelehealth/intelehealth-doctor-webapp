@@ -61,7 +61,7 @@
         </div>
 
         <div class="form-group mt-3" data-test-id="grpSubmit">
-          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
+          <button type="submit" class="btn btn-block next-btn" [disabled]="isLoading" data-test-id="btnSubmit">
             {{'Next'|translate}}
             <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
           </button>

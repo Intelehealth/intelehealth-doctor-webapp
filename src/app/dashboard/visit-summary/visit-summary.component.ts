@@ -3259,6 +3259,34 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private getNoteObsPayload(concept: string, value: string): any {
+    const basePayload = {
+      concept,
+      person: this.visit.patient.uuid,
+      obsDatetime: new Date(),
+      encounter: this.visitNotePresent.uuid
+    };
+
+    if ([conceptIds.conceptFamilyHistoryNotes, conceptIds.conceptPastMedicalHistoryNotes].includes(concept)) {
+      return {
+        ...basePayload,
+        groupMembers: [
+          {
+            concept: conceptIds.conceptNote,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value
+          }
+        ]
+      };
+    }
+
+    return {
+      ...basePayload,
+      value
+    };
+  }
+
   saveAllObs(): Observable<any> {
     const postObsRequests = [];
 
@@ -3341,13 +3369,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.notesRef.notes) {
           if (note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptNote,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptNote, note.value)
+            ).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
           );
         }
       }
@@ -3357,13 +3381,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.familyHistoryNoteRef.notes) {
           if (note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptFamilyHistoryNotes,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptFamilyHistoryNotes, note.value)
+            ).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
           );
         }
       }
@@ -3373,13 +3393,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.pastMedicalHistoryNoteRef.notes) {
           if (note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptPastMedicalHistoryNotes,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptPastMedicalHistoryNotes, note.value)
+            ).pipe(tap((res: ObsModel) => note.uuid = res.uuid))
           );
         }
       }
@@ -3469,13 +3485,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.notesRef.notes) {
           if(note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptNote,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptNote, note.value)
+            ).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
           );
         }
       }
@@ -3485,13 +3497,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.familyHistoryNoteRef.notes) {
           if(note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptFamilyHistoryNotes,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptFamilyHistoryNotes, note.value)
+            ).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
           );
         }
       }
@@ -3501,13 +3509,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         for (const note of this.pastMedicalHistoryNoteRef.notes) {
           if(note.uuid) continue;
           postObsRequests.push(
-            this.encounterService.postObs({
-              concept: conceptIds.conceptPastMedicalHistoryNotes,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: note.value,
-              encounter: this.visitNotePresent.uuid
-            }).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
+            this.encounterService.postObs(
+              this.getNoteObsPayload(conceptIds.conceptPastMedicalHistoryNotes, note.value)
+            ).pipe(tap((res:ObsModel)=>note.uuid=res.uuid))
           );
         }
       }
@@ -4035,50 +4039,54 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   createLLMObs(encounterUUID:string, diagnosisData:any, revised: boolean = false):Observable<any>{
       let diagnosisObs = diagnosisData.map((diagnosisAIData:any,rank:number)=>{
+        const rationale = Array.isArray(diagnosisAIData.summarised_rationale)
+          ? diagnosisAIData.summarised_rationale.map(obj => Object.values(obj).pop()).filter(Boolean).join(":")
+          : '';
+        const groupMembers = [
+          {
+            concept: conceptIds.conceptDiagnosisName,
+            value: diagnosisAIData.diagnosis,
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          },
+          {
+            concept: conceptIds.conceptDiagnosisLikelihood,
+            value: diagnosisAIData.likelihood ? `${diagnosisAIData.likelihood} likely` : null,
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          },
+          {
+            concept: conceptIds.conceptRationale,
+            value: rationale,
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          },
+          {
+            concept: conceptIds.conceptRank,
+            value: (rank + 1),
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          },
+          {
+            concept: conceptIds.conceptVersion,
+            value: revised ? 'revised' : 'initial',
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          },
+          {
+            concept: conceptIds.conceptWasRegenerated,
+            value: revised,
+            obsDatetime: new Date(),
+            person: this.visit.patient.uuid,
+          }
+        ].filter(member => member.value !== null && member.value !== undefined && member.value !== '');
+
         let diagnosisRecord = {
           concept: conceptIds.conceptLLM,
           person: this.visit.patient.uuid,
           obsDatetime: new Date(),
           encounter: encounterUUID,
-          groupMembers: [
-            {
-              concept: conceptIds.conceptDiagnosisName,
-              value: diagnosisAIData.diagnosis,
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-              
-            },
-            {
-              concept: conceptIds.conceptDiagnosisLikelihood,
-              value: diagnosisAIData.likelihood + " likely",
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptRationale,
-              value: diagnosisAIData.summarised_rationale.map(obj=>Object.values(obj).pop()).join(":"),
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptRank,
-              value: (rank+1),
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptVersion,
-              value: revised ? 'revised' : 'initial',
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            },
-            {
-              concept: conceptIds.conceptWasRegenerated,
-              value: revised,
-              obsDatetime: new Date(),
-              person: this.visit.patient.uuid,
-            }
-          ]
+          groupMembers
         }
 
         return this.encounterService.postObs(diagnosisRecord, true)

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { CoreService } from 'src/app/services/core/core.service';
+import { SKIP_CREDENTIALS } from './http-context.tokens';
 
 @Injectable()
 export class NetworkInterceptor implements HttpInterceptor {
@@ -9,7 +10,7 @@ export class NetworkInterceptor implements HttpInterceptor {
 
   intercept(_request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const request: HttpRequest<any> = _request.clone({
-      withCredentials: true,
+      withCredentials: _request.context.get(SKIP_CREDENTIALS) ? false : true,
     })
 
     if (!navigator.onLine) {

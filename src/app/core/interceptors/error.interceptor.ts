@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { SUPPRESS_AUTH_LOGOUT } from './http-context.tokens';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -18,7 +19,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         const error = err?.error?.message || err?.error?.error?.message  || err?.error?.error || err?.statusText;
         return throwError(error);
       }
-      if ([401, 403].indexOf(err.status) != -1) {
+      if ([401, 403].indexOf(err.status) != -1 && !request.context.get(SUPPRESS_AUTH_LOGOUT)) {
         this.authService.logOut();
       }
 

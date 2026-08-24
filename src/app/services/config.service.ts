@@ -395,7 +395,7 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   getIhFhirModuleSections(): Observable<any> {
-    const url = `${this.baseURL}/ih-fhir-module/all`;
+    const url = `${this.baseURL}/ih-fhir-module/all?ngsw-bypass=true&_=${Date.now()}`;
     return this.http.get(url);
   }
 
@@ -407,7 +407,7 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   updateIhFhirModuleEnabledStatus(id: number, statusKey: string, status: boolean): Observable<any> {
-    const url = `${this.baseURL}/ih-fhir-module/updateIsEnabled/${id}`;
+    const url = `${this.baseURL}/ih-fhir-module/updateIsEnabled/${id}?ngsw-bypass=true`;
     return this.http.put(url, { [statusKey]: status });
   }
 

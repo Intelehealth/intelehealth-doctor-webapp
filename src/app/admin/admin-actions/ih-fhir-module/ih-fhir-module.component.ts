@@ -17,7 +17,23 @@ export class IhFhirModuleComponent {
   displayedColumns: string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  fhirData: any[];
+  fhirData: any[] = [];
+  private readonly moduleStatusIgnoredKeys = [
+    'id',
+    'name',
+    'lang',
+    'key',
+    'platform',
+    'updatedAt',
+    'updated_at',
+    'createdAt',
+    'created_at',
+    'is_editable',
+    'is_enabled',
+    'is_locked',
+    'order',
+    'sub_sections'
+  ];
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -35,8 +51,7 @@ export class IhFhirModuleComponent {
   getFhirModule(): void {
     this.configService.getIhFhirModuleSections().subscribe((res: any) => {
       this.fhirData = this.getFhirModuleData(res);
-      this.dataSource = new MatTableDataSource(this.fhirData);
-      this.dataSource.paginator = this.paginator;
+      this.refreshDataSource();
     });
   }
 
@@ -59,24 +74,10 @@ export class IhFhirModuleComponent {
   }
 
   private normalizeFhirModule(item: any): any {
-    const ignoredKeys = [
-      'id',
-      'name',
-      'lang',
-      'key',
-      'platform',
-      'updatedAt',
-      'updated_at',
-      'createdAt',
-      'created_at',
-      'is_editable',
-      'is_enabled',
-      'is_locked',
-      'order',
-      'sub_sections'
-    ];
-    const statusKey = Object.keys(item || {}).find(key => !ignoredKeys.includes(key) && typeof item[key] === 'boolean') || item?.key || 'fhir';
-    const isEnabled = typeof item?.[statusKey] === 'boolean' ? item[statusKey] : Boolean(item?.is_enabled);
+    const statusKey = this.resolveStatusKey(item);
+    const isEnabled = typeof item?.[statusKey] === 'boolean'
+      ? item[statusKey]
+      : Boolean(item?.is_enabled);
 
     return {
       ...item,
@@ -87,13 +88,61 @@ export class IhFhirModuleComponent {
     };
   }
 
+  private resolveStatusKey(item: any): string {
+    if (typeof item?.key === 'string' && item.key.trim()) {
+      return item.key.trim();
+    }
+
+    const normalizedName = (item?.name || '').toLowerCase();
+    if (normalizedName.includes('shr')) {
+      return 'shr';
+    }
+    if (normalizedName.includes('fhir')) {
+      return 'fhir';
+    }
+
+    const dynamicKey = Object.keys(item || {}).find(
+      key => !this.moduleStatusIgnoredKeys.includes(key) && typeof item[key] === 'boolean'
+    );
+
+    return dynamicKey || 'fhir';
+  }
+
   updateStatus(element: any, status: boolean): void {
-    this.configService.updateIhFhirModuleEnabledStatus(element.id, element.statusKey, status).subscribe(res => {
-      this.toastr.success('FHIR Module has been successfully updated', 'Update successful!');
-      this.getFhirModule();
-    }, err => {
-      this.getFhirModule();
+    if (element._updating) {
+      return;
+    }
+
+    const previousStatus = element.is_enabled;
+    element._updating = true;
+    this.applyModuleStatus(element, status);
+
+    this.configService.updateIhFhirModuleEnabledStatus(element.id, element.statusKey, status).subscribe({
+      next: () => {
+        element._updating = false;
+        this.toastr.success('FHIR Module has been successfully updated', 'Update successful!');
+        this.getFhirModule();
+      },
+      error: () => {
+        element._updating = false;
+        this.applyModuleStatus(element, previousStatus);
+        this.toastr.error('FHIR Module could not be updated. Please try again.', 'Update failed!');
+        this.getFhirModule();
+      }
     });
+  }
+
+  private applyModuleStatus(element: any, status: boolean): void {
+    element.is_enabled = status;
+    if (element.statusKey) {
+      element[element.statusKey] = status;
+    }
+    this.refreshDataSource();
+  }
+
+  private refreshDataSource(): void {
+    this.dataSource.data = [...this.fhirData];
+    this.dataSource.paginator = this.paginator;
   }
 
   onPublish(): void {

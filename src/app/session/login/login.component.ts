@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
+import { throwError } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { AuthGatewayLoginResponseModel, CheckSessionResponseModel, LoginResponseModel, ProviderResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
@@ -22,7 +24,7 @@ export class LoginComponent implements OnInit {
   submitted = false;
   visible = false;
   rememberMe = false;
-  loginAttempt = 0;
+  isLoading = false;
   selectedLanguage = 'en';
   showCaptcha: boolean = environment.showCaptcha;
 
@@ -64,7 +66,9 @@ export class LoginComponent implements OnInit {
   * @return {void}
   */
   login() {
-    this.loginAttempt++;
+    if (this.isLoading) {
+      return;
+    }
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -72,27 +76,40 @@ export class LoginComponent implements OnInit {
     const val = this.loginForm.value;
     const cred = `${val.username}:${val.password}`;
     const base64cred = btoa(cred);
-    this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
-      if (res.authenticated && !res.verified) {
-        this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
-          this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
-            if (provider.results.length) {
-              setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
-              setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
-              if(provider?.results?.[0]?.attributes?.length === 0) {
-                setCacheData(doctorDetails.IS_NEW_DOCTOR, res.user.uuid);
-              }
-              this.loginSuccess();
-            } else {
-              this.translationService.getTranslation('Couldn\'t find provider.', 'Login Failed!', false);
-            }
-          });
-        });
-      } else {
+    this.isLoading = true;
+
+    this.authService.login(base64cred).pipe(
+      switchMap((res: LoginResponseModel) => {
+        if (!res.authenticated || res.verified) {
+          return throwError(() => new Error('invalid_credentials'));
+        }
+        return this.authService.getAuthToken(val.username, val.password).pipe(
+          switchMap((token: AuthGatewayLoginResponseModel) =>
+            this.authService.getProvider(res.user.uuid).pipe(
+              map((provider: ProviderResponseModel) => ({ res, provider, token }))
+            )
+          )
+        );
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    ).subscribe({
+      next: ({ res, provider }) => {
+        if (provider.results.length) {
+          setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
+          setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
+          if (provider?.results?.[0]?.attributes?.length === 0) {
+            setCacheData(doctorDetails.IS_NEW_DOCTOR, res.user.uuid);
+          }
+          this.loginSuccess();
+        } else {
+          this.translationService.getTranslation('Couldn\'t find provider.', 'Login Failed!', false);
+        }
+      },
+      error: () => {
         this.translationService.getTranslation('Couldn\'t find you, credentials provided are wrong.', 'Login Failed!', false);
       }
-    }, err => {
-      if (this.loginAttempt < 3) { this.login(); }
     });
   }
 

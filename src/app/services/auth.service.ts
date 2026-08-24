@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpContext, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { catchError, map, mergeMap } from "rxjs/operators";
 import { BehaviorSubject, Observable, of } from "rxjs";
@@ -12,6 +12,7 @@ import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
 import { doctorDetails } from "src/config/constant";
 import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
+import { SKIP_CREDENTIALS, SUPPRESS_AUTH_LOGOUT } from "../core/interceptors/http-context.tokens";
 
 @Injectable({
   providedIn: "root",
@@ -73,13 +74,18 @@ export class AuthService {
   login(credBase64: string): Observable<any> {
     this.base64Cred = credBase64;
     setCacheData('xsddsdass', credBase64);
+    this.cookieService.delete('JSESSIONID', '/');
     this.cookieService.deleteAll();
-    return this.http.delete(`${this.baseUrl}/session`).pipe(
+    const loginContext = new HttpContext().set(SUPPRESS_AUTH_LOGOUT, true);
+    return this.http.delete(`${this.baseUrl}/session`, { context: loginContext }).pipe(
       catchError(() => of(null)),
       mergeMap((item) => {
         let headers: HttpHeaders = new HttpHeaders();
         headers = headers.append('Authorization', 'Basic ' + credBase64);
-        return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
+        return this.http.get(`${this.baseUrl}/session`, {
+          headers,
+          context: loginContext.set(SKIP_CREDENTIALS, true),
+        }).pipe(
           map((user: LoginResponseModel) => {
             if (user.authenticated) {
               user.verified = false;
@@ -105,7 +111,9 @@ export class AuthService {
   * @return {Observable<any>}
   */
   getAuthToken(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.gatewayURL}auth/login`, { username, password }).pipe(
+    return this.http.post(`${this.gatewayURL}auth/login`, { username, password }, {
+      context: new HttpContext().set(SUPPRESS_AUTH_LOGOUT, true),
+    }).pipe(
       map((res: AuthGatewayLoginResponseModel) => {
         setCacheData('token', res.token);
         return res;
@@ -127,7 +135,9 @@ export class AuthService {
   * @return {Observable<any>}
   */
   getProvider(userId: string): Observable<any> {
-    return this.http.get(`${this.gatewayURL}auth/provider/${userId}`);
+    return this.http.get(`${this.gatewayURL}auth/provider/${userId}`, {
+      context: new HttpContext().set(SUPPRESS_AUTH_LOGOUT, true),
+    });
   }
 
   /**
