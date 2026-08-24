@@ -1,6 +1,6 @@
-import { languages, visitTypes } from "src/config/constant";
+import { languages, visitTypes, doctorDetails } from "src/config/constant";
 import * as moment from 'moment';
-import { ProviderAttributeModel } from "../model/model";
+import { EncounterModel, ProviderAttributeModel } from "../model/model";
 import { DecimalPipe } from "@angular/common";
 import { environment } from "src/environments/environment";
 
@@ -94,6 +94,55 @@ export function getSpecialization(attr: ProviderAttributeModel[] = []): string {
     }
   }
   return specialization;
+}
+
+/**
+ * Checks whether the provider is a NAMCO doctor using the provider name
+ * heuristic and their specialization attribute's "Namco" prefix.
+* @param {{ person?: { display?: string }, attributes?: ProviderAttributeModel[] }} provider - Provider profile
+* @return {boolean}
+*/
+export function isNamcoDoctor(provider: { person?: { display?: string }, attributes?: ProviderAttributeModel[] } = {}): boolean {
+  const doctorName = provider?.person?.display || '';
+  if (doctorName.toLowerCase().includes('namco')) {
+    return true;
+  }
+  const specialization = getSpecialization(provider?.attributes || []);
+  return specialization.trim().toLowerCase().startsWith('namco');
+}
+
+/**
+* Resolve which encounter(s) on this visit the Visit Summary's obs reads (Diagnosis, Medication,
+* Advice, Investigations, Referral, Follow-up, Notes, etc.) should be scoped to, so a field never
+* mixes values from two different encounters on the same visit.
+*
+* A normal doctor reads only from their own "Visit Note" encounter. A NAMCO doctor reads from
+* BOTH the "Referral" encounter (the obs snapshot copied there at referral time — see
+* createReferralEncounterForNamco() in visit-summary.component.ts) AND their own "Specialist
+* Visit Note" encounter (where their own new entries get saved — see startVisitNote()), since
+* without the Referral encounter they'd lose the inherited data, and without the Specialist
+* Visit Note encounter they'd lose anything they've since added themselves.
+*
+* Matching by encounter display name (not the ambiguous shared "Visit Note" substring both
+* encounter types contain) is deliberate — a visit can have both a "Visit Note" and a
+* "Specialist Visit Note" encounter, and getVisitEncounterExists()-style substring matching
+* would pick whichever happens to come first in the array.
+* @param {{ encounters?: EncounterModel[] }} visit - The current visit
+* @return {string[]} - Encounter uuids obs reads should be scoped to
+*/
+export function getSourceEncounterUuids(visit: { encounters?: EncounterModel[] } = {}): string[] {
+  const encounters = visit?.encounters || [];
+  const findEncounter = (label: string, exclude?: string) =>
+    encounters.find((e: EncounterModel) => (e?.display || '').includes(label) && (!exclude || !(e?.display || '').includes(exclude)));
+
+  const provider = getCacheData(true, doctorDetails.PROVIDER);
+  if (isNamcoDoctor(provider)) {
+    const referralEncounter = findEncounter(visitTypes.REFERRAL);
+    const specialistVisitNote = findEncounter(visitTypes.SPECIALIST_VISIT_NOTE);
+    return [referralEncounter?.uuid, specialistVisitNote?.uuid].filter(Boolean);
+  }
+  const visitNote = findEncounter(visitTypes.VISIT_NOTE, visitTypes.SPECIALIST_VISIT_NOTE);
+  return [visitNote?.uuid].filter(Boolean);
 }
 
 /**

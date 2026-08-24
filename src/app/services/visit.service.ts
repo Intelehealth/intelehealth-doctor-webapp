@@ -266,6 +266,16 @@ export class VisitService {
   }
 
   /**
+  * Get referred visits
+  * @param {string} speciality - Visit speciality
+  * @param {number} page - Page number
+  * @return {Observable<any>}
+  */
+  getReferredVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getReferredVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
+  }
+
+  /**
    * get InstructionRemarks of Medication
    *  @return {Observable<any>}
    */

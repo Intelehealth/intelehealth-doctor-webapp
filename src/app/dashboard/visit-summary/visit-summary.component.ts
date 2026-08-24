@@ -26,7 +26,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, isNamcoDoctor, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -1123,9 +1123,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getEyeImages(visit: VisitModel): void {
     this.eyeImages = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(visit);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.eyeImages.push(data);
         }
@@ -1150,9 +1151,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getVisitAdditionalDocs(visit: VisitModel): void {
     this.additionalDocs = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(visit);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.additionalDocs.push(data);
         }
@@ -1458,9 +1460,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     // Capture consultation start time
     this.consultationStartTime = new Date();
 
+    // NAMCO doctors (specialists picking up a NAMCO-referred visit) get a "Specialist Visit
+    // Note" encounter instead of the regular "Visit Note" encounter — everything else about
+    // the visit flow (obs, diagnosis, visit completion) is unchanged and keeps working as-is,
+    // since OpenMRS's encounter display name for this type still contains "Visit Note".
+    const encounterType = isNamcoDoctor(this.provider)
+      ? '086f323a-b90b-49aa-a3ca-fb9ed8ab7426' // Specialist Visit Note encounter
+      : 'd7151f82-c1f3-4152-a605-2f9ea7414a79'; // Visit Note encounter
+
     const json = {
       patient: this.visit.patient.uuid,
-      encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79', // Visit Note encounter
+      encounterType,
       encounterProviders: [
         {
           provider: this.provider.uuid,
@@ -1515,10 +1525,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   checkIfReferralConsentPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferralConsent)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             const [decision, consent] = obs.value.split(':');
             this.referralConsentForm.patchValue({ uuid: obs.uuid, decision, consent: consent || null });
           }
@@ -1689,9 +1700,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes("}") && this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) {
             this.diagnosisSecondaryForm.patchValue(obsParse(obs.value, obs.uuid))
           } else {
@@ -1922,9 +1934,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if(this.appConfigService.patient_visit_summary?.standard_medication){
             this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
           } else {
@@ -2091,10 +2104,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   checkIfAdditionalInstructionPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
         
             if (this.additionalInstructionForm && !obs.value.includes('</a>')) {
             
@@ -2119,10 +2133,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   checkIfAdvicePresent(): void {
     this.advices = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if (!obs.value.includes('</a>')) {
               // Exclude additional instructions from advices list
               if (!this.additionalInstructions || this.additionalInstructions.uuid !== obs.uuid) {
@@ -2200,10 +2215,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   checkIfTestPresent(): void {
     this.tests = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if(this.appConfigService.patient_visit_summary.dp_investigations_secondary)
               this.testForm.patchValue({uuid:obs.uuid, test:obs.value})
             else
@@ -2218,10 +2234,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiscussionSummary)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.discussionSummaryForm.patchValue({ uuid: obs.uuid, value: obs.value })
           }
         });
@@ -2297,13 +2314,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   checkIfReferralPresent(): void {
     this.referrals = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid) && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() ? obs_values[3].trim() : '-' });
-          } else if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          } else if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.referralSecondaryForm.patchValue({ uuid: obs.uuid, ref: obs.value })
           }
         });
@@ -2359,9 +2377,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   checkIfFollowUpPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
           if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);

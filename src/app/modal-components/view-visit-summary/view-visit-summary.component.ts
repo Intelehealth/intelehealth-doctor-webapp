@@ -15,7 +15,7 @@ import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
-import { calculateBMI, getAge, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
@@ -406,9 +406,10 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(visit);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const imageBase64 = await this.toObjectUrl(`${this.baseURL}/obs/${obs.uuid}/value`);
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment, base64: imageBase64.toString()};
           this.eyeImages.push(data);
@@ -434,9 +435,10 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(visit);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const src = `${this.baseURL}/obs/${obs.uuid}/value`;
           const base64 = await this.toObjectUrl(src);
           const data = { src: src, section:obs.comment, base64: base64.toString()};

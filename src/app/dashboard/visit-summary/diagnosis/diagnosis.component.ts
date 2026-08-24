@@ -9,7 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT } from 'aiddx-library';
-import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { DiagnosticModel, DropdownItemModel, EncounterModel, ObsApiResponseModel, ObsModel, ReferralModel, TestModel } from 'src/app/model/model';
@@ -385,9 +385,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
 
   checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes("}") && this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) {
             this.diagnosisSecondaryForm.patchValue(this.obsParse(obs.value, obs.uuid));
           } else {
@@ -711,11 +712,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
    * @returns {void}
    */
   checkIfNotePresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote)
       .subscribe({
         next: (response: ObsApiResponseModel) => {
           response.results.forEach((obs: ObsModel) => {
-            if (obs.encounter.visit.uuid === this.visit.uuid) {
+            if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
               this.patientInteractionNotesForm.patchValue({ uuid: obs.uuid, value: obs.value });
             }
           });
@@ -902,9 +904,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
 
   checkIfMedicationPresent(): void {
     this.medicines = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes(':') && !this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
             this.medicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
             if (this.aillmtxMedicationComponent) {
@@ -980,10 +983,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   */
   checkIfAdvicePresent(): void {
     this.advices = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if (!obs.value.includes('</a>')) {
               this.advices.push(obs);
               if (this.aillmtxAdviceComponent) {
@@ -1094,10 +1098,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   */
   checkIfTestPresent(): void {
     this.tests = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if(this.appConfigService.patient_visit_summary.dp_investigations_secondary) {
               this.testForm.patchValue({uuid:obs.uuid, test:obs.value})
             } else {
@@ -1199,16 +1204,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   */
   checkIfReferralPresent(): void {
     this.referrals = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid) && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() ? obs_values[3].trim() : '-' });
             if (this.aillmtxReferralComponent) {
               this.aillmtxReferralComponent.existingReferral = [...this.referrals];
             }
-          } else if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          } else if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.referralSecondaryForm.patchValue({ uuid: obs.uuid, ref: obs.value })
           }
         });
@@ -1311,9 +1317,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   * @returns {void}
   */
   checkIfFollowUpPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
           if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);

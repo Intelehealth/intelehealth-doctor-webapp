@@ -1280,10 +1280,10 @@
               </mat-expansion-panel>
             </ng-template>
 
-            <app-notes #notes [title]="'Note'" [expanded]="showAndHideUiElement ? true : false" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
+            <app-notes #notes [title]="'Note'" [expanded]="true" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
               [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)"></app-notes>
 
-            <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel5 hideToggle class="overflow-show"
+            <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show"
               *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled" data-test-id="expansionPanelAdvice">
               <mat-expansion-panel-header data-test-id="expansionPanelHeaderAdvice">
                 <mat-panel-title>
@@ -1404,7 +1404,7 @@
 
             <ng-template #tplDrRcom>
               <mat-expansion-panel
-                [expanded]="showAndHideUiElement ? true : false"
+                [expanded]="true"
                 #panel4
                 hideToggle
                 class=""
@@ -2017,7 +2017,7 @@
               </mat-expansion-panel>
 
               <mat-expansion-panel
-                [expanded]="showAndHideUiElement ? true : false"
+                [expanded]="true"
                 #panel6
                 hideToggle
                 class="overflow-show"
@@ -2146,7 +2146,7 @@
               </app-follow-up-instruction>
             </ng-template>
 
-            <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
+            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
               <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
                 <mat-panel-title data-test-id="matPanelTitleReferral">
                   <div class="intel-accordion-title" data-test-id="divAccordionTitleReferral">

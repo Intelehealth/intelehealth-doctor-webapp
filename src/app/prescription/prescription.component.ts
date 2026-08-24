@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
-import { getCacheData } from '../utils/utility-functions';
+import { getCacheData, getAge } from '../utils/utility-functions';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -18,17 +18,23 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   active: number = 1;
   completedVisits: CustomVisitModel[] = [];
   prescriptionSent: CustomVisitModel[] = [];
+  referredVisits: CustomVisitModel[] = [];
   loaded1: boolean = false;
   loaded2: boolean = false;
+  loaded3: boolean = false;
   specialization: string = '';
   prescriptionSentCount: number = 0;
   completedVisitsCount: number = 0;
+  referredVisitsCount: number = 0;
   allPrescriptionSent: any[] = [];
   allCompletedVisits: any[] = [];
+  allReferredVisits: any[] = [];
   searchTermComp: string = '';
   searchTerm: string = '';
+  searchTermRef: string = '';
   private sentSearch$ = new Subject<string>();
   private completedSearch$ = new Subject<string>();
+  private referredSearch$ = new Subject<string>();
   constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
 
   ngOnInit(): void {
@@ -41,6 +47,7 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
+    this.getReferredVisits();
 
      // Prescription Sent search debounce
     this.sentSearch$
@@ -62,6 +69,17 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
      .subscribe(term => {
        this.searchTerm = term;
        this.getCompletedVisits(1); // page reset
+      });
+
+    // Referred Visits search debounce
+    this.referredSearch$
+     .pipe(
+       debounceTime(400),
+       distinctUntilChanged()
+      )
+     .subscribe(term => {
+       this.searchTermRef = term;
+       this.getReferredVisits(1); // page reset
       });
   }
 
@@ -138,6 +156,89 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
     return;
   }
     this.getCompletedVisits(params.page);
+  }
+
+  /**
+  * Get referred visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
+  getReferredVisits(page: number = 1) {
+    if(page == 1) this.referredVisits = []; this.allReferredVisits = [];
+    this.visitService.getReferredVisits(this.specialization, page).subscribe((rv: ApiResponseModel) => {
+      if (rv.success) {
+        this.referredVisitsCount = rv.totalCount;
+        let records = [];
+        for (let i = 0; i < rv.data.length; i++) {
+          let visit = rv.data[i];
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.status = this.getReferredVisitStatus(visit);
+          visit.routing_specialization = this.getRoutingSpecialization(visit);
+          visit.person.age = getAge(visit.person.birthdate, undefined, true);
+          records.push(visit);
+        }
+        this.allReferredVisits = [...this.allReferredVisits, ...records];
+        this.applyReferredSearch();
+        if(!this.loaded3) {
+          this.loaded3 = true;
+        }
+      }
+    });
+  }
+
+  applyReferredSearch() {
+    if (!this.searchTermRef) {
+      this.referredVisits = [...this.allReferredVisits];
+      return;
+    }
+    const term = this.searchTermRef.toLowerCase().trim();
+    this.referredVisits = this.allReferredVisits.filter(visit => {
+      const name = [
+        visit.patient_name?.given_name,
+        visit.patient_name?.middle_name,
+        visit.patient_name?.family_name
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return name.includes(term);
+    });
+  }
+
+  /**
+  * Get referred visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
+  * @return {void}
+  */
+  getReferredVisitsData(params: {page: number, pageSize: number, searchTerm?: string}) {
+    if (params.searchTerm !== undefined) {
+      this.referredSearch$.next(params.searchTerm);
+      return;
+    }
+    this.getReferredVisits(params.page);
+  }
+
+  /**
+  * status is "Referred".
+  * @param {CustomVisitModel} _visit - Visit
+  * @return {string} - Visit stage label
+  */
+  getReferredVisitStatus(_visit: CustomVisitModel): string {
+    return 'Referred';
+  }
+
+  /**
+  * Get the specialization a visit was referred/routed to
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string} - Referred-to specialization, or empty string if not present
+  */
+  getRoutingSpecialization(visit: CustomVisitModel): string {
+    const attr = (visit.attributes || []).find(
+      (a: any) => a?.attribute_type?.name === visitTypes.ROUTING_SPECIALIZATION
+    );
+    return attr?.value_reference || '';
   }
 
   /**
@@ -332,5 +433,6 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   ngOnDestroy() {
   this.sentSearch$.complete();
   this.completedSearch$.complete();
+  this.referredSearch$.complete();
 }
 }

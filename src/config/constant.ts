@@ -38,6 +38,10 @@ export const visitTypes = {
     FOLLOW_UP:'Follow-up',
     NEW:'New',
     PATIENT_INTERACTION_COMMENT:'Patient Interaction Comment',
+    REFERRAL:'Referral',
+    REFERRED_VISIT:'Referred Visit',
+    ROUTING_SPECIALIZATION:'Routing Specialization',
+    SPECIALIST_VISIT_NOTE:'Specialist Visit Note',
     // AI_DIAGNOSIS_SUPPORT:'AI Diagnosis Support',
     // LLM_REGENERATION: 'LLM Regeneration'
 }
