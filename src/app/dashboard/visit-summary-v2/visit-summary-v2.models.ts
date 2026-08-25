@@ -112,6 +112,7 @@ export type SuggestionSource = 'ai' | 'manual';
 export interface AiDiagnosisSuggestion {
   name: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
 }
 
@@ -119,6 +120,7 @@ export interface AiMedicationSuggestion {
   name: string;
   label: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
   timing?: string;
   strength?: string;
@@ -147,6 +149,7 @@ export interface SelectedDiagnosis {
   source: SuggestionSource;
   type: string;
   status: string;
+  uuid?: string;
 }
 
 export interface SelectedMedicine {

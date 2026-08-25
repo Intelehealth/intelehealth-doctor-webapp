@@ -121,9 +121,14 @@
     <p class="vs2-summary-text" *ngIf="aiSummaryExpanded">{{ aiClinicalSummary }}</p>
   </div>
 
-  <h4 class="vs2-ai-dx-title">
-    <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Diagnosis
-  </h4>
+  <div class="vs2-ai-dx-head">
+    <h4 class="vs2-ai-dx-title">
+      <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Diagnosis
+    </h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ddx')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+  </div>
 
   <div class="vs2-ai-panel" *ngIf="aiDiagnosisState === 'loading'">
     <div class="vs2-ai-loading-head">
@@ -165,41 +170,40 @@
       <span class="vs2-dx-chip" *ngFor="let s of aiSuggestions"
         [ngClass]="'vs2-dx-' + s.likelihood.toLowerCase()" [class.vs2-dx-selected]="isDiagnosisSelected(s.name)"
         (click)="toggleAiSuggestion(s)">
-        <mat-icon class="vs2-dx-check" *ngIf="isDiagnosisSelected(s.name)">check</mat-icon>
-        <span class="vs2-dx-dot" *ngIf="!isDiagnosisSelected(s.name)"></span>
+        <mat-icon class="vs2-dx-mark">{{ isDiagnosisSelected(s.name) ? 'check' : 'add' }}</mat-icon>
         <span class="vs2-dx-name">{{ s.name }}</span>
-        <span class="vs2-dx-badge">{{ s.likelihood }} Likely</span>
-        <mat-icon class="vs2-dx-info" (click)="toggleWhy(s, $event)">info_outline</mat-icon>
+        <span class="vs2-dx-badge">
+          {{ s.likelihood }} Likely <span class="vs2-dx-pct" *ngIf="s.confidence !== null">{{ confidenceLabel(s) }}</span>
+        </span>
+        <span class="vs2-dx-info-wrap" *ngIf="s.reasons.length">
+          <mat-icon class="vs2-dx-info" (click)="toggleWhy(s, $event)">info_outline</mat-icon>
+          <span class="vs2-dx-why" [class.vs2-dx-why-open]="whySuggestion === s" (click)="$event.stopPropagation()">
+            <h5>Why {{ s.name }}?</h5>
+            <ul class="vs2-bullet-list">
+              <li *ngFor="let r of s.reasons">{{ r }}</li>
+            </ul>
+          </span>
+        </span>
       </span>
-    </div>
-
-    <div class="vs2-dx-why" *ngIf="whySuggestion">
-      <h5>Why {{ whySuggestion.name }}?</h5>
-      <ul class="vs2-bullet-list">
-        <li *ngFor="let r of whySuggestion.reasons">{{ r }}</li>
-      </ul>
     </div>
   </ng-container>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="diagnosisResults"
-    [(ngModel)]="selectedDiagnosis"
-    bindLabel="name"
-    [searchable]="true"
-    [clearable]="true"
-    [addTag]="false"
-    [minTermLength]="3"
-    typeToSearchText="Type at least 3 characters"
-    (search)="onDiagnosisSearch($event)"
-    (change)="onDiagnosisPicked($event)"
-    placeholder="Type to search diagnosis">
-  </ng-select>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="diagnosisSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onDiagnosisSearch($event)"
+      placeholder="Type to search diagnosis" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="diagnosisSearchTerm" (click)="clearDiagnosisSearch()">close</mat-icon>
+  </div>
 
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickDiagnoses" [class.vs2-dx-quick-on]="isDiagnosisSelected(q)"
-      (click)="toggleQuickDiagnosis(q)">
-      <mat-icon>{{ isDiagnosisSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
+  <div class="vs2-dx-quick-row" *ngIf="diagnosisSearchTerm">
+    <span class="vs2-dx-search-hint" *ngIf="diagnosisSearching">Searching…</span>
+    <span class="vs2-dx-search-hint" *ngIf="!diagnosisSearching && !diagnosisResults.length">
+      No matching diagnosis found
+    </span>
+    <button class="vs2-dx-quick" *ngFor="let r of diagnosisResults" [class.vs2-dx-quick-on]="isDiagnosisSelected(r.name)"
+      (click)="toggleSearchResult(r)">
+      <mat-icon>{{ isDiagnosisSelected(r.name) ? 'check' : 'add' }}</mat-icon> {{ r.name }}
     </button>
   </div>
 
@@ -296,9 +300,14 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <h4 class="vs2-ai-dx-title">
-    <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Medication
-  </h4>
+  <div class="vs2-ai-dx-head">
+    <h4 class="vs2-ai-dx-title">
+      <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Medication
+    </h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_medication')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+  </div>
 
   <div class="vs2-ai-panel vs2-ai-empty" *ngIf="medicationPanelState === 'no-diagnosis'">
     <span class="vs2-ai-empty-icon"><img src="assets/svgs/diagnosis.svg" alt="" /></span>
@@ -347,37 +356,37 @@
       <span class="vs2-dx-chip" *ngFor="let s of aiMedicationSuggestions"
         [ngClass]="'vs2-dx-' + s.likelihood.toLowerCase()" [class.vs2-dx-selected]="isMedicineSelected(s.name)"
         (click)="toggleAiMedication(s)">
-        <mat-icon class="vs2-dx-check" *ngIf="isMedicineSelected(s.name)">check</mat-icon>
-        <span class="vs2-dx-dot" *ngIf="!isMedicineSelected(s.name)"></span>
+        <mat-icon class="vs2-dx-mark">{{ isMedicineSelected(s.name) ? 'check' : 'add' }}</mat-icon>
         <span class="vs2-dx-name">{{ isMedicineSelected(s.name) ? s.name : s.label }}</span>
-        <span class="vs2-dx-badge">{{ s.likelihood }} Likely</span>
-        <mat-icon class="vs2-dx-info" (click)="toggleMedicationWhy(s, $event)">info_outline</mat-icon>
+        <span class="vs2-dx-badge">
+          {{ s.likelihood }} Likely <span class="vs2-dx-pct" *ngIf="s.confidence !== null">{{ confidenceLabel(s) }}</span>
+        </span>
+        <span class="vs2-dx-info-wrap" *ngIf="s.reasons.length">
+          <mat-icon class="vs2-dx-info" (click)="toggleMedicationWhy(s, $event)">info_outline</mat-icon>
+          <span class="vs2-dx-why" [class.vs2-dx-why-open]="whyMedication === s" (click)="$event.stopPropagation()">
+            <h5>Why {{ s.name }} ?</h5>
+            <ul class="vs2-bullet-list">
+              <li *ngFor="let r of s.reasons">{{ r }}</li>
+            </ul>
+          </span>
+        </span>
       </span>
-    </div>
-
-    <div class="vs2-dx-why" *ngIf="whyMedication">
-      <h5>Why {{ whyMedication.name }} ?</h5>
-      <ul class="vs2-bullet-list">
-        <li *ngFor="let r of whyMedication.reasons">{{ r }}</li>
-      </ul>
     </div>
   </ng-container>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="drugOptions"
-    [(ngModel)]="searchedDrug"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    (change)="onMedicinePicked($event)"
-    placeholder="Type to search medication">
-  </ng-select>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="medicineSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onMedicineSearch($event)"
+      placeholder="Type to search medication" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="medicineSearchTerm" (click)="clearMedicineSearch()">close</mat-icon>
+  </div>
 
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickMedicines" [class.vs2-dx-quick-on]="isMedicineSelected(q)"
-      (click)="toggleQuickMedicine(q)">
-      <mat-icon>{{ isMedicineSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
+  <div class="vs2-dx-quick-row" *ngIf="medicineSearchTerm">
+    <span class="vs2-dx-search-hint" *ngIf="!medicineResults.length">Keep typing to search medication</span>
+    <button class="vs2-dx-quick" *ngFor="let r of medicineResults" [class.vs2-dx-quick-on]="isMedicineSelected(r)"
+      (click)="toggleMedicineResult(r)">
+      <mat-icon>{{ isMedicineSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
     </button>
   </div>
 
@@ -479,7 +488,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiAdvices.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Advice</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Advice</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let a of aiAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(a)"
         (click)="toggleAdvice(a)">
@@ -509,21 +522,18 @@
     </div>
   </div>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="adviceOptions"
-    [(ngModel)]="newAdviceText"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    (change)="onAdvicePicked($event)"
-    placeholder="Type to search advice or type custom advice">
-  </ng-select>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="adviceSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onAdviceSearch($event)"
+      placeholder="Type to search advice or type custom advice" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="adviceSearchTerm" (click)="clearAdviceSearch()">close</mat-icon>
+  </div>
 
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(q)"
-      (click)="toggleAdvice(q)">
-      <mat-icon>{{ isAdviceSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
+  <div class="vs2-dx-quick-row" *ngIf="adviceSearchTerm">
+    <button class="vs2-dx-quick" *ngFor="let r of adviceResults" [class.vs2-dx-quick-on]="isAdviceSelected(r)"
+      (click)="toggleAdvice(r)">
+      <mat-icon>{{ isAdviceSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
     </button>
   </div>
 
@@ -553,7 +563,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiTests.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Tests</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Tests</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestAdded(t)"
         (click)="addAiTest(t)">
@@ -592,7 +606,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiReferrals.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Referral</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Referral</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let r of aiReferrals" (click)="applyAiReferral(r)">
         <mat-icon>add</mat-icon> {{ r.speciality }}<ng-container *ngIf="r.facility"> - {{ r.facility }}</ng-container>
@@ -674,7 +692,11 @@
   <div class="vs2-divider"></div>
 
   <div class="vs2-ai-followup" *ngIf="aiFollowUp">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <button class="vs2-dx-quick" (click)="applyAiFollowUp()">
       <mat-icon>add</mat-icon> {{ aiFollowUp.duration }}<ng-container *ngIf="aiFollowUp.reason"> - {{ aiFollowUp.reason }}</ng-container>
     </button>
