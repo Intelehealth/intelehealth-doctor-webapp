@@ -101,9 +101,16 @@ export interface Patient {
   other: DetailRow[];
 }
 
-export type AiDiagnosisState = 'loading' | 'error' | 'ready';
+export type AiDiagnosisState = 'loading' | 'error' | 'missing-details' | 'ready';
 
-export type AiMedicationState = 'loading' | 'error' | 'no-diagnosis' | 'ready';
+export type AiMedicationState = 'loading' | 'error' | 'missing-details' | 'no-diagnosis' | 'ready';
+
+export class AiMissingDetailsError extends Error {
+  constructor(public readonly missing: string[]) {
+    super(`Missing patient details required for AI suggestions: ${missing.join(', ')}`);
+    this.name = 'AiMissingDetailsError';
+  }
+}
 
 export type SuggestionLikelihood = 'High' | 'Moderate' | 'Less';
 
