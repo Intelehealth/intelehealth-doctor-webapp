@@ -2512,7 +2512,7 @@
         {{'View Prescription'|translate}}
       </button>
 
-      <div class="magic-link-wrap" *ngIf="isTurnServer && isVisitNoteProvider && !visitEnded && hasWebRTCEnabled">
+      <div class="magic-link-wrap" hidden *ngIf="isTurnServer && isVisitNoteProvider && !visitEnded && hasWebRTCEnabled">
         <button type="button" class="blue-btn mb-2" *ngIf="!magicLinkUrl" (click)="onGenerateMagicLink()"
           [disabled]="generatingMagicLink" data-test-id="btnGenerateMagicLink">
           {{ (generatingMagicLink ? 'Generating link...' : 'Generate video call link') | translate }}
