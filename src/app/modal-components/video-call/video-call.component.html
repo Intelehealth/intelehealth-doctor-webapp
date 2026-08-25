@@ -71,15 +71,6 @@
             <div class="video-controls">
               <button
                 type="button"
-                class="video-ctrl-btn red"
-                (click)="endCallInRoom();setFlag();"
-                data-test-id="btnEnd"
-               [class.minimized]="_minimized"
-              >
-                <img src="assets/svgs/call-end.svg" alt="" />
-              </button>
-              <button
-                type="button"
                 class="video-ctrl-btn"
                 (click)="toggleAudio()"
                 data-test-id="btnToggleAudio"
@@ -113,6 +104,15 @@
                   alt=""
                 />
                 <span class="ctrl-indicator" *ngIf="cameraIssue" title="Camera issue">!</span>
+              </button>
+              <button
+                type="button"
+                class="video-ctrl-btn red"
+                (click)="endCallInRoom();setFlag();"
+                data-test-id="btnEnd"
+               [class.minimized]="_minimized"
+              >
+                <img src="assets/svgs/call-end.svg" alt="" />
               </button>
             </div>
             <div class="window-controls" [class.minimized]="_minimized">

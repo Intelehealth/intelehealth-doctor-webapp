@@ -338,9 +338,10 @@ export class DashboardComponent implements OnInit {
       {
         label: "Name",
         key: "patient_name",
-        formatHtml: (element)=> { 
+        formatHtml: (element)=> {
+          const gender = element?.patientGender ? this.translateService.instant(element.patientGender) : '';
           return `
-            <span class="font-bold ml-2">${element?.patientName} (${this.translateService.instant(element?.patientGender)})</span>
+            <span class="font-bold ml-2">${element?.patientName ?? ''}${gender ? ` (${gender})` : ''}</span>
           `
         },
       },
@@ -355,6 +356,9 @@ export class DashboardComponent implements OnInit {
         label: "Starts in",
         key: "starts_in",
         formatHtml: (element) => {
+          if (environment.isTurnServer) {
+            return this.formatStartsInProgress(element);
+          }
           let  color, bold = '';
           if (element.starts_in.includes('Due')){
             color = "#FF475D"; bold = "bold"; // red color & bold
@@ -390,26 +394,38 @@ export class DashboardComponent implements OnInit {
       {
         label: "Actions",
         key: "actions",
-        actionButtons: [
-          {
-            label: "Reschedule",
-            validationRequired: false,
-            callBack: (element: any) => this.reschedule(element),
-            style: {
-              color: "#2e1e91",
-              backgroundColor: "#efe8ff",
-            },
-          },
-          {
-            label: "Cancel",
-            validationRequired: false,
-            callBack: (element: any) => this.cancel(element),
-            style: {
-              color: "#ff475d",
-              backgroundColor: "#ffe8e8",
-            },
-          },
-        ]
+        actionButtons: environment.isTurnServer
+          ? [
+              {
+                label: "Join call",
+                validationRequired: false,
+                callBack: (element: any) => this.startCall(element),
+                style: {
+                  color: "#ffffff",
+                  backgroundColor: "#2e1e91",
+                },
+              },
+            ]
+          : [
+              {
+                label: "Reschedule",
+                validationRequired: false,
+                callBack: (element: any) => this.reschedule(element),
+                style: {
+                  color: "#2e1e91",
+                  backgroundColor: "#efe8ff",
+                },
+              },
+              {
+                label: "Cancel",
+                validationRequired: false,
+                callBack: (element: any) => this.cancel(element),
+                style: {
+                  color: "#ff475d",
+                  backgroundColor: "#ffe8e8",
+                },
+              },
+            ]
       }
     ],
   };
@@ -1176,6 +1192,50 @@ export class DashboardComponent implements OnInit {
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
   * @return {void}
   */
+  startCall(appointment: AppointmentModel) {
+    if (!appointment?.visitUuid) {
+      this.toastr.error(
+        this.translateService.instant('This appointment has no visit linked to it.'),
+        this.translateService.instant('Cannot start call')
+      );
+      return;
+    }
+    this.router.navigate(['/dashboard/visit-summary', appointment.visitUuid], {
+      queryParams: { startCall: 'video' }
+    });
+  }
+
+  formatStartsInProgress(element: any): string {
+    const start = moment(element?.slotJsDate);
+    const now = moment();
+    const minsLeft = start.diff(now, 'minutes');
+    const window = 60;
+    const pct = Math.max(0, Math.min(100, ((window - minsLeft) / window) * 100));
+
+    let color = '#0FD197';
+    let text = '';
+    if (minsLeft <= 0) {
+      color = '#FF475D';
+      text = this.translateService.instant('Due now');
+    } else if (minsLeft < 60) {
+      color = '#FF9F45';
+      text = `${minsLeft} ${this.translateService.instant('min')}`;
+    } else if (start.diff(now, 'hours') < 24) {
+      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')}`;
+    } else {
+      text = start.format('DD MMM, hh:mm A');
+    }
+
+    return `
+      <div style="min-width:130px;">
+        <span style="color:${color};font-weight:bold;">${text}</span>
+        <div style="height:5px;border-radius:3px;background:#ececf3;margin-top:5px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
       return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
