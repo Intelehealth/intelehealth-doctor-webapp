@@ -131,7 +131,7 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   saveManualDiagnosis(payload: any): Observable<any> {
-    const url = `${environment.base}/ddx/manual`;
+    const url = `${environment.mindmapURL}/ddx/manual`;
     return this.http.post(url, payload);
   }
 
@@ -141,7 +141,7 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   saveManualTreatment(payload: any): Observable<any> {
-    const url = `${environment.base}/ttx/manual`;
+    const url = `${environment.mindmapURL}/ttx/manual`;
     return this.http.post(url, payload);
   }
 }
