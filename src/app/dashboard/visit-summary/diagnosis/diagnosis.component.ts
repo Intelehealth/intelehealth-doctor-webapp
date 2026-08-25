@@ -410,6 +410,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     return this.aillmddxComponent?.selectedDiagnosis || [];
   }
 
+  /*
+   * Gated on diagnoses actually added to the visit, not Ayu checkbox ticks.
+   */
+  get isTreatmentDisabled(): boolean {
+    return this.isTreatmentLoading || this.existingDiagnosis.length === 0;
+  }
+
   get selectedMedication(): any[] {
     return this.aillmtxMedicationComponent?.selectedMedicine || [];
   }
