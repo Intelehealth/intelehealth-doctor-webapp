@@ -136,7 +136,7 @@
             </div>
             <div class="confirm-treatment-wrap" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
               <button type="button" class="confirm-treatment-btn"
-                [disabled]="isTreatmentLoading || (selectedDiagnoses.length === 0 && existingDiagnosis.length === 0)"
+                [disabled]="isTreatmentDisabled"
                 (click)="confirmAndSuggestTreatment()"
                 data-test-id="btnConfirmSuggestTreatment">
                 <ng-container *ngIf="!isTreatmentLoading">
@@ -265,7 +265,7 @@
       (reportPanelIssue)="openReportIssue('ttx_medication')"
       (reportSuggestionIssue)="onMedicationSuggestionReport($event)"
       [treatmentLoading]="isTreatmentLoading"
-      [treatmentDisabled]="isTreatmentLoading || (selectedDiagnoses.length === 0 && existingDiagnosis.length === 0)"
+      [treatmentDisabled]="isTreatmentDisabled"
       (requestTreatmentPlan)="confirmAndSuggestTreatment()"
       data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
   </ng-container>
