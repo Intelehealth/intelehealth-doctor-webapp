@@ -454,6 +454,68 @@ textarea.form-control {
   max-width: 500px;
   max-height: fit-content;
 
+  .confirm-treatment-wrap {
+    border-top: 1px dashed #B5F2DF;
+    margin-top: 12px;
+    padding-top: 14px;
+  }
+
+  .report-issue-btn,
+  .report-issue-btn-sm {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+    cursor: pointer;
+    line-height: 0;
+    opacity: 0.75;
+  }
+
+  .report-issue-btn:hover,
+  .report-issue-btn-sm:hover {
+    opacity: 1;
+  }
+
+  .confirm-treatment-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(90deg, #4a2fd6 0%, #3a1eb0 100%);
+    cursor: pointer;
+
+    img { width: 18px; height: 18px; filter: brightness(0) invert(1); }
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:not(:disabled):hover { background: linear-gradient(90deg, #3f27bd 0%, #311a97 100%); }
+  }
+
+  .confirm-spinner {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: confirm-treatment-spin 0.7s linear infinite;
+  }
+
+  @keyframes confirm-treatment-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .confirm-treatment-hint {
+    text-align: center;
+    color: #8a8a9a;
+    font-size: 12px;
+    margin: 8px 0 0;
+  }
+
   label {
     display: flex;
     align-items: center;

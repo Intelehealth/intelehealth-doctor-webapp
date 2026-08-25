@@ -1,0 +1,140 @@
+.insights-con {
+  padding: 24px;
+}
+
+.insights-disabled {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.insights-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.insights-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.range-select {
+  border: 1px solid #ece7fb;
+  color: #4c1d95;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.refresh-btn {
+  border: 1px solid #6b46c1;
+  color: #6b46c1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #f7f5ff;
+  border: 1px solid #ece7fb;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #4c1d95;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.recent-card {
+  background: #fff;
+  border: 1px solid #ece7fb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.recent-title {
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-table th,
+.recent-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0eefb;
+  font-size: 14px;
+}
+
+.recent-table th {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.recent-table .empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px;
+}
+
+.cell-val {
+  vertical-align: middle;
+}
+
+.copy-btn {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0 4px;
+  vertical-align: middle;
+}
+
+.copy-btn:hover {
+  color: #6b46c1;
+}
+
+.copy-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.copy-label {
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 2px;
+  vertical-align: middle;
+}

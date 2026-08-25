@@ -115,12 +115,14 @@
                 <span class="ctrl-indicator" *ngIf="cameraIssue" title="Camera issue">!</span>
               </button>
             </div>
+            <div class="window-controls" [class.minimized]="_minimized">
               <button
                 type="button"
                 class="video-ctrl-btn fullscreen-btn"
                 (click)="toggleWindow()"
                 data-test-id="btnToggleWindow"
                 [class.minimized]="_minimized"
+                [title]="_minimized ? 'Maximize' : 'Minimize'"
               >
                 <img
                   src="{{
@@ -131,6 +133,7 @@
                   alt=""
                 />
               </button>
+            </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
             <div #localVideo class="local-container"></div>

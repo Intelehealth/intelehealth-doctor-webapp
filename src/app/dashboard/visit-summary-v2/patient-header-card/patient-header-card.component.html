@@ -1,0 +1,115 @@
+<div class="vs2-patient-card">
+ <div class="vs2-patient-top">
+  <div class="vs2-patient-left">
+    <img class="vs2-avatar" [src]="patient.avatar" alt="patient avatar" />
+    <div class="vs2-patient-info">
+      <div class="vs2-patient-name-row">
+        <span class="vs2-patient-name">{{ patient.name }} ({{ patient.gender }})</span>
+        <span class="vs2-chip vs2-chip-purple" *ngIf="patient.tag">{{ patient.tag }}</span>
+      </div>
+      <div class="vs2-patient-id">{{ patient.openMrsId }}</div>
+
+      <div class="vs2-patient-meta">
+        <div class="vs2-meta-item">
+          <span class="vs2-meta-label">Age</span>
+          <span class="vs2-meta-value">{{ patient.age }}</span>
+        </div>
+        <div class="vs2-meta-item">
+          <span class="vs2-meta-label">Weight</span>
+          <span class="vs2-meta-value">{{ patient.weight }}</span>
+        </div>
+        <div class="vs2-meta-item">
+          <span class="vs2-meta-label">Allergies</span>
+          <div class="vs2-allergies">
+            <span class="vs2-chip vs2-chip-red" *ngFor="let a of visibleAllergies">{{ a }}</span>
+            <button type="button" class="vs2-chip vs2-chip-grey vs2-chip-btn"
+                    *ngIf="patient.extraAllergiesCount"
+                    (click)="toggleAllAllergies()">{{ showAllAllergies ? 'Show less' : '+' + patient.extraAllergiesCount + ' more' }}</button>
+            <span class="vs2-meta-value" *ngIf="!patient.allergies?.length">NA</span>
+          </div>
+        </div>
+        <div class="vs2-meta-item" *ngIf="patient.pregnancy">
+          <span class="vs2-meta-label">Pregnancy</span>
+          <span class="vs2-meta-value vs2-meta-value-purple">{{ patient.pregnancy }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vs2-patient-right">
+    <div class="vs2-contact">
+      <span class="vs2-contact-label">Contact no:</span>
+      <div class="vs2-contact-row">
+        <span class="vs2-contact-no">{{ patient.contactNo }}</span>
+        <span class="vs2-call-btn"><mat-icon>call</mat-icon></span>
+      </div>
+    </div>
+    <a class="vs2-view-full" href="javascript:void(0)" (click)="toggleFullDetails()">
+      <mat-icon>{{ showFullDetails ? 'expand_less' : 'expand_more' }}</mat-icon>
+      {{ showFullDetails ? 'Hide Patient Details' : 'View Full Patient Details' }}
+    </a>
+  </div>
+ </div>
+
+  <div class="vs2-patient-full" *ngIf="showFullDetails">
+    <div class="vs2-full-left">
+      <div class="vs2-full-block">
+        <span class="vs2-meta-label">All Allergies</span>
+        <div class="vs2-allergies vs2-allergies-wrap">
+          <span class="vs2-chip"
+                [ngClass]="a.severe ? 'vs2-chip-red' : 'vs2-chip-yellow'"
+                *ngFor="let a of patient.allAllergies">{{ a.name }}</span>
+          <span class="vs2-meta-value" *ngIf="!patient.allAllergies?.length">NA</span>
+        </div>
+      </div>
+
+      <div class="vs2-full-block">
+        <span class="vs2-contact-label">Contact no:</span>
+        <div class="vs2-full-contacts">
+          <div class="vs2-contact-row" *ngFor="let c of patient.contacts">
+            <span class="vs2-contact-no">{{ c.no }}</span>
+            <span class="vs2-call-btn">
+              <img *ngIf="c.type === 'whatsapp'" class="vs2-contact-icon"
+                   src="assets/svgs/whatsapp-icon.svg" alt="whatsapp" />
+              <mat-icon *ngIf="c.type !== 'whatsapp'">call</mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vs2-full-right">
+      <div class="vs2-full-toprow">
+        <div class="vs2-meta-item">
+          <span class="vs2-meta-label">Occupation</span>
+          <span class="vs2-meta-value">{{ patient.occupation }}</span>
+        </div>
+        <div class="vs2-meta-item">
+          <span class="vs2-meta-label">Date of Birth</span>
+          <span class="vs2-meta-value">{{ patient.dateOfBirth }}</span>
+        </div>
+      </div>
+
+      <div class="vs2-full-tabs">
+        <button class="vs2-full-tab"
+                *ngFor="let t of fullDetailsTabs"
+                [class.active]="activeFullDetailsTab === t"
+                (click)="setFullDetailsTab(t)">{{ t }}</button>
+      </div>
+
+      <div class="vs2-full-grid" *ngIf="activeFullDetailsTab === 'Address'">
+        <div class="vs2-meta-item" *ngFor="let row of patient.address">
+          <span class="vs2-meta-label">{{ row.label }}</span>
+          <span class="vs2-meta-value">{{ row.value }}</span>
+        </div>
+      </div>
+
+      <div class="vs2-full-grid" *ngIf="activeFullDetailsTab === 'Other'">
+        <div class="vs2-meta-item" *ngFor="let row of patient.other">
+          <span class="vs2-meta-label">{{ row.label }}</span>
+          <span class="vs2-meta-value">{{ row.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

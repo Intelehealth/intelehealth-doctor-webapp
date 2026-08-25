@@ -35,6 +35,11 @@ import { MatInputModule } from '@angular/material/input';
 import { formatDate } from '@angular/common';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ReferralConsentComponent } from '../referral-consent/referral-consent.component';
+import { InsightService } from 'src/app/services/insight.service';
+import { insightEvents } from 'src/config/insight-events';
+import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
+import { CoreService } from 'src/app/services/core/core.service';
+import { AiIssueReportService } from 'src/app/services/ai-issue-report.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -178,7 +183,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     private encounterService: EncounterService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private insight: InsightService,
+    private coreService: CoreService,
+    private aiIssueReportService: AiIssueReportService
   ) {
     this.diagnosisForm = this.fb.group({
       diagnosisName: ['', Validators.required],
@@ -308,6 +316,45 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy() {
     // Clear the cache when component is destroyed
     this.aiTxService.clearCache();
+  }
+
+  private getPatientOpenMrsId(): string {
+    const identifiers = this.patientInfo?.identifiers || [];
+    const idf = identifiers.find((i: any) => i.identifierType?.display === 'OpenMRS ID');
+    return idf?.identifier || '';
+  }
+
+  openReportIssue(aiSurface: ReportAiIssueDialogData['aiSurface'], item?: any): void {
+    const doctor = getCacheData(true, doctorDetails.PROVIDER);
+    this.coreService.openReportAiIssueModal({
+      visitUuid: this.visit?.uuid,
+      doctorUuid: doctor?.uuid,
+      patientUuid: this.visit?.patient?.uuid,
+      aiSurface,
+      suggestionRef: item?.diagnosis || item?.name,
+      rawSuggestion: item,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientOpenMrsId(),
+    }).subscribe();
+  }
+
+  onMedicationSuggestionReport(payload: any): void {
+    const doctor = getCacheData(true, doctorDetails.PROVIDER);
+    this.aiIssueReportService.create({
+      visit_uuid: this.visit?.uuid,
+      doctor_uuid: doctor?.uuid,
+      patient_uuid: this.visit?.patient?.uuid,
+      ai_surface: 'ttx_medication',
+      reason: payload?.reason,
+      details: payload?.details,
+      suggestion_ref: payload?.suggestion_ref,
+      raw_suggestion: payload?.raw_suggestion,
+      doctor_name: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patient_openmrs_id: this.getPatientOpenMrsId(),
+    }).subscribe({
+      next: () => this.coreService.showToast('success', 'We recorded this report and will review it asap!', 'Reported', 'reportAiIssueSuccessToast'),
+      error: () => this.coreService.showToast('error', 'Could not submit the report. Please try again.', 'Error', 'reportAiIssueErrorToast'),
+    });
   }
 
   /**
@@ -638,6 +685,18 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         uuid: uuid
       };
     }
+  }
+
+  onRationaleOpened(payload?: any): void {
+    this.insight.record({
+      event_name: insightEvents.DDX_RATIONALE_OPENED,
+      entity_type: 'visit',
+      entity_id: this.visit?.uuid,
+      properties: {
+        diagnosis_count: payload?.diagnosis_count,
+        doctor_name: getCacheData(true, doctorDetails.USER)?.person?.display
+      }
+    });
   }
 
   onAIDiagnosisSelected(): void {

@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { ProviderService } from 'src/app/services/provider.service';
+import { InsightService } from 'src/app/services/insight.service';
+import { insightEvents } from 'src/config/insight-events';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { AppointmentService } from 'src/app/services/appointment.service';
@@ -10,8 +12,10 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { AbstractControl, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
+import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
@@ -96,6 +100,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   facilities: DataItemModel[] = facility.facilities
   specializations: SpecializationModel[] = [];
   referSpecializations: DropdownItemModel[] = [];
+  readonly OTHERS_SPECIALITY = 'Others';
   refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
   strengthList: DataItemModel[] = strength.strengthList
   daysList: DataItemModel[] = days.daysList
@@ -151,6 +156,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   additionalNotes = '';
   isCalling: boolean = false;
+  autoCallStarted: boolean = false;
 
   openChatFlag: boolean = false;
 
@@ -174,6 +180,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   collapsed: boolean = false;
   isMCCUser: boolean = false;
+  isTurnServer: boolean = environment.isTurnServer;
+  magicLinkUrl: string = null;
+  generatingMagicLink: boolean = false;
   brandName = environment.brandName === 'KCDO';
   diagnosticList;
   sanitizedValue: SafeHtml;
@@ -475,7 +484,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     private rolesService: NgxRolesService,
     private sanitizer: DomSanitizer,
     private analytics: AnalyticsService,
-    private providerService: ProviderService) {
+    private webrtcSvc: WebrtcService,
+    private providerService: ProviderService,
+    private insight: InsightService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
     });
@@ -484,7 +495,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.diagnostics = this.appConfigService.patient_diagnostics_section ? [...this.appConfigService.patient_diagnostics] : [];
     this.digitalStethoscope = this.appConfigService.digital_stethoscope_section ? [...this.appConfigService.digital_stethoscope] : [];
     this.specializations = [...this.appConfigService.specialization];
-    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.referSpecializations = [
+      ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
+      ...(environment.isTurnServer ? [{ id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true }] : []),
+    ];
     this.patientVisitSummary = { ...this.appConfigService.patient_visit_summary };
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
@@ -548,6 +562,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       reason: new FormControl(null)
     });
 
+    // "Others" needs the doctor to type what specialty they mean, in Remarks.
+    this.addReferralForm.get('speciality').valueChanges.subscribe((speciality) => {
+      const reasonControl = this.addReferralForm.get('reason');
+      if (speciality === this.OTHERS_SPECIALITY) {
+        reasonControl.setValidators([Validators.required]);
+      } else {
+        reasonControl.clearValidators();
+      }
+      reasonControl.updateValueAndValidity();
+    });
+
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
@@ -555,7 +580,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
-      followUpType: new FormControl(null)
+      followUpType: new FormControl(environment.isTurnServer ? 'Telemedicine' : null)
     });
 
     this.referralSecondaryForm = new FormGroup({
@@ -624,6 +649,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
+    this.insight.record({ event_name: insightEvents.VISIT_SUMMARY_VIEWED, entity_type: 'visit', entity_id: id });
     medicines.forEach(med => {
       this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
     });
@@ -743,7 +769,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
-            this.clinicName = visit.location.display;
+            // Debug: what patientInfo() actually returned for identifiers. If
+            // typeDisplay is undefined here, the fetch representation didn't
+            // expand identifiers (isTurnServer flag / build), so the header shows NA.
+            this.clinicName = visit.location?.display || '';
 
             if (this.appConfigService.abha_section) {
               // check if abha number / abha address exists for this patient
@@ -756,6 +785,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // check if Patient Exit Survey exists for this visit
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
+            this.maybeAutoStartCall();
             if (this.visitNotePresent) {
               // Set consultation start time from visit note encounter datetime if not already set
               if (!this.consultationStartTime && this.visitNotePresent.encounterDatetime) {
@@ -822,11 +852,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getVisitProvider(encounters: EncounterModel[]): void {
     encounters.forEach((encounter: EncounterModel) => {
-      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
-        this.providerName = encounter.encounterProviders[0].provider.person.display;
+      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null && encounter.encounterProviders?.length) {
+        this.providerName = encounter.encounterProviders[0].provider?.person?.display || '';
         // store visit provider in local-Storage
         setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
-        encounter.encounterProviders[0].provider.attributes.forEach(
+        encounter.encounterProviders[0].provider?.attributes?.forEach(
           (attribute) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
               this.hwPhoneNo = attribute.value;
@@ -1332,6 +1362,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  maybeAutoStartCall(): void {
+    if (!environment.isTurnServer || this.autoCallStarted) {
+      return;
+    }
+    if (this.route.snapshot.queryParamMap.get('startCall') !== 'video') {
+      return;
+    }
+    this.autoCallStarted = true;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true
+    });
+    this.startCall('video');
+  }
+
   /**
   * Start video call with HW/patient
   * @return {void}
@@ -1372,6 +1418,30 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
       this.isCalling = false;
+    });
+  }
+
+  onGenerateMagicLink() {
+    if (this.generatingMagicLink || !this.visit?.uuid) return;
+    this.generatingMagicLink = true;
+    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME) || this.provider?.person?.display;
+    this.webrtcSvc.generateMagicLink(this.visit.uuid, this.visit.patient?.uuid, doctorName, this.patient?.person?.display).subscribe((res: any) => {
+      this.generatingMagicLink = false;
+      if (res?.success && res?.url) {
+        this.magicLinkUrl = res.url;
+      } else {
+        this.toastr.error(res?.message || 'Could not generate the video call link.');
+      }
+    }, () => {
+      this.generatingMagicLink = false;
+      this.toastr.error('Could not generate the video call link.');
+    });
+  }
+
+  copyMagicLink() {
+    if (!this.magicLinkUrl) return;
+    navigator.clipboard.writeText(this.magicLinkUrl).finally(() => {
+      this.translationService.getTranslation('Video call magic link copied', '', true);
     });
   }
 
@@ -1482,6 +1552,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.encounterService.postEncounter(json).subscribe((response) => {
       this.visitNotePresent = response;
+      this.notifyHwForVisitStarted();
       // save diagnosis from case summary
       if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
         let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
@@ -2407,7 +2478,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
-            followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
+            followUpType: this.isFeatureAvailable('followUpType')
+              ? (followUpType ?? (environment.isTurnServer ? 'Telemedicine' : null))
+              : null
           });
         }
       });
@@ -2452,7 +2525,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, /* followUpTime: null, */ followUpReason: null, followUpType: null });
+      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: '', followUpDate: null, /* followUpTime: null, */ followUpReason: null, followUpType: environment.isTurnServer ? 'Telemedicine' : null });
       this.followUpDatetime = null;
     });
   }
@@ -2563,6 +2636,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
+    if (environment.isTurnServer && this.addReferralForm.value.speciality === this.OTHERS_SPECIALITY && !this.addReferralForm.value.reason) {
+      this.toastr.warning(this.translateService.instant('Please specify the specialty in Remarks'), this.translateService.instant('Remarks Required'));
+      return false;
+    }
+
     if (this.appConfigService.patient_visit_summary?.dp_dignosis_secondary && this.diagnosisSecondaryForm.invalid) {
       this.toastr.warning(this.translateService.instant('Enter Diagnosis'), this.translateService.instant('Diagnosis Required'));
       return false;
@@ -2580,12 +2658,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
 
-    if (this.appConfigService.namco_referral_section && !this.referralConsentForm.value.decision) {
+    // Turn servers hide the Referral Consent section, so skip its validation too
+    // (otherwise the visit can never be completed -- the field can't be filled).
+    if (!environment.isTurnServer && this.appConfigService.namco_referral_section && !this.referralConsentForm.value.decision) {
       this.toastr.warning(this.translateService.instant('Referral consent not added'), this.translateService.instant('Referral Consent Required'));
       return false;
     }
 
-    if (this.appConfigService.namco_referral_section && this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
+    if (!environment.isTurnServer && this.appConfigService.namco_referral_section && this.referralConsentForm.value.decision === 'NAMCO' && !this.referralConsentForm.value.consent) {
       this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
@@ -2631,7 +2711,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       }).subscribe((post) => {
                         this.visitCompleted = true;
                         const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
-
+                        // Prescription just shared -> notify the patient on WhatsApp
+                        if (environment.isTurnServer) {
+                          this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+                        }
                         this.notifyHwForAvailablePrescription("","",followUpDate);
                         this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
@@ -2841,6 +2924,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getImagesBySection(section: string): Array<DocImagesModel> {
     return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  notifyHwForVisitStarted(): void {
+    const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
+    this.mindmapService.notifyHwForVisitStarted(hwUuid, {
+      visitUuid: this.visit?.uuid,
+      patientUuid: this.patient?.uuid,
+      patientOpenMrsId: this.getPatientIdentifier("OpenMRS ID"),
+      doctorUuid: this.provider?.uuid
+    });
   }
 
   /**
@@ -4061,6 +4154,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   get ayuSuggestionsLoading(): boolean {
     return !!this.ddxCompRef?.instance?.aillmddxComponent?.isLoading;
+  }
+
+  openReportIssue(aiSurface: ReportAiIssueDialogData['aiSurface']): void {
+    const doctor = getCacheData(true, doctorDetails.PROVIDER);
+    this.coreService.openReportAiIssueModal({
+      visitUuid: this.visit?.uuid,
+      doctorUuid: doctor?.uuid,
+      patientUuid: this.visit?.patient?.uuid,
+      aiSurface,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+    }).subscribe();
   }
 
   // SaveAIDiagosisHistory(visit:any, diagnosisData:any){
