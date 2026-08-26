@@ -11,11 +11,14 @@ export const DEFAULT_DIAGNOSIS_CODE = 'NA';
 export const DEFAULT_DIAGNOSIS_TYPE = 'Primary';
 export const DEFAULT_DIAGNOSIS_STATUS = 'Provisional';
 export const DEFAULT_MEDICINE_DURATION_UNIT = 'Days';
+export const MEDICINE_SEARCH_MIN_LENGTH = 2;
+export const MEDICINE_SEARCH_MAX_RESULTS = 8;
+export const ADVICE_SEARCH_MAX_RESULTS = 8;
+export const ADVICE_SEARCH_MIN_LENGTH = 2;
 
 export const CONTEXT_CHIPS: string[] = ['Pregnancy', 'Travel History', 'Immunocompromised', 'Weight Loss', 'Chronic Disease'];
 export const DIAGNOSIS_TYPES: string[] = ['Primary', 'Secondary'];
 export const DIAGNOSIS_STATUSES: string[] = ['Provisional', 'Confirmed', 'Under Evaluation'];
-export const QUICK_DIAGNOSES: string[] = ['Viral Fever', 'Hypertension', 'UTI', 'Diabetes', 'Pregnancy'];
 
 export const DRUG_OPTIONS: string[] = medicines.map(m => m.name);
 export const DOSE_OPTIONS: string[] = doses.map(d => d.name);
@@ -29,11 +32,8 @@ export const FREQUENCY_OPTIONS: string[] = [
   'Every 30 minutes', 'Every hour', 'Every four hours', 'Every eight hours',
   'Twice daily before meals', 'Twice daily after meals'
 ];
-export const QUICK_MEDICINES: string[] = ['Paracetamol', 'Lisinopril', 'Nitrofurantoin', 'Metformin', 'Prenatal vitamins'];
 export const TIMING_OPTIONS: string[] = ['1 - 0 - 0', '0 - 1 - 0', '0 - 0 - 1', '1 - 0 - 1', '1 - 1 - 1'];
 export const DAY_OPTIONS: string[] = ['3', '5', '7', '10', '15', '30'];
-
-export const QUICK_ADVICES: string[] = ['Light Exercise', 'Drink 2-3 liters of water', 'Use Lukewarm water', 'Follow up in 7 days'];
 
 export const ADVICE_BUNDLES: AdviceBundle[] = [
   {

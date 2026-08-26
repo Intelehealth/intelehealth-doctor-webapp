@@ -133,6 +133,7 @@ export class VisitSummaryV2Service {
       suggestions: results.map((r: any) => ({
         name: r?.diagnosis || '',
         likelihood: this.mapLikelihood(r?.likelihood),
+        confidence: this.mapProbability(r?.probability),
         reasons: this.buildRationale(r)
       })).filter((s: AiDiagnosisSuggestion) => !!s.name),
       questions: questions.map((q: any) => {
@@ -147,6 +148,13 @@ export class VisitSummaryV2Service {
         };
       }).filter((q: AyuSuggestedQuestion) => !!q.question)
     };
+  }
+
+  private mapProbability(value: any): number | null {
+    if (value === null || value === undefined || value === '') { return null; }
+    const num = Number(value);
+    if (isNaN(num)) { return null; }
+    return Math.round(num <= 1 ? num * 100 : num);
   }
 
   private mapLikelihood(value: string): SuggestionLikelihood {
@@ -171,6 +179,7 @@ export class VisitSummaryV2Service {
         name: m?.name || '',
         label: m?.name || '',
         likelihood: this.mapConfidence(m?.confidence),
+        confidence: this.mapProbability(m?.confidence),
         reasons: this.toReasonList(m?.rationale),
         timing: m?.frequency || '',
         strength: m?.dosage || '',

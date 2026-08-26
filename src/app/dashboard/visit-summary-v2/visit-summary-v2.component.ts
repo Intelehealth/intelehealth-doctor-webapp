@@ -57,8 +57,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     { key: 'dn-advice', label: 'Advice', icon: 'assets/svgs/advice.svg' },
     { key: 'dn-test', label: 'Test', icon: 'assets/svgs/test.svg' },
     { key: 'dn-referral', label: 'Referral-Out', icon: 'assets/svgs/referal.svg' },
-    { key: 'dn-followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' },
-    { key: 'dn-documents', label: 'Additional documents', icon: 'assets/svgs/additional-document-purple.svg' }
+    { key: 'dn-followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' }
   ];
 
   patient: Patient | null = null;

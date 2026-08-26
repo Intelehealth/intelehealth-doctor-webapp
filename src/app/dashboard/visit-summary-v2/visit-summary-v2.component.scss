@@ -1135,6 +1135,31 @@ app-past-visits {
   }
 }
 
+.vs2-ai-dx-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .vs2-ai-dx-title {
+    margin-bottom: 12px;
+  }
+}
+
+.vs2-report-issue-btn {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 2px 4px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  line-height: 0;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .vs2-ai-panel {
   background: $section-bg;
   border-radius: 12px;
@@ -1260,13 +1285,6 @@ app-past-visits {
   cursor: pointer;
   background: #fff;
 
-  .vs2-dx-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: $grey-text;
-  }
-
   .vs2-dx-badge {
     border-radius: 6px;
     padding: 3px 8px;
@@ -1277,7 +1295,7 @@ app-past-visits {
   }
 
   .vs2-dx-info,
-  .vs2-dx-check {
+  .vs2-dx-mark {
     font-size: 18px;
     width: 18px;
     height: 18px;
@@ -1287,46 +1305,107 @@ app-past-visits {
   &.vs2-dx-high {
     border-color: #bdeedd;
 
-    .vs2-dx-dot { background: $green; }
     .vs2-dx-badge { background: $green-soft; color: #1f9d6e; }
   }
 
   &.vs2-dx-moderate {
     border-color: #f6d9a8;
 
-    .vs2-dx-dot { background: #e79a2b; }
     .vs2-dx-badge { background: #fff4e2; color: #c2760f; }
   }
 
   &.vs2-dx-selected {
     border-color: $green;
 
-    .vs2-dx-check { color: $green; }
+    .vs2-dx-mark { color: $green; }
   }
+}
+
+.vs2-dx-info-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .vs2-dx-why {
-  background: $section-bg;
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: -8px;
+  z-index: 5;
+  width: 240px;
+  cursor: default;
+  background: #fff;
+  border: 1px solid $border;
   border-radius: 10px;
-  padding: 14px 18px;
-  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(20, 20, 60, 0.16);
+  padding: 12px 14px;
+
+  &.vs2-dx-why-open {
+    display: block;
+  }
 
   h5 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: $purple;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
+  }
+
+  .vs2-bullet-list {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 12px;
+    color: $navy;
   }
 }
 
-.vs2-dx-search {
+.vs2-dx-info-wrap:hover .vs2-dx-why {
   display: block;
+}
+
+.vs2-dx-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: $section-bg;
+  border: 1px solid $border;
+  border-radius: 999px;
+  padding: 0 16px;
+  min-height: 46px;
   margin-bottom: 12px;
 
-  .ng-select-container {
-    background: $section-bg;
-    min-height: 46px;
+  .vs2-dx-search-icon,
+  .vs2-dx-search-clear {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: $grey-text;
+    flex: none;
   }
+
+  .vs2-dx-search-clear {
+    cursor: pointer;
+  }
+
+  .vs2-dx-search-input {
+    flex: 1;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 15px;
+    color: $navy;
+
+    &::placeholder {
+      color: $grey-text;
+    }
+  }
+}
+
+.vs2-dx-search-hint {
+  font-size: 13px;
+  color: $grey-text;
+  align-self: center;
 }
 
 .vs2-dx-quick-row {
@@ -1898,6 +1977,12 @@ app-past-visits {
 
 .vs2-mt {
   margin-top: 14px;
+}
+
+.vs2-share-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
 }
 
 .vs2-btn-row {
