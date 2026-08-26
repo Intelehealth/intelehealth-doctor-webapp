@@ -14,6 +14,7 @@ export const DEFAULT_MEDICINE_DURATION_UNIT = 'Days';
 export const MEDICINE_SEARCH_MIN_LENGTH = 2;
 export const MEDICINE_SEARCH_MAX_RESULTS = 8;
 export const ADVICE_SEARCH_MAX_RESULTS = 8;
+export const ADVICE_SEARCH_MIN_LENGTH = 2;
 
 export const CONTEXT_CHIPS: string[] = ['Pregnancy', 'Travel History', 'Immunocompromised', 'Weight Loss', 'Chronic Disease'];
 export const DIAGNOSIS_TYPES: string[] = ['Primary', 'Secondary'];

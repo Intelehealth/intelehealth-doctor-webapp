@@ -21,7 +21,7 @@ import {
   DIAGNOSIS_SEARCH_DEBOUNCE_MS, DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_STATUSES, DIAGNOSIS_TYPES,
   DOSE_OPTIONS, DRUG_OPTIONS, DURATION_UNIT_OPTIONS, FACILITY_OPTIONS, FREQUENCY_OPTIONS,
   INSTRUCTION_OPTIONS, MEDICINE_SEARCH_MAX_RESULTS, MEDICINE_SEARCH_MIN_LENGTH,
-  ADVICE_SEARCH_MAX_RESULTS, REFERRAL_PRIORITIES,
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, REFERRAL_PRIORITIES,
   TIMING_OPTIONS
 } from './doctor-note.constants';
 
@@ -129,8 +129,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   followUpTimeSlots: string[] = [];
   readonly quickFollowUpDays = [3, 7, 10, 30];
   minFollowUpDate = new Date().toISOString().slice(0, 10);
-
-  uploadedDocs: { name: string }[] = [];
 
   private provider = getCacheData(true, doctorDetails.PROVIDER);
 
@@ -309,7 +307,15 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   isDiagnosisSelected(name: string): boolean {
+    return this.isDiagnosisPending(name) || this.isDiagnosisAdded(name);
+  }
+
+  private isDiagnosisPending(name: string): boolean {
     return this.selectedDiagnoses.some(d => d.name.toLowerCase() === name.toLowerCase());
+  }
+
+  private isDiagnosisAdded(name: string): boolean {
+    return this.addedDiagnoses.some(d => d.name.toLowerCase() === name.toLowerCase());
   }
 
   toggleAiSuggestion(suggestion: AiDiagnosisSuggestion): void {
@@ -321,6 +327,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   private toggleSelectedDiagnosis(name: string, source: 'ai' | 'manual', code = DEFAULT_DIAGNOSIS_CODE): void {
+    if (this.isDiagnosisAdded(name)) {
+      this.coreService.showToast('warning', 'Diagnosis already added, please add another diagnosis.', 'Already Added', 'warning-diagnosis-toast');
+      return;
+    }
     const index = this.selectedDiagnoses.findIndex(d => d.name.toLowerCase() === name.toLowerCase());
     if (index > -1) {
       this.selectedDiagnoses.splice(index, 1);
@@ -342,8 +352,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!this.canWrite()) { return; }
     [...this.selectedDiagnoses].forEach(dx => {
       const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
-      this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload, dx.uuid || undefined).subscribe(res => {
-        this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || dx.uuid || '' });
+      this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).subscribe(res => {
+        this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
         const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
         if (index > -1) { this.selectedDiagnoses.splice(index, 1); }
         this.loadAiTreatment();
@@ -421,16 +431,22 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   editDiagnosis(index: number): void {
     const dx = this.addedDiagnoses[index];
-    if (!dx || this.isDiagnosisSelected(dx.name)) { return; }
-    this.addedDiagnoses.splice(index, 1);
-    this.selectedDiagnoses.push({
-      name: dx.name,
-      code: dx.code || DEFAULT_DIAGNOSIS_CODE,
-      source: 'manual',
-      type: dx.type,
-      status: dx.status,
-      uuid: dx.uuid || ''
-    });
+    if (!dx || this.isDiagnosisPending(dx.name)) { return; }
+    const pullIntoEditor = () => {
+      this.addedDiagnoses.splice(index, 1);
+      this.selectedDiagnoses.push({
+        name: dx.name,
+        code: dx.code || DEFAULT_DIAGNOSIS_CODE,
+        source: 'manual',
+        type: dx.type,
+        status: dx.status
+      });
+    };
+    if (dx.uuid) {
+      this.v2Service.deleteObs(dx.uuid).subscribe(() => pullIntoEditor());
+      return;
+    }
+    pullIntoEditor();
   }
 
   deleteDiagnosis(index: number, uuid?: string): void {
@@ -448,7 +464,15 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   isMedicineSelected(name: string): boolean {
+    return this.isMedicinePending(name) || this.isMedicineAdded(name);
+  }
+
+  private isMedicinePending(name: string): boolean {
     return this.selectedMedicines.some(m => m.drug.toLowerCase() === name.toLowerCase());
+  }
+
+  private isMedicineAdded(name: string): boolean {
+    return this.addedMedicines.some(m => m.drug.toLowerCase() === name.toLowerCase());
   }
 
   toggleAiMedication(suggestion: AiMedicationSuggestion): void {
@@ -466,7 +490,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     const contains = this.drugOptions.filter(d => !d.toLowerCase().startsWith(query) && d.toLowerCase().includes(query));
     this.medicineResults = [...starts, ...contains].slice(0, MEDICINE_SEARCH_MAX_RESULTS);
     if (!this.medicineResults.some(d => d.toLowerCase() === query)) {
-      this.medicineResults.unshift(term.trim());
+      this.medicineResults.push(term.trim());
     }
   }
 
@@ -479,6 +503,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   private toggleSelectedMedicine(drug: string, source: 'ai' | 'manual', suggestion?: AiMedicationSuggestion): void {
+    if (this.isMedicineAdded(drug)) {
+      this.coreService.showToast('warning', 'Medicine already added, please add another medicine.', 'Already Added', 'warning-medicine-toast');
+      return;
+    }
     const index = this.selectedMedicines.findIndex(m => m.drug.toLowerCase() === drug.toLowerCase());
     if (index > -1) {
       this.selectedMedicines.splice(index, 1);
@@ -607,7 +635,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   onAdviceSearch(term: string): void {
     this.adviceSearchTerm = term;
     const query = (term || '').trim().toLowerCase();
-    if (!query) {
+    if (query.length < ADVICE_SEARCH_MIN_LENGTH) {
       this.adviceResults = [];
       return;
     }
@@ -615,7 +643,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     const contains = this.adviceOptions.filter(a => !a.toLowerCase().startsWith(query) && a.toLowerCase().includes(query));
     this.adviceResults = [...starts, ...contains].slice(0, ADVICE_SEARCH_MAX_RESULTS);
     if (!this.adviceResults.some(a => a.toLowerCase() === query)) {
-      this.adviceResults.unshift(term.trim());
+      this.adviceResults.push(term.trim());
     }
   }
 

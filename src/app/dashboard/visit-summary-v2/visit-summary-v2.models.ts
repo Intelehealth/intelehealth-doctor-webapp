@@ -149,7 +149,6 @@ export interface SelectedDiagnosis {
   source: SuggestionSource;
   type: string;
   status: string;
-  uuid?: string;
 }
 
 export interface SelectedMedicine {

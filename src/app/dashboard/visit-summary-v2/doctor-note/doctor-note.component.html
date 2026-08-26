@@ -763,25 +763,8 @@
   </ng-container>
 </section>
 
-<section id="section-dn-documents" class="vs2-section-card">
-  <div class="vs2-section-title">
-    <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
-    <span>Additional documents</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
-  </div>
-  <div class="vs2-divider"></div>
-
-  <div class="vs2-list-item" *ngFor="let doc of uploadedDocs">
-    <span class="vs2-detail-label">{{ doc.name }}</span>
-    <mat-icon class="vs2-delete-icon">delete_outline</mat-icon>
-  </div>
-
-  <div class="vs2-dropzone">
-    <mat-icon>cloud_upload</mat-icon>
-    <span class="vs2-dropzone-text">Drag &amp; drop files or <a href="javascript:void(0)">Browse</a></span>
-    <span class="vs2-dropzone-hint">Supported formats: Images, JPEG, PNG, GIF, PDF, DOC, Excel, PPT</span>
-  </div>
-  <button class="vs2-btn-primary vs2-mt" (click)="sharePrescription()">
+<div class="vs2-share-row">
+  <button class="vs2-btn-primary" (click)="sharePrescription()">
     {{ prescriptionShared ? 'Update Prescription' : 'Share Prescription' }}
   </button>
-</section>
+</div>
