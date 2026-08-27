@@ -10,8 +10,14 @@ export class ReoportService {
 
   getReport(body) {
     if (body.reportId === 1) {
-      return this.http.get(
-        `${environment.base}/pl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
+      return this.http.post(
+        `${environment.base}/pl`,
+        {
+          startDate: body.selectedData.value.field1,
+          endDate: body.selectedData.value.field2,
+          receiver: body.selectedData.value.field3
+        },
+        { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 2) {

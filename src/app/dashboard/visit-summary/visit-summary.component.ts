@@ -806,7 +806,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
               this.checkIfTestPresent();
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
-              this.checkIfReferralConsentPresent();
+              if (this.appConfigService.namco_referral_section) {
+                this.checkIfReferralConsentPresent();
+              }
               this.checkIfPatientCallDurationPresent(visit.attributes)
               this.checkIfCallStatusPresent(visit.attributes)
               this.checkIfDiscussionSummaryPresent();
@@ -1704,6 +1706,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {Observable<any>}
   */
   saveReferralConsent(): Observable<any> {
+    if (!this.appConfigService.namco_referral_section) {
+      return of(false);
+    }
     if (this.referralConsentForm.value.uuid) {
       if (this.referralConsentForm.valid)
         return this.encounterService.updateObs(this.referralConsentForm.value.uuid, { value: this.formatReferralConsentValue() });
