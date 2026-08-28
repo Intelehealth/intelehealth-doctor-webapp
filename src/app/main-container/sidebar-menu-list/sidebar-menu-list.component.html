@@ -9,6 +9,14 @@
   </li>
 </ng-container>
 
+<li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE', 'ORGANIZATIONAL:MCC']"
+    (click)="toggleSidebar()" data-test-id="listItemQueue">
+  <a class="nav-item-link" routerLink="/queue" routerLinkActive="active" data-test-id="linkQueue">
+    <img src="assets/svgs/menu-queue.svg" alt="" data-test-id="iconQueue">
+    <span data-test-id="labelQueue">{{'Queue' | translate}}</span>
+  </a>
+</li>
+
 <ng-container *ngIf="menus?.messages">
   <li class="nav-item"
       *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE', 'ORGANIZATIONAL:MCC']"

@@ -1,0 +1,37 @@
+<div class="intel-con-modal queue-modal" data-test-id="callNotHappenedModal">
+  <div class="queue-modal-close">
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseCallNotHappened">
+      <img src="assets/svgs/CloseX.svg" alt="Close" />
+    </button>
+  </div>
+
+  <div class="modal-con">
+    <div class="queue-modal-icon grey">
+      <img src="assets/svgs/queue-call-missed.svg" alt="" data-test-id="imgCallNotHappened" />
+    </div>
+    <h6 class="mt-3" data-test-id="lblCallNotHappenedTitle">{{ 'Call did not happen?' | translate }}</h6>
+    <p class="mt-2 text-center" data-test-id="lblCallNotHappenedMessage">
+      {{ 'You can continue with a prescription without a call.' | translate }}
+    </p>
+  </div>
+
+  <div class="reason-list">
+    <label *ngFor="let reason of reasons" class="reason-option" [class.selected]="selectedReason === reason"
+      [attr.data-test-id]="'optReason' + reason">
+      <input type="radio" name="callNotHappenedReason" [value]="reason" [(ngModel)]="selectedReason" />
+      <span class="radio-dot"></span>
+      <span class="reason-label">{{ reason | translate }}</span>
+    </label>
+  </div>
+
+  <div class="modal-action-btn-con">
+    <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)"
+      data-test-id="btnCancelCallNotHappened">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button class="modal-btn blue-btn" type="button" [disabled]="!selectedReason" (click)="close(true)"
+      data-test-id="btnContinueCallNotHappened">
+      {{ 'Continue' | translate }}
+    </button>
+  </div>
+</div>

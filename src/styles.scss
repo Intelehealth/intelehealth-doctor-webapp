@@ -8,6 +8,7 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
 @import 'bootstrap/scss/bootstrap.scss';
 @import "angular-calendar/css/angular-calendar.css";
 @import "./app/core/directives/mat-table-responsive.directive.scss";
+@import "./app/queue/queue-modals.scss";
 @import "@sjmc11/tourguidejs/src/scss/tour.scss";
 
 @font-face {
