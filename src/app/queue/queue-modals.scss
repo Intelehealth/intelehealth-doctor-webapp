@@ -1,0 +1,232 @@
+/* Queue dialogs and row menu render in the CDK overlay, outside the
+   QueueComponent's view, so their styles must be global. */
+
+$q-violet: #2E1B87;
+$q-violet-text: #3B23A8;
+$q-violet-soft: #EDEAFB;
+$q-slate: #37415B;
+$q-ink: #2B2B4B;
+$q-muted: #7F7B92;
+$q-border: #E6E6EF;
+
+.queue-modal-panel {
+  .mat-dialog-container {
+    border-radius: 16px;
+    padding: 0;
+  }
+
+  .queue-modal {
+    padding: 24px;
+    width: 100%;
+
+    .queue-modal-close {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+
+      .modal-close-btn {
+        display: inline-flex;
+        align-items: center;
+        border: none;
+        background: transparent;
+        outline: none;
+        padding: 0;
+      }
+    }
+
+    .queue-modal-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+
+      &.grey {
+        background: #F2F3F7;
+      }
+
+      &.orange {
+        background: #FDEFE0;
+      }
+
+      &.violet {
+        background: $q-violet-soft;
+      }
+    }
+
+    .modal-con {
+      h6 {
+        color: $q-ink;
+      }
+    }
+
+    .modal-action-btn-con {
+      width: 100%;
+      margin-top: 24px;
+
+      .modal-btn {
+        flex: 1;
+        border: 1px solid $q-violet-soft;
+        color: $q-violet-text;
+
+        &:disabled {
+          opacity: .5;
+          cursor: not-allowed;
+        }
+      }
+
+      .modal-btn.blue-btn {
+        background: $q-violet;
+        border: 1px solid $q-violet;
+        color: #FFFFFF;
+      }
+
+      .modal-btn.dark-btn {
+        background: $q-slate;
+        border: 1px solid $q-slate;
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  .preset-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-top: 24px;
+
+    .preset-btn {
+      flex: 1;
+      min-height: 48px;
+      border: 1px solid $q-border;
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: $q-ink;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &.selected {
+        background: $q-violet;
+        border-color: $q-violet;
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  .custom-duration-input {
+    width: 100%;
+    min-height: 56px;
+    margin-top: 12px;
+    padding: 0 16px;
+    border: 1px solid $q-border;
+    border-radius: 8px;
+    font-size: 16px;
+    color: $q-ink;
+    outline: none;
+
+    &::placeholder {
+      color: #A5A2B3;
+    }
+
+    &:focus {
+      border-color: $q-violet;
+    }
+  }
+
+  .reason-list {
+    width: 100%;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .reason-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      padding: 14px 16px;
+      border: 1px solid $q-border;
+      border-radius: 8px;
+      cursor: pointer;
+
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .radio-dot {
+        width: 20px;
+        height: 20px;
+        border: 1.5px solid #C9C7D4;
+        border-radius: 50%;
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      .reason-label {
+        font-size: 16px;
+        color: $q-muted;
+      }
+
+      &.selected {
+        border-color: $q-violet;
+
+        .radio-dot {
+          border-color: $q-violet;
+
+          &::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 50%;
+            background: $q-violet;
+          }
+        }
+
+        .reason-label {
+          color: $q-ink;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+.queue-row-menu.mat-menu-panel {
+  min-width: 240px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(43, 43, 75, .12);
+
+  .mat-menu-content {
+    padding: 6px 0;
+  }
+
+  .mat-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 15px;
+    color: $q-ink;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+
+    &.accent {
+      color: $q-violet;
+      font-weight: 600;
+    }
+
+    & + .mat-menu-item {
+      border-top: 1px solid #F2F2F7;
+    }
+  }
+}
