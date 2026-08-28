@@ -2512,7 +2512,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    if (environment.isTurnServer && this.addReferralForm.value.speciality === this.OTHERS_SPECIALITY && !this.addReferralForm.value.reason) {
+    const activeReferralForm = this.hasAILLMEnabled ? this.ddxCompRef?.instance?.addReferralForm : this.addReferralForm;
+    if (environment.isTurnServer && activeReferralForm?.value.speciality === this.OTHERS_SPECIALITY && !activeReferralForm.value.reason) {
       this.toastr.warning(this.translateService.instant('Please specify the specialty in Remarks'), this.translateService.instant('Remarks Required'));
       return false;
     }
