@@ -60,7 +60,7 @@ jobs:
               echo "host=${{ secrets.TTXAI_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
             *)
-            ttxai)
+            nasprod)
               echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
             *)    
