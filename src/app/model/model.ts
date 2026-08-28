@@ -264,6 +264,7 @@ export interface CustomVisitModel {
   attributes?: any[]
   routing_specialization?: string
   status?: string
+  referral_status?: { label: string, statusClass: string }
 }
 
 export interface CustomEncounterModel {

@@ -1,0 +1,60 @@
+.referral-sent-box {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 22px;
+  padding: 12px 16px;
+  background: #F9FFFC;
+  border: 2px solid #B5F2DF;
+  border-radius: 8px;
+  text-align: left;
+
+  .referral-sent-title {
+    color: var(--color-green);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  // Grid, not flex + justify-content:space-between — with real (longer) facility/specialty
+  // values, space-between wraps the third column onto its own left-aligned line instead of
+  // keeping three even columns, since flex rows have no notion of a column an item belongs to.
+  .referral-sent-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+  }
+
+  .referral-sent-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .referral-sent-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: #828282;
+  }
+
+  .referral-sent-value {
+    font-size: 14px;
+    color: #333333;
+    overflow-wrap: break-word;
+  }
+
+  .purple-pill {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    background: #EEECFB;
+    border-radius: 4px;
+    height: 24px;
+    color: #6C5DD3;
+    padding: 2px 8px;
+    width: fit-content;
+    font-weight: 500;
+  }
+}

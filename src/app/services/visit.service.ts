@@ -209,30 +209,33 @@ export class VisitService {
   * Get awaiting visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getAwaitingVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}`);
+  getAwaitingVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
   * Get priority visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getPriorityVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}`);
+  getPriorityVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
   * Get inprogress visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getInProgressVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}`);
+  getInProgressVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**

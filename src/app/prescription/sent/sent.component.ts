@@ -16,7 +16,7 @@ import { PaginationService, PaginationState } from '../../services/pagination.se
 export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   // Table configuration
-  displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
+  displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'referral_status'];
   dataSource: CustomVisitModel[] = [];
   
   // Input properties

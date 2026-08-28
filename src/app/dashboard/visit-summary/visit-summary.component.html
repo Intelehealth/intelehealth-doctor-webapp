@@ -2531,7 +2531,7 @@
 
       <button type="button" class="blue-btn mr-2 mb-2" (click)="saveAsDraft()"
         [disabled]="!changesMade || !editFormValues"
-        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted"
+        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted && !hasReferral"
         data-test-id="btnSaveAsDraft">
         {{'Save as Draft'|translate}}
       </button>
@@ -2539,11 +2539,11 @@
       <button type="button" class="blue-btn mr-2 mb-2" (click)="sharePrescription()"
         *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
         data-test-id="btnSharePrescription">
-        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
+        {{ (visitCompleted || hasReferral) ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
       </button>
 
       <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
-        *ngIf="visitNotePresent && visitCompleted" data-test-id="btnViewPrescription">
+        *ngIf="visitNotePresent && (visitCompleted || hasReferral)" data-test-id="btnViewPrescription">
         {{'View Prescription'|translate}}
       </button>
     </div>

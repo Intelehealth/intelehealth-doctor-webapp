@@ -184,13 +184,15 @@ export class CoreService {
 
   /**
    * Open prescription share success modal
+   * @param {any} data - Optional dialog data (e.g., { isReferral: boolean })
    * @return {Observable<any>} - Dialog result
    */
-  openSharePrescriptionSuccessModal(): Observable<any> {
+  openSharePrescriptionSuccessModal(data?: any): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionSuccessComponent, {
       panelClass: "modal-md",
       hasBackdrop: true,
       disableClose: true,
+      data,
     });
     return dialogRef.afterClosed();
   }

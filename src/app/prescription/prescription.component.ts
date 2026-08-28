@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
+import { DiagnosisService } from '../services/diagnosis.service';
+import { AppConfigService } from '../services/app-config.service';
 import * as moment from 'moment';
 import { getCacheData, getAge } from '../utils/utility-functions';
-import { doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { doctorDetails, visitTypes, conceptIds } from 'src/config/constant';
+import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ObsApiResponseModel, ObsModel, ProviderAttributeModel } from '../model/model';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { forkJoin, Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-prescription',
@@ -35,7 +37,12 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   private sentSearch$ = new Subject<string>();
   private completedSearch$ = new Subject<string>();
   private referredSearch$ = new Subject<string>();
-  constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
+  constructor(
+    private pageTitleService: PageTitleService,
+    private visitService: VisitService,
+    private diagnosisService: DiagnosisService,
+    public appConfigService: AppConfigService,
+  ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
@@ -253,27 +260,74 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
     this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
-        let records = [];
-        for (let i = 0; i < ps.data.length; i++) {
-          let visit = ps.data[i];
+        const visitRequests: Observable<any>[] = ps.data.map((visit) => {
           let vcenc = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          records.push(visit);
-        }
-       // master list
-      this.allPrescriptionSent = [...this.allPrescriptionSent, ...records];
+          return this.getReferralStatus(visit).pipe(map((referralStatus) => {
+            visit.referral_status = referralStatus;
+            return visit;
+          }));
+        });
+        forkJoin(visitRequests).subscribe((records: CustomVisitModel[]) => {
+          // master list
+          this.allPrescriptionSent = [...this.allPrescriptionSent, ...records];
 
-      // apply search AFTER data loads5855
-      this.applySearch();
+          // apply search AFTER data loads
+          this.applySearch();
 
-        if(!this.loaded2) {;
-          this.loaded2 = true;
-        }
+          if(!this.loaded2) {
+            this.loaded2 = true;
+          }
+        });
       }
     });
+  }
+
+  /**
+  * Get the referral status pill (decision + patient consent) for a visit in the
+  * Prescription Sent tab. Visits here are completed and were never routed to NAMCO,
+  * so only these outcomes are possible: referred to PHC, no referral needed, or
+  * NAMCO referral declined by the patient. Referral Consent can only exist on the
+  * visit's single Visit Note encounter, so a plain visit-level match is sufficient.
+  * @param {CustomVisitModel} visit - Visit
+  * @return {Observable<{ label: string, statusClass: string } | null>}
+  */
+  getReferralStatus(visit: CustomVisitModel): Observable<{ label: string, statusClass: string } | null> {
+    return this.diagnosisService.getObs(visit.person.uuid, conceptIds.conceptReferralConsent).pipe(
+      map((response: ObsApiResponseModel) => {
+        const obs = response.results.find((o: ObsModel) => o.encounter?.visit?.uuid === visit.uuid);
+        if (!obs?.value) {
+          return null;
+        }
+        const [decision, consent] = obs.value.split(':');
+        return this.mapReferralStatus(decision, consent);
+      })
+    );
+  }
+
+  /**
+  * Map a Referral Consent decision + patient consent to a display label and pill color.
+  * @param {string} decision - 'NAMCO' | 'PHC' | 'No referral'
+  * @param {string} consent - 'Yes' | 'No' | undefined
+  * @return {{ label: string, statusClass: string } | null}
+  */
+  mapReferralStatus(decision: string, consent: string): { label: string, statusClass: string } | null {
+    if (decision === 'PHC') {
+      return { label: 'To PHC', statusClass: 'blue-pill' };
+    }
+    if (decision === 'No referral') {
+      return { label: 'No referral Needed', statusClass: 'gray-pill' };
+    }
+    if (decision === 'NAMCO' && consent === 'No') {
+      return { label: 'Referral Declined', statusClass: 'red-pill' };
+    }
+    if (decision === 'NAMCO' && consent === 'Yes') {
+      return { label: 'To NAMCO', statusClass: 'purple-pill' };
+    }
+    return null;
   }
 
  /**

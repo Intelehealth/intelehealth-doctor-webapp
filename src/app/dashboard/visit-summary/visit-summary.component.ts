@@ -114,6 +114,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   visitEnded: EncounterModel | string;
   visitCompleted: EncounterModel | boolean;
+  hasReferral: EncounterModel | boolean;
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
   referSpecialityForm: FormGroup;
@@ -782,6 +783,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             // check if visit complete exists for this visit
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
+            // check if this visit has been referred to a specialist
+            this.hasReferral = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.REFERRAL);
             // check if Patient Exit Survey exists for this visit
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
@@ -2536,14 +2539,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-  * If this visit's saved Referral Consent is NAMCO/Yes and a referral to any
-  * Namco specialisation (e.g. "Namco _ Dermatology", "Namco_Orthopaedic") at
-  * "Namco Hospital" has been added, create a Referral encounter, copy this
-  * visit's Initial (dr first) Visit Note obs onto it, and set the visit's
-  * "Routing Specialization" attribute so the specialist doctor's queue picks it up.
-  * Does not read/write the Referral Consent or Referral capture logic itself.
-  * Gated by the admin-configurable `namco_referral_section` feature flag — when disabled,
-  * NAMCO referrals fall through to the normal Visit Complete flow like any other referral.
+  * Find this visit's referral entry (from the referral capture form's `this.referrals` array)
+  * that both targets NAMCO and has been consented to via the Referral Consent form — i.e. the
+  * exact referral createReferralEncounterForNamco() will act on. Shared with the Share
+  * Prescription confirmation modal (sharePrescription()) so what it shows the doctor can never
+  * diverge from what actually happens once they confirm.
+  * @returns {ReferralModel | null}
+  */
+  getConfirmedNamcoReferral(): ReferralModel | null {
+    if (!this.appConfigService.namco_referral_section) {
+      return null;
+    }
+    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
+    if (!isNamcoConsented) {
+      return null;
+    }
+    return this.referrals.find((r: ReferralModel) =>
+      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
+      (r.facility || '').trim().toLowerCase() === 'namco hospital'
+    ) || null;
+  }
+
+  /**
+  * Creates a NAMCO Referral encounter when consent and specialization match,
+  * copies the initial visit note, and sets Routing Specialization.
+  * Gated by the namco_referral_section feature flag; otherwise uses normal Visit Complete flow.
+  * Does not handle Referral Consent or referral capture logic.  
   * @returns {Observable<any>}
   */
   createReferralEncounterForNamco(): Observable<any> {
@@ -2551,13 +2572,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return of(null);
     }
 
-    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
-    const namcoReferral = this.referrals.find((r: ReferralModel) =>
-      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
-      (r.facility || '').trim().toLowerCase() === 'namco hospital'
-    );
-
-    if (!isNamcoConsented || !namcoReferral || !this.visitNotePresent) {
+    const namcoReferral = this.getConfirmedNamcoReferral();
+    if (!namcoReferral || !this.visitNotePresent) {
       return of(null);
     }
 
@@ -2684,7 +2700,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
         const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
         //Open Share Prescription Confirmation Modal
-        this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion }).subscribe((res: boolean) => {
+        const namcoReferral = this.getConfirmedNamcoReferral();
+        this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion, namcoReferral }).subscribe((res: boolean) => {
           if (res) {
             // Runs the existing visit-completion flow (Visit Complete encounter + prescription share).
             // Only called when this save did NOT just create a Referral encounter — a visit that's
@@ -2791,7 +2808,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
             this.createReferralEncounterForNamco().subscribe({
               next: (referralEncounter) => {
-                if (!referralEncounter) {
+                if (referralEncounter) {
+                  this.hasReferral = referralEncounter;
+                  // The visit stays open (referred to a specialist) instead of being completed,
+                  // so completeVisit()'s own success modal never runs for this path — show one
+                  // here instead, so the doctor still gets closing confirmation for their referral.
+                  this.coreService.openSharePrescriptionSuccessModal({ isReferral: true }).subscribe((result: string | boolean) => {
+                    if (result === 'view') {
+                      this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                    } else if (result === 'dashboard') {
+                      this.router.navigate(['/dashboard']);
+                    }
+                  });
+                } else {
                   completeVisit();
                 }
               },

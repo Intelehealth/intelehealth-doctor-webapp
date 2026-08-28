@@ -130,4 +130,51 @@ describe('PrescriptionComponent', () => {
       req.flush({ success: true, totalCount: 0, data: [] });
     });
   });
+
+  describe('Referral Status (Prescription Sent tab)', () => {
+    it('maps a PHC referral decision to "To PHC"', () => {
+      expect(component.mapReferralStatus('PHC', undefined)).toEqual({ label: 'To PHC', statusClass: 'blue-pill' });
+    });
+
+    it('maps a "No referral" decision to "No referral Needed"', () => {
+      expect(component.mapReferralStatus('No referral', undefined)).toEqual({ label: 'No referral Needed', statusClass: 'gray-pill' });
+    });
+
+    it('maps a NAMCO decision the patient declined consent for to "Referral Declined"', () => {
+      expect(component.mapReferralStatus('NAMCO', 'No')).toEqual({ label: 'Referral Declined', statusClass: 'red-pill' });
+    });
+
+    it('maps a NAMCO decision the patient consented to as "To NAMCO" (defensive — shouldn\'t reach this tab in practice)', () => {
+      expect(component.mapReferralStatus('NAMCO', 'Yes')).toEqual({ label: 'To NAMCO', statusClass: 'purple-pill' });
+    });
+
+    it('returns null when there is no referral decision at all', () => {
+      expect(component.mapReferralStatus(undefined, undefined)).toBeNull();
+    });
+
+    it('getReferralStatus resolves null when the patient has no Referral Consent obs', (done) => {
+      component.getReferralStatus({ uuid: 'visit-1', person: { uuid: 'person-1' } } as any).subscribe((status) => {
+        expect(status).toBeNull();
+        done();
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/obs') && req.url.includes('patient=person-1'));
+      req.flush({ results: [] });
+    });
+
+    it('getReferralStatus only matches the obs belonging to this visit, ignoring obs from the patient\'s other visits', (done) => {
+      component.getReferralStatus({ uuid: 'visit-1', person: { uuid: 'person-1' } } as any).subscribe((status) => {
+        expect(status).toEqual({ label: 'To PHC', statusClass: 'blue-pill' });
+        done();
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/obs') && req.url.includes('patient=person-1'));
+      req.flush({
+        results: [
+          { uuid: 'obs-old', value: 'NAMCO:No', encounter: { uuid: 'enc-old', visit: { uuid: 'visit-0' } } },
+          { uuid: 'obs-current', value: 'PHC:', encounter: { uuid: 'enc-current', visit: { uuid: 'visit-1' } } },
+        ]
+      });
+    });
+  });
 });
