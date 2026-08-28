@@ -1211,19 +1211,18 @@ export class DashboardComponent implements OnInit {
     const minsLeft = start.diff(now, 'minutes');
     const window = 60;
     const pct = Math.max(0, Math.min(100, ((window - minsLeft) / window) * 100));
-
     let color = '#0FD197';
     let text = '';
     if (minsLeft <= 0) {
       color = '#FF475D';
-      text = this.translateService.instant('Due now');
+      text = `${this.translateService.instant('Due')} : ${start.format('DD MMM, YYYY hh:mm A')}`;
     } else if (minsLeft < 60) {
       color = '#FF9F45';
       text = `${minsLeft} ${this.translateService.instant('min')}`;
     } else if (start.diff(now, 'hours') < 24) {
       text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')}`;
     } else {
-      text = start.format('DD MMM, hh:mm A');
+      text = start.format('DD MMM, YYYY hh:mm A');
     }
 
     return `
