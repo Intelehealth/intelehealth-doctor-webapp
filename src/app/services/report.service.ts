@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { isFeaturePresent } from 'src/app/utils/utility-functions';
+
 @Injectable({
   providedIn: "root",
 })
@@ -10,7 +12,7 @@ export class ReoportService {
 
   getReport(body) {
     if (body.reportId === 1) {
-      if (environment.production) {
+      if (isFeaturePresent('reportEmail')) {
         return this.http.get(
           `${environment.base}/pl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
         }
@@ -25,7 +27,7 @@ export class ReoportService {
     }
 
     if (body.reportId === 2) {
-      if (environment.production) {
+      if (isFeaturePresent('reportEmail')) {
         return this.http.get(
           `${environment.base}/vl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
         }
