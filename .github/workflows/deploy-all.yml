@@ -1,0 +1,115 @@
+name: Deploy Webapp Unilateral
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Host to deploy to"
+        type: choice
+        default: all
+        options:
+          - all
+          - dev
+          - turn
+          - ttxai
+          - nasprod
+           
+  push:
+    branches:
+      - nas-ida5-development-master
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.set.outputs.targets }}
+    steps:
+      - name: Determine targets
+        id: set
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
+            echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
+          else
+            echo 'targets=["dev","turn","ttxai", "nasprod"]' >> "$GITHUB_OUTPUT"
+          fi
+
+  build-and-deploy:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(needs.set-matrix.outputs.targets) }}
+    concurrency:
+      group: webapp-deploy-${{ matrix.target }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Resolve deploy host
+        id: resolve
+        run: |
+          case "${{ matrix.target }}" in
+            dev)
+              echo "host=${{ secrets.DEV_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            turn)
+              echo "host=${{ secrets.TURN_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            ttxai)
+              echo "host=${{ secrets.TTXAI_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+            ttxai)
+              echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)    
+              echo "Unknown matrix target: ${{ matrix.target }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Download .env via Native SCP
+        env:
+          DEPLOY_HOST: ${{ steps.resolve.outputs.host }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          scp -i ~/.ssh/id_rsa "$REMOTE_USER@$DEPLOY_HOST:/home/ubuntu/deploy/webapp/.env" .env
+
+      - name: Build and Save Docker Image
+        run: |
+          mv .env ./ || true
+          docker build -t intelehealth-webapp:latest .
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+
+      - name: Upload Image to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ steps.resolve.outputs.host }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "webapp_image.tar.gz"
+          target: "/home/ubuntu/deploy/webapp/"
+
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ steps.resolve.outputs.host }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/deploy/webapp/
+            gunzip -c webapp_image.tar.gz | docker load
+            docker stop webapp-container || true
+            docker rm webapp-container || true
+            docker run -d \
+              --name webapp-container \
+              -p 81:80 \
+              --env-file /home/ubuntu/deploy/webapp/.env \
+              intelehealth-webapp:latest
+            rm /home/ubuntu/deploy/webapp/webapp_image.tar.gz
