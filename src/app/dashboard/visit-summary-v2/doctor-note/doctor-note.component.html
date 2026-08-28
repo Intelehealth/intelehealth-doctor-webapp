@@ -160,6 +160,17 @@
     </div>
   </div>
 
+  <div class="vs2-ai-panel vs2-ai-empty" *ngIf="aiDiagnosisState === 'missing-details'">
+    <span class="vs2-ai-empty-icon"><img src="assets/svgs/diagnosis.svg" alt="" /></span>
+    <span class="vs2-ai-empty-title">Patient Details Required</span>
+    <span class="vs2-ai-empty-sub">AI-assisted diagnosis needs {{ aiMissingDetailsText }}.<br />Please record the
+      patient's vitals for this visit to continue.</span>
+    <div class="vs2-ai-error-actions">
+      <button class="vs2-btn-outline" (click)="addDiagnosisManually()">Add Diagnosis Manually</button>
+      <button class="vs2-btn-primary" (click)="retryAiDiagnosis()">Try again</button>
+    </div>
+  </div>
+
   <ng-container *ngIf="aiDiagnosisState === 'ready'">
     <div class="vs2-ai-disclaimer">
       <b>Disclaimer:</b> This AI-generated suggestion is intended to support not replace your clinical judgment and may
@@ -314,6 +325,13 @@
     <span class="vs2-ai-empty-title">No Diagnosis Provided</span>
     <span class="vs2-ai-empty-sub">AI-assisted medicines suggestions are based on the diagnosis.<br />Please add the
       required diagnostic details to continue.</span>
+  </div>
+
+  <div class="vs2-ai-panel vs2-ai-empty" *ngIf="medicationPanelState === 'missing-details'">
+    <span class="vs2-ai-empty-icon"><img src="assets/svgs/diagnosis.svg" alt="" /></span>
+    <span class="vs2-ai-empty-title">Patient Details Required</span>
+    <span class="vs2-ai-empty-sub">AI-assisted medication needs {{ aiMissingDetailsText }}.<br />Please record the
+      patient's vitals for this visit to continue.</span>
   </div>
 
   <div class="vs2-ai-panel" *ngIf="medicationPanelState === 'loading'">
