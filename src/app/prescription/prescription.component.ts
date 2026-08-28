@@ -54,7 +54,9 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
-    this.getReferredVisits();
+    if(this.appConfigService?.namco_referral_section) {
+      this.getReferredVisits();
+    }
 
      // Prescription Sent search debounce
     this.sentSearch$
