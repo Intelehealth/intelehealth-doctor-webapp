@@ -133,6 +133,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   diagnosisCode: { value: string } = { value: '' };
 
   hasAILLMEnabled: boolean = false;
+  isTurnServer: boolean = environment.isTurnServer;
+  readonly OTHERS_SPECIALITY = 'Others';
 
   medicines: MedicineModel[] = [];
   advices: ObsModel[] = [];
@@ -229,6 +231,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       reason: new FormControl(null)
     });
 
+    // "Others" needs the doctor to type what specialty they mean, in Remarks.
+    this.addReferralForm.get('speciality').valueChanges.subscribe((speciality) => {
+      const reasonControl = this.addReferralForm.get('reason');
+      if (speciality === this.OTHERS_SPECIALITY) {
+        reasonControl.setValidators([Validators.required]);
+      } else {
+        reasonControl.clearValidators();
+      }
+      reasonControl.updateValueAndValidity();
+    });
+
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
@@ -236,12 +249,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
-      followUpType: new FormControl(null)
+      followUpType: new FormControl(this.isTurnServer ? 'Telemedicine' : null)
     });
 
 
     this.diagnosis$ = this.diagnosisSubject.asObservable();
-    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.referSpecializations = [
+      ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
+      ...(this.isTurnServer ? [{ id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true }] : []),
+    ];
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
 
