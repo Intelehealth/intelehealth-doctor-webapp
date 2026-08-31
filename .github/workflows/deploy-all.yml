@@ -106,6 +106,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/deploy/webapp/
+            chmod 644 webapp_image.tar.gz
             gunzip -c webapp_image.tar.gz | docker load
             docker stop webapp-container || true
             docker rm webapp-container || true
