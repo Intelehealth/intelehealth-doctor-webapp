@@ -67,7 +67,7 @@ jobs:
       #      nasprod)
       #        echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
       #        ;;
-             *)    
+            *)    
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
               ;;
