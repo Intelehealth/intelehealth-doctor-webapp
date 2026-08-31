@@ -61,13 +61,13 @@ jobs:
             ttxai)
               echo "host=${{ secrets.TTXAI_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
-               testturn)
+            testturn)
               echo "host=${{ secrets.TESTTURN_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
       #      nasprod)
       #        echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
       #        ;;
-            *)    
+             *)    
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
               ;;
