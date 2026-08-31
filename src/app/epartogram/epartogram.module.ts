@@ -8,6 +8,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTooltipModule
   ]
 })
 export class EpartogramModule { }

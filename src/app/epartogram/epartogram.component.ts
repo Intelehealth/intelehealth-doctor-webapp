@@ -468,7 +468,7 @@ export class EpartogramComponent implements OnInit {
   }
 
   getVisit(uuid: string) {
-    this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
+   this.visitService.fetchVisitDetailsPublic(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
         this.patient = visit?.patient;
@@ -578,12 +578,16 @@ export class EpartogramComponent implements OnInit {
     }
     if (typeof normalized === 'object') {
       const disorders: string[] = [];
-      const congenitalArray = normalized.CONGENITAL_ANOMALY || normalized.congenital_anomaly || [];
-      if (Array.isArray(congenitalArray)) {
-        disorders.push(...congenitalArray.map(String).filter(Boolean));
+      const congenitalValue = normalized.CONGENITAL_ANOMALY ?? normalized.congenital_anomaly;
+      if (Array.isArray(congenitalValue)) {
+        disorders.push(...congenitalValue.map(String).filter(Boolean));
       }
       if (normalized.other_text) {
         disorders.push(String(normalized.other_text));
+      }
+      // Plain answer (e.g. "No"/"Yes") with no selected disorders: show the answer itself
+      if (!disorders.length && typeof congenitalValue === 'string' && congenitalValue.trim()) {
+        disorders.push(congenitalValue.trim());
       }
       return disorders.length ? disorders.join(', ') : '-';
     }
@@ -831,7 +835,7 @@ export class EpartogramComponent implements OnInit {
       this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
 
       setTimeout(() => {
-        document.querySelector('#vcd').scrollIntoView();
+        document.querySelector('#vcd')?.scrollIntoView();
       }, 500);
     }
   }
