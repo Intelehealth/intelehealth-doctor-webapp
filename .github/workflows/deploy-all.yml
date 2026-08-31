@@ -12,6 +12,7 @@ on:
           - turn
           - ttxai
           - testturn
+          - pathqa
   push:
     branches:
       - development_master
@@ -28,7 +29,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn"]' >> "$GITHUB_OUTPUT"
+            echo 'targets=["dev","turn","ttxai","testturn","pathqa"]' >> "$GITHUB_OUTPUT"
           fi
 
   build-and-deploy:
@@ -60,6 +61,9 @@ jobs:
               ;;
             testturn)
               echo "host=${{ secrets.TESTTURN_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            pathqa)
+              echo "host=${{ secrets.PATHQA_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
