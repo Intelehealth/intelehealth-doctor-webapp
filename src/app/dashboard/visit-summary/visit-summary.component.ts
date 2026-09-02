@@ -1158,7 +1158,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getEyeImages(visit: VisitModel): void {
     this.eyeImages = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(visit);
+    const adultInitialEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL);
+    const sourceEncounterUuids = [...getSourceEncounterUuids(visit), adultInitialEncounter?.uuid].filter(Boolean);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -1186,7 +1187,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getVisitAdditionalDocs(visit: VisitModel): void {
     this.additionalDocs = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(visit);
+    const adultInitialEncounter = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL);
+    const sourceEncounterUuids = [...getSourceEncounterUuids(visit), adultInitialEncounter?.uuid].filter(Boolean);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
