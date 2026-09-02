@@ -35,7 +35,7 @@ export class ReportListComponent {
       field2: 'End date',
       // Email address field is not offered in production — data.field3 gates both the
       // dialog's *ngIf for this input and its required/email validators (report-generator.component.ts).
-      field3: isFeaturePresent('reportEmail') ? '' : 'Email address',
+      field3: isFeaturePresent('reportEmail') ? 'Email address' : '',
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };
