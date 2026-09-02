@@ -1,2041 +1,1425 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
-      <div class="appointment-banner">
-        <div>
-          <h6>{{'Appointment starts in'|translate}}</h6>
-          <p>
-            <img src="assets/svgs/clock-green.svg" alt="" />
-            {{ checkIfDateOldThanOneDay(visitAppointment) }}
-          </p>
+<div class="vs2-page" (click)="handleSectionToggle($event)" (keydown)="handleSectionToggle($event)">
+  <section class="vs2-patient-card" *ngIf="patient">
+    <div class="vs2-patient-top">
+      <div class="vs2-patient-left">
+        <img
+          class="vs2-avatar"
+          [src]="baseUrl + '/personimage/' + patient?.person?.uuid"
+          (error)="onImgError($event)"
+          [alt]="patient?.person?.display || ('Patient' | translate)"
+        />
+        <div class="vs2-patient-info">
+          <div class="vs2-patient-name-row">
+            <span class="vs2-patient-name">
+              {{ patient?.person?.display }} ({{ patientGender | translate }})
+            </span>
+            <span class="vs2-chip vs2-chip-purple" *ngIf="patientPregnancyTag">
+              {{ patientPregnancyTag | translate }}
+            </span>
+          </div>
+          <div class="vs2-patient-id">{{ getPatientIdentifier('OpenMRS ID') }}</div>
         </div>
-        <div>
-          <a
-            class="start-call-btn"
-            href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
-            target="_blank"
-          >
-            {{'Start call'|translate}}
-          </a>
+
+        <div class="vs2-patient-meta">
+          <div class="vs2-meta-item">
+            <span class="vs2-meta-label">{{ 'Age' | translate }}</span>
+            <span class="vs2-meta-value">
+              {{ patient?.person?.age }} {{ 'Years' | translate }}
+            </span>
+          </div>
+          <div class="vs2-meta-item">
+            <span class="vs2-meta-label">{{ 'Weight' | translate }}</span>
+            <span class="vs2-meta-value">
+              {{ patientWeight }}
+            </span>
+          </div>
+          <div class="vs2-meta-item" *ngIf="visiblePatientAllergies.length">
+            <span class="vs2-meta-label">{{ 'Allergies' | translate }}</span>
+            <div class="vs2-allergies">
+              <span class="vs2-chip vs2-chip-red" *ngFor="let allergy of visiblePatientAllergies">{{ allergy }}</span>
+              <span class="vs2-chip vs2-chip-grey" *ngIf="extraPatientAllergiesCount">
+                +{{ extraPatientAllergiesCount }} {{ 'more' | translate }}
+              </span>
+            </div>
+          </div>
+          <div class="vs2-meta-item" *ngIf="patientPregnancy">
+            <span class="vs2-meta-label">{{ 'Pregnancy' | translate }}</span>
+            <span class="vs2-meta-value vs2-meta-value-purple">
+              {{ patientPregnancy | translate }}
+            </span>
+          </div>
         </div>
+      </div>
+
+      <div class="vs2-patient-right">
+        <div class="vs2-contact">
+          <span class="vs2-contact-label">{{ 'Contact no:' | translate }}</span>
+          <div class="vs2-contact-row">
+            <span class="vs2-contact-no">{{ patientContactNo }}</span>
+            <a
+              class="vs2-call-btn"
+              [href]="'tel:' + patientContactNo"
+              [attr.aria-label]="'Start call' | translate"
+            >
+              <mat-icon>call</mat-icon>
+            </a>
+          </div>
+        </div>
+        <button class="vs2-view-full vs2-icon-action" type="button" (click)="togglePatientDetails()">
+          <mat-icon>{{ showFullPatientDetails ? 'expand_less' : 'expand_more' }}</mat-icon>
+          {{ (showFullPatientDetails ? 'Hide Patient Details' : 'View Full Patient Details') | translate }}
+        </button>
       </div>
     </div>
 
-    <div class="col-md-12 p-0 mb-5">
-      <div class="intel-card">
-        <div class="card-body">
-          <div class="row patient-info-wrapper" *ngIf="patient">
-            <div class="col-md-4 patient-info-section p-3">
-              <div class="patient-img-item mb-2">
-                <div class="patient-img">
-                  <img
-                    src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
-                    (error)="onImgError($event)"
-                    alt=""
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-                <div class="ml-3">
-                  <h6>
-                    {{ patient?.person.display }} ({{ patient?.person.gender|translate }})
-                  </h6>
-                  <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
-                </div>
-              </div>
-              <div class="patient-info-item">
-                <h6>{{'Age'|translate}}</h6>
-                <p>
-                  {{
-                    patient?.person.birthdate
-                      ? getAge(patient?.person.birthdate)
-                      : patient?.person.age
-                  }}
-                </p>
-              </div>
-            </div>
-            <div class="col-md-4 patient-info-section p-3">
-              <div class="patient-info-item mb-3">
-                <h6>{{'Citizen ID'|translate}}</h6>
-                <p>{{ getPersonAttributeValue("Citizen Id")|translate }}</p>
-              </div>
-              <div class="patient-info-item mb-3">
-                <h6>{{'Occupation'|translate}}</h6>
-                <p>{{ getPersonAttributeValue("occupation")|translate }}</p>
-              </div>
-              <div class="patient-info-item">
-                <h6>{{'Address'|translate}}</h6>
-                <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
-              </div>
-            </div>
-            <div class="col-md-4 patient-info-section p-3">
-              <div class="patient-info-item">
-                <h6>{{'Contact no.'|translate}}</h6>
-                <p>
-                  {{ getPersonAttributeValue("Telephone Number")|translate }}
-                  <a
-                    href="{{ getWhatsAppLink() }}"
-                    target="_blank"
-                    class="icon-btn"
-                  >
-                    <img src="assets/svgs/whatsapp-icon.svg" alt="" />
-                  </a>
-                </p>
-                <p>
-                  {{ getPersonAttributeValue("Telephone Number")|translate }}
-                  <a
-                    href="tel:{{ getPersonAttributeValue('Telephone Number')|translate }}"
-                    target="_blank"
-                    class="icon-btn"
-                  >
-                    <img src="assets/svgs/phone-circle.svg" alt="" />
-                  </a>
-                </p>
-              </div>
+    <div class="vs2-patient-full" *ngIf="showFullPatientDetails">
+      <div class="vs2-full-left">
+        <div class="vs2-full-block">
+          <span class="vs2-meta-label">{{ 'All Allergies' | translate }}</span>
+          <div class="vs2-allergies vs2-allergies-wrap">
+            <span class="vs2-chip vs2-chip-yellow" *ngFor="let allergy of patientAllergies">{{ allergy }}</span>
+          </div>
+        </div>
+
+        <div class="vs2-full-block">
+          <span class="vs2-contact-label">{{ 'Contact no:' | translate }}</span>
+          <div class="vs2-full-contacts">
+            <div class="vs2-contact-row">
+              <span class="vs2-contact-no">{{ patientContactNo }}</span>
+              <a class="vs2-call-btn" [href]="'tel:' + patientContactNo">
+                <mat-icon>call</mat-icon>
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-12 p-0 mb-5">
-      <div class="intel-card">
-        <mat-tab-group
-          class="visit-summary-tab-group"
-          mat-align-tabs="start"
-          [disableRipple]="true"
-          (selectedIndexChange)="onTabChange($event)"
-        >
-          <mat-tab label="{{'Current visit summary'|translate}}">
-            <div class="text-right">
-              <button
-                *ngIf="!showAll"
-                mat-button
-                (click)="accordion.openAll(); showAll = !showAll"
-              >
-                <span class="text-muted">{{'Show all'|translate}}</span>
-                <mat-icon>expand_more</mat-icon>
-              </button>
-              <button
-                *ngIf="showAll"
-                mat-button
-                (click)="accordion.closeAll(); showAll = !showAll"
-              >
-                <span class="text-muted">{{'Hide all'|translate}}</span>
-                <mat-icon>expand_less</mat-icon>
-              </button>
-            </div>
-            <mat-accordion class="intel-accordion-con" multi>
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/consultation-details.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Consultation details'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
+      <div class="vs2-full-right">
+        <div class="vs2-full-toprow">
+          <div class="vs2-meta-item">
+            <span class="vs2-meta-label">{{ 'Occupation' | translate }}</span>
+            <span class="vs2-meta-value">{{ getPersonAttributeValue('occupation') === 'NA' ? '' : getPersonAttributeValue('occupation') }}</span>
+          </div>
+          <div class="vs2-meta-item">
+            <span class="vs2-meta-label">{{ 'Date of Birth' | translate }}</span>
+            <span class="vs2-meta-value">{{ patientDateOfBirth }}</span>
+          </div>
+        </div>
 
-                <ul class="items-list">
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Visit ID'|translate}}</label>
-                      <div class="list-item-content">
-                        {{
-                          visit?.uuid
-                            ? (replaceWithStar(visit?.uuid) | uppercase)
-                            : ""
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Visit created'|translate}}</label>
-                      <div class="list-item-content">
-                        {{ visit?.startDatetime | date : "dd MMM, yyyy":'':locale }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Appointment on'|translate}}</label>
-                      <div class="list-item-content">
-                        <span [class.text-muted]="!visitAppointment">{{
-                          visitAppointment
-                            ? (visitAppointment | date : "dd MMM, yyyy":'':locale)
-                            : "No appointment"|translate
-                        }}</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Status'|translate}}</label>
-                      <div class="list-item-content">
-                        <span
-                          [ngClass]="{
-                            'text-important-red':
-                              visitStatus == 'Priority Visit',
-                            'text-important-green':
-                              [
-                                'Awaiting Visit',
-                                'In-progress Visit',
-                                'Completed Visit',
-                                'Ended Visit'
-                              ].indexOf(visitStatus) != -1
-                          }"
-                          >{{ visitStatus|translate }}</span
-                        >
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Location'|translate}}</label>
-                      <div class="list-item-content">
-                        {{ clinicName | titlecase }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Provided by'|translate}}</label>
-                      <div class="list-item-content">
-                        <div class="visit-provider-con">
-                          <span>{{ providerName }}</span>
-                          <!-- <div class="d-flex">
-                            <img class="mx-3" src="assets/svgs/dot.svg" />
-                            <a
-                              href="javascript:void(0)"
-                              class="icon-btn"
-                              (click)="startChat()"
-                            >
-                              <img src="assets/svgs/msg.svg" alt="" />
-                            </a>
-                            <a
-                              href="javascript:void(0)"
-                              class="icon-btn"
-                              (click)="startCall()"
-                            >
-                              <img src="assets/svgs/phone-circle.svg" alt="" />
-                            </a>
-                          </div>
-                          <span class="text-muted"
-                            >Click here to connent with CHW</span
-                          > -->
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </mat-expansion-panel>
+        <div class="vs2-full-tabs" role="tablist">
+          <button
+            type="button"
+            class="vs2-full-tab"
+            [class.active]="activePatientDetailsTab === 'address'"
+            (click)="setPatientDetailsTab('address')"
+          >
+            {{ 'Address' | translate }}
+          </button>
+          <button
+            type="button"
+            class="vs2-full-tab"
+            [class.active]="activePatientDetailsTab === 'other'"
+            (click)="setPatientDetailsTab('other')"
+          >
+            {{ 'Other' | translate }}
+          </button>
+        </div>
 
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img src="assets/svgs/vitals.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">{{'Vitals'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ul class="items-list">
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Height (cm)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('Height (cm)')"
-                      >
-                        {{
-                          getObsValue("Height (cm)")
-                            ? getObsValue("Height (cm)")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Weight (kg)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('Weight (kg)')"
-                      >
-                        {{
-                          getObsValue("Weight (kg)")
-                            ? getObsValue("Weight (kg)")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'BMI'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="
-                          !getObsValue('Height (cm)') ||
-                          !getObsValue('Weight (kg)')
-                        "
-                      >
-                        {{
-                          getObsValue("Height (cm)") &&
-                          getObsValue("Weight (kg)")
-                            ? (getObsValue("Weight (kg)") /
-                                ((getObsValue("Height (cm)") / 100) *
-                                  (getObsValue("Height (cm)") / 100))
-                              | number : "1.2-2")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'BP'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="
-                          !getObsValue('SYSTOLIC BLOOD PRESSURE')
-                        "
-                      >
-                        {{
-                          getObsValue("SYSTOLIC BLOOD PRESSURE")
-                            ? getObsValue("SYSTOLIC BLOOD PRESSURE") +
-                              " / " +
-                              getObsValue("DIASTOLIC BLOOD PRESSURE")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Pulse'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('Pulse')"
-                      >
-                        {{
-                          getObsValue("Pulse")
-                            ? getObsValue("Pulse")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Temprature (C)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('TEMPERATURE (C)')"
-                      >
-                        {{
-                          getObsValue("TEMPERATURE (C)")
-                            ? (getObsValue("TEMPERATURE (C)"))
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'SpO2 (%)'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="
-                          !getObsValue('BLOOD OXYGEN SATURATION')
-                        "
-                      >
-                        {{
-                          getObsValue("BLOOD OXYGEN SATURATION")
-                            ? getObsValue("BLOOD OXYGEN SATURATION")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Respiratory Rate'|translate}}</label>
-                      <div
-                        class="list-item-content"
-                        [class.text-muted]="!getObsValue('Respiratory rate')"
-                      >
-                        {{
-                          getObsValue("Respiratory rate")
-                            ? getObsValue("Respiratory rate")
-                            : "No information"|translate
-                        }}
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/check-up-reason.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Check-up reason'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <div class="cheif-complaint-wrapper">
-                  <h6>{{'Cheif Complaint'|translate}}</h6>
-                  <div class="complaint-chips">
-                    <div class="chip-item" *ngFor="let c of cheifComplaints">
-                      {{ c|translate }}
-                    </div>
-                  </div>
-                  <div class="check-up-reason-con">
-                    <ng-container *ngFor="let ckr of checkUpReasonData">
-                      <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title.trim()|translate }}</h6>
-                        <ul class="items-list pt-0">
-                          <li *ngFor="let ckri of ckr.data">
-                            <div class="list-item">
-                              <label>{{ ckri.key|translate }}</label>
-                              <div
-                                class="list-item-content"
-                                [class.text-muted]="!ckri.value"
-                              >
-                                {{ ckri.value ? (ckri.value|translate) : ("None"|translate) }}
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </ng-container>
-                      <ng-container *ngIf="ckr.title == 'Associated symptoms' && ckr.data.length != 0">
-                        <h6 class="my-3">{{ ckr.title.trim()|translate }}</h6>
-                        <ul class="items-list pt-0">
-                          <li *ngFor="let ckri of ckr.data">
-                            <div class="list-item-col">
-                              <label>{{ ckri.key|translate }}</label>
-                              <div
-                                class="list-item-content"
-                                [class.text-muted]="!ckri.value"
-                              >
-                                {{ ckri.value ? (ckri.value|translate) : ("None"|translate) }}
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </ng-container>
-                    </ng-container>
-                  </div>
-                </div>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/physical-examination.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Physical examination'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ng-container *ngFor="let pe of physicalExaminationData">
-                  <div class="cheif-complaint-wrapper">
-                    <ng-container *ngIf="pe.title != 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title|translate }}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let pei of pe.data">
-                          <div class="list-item">
-                            <label>{{ pei.key|translate }}</label>
-                            <div
-                              class="list-item-content"
-                              [class.text-muted]="!pei.value"
-                            >
-                              {{ pei.value ? (pei.value|translate) : ("None"|translate) }}
-                            </div>
-                          </div>
-                        </li>
-                        <li *ngIf="eyeImages.length && pe.title == 'General exams'">
-                          <div class="list-item">
-                            <label>{{'Eye images'|translate}}</label>
-                            <div class="list-item-content">
-                              <div class="eye-images-con">
-                                <div
-                                  class="eye-item"
-                                  *ngFor="let e of eyeImages; let x = index"
-                                >
-                                  <img [src]="e.src" alt="" />
-                                  <div
-                                    class="cover"
-                                    (click)="previewEyeImages(x)"
-                                  >
-                                    <img
-                                      src="assets/svgs/maximize.svg"
-                                      alt=""
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </ng-container>
-                    <ng-container *ngIf="pe.title == 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title|translate }}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let pei of pe.data">
-                          {{ pei.key|translate }}
-                        </li>
-                      </ul>
-                    </ng-container>
-                  </div>
-                </ng-container>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/medical-history.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Medical history'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ng-container *ngFor="let ph of patientHistoryData">
-                  <div class="cheif-complaint-wrapper">
-                    <h6 class="my-3">{{ ph.title|translate }}</h6>
-                    <ul class="items-list pt-0">
-                      <li *ngFor="let phi of ph.data">
-                        <div class="list-item">
-                          <label>{{ (phi.key|translate) }}</label>
-                          <div
-                            class="list-item-content"
-                            [class.text-muted]="!phi.value"
-                          >
-                            {{ phi.value ? (phi.value|translate) : ("None"|translate) }}
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </ng-container>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel [expanded]="true" class="bg-gray">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/additional-documents.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Additional documents'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <ng-container
-                  *ngIf="additionalDocs.length; else noAdditionaDocs"
-                >
-                  <div class="additional-doc-container">
-                    <div
-                      class="doc-item"
-                      *ngFor="let d of additionalDocs; let x = index"
-                    >
-                      <img [src]="d.src" alt="" />
-                      <div class="cover" (click)="previewDocImages(x)">
-                        <img src="assets/svgs/maximize.svg" alt="" />
-                      </div>
-                    </div>
-                    <!-- <div class="doc-item">
-                      <div class="other-doc">
-                        <img src="assets/svgs/pdf-doc.svg" alt="">
-                        <span>Blood test report.pdf</span>
-                      </div>
-                    </div> -->
-                  </div>
-                </ng-container>
-
-                <ng-template #noAdditionaDocs>
-                  <div class="no-docs">{{'No additional docs available!'|translate}}</div>
-                </ng-template>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel
-                [expanded]="!visitNotePresent"
-                *ngIf="!visitNotePresent"
-              >
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <div class="intel-accordion-title">
-                      <img
-                        src="assets/svgs/refer-specialist.svg"
-                        alt=""
-                        width="44px"
-                      />
-                      <h6 class="mb-0 ml-2">{{'Refer to specialist'|translate}}</h6>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <form
-                  [formGroup]="referSpecialityForm"
-                  (ngSubmit)="referSpecialist()"
-                  class="refer-form"
-                >
-                  <div class="form-group row">
-                    <label for="refer" class="col-sm-3 col-form-label"
-                      >{{'Refer to another speciality'|translate}}</label
-                    >
-                    <div class="col-sm-9 d-flex align-items-center">
-                      <div class="pretty p-default p-round">
-                        <input
-                          type="radio"
-                          [value]="true"
-                          formControlName="refer"
-                        />
-                        <div class="state p-success">
-                          <label>{{'Yes'|translate}}</label>
-                        </div>
-                      </div>
-                      <div class="pretty p-default p-round">
-                        <input
-                          type="radio"
-                          [value]="false"
-                          formControlName="refer"
-                        />
-                        <div class="state p-success">
-                          <label>{{'No'|translate}}</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <ng-container *ngIf="referSpecialityForm.value.refer">
-                    <div class="form-group row">
-                      <label for="refer" class="col-sm-3 col-form-label"
-                        >{{'Specialization'|translate}}</label
-                      >
-                      <div class="col-sm-3">
-                        <ng-select
-                          appendTo=".visit-summary-tab-group"
-                          class="visit-select"
-                          formControlName="specialization"
-                          bindLabel="name"
-                          bindValue="name"
-                          [clearable]="false"
-                          [searchable]="true"
-                          placeholder="{{'Select specialization'|translate}}"
-                          notFoundText="{{'No items found'|translate}}"
-                        >
-                          <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">{{ (specialization.name) | translate }}</ng-option>
-                      </ng-select>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <button type="submit" class="next-btn">{{'Re-assign'|translate}}</button>
-                    </div>
-                  </ng-container>
-                </form>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </mat-tab>
-
-          <mat-tab label="{{'Past visit history'|translate}}">
-            <div class="mat-elevation-z8">
-              <table mat-table [dataSource]="dataSource">
-                <!-- Action Column -->
-                <ng-container matColumnDef="action">
-                  <th mat-header-cell *matHeaderCellDef></th>
-                  <td mat-cell *matCellDef="let element; let first = first">
-                    <div class="timeline-icon">
-                      <div class="t-line" *ngIf="!first"></div>
-                      <div class="dot"></div>
-                      <div class="b-line"></div>
-                    </div>
-                  </td>
-                </ng-container>
-
-                <!-- Created on Column -->
-                <ng-container matColumnDef="created_on">
-                  <th mat-header-cell *matHeaderCellDef>{{'Created on'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.created_on | date : "dd MMM, yyyy":'':locale }}
-                  </td>
-                </ng-container>
-
-                <!-- Consulted by Column -->
-                <ng-container matColumnDef="consulted_by">
-                  <th mat-header-cell *matHeaderCellDef>{{'Consulted by'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    <div
-                      class="d-flex align-items-center"
-                      *ngIf="element.doctor"
-                    >
-                      <img
-                        src="{{
-                          baseUrl +
-                            '/personimage/' +
-                            element?.doctor?.person_uuid
-                        }}"
-                        (error)="onImgError($event)"
-                        alt=""
-                        width="32px"
-                        height="32px"
-                        style="border-radius: 50%"
-                      />
-                      <span class="font-bold ml-2"
-                        >{{ element?.doctor?.name }} ({{
-                          element?.doctor?.gender|translate
-                        }})</span
-                      >
-                    </div>
-                  </td>
-                </ng-container>
-
-                <!-- Cheif Complaint Column -->
-                <ng-container matColumnDef="cheif_complaint">
-                  <th mat-header-cell *matHeaderCellDef>{{'Cheif Complaint'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.cheif_complaint }}
-                  </td>
-                </ng-container>
-
-                <!-- Summary Column -->
-                <ng-container matColumnDef="summary">
-                  <th mat-header-cell *matHeaderCellDef>{{'Summary'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    <a
-                      class="pill-anchor"
-                      href="javascript:void(0)"
-                      (click)="openVisitSummaryModal(element.uuid)"
-                    >
-                      <div class="blue-pill">
-                        <img
-                          src="assets/svgs/summary-list-blue-icon.svg"
-                          alt=""
-                        />
-                        <span class="ml-1">{{'View'|translate}}</span>
-                      </div>
-                    </a>
-                  </td>
-                </ng-container>
-
-                <!-- Prescription Column -->
-                <ng-container matColumnDef="prescription">
-                  <th mat-header-cell *matHeaderCellDef>{{'Prescription'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    <a
-                      *ngIf="element.prescription_sent"
-                      class="pill-anchor"
-                      href="javascript:void(0)"
-                      (click)="openVisitPrescriptionModal(element.uuid)"
-                    >
-                      <div class="green-pill">
-                        <img src="assets/svgs/green-pad.svg" alt="" />
-                        <span class="ml-1">{{'View'|translate}}</span>
-                      </div>
-                    </a>
-                  </td>
-                </ng-container>
-
-                <!-- Prescription sent Column -->
-                <ng-container matColumnDef="prescription_sent">
-                  <th mat-header-cell *matHeaderCellDef>{{'Prescription sent'|translate}}</th>
-                  <td mat-cell *matCellDef="let element">
-                    <div class="blue-pill" *ngIf="element.prescription_sent">
-                      <img src="assets/svgs/pad-4.svg" alt="" />
-                      <span class="ml-1">{{ element.prescription_sent }}</span>
-                    </div>
-                  </td>
-                </ng-container>
-
-                <tr class="mat-row" *matNoDataRow>
-                  <td
-                    class="mat-cell text-center"
-                    [attr.colspan]="displayedColumns.length"
-                  >
-                    {{'No past visit history'|translate}}
-                  </td>
-                </tr>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: displayedColumns"
-                ></tr>
-              </table>
-            </div>
-          </mat-tab>
-        </mat-tab-group>
-      </div>
-    </div>
-
-    <div class="col-md-12 p-0 mb-5">
-      <div class="intel-card">
-        <div class="card-body">
-          <p class="note-con">
-            <span class="important-text">{{'Note:'|translate}}</span> 
-            {{ 'This history note and physical exam note was generated by a community health worker with the'| translate }}
-            {{ 'support of the Intelehealth mobile application and Ayu, a digital assistant. It collects only'| translate }}
-            {{ 'preliminary findings and may not gather all of the patient clinical information, especially' | translate }}
-            {{ 'sensitive information or complex physical exam information which is hard for the health worker' | translate }}
-            {{ 'to collect. Please verify crucial clinical information and collect any additional information' | translate }}
-            {{ 'you require by speaking with the patient directly.' | translate }}
-          </p>
+        <div class="vs2-full-grid" *ngIf="activePatientDetailsTab === 'address'">
+          <div class="vs2-meta-item" *ngFor="let row of patientAddressRows">
+            <span class="vs2-meta-label">{{ row.label | translate }}</span>
+            <span class="vs2-meta-value">{{ row.value | translate }}</span>
+          </div>
+        </div>
+        <div class="vs2-full-grid" *ngIf="activePatientDetailsTab === 'other'">
+          <div class="vs2-meta-item" *ngFor="let row of patientOtherRows">
+            <span class="vs2-meta-label">{{ row.label | translate }}</span>
+            <span class="vs2-meta-value">{{ row.value | translate }}</span>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitEnded">
-      <button type="button" class="blue-btn" (click)="startVisitNote()">
-        {{'Start visit note'|translate}}
-      </button>
-    </div>
+  <div class="vs2-body">
+    <aside class="vs2-sidebar">
+      <div class="vs2-scope-toggle">
+        <button
+          type="button"
+          class="vs2-scope-btn"
+          [class.active]="activeVisitScope === 'current'"
+          (click)="setVisitScope('current')"
+        >
+          {{ 'Current visits' | translate }}
+        </button>
+        <button
+          type="button"
+          class="vs2-scope-btn"
+          [class.active]="activeVisitScope === 'past'"
+          (click)="setVisitScope('past')"
+        >
+          {{ 'Past Visits' | translate }}
+        </button>
+      </div>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent">
-      <div class="intel-card">
-        <div class="card-body">
-          <mat-accordion class="intel-accordion-con">
-            <mat-expansion-panel [expanded]="true" #panel1 hideToggle>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img
-                      src="assets/svgs/patient-interaction.svg"
-                      alt=""
-                      width="44px"
-                    />
-                    <h6 class="mb-0 ml-2">{{'Patient interaction'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel1.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
+      <ng-container *ngIf="activeVisitScope === 'current'">
+        <nav class="vs2-section-nav" [attr.aria-label]="'Current visits' | translate">
+          <button
+            type="button"
+            *ngFor="let section of currentVisitSections"
+            class="vs2-section-link"
+            [class.active]="activeSection === section.key"
+            (click)="selectSection(section.key)"
+          >
+            <img class="vs2-section-icon-img" [src]="section.icon" alt="" />
+            <span class="vs2-section-label">{{ section.label | translate }}</span>
+          </button>
+        </nav>
 
-              <form
-                [formGroup]="patientInteractionForm"
-                (ngSubmit)="savePatientInteraction()"
-              >
-                <ul class="items-list">
-                  <li>
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label"
-                        >{{'Connect with patient'|translate}}</label
-                      >
-                      <div
-                        class="col-sm-9 d-flex align-items-center"
-                        *ngIf="
-                          getPersonAttributeValue('Telephone Number') != 'NA';
-                          else noContactDetails
-                        "
-                      >
-                        <div class="d-flex">
-                          <a
-                            href="tel:{{
-                              getPersonAttributeValue('Telephone Number')
-                            }}"
-                            target="_blank"
-                            class="icon-btn m-0 mr-2"
-                          >
-                            <img src="assets/svgs/phone-green.svg" alt="" />
-                          </a>
-                          <a
-                            href="{{ getWhatsAppLink() }}"
-                            target="_blank"
-                            class="icon-btn m-0 mr-2"
-                          >
-                            <img src="assets/svgs/whatsapp-green.svg" alt="" />
-                          </a>
-                        </div>
-                        <span class="text-muted"
-                          >{{'Click here to connent with the patient'|translate}}</span
-                        >
-                      </div>
-                      <ng-template #noContactDetails>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <span class="text-muted"
-                            >{{'Patient Mobile number is not available'|translate}}</span
-                          >
-                        </div>
-                      </ng-template>
-                    </div>
-                  </li>
-                  <li *ngIf="!patientInteractionForm.value.present">
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label"
-                        >{{'Have you spoken with the patient directly?'|translate}}</label
-                      >
-                      <div class="col-sm-9 d-flex align-items-center">
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            [value]="'Yes'"
-                            formControlName="spoken"
-                          />
-                          <div class="state p-success">
-                            <label>{{'Yes'|translate}}</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            [value]="'No'"
-                            formControlName="spoken"
-                          />
-                          <div class="state p-success">
-                            <label>{{'No'|translate}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-                <div
-                  class="form-group mb-0"
-                  *ngIf="
-                    isVisitNoteProvider &&
-                    !visitEnded &&
-                    !patientInteractionForm.value.present
-                  "
-                >
-                  <button
-                    type="submit"
-                    class="gray-btn"
-                    [disabled]="patientInteractionForm.invalid"
-                  >
-                    {{'Save'|translate}}
-                  </button>
-                </div>
-                <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{'Patient interaction'|translate}}</th>
-                        <th scope="col">{{'Status'|translate}}</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>{{'Spoken with the patient directly?'|translate}}</td>
-                        <td>{{ patientInteractionForm.value.spoken|translate }}</td>
-                        <td class="pr-0">
-                          <button
-                            type="button"
-                            mat-icon-button
-                            class="float-right"
-                            *ngIf="isVisitNoteProvider && !visitEnded"
-                            (click)="deletePatientInteraction()"
-                          >
-                            <img src="assets/svgs/delete-icon.svg" alt="" />
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </form>
-            </mat-expansion-panel>
+        <div class="vs2-nav-group-label" *ngIf="visitNotePresent">{{ "Doctor's Note" | translate }}</div>
+        <nav class="vs2-section-nav" *ngIf="visitNotePresent" [attr.aria-label]="'Doctor Note' | translate">
+          <button
+            type="button"
+            *ngFor="let section of doctorNoteSections"
+            class="vs2-section-link"
+            [class.active]="activeSection === section.key"
+            (click)="selectSection(section.key)"
+          >
+            <img class="vs2-section-icon-img" [src]="section.icon" alt="" />
+            <span class="vs2-section-label">{{ section.label | translate }}</span>
+          </button>
+        </nav>
+      </ng-container>
 
-            <mat-expansion-panel
-              [expanded]="false"
-              #panel2
-              hideToggle
-              class="bg-gray"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
+      <div class="vs2-timeline" *ngIf="activeVisitScope === 'past'">
+        <ng-container *ngFor="let group of pastVisitTimelineGroups">
+          <div class="vs2-timeline-date">
+            <span>{{ group.date }}</span>
+            <span class="vs2-timeline-badge" *ngIf="group.current">{{ 'Current' | translate }}</span>
+          </div>
+          <button
+            *ngFor="let pastVisit of group.visits"
+            type="button"
+            class="vs2-timeline-item"
+            [class.active]="activePastVisitUuid === pastVisit.key"
+            (click)="selectPastVisit(pastVisit.key)"
+          >
+            <span class="vs2-timeline-rail"><span class="vs2-timeline-dot"></span></span>
+            <span class="vs2-timeline-card">
+              <span class="vs2-timeline-title">{{ pastVisit.title }}</span>
+              <span class="vs2-timeline-med">{{ pastVisit.med }}</span>
+              <span class="vs2-timeline-by" [class.referred]="pastVisit.referred">{{ pastVisit.by }}</span>
+            </span>
+          </button>
+        </ng-container>
+      </div>
+    </aside>
 
-              <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">{{'Diagnosis'|translate}}</th>
-                      <th scope="col">{{'Type'|translate}}</th>
-                      <th scope="col">{{'Status'|translate}}</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ng-container *ngIf="existingDiagnosis.length">
-                      <tr *ngFor="let d of existingDiagnosis; let i = index">
-                        <td>{{ d.diagnosisName }}</td>
-                        <td>{{ d.diagnosisType|translate }}</td>
-                        <td>{{ d.diagnosisStatus|translate }}</td>
-                        <td class="pr-0">
-                          <button
-                            mat-icon-button
-                            class="float-right"
-                            *ngIf="isVisitNoteProvider && !visitEnded"
-                            (click)="deleteDiagnosis(i, d.uuid)"
-                          >
-                            <img src="assets/svgs/delete-icon.svg" alt="" />
-                          </button>
-                        </td>
-                      </tr>
-                    </ng-container>
-                    <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                      <tr *ngIf="addMoreDiagnosis">
-                        <td colspan="4">
-                          <div class="form-group mb-0">
-                            <button
-                              type="button"
-                              class="add-more-btn"
-                              (click)="toggleDiagnosis()"
-                            >
-                              <img src="assets/svgs/plus-circle.svg" alt="" />
-                              <span class="ml-2">{{'Add more diagnosis'|translate}}</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </ng-container>
-                  </tbody>
-                </table>
-              </div>
+    <div class="vs2-right">
+      <ng-container *ngIf="activeVisitScope === 'current'">
+        <div class="vs2-top-tabs">
+          <button
+            type="button"
+            class="vs2-top-tab"
+            [class.active]="activeTopTab === 'current'"
+            (click)="setTopTab('current')"
+          >
+            {{ 'Current visits' | translate }}
+          </button>
+          <button
+            type="button"
+            class="vs2-top-tab"
+            *ngIf="visitNotePresent"
+            [class.active]="activeTopTab === 'doctor'"
+            (click)="setTopTab('doctor')"
+          >
+            {{ "Doctor's Note" | translate }}
+          </button>
+        </div>
 
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                <form
-                  [formGroup]="diagnosisForm"
-                  (ngSubmit)="saveDiagnosis()"
-                  *ngIf="!addMoreDiagnosis"
-                >
-                  <ul class="items-list">
-                    <li>
-                      <div class="row">
-                        <label
-                          for="select-diagnosis"
-                          class="col-sm-3 col-form-label"
-                          >{{'Select diagnosis'|translate}}</label
-                        >
-                        <div class="col-sm-3">
-                          <ng-select
-                            class="visit-select custom"
-                            formControlName="diagnosisName"
-                            (search)="onKeyUp($event)"
-                            [items]="diagnosis$ | async"
-                            bindLabel="name"
-                            bindValue="name"
-                            [clearable]="true"
-                            [searchable]="true"
-                            placeholder="{{'Select diagnosis'|translate}}"
-                            [addTag]="true"
-                            notFoundText="{{'No items found'|translate}}"
-                            addTagText="{{'Add item'|translate}}"
-                          >
-                          <!-- <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                            {{item.name|translate}}
-                          </ng-template>
-                          <ng-template ng-label-tmp let-item="item">
-                            {{item.name|translate}}
-                          </ng-template> -->
-                          </ng-select>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label"
-                          >{{'Diagnosis type'|translate}}</label
-                        >
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input
-                              type="radio"
-                              [value]="'Primary'"
-                              formControlName="diagnosisType"
-                            />
-                            <div class="state p-success">
-                              <label>{{'Primary'|translate}}</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input
-                              type="radio"
-                              [value]="'Secondary'"
-                              formControlName="diagnosisType"
-                            />
-                            <div class="state p-success">
-                              <label>{{'Secondary'|translate}}</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">{{'Select'|translate}}</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input
-                              type="radio"
-                              [value]="'Provisional'"
-                              formControlName="diagnosisStatus"
-                            />
-                            <div class="state p-success">
-                              <label>{{'Provisional'|translate}}</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input
-                              type="radio"
-                              [value]="'Confirmed'"
-                              formControlName="diagnosisStatus"
-                            />
-                            <div class="state p-success">
-                              <label>{{'Confirmed'|translate}}</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                  <div class="form-group mb-0">
-                    <button
-                      type="button"
-                      class="white-btn mr-2"
-                      (click)="toggleDiagnosis()"
-                    >
-                    {{'Cancel'|translate}}
-                    </button>
-                    <button
-                      type="submit"
-                      class="gray-btn"
-                      [disabled]="diagnosisForm.invalid"
-                    >
-                      {{'Add'|translate}}
-                    </button>
-                  </div>
-                </form>
-              </ng-container>
+        <main class="vs2-content">
+          <div
+            class="vs2-content-header vs2-content-toggle"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!currentVisitCollapsed"
+            [class.vs2-content-group-collapsed]="currentVisitCollapsed"
+            (click)="toggleContentGroup('current')"
+            (keydown.enter)="toggleContentGroup('current')"
+            (keydown.space)="toggleContentGroup('current'); $event.preventDefault()"
+          >
+            <h2>{{ 'Current visits' | translate }}</h2>
+            <mat-icon>expand_less</mat-icon>
+          </div>
 
-              <!-- <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
-                <ul class="items-list">
-                  <li>
-                    <div class="row">
-                      <label class="col-sm-3 col-form-label">Do you have enough information for diagnosis?</label>
-                      <div class="col-sm-9 d-flex align-items-center">
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'Yes'" formControlName="diagnosisIdentified" />
-                          <div class="state p-success">
-                            <label>Yes</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input type="radio" [value]="'No'" formControlName="diagnosisIdentified" />
-                          <div class="state p-success">
-                            <label>No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <ng-container *ngIf="diagnosisForm.value.diagnosisIdentified == 'Yes'">
-                    <li>
-                      <div class="row">
-                        <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
-                        <div class="col-sm-3">
-                          <ng-select class="visit-select custom" formControlName="diagnosisName" (search)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
-                          </ng-select>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Diagnosis type</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Primary'" formControlName="diagnosisType" />
-                            <div class="state p-success">
-                              <label>Primary</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Secondary'" formControlName="diagnosisType" />
-                            <div class="state p-success">
-                              <label>Secondary</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label class="col-sm-3 col-form-label">Select</label>
-                        <div class="col-sm-9 d-flex align-items-center">
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus" />
-                            <div class="state p-success">
-                              <label>Provisional</label>
-                            </div>
-                          </div>
-                          <div class="pretty p-default p-round">
-                            <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus" />
-                            <div class="state p-success">
-                              <label>Confirmed</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ng-container>
-                </ul>
-                <div class="form-group mb-0" *ngIf="isVisitNoteProvider && !visitEnded && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
-                  <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Save</button>
-                </div>
-              </form> -->
-            </mat-expansion-panel>
-
-            <mat-expansion-panel [expanded]="false" #panel3 hideToggle>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/note.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Note'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel3.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <ul class="items-list" *ngIf="notes.length">
-                <li *ngFor="let n of notes; let i = index">
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <span>{{ n.value }}</span>
-                    <button
-                      mat-icon-button
-                      (click)="deleteNote(i, n.uuid)"
-                      *ngIf="isVisitNoteProvider && !visitEnded"
-                    >
-                      <img src="assets/svgs/delete-icon.svg" alt="" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
-              <ng-template #noNotes>
-                <div class="no-docs text-center font-weight-bold">
-                  {{'No notes added!'|translate}}
-                </div>
-              </ng-template>
-              <form
-                class="mt-3"
-                [formGroup]="addNoteForm"
-                (ngSubmit)="addNote()"
-                *ngIf="isVisitNoteProvider && !visitEnded"
-              >
-                <div class="form-group" *ngIf="addMoreNote">
-                  <button
-                    type="button"
-                    class="add-more-btn"
-                    (click)="toggleNote()"
-                  >
-                    <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">Add more notes</span>
-                  </button>
-                </div>
-                <ng-container *ngIf="!addMoreNote">
-                  <div class="form-group">
-                    <label for="note"
-                      ><b>{{'Note'|translate}}&nbsp;</b>
-                      <span class="text-muted"
-                        >{{'(Not shared with patient)'|translate}}</span
-                      ></label
-                    >
-                    <textarea
-                      class="form-control"
-                      rows="3"
-                      placeholder="{{'Type here'|translate}}"
-                      formControlName="note"
-                    ></textarea>
-                  </div>
-                  <div class="form-group">
-                    <button
-                      type="button"
-                      class="white-btn mr-2"
-                      (click)="toggleNote()"
-                    >
-                    {{'Cancel'|translate}}
-                    </button>
-                    <button
-                      type="submit"
-                      class="gray-btn"
-                      [disabled]="addNoteForm.invalid"
-                    >
-                      {{'Add note'|translate}}
-                    </button>
+          <div class="vs2-content-group" [hidden]="currentVisitCollapsed">
+          <section id="section-consultation" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/consultation-details.svg" alt="" />
+              <span>{{ 'Consultation details' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasRowsWithValues(consultationDetails); else consultationDetailsEmpty">
+              <div class="vs2-detail-grid">
+                <ng-container *ngFor="let row of consultationDetails">
+                  <div class="vs2-detail-row" *ngIf="hasDisplayValue(row.value)">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value | translate }}</span>
                   </div>
                 </ng-container>
-              </form>
-            </mat-expansion-panel>
+              </div>
+            </ng-container>
+            <ng-template #consultationDetailsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
 
-            <mat-expansion-panel
-              [expanded]="false"
-              #panel4
-              hideToggle
-              class="bg-gray overflow-show"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/medication.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Medication'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
-                <div class="table-responsive medication-con">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{'Drug name'|translate}}</th>
-                        <th scope="col">{{'Strength'|translate}}</th>
-                        <th scope="col">{{'No. of days'|translate}}</th>
-                        <th scope="col">{{'Timing'|translate}}</th>
-                        <th scope="col">{{'Remarks'|translate}}</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <ng-container *ngIf="medicines.length">
-                        <tr *ngFor="let m of medicines; let i = index">
-                          <td>{{ m.drug|translate }}</td>
-                          <td>{{ m.strength|translate }}</td>
-                          <td>{{ m.days }}</td>
-                          <td>{{ m.timing }}</td>
-                          <td>{{ m.remark }}</td>
-                          <td class="pr-0">
-                            <button
-                              type="button"
-                              mat-icon-button
-                              class="float-right"
-                              *ngIf="isVisitNoteProvider && !visitEnded"
-                              (click)="deleteMedicine(i, m.uuid)"
-                            >
-                              <img src="assets/svgs/delete-icon.svg" alt="" />
-                            </button>
-                          </td>
-                        </tr>
-                      </ng-container>
-                      <ng-template #noMedicines>
-                        <tr>
-                          <td colspan="6" class="text-center font-weight-bold">
-                            {{'No medicines added'|translate}}!
-                          </td>
-                        </tr>
-                      </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                        <tr *ngIf="addMoreMedicine">
-                          <td colspan="6">
-                            <div class="form-group mb-0">
-                              <button
-                                type="button"
-                                class="add-more-btn"
-                                (click)="toggleMedicine()"
-                              >
-                                <img src="assets/svgs/plus-circle.svg" alt="" />
-                                <span class="ml-2">{{'Add more medicine'|translate}}</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                        <!-- <tr *ngIf="!addMoreMedicine">
-                          <td>
-                            <ng-select appendTo=".table-responsive" formControlName="drug" class="visit-select custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select drug">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select strength">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select days">
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select timing">
-                            </ng-select>
-                          </td>
-                          <td colspan="2">
-                            <div class="form-group mb-0">
-                              <input formControlName="remark" type="text" class="form-control" placeholder="Enter Remark">
-                            </div>
-                          </td>
-                        </tr> -->
-                        <tr *ngIf="!addMoreMedicine">
-                          <td>
-                            <div class="form-group mb-0">
-                              <input
-                                formControlName="drug"
-                                type="text"
-                                class="form-control"
-                                placeholder="{{'Enter drug'|translate}}"
-                                [ngbTypeahead]="search3"
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <div class="form-group mb-0">
-                              <input
-                                formControlName="strength"
-                                type="text"
-                                class="form-control"
-                                placeholder="{{'Enter strength'|translate}}"
-                                [ngbTypeahead]="search4"
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <div class="form-group mb-0">
-                              <input
-                                formControlName="days"
-                                type="text"
-                                class="form-control"
-                                placeholder="{{'Enter days'|translate}}"
-                                [ngbTypeahead]="search5"
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <ng-select
-                              appendTo=".medication-con"
-                              formControlName="timing"
-                              class="visit-select custom"
-                              [items]="timingList"
-                              bindLabel="name"
-                              bindValue="name"
-                              [clearable]="false"
-                              [searchable]="true"
-                              [addTag]="true"
-                              placeholder="{{'Select timing'|translate}}"
-                              notFoundText="{{'No items found'|translate}}"
-                            >
-                            </ng-select>
-                          </td>
-                          <td colspan="2">
-                            <div class="form-group mb-0">
-                              <input
-                                formControlName="remark"
-                                type="text"
-                                class="form-control"
-                                placeholder="{{'Enter Remark'|translate}}"
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                        <tr *ngIf="!addMoreMedicine">
-                          <td colspan="6" class="border-top-0">
-                            <div class="form-group mb-0 float-right">
-                              <button
-                                type="button"
-                                class="white-btn mr-2"
-                                (click)="toggleMedicine()"
-                              >
-                                {{'Cancel'|translate}}
-                              </button>
-                              <button
-                                type="submit"
-                                class="gray-btn"
-                                [disabled]="addMedicineForm.invalid"
-                              >
-                                {{'Add'|translate}}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </ng-container>
-                    </tbody>
-                  </table>
+          <section id="section-checkup" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/check-up-reason.svg" alt="" />
+              <span>{{ 'Check-up reason' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasCurrentCheckUpData; else currentCheckUpEmpty">
+              <ng-container *ngIf="cheifComplaints.length">
+                <h4 class="vs2-subhead">{{ 'Chief complaint' | translate }}</h4>
+                <div class="vs2-complaint-chips">
+                  <span class="vs2-chip vs2-chip-solid" *ngFor="let complaint of cheifComplaints">
+                    {{ complaint | translate }}
+                  </span>
                 </div>
-              </form>
+              </ng-container>
+              <ng-container *ngFor="let reason of checkUpReasonData">
+                <div class="vs2-complaint-block" *ngIf="reason.title !== 'Associated symptoms' && reason.data?.length">
+                  <h4 class="vs2-subhead vs2-subhead-strong">{{ reason.title.trim() | translate }}</h4>
+                  <div class="vs2-detail-list">
+                    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let item of reason.data">
+                      <span class="vs2-detail-label">{{ item.key | translate }}</span>
+                      <span class="vs2-detail-value">{{ item.value }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="currentAssociatedSymptoms.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Associated symptoms' | translate }}</h4>
+                <div class="vs2-symptom-group" *ngFor="let symptom of currentAssociatedSymptoms">
+                  <div class="vs2-symptom-label">{{ symptom.label | translate }}:</div>
+                  <p class="vs2-symptom-text">{{ symptom.text }}</p>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-template #currentCheckUpEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
 
-              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}</h6>
-              <ng-container *ngIf="additionalInstructions.length">
-                <ul class="items-list">
-                  <li *ngFor="let ai of additionalInstructions; let i = index">
-                    <div class="d-flex justify-content-between">
-                      <span>{{ ai.value }}</span>
+          <section id="section-history" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/medical-history.svg" alt="" />
+              <span>{{ 'Medical history' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasCurrentMedicalHistoryData; else currentMedicalHistoryEmpty">
+              <ng-container *ngFor="let history of patientHistoryData">
+                <ng-container *ngIf="history.data?.length">
+                  <h4 class="vs2-subhead" [class.vs2-subhead-strong]="history.title === 'Family history'">
+                    {{ history.title | translate }}
+                  </h4>
+                  <div class="vs2-detail-list">
+                    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let item of history.data">
+                      <span class="vs2-detail-label">{{ item.key | translate }}</span>
+                      <span class="vs2-detail-value">{{ item.value }}</span>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-template #currentMedicalHistoryEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section id="section-vitals" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
+              <span>{{ 'Vitals' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasCurrentVitalsData; else currentVitalsEmpty">
+              <div class="vs2-vitals-grid">
+                <div class="vs2-vital-cell" *ngFor="let vital of vitalCards">
+                  <span class="vs2-vital-label">{{ vital.label | translate }}</span>
+                  <span class="vs2-vital-value">{{ vital.value }}</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #currentVitalsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section id="section-physical" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/physical-examination.svg" alt="" />
+              <span>{{ 'Physical examination' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasCurrentPhysicalExamData; else currentPhysicalExamEmpty">
+              <ng-container *ngIf="generalExamRows.length || eyeImages.length">
+                <h4 class="vs2-subhead">{{ 'General exams' | translate }}</h4>
+                <div class="vs2-detail-list">
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of generalExamRows">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value">{{ row.value }}</span>
+                  </div>
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngIf="eyeImages.length">
+                    <span class="vs2-detail-label">{{ 'Eye images' | translate }}</span>
+                    <div class="vs2-thumb-row">
                       <button
-                        mat-icon-button
-                        *ngIf="isVisitNoteProvider && !visitEnded"
-                        (click)="deleteAdditionalInstruction(i, ai.uuid)"
+                        type="button"
+                        class="vs2-thumb vs2-icon-action"
+                        *ngFor="let image of eyeImages; let imageIndex = index"
+                        (click)="previewEyeImages(imageIndex)"
                       >
-                        <img src="assets/svgs/delete-icon.svg" alt="" />
+                        <img [src]="image.src" [alt]="'Eye images' | translate" />
                       </button>
                     </div>
-                  </li>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="abdomenFindings.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Abdomen' | translate }}</h4>
+                <ul class="vs2-bullet-list">
+                  <li *ngFor="let finding of abdomenFindings">{{ finding | translate }}</li>
                 </ul>
               </ng-container>
+            </ng-container>
+            <ng-template #currentPhysicalExamEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
 
-              <ng-template #noAdditionalInstructions>
-                <div class="no-docs text-center font-weight-bold">
-                  {{'No additional instructions added!'|translate}}
-                </div>
-              </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                <div class="form-group" *ngIf="addMoreAdditionalInstruction">
-                  <button
-                    type="button"
-                    class="add-more-btn"
-                    (click)="toggleAdditionalInstruction()"
+          <section id="section-documents" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/additional-documents.svg" alt="" />
+              <span>{{ 'Additional documents' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <div class="vs2-doc-row" *ngIf="additionalDocs.length; else currentDocumentsEmpty">
+              <button
+                type="button"
+                class="vs2-doc-thumb vs2-icon-action"
+                *ngFor="let document of additionalDocs; let documentIndex = index"
+                (click)="previewDocImages(documentIndex)"
+              >
+                <img [src]="document.src" [alt]="'Additional documents' | translate" />
+              </button>
+            </div>
+            <ng-template #currentDocumentsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section id="section-refer" class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/refer-to-specialist.svg" alt="" />
+              <span>{{ 'Refer to specialist' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <form [formGroup]="referSpecialityForm" (ngSubmit)="referSpecialist()">
+              <div class="vs2-refer-row">
+                <span class="vs2-detail-label vs2-no-bullet">{{ 'Refer to another speciality' | translate }}</span>
+                <label class="vs2-radio">
+                  <input type="radio" [value]="true" formControlName="refer" />
+                  {{ 'Yes' | translate }}
+                </label>
+                <label class="vs2-radio">
+                  <input type="radio" [value]="false" formControlName="refer" />
+                  {{ 'No' | translate }}
+                </label>
+              </div>
+              <ng-container *ngIf="referSpecialityForm.value.refer">
+                <div class="vs2-refer-row">
+                  <span class="vs2-detail-label vs2-no-bullet">{{ 'Specialization' | translate }}</span>
+                  <ng-select
+                    class="vs2-ng-select"
+                    formControlName="specialization"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="{{ 'Select specialization' | translate }}"
+                    notFoundText="{{ 'No items found' | translate }}"
                   >
-                    <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">{{'Add more instructions'|translate}}</span>
-                  </button>
+                    <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
+                      {{ specialization.name | translate }}
+                    </ng-option>
+                  </ng-select>
                 </div>
-                <form
-                  [formGroup]="addAdditionalInstructionForm"
-                  (ngSubmit)="addAdditionalInstruction()"
-                  *ngIf="!addMoreAdditionalInstruction"
-                >
-                  <div class="form-group">
-                    <!-- <label for="note"><b>Additional instructions</b></label> -->
-                    <textarea
-                      formControlName="note"
-                      class="form-control"
-                      rows="3"
-                      placeholder="{{'Type here'|translate}}"
-                    ></textarea>
-                  </div>
-                  <div class="form-group">
-                    <button
-                      type="button"
-                      class="white-btn mr-2"
-                      (click)="toggleAdditionalInstruction()"
-                    >
-                      {{'Cancel'|translate}}
-                    </button>
-                    <button
-                      type="submit"
-                      class="gray-btn"
-                      [disabled]="addAdditionalInstructionForm.invalid"
-                    >
-                      {{'Save'|translate}}
-                    </button>
-                  </div>
-                </form>
+                <button class="vs2-btn-primary" type="submit" [disabled]="referSpecialityForm.invalid || !!visitNotePresent">
+                  {{ 'Re-assign' | translate }}
+                </button>
               </ng-container>
-            </mat-expansion-panel>
+            </form>
 
-            <mat-expansion-panel
-              [expanded]="false"
-              #panel5
-              hideToggle
-              class="overflow-show"
+            <ng-container *ngIf="!referSpecialityForm.value.refer">
+              <div class="vs2-note-box">
+                <span class="vs2-note-label">{{ 'Note:' | translate }}</span>
+                <span class="vs2-note-text">
+                  {{ 'This history note and physical exam note was generated by a community health worker with the' | translate }}
+                  {{ 'support of the Intelehealth mobile application and Ayu, a digital assistant. It collects only' | translate }}
+                  {{ 'preliminary findings and may not gather all of the patient clinical information, especially' | translate }}
+                  {{ 'sensitive information or complex physical exam information which is hard for the health worker' | translate }}
+                  {{ 'to collect. Please verify crucial clinical information and collect any additional information' | translate }}
+                  {{ 'you require by speaking with the patient directly.' | translate }}
+                </span>
+              </div>
+              <button
+                class="vs2-btn-primary"
+                type="button"
+                (click)="startVisitNote()"
+                [disabled]="!!visitNotePresent || visitEnded"
+              >
+                {{ 'Start Visit Note' | translate }}
+              </button>
+            </ng-container>
+          </section>
+          </div>
+
+          <ng-container *ngIf="visitNotePresent">
+            <div
+              id="section-doctor-note"
+              class="vs2-content-header vs2-content-toggle vs2-dn-header"
+              role="button"
+              tabindex="0"
+              [attr.aria-expanded]="!doctorNoteCollapsed"
+              [class.vs2-content-group-collapsed]="doctorNoteCollapsed"
+              (click)="toggleContentGroup('doctor')"
+              (keydown.enter)="toggleContentGroup('doctor')"
+              (keydown.space)="toggleContentGroup('doctor'); $event.preventDefault()"
             >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/advice.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Advice'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
+              <h2>{{ "Doctor's Note" | translate }}</h2>
+              <mat-icon>expand_less</mat-icon>
+            </div>
 
-              <ul class="items-list" *ngIf="advices.length">
-                <li *ngFor="let ad of advices; let i = index">
-                  <div class="d-flex justify-content-between">
-                    <span>{{ ad.value|translate }}</span>
-                    <button
-                      mat-icon-button
-                      (click)="deleteAdvice(i, ad.uuid)"
-                      *ngIf="isVisitNoteProvider && !visitEnded"
-                    >
-                      <img src="assets/svgs/delete-icon.svg" alt="" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
-              <ng-template #noAdvices>
-                <div class="no-docs text-center font-weight-bold">
-                  {{'No advices added!'|translate}}
-                </div>
-              </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                <div class="form-group mt-3" *ngIf="addMoreAdvice">
-                  <button
-                    type="button"
-                    class="add-more-btn"
-                    (click)="toggleAdvice()"
-                  >
-                    <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">{{'Add more advice'|translate}}</span>
-                  </button>
-                </div>
-                <form
-                  class="mt-3"
-                  [formGroup]="addAdviceForm"
-                  (ngSubmit)="addAdvice()"
-                  *ngIf="!addMoreAdvice"
-                >
-                  <div class="form-group">
-                    <label for="note"><b>{{'Advice'|translate}}</b></label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="advice"
-                      placeholder="{{'Type here'|translate}}"
-                      [ngbTypeahead]="search"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <button
-                      type="button"
-                      class="white-btn mr-2"
-                      (click)="toggleAdvice()"
-                    >
-                      {{'Cancel'|translate}}
-                    </button>
-                    <button
-                      type="submit"
-                      class="gray-btn"
-                      [disabled]="addAdviceForm.invalid"
-                    >
-                      {{'Add advice'|translate}}
-                    </button>
-                  </div>
-                </form>
-              </ng-container>
-            </mat-expansion-panel>
-
-            <mat-expansion-panel
-              [expanded]="false"
-              #panel6
-              hideToggle
-              class="bg-gray overflow-show"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/test.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Test'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <ul class="items-list" *ngIf="tests.length">
-                <li *ngFor="let t of tests; let i = index">
-                  <div class="d-flex justify-content-between">
-                    <span>{{ t.value|translate }}</span>
-                    <button
-                      mat-icon-button
-                      (click)="deleteTest(i, t.uuid)"
-                      *ngIf="isVisitNoteProvider && !visitEnded"
-                    >
-                      <img src="assets/svgs/delete-icon.svg" alt="" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
-              <ng-template #noTests>
-                <div class="no-docs text-center font-weight-bold">
-                  {{'No tests added!'|translate}}
-                </div>
-              </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                <div class="form-group mt-3" *ngIf="addMoreTest">
-                  <button
-                    type="button"
-                    class="add-more-btn"
-                    (click)="toggleTest()"
-                  >
-                    <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">{{'Add more test'|translate}}</span>
-                  </button>
-                </div>
-                <form
-                  class="mt-3"
-                  [formGroup]="addTestForm"
-                  (ngSubmit)="addTest()"
-                  *ngIf="!addMoreTest"
-                >
-                  <div class="form-group">
-                    <label for="note"><b>{{'Test'|translate}}</b></label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="test"
-                      placeholder="{{'Type here'|translate}}"
-                      [ngbTypeahead]="search2"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <button
-                      type="button"
-                      class="white-btn mr-2"
-                      (click)="toggleTest()"
-                    >
-                      {{'Cancel'|translate}}
-                    </button>
-                    <button
-                      type="submit"
-                      class="gray-btn"
-                      [disabled]="addTestForm.invalid"
-                    >
-                     {{'Add test'|translate}}
-                    </button>
-                  </div>
-                </form>
-              </ng-container>
-            </mat-expansion-panel>
-
-            <!-- <mat-expansion-panel
-              [expanded]="false"
-              #panel7
-              hideToggle
-              class="overflow-show"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/referral.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Referral'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
-                <div class="table-responsive scrollable-box">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{'Referral facility'|translate}}</th>
-                        <th scope="col">{{'Remarks'|translate}}</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <ng-container *ngIf="referrals.length">
-                        <tr *ngFor="let r of referrals; let i = index">
-                          <td>{{ r.speciality }}</td>
-                          <td>{{ r.remark }}</td>
-                          <td class="pr-0">
-                            <button
-                              type="button"
-                              class="float-right"
-                              mat-icon-button
-                              (click)="deleteReferral(i, r.uuid)"
-                              *ngIf="isVisitNoteProvider && !visitEnded"
-                            >
-                              <img src="assets/svgs/delete-icon.svg" alt="" />
-                            </button>
-                          </td>
-                        </tr>
-                      </ng-container>
-                      <ng-template #noReferrals>
-                        <tr>
-                          <td colspan="3" class="text-center font-weight-bold">
-                            {{'No referrals added!'|translate}}
-                          </td>
-                        </tr>
-                      </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                        <tr *ngIf="addMoreReferral">
-                          <td colspan="3">
-                            <div class="form-group mb-0">
-                              <button
-                                type="button"
-                                class="add-more-btn"
-                                (click)="toggleReferral()"
-                              >
-                                <img src="assets/svgs/plus-circle.svg" alt="" />
-                                <span class="ml-2">{{'Add more referral'|translate}}</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr *ngIf="!addMoreReferral">
-                          <td>
-                            <ng-select
-                              class="visit-select"
-                              appendTo=".scrollable-box"
-                              formControlName="speciality"
-                              [clearable]="false"
-                              [searchable]="true"
-                              [addTag]="true"
-                              placeholder="{{'Select specialization'|translate}}"
-                            >
-                              <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">{{ (specialization.name) | translate }}</ng-option>
-                            </ng-select>
-                          </td>
-                          <td colspan="2">
-                            <div class="form-group mb-0">
-                              <input
-                                formControlName="remark"
-                                type="text"
-                                class="form-control"
-                                placeholder="{{'Type here'|translate}}"
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                        <tr *ngIf="!addMoreReferral">
-                          <td colspan="3" class="border-top-0">
-                            <div class="form-group mb-0 float-right">
-                              <button
-                                type="button"
-                                class="white-btn mr-2"
-                                (click)="toggleReferral()"
-                              >
-                                {{'Cancel'|translate}}
-                              </button>
-                              <button
-                                type="submit"
-                                class="gray-btn"
-                                [disabled]="addReferralForm.invalid"
-                              >
-                                {{'Add'|translate}}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </ng-container>
-                    </tbody>
-                  </table>
-                </div>
-              </form>
-            </mat-expansion-panel> -->
-
-            <mat-expansion-panel
-              [expanded]="false"
-              #panel8
-              hideToggle
-              class="bg-gray"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Follow-up'|translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-
-              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
-                <ul class="items-list">
+            <div class="vs2-content-group" [hidden]="doctorNoteCollapsed">
+            <section id="section-dn-interaction" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
+                <span>{{ 'Patient interaction' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <form [formGroup]="patientInteractionForm" (ngSubmit)="savePatientInteraction()">
+                <ul class="vs2-bullet-list vs2-interaction-list">
                   <li>
-                    <div class="row">
-                      <label for="follow-up" class="col-sm-3 col-form-label"
-                        >{{'Do you want to have follow up with the patient?'|translate}}</label
-                      >
-                      <div class="col-sm-9 d-flex align-items-center">
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            [value]="'Yes'"
-                            formControlName="wantFollowUp"
-                          />
-                          <div class="state p-success">
-                            <label>{{'Yes'|translate}}</label>
-                          </div>
-                        </div>
-                        <div class="pretty p-default p-round">
-                          <input
-                            type="radio"
-                            [value]="'No'"
-                            formControlName="wantFollowUp"
-                          />
-                          <div class="state p-success">
-                            <label>{{'No'|translate}}</label>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="vs2-form-row">
+                      <span class="vs2-field-label">{{ 'Connect with patient' | translate }}</span>
+                      <span class="vs2-connect-actions">
+                        <a
+                          class="vs2-icon-circle"
+                          [class.vs2-icon-circle-disabled]="!patientContactNo"
+                          [attr.href]="patientContactNo ? 'tel:' + patientContactNo : null"
+                          [attr.aria-label]="'Start call' | translate"
+                        >
+                          <img src="assets/svgs/phone-black.svg" alt="" />
+                        </a>
+                        <a
+                          class="vs2-icon-circle"
+                          [class.vs2-icon-circle-disabled]="!patientContactNo"
+                          [attr.href]="patientContactNo ? getWhatsAppLink() : null"
+                          target="_blank"
+                          rel="noopener"
+                          aria-label="WhatsApp"
+                        >
+                          <img src="assets/svgs/whatsapp-black.svg" alt="" />
+                        </a>
+                        <span class="vs2-connect-hint">
+                          {{ (patientContactNo ? 'Click here to connect with the patient' : 'Phone number is not available') | translate }}
+                        </span>
+                      </span>
                     </div>
                   </li>
-                  <ng-container
-                    *ngIf="followUpForm.value.wantFollowUp == 'Yes'"
-                  >
-                    <li>
-                      <div class="row">
-                        <label for="follow-date" class="col-sm-3 col-form-label"
-                          >{{'Select date'|translate}}</label
-                        >
-                        <div class="col-sm-3">
-                          <div class="input-group">
-                            <input
-                              type="text"
-                              class="form-control"
-                              formControlName="followUpDate"
-                              [min]="minDate"
-                              [matDatepicker]="fdp"
-                              placeholder="{{'Enter date'|translate}}"
-                              aria-label="Followupdate"
-                              aria-describedby="basic-addon1"
-                              readonly
-                            />
-                            <mat-datepicker #fdp></mat-datepicker>
-                            <div class="input-group-append">
-                              <span class="input-group-text" id="basic-addon1">
-                                <mat-datepicker-toggle matSuffix [for]="fdp">
-                                  <img
-                                    matDatepickerToggleIcon
-                                    src="assets/svgs/calendar-date.svg"
-                                    alt=""
-                                  />
-                                </mat-datepicker-toggle>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label for="follow-date" class="col-sm-3 col-form-label"
-                          >{{'Select time'|translate}}</label
-                        >
-                        <div class="col-sm-3">
-                          <ng-select
-                            class="visit-select custom"
-                            appendTo=".intel-card"
-                            formControlName="followUpTime"
-                            [items]="timeList"
-                            bindLabel="name"
-                            [clearable]="false"
-                            [searchable]="true"
-                            placeholder="{{'Select time'|translate}}"
-                            notFoundText="{{'No items found'|translate}}"
-                          >
-                          </ng-select>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <label
-                          for="follow-reason"
-                          class="col-sm-3 col-form-label"
-                          >{{'Reason for follow-up'|translate}}</label
-                        >
-                        <div class="col-sm-9">
-                          <input
-                            type="text"
-                            class="form-control"
-                            placeholder="{{'Type here'|translate}}"
-                            formControlName="followUpReason"
-                          />
-                        </div>
-                      </div>
-                    </li>
-                  </ng-container>
+                  <li>
+                    <div class="vs2-form-row">
+                      <span class="vs2-field-label">{{ 'Have you spoken with the patient directly?' | translate }}</span>
+                      <span class="vs2-interaction-choice-group">
+                        <label class="vs2-radio">
+                          <input type="radio" value="Yes" formControlName="spoken" [attr.disabled]="patientInteractionForm.value.present || !canEditVisitNote ? true : null" />
+                          {{ 'Yes' | translate }}
+                        </label>
+                        <label class="vs2-radio">
+                          <input type="radio" value="No" formControlName="spoken" [attr.disabled]="patientInteractionForm.value.present || !canEditVisitNote ? true : null" />
+                          {{ 'No' | translate }}
+                        </label>
+                      </span>
+                    </div>
+                  </li>
                 </ul>
-                <div
-                  class="form-group mb-0"
-                  *ngIf="
-                    isVisitNoteProvider &&
-                    !visitEnded &&
-                    !followUpForm.value.present &&
-                    followUpForm.value.wantFollowUp == 'Yes'
-                  "
+                <button
+                  class="vs2-btn-soft"
+                  type="submit"
+                  [disabled]="patientInteractionForm.invalid || patientInteractionForm.value.present || !canEditVisitNote"
                 >
-                  <button
-                    type="submit"
-                    class="gray-btn"
-                    [disabled]="followUpForm.invalid"
-                  >
-                    {{'Save'|translate}}
-                  </button>
+                  {{ 'Save' | translate }}
+                </button>
+              </form>
+            </section>
+
+            <section id="section-dn-diagnosis" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/diagnosis.svg" alt="" />
+                <span>{{ 'Diagnosis' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <h4 class="vs2-subhead vs2-subhead-purple">{{ 'Add Diagnosis' | translate }}</h4>
+              <form
+                [formGroup]="diagnosisForm"
+                (ngSubmit)="saveDiagnosis()"
+              >
+                <div class="vs2-form-row">
+                  <span class="vs2-field-label">{{ 'Do you have enough information to diagnose?' | translate }}</span>
+                  <label class="vs2-radio"><input type="radio" [checked]="true" [disabled]="!canEditVisitNote" /> {{ 'Yes' | translate }}</label>
+                  <label class="vs2-radio"><input type="radio" [disabled]="!canEditVisitNote" /> {{ 'No' | translate }}</label>
+                </div>
+                <div class="vs2-form-row">
+                  <span class="vs2-field-label">{{ 'Select diagnosis' | translate }}</span>
+                  <ng-select
+                    class="vs2-ng-select"
+                    formControlName="diagnosisName"
+                    (search)="onKeyUp($event)"
+                    [items]="diagnosis$ | async"
+                    bindLabel="name"
+                    bindValue="name"
+                    [clearable]="true"
+                    [searchable]="true"
+                    [addTag]="true"
+                    [readonly]="!canEditVisitNote"
+                    placeholder="{{ 'Search diagnosis' | translate }}"
+                    notFoundText="{{ 'No items found' | translate }}"
+                    addTagText="{{ 'Add item' | translate }}"
+                  ></ng-select>
+                </div>
+                <div class="vs2-form-row">
+                  <span class="vs2-field-label">{{ 'Diagnosis type' | translate }}</span>
+                  <label class="vs2-radio"><input type="radio" value="Primary" formControlName="diagnosisType" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'Primary' | translate }}</label>
+                  <label class="vs2-radio"><input type="radio" value="Secondary" formControlName="diagnosisType" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'Secondary' | translate }}</label>
+                </div>
+                <div class="vs2-form-row">
+                  <span class="vs2-field-label">{{ 'Select' | translate }}</span>
+                  <label class="vs2-radio"><input type="radio" value="Provisional" formControlName="diagnosisStatus" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'Provisional' | translate }}</label>
+                  <label class="vs2-radio"><input type="radio" value="Confirmed" formControlName="diagnosisStatus" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'Confirmed' | translate }}</label>
+                </div>
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleDiagnosis()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="diagnosisForm.invalid || !canEditVisitNote">{{ 'Add' | translate }}</button>
                 </div>
               </form>
 
-              <div class="table-responsive" *ngIf="followUpForm.value.present">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">{{'Follow Up Requested'|translate}}</th>
-                      <th scope="col">{{'Date'|translate}}</th>
-                      <th scope="col">{{'Time'|translate}}</th>
-                      <th scope="col">{{'Reason'|translate}}</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{ followUpForm.value.wantFollowUp|translate }}</td>
-                      <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy':'':locale) : '-' }}</td>
-                      <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
-                      <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
-                      <td class="pr-0">
-                        <button
-                          type="button"
-                          class="float-right"
-                          mat-icon-button
-                          (click)="deleteFollowUp()"
-                          *ngIf="isVisitNoteProvider && !visitEnded"
-                        >
-                          <img src="assets/svgs/delete-icon.svg" alt="" />
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
-      </div>
-    </div>
+              <ng-container *ngIf="existingDiagnosis.length">
+                <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">{{ 'Added Diagnosis' | translate }}</h4>
+                <div class="vs2-added-item" *ngFor="let diagnosisItem of existingDiagnosis; let diagnosisIndex = index">
+                  <div class="vs2-added-row">
+                    <span class="vs2-added-name">{{ diagnosisItem.diagnosisName }}</span>
+                    <span class="vs2-added-actions">
+                      <mat-icon class="vs2-edit-icon" [class.vs2-disabled-action]="!canEditVisitNote">edit</mat-icon>
+                      <mat-icon
+                        class="vs2-delete-icon"
+                        (click)="deleteDiagnosis(diagnosisIndex, diagnosisItem.uuid)"
+                        [class.vs2-disabled-action]="!canEditVisitNote"
+                      >delete_outline</mat-icon>
+                    </span>
+                  </div>
+                  <div class="vs2-added-chips">
+                    <span class="vs2-chip vs2-chip-solid-sm">{{ diagnosisItem.diagnosisType | translate }}</span>
+                    <span class="vs2-chip vs2-chip-grey">{{ diagnosisItem.diagnosisStatus | translate }}</span>
+                  </div>
+                </div>
+              </ng-container>
+            </section>
 
-    <div
-      class="col-md-12 p-0 py-2 mb-5 text-center"
-      *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
-    >
-      <button
-        type="button"
-        class="blue-btn mr-2"
-        (click)="sharePrescription()"
-      >
-        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
-      </button>
-      <button
-        type="button"
-        class="blue-btn"
-        (click)="openVisitPrescriptionModal(visit?.uuid)"
-        *ngIf="visitCompleted"
-        >
-        {{'View prescription'|translate}}
-      </button>
+            <section id="section-dn-note" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
+                <span>{{ 'Note/Outcome' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <div class="vs2-list-item" *ngFor="let note of notes; let noteIndex = index">
+                <span class="vs2-detail-label">{{ note.value }}</span>
+                <mat-icon
+                  class="vs2-delete-icon"
+                  (click)="deleteNote(noteIndex, note.uuid)"
+                  [class.vs2-disabled-action]="!canEditVisitNote"
+                >delete_outline</mat-icon>
+              </div>
+              <form [formGroup]="addNoteForm" (ngSubmit)="addNote()">
+                <label class="vs2-field-label vs2-mt">
+                  {{ 'Note' | translate }}<span class="vs2-req">*</span>
+                  <span class="vs2-check">
+                    <input type="checkbox" [checked]="true" disabled />
+                    {{ 'that shared with patient' | translate }}
+                  </span>
+                </label>
+                <textarea class="vs2-textarea" formControlName="note" [readonly]="!canEditVisitNote" placeholder="{{ 'Type here' | translate }}"></textarea>
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleNote()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="addNoteForm.invalid || !canEditVisitNote">{{ 'Add note' | translate }}</button>
+                </div>
+              </form>
+            </section>
+
+            <section id="section-dn-medication" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/medication.svg" alt="" />
+                <span>{{ 'Medication' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <h4 class="vs2-subhead vs2-subhead-purple">{{ 'Add Medication' | translate }}</h4>
+              <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
+                <div class="vs2-med-grid">
+                  <div class="vs2-field">
+                    <span class="vs2-field-label">{{ 'Drug name' | translate }}</span>
+                    <input
+                      class="vs2-input"
+                      formControlName="drug"
+                      type="text"
+                      [readonly]="!canEditVisitNote"
+                      placeholder="{{ 'Select or type' | translate }}"
+                    />
+                  </div>
+                  <div class="vs2-field">
+                    <span class="vs2-field-label">{{ 'Strength' | translate }}</span>
+                    <input
+                      class="vs2-input"
+                      formControlName="strength"
+                      type="text"
+                      [readonly]="!canEditVisitNote"
+                      placeholder="{{ 'Enter' | translate }}"
+                    />
+                  </div>
+                  <div class="vs2-field">
+                    <span class="vs2-field-label">{{ 'No. of days' | translate }}</span>
+                    <input class="vs2-input" formControlName="days" [readonly]="!canEditVisitNote" placeholder="{{ 'Enter' | translate }}" />
+                  </div>
+                  <div class="vs2-field">
+                    <span class="vs2-field-label">{{ 'Timing' | translate }}</span>
+                    <ng-select
+                      class="vs2-ng-select vs2-ng-select-grid"
+                      formControlName="timing"
+                      [items]="timingList"
+                      bindLabel="name"
+                      bindValue="name"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [addTag]="true"
+                      [readonly]="!canEditVisitNote"
+                      placeholder="{{ 'Select or type' | translate }}"
+                    ></ng-select>
+                  </div>
+                  <div class="vs2-field">
+                    <span class="vs2-field-label">{{ 'Remarks' | translate }}</span>
+                    <input
+                      class="vs2-input"
+                      formControlName="remark"
+                      type="text"
+                      [readonly]="!canEditVisitNote"
+                      placeholder="{{ 'Enter' | translate }}"
+                    />
+                  </div>
+                </div>
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleMedicine()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="addMedicineForm.invalid || !canEditVisitNote">{{ 'Add' | translate }}</button>
+                </div>
+              </form>
+
+              <ng-container *ngIf="medicines.length">
+                <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">{{ 'Added Medication' | translate }}</h4>
+                <div class="vs2-table vs2-med-table">
+                  <div class="vs2-table-head">
+                    <span>{{ 'Drug name' | translate }}</span>
+                    <span>{{ 'Strength' | translate }}</span>
+                    <span>{{ 'No. of days' | translate }}</span>
+                    <span>{{ 'Timing' | translate }}</span>
+                    <span>{{ 'Remarks' | translate }}</span>
+                    <span></span>
+                  </div>
+                  <div class="vs2-table-row" *ngFor="let medicine of medicines; let medicineIndex = index">
+                    <span>{{ medicine.drug | translate }}</span>
+                    <span>{{ medicine.strength | translate }}</span>
+                    <span>{{ medicine.days }}</span>
+                    <span>{{ medicine.timing }}</span>
+                    <span>{{ medicine.remark }}</span>
+                    <span class="vs2-added-actions">
+                      <mat-icon class="vs2-edit-icon" [class.vs2-disabled-action]="!canEditVisitNote">edit</mat-icon>
+                      <mat-icon
+                        class="vs2-delete-icon"
+                        (click)="deleteMedicine(medicineIndex, medicine.uuid)"
+                        [class.vs2-disabled-action]="!canEditVisitNote"
+                      >delete_outline</mat-icon>
+                    </span>
+                  </div>
+                </div>
+              </ng-container>
+
+              <h4 class="vs2-subhead vs2-subhead-purple vs2-subhead-strong">{{ 'Additional instructions' | translate }}</h4>
+              <div class="vs2-list-item" *ngFor="let instruction of additionalInstructions; let instructionIndex = index">
+                <span class="vs2-detail-label vs2-additional-instruction-text">{{ instruction.value }}</span>
+                <mat-icon
+                  class="vs2-delete-icon"
+                  (click)="deleteAdditionalInstruction(instructionIndex, instruction.uuid)"
+                  [class.vs2-disabled-action]="!canEditVisitNote"
+                >delete_outline</mat-icon>
+              </div>
+              <form
+                [formGroup]="addAdditionalInstructionForm"
+                (ngSubmit)="addAdditionalInstruction()"
+              >
+                <textarea class="vs2-textarea" formControlName="note" [readonly]="!canEditVisitNote" placeholder="{{ 'Type here' | translate }}"></textarea>
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleAdditionalInstruction()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="addAdditionalInstructionForm.invalid || !canEditVisitNote">{{ 'Add note' | translate }}</button>
+                </div>
+              </form>
+            </section>
+
+            <section id="section-dn-advice" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/advice.svg" alt="" />
+                <span>{{ 'Advice' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <div class="vs2-list-item" *ngFor="let advice of advices; let adviceIndex = index">
+                <span class="vs2-detail-label">{{ advice.value | translate }}</span>
+                <mat-icon
+                  class="vs2-delete-icon"
+                  (click)="deleteAdvice(adviceIndex, advice.uuid)"
+                  [class.vs2-disabled-action]="!canEditVisitNote"
+                >delete_outline</mat-icon>
+              </div>
+              <form [formGroup]="addAdviceForm" (ngSubmit)="addAdvice()">
+                <span class="vs2-field-label">{{ 'Advice' | translate }}<span class="vs2-req">*</span></span>
+                <input
+                  class="vs2-input"
+                  type="text"
+                  formControlName="advice"
+                  [readonly]="!canEditVisitNote"
+                  placeholder="{{ 'Add advice to patient' | translate }}"
+                />
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleAdvice()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="addAdviceForm.invalid || !canEditVisitNote">{{ 'Add Advice' | translate }}</button>
+                </div>
+              </form>
+            </section>
+
+            <section id="section-dn-test" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
+                <span>{{ 'Test' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <div class="vs2-list-item" *ngFor="let test of tests; let testIndex = index">
+                <span class="vs2-detail-label">{{ test.value | translate }}</span>
+                <mat-icon
+                  class="vs2-delete-icon"
+                  (click)="deleteTest(testIndex, test.uuid)"
+                  [class.vs2-disabled-action]="!canEditVisitNote"
+                >delete_outline</mat-icon>
+              </div>
+              <form [formGroup]="addTestForm" (ngSubmit)="addTest()">
+                <span class="vs2-field-label">{{ 'Test' | translate }}<span class="vs2-req">*</span></span>
+                <input
+                  class="vs2-input"
+                  type="text"
+                  formControlName="test"
+                  [readonly]="!canEditVisitNote"
+                  placeholder="{{ 'Add test to patient' | translate }}"
+                />
+                <div class="vs2-btn-row">
+                  <button class="vs2-btn-cancel" type="button" (click)="toggleTest()" [disabled]="!canEditVisitNote">{{ 'Cancel' | translate }}</button>
+                  <button class="vs2-btn-add" type="submit" [disabled]="addTestForm.invalid || !canEditVisitNote">{{ 'Add Test' | translate }}</button>
+                </div>
+              </form>
+            </section>
+
+            <section id="section-dn-followup" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/follow-up.svg" alt="" />
+                <span>{{ 'Follow-up' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
+                <div class="vs2-form-row">
+                  <span class="vs2-field-label">{{ 'Do you want to have follow up with the patient?' | translate }}</span>
+                  <label class="vs2-radio"><input type="radio" value="Yes" formControlName="wantFollowUp" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'Yes' | translate }}</label>
+                  <label class="vs2-radio"><input type="radio" value="No" formControlName="wantFollowUp" [attr.disabled]="!canEditVisitNote ? true : null" /> {{ 'No' | translate }}</label>
+                </div>
+                <ng-container *ngIf="followUpForm.value.wantFollowUp === 'Yes'">
+                  <div class="vs2-form-row">
+                    <span class="vs2-field-label">{{ 'Follow-up type' | translate }}</span>
+                    <label class="vs2-radio"><input type="radio" [checked]="true" [disabled]="!canEditVisitNote" /> {{ 'In person' | translate }}</label>
+                    <label class="vs2-radio"><input type="radio" [disabled]="!canEditVisitNote" /> {{ 'Telemedicine' | translate }}</label>
+                  </div>
+                  <div class="vs2-form-row">
+                    <span class="vs2-field-label">{{ 'Select date' | translate }}<span class="vs2-req">*</span></span>
+                    <input
+                      class="vs2-input vs2-date"
+                      type="date"
+                      formControlName="followUpDate"
+                      [min]="minFollowUpDate"
+                      [readonly]="!canEditVisitNote"
+                    />
+                  </div>
+                  <div class="vs2-form-row">
+                    <span class="vs2-field-label">{{ 'Select time' | translate }}<span class="vs2-req">*</span></span>
+                    <ng-select
+                      class="vs2-ng-select"
+                      formControlName="followUpTime"
+                      [items]="timeList"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [readonly]="!canEditVisitNote"
+                      placeholder="{{ 'Select time' | translate }}"
+                    ></ng-select>
+                  </div>
+                  <div class="vs2-form-row">
+                    <span class="vs2-field-label">{{ 'Reason for follow-up' | translate }}</span>
+                    <input class="vs2-input" formControlName="followUpReason" [readonly]="!canEditVisitNote" placeholder="{{ 'Type here' | translate }}" />
+                  </div>
+                  <button
+                    class="vs2-btn-primary"
+                    type="submit"
+                    [disabled]="followUpForm.invalid || !canEditVisitNote"
+                  >
+                    {{ 'Save' | translate }}
+                  </button>
+                </ng-container>
+              </form>
+
+              <div class="vs2-table vs2-fu-note-table" *ngIf="followUpForm.value.present">
+                <div class="vs2-table-head">
+                  <span>{{ 'Follow Up Requested' | translate }}</span>
+                  <span>{{ 'Type' | translate }}</span>
+                  <span>{{ 'Date' | translate }}</span>
+                  <span>{{ 'Time' | translate }}</span>
+                  <span>{{ 'Reason' | translate }}</span>
+                  <span></span>
+                </div>
+                <div class="vs2-table-row">
+                  <span>{{ followUpForm.value.wantFollowUp | translate }}</span>
+                  <span>{{ 'In person' | translate }}</span>
+                  <span>{{ followUpForm.value.followUpDate | date : 'dd MMMM yyyy' : '' : locale }}</span>
+                  <span>{{ followUpForm.value.followUpTime || '-' }}</span>
+                  <span>{{ followUpForm.value.followUpReason || '-' }}</span>
+                  <mat-icon
+                    class="vs2-delete-icon"
+                    (click)="deleteFollowUp()"
+                    [class.vs2-disabled-action]="!canEditVisitNote"
+                  >delete_outline</mat-icon>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-dn-documents" class="vs2-section-card">
+              <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+                <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
+                <span>{{ 'Additional documents' | translate }}</span>
+                <mat-icon class="vs2-chevron">expand_less</mat-icon>
+              </div>
+              <div class="vs2-divider"></div>
+              <div class="vs2-list-item" *ngFor="let document of doctorDocuments">
+                <span class="vs2-detail-label">{{ document.name }}</span>
+                <mat-icon class="vs2-delete-icon vs2-disabled-action">delete_outline</mat-icon>
+              </div>
+              <div class="vs2-dropzone" aria-disabled="true">
+                <mat-icon>cloud_upload</mat-icon>
+                <span class="vs2-dropzone-text">
+                  {{ 'Drag & drop files or' | translate }} <a href="javascript:void(0)">{{ 'Browse' | translate }}</a>
+                </span>
+                <span class="vs2-dropzone-hint">
+                  {{ 'Supported formats: Images, JPEG, PNG, GIF, PDF, DOC, Excel, PPT' | translate }}
+                </span>
+              </div>
+              <button
+                class="vs2-btn-primary vs2-mt"
+                type="button"
+                (click)="sharePrescription()"
+                [disabled]="!canEditVisitNote"
+              >
+                {{ 'Share Prescription' | translate }}
+              </button>
+            </section>
+            </div>
+          </ng-container>
+        </main>
+      </ng-container>
+
+      <ng-container *ngIf="activeVisitScope === 'past'">
+        <div class="vs2-top-tabs" *ngIf="activePastVisitVisual">
+          <button
+            type="button"
+            class="vs2-top-tab"
+            [class.active]="activePastTopTab === 'visit'"
+            (click)="setPastTopTab('visit')"
+          >
+            {{ 'Past visits' | translate }}
+          </button>
+          <button
+            type="button"
+            class="vs2-top-tab"
+            [class.active]="activePastTopTab === 'prescription'"
+            (click)="setPastTopTab('prescription')"
+          >
+            {{ 'Prescription' | translate }}
+          </button>
+        </div>
+
+        <main class="vs2-content" *ngIf="activePastVisitVisual">
+          <div
+            id="section-past-visit"
+            class="vs2-content-header vs2-content-toggle"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!pastVisitCollapsed"
+            [class.vs2-content-group-collapsed]="pastVisitCollapsed"
+            (click)="toggleContentGroup('past')"
+            (keydown.enter)="toggleContentGroup('past')"
+            (keydown.space)="toggleContentGroup('past'); $event.preventDefault()"
+          >
+            <h2>{{ 'Past visit' | translate }}</h2>
+            <mat-icon>expand_less</mat-icon>
+          </div>
+
+          <div class="vs2-content-group" [hidden]="pastVisitCollapsed">
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/diagnosis-green.svg" alt="" />
+              <span>{{ 'Past Diagnostics' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasDisplayValue(activePastVisitVisual.diagnosis); else pastDiagnosticsEmpty">
+              <h4 class="vs2-subhead">{{ 'Past diagnostics' | translate }}</h4>
+              <div class="vs2-complaint-chips">
+                <span class="vs2-chip vs2-chip-solid">{{ activePastVisitVisual.diagnosis }}</span>
+              </div>
+            </ng-container>
+            <ng-template #pastDiagnosticsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/consultation-details.svg" alt="" />
+              <span>{{ 'Past Consultation details' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasRowsWithValues(activePastVisitVisual.consultation); else pastConsultationEmpty">
+              <div class="vs2-detail-grid">
+                <ng-container *ngFor="let row of activePastVisitVisual.consultation">
+                  <div class="vs2-detail-row" *ngIf="hasDisplayValue(row.value)">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value | translate }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-template #pastConsultationEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/check-up-reason.svg" alt="" />
+              <span>{{ 'Past Check-up reason' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container
+              *ngIf="activePastVisitVisual.chiefComplaints?.length || activePastVisitVisual.complaintDetails?.length || activePastVisitVisual.associatedSymptoms?.length; else pastCheckUpEmpty"
+            >
+              <ng-container *ngIf="activePastVisitVisual.chiefComplaints?.length">
+                <h4 class="vs2-subhead">{{ 'Chief complaint' | translate }}</h4>
+                <div class="vs2-complaint-chips">
+                  <span class="vs2-chip vs2-chip-solid" *ngFor="let complaint of activePastVisitVisual.chiefComplaints">
+                    {{ complaint }}
+                  </span>
+                </div>
+              </ng-container>
+              <div class="vs2-complaint-block" *ngFor="let detail of activePastVisitVisual.complaintDetails">
+                <ng-container *ngIf="detail.rows?.length">
+                  <h4 class="vs2-subhead vs2-subhead-strong">{{ detail.title | translate }}</h4>
+                  <div class="vs2-detail-list">
+                    <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of detail.rows">
+                      <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                      <span class="vs2-detail-value">{{ row.value }}</span>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+              <ng-container *ngIf="activePastVisitVisual.associatedSymptoms?.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Associated symptoms' | translate }}</h4>
+                <div class="vs2-symptom-group" *ngFor="let symptom of activePastVisitVisual.associatedSymptoms">
+                  <div class="vs2-symptom-label">{{ symptom.label | translate }}:</div>
+                  <p class="vs2-symptom-text">{{ symptom.text }}</p>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-template #pastCheckUpEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/medical-history.svg" alt="" />
+              <span>{{ 'Past Medical history' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container
+              *ngIf="activePastVisitVisual.patientHistory?.length || activePastVisitVisual.familyHistory?.length; else pastMedicalHistoryEmpty"
+            >
+              <ng-container *ngIf="activePastVisitVisual.patientHistory?.length">
+                <h4 class="vs2-subhead">{{ 'Patient history' | translate }}</h4>
+                <div class="vs2-detail-list">
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of activePastVisitVisual.patientHistory">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value">{{ row.value }}</span>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="activePastVisitVisual.familyHistory?.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Family history' | translate }}</h4>
+                <div class="vs2-detail-list">
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of activePastVisitVisual.familyHistory">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value">{{ row.value }}</span>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-template #pastMedicalHistoryEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
+              <span>{{ 'Past Vitals' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container *ngIf="hasRowsWithValues(activePastVisitVisual.vitals); else pastVitalsEmpty">
+              <div class="vs2-vitals-grid">
+                <div class="vs2-vital-cell" *ngFor="let vital of activePastVisitVisual.vitals">
+                  <span class="vs2-vital-label">{{ vital.label | translate }}</span>
+                  <span class="vs2-vital-value">{{ vital.value }}</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #pastVitalsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/physical-examination.svg" alt="" />
+              <span>{{ 'Past Physical examination' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container
+              *ngIf="activePastVisitVisual.generalExams?.length || activePastVisitVisual.eyeImages?.length || activePastVisitVisual.abdomenFindings?.length; else pastPhysicalExamEmpty"
+            >
+              <ng-container *ngIf="activePastVisitVisual.generalExams?.length || activePastVisitVisual.eyeImages?.length">
+                <h4 class="vs2-subhead">{{ 'General exams' | translate }}</h4>
+                <div class="vs2-detail-list">
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of activePastVisitVisual.generalExams">
+                    <span class="vs2-detail-label">{{ row.label | translate }}</span>
+                    <span class="vs2-detail-value">{{ row.value }}</span>
+                  </div>
+                  <div class="vs2-detail-row vs2-detail-row-wide" *ngIf="activePastVisitVisual.eyeImages?.length">
+                    <span class="vs2-detail-label">{{ 'Eye images' | translate }}</span>
+                    <div class="vs2-thumb-row">
+                      <div class="vs2-thumb" *ngFor="let image of activePastVisitVisual.eyeImages">
+                        <img [src]="image" alt="" onerror="this.style.display='none'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="activePastVisitVisual.abdomenFindings?.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Abdomen' | translate }}</h4>
+                <ul class="vs2-bullet-list">
+                  <li *ngFor="let finding of activePastVisitVisual.abdomenFindings">{{ finding | translate }}</li>
+                </ul>
+              </ng-container>
+            </ng-container>
+            <ng-template #pastPhysicalExamEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/additional-documents.svg" alt="" />
+              <span>{{ 'Past Additional documents' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <div class="vs2-doc-row" *ngIf="activePastVisitVisual.documents?.length; else pastDocumentsEmpty">
+              <ng-container *ngFor="let document of activePastVisitVisual.documents">
+                <div class="vs2-doc-thumb" *ngIf="document.type === 'image'">
+                  <img [src]="document.src" alt="" onerror="this.style.display='none'" />
+                </div>
+                <div class="vs2-doc-pdf" *ngIf="document.type === 'pdf'">
+                  <span class="vs2-pdf-icon"><mat-icon>picture_as_pdf</mat-icon></span>
+                  <span class="vs2-pdf-name">{{ document.name }}</span>
+                </div>
+              </ng-container>
+            </div>
+            <ng-template #pastDocumentsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+          </div>
+
+          <div
+            id="section-past-prescription"
+            class="vs2-content-header vs2-content-toggle vs2-dn-header"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!pastPrescriptionCollapsed"
+            [class.vs2-content-group-collapsed]="pastPrescriptionCollapsed"
+            (click)="toggleContentGroup('prescription')"
+            (keydown.enter)="toggleContentGroup('prescription')"
+            (keydown.space)="toggleContentGroup('prescription'); $event.preventDefault()"
+          >
+            <h2>{{ 'Prescription' | translate }}</h2>
+            <mat-icon>expand_less</mat-icon>
+          </div>
+
+          <div class="vs2-content-group" [hidden]="pastPrescriptionCollapsed">
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
+              <span>{{ 'Consulted Doctor Details' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container
+              *ngIf="hasDisplayValue(activePastVisitVisual.prescription.doctor.name) || hasDisplayValue(activePastVisitVisual.prescription.doctor.qualifications) || hasDisplayValue(activePastVisitVisual.prescription.doctor.speciality); else pastDoctorDetailsEmpty"
+            >
+              <div class="vs2-detail-list">
+                <div class="vs2-detail-row vs2-detail-row-wide vs2-no-bullet-row" *ngIf="hasDisplayValue(activePastVisitVisual.prescription.doctor.name)">
+                  <span class="vs2-detail-label vs2-no-bullet">{{ 'Name' | translate }}</span>
+                  <span class="vs2-detail-value">{{ activePastVisitVisual.prescription.doctor.name }}</span>
+                </div>
+                <div class="vs2-detail-row vs2-detail-row-wide vs2-no-bullet-row" *ngIf="hasDisplayValue(activePastVisitVisual.prescription.doctor.qualifications)">
+                  <span class="vs2-detail-label vs2-no-bullet">{{ 'Qualifications' | translate }}</span>
+                  <span class="vs2-detail-value">{{ activePastVisitVisual.prescription.doctor.qualifications }}</span>
+                </div>
+                <div class="vs2-detail-row vs2-detail-row-wide vs2-no-bullet-row" *ngIf="hasDisplayValue(activePastVisitVisual.prescription.doctor.speciality)">
+                  <span class="vs2-detail-label vs2-no-bullet">{{ 'Speciality' | translate }}</span>
+                  <span class="vs2-detail-value">{{ activePastVisitVisual.prescription.doctor.speciality }}</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #pastDoctorDetailsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/diagnosis.svg" alt="" />
+              <span>{{ 'Diagnosis' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <div class="vs2-table vs2-dx-table" *ngIf="activePastVisitVisual.prescription.diagnosis?.length; else pastPrescriptionDiagnosisEmpty">
+              <div class="vs2-table-head">
+                <span>{{ 'Diagnosis' | translate }}</span>
+                <span>{{ 'Type' | translate }}</span>
+                <span>{{ 'Status' | translate }}</span>
+              </div>
+              <div class="vs2-table-row" *ngFor="let diagnosis of activePastVisitVisual.prescription.diagnosis">
+                <span>{{ diagnosis.name }}</span>
+                <span>{{ diagnosis.type | translate }}</span>
+                <span>{{ diagnosis.status | translate }}</span>
+              </div>
+            </div>
+            <ng-template #pastPrescriptionDiagnosisEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
+              <span>{{ 'Note' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ul class="vs2-bullet-list" *ngIf="activePastVisitVisual.prescription.notes?.length; else pastNotesEmpty">
+              <li *ngFor="let note of activePastVisitVisual.prescription.notes">{{ note }}</li>
+            </ul>
+            <ng-template #pastNotesEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/medication.svg" alt="" />
+              <span>{{ 'Medication' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ng-container
+              *ngIf="activePastVisitVisual.prescription.meds?.length || activePastVisitVisual.prescription.instructions?.length; else pastMedicationEmpty"
+            >
+              <div class="vs2-table vs2-presc-med-table" *ngIf="activePastVisitVisual.prescription.meds?.length">
+                <div class="vs2-table-head">
+                  <span>{{ 'Drug name' | translate }}</span>
+                  <span>{{ 'Dosage' | translate }}</span>
+                  <span>{{ 'Frequency' | translate }}</span>
+                  <span>{{ 'Duration' | translate }}</span>
+                  <span>{{ 'Instructions' | translate }}</span>
+                </div>
+                <div class="vs2-table-row" *ngFor="let medicine of activePastVisitVisual.prescription.meds">
+                  <span>{{ medicine.drug }}</span>
+                  <span>{{ medicine.dose }}</span>
+                  <span>{{ medicine.frequency }}</span>
+                  <span>{{ medicine.durationNo }} {{ medicine.durationUnit | translate }}</span>
+                  <span>{{ medicine.instructRemark }}</span>
+                </div>
+              </div>
+              <ng-container *ngIf="activePastVisitVisual.prescription.instructions?.length">
+                <h4 class="vs2-subhead vs2-subhead-strong">{{ 'Additional instructions' | translate }}</h4>
+                <ul class="vs2-bullet-list">
+                  <li *ngFor="let instruction of activePastVisitVisual.prescription.instructions">{{ instruction }}</li>
+                </ul>
+              </ng-container>
+            </ng-container>
+            <ng-template #pastMedicationEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/advice.svg" alt="" />
+              <span>{{ 'Advice' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ul class="vs2-bullet-list" *ngIf="activePastVisitVisual.prescription.advice?.length; else pastAdviceEmpty">
+              <li *ngFor="let advice of activePastVisitVisual.prescription.advice">{{ advice | translate }}</li>
+            </ul>
+            <ng-template #pastAdviceEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
+              <span>{{ 'Test' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <ul class="vs2-bullet-list" *ngIf="activePastVisitVisual.prescription.tests?.length; else pastTestsEmpty">
+              <li *ngFor="let test of activePastVisitVisual.prescription.tests">{{ test | translate }}</li>
+            </ul>
+            <ng-template #pastTestsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/follow-up.svg" alt="" />
+              <span>{{ 'Follow-up' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <div class="vs2-table vs2-fu-table">
+              <div class="vs2-table-head">
+                <span>{{ 'Follow-up suggested' | translate }}</span>
+                <span>{{ 'Follow-up Date' | translate }}</span>
+                <span>{{ 'Follow-up Time' | translate }}</span>
+                <span>{{ 'Reason for follow-up' | translate }}</span>
+              </div>
+              <div class="vs2-table-row">
+                <span>{{ activePastVisitVisual.prescription.followUp.suggested | translate }}</span>
+                <span>{{ activePastVisitVisual.prescription.followUp.date }}</span>
+                <span>{{ activePastVisitVisual.prescription.followUp.time }}</span>
+                <span>{{ activePastVisitVisual.prescription.followUp.reason }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="vs2-section-card">
+            <div class="vs2-section-title" role="button" tabindex="0" aria-expanded="true">
+              <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
+              <span>{{ 'Additional documents' | translate }}</span>
+              <mat-icon class="vs2-chevron">expand_less</mat-icon>
+            </div>
+            <div class="vs2-divider"></div>
+            <div class="vs2-doc-row" *ngIf="activePastVisitVisual.prescription.docs?.length; else pastPrescriptionDocumentsEmpty">
+              <div class="vs2-doc-pdf" *ngFor="let document of activePastVisitVisual.prescription.docs">
+                <span class="vs2-pdf-icon"><mat-icon>picture_as_pdf</mat-icon></span>
+                <span class="vs2-pdf-name">{{ document.name }}</span>
+              </div>
+            </div>
+            <ng-template #pastPrescriptionDocumentsEmpty>
+              <p class="vs2-placeholder">{{ 'No Data' | translate }}</p>
+            </ng-template>
+          </section>
+          </div>
+        </main>
+      </ng-container>
     </div>
   </div>
 </div>
 
-<div class="webrtc-controls">
-  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()"/>
-  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()"/>
+<div class="webrtc-controls" *ngIf="visit && patient">
+  <button
+    type="button"
+    class="webrtc-control"
+    (click)="startCall()"
+    [attr.aria-label]="'Start call' | translate"
+    [attr.title]="'Start call' | translate"
+  >
+    <img src="assets/svgs/video-frame.svg" alt="" />
+  </button>
+  <button
+    type="button"
+    class="webrtc-control"
+    (click)="startChat()"
+    [attr.aria-label]="'Chat' | translate"
+    [attr.title]="'Chat' | translate"
+  >
+    <img src="assets/svgs/chat-icon-blue-circle.svg" alt="" />
+  </button>
 </div>

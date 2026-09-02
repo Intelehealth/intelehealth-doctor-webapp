@@ -56,6 +56,37 @@ class PickDateAdapter extends NativeDateAdapter {
 export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   locale: any = localStorage.getItem('selectedLanguage');
+  showFullPatientDetails = false;
+  activePatientDetailsTab: 'address' | 'other' = 'address';
+  activeVisitScope: 'current' | 'past' = 'current';
+  activeTopTab: 'current' | 'doctor' = 'current';
+  activePastTopTab: 'visit' | 'prescription' = 'visit';
+  currentVisitCollapsed = false;
+  doctorNoteCollapsed = false;
+  pastVisitCollapsed = false;
+  pastPrescriptionCollapsed = false;
+  activeSection = 'consultation';
+  activePastVisitUuid = '';
+  private pastVisitSelectionTouched = false;
+  readonly currentVisitSections = [
+    { key: 'consultation', label: 'Consultation details', icon: 'assets/svgs/consultation-details.svg' },
+    { key: 'checkup', label: 'Check-up reason', icon: 'assets/svgs/check-up-reason.svg' },
+    { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
+    { key: 'vitals', label: 'Vitals', icon: 'assets/svgs/vitals.svg' },
+    { key: 'physical', label: 'Physical examination', icon: 'assets/svgs/physical-examination.svg' },
+    { key: 'documents', label: 'Additional documents', icon: 'assets/svgs/additional-documents.svg' },
+    { key: 'refer', label: 'Refer to specialist', icon: 'assets/svgs/refer-to-specialist.svg' }
+  ];
+  readonly doctorNoteSections = [
+    { key: 'dn-interaction', label: 'Patient interaction', icon: 'assets/svgs/patient-interaction.svg' },
+    { key: 'dn-diagnosis', label: 'Diagnosis', icon: 'assets/svgs/diagnosis.svg' },
+    { key: 'dn-note', label: 'Note', icon: 'assets/svgs/note.svg' },
+    { key: 'dn-medication', label: 'Medication', icon: 'assets/svgs/medication.svg' },
+    { key: 'dn-advice', label: 'Advice', icon: 'assets/svgs/advice.svg' },
+    { key: 'dn-test', label: 'Test', icon: 'assets/svgs/test.svg' },
+    { key: 'dn-followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' },
+    { key: 'dn-documents', label: 'Additional documents', icon: 'assets/svgs/additional-document-purple.svg' }
+  ];
   visit: any;
   patient: any;
   baseUrl: string = environment.baseURL;
@@ -78,7 +109,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
   conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
-
   baseURL = environment.baseURL;
   additionalDocs: any = [];
   eyeImages: any = [];
@@ -479,7 +509,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.checkIfAdvicePresent();
               this.getTestsList();
               this.checkIfTestPresent();
-              this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
             }
             this.getAppointment(visit.uuid);
@@ -544,61 +573,32 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getObsValue(obsName: string) {
-    let val = null;
-    this.vitalObs.forEach((obs: any) => {
-      if (obs.concept.display == obsName) {
-        val = obs.value;
-      }
-    });
-    return val;
+  getObsValue(obsName: string | string[]) {
+    const names = (Array.isArray(obsName) ? obsName : [obsName])
+      .map((name: string) => name.trim().toLowerCase());
+    const observation = (this.vitalObs || []).find((obs: any) =>
+      names.includes(String(obs?.concept?.display || '').trim().toLowerCase())
+    );
+    const value = observation?.value;
+    if (value && typeof value === 'object') {
+      return value.display || value.name || null;
+    }
+    return value ?? null;
   }
 
   getCheckUpReason(encounters: any) {
-    this.cheifComplaints = [];
-    this.checkUpReasonData = [];
-    encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == 'ADULTINITIAL') {
-        enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const updatedDate = this.dateFinder(obs.value).replace(/<br\s*\/?>/gi, '<br/>');
-            const currentComplaint = updatedDate.split('<b>');
-            for (let i = 0; i < currentComplaint.length; i++) {
-              if (currentComplaint[i] && currentComplaint[i].length > 1) {
-                const obs1 = currentComplaint[i].split('<');
-                if (!obs1[0].match('Associated symptoms')) {
-                  this.cheifComplaints.push(obs1[0]);
-                }
-
-                const splitByBr = currentComplaint[i].split('<br/>');
-                if (splitByBr[0].includes('Associated symptoms')) {
-                  let obj1: any = {};
-                  obj1.title = 'Associated symptoms';
-                  obj1.data = [];
-                  for (let j = 1; j < splitByBr.length; j = j + 2) {
-                    if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
-                      obj1.data.push({ key: this.stripHtmlTags(splitByBr[j].replace('• ', '').replace(' -', '')), value: this.stripHtmlTags(splitByBr[j + 1]?.trim()) });
-                    }
-                  }
-                  this.checkUpReasonData.push(obj1);
-                } else {
-                  let obj1: any = {};
-                  obj1.title = this.stripHtmlTags(splitByBr[0].replace('</b>:', ''));
-                  obj1.data = [];
-                  for (let k = 1; k < splitByBr.length; k++) {
-                    if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
-                      const splitByDash = splitByBr[k].split(' -');
-                      obj1.data.push({ key: this.stripHtmlTags(splitByDash[0].replace('• ', '')), value: this.stripHtmlTags(splitByDash.slice(1, splitByDash.length).join(' -').trim()) });
-                    }
-                  }
-                  this.checkUpReasonData.push(obj1);
-                }
-              }
-            }
-          }
-        });
-      }
-    });
+    const parsed = this.parsePastCheckUpReason(encounters || []);
+    this.cheifComplaints = parsed.chiefComplaints;
+    this.checkUpReasonData = parsed.complaintDetails.map((detail: any) => ({
+      title: detail.title,
+      data: detail.rows.map((row: any) => ({ key: row.label, value: row.value }))
+    }));
+    if (parsed.associatedSymptoms.length) {
+      this.checkUpReasonData.push({
+        title: 'Associated symptoms',
+        data: parsed.associatedSymptoms.map((symptom: any) => ({ key: symptom.label, value: symptom.text }))
+      });
+    }
   }
 
   stripHtmlTags(text: string): string {
@@ -619,87 +619,31 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   getPhysicalExamination(encounters: any) {
-    this.physicalExaminationData = [];
-    encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == 'ADULTINITIAL') {
-        enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<b>');
-            for (let i = 0; i < physicalExam.length; i++) {
-              if (physicalExam[i]) {
-                const splitByBr = physicalExam[i].split('<br/>');
-
-                if (splitByBr[0].includes('Abdomen')) {
-                  let obj1: any = {};
-                  obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
-                  obj1.data = [];
-                  for (let k = 1; k < splitByBr.length; k++) {
-                    if (splitByBr[k].trim()) {
-                      obj1.data.push({ key: this.stripHtmlTags(splitByBr[k].replace('• ', '')), value: null });
-                    }
-                  }
-                  this.physicalExaminationData.push(obj1);
-                } else {
-                  let obj1: any = {};
-                  obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
-                  obj1.data = [];
-                  for (let k = 1; k < splitByBr.length; k++) {
-                    if (splitByBr[k].trim()) {
-                      const splitByDash = splitByBr[k].split('-');
-                      // obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
-                      obj1.data.push({ key: this.stripHtmlTags(splitByDash[1]?.replace('• ', '')), value: this.stripHtmlTags(splitByDash[2]) });
-                    }
-                  }
-                  this.physicalExaminationData.push(obj1);
-                }
-              }
-            }
-          }
-        });
+    const parsed = this.parsePastPhysicalExam(encounters || []);
+    this.physicalExaminationData = [
+      {
+        title: 'General exams',
+        data: parsed.generalExams.map((row: any) => ({ key: row.label, value: row.value }))
+      },
+      {
+        title: 'Abdomen',
+        data: parsed.abdomenFindings.map((finding: string) => ({ key: finding, value: null }))
       }
-    });
+    ];
   }
 
   getMedicalHistory(encounters: any) {
-    this.patientHistoryData = [];
-    encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == 'ADULTINITIAL') {
-        enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == 'MEDICAL HISTORY') {
-            const medicalHistory = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<br/>');
-            let obj1: any = {};
-            obj1.title = 'Patient history';
-            obj1.data = [];
-            for (let i = 0; i < medicalHistory.length; i++) {
-              if (medicalHistory[i]) {
-                const splitByDash = medicalHistory[i].split('-');
-                obj1.data.push({ key: this.stripHtmlTags(splitByDash[0].replace('• ', '').trim()), value: this.stripHtmlTags(splitByDash.slice(1, splitByDash.length).join('-').trim()) });
-              }
-            }
-            this.patientHistoryData.unshift(obj1);
-          }
-
-          if (obs.concept.display == 'FAMILY HISTORY') {
-            const familyHistory = obs.value.replace(/<br\s*\/?>/gi, '<br/>').split('<br/>');
-            let obj1: any = {};
-            obj1.title = 'Family history';
-            obj1.data = [];
-            for (let i = 0; i < familyHistory.length; i++) {
-              if (familyHistory[i]) {
-                const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split('.');
-                for (let x = 0; x < splitByComma.length; x++) {
-                  if (splitByComma[x]) {
-                    obj1.data.push({ key: this.stripHtmlTags(splitByComma[x].split(',')[0].trim()), value: this.stripHtmlTags(splitByComma[x].split(',')[1] + ".") });
-                  }
-                };
-              }
-            }
-            this.patientHistoryData.push(obj1);
-          }
-        });
+    const parsed = this.parsePastMedicalHistory(encounters || []);
+    this.patientHistoryData = [
+      {
+        title: 'Patient history',
+        data: parsed.patientHistory.map((row: any) => ({ key: row.label, value: row.value }))
+      },
+      {
+        title: 'Family history',
+        data: parsed.familyHistory.map((row: any) => ({ key: row.label, value: row.value }))
       }
-    });
+    ];
   }
 
   getEyeImages(visit: any) {
@@ -738,6 +682,292 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     // console.log(event);
   }
 
+  togglePatientDetails(): void {
+    this.showFullPatientDetails = !this.showFullPatientDetails;
+  }
+
+  handleSectionToggle(event: MouseEvent | KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const sectionTitle = target.closest('.vs2-section-title') as HTMLElement;
+    if (!sectionTitle) { return; }
+
+    if (event instanceof KeyboardEvent) {
+      if (event.key !== 'Enter' && event.key !== ' ') { return; }
+      event.preventDefault();
+    }
+
+    const section = sectionTitle.closest('.vs2-section-card');
+    if (!section) { return; }
+
+    const collapsed = section.classList.toggle('vs2-section-collapsed');
+    sectionTitle.setAttribute('aria-expanded', String(!collapsed));
+  }
+
+  toggleContentGroup(group: 'current' | 'doctor' | 'past' | 'prescription'): void {
+    if (group === 'current') { this.currentVisitCollapsed = !this.currentVisitCollapsed; }
+    if (group === 'doctor') { this.doctorNoteCollapsed = !this.doctorNoteCollapsed; }
+    if (group === 'past') { this.pastVisitCollapsed = !this.pastVisitCollapsed; }
+    if (group === 'prescription') { this.pastPrescriptionCollapsed = !this.pastPrescriptionCollapsed; }
+  }
+
+  setPatientDetailsTab(tab: 'address' | 'other'): void {
+    this.activePatientDetailsTab = tab;
+  }
+
+  setVisitScope(scope: 'current' | 'past'): void {
+    this.activeVisitScope = scope;
+    if (scope === 'past' && !this.activePastVisitUuid && this.pastVisits.length) {
+      this.activePastVisitUuid = this.pastVisits[0].uuid;
+    }
+  }
+
+  setTopTab(tab: 'current' | 'doctor'): void {
+    this.activeTopTab = tab;
+    this.scrollToSection(tab === 'doctor' ? 'doctor-note' : 'consultation');
+  }
+
+  setPastTopTab(tab: 'visit' | 'prescription'): void {
+    this.activePastTopTab = tab;
+    this.scrollToElement(tab === 'prescription' ? 'section-past-prescription' : 'section-past-visit');
+  }
+
+  selectSection(key: string): void {
+    this.activeSection = key;
+    this.scrollToSection(key);
+  }
+
+  selectPastVisit(uuid: string): void {
+    this.activePastVisitUuid = uuid;
+    this.pastVisitSelectionTouched = true;
+  }
+
+  get activePastVisit(): any {
+    return this.pastVisits.find((pastVisit: any) => pastVisit.uuid === this.activePastVisitUuid) || this.pastVisits[0];
+  }
+
+  get activePastVisitVisual(): any {
+    return this.activePastVisit?._visual;
+  }
+
+  get hasCurrentMedicalHistoryData(): boolean {
+    return (this.patientHistoryData || []).some((history: any) => history.data?.length);
+  }
+
+  get hasCurrentCheckUpData(): boolean {
+    return !!(
+      this.cheifComplaints?.length ||
+      this.currentAssociatedSymptoms.length ||
+      (this.checkUpReasonData || []).some((reason: any) =>
+        reason.title !== 'Associated symptoms' && reason.data?.length
+      )
+    );
+  }
+
+  get hasCurrentVitalsData(): boolean {
+    return this.hasRowsWithValues(this.vitalCards);
+  }
+
+  get hasCurrentPhysicalExamData(): boolean {
+    return !!(this.generalExamRows.length || this.eyeImages?.length || this.abdomenFindings.length);
+  }
+
+  hasDisplayValue(value: any): boolean {
+    return value !== null && value !== undefined && String(value).trim() !== '';
+  }
+
+  hasRowsWithValues(rows: any[]): boolean {
+    return (rows || []).some((row: any) => this.hasDisplayValue(row?.value));
+  }
+
+  get pastVisitTimelineGroups(): any[] {
+    const groups: any[] = [];
+    [...this.pastVisits]
+      .sort((a: any, b: any) => this.toTime(b.startDatetime) - this.toTime(a.startDatetime))
+      .forEach((pastVisit: any) => {
+        const date = this.formatGroupDate(pastVisit.startDatetime);
+        let group = groups.find((item: any) => item.date === date);
+        if (!group) {
+          group = { date, visits: [] };
+          groups.push(group);
+        }
+        if (pastVisit._visual) {
+          group.visits.push(pastVisit._visual);
+        }
+      });
+    if (groups.length) {
+      groups[0].current = true;
+    }
+    return groups;
+  }
+
+  get patientAddressRows(): { label: string; value: string }[] {
+    const address = this.patient?.person?.preferredAddress || {};
+    return [
+      { label: 'Household number', value: address.address1 },
+      { label: 'Corresponding address 1', value: address.address2 },
+      { label: 'Village/Town/City', value: address.cityVillage },
+      { label: 'State', value: address.stateProvince },
+      { label: 'Country', value: address.country },
+      { label: 'Postal Code', value: address.postalCode }
+    ].filter((row: any) => row.value).map((row: any) => ({ ...row, value: String(row.value) }));
+  }
+
+  get patientOtherRows(): { label: string; value: string }[] {
+    return [
+      { label: 'National ID', value: this.getPersonAttributeValue('NationalID') },
+      { label: 'Occupation', value: this.getPersonAttributeValue('occupation') }
+    ].filter((row: any) => row.value && row.value !== 'NA');
+  }
+
+  get patientGender(): string {
+    const gender = String(this.patient?.person?.gender || '').toUpperCase();
+    if (gender === 'M' || gender === 'MALE') { return 'Male'; }
+    if (gender === 'F' || gender === 'FEMALE') { return 'Female'; }
+    if (gender === 'O' || gender === 'OTHER') { return 'Other'; }
+    return this.patient?.person?.gender || '';
+  }
+
+  get patientAge(): string {
+    return this.patient?.person?.age != null ? `${this.patient.person.age} Years` : '';
+  }
+
+  get patientWeight(): string {
+    const weight = this.getObsValue('Weight (kg)');
+    return weight ? `${weight}Kg` : '';
+  }
+
+  get patientAllergies(): string[] {
+    const value = this.getPatientHistoryValueMatching(/allerg|аллерг/i);
+    if (!value || value === 'NA' || /^(no known|none|нет|не выявлено)/i.test(value.trim())) { return []; }
+    return value
+      .split(/[,;\n]/)
+      .map((item: string) => item.trim().replace(/[.\s]+$/, ''))
+      .filter(Boolean);
+  }
+
+  get visiblePatientAllergies(): string[] {
+    return this.patientAllergies.slice(0, 2);
+  }
+
+  get extraPatientAllergiesCount(): number {
+    return Math.max(this.patientAllergies.length - this.visiblePatientAllergies.length, 0);
+  }
+
+  get patientPregnancy(): string {
+    const value = this.getPatientHistoryValue('Pregnan');
+    return value === 'NA' ? '' : value;
+  }
+
+  get patientPregnancyTag(): string {
+    return this.patientPregnancy && !/^\s*(no|not)\b/i.test(this.patientPregnancy) ? 'Pregnant' : '';
+  }
+
+  get patientContactNo(): string {
+    const value = this.getPersonAttributeValue('Telephone Number');
+    return value === 'NA' ? '' : value;
+  }
+
+  get patientDateOfBirth(): string {
+    return this.formatDate(this.patient?.person?.birthdate);
+  }
+
+  get consultationDetails(): { label: string; value: string; highlight?: boolean }[] {
+    return [
+      { label: 'Visit ID', value: this.replaceWithStar(this.visit?.uuid) },
+      { label: 'Appointment on', value: this.visitAppointment ? this.formatDate(this.visitAppointment) : 'No appointment' },
+      { label: 'Visit created', value: this.formatDateTime(this.visit?.startDatetime) },
+      { label: 'Status', value: this.visitStatus || '', highlight: this.visitStatus === 'Priority Visit' },
+      { label: 'Visit uploaded', value: this.formatDateTime(this.visit?.dateCreated) },
+      { label: 'Location', value: this.toTitleCase(this.clinicName || '') }
+    ];
+  }
+
+  get generalExamRows(): { label: string; value: string }[] {
+    const rows: { label: string; value: string }[] = [];
+    (this.physicalExaminationData || []).forEach((group: any) => {
+      if (String(group.title || '').toLowerCase() !== 'abdomen') {
+        (group.data || []).forEach((item: any) => rows.push({ label: item.key, value: item.value || '' }));
+      }
+    });
+    return rows;
+  }
+
+  get abdomenFindings(): string[] {
+    const findings: string[] = [];
+    (this.physicalExaminationData || []).forEach((group: any) => {
+      if (String(group.title || '').toLowerCase() === 'abdomen') {
+        (group.data || []).forEach((item: any) => findings.push(item.key));
+      }
+    });
+    return findings;
+  }
+
+  get currentAssociatedSymptoms(): { label: string; text: string }[] {
+    const symptoms: { label: string; text: string }[] = [];
+    (this.checkUpReasonData || []).forEach((group: any) => {
+      if (group.title === 'Associated symptoms') {
+        (group.data || []).forEach((item: any) => symptoms.push({ label: item.key, text: item.value || '' }));
+      }
+    });
+    return symptoms;
+  }
+
+  get doctorDocuments(): { name: string }[] {
+    const documents: { name: string }[] = [];
+    (this.visit?.encounters || []).forEach((encounter: any) => {
+      if (!/Visit Note|Remote Prescription/i.test(this.encounterDisplay(encounter))) { return; }
+      (encounter.obs || []).forEach((obs: any) => {
+        if (obs.concept?.uuid === this.conceptAdditionlDocument) {
+          documents.push({ name: obs.comment || 'Attachment' });
+        }
+      });
+    });
+    return documents;
+  }
+
+  get minFollowUpDate(): string {
+    return moment(this.minDate).format('YYYY-MM-DD');
+  }
+
+  get canEditVisitNote(): boolean {
+    return this.isVisitNoteProvider && !this.visitEnded;
+  }
+
+  get vitalCards(): { label: string; value: any }[] {
+    const height = this.getObsValue('Height (cm)');
+    const weight = this.getObsValue('Weight (kg)');
+    const bmi = height && weight ? (weight / ((height / 100) * (height / 100))).toFixed(2) : null;
+    const bloodGroupObservation = this.getObsValue(['BLOOD GROUP', 'BLOOD GROUP AND RH', 'Blood group & Rh type']);
+    const bloodGroupAttribute = ['Blood group & Rh type', 'Blood Group', 'BLOOD GROUP']
+      .map((attribute: string) => this.getPersonAttributeValue(attribute))
+      .find((value: any) => value && value !== 'NA');
+    const bloodGroup = bloodGroupObservation || bloodGroupAttribute;
+
+    return [
+      { label: 'Height(cm)', value: height },
+      { label: 'Weight (kg)', value: weight },
+      { label: 'BMI', value: bmi },
+      { label: 'BP Systolic', value: this.getObsValue('SYSTOLIC BLOOD PRESSURE') },
+      { label: 'BP Diastolic', value: this.getObsValue('DIASTOLIC BLOOD PRESSURE') },
+      { label: 'Pulse (bpm)', value: this.getObsValue('Pulse') },
+      { label: 'Temperature (F)', value: this.getObsValue('TEMPERATURE (C)') },
+      { label: 'SpO2 (%)', value: this.getObsValue('BLOOD OXYGEN SATURATION') },
+      { label: 'Respiratory Rate', value: this.getObsValue('Respiratory rate') },
+      { label: 'Blood Group', value: bloodGroup ? String(bloodGroup).toUpperCase() : null }
+    ];
+  }
+
+  private scrollToSection(key: string): void {
+    this.scrollToElement(`section-${key}`);
+  }
+
+  private scrollToElement(id: string): void {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
   }
@@ -767,13 +997,367 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return val;
   }
 
+  getPatientHistoryValue(label: string): string {
+    for (const group of this.patientHistoryData || []) {
+      const item = (group.data || []).find((historyItem: any) =>
+        String(historyItem.key || '').toLowerCase().includes(label.toLowerCase())
+      );
+      if (item?.value) {
+        return item.value;
+      }
+    }
+    return 'NA';
+  }
+
+  private getPatientHistoryValueMatching(pattern: RegExp): string {
+    for (const group of this.patientHistoryData || []) {
+      const item = (group.data || []).find((historyItem: any) =>
+        pattern.test(String(historyItem.key || ''))
+      );
+      if (item?.value) {
+        return String(item.value);
+      }
+    }
+    return 'NA';
+  }
+
   getWhatsAppLink() {
     return this.visitService.getWhatsappLink(this.getPersonAttributeValue('Telephone Number'), `Hello I'm calling for consultation`);
   }
 
-  replaceWithStar(str: string) {
-    let n = str.length;
-    return str.replace(str.substring(0, n - 4), "*****");
+  replaceWithStar(value: any): string {
+    const visitId = String(value || '').toUpperCase();
+    return visitId ? `*****${visitId.slice(-4)}` : '';
+  }
+
+  private buildPastVisitVisual(visit: any): any {
+    const encounters = visit?.encounters || [];
+    const checkUp = this.parsePastCheckUpReason(encounters);
+    const history = this.parsePastMedicalHistory(encounters);
+    const physical = this.parsePastPhysicalExam(encounters);
+    const prescription = this.parsePastPrescription(encounters);
+    const firstMedication = prescription.meds[0];
+    const referred = this.obsByConcept(encounters, this.conceptReferral).length > 0;
+    const doctorName = prescription.doctor.name;
+
+    return {
+      key: visit.uuid,
+      title: prescription.diagnosis[0]?.name || checkUp.chiefComplaints[0] || 'Visit',
+      med: firstMedication ? `${firstMedication.drug} ${firstMedication.dose}`.trim() : '',
+      by: doctorName ? (referred ? `Reff. to ${doctorName}` : `Seen by ${doctorName}`) : '',
+      referred,
+      diagnosis: prescription.diagnosis[0]?.name || '',
+      consultation: [
+        { label: 'Visit ID', value: this.replaceWithStar(visit.uuid) },
+        { label: 'Visit started', value: this.formatDateTime(visit.startDatetime) },
+        { label: 'Status', value: this.getPastVisitStatus(encounters, visit.stopDatetime) }
+      ],
+      chiefComplaints: checkUp.chiefComplaints,
+      complaintDetails: checkUp.complaintDetails,
+      associatedSymptoms: checkUp.associatedSymptoms,
+      patientHistory: history.patientHistory,
+      familyHistory: history.familyHistory,
+      vitals: this.buildPastVitals(encounters),
+      generalExams: physical.generalExams,
+      abdomenFindings: physical.abdomenFindings,
+      eyeImages: this.obsByConcept(encounters, this.conceptPhysicalExamination)
+        .map((obs: any) => `${this.baseURL}/obs/${obs.uuid}/value`),
+      documents: this.obsByConcept(encounters, this.conceptAdditionlDocument)
+        .map((obs: any) => ({ type: 'image', src: `${this.baseURL}/obs/${obs.uuid}/value` })),
+      prescription
+    };
+  }
+
+  private parsePastPrescription(encounters: any[]): any {
+    const medicationObs = this.obsByConcept(encounters, this.conceptMed);
+    const diagnoses = this.obsByConcept(encounters, this.conceptDiagnosis)
+      .map((obs: any) => this.diagnosisFromValue(this.observationValue(obs)))
+      .filter((diagnosis: any) => diagnosis.name);
+    const medicationValues = medicationObs.map((obs: any) => this.observationValue(obs));
+    const referralObs = this.obsByConcept(encounters, this.conceptReferral);
+    const followUpObs = this.obsByConcept(encounters, this.conceptFollow);
+
+    return {
+      doctor: this.doctorFromEncounters(encounters),
+      diagnosis: diagnoses,
+      notes: this.obsByConcept(encounters, this.conceptNote).map((obs: any) => this.observationValue(obs)),
+      meds: medicationValues.filter((value: string) => value.includes(':')).map((value: string) => {
+        const parts = value.split(':');
+        return {
+          drug: parts[0] || '',
+          dose: parts[1] || '',
+          durationNo: parts[2] || '',
+          durationUnit: 'Days',
+          frequency: parts[3] || '',
+          instructRemark: parts.slice(4).join(':') || ''
+        };
+      }),
+      instructions: medicationValues.filter((value: string) => value && !value.includes(':')),
+      advice: this.obsByConcept(encounters, this.conceptAdvice)
+        .map((obs: any) => this.observationValue(obs)).filter((value: string) => !value.includes('</a>')),
+      tests: this.obsByConcept(encounters, this.conceptTest).map((obs: any) => this.observationValue(obs)),
+      referral: referralObs.length
+        ? this.referralFromValue(this.observationValue(referralObs[0]))
+        : { to: '', facility: '', priority: '', reason: '' },
+      followUp: followUpObs.length
+        ? this.followUpFromValue(this.observationValue(followUpObs[0]))
+        : { suggested: 'No', date: '', time: '', reason: '' },
+      docs: this.obsByConcept(encounters, this.conceptAdditionlDocument)
+        .map((obs: any) => ({ name: obs.comment || 'Attachment' }))
+    };
+  }
+
+  private diagnosisFromValue(value: string): any {
+    if (!value || value.includes('}')) { return { name: '', type: '', status: '' }; }
+    let parts = value.split(':');
+    if (value.includes('::')) {
+      parts = value.split('::').pop()?.split(':') || [];
+    }
+    const typeStatus = parts[1]?.split('&') || [];
+    return {
+      name: parts[0]?.trim() || '',
+      type: typeStatus[0]?.trim() || '',
+      status: typeStatus[1]?.trim() || ''
+    };
+  }
+
+  private referralFromValue(value: string): any {
+    const parts = (value || '').split(':');
+    if (parts.length <= 2) {
+      return { to: parts[0]?.trim() || '', facility: '', priority: '', reason: parts[1]?.trim() || '-' };
+    }
+    return {
+      to: parts[0]?.trim() || '',
+      facility: parts[1]?.trim() || '',
+      priority: parts[2]?.trim() || '',
+      reason: parts.slice(3).join(':').trim() || '-'
+    };
+  }
+
+  private followUpFromValue(value: string): any {
+    const parts = (value || '').split(',').map((part: string) => part.trim()).filter(Boolean);
+    return {
+      suggested: 'Yes',
+      date: this.formatDate(parts[0]),
+      time: parts.find((part: string) => part.includes('Time:'))?.split('Time:')[1]?.trim() || '',
+      reason: parts.find((part: string) => part.includes('Remark:'))?.split('Remark:')[1]?.trim() || ''
+    };
+  }
+
+  private doctorFromEncounters(encounters: any[]): any {
+    let doctor = { name: '', qualifications: '', speciality: '' };
+    encounters.forEach((encounter: any) => {
+      (encounter.obs || []).forEach((obs: any) => {
+        if (obs.concept?.display !== 'Doctor details') { return; }
+        try {
+          const value = typeof obs.value === 'string' ? JSON.parse(obs.value) : obs.value;
+          doctor = {
+            name: value?.name || '',
+            qualifications: value?.Qualification || value?.qualification || '',
+            speciality: value?.specialization || ''
+          };
+        } catch { }
+      });
+    });
+    return doctor;
+  }
+
+  private parsePastCheckUpReason(encounters: any[]): any {
+    const chiefComplaints: string[] = [];
+    const complaintDetails: any[] = [];
+    const associatedSymptoms: any[] = [];
+
+    encounters.forEach((encounter: any) => {
+      if (!this.encounterDisplay(encounter).includes('ADULTINITIAL')) { return; }
+      (encounter.obs || []).forEach((obs: any) => {
+        if (obs.concept?.display !== 'CURRENT COMPLAINT') { return; }
+        const complaint = this.observationValue(obs).replace(/<br\s*\/?>/gi, '<br/>');
+        complaint.split('<b>').forEach((block: string) => {
+          if (!block || block.length <= 1) { return; }
+          const rows = block.split('<br/>');
+          const title = this.stripHtmlTags(rows[0].replace('</b>:', ''));
+          if (title && !title.includes('Associated symptoms')) {
+            chiefComplaints.push(title);
+          }
+          if (rows[0].includes('Associated symptoms')) {
+            for (let index = 1; index < rows.length; index += 2) {
+              if (rows[index]?.trim()) {
+                associatedSymptoms.push({
+                  label: this.stripHtmlTags(rows[index].replace('• ', '').replace(' -', '')),
+                  text: this.stripHtmlTags(rows[index + 1] || '')
+                });
+              }
+            }
+            return;
+          }
+          const detailRows: any[] = [];
+          for (let index = 1; index < rows.length; index++) {
+            if (!rows[index]?.trim()) { continue; }
+            const parts = rows[index].split(' -');
+            detailRows.push({
+              label: this.stripHtmlTags(parts[0].replace('• ', '')),
+              value: this.stripHtmlTags(parts.slice(1).join(' -'))
+            });
+          }
+          complaintDetails.push({ title, rows: detailRows });
+        });
+      });
+    });
+    return { chiefComplaints, complaintDetails, associatedSymptoms };
+  }
+
+  private parsePastPhysicalExam(encounters: any[]): any {
+    const generalExams: any[] = [];
+    const abdomenFindings: string[] = [];
+    encounters.forEach((encounter: any) => {
+      if (!this.encounterDisplay(encounter).includes('ADULTINITIAL')) { return; }
+      (encounter.obs || []).forEach((obs: any) => {
+        if (obs.concept?.display !== 'PHYSICAL EXAMINATION') { return; }
+        const value = this.observationValue(obs).replace(/<br\s*\/?>/gi, '<br/>');
+        value.split('<b>').forEach((block: string) => {
+          if (!block) { return; }
+          const rows = block.split('<br/>');
+          if (rows[0].includes('Abdomen')) {
+            rows.slice(1).filter((row: string) => row.trim()).forEach((row: string) => {
+              abdomenFindings.push(this.stripHtmlTags(row.replace('• ', '')));
+            });
+            return;
+          }
+          rows.slice(1).filter((row: string) => row.trim()).forEach((row: string) => {
+            const parts = row.split('-');
+            generalExams.push({
+              label: this.stripHtmlTags(parts[0].replace('• ', '')),
+              value: this.stripHtmlTags(parts.slice(1).join('-'))
+            });
+          });
+        });
+      });
+    });
+    return { generalExams, abdomenFindings };
+  }
+
+  private parsePastMedicalHistory(encounters: any[]): any {
+    const patientHistory: any[] = [];
+    const familyHistory: any[] = [];
+    encounters.forEach((encounter: any) => {
+      if (!this.encounterDisplay(encounter).includes('ADULTINITIAL')) { return; }
+      (encounter.obs || []).forEach((obs: any) => {
+        const value = this.observationValue(obs).replace(/<br\s*\/?>/gi, '<br/>');
+        if (obs.concept?.display === 'MEDICAL HISTORY') {
+          value.split('<br/>').filter(Boolean).forEach((line: string) => {
+            const parts = line.split('-');
+            patientHistory.push({
+              label: this.stripHtmlTags(parts[0].replace('• ', '')),
+              value: this.stripHtmlTags(parts.slice(1).join('-'))
+            });
+          });
+        }
+        if (obs.concept?.display === 'FAMILY HISTORY') {
+          value.split('<br/>').filter(Boolean).forEach((line: string) => {
+            const content = line.includes(':') ? line.split(':').slice(1).join(':') : line;
+            content.split(/[•.]/).filter((item: string) => item.trim()).forEach((item: string) => {
+              const parts = item.split(',');
+              familyHistory.push({
+                label: this.stripHtmlTags(parts.shift() || ''),
+                value: this.stripHtmlTags(parts.join(',').trim())
+              });
+            });
+          });
+        }
+      });
+    });
+    return { patientHistory, familyHistory };
+  }
+
+  private buildPastVitals(encounters: any[]): any[] {
+    const vitalEncounter = encounters.find((encounter: any) => this.encounterDisplay(encounter) === 'Vitals');
+    const observations = vitalEncounter?.obs || [];
+    const value = (names: string[]) => {
+      const observation = observations.find((obs: any) => names.includes(obs.concept?.display));
+      return observation?.value ?? '';
+    };
+    const height = value(['Height (cm)']);
+    const weight = value(['Weight (kg)']);
+    const bmi = height && weight ? (Number(weight) / ((Number(height) / 100) ** 2)).toFixed(2) : '';
+    return [
+      { label: 'Height (cm)', value: height },
+      { label: 'Weight (kg)', value: weight },
+      { label: 'BMI', value: bmi },
+      { label: 'BP Systolic', value: value(['SYSTOLIC BLOOD PRESSURE']) },
+      { label: 'BP Diastolic', value: value(['DIASTOLIC BLOOD PRESSURE']) },
+      { label: 'Pulse', value: value(['Pulse']) },
+      { label: 'Temprature (C)', value: value(['TEMPERATURE (C)']) },
+      { label: 'SpO2 (%)', value: value(['BLOOD OXYGEN SATURATION']) },
+      { label: 'Respiratory Rate', value: value(['Respiratory rate']) }
+    ];
+  }
+
+  private obsByConcept(encounters: any[], conceptUuid: string): any[] {
+    const observations: any[] = [];
+    encounters.forEach((encounter: any) => (encounter.obs || []).forEach((obs: any) => {
+      if (obs.concept?.uuid === conceptUuid) { observations.push(obs); }
+    }));
+    return observations;
+  }
+
+  private observationValue(obs: any): string {
+    const raw = obs?.value;
+    if (raw == null) { return ''; }
+    if (typeof raw === 'object') { return String(raw.display || raw.value || ''); }
+    const value = String(raw);
+    if (!value.trim().startsWith('{')) { return value; }
+    try {
+      const parsed = JSON.parse(value);
+      const language = localStorage.getItem('selectedLanguage') || 'en';
+      return String(parsed[language] || parsed.en || Object.values(parsed)[0] || '');
+    } catch {
+      return value;
+    }
+  }
+
+  private encounterDisplay(encounter: any): string {
+    return String(encounter?.encounterType?.display || encounter?.display || '');
+  }
+
+  private getPastVisitStatus(encounters: any[], stopDatetime?: any): string {
+    if (stopDatetime || encounters.some((encounter: any) => this.encounterDisplay(encounter).includes('Patient Exit Survey'))) {
+      return 'Ended Visit';
+    }
+    if (encounters.some((encounter: any) => this.encounterDisplay(encounter).includes('Visit Complete'))) { return 'Completed Visit'; }
+    if (encounters.some((encounter: any) => this.encounterDisplay(encounter).includes('Visit Note'))) { return 'In-progress Visit'; }
+    if (encounters.some((encounter: any) => this.encounterDisplay(encounter).includes('Flagged'))) { return 'Priority Visit'; }
+    if (encounters.some((encounter: any) => /ADULTINITIAL|Vitals/.test(this.encounterDisplay(encounter)))) { return 'Awaiting Visit'; }
+    return '';
+  }
+
+  private toTime(value: any): number {
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? 0 : time;
+  }
+
+  private formatGroupDate(value: any): string {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-US', {
+      month: 'short', day: '2-digit', year: 'numeric'
+    });
+  }
+
+  private formatDate(value: any): string {
+    const date = new Date(value);
+    if (!value || Number.isNaN(date.getTime())) { return ''; }
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  private formatDateTime(value: any): string {
+    const date = new Date(value);
+    if (!value || Number.isNaN(date.getTime())) { return ''; }
+    return date.toLocaleString('en-US', {
+      month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
+    });
+  }
+
+  private toTitleCase(value: string): string {
+    return value.replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
   }
 
   checkIfEncounterExists(encounters: any, visitType: string) {
@@ -1566,7 +2150,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         visits.forEach((visit: any) => {
           if (visit.uuid !== this.visit.uuid) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: any) => {
-              console.log(visitdetail, "visits data");
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: any) => {
@@ -1583,8 +2166,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   });
                 }
               });
+              visitdetail._visual = this.buildPastVisitVisual(visitdetail);
               this.pastVisits.push(visitdetail);
-              console.log(this.pastVisits, "Past visits data");
+              if (!this.pastVisitSelectionTouched) {
+                this.activePastVisitUuid = [...this.pastVisits]
+                  .sort((a: any, b: any) => this.toTime(b.startDatetime) - this.toTime(a.startDatetime))[0]?.uuid || '';
+              }
               this.dataSource = new MatTableDataSource(this.pastVisits);
             });
           }
