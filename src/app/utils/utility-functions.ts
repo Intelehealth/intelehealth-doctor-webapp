@@ -50,6 +50,13 @@ export function checkIfDateOldThanOneDay(data: string) {
   let hours = moment(data).diff(moment(), 'hours');
   let minutes = moment(data).diff(moment(), 'minutes');
   minutes = minutes - (hours * 60);
+
+  if (environment.isTurnServer) {
+    return minutes < 0
+      ? `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`
+      : moment(data).format('DD MMM, YYYY hh:mm A');
+  }
+
   let resString = "";
   if (hours >= 24) {
     resString = moment(data).format('DD MMM, YYYY hh:mm A');

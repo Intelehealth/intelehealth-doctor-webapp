@@ -391,43 +391,31 @@ export class DashboardComponent implements OnInit {
       //     return ""; // Do not return the telephone number
       //   }
       // },
-      {
+      environment.isTurnServer ? null : {
         label: "Actions",
         key: "actions",
-        actionButtons: environment.isTurnServer
-          ? [
-              {
-                label: "Join call",
-                validationRequired: false,
-                callBack: (element: any) => this.startCall(element),
-                style: {
-                  color: "#ffffff",
-                  backgroundColor: "#2e1e91",
-                },
-              },
-            ]
-          : [
-              {
-                label: "Reschedule",
-                validationRequired: false,
-                callBack: (element: any) => this.reschedule(element),
-                style: {
-                  color: "#2e1e91",
-                  backgroundColor: "#efe8ff",
-                },
-              },
-              {
-                label: "Cancel",
-                validationRequired: false,
-                callBack: (element: any) => this.cancel(element),
-                style: {
-                  color: "#ff475d",
-                  backgroundColor: "#ffe8e8",
-                },
-              },
-            ]
-      }
-    ],
+        actionButtons: [
+          {
+            label: "Reschedule",
+            validationRequired: false,
+            callBack: (element: any) => this.reschedule(element),
+            style: {
+              color: "#2e1e91",
+              backgroundColor: "#efe8ff",
+            },
+          },
+          {
+            label: "Cancel",
+            validationRequired: false,
+            callBack: (element: any) => this.cancel(element),
+            style: {
+              color: "#ff475d",
+              backgroundColor: "#ffe8e8",
+            },
+          },
+        ],
+      },
+    ].filter(Boolean),
   };
 
   pluginConfigObsInProgress: any = {
@@ -1220,7 +1208,7 @@ export class DashboardComponent implements OnInit {
       color = '#FF9F45';
       text = `${minsLeft} ${this.translateService.instant('min')}`;
     } else if (start.diff(now, 'hours') < 24) {
-      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')}`;
+      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')} — ${start.format('DD MMM, hh:mm A')}`;
     } else {
       text = start.format('DD MMM, YYYY hh:mm A');
     }
