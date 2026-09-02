@@ -1220,7 +1220,7 @@ export class DashboardComponent implements OnInit {
       color = '#FF9F45';
       text = `${minsLeft} ${this.translateService.instant('min')}`;
     } else if (start.diff(now, 'hours') < 24) {
-      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')}`;
+      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')} — ${start.format('DD MMM, hh:mm A')}`;
     } else {
       text = start.format('DD MMM, YYYY hh:mm A');
     }
