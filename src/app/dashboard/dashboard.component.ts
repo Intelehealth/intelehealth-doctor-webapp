@@ -391,43 +391,31 @@ export class DashboardComponent implements OnInit {
       //     return ""; // Do not return the telephone number
       //   }
       // },
-      {
+      environment.isTurnServer ? null : {
         label: "Actions",
         key: "actions",
-        actionButtons: environment.isTurnServer
-          ? [
-              {
-                label: "Join call",
-                validationRequired: false,
-                callBack: (element: any) => this.startCall(element),
-                style: {
-                  color: "#ffffff",
-                  backgroundColor: "#2e1e91",
-                },
-              },
-            ]
-          : [
-              {
-                label: "Reschedule",
-                validationRequired: false,
-                callBack: (element: any) => this.reschedule(element),
-                style: {
-                  color: "#2e1e91",
-                  backgroundColor: "#efe8ff",
-                },
-              },
-              {
-                label: "Cancel",
-                validationRequired: false,
-                callBack: (element: any) => this.cancel(element),
-                style: {
-                  color: "#ff475d",
-                  backgroundColor: "#ffe8e8",
-                },
-              },
-            ]
-      }
-    ],
+        actionButtons: [
+          {
+            label: "Reschedule",
+            validationRequired: false,
+            callBack: (element: any) => this.reschedule(element),
+            style: {
+              color: "#2e1e91",
+              backgroundColor: "#efe8ff",
+            },
+          },
+          {
+            label: "Cancel",
+            validationRequired: false,
+            callBack: (element: any) => this.cancel(element),
+            style: {
+              color: "#ff475d",
+              backgroundColor: "#ffe8e8",
+            },
+          },
+        ],
+      },
+    ].filter(Boolean),
   };
 
   pluginConfigObsInProgress: any = {
