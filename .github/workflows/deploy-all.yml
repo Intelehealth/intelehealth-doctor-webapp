@@ -12,7 +12,7 @@ on:
           - turn
           - ttxai
           - testturn
-        #  - nasprod
+          - nasprod
            
   push:
     branches:
@@ -30,8 +30,8 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn"]' >> "$GITHUB_OUTPUT"
-            # , "nasprod"
+            echo 'targets=["dev","turn","ttxai","testturn" , "nasprod"]' >> "$GITHUB_OUTPUT"
+             
           fi
 
   build-and-deploy:
@@ -64,9 +64,9 @@ jobs:
             testturn)
               echo "host=${{ secrets.TESTTURN_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
-      #      nasprod)
-      #        echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
-      #        ;;
+            nasprod)
+              echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
             *)    
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
