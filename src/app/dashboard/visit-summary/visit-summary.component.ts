@@ -1487,9 +1487,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     const caller = doctorPhoneNumber ? doctorPhoneNumber : environment.doctorPhoneNumber;
     this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0', notes).subscribe({
       next: (data) => {
+        this.analytics.logEvent('kaleyra_call_initiated', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+          visitId: visitUuid,
+          location: this.clinicName
+        });
         this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
       },
       error: (error) => {
+        this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          visitId: visitUuid,
+          location: this.clinicName,
+          reason: error?.message ?? 'unknown'
+        });
         this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
       }
     });
@@ -2947,11 +2959,45 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isCallInProgress = false;
     this.isWhatsappCallWarningShown = false;
     this.callTimerInterval.unsubscribe();
+    this.analytics.logEvent('whatsapp_call_ended', 'engagement', 'whatsapp_call_button', this.callDuration, {
+      doctorUserId: this.visitSummaryService.userId,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit?.uuid,
+      location: this.clinicName,
+      callDuration: this.callDuration
+    });
     this.arrCallDurations.push({ callDuration: this.callDuration, timestamp: this.callDurationTimeStamp })
     if (this.callDurationsUuid)
       this.visitService.updateAttribute(this.visit.uuid, this.callDurationsUuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
     else
       this.visitService.postAttribute(this.visit.uuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
+  }
+
+  contactAnalyticsPayload() {
+    return {
+      doctorUserId: this.visitSummaryService.userId,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit?.uuid,
+      location: this.clinicName
+    };
+  }
+
+  /**
+  * Track the patient WhatsApp icon, then start the timed call if enabled
+  * @param {boolean} isScroll - Scroll to the interaction form
+  * @returns {void}
+  */
+  onPatientWhatsAppClick(isScroll: boolean = false) {
+    this.analytics.logEvent('whatsapp_link_opened', 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload());
+    this.startWhatsAppCall(isScroll);
+  }
+
+  /**
+  * Track the patient phone icon; the tel: href does the dialling
+  * @returns {void}
+  */
+  onPatientPhoneClick() {
+    this.analytics.logEvent('patient_phone_dialled', 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload());
   }
 
   /**
@@ -2965,6 +3011,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.isCallInProgress) {
         this.isCallInProgress = true;
         this.callDurationTimeStamp = Date.now()
+        this.analytics.logEvent('whatsapp_call_started', 'engagement', 'whatsapp_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+          visitId: this.visit?.uuid,
+          location: this.clinicName
+        });
         this.callTimerInterval = interval(1000).subscribe(val => {
           this.callDuration = val;
         })
