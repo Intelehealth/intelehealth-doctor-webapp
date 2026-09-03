@@ -97,16 +97,23 @@ export class MindmapService {
   * Notify the patient on WhatsApp (via the Turn microservice) that their
   * prescription is ready.
   * @param {string} visitUuid - OpenMRS visit uuid of the shared prescription
+  * @param {any} visit - Optional full visit payload (see VisitService.getVisitForPrescription).
+  *   When provided, Turn builds the PDF from this instead of re-reading OpenMRS,
+  *   avoiding any read-after-write lag on the encounter just created.
   * @return {void}
   */
-  notifyPrescriptionOnTurn(visitUuid: string): void {
+  notifyPrescriptionOnTurn(visitUuid: string, visit?: any): void {
     const isTurnServer = (environment as any).isTurnServer === true;
     const turnUrl = (environment as any).turnNotifyURL;
     if (!isTurnServer || !turnUrl || !visitUuid) {
       return;
     }
+    const body: any = { visit_uuid: visitUuid };
+    if (visit) {
+      body.visit = visit;
+    }
     this.http
-      .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, { visit_uuid: visitUuid })
+      .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, body)
       .subscribe({
         next: () => console.log('Turn prescription notify sent'),
         error: (err) => console.error('Turn prescription notify failed:', err)
