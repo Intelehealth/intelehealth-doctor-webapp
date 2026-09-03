@@ -2585,9 +2585,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                     }).subscribe((post) => {
                       this.visitCompleted = true;
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
-                      // Prescription just shared -> notify the patient on WhatsApp
+                      // Prescription just shared -> notify the patient on WhatsApp.
+                      // Fetch the visit fresh (now that the encounter above is confirmed
+                      // created) and send it along,
                       if (environment.isTurnServer) {
-                        this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+                        this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
+                          next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit),
+                          error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid),
+                        });
                       }
                       this.notifyHwForAvailablePrescription("","",followUpDate);
                     
