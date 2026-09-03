@@ -504,10 +504,6 @@
   </ng-container>
 </mat-expansion-panel>
 
-<app-referral-consent *ngIf="referralConsentForm && !isTurnServer" [referralConsentForm]="referralConsentForm"
-  [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
-</app-referral-consent>
-
 <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" data-test-id="matExpReferral">
 
   <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
