@@ -355,13 +355,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 uuid: obs.uuid
               });
             }
-          } else {
-            this.additionalInstructions.push(obs);
           }
         }
       });
     });
   }
+
+  // Additional Instructions shares conceptAdvice with Advice
+
+  static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
 
   /**
   * Get advices for the visit
@@ -369,11 +371,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfAdvicePresent() {
     this.advices = [];
+    this.additionalInstructions = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            if (!obs.value.includes('</a>')) {
+            if (obs.value.includes('</a>')) return;
+            if (obs.value.startsWith(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.additionalInstructions.push({
+                ...obs,
+                value: obs.value.slice(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX.length),
+              });
+            } else {
               this.advices.push(obs);
             }
           }
@@ -642,11 +651,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         signatureValue = await this.toObjectUrl(`${this.signature.value}`);
     }
 
+    // ArogyaPath 2.0 branding is Turn-only; other servers keep the Intelehealth name.
+    const brandLabel = environment.isTurnServer ? 'ArogyaPath 2.0' : 'Intelehealth';
+
     const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 40 ],
-      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      watermark: { text: brandLabel.toUpperCase(), color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
           { text: ''},
@@ -656,7 +668,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage: { toString: () => string; }, pageCount: string) => {
         return {
           columns: [
-            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
+            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: `Copyright ©2023 ${brandLabel}, a 501 (c)(3) & Section 8 non-profit organisation`, fontSize: 8, margin: [5, 0, 0, 0]} ],
             { text: '\n\n'+currentPage.toString() + ' of ' + pageCount, width:"7%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
@@ -671,7 +683,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: `${brandLabel} e-Prescription`,
                   alignment: 'center',
                   style: 'header'
                 },

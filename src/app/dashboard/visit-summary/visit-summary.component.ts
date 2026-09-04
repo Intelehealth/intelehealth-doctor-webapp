@@ -2087,15 +2087,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     return match ? match.drug : null;
   }
 
+  // Additional Instructions shares conceptAdvice with Advice (no dedicated concept exists),
+  // so this marker is what lets read-side code tell the two apart reliably.
+  static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
+
   /**
   * Save additional instruction
   * @returns {void}
   */
   saveAdditionalInstruction(): Observable<any> {
+    const markedValue = `${VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX}${this.additionalInstructionForm.value.value}`;
     if (this.additionalInstructionForm.value.uuid) {
       if (this.additionalInstructionForm.valid)
         return this.encounterService.updateObs(this.additionalInstructionForm.value.uuid, {
-          value: this.additionalInstructionForm.value.value
+          value: markedValue
         })
       else
         return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
@@ -2104,7 +2109,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         concept: conceptIds.conceptAdvice,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
-        value: this.additionalInstructionForm.value.value,
+        value: markedValue,
         encounter: this.visitNotePresent.uuid
       }).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: response.uuid })));
     } else {
@@ -2174,18 +2179,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-        
-            if (this.additionalInstructionForm && !obs.value.includes('</a>')) {
-            
-              if (!obs.value.includes(':') || obs.value.split(':').length < 3) {
-              
-                if (!this.advicesList.includes(obs.value)) {
-                  this.additionalInstructions = obs;
-                  if (this.additionalInstructionForm) {
-                    this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
-                  }
-                }
-              }
+            if (this.additionalInstructionForm && obs.value.startsWith(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.additionalInstructions = obs;
+              const value = obs.value.slice(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX.length);
+              this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value });
             }
           }
         });
@@ -2202,11 +2199,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            if (!obs.value.includes('</a>')) {
-              // Exclude additional instructions from advices list
-              if (!this.additionalInstructions || this.additionalInstructions.uuid !== obs.uuid) {
-                this.advices.push(obs);
-              }
+            // Additional Instructions shares this concept but is marked, so exclude it here.
+            if (!obs.value.includes('</a>') && !obs.value.startsWith(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.advices.push(obs);
             }
           }
         });
@@ -2481,10 +2476,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {Observable<any>}
   */
   saveFollowUp() {
+    console.log('[visit-summary] saveFollowUp() form value=', JSON.stringify(this.followUpForm.value), 'isTurnServer=', environment.isTurnServer);
     let value = 'No';
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
       value = `${moment(this.followUpForm.value.followUpDate ?? new Date()).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime ?? 'NA'},Remark:${this.followUpForm.value.followUpReason || 'NA'},Type:${this.followUpForm.value.followUpType || 'NA'}`;
     }
+    console.log('[visit-summary] saveFollowUp() obs value to save=', value);
     const followUpDate = this.followUpForm.value.wantFollowUp === 'Yes'
       ? `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`
       : null;
@@ -2634,6 +2631,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       });
                     });
                   } else {
+                    // Update Prescription: re-notify the patient on WhatsApp, same as Share Prescription.
+                    if (environment.isTurnServer) {
+                      this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
+                        next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true),
+                        error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true),
+                      });
+                    }
                     this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
                       if (result === 'view') {
                         // Open visit summary modal here....
