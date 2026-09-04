@@ -4,7 +4,7 @@ import { VisitService } from '../services/visit.service';
 import { DiagnosisService } from '../services/diagnosis.service';
 import { AppConfigService } from '../services/app-config.service';
 import * as moment from 'moment';
-import { getCacheData, getAge } from '../utils/utility-functions';
+import { getCacheData, getAge, isNamcoDoctor } from '../utils/utility-functions';
 import { doctorDetails, visitTypes, conceptIds } from 'src/config/constant';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ObsApiResponseModel, ObsModel, ProviderAttributeModel } from '../model/model';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -24,6 +24,7 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   loaded1: boolean = false;
   loaded2: boolean = false;
   loaded3: boolean = false;
+  isNamcoDoctor: boolean = false;
   specialization: string = '';
   prescriptionSentCount: number = 0;
   completedVisitsCount: number = 0;
@@ -51,10 +52,11 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
       }
+      this.isNamcoDoctor = isNamcoDoctor(provider);
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
-    if(this.appConfigService?.namco_referral_section) {
+    if(this.appConfigService?.namco_referral_section && !this.isNamcoDoctor) {
       this.getReferredVisits();
     }
 

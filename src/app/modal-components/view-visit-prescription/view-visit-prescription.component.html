@@ -660,7 +660,7 @@
                 <h6>{{'Medications'|translate}}</h6>
               </div>
               <div class="data-section-content">
-                <div class="table-responsive" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary">
+                <div class="table-responsive" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary && !appConfigService?.patient_visit_summary?.standard_medication">
                   <table class="table">
                     <thead>
                       <tr>
@@ -686,6 +686,44 @@
                       <ng-template #noMedicines>
                         <tr>
                           <td colspan="5" class="text-center">
+                           {{'No medicines added' | translate}}
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Standard Medication mode — formatMedicineDisplay() (visit.service.ts) parses obs
+                     into { drug, dose, durationNo, durationUnit, instructRemark, frequency } and
+                     checkIfMedicationPresent() correctly pushes them into standardMedicines, but
+                     nothing in this template ever rendered that array — medications silently
+                     disappeared for any org with standard_medication enabled. -->
+                <div class="table-responsive" *ngIf="!appConfigService?.patient_visit_summary?.dp_medication_secondary && appConfigService?.patient_visit_summary?.standard_medication">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">{{'Drug name'|translate}}</th>
+                        <th scope="col">{{'Dose'|translate}}</th>
+                        <th scope="col">{{'Frequency'|translate}}</th>
+                        <th scope="col">{{'Duration (number)'|translate}}</th>
+                        <th scope="col">{{'Duration (units)'|translate}}</th>
+                        <th scope="col">{{'Instruction(Remarks)'|translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngIf="standardMedicines.length; else noStandardMedicines">
+                        <tr *ngFor="let m of standardMedicines; let i = index">
+                          <td>{{ m.drug }}</td>
+                          <td>{{ m.dose }}</td>
+                          <td>{{ m.frequency }}</td>
+                          <td>{{ m.durationNo }}</td>
+                          <td>{{ m.durationUnit }}</td>
+                          <td>{{ m.instructRemark }}</td>
+                        </tr>
+                      </ng-container>
+                      <ng-template #noStandardMedicines>
+                        <tr>
+                          <td colspan="6" class="text-center">
                            {{'No medicines added' | translate}}
                           </td>
                         </tr>

@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPrescriptionSourceEncounterUuids, isNamcoDoctor, getCacheData } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -78,6 +78,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   sanitizedValue: SafeHtml;
   recommendation: { uuid: string; value: any; };
   brandName = environment.brandName === 'KCDO';
+  isNamcoDoctorLoggedIn: boolean = isNamcoDoctor(getCacheData(true, doctorDetails.PROVIDER));
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -275,7 +276,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -309,7 +310,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfNotePresent() {
     this.notes = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -324,7 +325,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent() {
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -341,7 +342,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -373,7 +374,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfAdvicePresent() {
     this.advices = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
@@ -392,7 +393,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfTestPresent() {
     this.tests = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
@@ -409,7 +410,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfReferralPresent() {
     this.referrals = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
@@ -430,7 +431,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfFollowUpPresent() {
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
@@ -1406,6 +1407,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && this.isNamcoDoctorLoggedIn) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -1472,7 +1474,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
    */
   checkIfFollowUpInstructionsPresent(): void {
     this.followUpInstructions = [];
-    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollowUpInstruction).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {

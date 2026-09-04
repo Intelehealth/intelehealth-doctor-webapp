@@ -52,7 +52,7 @@
           </ng-template>
         </li>
 
-        <li [ngbNavItem]="3" data-test-id="tabReferredVisits" *ngIf="appConfigService?.namco_referral_section">
+        <li [ngbNavItem]="3" data-test-id="tabReferredVisits" *ngIf="appConfigService?.namco_referral_section && !isNamcoDoctor">
           <a ngbNavLink data-test-id="navReferred">
             <div class="chip-item chip-item-blue" data-test-id="chipReferred">
               <img class="chip-img" src="assets/svgs/pad.svg" alt="" data-test-id="chipReferredIcon" />

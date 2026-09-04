@@ -46,6 +46,7 @@ import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-si
 import { CurrentVisitDetailsComponent } from './visit-summary-v2/current-visit-details/current-visit-details.component';
 import { DoctorNoteComponent } from './visit-summary-v2/doctor-note/doctor-note.component';
 import { PastVisitsComponent } from './visit-summary-v2/past-visits/past-visits.component';
+import { PrimaryDoctorNoteComponent } from './visit-summary/primary-doctor-note/primary-doctor-note.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -72,6 +73,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     CurrentVisitDetailsComponent,
     DoctorNoteComponent,
     PastVisitsComponent,
+    PrimaryDoctorNoteComponent,
   ],
   imports: [
     IhLibraryModule,

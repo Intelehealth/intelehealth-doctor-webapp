@@ -844,6 +844,17 @@
               </span>
             </div>
           </mat-tab>
+
+          <mat-tab *ngIf="isNamcoDoctorLoggedIn">
+            <ng-template mat-tab-label>
+              <span data-test-id="mtPrimaryDoctorNote">{{ 'Primary Doctor\'s Note' | translate }}</span>
+            </ng-template>
+            <app-primary-doctor-note 
+              [visit]="visit" 
+              [patientInfo]="patient" 
+              data-test-id="appPrimaryDoctorNote"
+            ></app-primary-doctor-note>
+          </mat-tab>
         </mat-tab-group>
       </div>
     </div>
@@ -864,7 +875,7 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
-      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
+      <button type="button" class="blue-btn" (click)="createVisitNoteEncounter()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
         {{'Start visit note'|translate}}
       </button>
     </div>
@@ -1401,7 +1412,7 @@
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
             </ng-container>
 
-            <app-referral-consent *ngIf="!hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
+            <app-referral-consent *ngIf="!isNamcoDoctorLoggedIn && !hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
               [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
             </app-referral-consent>
 
@@ -2361,7 +2372,7 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType') && !isTurnServer">
+                    <li *ngIf="isFeatureAvailable('followUpType')">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}
@@ -2528,24 +2539,48 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
+      <ng-container *ngIf="!isNamcoDoctorLoggedIn">
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="saveAsDraft()"
+          [disabled]="!changesMade || !editFormValues"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted && !hasReferral"
+          data-test-id="btnSaveAsDraft">
+          {{'Save as Draft'|translate}}
+        </button>
 
-      <button type="button" class="blue-btn mr-2 mb-2" (click)="saveAsDraft()"
-        [disabled]="!changesMade || !editFormValues"
-        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted && !hasReferral"
-        data-test-id="btnSaveAsDraft">
-        {{'Save as Draft'|translate}}
-      </button>
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="sharePrescription()"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
+          data-test-id="btnSharePrescription">
+          {{ (visitCompleted || hasReferral) ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
+        </button>
 
-      <button type="button" class="blue-btn mr-2 mb-2" (click)="sharePrescription()"
-        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
-        data-test-id="btnSharePrescription">
-        {{ (visitCompleted || hasReferral) ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
-      </button>
+        <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
+          *ngIf="visitNotePresent && (visitCompleted || hasReferral)" data-test-id="btnViewPrescription">
+          {{'View Prescription'|translate}}
+        </button>
+      </ng-container>   
 
-      <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
-        *ngIf="visitNotePresent && (visitCompleted || hasReferral)" data-test-id="btnViewPrescription">
-        {{'View Prescription'|translate}}
-      </button>
+      <!-- NAMCO specialist's own Specialist Visit Note buttons — entirely separate handlers
+           (saveSpecialistDraft(), shareSpecialistPrescription()) and conditions from the normal-
+           doctor block above, so neither can affect the other. -->
+      <ng-container *ngIf="isNamcoDoctorLoggedIn">
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="saveSpecialistDraft()"
+          [disabled]="!changesMade || !editFormValues"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted"
+          data-test-id="btnSaveSpecialistDraft">
+          {{'Save as Draft'|translate}}
+        </button>
+
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="shareSpecialistPrescription()"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
+          data-test-id="btnShareSpecialistPrescription">
+          {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
+        </button>
+
+        <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
+          *ngIf="visitNotePresent && visitCompleted" data-test-id="btnViewSpecialistPrescription">
+          {{'View Prescription'|translate}}
+        </button>
+      </ng-container>
     </div>
   </div>
 </div>
