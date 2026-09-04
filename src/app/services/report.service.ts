@@ -13,9 +13,6 @@ export class ReoportService {
   getReport(body) {
     if (body.reportId === 1) {
       if (isFeaturePresent('reportEmail')) {
-        return this.http.get(
-          `${environment.base}/pl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
-        }
         return this.http.post(
           `${environment.base}/pl`,
           {
@@ -24,13 +21,13 @@ export class ReoportService {
             receiver: body.selectedData.value.field3
           },
           { reportProgress: true, observe: "events" });
+      }
+      return this.http.get(
+        `${environment.base}/pl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
     }
 
     if (body.reportId === 2) {
       if (isFeaturePresent('reportEmail')) {
-        return this.http.get(
-          `${environment.base}/vl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
-        }
         return this.http.post(
           `${environment.base}/vl`,
           {
@@ -39,6 +36,9 @@ export class ReoportService {
             receiver: body.selectedData.value.field3
           },
           { reportProgress: true, observe: "events" });
+      }
+      return this.http.get(
+        `${environment.base}/vl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
     }
   }
 
