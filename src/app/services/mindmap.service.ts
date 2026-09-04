@@ -100,9 +100,10 @@ export class MindmapService {
   * @param {any} visit - Optional full visit payload (see VisitService.getVisitForPrescription).
   *   When provided, Turn builds the PDF from this instead of re-reading OpenMRS,
   *   avoiding any read-after-write lag on the encounter just created.
+  * @param {boolean} resend - Explicit resend (Update Prescription), sends again even if already notified once.
   * @return {void}
   */
-  notifyPrescriptionOnTurn(visitUuid: string, visit?: any): void {
+  notifyPrescriptionOnTurn(visitUuid: string, visit?: any, resend?: boolean): void {
     const isTurnServer = (environment as any).isTurnServer === true;
     const turnUrl = (environment as any).turnNotifyURL;
     if (!isTurnServer || !turnUrl || !visitUuid) {
@@ -111,6 +112,9 @@ export class MindmapService {
     const body: any = { visit_uuid: visitUuid };
     if (visit) {
       body.visit = visit;
+    }
+    if (resend) {
+      body.resend = true;
     }
     this.http
       .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, body)
