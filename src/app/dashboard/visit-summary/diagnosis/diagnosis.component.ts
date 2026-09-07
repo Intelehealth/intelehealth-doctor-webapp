@@ -1470,12 +1470,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
               followUpTime = time ? time : null;
             }
-
-            // Only try to get Type if the feature is enabled
-            if (this.isFeatureAvailable('followUpType')) {
-              const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
-              followUpType = type && type !== 'null' ? type : null;
-            }
+          }
+          // Only try to get Type if the feature is enabled - independent of wantFollowUp, since 'No' obs also carries a Type: fragment
+          if (this.isFeatureAvailable('followUpType')) {
+            const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
+            followUpType = type && type !== 'null' ? type : (this.isTurnServer ? 'Telemedicine' : null);
           }
           this.followUpDatetime = obs.value;
           this.followUpForm.patchValue({
@@ -1533,11 +1532,14 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         this.followUpSaved.emit(this.followUpForm.value);
       }
     } else {
+      const noFollowUpValue = this.isFeatureAvailable('followUpType')
+        ? `${this.followUpForm.value.wantFollowUp},Type:${this.isTurnServer ? 'Telemedicine' : (this.followUpForm.value.followUpType || '')}`
+        : this.followUpForm.value.wantFollowUp;
       this.encounterService.postObs({
         concept: conceptIds.conceptFollow,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
-        value: this.followUpForm.value.wantFollowUp,
+        value: noFollowUpValue,
         encounter: this.visitNotePresent.uuid
       }).subscribe ( (res) => {
           this.followUpForm.patchValue({
@@ -1570,7 +1572,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
+      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: this.isTurnServer ? 'Telemedicine' : null }
       this.followUpForm.patchValue(followUp);
       this.followUpDatetime = null;
       if (this.aillmtxFollowupComponent) {

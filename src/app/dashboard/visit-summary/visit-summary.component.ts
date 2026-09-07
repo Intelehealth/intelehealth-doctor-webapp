@@ -2087,8 +2087,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     return match ? match.drug : null;
   }
 
-  // Additional Instructions shares conceptAdvice with Advice (no dedicated concept exists),
-  // so this marker is what lets read-side code tell the two apart reliably.
+  // Additional Instructions shares conceptAdvice with Advice 
   static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
 
   /**
