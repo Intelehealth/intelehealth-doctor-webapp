@@ -41,8 +41,13 @@
                   <h6 data-test-id="etPatientName">
                     <span>{{ patient?.person?.preferredName?.givenName }}</span>
                     <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
+<<<<<<< Updated upstream
                     <span *ngIf="patient?.person?.preferredName?.familyName && patient?.person?.preferredName?.familyName !== '.'">{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
                     <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.birthdate ? getAge(patient?.person.birthdate, true) : patient?.person.age) + ")" }}</span>
+=======
+                    <span *ngIf="patient?.person?.preferredName?.familyName && patient?.person?.preferredName?.familyName !== '.'">Shaheen :  {{ ' ' + patient?.person?.preferredName?.familyName }}</span>
+                    <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.age) + ")" }}</span>
+>>>>>>> Stashed changes
                   </h6>
                   <!-- Turn servers always show the OpenMRS ID (Turn patients have no TMH Case Number).
                        Other servers (dev, pathqa) keep the original tnmStaging/TMH behavior unchanged. -->
