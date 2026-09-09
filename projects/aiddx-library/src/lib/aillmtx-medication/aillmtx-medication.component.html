@@ -7,7 +7,15 @@
                     <i class="bi bi-exclamation-triangle-fill text-danger mb-2" style="font-size: 2rem;"></i>
                     <img src="assets/images/login/interneticon.png" alt="Warning" class="warning-icon" />
                     <h3 class="text-danger">No diagnosis Provided</h3>
-                    <p class="text-muted">Please add the required diagnosis details to fetch AI-assisted Medicines suggestions.</p>
+                    <p class="text-muted">Press the Confirm button to fetch AI-assisted Medicines suggestions</p>
+                    <button type="button" class="suggest-tx-btn mt-2" [disabled]="treatmentDisabled" (click)="requestTreatmentPlan.emit()">
+                        <ng-container *ngIf="!treatmentLoading">
+                            <img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" />{{ 'Confirm & Suggest Treatment Plan' | translate }}
+                        </ng-container>
+                        <ng-container *ngIf="treatmentLoading">
+                            {{ 'Suggesting treatment plan...' | translate }}
+                        </ng-container>
+                    </button>
                 </div>
             </div>
 
@@ -55,6 +63,7 @@
 
          <div class="warning">
             <img class="mb-1 mr-2" src="assets/svgs/info-ddx.svg" alt="" />This AI-generated suggestion is intended to support—not replace—your clinical judgement and may not account for all relevant factors.<strong> Please carefully review for potential adverse drug reactions (ADRs)</strong>, including drug–drug, drug–condition, and drug–allergy interactions before finalizing the prescription.<strong> Please use your own judgement before acting.</strong>
+            <a class="report-link" (click)="reportPanelIssue.emit({ medication_count: medicationList?.length || 0 })">{{ 'Is something wrong? Report it' | translate }}</a>
           </div>
 
         <div *ngIf="medicationList.length" class="med-scroll-wrapper" [ngClass]="{ 'scroll-enabled': medicationList.length > 6 }">
@@ -67,12 +76,29 @@
                         <span class="med-name"  [class.text-muted]="isMedicineExists(medicine.name)">{{ medicine.name }}</span>
                     </label>
                     <span class="med-severity"  [class.text-muted]="isMedicineExists(medicine.name)">({{ medicine.confidence ? (medicine.confidence.charAt(0).toUpperCase() + medicine.confidence.slice(1).toLowerCase()) : '' }})</span>
+                    <button type="button" class="med-flag-btn" title="{{ 'Report this suggestion' | translate }}" (click)="openReport(medicine)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                    </button>
+                </div>
+                <div class="report-popover" *ngIf="reportOpenFor === medicine">
+                    <div class="rp-title">{{ 'Report this AI suggestion' | translate }}</div>
+                    <div class="rp-sub">{{ medicine.name }}</div>
+                    <div class="rp-chips">
+                        <button type="button" class="rp-chip" [class.active]="reportReason === 'wrong_dose'" (click)="reportReason = 'wrong_dose'">{{ 'Wrong dose' | translate }}</button>
+                        <button type="button" class="rp-chip" [class.active]="reportReason === 'unsafe'" (click)="reportReason = 'unsafe'">{{ 'Unsafe' | translate }}</button>
+                        <button type="button" class="rp-chip" [class.active]="reportReason === 'other'" (click)="reportReason = 'other'">{{ 'Other' | translate }}</button>
+                    </div>
+                    <textarea class="rp-note" rows="3" placeholder="{{ 'Add a note (optional)' | translate }}" [(ngModel)]="reportNote"></textarea>
+                    <div class="rp-actions">
+                        <button type="button" class="rp-cancel" (click)="closeReport()">{{ 'Cancel' | translate }}</button>
+                        <button type="button" class="rp-send" [disabled]="!reportReason" (click)="sendReport(medicine)">{{ 'Send' | translate }}</button>
+                    </div>
                 </div>
                 <ul class="med-details" [class.text-muted]="isMedicineExists(medicine.name)">
-                    <li>{{ medicine.dosage }}</li>
-                    <li>{{ medicine.frequency }}</li>
-                    <li>{{ medicine.duration }} {{medicine.duration_unit}}</li>
-                    <li>{{ medicine.instructions }}</li>
+                    <li *ngIf="medicine.dosage">{{ medicine.dosage }}</li>
+                    <li *ngIf="medicine.frequency">{{ medicine.frequency }}</li>
+                    <li *ngIf="medicine.duration">{{ medicine.duration }} {{medicine.duration_unit}}</li>
+                    <li *ngIf="medicine.instructions">{{ medicine.instructions }}</li>
                 </ul>
                 <div *ngIf="medicine.rationale" class="med-rationale" [class.text-muted]="isMedicineExists(medicine.name)">
                     <strong>Rationale:</strong> {{ medicine.rationale }}

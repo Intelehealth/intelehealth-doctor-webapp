@@ -23,11 +23,11 @@ export class AiTxService {
   }
 
   getAITTx(casehistory: any, diagnosis: any, visitUuid: string, prescriptionShared: boolean = false) {
-    const endpoint = prescriptionShared ? '/ttxfinal' : '/ttxv1';
     if (diagnosis !== this.lastDiagnosis || prescriptionShared !== this.lastPrescriptionShared || !this.cachedResponse) {
       this.lastDiagnosis = diagnosis;
       this.lastPrescriptionShared = prescriptionShared;
-      this.cachedResponse = this.http.post(`${this.env.base}${endpoint}`, { diagnosis, case: casehistory, visitUuid }).pipe(
+      const url = prescriptionShared ? `${this.env.mindmapURL}/ttxfinal` : `${this.env.mindmapURL}/ttxv1`;
+      this.cachedResponse = this.http.post(url, { diagnosis, case: casehistory, visitUuid }).pipe(
         shareReplay(1)
       );
     }

@@ -36,6 +36,8 @@
   appearance: none;
   width: 18px;
   height: 16px;
+  /* Stops a long adjacent label squeezing the box out of square. */
+  flex-shrink: 0;
   border: 1px solid #B0ADBE;
   border-radius: 4px;
   position: relative;

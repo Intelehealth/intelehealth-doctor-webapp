@@ -17,8 +17,11 @@ export class AiddxService {
   }
 
   getAIDiagnosis(casehistory: any, visitUuid: string, prescriptionShared: boolean = false) {
-    const endpoint = prescriptionShared ? '/ddxfinal' : '/ddx';
-    return this.http.post(`${this.env.base}${endpoint}`, { casehistory, visitUuid });
+    if (prescriptionShared) {
+      return this.http.post(`${this.env.mindmapURL}/ddxfinal`, { casehistory, visitUuid });
+    }
+    /* Routed through the portal's authenticated wrapper. */
+    return this.http.post(`${this.env.mindmapURL}/ddx`, { casehistory, visitUuid });
   }
 
   getDDxPayload(patientInfo: any, visit: any, notes?: string) {

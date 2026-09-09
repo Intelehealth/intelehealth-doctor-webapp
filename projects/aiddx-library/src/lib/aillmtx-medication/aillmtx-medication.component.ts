@@ -11,6 +11,11 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
   @Input() visit: any;
   @Input() existingMedication: any[] = [];
   @Output() medicationSelected = new EventEmitter<string[]>();
+  @Output() reportPanelIssue = new EventEmitter<any>();
+  @Output() reportSuggestionIssue = new EventEmitter<any>();
+  @Output() requestTreatmentPlan = new EventEmitter<void>();
+  @Input() treatmentDisabled: boolean = false;
+  @Input() treatmentLoading: boolean = false;
   @Input() diagnosisName: string;
   @Input() notesss: string;
   @Input() patientAllergies: string = '';
@@ -27,6 +32,9 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
   selectedMedicine: any[] = [];
   loggedError:string;
   reminderMessages: string[] = [];
+  reportOpenFor: any = null;
+  reportReason: string | null = null;
+  reportNote = '';
 
   constructor(
     private TxService: AiTxService,
@@ -173,6 +181,29 @@ export class AillmtxMedicationComponent implements OnInit, OnChanges {
 
   onTryAgain() {
     this.getAIMedicalWithRetry(this.diagnosisName);
+  }
+
+  openReport(medicine: any) {
+    this.reportOpenFor = medicine;
+    this.reportReason = null;
+    this.reportNote = '';
+  }
+
+  closeReport() {
+    this.reportOpenFor = null;
+    this.reportReason = null;
+    this.reportNote = '';
+  }
+
+  sendReport(medicine: any) {
+    if (!this.reportReason) { return; }
+    this.reportSuggestionIssue.emit({
+      suggestion_ref: medicine?.name,
+      reason: this.reportReason,
+      details: this.reportNote?.trim() || undefined,
+      raw_suggestion: medicine,
+    });
+    this.closeReport();
   }
 
   onAIMedicineChange(event: any) {

@@ -19,6 +19,7 @@ export class AillmddxComponent {
   @Output() furtherQuestionsListReceived = new EventEmitter<any[]>();
   @Output() diagnosisReceived = new EventEmitter<any[]>();
   @Output() rationaleOpened = new EventEmitter<any>();
+  @Output() reportIssue = new EventEmitter<any>();
   @Input() notes: string;
   @Input() visitCompleted: boolean = false;
   @Input() reportExpanded = false;
@@ -88,8 +89,11 @@ export class AillmddxComponent {
               rationale: v?.rationale
             }
           });
+          const hasNumericRank = mapped.some(v => { const r = Number(v?.rank); return !isNaN(r) && r >= 1; });
           this.diagnosisList = this.visitCompleted
-            ? mapped.filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; }).sort((a, b) => Number(a.rank) - Number(b.rank))
+            ? (hasNumericRank
+                ? mapped.filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; }).sort((a, b) => Number(a.rank) - Number(b.rank))
+                : mapped.slice(0, 5))
             : mapped;
           this.diagnosisReceived.emit(this.diagnosisList);
           if(data?.result?.data?.further_questions?.length > 0) {
@@ -144,8 +148,11 @@ export class AillmddxComponent {
                 rationale: v?.rationale
               }
             });
+            const hasNumericRank = mapped.some(v => { const r = Number(v?.rank); return !isNaN(r) && r >= 1; });
             this.diagnosisList = this.visitCompleted
-              ? mapped.filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; }).sort((a, b) => Number(a.rank) - Number(b.rank))
+              ? (hasNumericRank
+                  ? mapped.filter(v => { const rank = Number(v?.rank); return rank >= 1 && rank <= 5; }).sort((a, b) => Number(a.rank) - Number(b.rank))
+                  : mapped.slice(0, 5))
               : mapped;
             this.diagnosisReceived.emit(this.diagnosisList);
             if(data?.result?.data?.further_questions?.length > 0) {
@@ -188,6 +195,10 @@ export class AillmddxComponent {
 
   onReportOpened() {
     this.rationaleOpened.emit({ diagnosis_count: this.diagnosisList?.length || 0 });
+  }
+
+  onReportIssue() {
+    this.reportIssue.emit({ diagnosis_count: this.diagnosisList?.length || 0 });
   }
 
   onAIDiagnosisChange(event: any) {

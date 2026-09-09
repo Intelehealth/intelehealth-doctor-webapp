@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AiddxService } from '../services/aiddx.service';
 import { AiTxService } from '../services/aitx.service';
 import { CONFIG_SERVICE, DIAGNOSIS_SERVICE, ENVIRONMENT } from './token';
@@ -27,6 +28,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   imports: [
     CommonModule,
+    /* Required by [(ngModel)] in these components' templates. */
+    FormsModule,
     TranslateModule,
     MatMenuModule,
     MatExpansionModule,

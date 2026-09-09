@@ -36,6 +36,8 @@
   appearance: none;
   width: 18px;
   height: 18px;
+  /* Stops a long adjacent label squeezing the box out of square. */
+  flex-shrink: 0;
   border: 1px solid #B0ADBE;
   border-radius: 4px;
   position: relative;
@@ -294,6 +296,19 @@
   margin-bottom: 14px;
   font-weight: 500;
   color: black;
+}
+
+.warning .report-link {
+  color: #C0392B;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.warning .report-link:hover {
+  opacity: 0.85;
 }
 
 .diagnosis-box h4 {
