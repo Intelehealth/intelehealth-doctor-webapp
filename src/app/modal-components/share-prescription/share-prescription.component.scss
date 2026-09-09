@@ -4,12 +4,12 @@
   margin-bottom: 22px;
   padding: 12px 16px;
   background: #F9FFFC;
-  border: 2px solid #B5F2DF;
+  border: 2px solid #CEFFE3;
   border-radius: 8px;
   text-align: left;
 
   .referral-sent-title {
-    color: var(--color-green);
+    color: #0F8A43;
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 8px;
@@ -21,14 +21,28 @@
   .referral-sent-fields {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px 12px;
+    row-gap: 8px;
+    column-gap: 0;
   }
 
+  // Horizontal spacing comes entirely from this padding (not the grid's column-gap), so each
+  // divider line sits exactly centered between equal space on either side.
   .referral-sent-field {
     display: flex;
     flex-direction: column;
     gap: 4px;
     min-width: 0;
+    padding: 0 10px;
+    border-right: 1px solid #EEEEEE;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+      border-right: none;
+    }
   }
 
   .referral-sent-label {
@@ -49,10 +63,10 @@
     display: inline-flex;
     flex-direction: row;
     align-items: center;
-    background: #EEECFB;
+    background: #EEEBFF;
     border-radius: 4px;
     height: 24px;
-    color: #6C5DD3;
+    color: var(--primary-color);
     padding: 2px 8px;
     width: fit-content;
     font-weight: 500;

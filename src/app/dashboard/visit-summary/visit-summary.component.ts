@@ -2739,6 +2739,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning(this.translateService.instant('Patient consent is required for NAMCO referral'), this.translateService.instant('Consent Required'));
       return false;
     }
+
+    if (!this.isNamcoDoctorLoggedIn && this.appConfigService.namco_referral_section && this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === this.translateService.instant('Yes') && !this.getConfirmedNamcoReferral()) {
+      this.toastr.warning(this.translateService.instant('As you have provided your consent for the referral, please complete the Referral section before sharing the prescription.'), this.translateService.instant('Referral Section Required'));
+      return false;
+    }
+
     this.changedFields = [];
     this.saveAllObs().subscribe({
       next: (responses) => {
