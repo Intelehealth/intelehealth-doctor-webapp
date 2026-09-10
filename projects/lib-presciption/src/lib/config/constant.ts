@@ -35,6 +35,8 @@ export const visitTypes = {
     FAMILY_HISTORY:'FAMILY HISTORY',
     FOLLOW_UP:'Follow-up',
     NEW:'New',
+    REFERRAL:'Referral',
+    SPECIALIST_VISIT_NOTE:'Specialist Visit Note',
 }
 
 export const doctorDetails = {

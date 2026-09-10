@@ -45,7 +45,7 @@ export class DiagnosisService {
   */
   getObs(baseURL: string,patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    const url = `${baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(uuid,visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 

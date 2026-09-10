@@ -1,6 +1,6 @@
-import { languages, visitTypes } from "../config/constant";
+import { languages, visitTypes, doctorDetails } from "../config/constant";
 import moment from 'moment';
-import { ProviderAttributeModel } from "../model/model";
+import { EncounterModel, ProviderAttributeModel } from "../model/model";
 import { DecimalPipe } from "@angular/common";
 // import { environment } from "../../../../src/environments/environment";
 
@@ -94,6 +94,43 @@ export function getSpecialization(attr: ProviderAttributeModel[] = []): string {
     }
   }
   return specialization;
+}
+
+/**
+ * Checks whether the provider is a NAMCO doctor using the provider name
+ * heuristic and their specialization attribute's "Namco" prefix.
+* @param {{ person?: { display?: string }, attributes?: ProviderAttributeModel[] }} provider - Provider profile
+* @return {boolean}
+*/
+export function isNamcoDoctor(provider: { person?: { display?: string }, attributes?: ProviderAttributeModel[] } = {}): boolean {
+  const doctorName = provider?.person?.display || '';
+  if (doctorName.toLowerCase().includes('namco')) {
+    return true;
+  }
+  const specialization = getSpecialization(provider?.attributes || []);
+  return specialization.trim().toLowerCase().startsWith('namco');
+}
+
+/**
+Resolve which encounter's prescription the currently logged-in doctor should see in View
+Prescription — their own, and only their own: a normal doctor sees their "Visit Note"
+encounter, a NAMCO doctor sees their own "Specialist Visit Note" encounter. Deliberately
+login-dependent so the two doctors' contributions are never shown blended together.
+* @param {{ encounters?: EncounterModel[] }} visit - The current visit
+* @return {string[]} - Encounter uuids this visit's prescription should be read from
+*/
+export function getPrescriptionSourceEncounterUuids(visit: { encounters?: EncounterModel[] } = {}): string[] {
+  const encounters = visit?.encounters || [];
+  const findEncounter = (label: string, exclude?: string) =>
+    encounters.find((e: EncounterModel) => (e?.display || '').includes(label) && (!exclude || !(e?.display || '').includes(exclude)));
+
+  const provider = getCacheData(true, doctorDetails.PROVIDER);
+  if (isNamcoDoctor(provider)) {
+    const specialistVisitNote = findEncounter(visitTypes.SPECIALIST_VISIT_NOTE);
+    return [specialistVisitNote?.uuid].filter((u): u is string => Boolean(u));
+  }
+  const visitNote = findEncounter(visitTypes.VISIT_NOTE, visitTypes.SPECIALIST_VISIT_NOTE);
+  return [visitNote?.uuid].filter((u): u is string => Boolean(u));
 }
 
 /**

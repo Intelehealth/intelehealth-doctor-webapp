@@ -419,6 +419,7 @@ export interface ObsModel {
     display?: string
   },
   encounter?: {
+    uuid?: string,
     visit?: {
       uuid?: string
     }

@@ -11,7 +11,7 @@ import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataMod
 import { checkIsEnabled, VISIT_SECTIONS } from './utils/visit-sections';
 import { TranslateService,TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
-import { calculateBMI, getAge, convertCelsiusToFahrenheit, getFieldValueByLanguage,obsParse } from './utils/utility-functions';
+import { calculateBMI, getAge, convertCelsiusToFahrenheit, getFieldValueByLanguage, obsParse, getCacheData, isNamcoDoctor, getPrescriptionSourceEncounterUuids } from './utils/utility-functions';
 import { conceptIds, doctorDetails, visitTypes } from './config/constant';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -104,7 +104,8 @@ export class LibPresciptionComponent implements OnInit,OnDestroy {
 
   recommendation: { uuid: string; value: any; };
   brandName: boolean = false;
- 
+  isNamcoDoctorLoggedIn: boolean = isNamcoDoctor(getCacheData(true, doctorDetails.PROVIDER));
+
   constructor(
      @Inject(MAT_DIALOG_DATA) public data:any,
       private dialogRef: MatDialogRef<LibPresciptionComponent>,
@@ -217,17 +218,53 @@ ngOnInit(): void {
                     this.consultedDoctor.gender = p.provider.person.gender;
                     this.consultedDoctor.person_uuid = p.provider.person.uuid;
                     this.consultedDoctor.attributes = p.provider.attributes;
-                    if (this.isDownloadPrescription) {
-                      this.setSignature(this.signature?.value, this.signatureType?.value);
-                    }
                   });
                 }
               });
+
+              if (!this.isNamcoDoctorLoggedIn) {
+                const referringVisitNote = (visit.encounters || []).find((e: EncounterModel) =>
+                  (e?.display || '').includes(visitTypes.VISIT_NOTE) && !(e?.display || '').includes(visitTypes.SPECIALIST_VISIT_NOTE)
+                );
+                const referringProvider = referringVisitNote?.encounterProviders?.[0]?.provider;
+                if (referringProvider) {
+                  this.consultedDoctor = this.buildConsultedDoctorFromProvider(referringProvider);
+                }
+              }
+              if (this.isDownloadPrescription) {
+                this.setSignature(this.signature?.value, this.signatureType?.value);
+              }
             }
           });
         }
       });
     }
+
+  /**
+  * Build the consulted-doctor display object from a provider record, for the referring doctor's
+  * own "Visit Note" encounter (which never gets a "Doctor details" obs snapshot — only Visit
+  * @param {any} provider - Provider record (encounterProviders[0].provider)
+  * @return {any} - Doctor details object shaped like the "Doctor details" obs snapshot
+  */
+  buildConsultedDoctorFromProvider(provider: any): any {
+    const d: any = {
+      name: provider?.person?.display,
+      uuid: provider?.uuid,
+      gender: provider?.person?.gender,
+      person_uuid: provider?.person?.uuid,
+      attributes: provider?.attributes || []
+    };
+    (provider?.attributes || []).forEach((pattr: ProviderAttributeModel) => {
+      if (pattr.voided) return;
+      switch (pattr.attributeType?.display) {
+        case doctorDetails.TYPE_OF_PROFESSION: d.typeOfProfession = pattr.value; break;
+        case doctorDetails.REGISTRATION_NUMBER: d.registrationNumber = pattr.value; break;
+        case doctorDetails.SPECIALIZATION: d.specialization = pattr.value; break;
+      }
+    });
+    return d;
+  }
+
   /**
    * Get chief complaints and patient visit reason/summary
    * @param {EncounterModel[]} encounters - Array of encounters
@@ -317,9 +354,10 @@ ngOnInit(): void {
    */
    checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
           if (this.isFeatureAvailable('dp_diagnosis_secondary')) {
             this.dignosisSecondary = obsParse(obs.value)
           } else if (obs.value.includes("}")) {
@@ -352,9 +390,10 @@ ngOnInit(): void {
    */
    checkIfNotePresent() {
      this.notes = [];
+     const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
      this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptNote).subscribe((response: ObsApiResponseModel) => {
        response.results.forEach((obs: ObsModel) => {
-         if (obs.encounter.visit.uuid === this.visit.uuid) {
+         if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
            this.notes.push(obs);
          }
        });
@@ -366,9 +405,10 @@ ngOnInit(): void {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent() {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
           this.discussionSummary = obs.value
         }
       });
@@ -382,9 +422,10 @@ ngOnInit(): void {
    checkIfMedicationPresent() {
     this.medicines = [];
     this.standardMedicines = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
           if (obs.value.includes(':')) {
             if(this.appConfigService.patient_visit_summary?.standard_medication){
               this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
@@ -411,11 +452,12 @@ ngOnInit(): void {
    */
    checkIfAdditionalInstructionPresent() {
      this.additionalInstructions = [];
+     const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
      this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptMed)
        .subscribe((response: ObsApiResponseModel) => {
          response.results.forEach((obs: ObsModel) => {
            const obsValue = typeof obs.value === 'string' ? obs.value : (obs.value?.display || String(obs.value || ''));
-           if (obs.encounter && obs.encounter.visit && obs.encounter.visit.uuid === this.visit.uuid) {
+           if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
              if (!obsValue.includes('</a>')) {
                if (!obsValue.includes(':')) {
                  this.additionalInstructions.push(obs);
@@ -434,10 +476,11 @@ ngOnInit(): void {
    */
    checkIfAdvicePresent() {
      this.advices = [];
+     const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
      this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptAdvice)
        .subscribe((response: ObsApiResponseModel) => {
          response.results.forEach((obs: ObsModel) => {
-           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+           if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
              if (!obs.value.includes('</a>')) {
                // Exclude additional instructions from advices list
               //  const isAdditionalInstruction = (!obs.value.includes(':') || obs.value.split(':').length < 3) && obs.value.length > 20;
@@ -456,10 +499,11 @@ ngOnInit(): void {
    */
    checkIfTestPresent() {
      this.tests = [];
+     const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
      this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptTest)
        .subscribe((response: ObsApiResponseModel) => {
          response.results.forEach((obs: ObsModel) => {
-           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+           if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
              this.tests.push(obs);
            }
          });
@@ -472,10 +516,11 @@ ngOnInit(): void {
    */
    checkIfReferralPresent() {
      this.referrals = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl, this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
             if(obs.value.includes(":")) {
               const obs_values = obs.value.split(':');
               this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim()? obs_values[3].trim():'-' });
@@ -490,10 +535,11 @@ ngOnInit(): void {
   * @returns {void}
   */
   checkIfRecommendationPresent(): void {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, conceptIds.conceptRecommendation)
     .subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if(obs.encounter && obs.encounter.visit.uuid === this.visit.uuid){
+        if(sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')){
           this.recommendation = {uuid: obs.uuid, value: obs.value}
         }
       });
@@ -505,9 +551,10 @@ ngOnInit(): void {
    * @returns {void}
    */
    checkIfFollowUpPresent() {
+     const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
      this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptFollow).subscribe((response: ObsApiResponseModel) => {
        response.results.forEach((obs: ObsModel) => {
-         if (obs.encounter.visit.uuid === this.visit.uuid) {
+         if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
            let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: string;
            if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
              const result = obs.value.split(',').filter(Boolean);
@@ -821,7 +868,7 @@ ngOnInit(): void {
             ];
             records.push(followUpRow);
           } else {
-            records.push([{ text: 'No follow-up added', colSpan: (this.isFeatureAvailable('followUpType') ? 5 : this.isFeatureAvailable('followUpTime') ? 4 : 3), alignment: 'center' }]);
+            records.push([{ text: 'No follow-up added', colSpan: 5, alignment: 'center' }]);
           }
           break;
       case 'cheifComplaint':
@@ -1201,6 +1248,7 @@ ngOnInit(): void {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && this.isNamcoDoctorLoggedIn) return !notInclude;
     const featureList = this.envService.getConfig('featureList')
     if(notInclude) return !featureList.includes(featureName);
     return featureList.includes(featureName);
@@ -1258,9 +1306,10 @@ ngOnInit(): void {
   */
   checkIfFollowUpInstructionsPresent(): void {
     this.followUpInstructions = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.baseUrl,this.visit.patient.uuid, this.conceptFollowUpInstruction).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid ?? '')) {
           this.followUpInstructions.push(obs);
         }
       });
@@ -1438,6 +1487,8 @@ ngOnInit(): void {
       }
 
       let signatureValue = this.signature.value;
+      console.log(signatureValue, "nflslkmvlmlsd dfl sd, ");
+      
       if(signatureValue.includes("amazonaws.com")){
         signatureValue = await this.toObjectUrl(`${this.signature.value}`);
       }

@@ -1,8 +1,8 @@
 {
   "name": "lib-presciption",
-  "version": "0.2.1",
+  "version": "1.2.4",
   "scripts": {
-    "lib-presciption": "ng build lib-presciption --configuration production",
+    "build": "ng build lib-presciption --configuration production",
     "dev": "ng build lib-presciption --watch"
   },
   "peerDependencies": {
