@@ -666,6 +666,11 @@
       [existingFollowUp]="existingFollowUp" [diagnosisName]="diagnosisName"></lib-aillmtx-followup>
   </ng-container> -->
 
+  <div class="alert alert-warning d-flex align-items-center" *ngIf="isNamcoReferralConfirmed" data-test-id="msgFollowUpBlockedByReferral">
+    <mat-icon class="mr-2">info</mat-icon>
+    <span>{{ 'You have selected this patient for referral to NAMCO. Follow-up is not applicable and cannot be filled for this visit.' | translate }}</span>
+  </div>
+
   <div class="table-responsive" *ngIf="followUpForm.value.present">
     <table class="table" aria-describedby="">
       <thead>
@@ -704,9 +709,10 @@
           <label for="follow-up" class="col-sm-3 col-form-label">{{'Do you want to have follow up with the patient?' |
             translate}}</label>
           <div class="col-sm-9 d-flex align-items-center">
-            <div class="pretty p-default p-round">
+            <div class="pretty p-default p-round" [class.followup-referral-disabled]="isNamcoReferralConfirmed">
               <input type="radio" value="{{'Yes' | translate}}" formControlName="wantFollowUp"
-                data-test-id="radioFollowUpYes" />
+                data-test-id="radioFollowUpYes"
+                [attr.disabled]="isNamcoReferralConfirmed ? 'disabled' : null" />
               <div class="state p-success">
                 <label>{{'Yes'|translate}}</label>
               </div>

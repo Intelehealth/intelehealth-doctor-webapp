@@ -573,6 +573,15 @@ textarea.form-control {
   // }
 }
 
+.followup-referral-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+
+  * {
+    cursor: not-allowed !important;
+  }
+}
+
 .medication-form-container {
   background-color: #FAF9FF !important;
   border-radius: 8px;

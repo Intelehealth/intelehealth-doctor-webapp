@@ -437,6 +437,26 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     return this.aillmtxFollowupComponent?.selectedFollowUp || [];
   }
 
+  /**
+   * True once this patient has a confirmed NAMCO referral (Referral Consent decision = NAMCO
+   * with consent = Yes, plus a matching NAMCO Hospital entry in the Referral section) — mirrors
+   * visit-summary.component.ts's getConfirmedNamcoReferral(). Follow-up doesn't apply once the
+   * patient has been routed to a specialist for this visit.
+   */
+  get isNamcoReferralConfirmed(): boolean {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm) {
+      return false;
+    }
+    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
+    if (!isNamcoConsented) {
+      return false;
+    }
+    return this.referrals.some((r: ReferralModel) =>
+      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
+      (r.facility || '').trim().toLowerCase() === 'namco hospital'
+    );
+  }
+
   checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
     const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
