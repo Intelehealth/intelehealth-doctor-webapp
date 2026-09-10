@@ -2745,6 +2745,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
 
+    // Track Share/Update Prescription button usage
+    this.analytics.logEvent('share_prescription', 'engagement', 'share_prescription_button', 1, {
+      actionType: (this.visitCompleted || this.hasReferral) ? 'Update' : 'Share',
+      doctorUserId: this.visitSummaryService.userId,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit.uuid,
+      location: this.clinicName,
+      timestamp: new Date().toISOString()
+    });
+
     this.changedFields = [];
     this.saveAllObs().subscribe({
       next: (responses) => {
@@ -2895,12 +2906,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
   * Save as Draft, for a NAMCO specialist working their own Specialist Visit Note encounter.
-  * Kept as its own named entry point (even though it simply delegates to the existing,
-  * doctor-type-agnostic saveAsDraft()) so the NAMCO button in the template never shares a
-  * click handler with the normal-doctor button — saveAsDraft() itself needs no NAMCO-specific
-  * behavior, since it only calls saveAllObs(), which already persists to whichever encounter
-  * this.visitNotePresent currently points at (the Specialist Visit Note encounter, for a NAMCO
-  * doctor).
   * @returns {void}
   */
   saveSpecialistDraft(): void {
@@ -2932,6 +2937,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
       return false;
     }
+
+    // Track Share/Update Prescription button usage
+    this.analytics.logEvent('share_prescription', 'engagement', 'share_specialist_prescription_button', 1, {
+      actionType: this.visitCompleted ? 'Update' : 'Share',
+      doctorUserId: this.visitSummaryService.userId,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit.uuid,
+      location: this.clinicName,
+      timestamp: new Date().toISOString()
+    });
 
     this.changedFields = [];
     this.saveAllObs().subscribe({
