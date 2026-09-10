@@ -28,6 +28,26 @@
     <p class="mt-2 text-center" data-test-id="sharePrescriptionModalMessage">
       {{ 'Are you sure you want to share this prescription?' | translate }}
     </p>
+
+    <div class="referral-sent-box" *ngIf="namcoReferral" data-test-id="referralSentBox">
+      <div class="referral-sent-title" data-test-id="referralSentTitle">{{ 'Referral Sent' | translate }}</div>
+      <div class="referral-sent-fields">
+        <div class="referral-sent-field" data-test-id="referralSentFacility">
+          <span class="referral-sent-label">{{ 'Facility' | translate }}</span>
+          <span class="referral-sent-value">
+            <img src="assets/svgs/hospital.svg" alt="">
+            {{ namcoReferral.facility }}</span>
+        </div>
+        <div class="referral-sent-field" data-test-id="referralSentSpecialty">
+          <span class="referral-sent-label">{{ 'Specialty' | translate }}</span>
+          <span class="referral-sent-value">{{ namcoReferralSpecialty }}</span>
+        </div>
+        <div class="referral-sent-field" data-test-id="referralSentPriority">
+          <span class="referral-sent-label">{{ 'Priority' | translate }}</span>
+          <span class="purple-pill">{{ namcoReferral.priority | translate }}</span>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="modal-action-btn-con">
     <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)" data-test-id="btnCancel">{{'Go back'|translate}}</button>

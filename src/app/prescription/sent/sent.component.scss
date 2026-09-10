@@ -79,6 +79,76 @@ th:last-child {
   width: fit-content;
 }
 
+.blue-pill,
+.gray-pill,
+.red-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  height: 32px;
+  padding: 4px 10px;
+  width: fit-content;
+  font-weight: 500;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+}
+
+.blue-pill {
+  background: #E7F1FF;
+  color: #2F80ED;
+
+  .dot {
+    background: #2F80ED;
+  }
+}
+
+.gray-pill {
+  background: #F2F2F2;
+  color: #828282;
+
+  .dot {
+    background: #828282;
+  }
+}
+
+.red-pill {
+  background: #FDECEC;
+  color: #EB5757;
+
+  .dot {
+    background: #EB5757;
+  }
+}
+
+.purple-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #EEECFB;
+  border-radius: 4px;
+  height: 32px;
+  color: #6C5DD3;
+  padding: 4px 10px;
+  width: fit-content;
+  font-weight: 500;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    border-radius: 50%;
+    background: #6C5DD3;
+    margin-right: 6px;
+  }
+}
+
 .actions-btn-wrap {
   .action-btn {
     outline: none;

@@ -69,6 +69,9 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnInit(): void {
+    if(this.appConfigService?.namco_referral_section) {
+        this.displayedColumns = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'referral_status'];
+    }
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.updatePaginationState();
     this.updateDataSource();

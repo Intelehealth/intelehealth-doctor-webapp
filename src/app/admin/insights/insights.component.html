@@ -1,0 +1,70 @@
+<div class="insights-con">
+  <div class="insights-head">
+    <h4 class="mb-0">{{ 'Insights' | translate }}</h4>
+    <div class="insights-actions" *ngIf="enabled">
+      <select class="range-select" [(ngModel)]="range" (ngModelChange)="load()" [disabled]="loading">
+        <option *ngFor="let r of ranges" [value]="r.key">{{ r.label | translate }}</option>
+      </select>
+      <button class="refresh-btn" (click)="load()" [disabled]="loading">
+        {{ (loading ? 'Loading...' : 'Refresh') | translate }}
+      </button>
+    </div>
+  </div>
+
+  <p class="insights-disabled" *ngIf="!enabled">{{ 'Insights are currently disabled.' | translate }}</p>
+
+  <div class="stat-grid" *ngIf="enabled">
+    <div class="stat-card">
+      <span class="stat-value">{{ rationaleOpens }}</span>
+      <span class="stat-label">{{ "Ayu's Detailed Report opens" | translate }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ rationaleDoctors }}</span>
+      <span class="stat-label">{{ 'Doctors who opened it' | translate }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ visitViews }}</span>
+      <span class="stat-label">{{ 'Visit summary views' | translate }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ openRate }}%</span>
+      <span class="stat-label">{{ 'Open rate' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="recent-card" *ngIf="enabled">
+    <h6 class="recent-title">{{ 'Recent report opens' | translate }}</h6>
+    <table class="recent-table" aria-describedby="Recent report opens">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Doctor' | translate }}</th>
+          <th scope="col">{{ 'Visit' | translate }}</th>
+          <th scope="col">{{ 'Diagnoses' | translate }}</th>
+          <th scope="col">{{ 'When' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of recent">
+          <td>
+            <span class="cell-val">{{ r.properties?.doctor_name || short(r.actor_id) }}</span>
+            <button class="copy-btn" (click)="copy(r.actor_id)" [title]="'Copy doctor UUID' | translate">
+              <mat-icon>content_copy</mat-icon>
+              <span class="copy-label">{{ 'UUID' | translate }}</span>
+            </button>
+          </td>
+          <td>
+            <span class="cell-val">{{ short(r.entity_id) }}</span>
+            <button class="copy-btn" (click)="copy(r.entity_id)" [title]="'Copy visit UUID' | translate">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </td>
+          <td>{{ r.properties?.diagnosis_count }}</td>
+          <td>{{ r.occurred_at | date: 'dd MMM, yyyy hh:mm a' }}</td>
+        </tr>
+        <tr *ngIf="!loading && !recent.length">
+          <td colspan="4" class="empty">{{ 'No data yet' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

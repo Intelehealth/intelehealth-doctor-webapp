@@ -64,7 +64,7 @@
               </div>
             </div>
 
-            <div class="patient-info-section p-1" *ngIf="checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
+            <div class="patient-info-section p-1" *ngIf="!isTurnServer && checkPatientRegField('Date of Birth') && patient?.person.birthdate !== 'NA'">
               <div class="patient-info-item">
                 <h6 data-test-id="etPatientAge">{{'Date of birth'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.birthdate | date : "dd MMM, yyyy" }}</p>
@@ -844,6 +844,17 @@
               </span>
             </div>
           </mat-tab>
+
+          <mat-tab *ngIf="isNamcoDoctorLoggedIn">
+            <ng-template mat-tab-label>
+              <span data-test-id="mtPrimaryDoctorNote">{{ 'Primary Doctor\'s Note' | translate }}</span>
+            </ng-template>
+            <app-primary-doctor-note 
+              [visit]="visit" 
+              [patientInfo]="patient" 
+              data-test-id="appPrimaryDoctorNote"
+            ></app-primary-doctor-note>
+          </mat-tab>
         </mat-tab-group>
       </div>
     </div>
@@ -864,7 +875,7 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
-      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
+      <button type="button" class="blue-btn" (click)="createVisitNoteEncounter()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
         {{'Start visit note'|translate}}
       </button>
     </div>
@@ -1054,7 +1065,10 @@
                 <div *ngIf="ayuSuggestionsLoading || furtherQuestionsList.length > 0" class="suggestions-box" data-test-id="divSuggestionsBox">
                   <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divSuggestionsHeader">
                     <h4 data-test-id="h4SuggestedQuestions"><img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" data-test-id="imgAyuIcon"/> Ayu suggested questions</h4>
-                    <!-- <span style="font-size: 12px; color: #888;">Show details</span> -->
+                    <button type="button" class="report-issue-btn" (click)="openReportIssue('ddx_questions')"
+                      title="{{ 'Report an issue with these suggestions' | translate }}" data-test-id="btnReportQuestionsIssue">
+                      <img src="assets/svgs/alert-triangle.svg" alt="" width="22" height="22" />
+                    </button>
                   </div>
 
                   <!-- Same bouncing-dots loader the ddx plugin shows for diagnosis, so the box
@@ -1280,10 +1294,10 @@
               </mat-expansion-panel>
             </ng-template>
 
-            <app-notes #notes [title]="'Note'" [expanded]="showAndHideUiElement ? true : false" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
+            <app-notes #notes [title]="'Note'" [expanded]="true" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
               [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)"></app-notes>
 
-            <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel5 hideToggle class="overflow-show"
+            <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show"
               *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled" data-test-id="expansionPanelAdvice">
               <mat-expansion-panel-header data-test-id="expansionPanelHeaderAdvice">
                 <mat-panel-title>
@@ -1398,13 +1412,13 @@
               <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
             </ng-container>
 
-            <app-referral-consent *ngIf="!hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
+            <app-referral-consent *ngIf="!isNamcoDoctorLoggedIn && !hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
               [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
             </app-referral-consent>
 
             <ng-template #tplDrRcom>
               <mat-expansion-panel
-                [expanded]="showAndHideUiElement ? true : false"
+                [expanded]="true"
                 #panel4
                 hideToggle
                 class=""
@@ -2017,7 +2031,7 @@
               </mat-expansion-panel>
 
               <mat-expansion-panel
-                [expanded]="showAndHideUiElement ? true : false"
+                [expanded]="true"
                 #panel6
                 hideToggle
                 class="overflow-show"
@@ -2146,7 +2160,7 @@
               </app-follow-up-instruction>
             </ng-template>
 
-            <mat-expansion-panel [expanded]="showAndHideUiElement ? true : false" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
+            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
               <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
                 <mat-panel-title data-test-id="matPanelTitleReferral">
                   <div class="intel-accordion-title" data-test-id="divAccordionTitleReferral">
@@ -2358,7 +2372,7 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType') && !this.showAndHideUiElement">
+                    <li *ngIf="isFeatureAvailable('followUpType')">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}
@@ -2525,24 +2539,48 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
+      <ng-container *ngIf="!isNamcoDoctorLoggedIn">
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="saveAsDraft()"
+          [disabled]="!changesMade || !editFormValues"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted && !hasReferral"
+          data-test-id="btnSaveAsDraft">
+          {{'Save as Draft'|translate}}
+        </button>
 
-      <button type="button" class="blue-btn mr-2 mb-2" (click)="saveAsDraft()"
-        [disabled]="!changesMade || !editFormValues"
-        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted"
-        data-test-id="btnSaveAsDraft">
-        {{'Save as Draft'|translate}}
-      </button>
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="sharePrescription()"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
+          data-test-id="btnSharePrescription">
+          {{ (visitCompleted || hasReferral) ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
+        </button>
 
-      <button type="button" class="blue-btn mr-2 mb-2" (click)="sharePrescription()"
-        *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
-        data-test-id="btnSharePrescription">
-        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
-      </button>
+        <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
+          *ngIf="visitNotePresent && (visitCompleted || hasReferral)" data-test-id="btnViewPrescription">
+          {{'View Prescription'|translate}}
+        </button>
+      </ng-container>   
 
-      <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
-        *ngIf="visitNotePresent && visitCompleted" data-test-id="btnViewPrescription">
-        {{'View Prescription'|translate}}
-      </button>
+      <!-- NAMCO specialist's own Specialist Visit Note buttons — entirely separate handlers
+           (saveSpecialistDraft(), shareSpecialistPrescription()) and conditions from the normal-
+           doctor block above, so neither can affect the other. -->
+      <ng-container *ngIf="isNamcoDoctorLoggedIn">
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="saveSpecialistDraft()"
+          [disabled]="!changesMade || !editFormValues"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider && !visitCompleted"
+          data-test-id="btnSaveSpecialistDraft">
+          {{'Save as Draft'|translate}}
+        </button>
+
+        <button type="button" class="blue-btn mr-2 mb-2" (click)="shareSpecialistPrescription()"
+          *ngIf="!isMCCUser && visitNotePresent && !visitEnded && isVisitNoteProvider"
+          data-test-id="btnShareSpecialistPrescription">
+          {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'Prescription'|translate}}
+        </button>
+
+        <button type="button" class="blue-btn mb-2" (click)="openVisitPrescriptionModal(visit?.uuid)"
+          *ngIf="visitNotePresent && visitCompleted" data-test-id="btnViewSpecialistPrescription">
+          {{'View Prescription'|translate}}
+        </button>
+      </ng-container>
     </div>
   </div>
 </div>

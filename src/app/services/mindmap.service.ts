@@ -93,6 +93,38 @@ export class MindmapService {
     return this.http.post(`${environment.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
   }
 
+  /**
+  * Notify the patient on WhatsApp (via the Turn microservice) that their
+  * prescription is ready.
+  * @param {string} visitUuid - OpenMRS visit uuid of the shared prescription
+  * @return {void}
+  */
+  notifyPrescriptionOnTurn(visitUuid: string): void {
+    const isTurnServer = (environment as any).isTurnServer === true;
+    const turnUrl = (environment as any).turnNotifyURL;
+    if (!isTurnServer || !turnUrl || !visitUuid) {
+      return;
+    }
+    this.http
+      .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, { visit_uuid: visitUuid })
+      .subscribe({
+        next: () => console.log('Turn prescription notify sent'),
+        error: (err) => console.error('Turn prescription notify failed:', err)
+      });
+  }
+
+
+  notifyHwForVisitStarted(hwUuid: string, data: any): void {
+    if (!hwUuid) {
+      console.warn('Cannot send visit started notification: Health worker UUID is not available');
+      return;
+    }
+
+    this.notifyApp(hwUuid, { silent: true, type: 'visit_started', data }).subscribe({
+      next: () => {},
+      error: (err) => console.error('Failed to send visit started notification:', err)
+    });
+  }
 
   /**
   * Send notification to health worker for available prescription
@@ -119,8 +151,9 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
+    console.log("payload for notification:",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => {},
+      next: () => console.log('Reschedule notification sent successfully'),
       error: (err) => console.error('Failed to send reschedule notification:', err)
     });
   }
@@ -149,8 +182,9 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
+    console.log("payload===",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => {},
+      next: () => console.log('Cancel notification sent successfully'),
       error: (err) => console.error('Failed to send cancel notification:', err)
     });
   }

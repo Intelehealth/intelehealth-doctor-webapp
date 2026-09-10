@@ -11,6 +11,7 @@ import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/canc
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { ConfirmDayOffComponent } from 'src/app/modal-components/confirm-day-off/confirm-day-off.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
+import { ReportAiIssueComponent, ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
 import { ConfirmOpenmrsIdComponent } from 'src/app/modal-components/confirm-openmrs-id/confirm-openmrs-id.component';
 import { FileDownloadComponent } from 'src/app/modal-components/file-download/file-download.component';
@@ -39,8 +40,8 @@ import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mind
 import { VcallOverlayComponent } from 'src/app/modal-components/vcall-overlay/vcall-overlay.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { ViewVisitSummaryComponent } from 'src/app/modal-components/view-visit-summary/view-visit-summary.component';
-import { LibPresciptionComponent } from 'lib-presciption';  
-
+import { ViewVisitPrescriptionComponent } from 'src/app/modal-components/view-visit-prescription/view-visit-prescription.component';
+import { LibPresciptionComponent } from 'lib-presciption';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';   
 @Injectable({
@@ -70,6 +71,21 @@ export class CoreService {
       disableClose: true,
     });
     return dialogRef;
+  }
+
+  /**
+   * Open "Report an AI issue" modal
+   * @param {ReportAiIssueDialogData} data - Dialog data
+   * @return {Observable<any>} - Dialog close result
+   */
+  openReportAiIssueModal(data: ReportAiIssueDialogData): Observable<any> {
+    const dialogRef = this.dialog.open(ReportAiIssueComponent, {
+      panelClass: "modal-md",
+      data,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef.afterClosed();
   }
 
   /**
@@ -168,13 +184,15 @@ export class CoreService {
 
   /**
    * Open prescription share success modal
+   * @param {any} data - Optional dialog data (e.g., { isReferral: boolean })
    * @return {Observable<any>} - Dialog result
    */
-  openSharePrescriptionSuccessModal(): Observable<any> {
+  openSharePrescriptionSuccessModal(data?: any): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionSuccessComponent, {
       panelClass: "modal-md",
       hasBackdrop: true,
       disableClose: true,
+      data,
     });
     return dialogRef.afterClosed();
   }

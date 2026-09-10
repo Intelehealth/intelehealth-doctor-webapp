@@ -4,8 +4,10 @@
   </div>
   <div class="modal-con mt-4">
     <img src="assets/svgs/success-circle.svg" alt="" width="80px" height="80px">
-    <h6 class="mt-3">{{'Shared prescription successfully'|translate}}</h6>
-    <p class="mt-2 text-center">{{'The prescription has been successfully sent. View prescription or go to dashboard'|translate}}</p>
+    <h6 class="mt-3" *ngIf="!isReferral">{{'Shared prescription successfully'|translate}}</h6>
+    <h6 class="mt-3" *ngIf="isReferral">{{'Referral sent successfully'|translate}}</h6>
+    <p class="mt-2 text-center" *ngIf="!isReferral">{{'The prescription has been successfully sent. View prescription or go to dashboard'|translate}}</p>
+    <p class="mt-2 text-center" *ngIf="isReferral">{{'The patient has been referred to a specialist. View prescription or go to dashboard'|translate}}</p>
     <p class="mt-2 text-center" *ngIf="!isLoadingCounts">
       <span>{{priorityVisitsCount}} {{'Visits remains in Priority Visits'|translate}}</span><br>
       <span>{{awaitingVisitsCount}} {{'Visits remains in Awaiting Visits'|translate}}</span><br>

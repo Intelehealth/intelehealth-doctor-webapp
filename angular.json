@@ -35,6 +35,7 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
+            "preserveSymlinks": true,
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",

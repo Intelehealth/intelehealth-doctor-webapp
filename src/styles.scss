@@ -786,6 +786,21 @@ body.font-lato td {
   }
 }
 
+.cdk-overlay-container.vc-call-minimized {
+  .cdk-overlay-backdrop {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .cdk-global-overlay-wrapper {
+    pointer-events: none;
+  }
+
+  .vc-modal-lg.minimized {
+    pointer-events: auto;
+  }
+}
+
 .intel-accordion-con {
   .mat-expansion-panel {
     background: #FFFFFF;
