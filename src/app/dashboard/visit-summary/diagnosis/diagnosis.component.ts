@@ -8,7 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
-import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT } from 'aiddx-library';
+import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT, CONFIG_SERVICE } from 'aiddx-library';
 import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -86,6 +86,7 @@ class PickDateAdapter extends NativeDateAdapter {
     AiddxService,
     AiTxService,
     { provide: ENVIRONMENT, useValue: environment },
+    { provide: CONFIG_SERVICE, useExisting: AppConfigService },
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
   ],

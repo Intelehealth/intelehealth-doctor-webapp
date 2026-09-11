@@ -23,7 +23,7 @@ export class AiLlmComponent {
 
   sectionEnabled: boolean = false;
   allSectionData: any = {};
-  displayedAILLMColumns: string[] = ["serialNo", "section"];
+  displayedAILLMColumns: string[] = ["serialNo", "section", "is_enabled"];
   displayedAILLMRecordingColumns: string[] = ["serialNo", "sectionr"];
 
   tableData = [];
