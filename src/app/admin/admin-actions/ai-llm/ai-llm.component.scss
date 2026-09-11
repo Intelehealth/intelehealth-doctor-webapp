@@ -243,3 +243,22 @@ th:last-child {
     flex-wrap: nowrap;
   }
 }
+
+.ai-llm-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #f0c36d;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: #6b5300;
+  font-size: 13px;
+  line-height: 1.5;
+
+  .alert-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}

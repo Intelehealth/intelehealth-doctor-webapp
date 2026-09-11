@@ -32,6 +32,7 @@ export class AppConfigService {
   public dropdown_values: DropdownValuesModel[]
   public patient_diagnostics_section: boolean;
   public ai_llm_section: boolean;
+  public ai_llm: { [key: string]: boolean };
   public ai_llm_recording_section:  boolean;
   public prescription_notes_section: boolean;
   public prescription_notes: { specialty: string; notes: string[]; is_enabled: boolean }[];
