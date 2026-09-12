@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -18,11 +18,19 @@ import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { AiddxService, AiTxService } from 'aiddx-library';
 import {
-  AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
-  ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
-  SymptomGroup, TimelineGroup, VitalCell
+  AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiMissingDetailsError, AiTreatmentResult,
+  AyuSuggestedQuestion, ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData,
+  SuggestionLikelihood, SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import { AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE } from './doctor-note/doctor-note.constants';
+
+const AI_REQUIRED_DETAILS: { label: string; numeric: boolean }[] = [
+  { label: 'Age', numeric: true },
+  { label: 'Weight (kg)', numeric: true },
+  { label: 'Gender', numeric: false }
+];
+
+const AI_UNSPECIFIED = /\b(not\s+specified|unknown|none|n\/?a)\b/i;
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
 export interface DiagnosisOption { name: string; code: string; }
@@ -118,8 +126,28 @@ export class VisitSummaryV2Service {
       : this.visitService.postAttribute(visitUuid, payload);
   }
 
+  missingAiDetails(caseText: string): string[] {
+    return AI_REQUIRED_DETAILS
+      .filter(({ label, numeric }) => {
+        const value = this.extractDetail(caseText, label);
+        if (!value) { return true; }
+        return numeric && (AI_UNSPECIFIED.test(value) || !/\d/.test(value));
+      })
+      .map(({ label }) => label);
+  }
+
+  private extractDetail(caseText: string, label: string): string {
+    const key = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const match = new RegExp(`\\b${key}\\s*[:=-]\\s*([^\\n\\r,;]+)`, 'i').exec(caseText || '');
+    return (match?.[1] || '').trim();
+  }
+
   loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
     const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
+    const missing = this.missingAiDetails(casehistory);
+    if (missing.length) {
+      return throwError(() => new AiMissingDetailsError(missing));
+    }
     return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared).pipe(
       map((res: any) => this.buildAiDiagnosisResult(res))
     );
@@ -166,6 +194,10 @@ export class VisitSummaryV2Service {
 
   loadAiTreatment(patientInfo: PatientModel, visit: VisitModel, diagnosis: string, prescriptionShared = false): Observable<AiTreatmentResult> {
     const casehistory = this.aiTxService.getTxPayload(patientInfo, visit);
+    const missing = this.missingAiDetails(casehistory);
+    if (missing.length) {
+      return throwError(() => new AiMissingDetailsError(missing));
+    }
     this.aiTxService.clearCache();
     return this.aiTxService.getAITTx(casehistory, diagnosis, visit?.uuid, prescriptionShared).pipe(
       map((res: any) => this.buildAiTreatmentResult(res))

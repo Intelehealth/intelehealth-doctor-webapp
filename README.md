@@ -79,3 +79,11 @@ SHOW_CAPTCHA=true/false
 ```
 
 [Disclaimer:] (https://github.com/Intelehealth/Intelehealth-Doctor-WebApp/blob/master/HEALTHCARE%20DISCLAIMER.md)
+
+## AI suggestions: required patient details
+
+The visit summary AI panels (`visit-summary-v2`) call ai-middleware through the portal, which requires `Age`, `Weight (kg)` and `Gender` in the generated case history for both diagnosis and treatment. Weight is only present when the visit has a Vitals encounter, so a visit with no recorded vitals cannot produce AI suggestions.
+
+`VisitSummaryV2Service.missingAiDetails()` mirrors those server rules and is checked before the request is sent. When something is missing the panels show a "Patient Details Required" state naming the missing fields, instead of firing a request that fails validation and surfaces as a generic error. Age and weight must contain a number; gender only has to be present.
+
+Keep `missingAiDetails()` in sync with `_validate_required_demographics` in ai-middleware `models/requests.py` if the required fields change.

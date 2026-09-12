@@ -13,7 +13,7 @@ import {
 } from '../visit-summary-v2.service';
 import {
   AdviceBundle, AiDiagnosisState, AiDiagnosisSuggestion, AiFollowUp, AiMedicationState, AiMedicationSuggestion,
-  AyuSuggestedQuestion, SelectedDiagnosis, SelectedMedicine
+  AiMissingDetailsError, AyuSuggestedQuestion, SelectedDiagnosis, SelectedMedicine
 } from '../visit-summary-v2.models';
 import {
   ADVICE_BUNDLES, CONTEXT_CHIPS, DAY_OPTIONS,
@@ -65,6 +65,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   hasEnoughInfo = true;
 
   aiDiagnosisState: AiDiagnosisState = 'loading';
+  aiMissingDetails: string[] = [];
   aiSummaryExpanded = false;
   improveExpanded = true;
   improveContextText = '';
@@ -374,10 +375,19 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.aiFollowUp = result.followUp;
         this.aiMedicationState = 'ready';
       },
-      error: () => {
-        this.aiMedicationState = 'error';
+      error: err => {
+        this.aiMissingDetails = this.detailsFromError(err);
+        this.aiMedicationState = this.aiMissingDetails.length ? 'missing-details' : 'error';
       }
     });
+  }
+
+  private detailsFromError(err: unknown): string[] {
+    return err instanceof AiMissingDetailsError ? err.missing : [];
+  }
+
+  get aiMissingDetailsText(): string {
+    return this.aiMissingDetails.join(', ');
   }
 
   isContextChipOn(chip: string): boolean {
@@ -423,8 +433,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.ayuSuggestedQuestions = result.questions;
         this.aiDiagnosisState = 'ready';
       },
-      error: () => {
-        this.aiDiagnosisState = 'error';
+      error: err => {
+        this.aiMissingDetails = this.detailsFromError(err);
+        this.aiDiagnosisState = this.aiMissingDetails.length ? 'missing-details' : 'error';
       }
     });
   }
