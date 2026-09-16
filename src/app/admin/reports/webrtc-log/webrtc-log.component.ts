@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-webrtc-log',
   templateUrl: './webrtc-log.component.html',
@@ -17,7 +18,21 @@ export class WebrtcLogComponent {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<any>();
-  callDataColumns: any = [
+  // Turn calls are direct patient<->doctor, so there's no Sevika/CHW; the backend
+  // sends block/village/state instead of district/state for those rows.
+  callDataColumns: any = environment.isTurnServer ? [
+    { label: "Patient Id", key: "patientId" },
+    { label: "Patient Name", key: "patientName" },
+    { label: "State", key: "state" },
+    { label: "Block", key: "block" },
+    { label: "Village", key: "village" },
+    { label: "Doctor Name", key: "doctorName" },
+    { label: "Start Time", key: "start_time"},
+    { label: "End Time", key: "end_time"},
+    { label: "Call Duration(In second)", key: "call_duration"},
+    { label: "Call Status", key: "call_status" },
+    { label: "Reason for call failure", key: "reason" },
+  ] : [
     { label: "Patient Id", key: "patientId" },
     { label: "Patient Name", key: "patientName" },
     { label: "State", key: "state" },
