@@ -4,7 +4,7 @@
             <img class="mr-2" src="assets/svgs/webrtc-report.svg" alt="" height="44px">
             <h6 class="mb-0">Webrtc Log</h6>
             <div class="card-header-actions">
-                <button type="button" class="action-btn bg-blue" data-test-id="btnExport" (click)="export()">
+                <button type="button" class="action-btn bg-blue" data-test-id="btnExport" [disabled]="data.length === 0" (click)="export()">
                     {{'Export' | translate}}</button>
             </div>
         </div>
