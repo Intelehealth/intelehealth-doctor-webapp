@@ -21,7 +21,7 @@ export class ReportsComponent {
   callDataColumns: any = environment.isTurnServer ? [
     { label: "Patient Id", key: "patientId" },
     { label: "Patient Name", key: "patientName" },
-    { label: "State", key: "state" },
+    { label: "City", key: "city" },
     { label: "Block", key: "block" },
     { label: "Village", key: "village" },
     { label: "Doctor Name", key: "doctorName" },
