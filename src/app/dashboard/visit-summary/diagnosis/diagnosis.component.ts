@@ -505,6 +505,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     this.dSearchSubject.next(event.term);
   }
 
+  // Lets the doctor add a diagnosis typed in free text when nothing in the
+  // SNOMED-CT/getdiags results matches (ng-select's addTag hook).
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
+
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
       this.diagnosisService.getSnomedCTDiagnosisList(val).subscribe({

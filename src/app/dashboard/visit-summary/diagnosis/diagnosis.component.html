@@ -42,7 +42,8 @@
                     <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom" formControlName="diagnosisName"
                       (search)="onKeyUp($event)" (change)="onDiagnosisChange($event)" [items]="diagnosis$ | async"
                       bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true"
-                      placeholder="{{'Select diagnosis'|translate}}" [addTag]="false" data-test-id="selectDiagnosisName">
+                      placeholder="{{'Select diagnosis'|translate}}" [addTag]="addDiagnosisTag" addTagText="Add new diagnosis:"
+                      data-test-id="selectDiagnosisName">
                     </ng-select>
                   </div>
                 </div>
