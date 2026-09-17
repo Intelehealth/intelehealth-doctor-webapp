@@ -13,6 +13,8 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, Validators } from
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
+import { OverrideReasonItem } from 'src/app/modal-components/ddx-ttx-override-reason/ddx-ttx-override-reason.component';
+import { DdxTtxOverrideDiagnosis } from 'src/app/services/ddx-ttx-override.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
@@ -2544,6 +2546,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.changedFields = [];
+    this.gateOnPendingOverrides(() => {
     this.saveAllObs().subscribe({
       next: (responses) => {
         this.changesMade = false;
@@ -2674,7 +2677,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         console.error('Error saving observations', error);
       }
     });
+    });
 
+    return true;
   }
 
   /**
@@ -3146,6 +3151,64 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private currentDiagnosesSnapshot(): DdxTtxOverrideDiagnosis[] {
+    return (this.ddxCompRef?.instance?.existingDiagnosis || [])
+      .filter((d: DiagnosisModel) => !!d?.diagnosisName)
+      .map((d: DiagnosisModel) => ({ name: d.diagnosisName, ai_assisted: d.from ? 'Y' : 'N' } as DdxTtxOverrideDiagnosis));
+  }
+
+  private collectPendingOverrides(): OverrideReasonItem[] {
+    if (!this.hasAILLMEnabled) return [];
+    const items: OverrideReasonItem[] = [];
+
+    for (const diagnosis of (this.ddxCompRef?.instance?.existingDiagnosis || [])) {
+      if (!diagnosis?.uuid && !diagnosis?.from) {
+        items.push({ surface: 'diagnosis', surfaceLabel: 'Diagnosis', selectedValue: diagnosis.diagnosisName });
+      }
+    }
+    for (const medicine of (this.standardMedicines || [])) {
+      if (!medicine?.uuid && !medicine?.aiGenerated) {
+        items.push({ surface: 'medication', surfaceLabel: 'Medication', selectedValue: medicine.drug });
+      }
+    }
+    for (const advice of (this.advices || [])) {
+      if (!advice?.uuid && !advice?.fromAi) {
+        items.push({ surface: 'advice', surfaceLabel: 'Advice', selectedValue: advice.value });
+      }
+    }
+    for (const test of (this.tests || [])) {
+      if (!test?.uuid && !test?.fromAi) {
+        items.push({ surface: 'investigation', surfaceLabel: 'Investigation/Test', selectedValue: test.value });
+      }
+    }
+    for (const referral of (this.referrals || [])) {
+      if (!referral?.uuid && !referral?.fromAi) {
+        items.push({ surface: 'referral', surfaceLabel: 'Referral', selectedValue: referral.speciality });
+      }
+    }
+
+    return items;
+  }
+
+  private gateOnPendingOverrides(proceed: () => void): void {
+    const items = this.collectPendingOverrides();
+    if (!items.length) {
+      proceed();
+      return;
+    }
+    this.coreService.openDdxTtxOverrideReasonModal({
+      visitId: this.visit?.id,
+      doctorId: this.provider?.id,
+      patientId: this.visit?.patient?.id,
+      diagnosesSnapshot: this.currentDiagnosesSnapshot(),
+      items
+    }).subscribe((result: any) => {
+      if (result) {
+        proceed();
+      }
+    });
+  }
+
   saveAllObs(): Observable<any> {
     const postObsRequests = [];
 
@@ -3568,54 +3631,56 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   
   saveAsDraft() {
     // Get all fields that have been changed
-    this.changedFields = Object.keys(this.updatedObsData).filter(key => 
+    this.changedFields = Object.keys(this.updatedObsData).filter(key =>
       this.updatedObsData[key] !== this.obsData[key]
     );
 
-    this.saveAllObs().subscribe({
-      next: (responses) => {     
-        // Unsubscribe from all existing subscriptions
-        this.unsubscribeFromFormTracking();
-        
-        // Reset tracking states
-        this.obsData = {
-          notes: [],
-          familyHistoryNote: [],
-          pastMedicalHistoryNote: [], 
-          followUp: false,
-          followUpInstruction: this.followUpInstructionComponentRef?.addInstructionForm?.value?.instructions || [],
-          diagnosis: [],
-          addMedicine: [],
-          addStandardMedicine: [],
-          additionalInstruction: null,
-          addAdvice: [],
-          addTests: [],
-          test: null,
-          addReferral: [],
-          discussionSummary: null,
-          patientCallStatus: null,
-          diagnosisSecondary: null,
-          referralSecondary: null,
-          patientInteractionComment: null,
-          hwInteraction: null,
-          patientInteraction: null,
-          referralConsent: null,
-          medicine: []
-        };
-        
-        // Update base state and reset tracking state
-        this.updatedObsData = {...this.obsData};
-        this.changesMade = false;
-        
-        // Reinitialize form tracking
-        this.trackFormChanges();
-        
-        this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
-      },
-      error: (error) => {
-        console.error('Error saving observations', error);
-        this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
-      }
+    this.gateOnPendingOverrides(() => {
+      this.saveAllObs().subscribe({
+        next: (responses) => {
+          // Unsubscribe from all existing subscriptions
+          this.unsubscribeFromFormTracking();
+
+          // Reset tracking states
+          this.obsData = {
+            notes: [],
+            familyHistoryNote: [],
+            pastMedicalHistoryNote: [],
+            followUp: false,
+            followUpInstruction: this.followUpInstructionComponentRef?.addInstructionForm?.value?.instructions || [],
+            diagnosis: [],
+            addMedicine: [],
+            addStandardMedicine: [],
+            additionalInstruction: null,
+            addAdvice: [],
+            addTests: [],
+            test: null,
+            addReferral: [],
+            discussionSummary: null,
+            patientCallStatus: null,
+            diagnosisSecondary: null,
+            referralSecondary: null,
+            patientInteractionComment: null,
+            hwInteraction: null,
+            patientInteraction: null,
+            referralConsent: null,
+            medicine: []
+          };
+
+          // Update base state and reset tracking state
+          this.updatedObsData = {...this.obsData};
+          this.changesMade = false;
+
+          // Reinitialize form tracking
+          this.trackFormChanges();
+
+          this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
+        },
+        error: (error) => {
+          console.error('Error saving observations', error);
+          this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
+        }
+      });
     });
   }
 
