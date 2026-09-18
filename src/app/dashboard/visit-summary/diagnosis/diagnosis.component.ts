@@ -505,8 +505,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     this.dSearchSubject.next(event.term);
   }
 
-  // Lets the doctor add a diagnosis typed in free text when nothing in the
-  // SNOMED-CT/getdiags results matches (ng-select's addTag hook).
+  // Lets the doctor add a diagnosis typed in free text.
   addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
 
   searchDiagnosis(val: string): void {
@@ -1476,8 +1475,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               followUpTime = time ? time : null;
             }
           }
-          // Only try to get Type if the feature is enabled - independent of wantFollowUp, since 'No' obs also carries a Type: fragment
-          if (this.isFeatureAvailable('followUpType')) {
+          // Only try to get Type if the feature is enabled and a follow-up was actually requested
+          if (this.isFeatureAvailable('followUpType') && wantFollowUp === 'Yes') {
             const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
             followUpType = type && type !== 'null' ? type : (this.isTurnServer ? 'Telemedicine' : null);
           }
@@ -1537,9 +1536,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         this.followUpSaved.emit(this.followUpForm.value);
       }
     } else {
-      const noFollowUpValue = this.isFeatureAvailable('followUpType')
-        ? `${this.followUpForm.value.wantFollowUp},Type:${this.isTurnServer ? 'Telemedicine' : (this.followUpForm.value.followUpType || '')}`
-        : this.followUpForm.value.wantFollowUp;
+      const noFollowUpValue = this.followUpForm.value.wantFollowUp;
       this.encounterService.postObs({
         concept: conceptIds.conceptFollow,
         person: this.visit.patient.uuid,
@@ -1554,7 +1551,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
             followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
-            followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+            followUpType : null
           });
           if (this.aillmtxFollowupComponent) {
             this.aillmtxFollowupComponent.existingFollowUp.push({
@@ -1563,7 +1560,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               followUpDate : null,
               followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
               followUpReason : null,
-              followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+              followUpType : null
             });
           }
       });
