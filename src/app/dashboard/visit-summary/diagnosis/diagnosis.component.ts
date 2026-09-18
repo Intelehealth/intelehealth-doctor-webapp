@@ -40,6 +40,7 @@ import { insightEvents } from 'src/config/insight-events';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import { CoreService } from 'src/app/services/core/core.service';
 import { AiIssueReportService } from 'src/app/services/ai-issue-report.service';
+import { DdxTtxOverrideDiagnosis } from 'src/app/services/ddx-ttx-override.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -1151,7 +1152,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     if (this.selectedAdvices.length > 0) {
       const advice = this.selectedAdvices[0];
       if (!this.advices.find((o: ObsModel) => o.value === advice)) {
-        this.advices.push({ value: advice });
+        this.advices.push({ value: advice, fromAi: true });
         if (this.aillmtxAdviceComponent) {
           this.aillmtxAdviceComponent.existingAdvice = [...this.advices];
         }
@@ -1170,7 +1171,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       this.toastr.warning(this.translateService.instant('Advice already added, please add another advice.'), this.translateService.instant('Already Added'));
       return;
     }
-    this.advices.push({ value: this.addAdviceForm.value.advice });
+    this.advices.push({ value: this.addAdviceForm.value.advice, fromAi: false });
     this.addAdviceForm.reset();
     this.adviceSaved.emit(this.advices);
   }
@@ -1267,7 +1268,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     if (this.selectedTests.length > 0) {
       const test = this.selectedTests[0];
       if (!this.tests.find((o: TestModel) => o.value === test)) {
-        const newTest: TestModel = { value: test, uuid: null };
+        const newTest: TestModel = { value: test, uuid: null, fromAi: true };
         this.tests.push(newTest);
         if (this.aillmtxTestComponent) {
           this.aillmtxTestComponent.existingTest = [...this.tests];
@@ -1287,7 +1288,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       return;
     }
-    const newTest: TestModel = { value: testValue, uuid: null };
+    const newTest: TestModel = { value: testValue, uuid: null, fromAi: false };
     this.tests.push(newTest);
     this.addTestForm.reset();
     this.testSaved.emit(this.tests);
@@ -1371,11 +1372,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     if (this.selectedReferrals.length > 0) {
       const selectedReferral = this.selectedReferrals[0] as any;
       const refer_reason = selectedReferral.remark ? selectedReferral.remark : '';
-      const formattedReferral = { 
-        speciality: selectedReferral.referral_to, 
-        facility: selectedReferral.referral_facility, 
-        priority: 'Elective', 
-        reason: refer_reason
+      const formattedReferral = {
+        speciality: selectedReferral.referral_to,
+        facility: selectedReferral.referral_facility,
+        priority: 'Elective',
+        reason: refer_reason,
+        fromAi: true
       };
 
       if(!this.referrals.find((o: ReferralModel) => o.speciality === formattedReferral.speciality)) {
@@ -1402,11 +1404,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     const refer_reason = this.addReferralForm.value.reason ? this.addReferralForm.value.reason : '';
-    this.referrals.push({ 
-      speciality: this.addReferralForm.value.speciality, 
-      facility: this.addReferralForm.value.facility, 
-      priority: this.addReferralForm.value.priority_refer, 
-      reason: refer_reason 
+    this.referrals.push({
+      speciality: this.addReferralForm.value.speciality,
+      facility: this.addReferralForm.value.facility,
+      priority: this.addReferralForm.value.priority_refer,
+      reason: refer_reason,
+      fromAi: false
     });
     this.addReferralForm.reset();
     this.addReferralForm.controls.priority_refer.setValue('Elective');
@@ -1496,16 +1499,53 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  private aiFollowUpSnapshot: { wantFollowUp: string; followUpDate: any; followUpType: string } | null = null;
+
+  private followUpDeviatesFromAi(): boolean {
+    if (!this.aiFollowUpSnapshot) return false;
+    const current = this.followUpForm.value;
+    const sameDate = moment(current.followUpDate).isSame(moment(this.aiFollowUpSnapshot.followUpDate), 'day');
+    return current.wantFollowUp !== this.aiFollowUpSnapshot.wantFollowUp
+      || !sameDate
+      || (current.followUpType || null) !== (this.aiFollowUpSnapshot.followUpType || null);
+  }
+
   /**
   * Save followup
-  * @returns {Observable<any>}
+  * @returns {void}
   */
-  saveFollowUp(): Observable<any> {
+  saveFollowUp(): void {
+    if (this.followUpDeviatesFromAi()) {
+      const doctor = getCacheData(true, doctorDetails.PROVIDER);
+      const diagnoses: DdxTtxOverrideDiagnosis[] = (this.existingDiagnosis || [])
+        .filter((d: any) => !!d?.diagnosisName)
+        .map((d: any) => ({ name: d.diagnosisName, ai_assisted: d.from ? 'Y' : 'N' } as DdxTtxOverrideDiagnosis));
+      this.coreService.openDdxTtxOverrideReasonModal({
+        visitId: this.visit?.id,
+        doctorId: doctor?.id,
+        patientId: this.visit?.patient?.id,
+        diagnosesSnapshot: diagnoses,
+        items: [{
+          surface: 'follow_up',
+          surfaceLabel: 'Follow-up',
+          selectedValue: `${this.followUpForm.value.wantFollowUp}${this.followUpForm.value.followUpDate ? ' - ' + moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD') : ''}`,
+        }],
+      }).subscribe((result: any) => {
+        if (result) {
+          this.persistFollowUp();
+        }
+      });
+      return;
+    }
+    this.persistFollowUp();
+  }
+
+  private persistFollowUp(): void {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
       const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
-      
+
       if (this.followUpForm.value.uuid) {
-        return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
+        this.encounterService.updateObs(this.followUpForm.value.uuid, { value }).subscribe();
       } else {
         if (this.aillmtxFollowupComponent) {
           this.aillmtxFollowupComponent.existingFollowUp.push({
@@ -1605,17 +1645,20 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       if (this.selectedFollowups.length > 0 && selectedFollowUp.follow_up_duration && selectedFollowUp.reason_for_follow_up) {
         const daysToAdd = this.convertDurationToDays(selectedFollowUp.follow_up_duration);
         if (selectedFollowUp.follow_up_required) {
+          const followUpDate = moment().add(daysToAdd, 'days').toDate();
           this.followUpForm.patchValue({
             present: false,
             wantFollowUp: 'Yes',
-            followUpDate: moment().add(daysToAdd, 'days').toDate(),
+            followUpDate,
             followUpTime: '10:00 AM',
             followUpReason: selectedFollowUp.reason_for_follow_up,
             followUpType: null
           });
+          this.aiFollowUpSnapshot = { wantFollowUp: 'Yes', followUpDate, followUpType: null };
         }
       }else {
         this.followUpForm.reset();
+        this.aiFollowUpSnapshot = null;
       }
     }
   

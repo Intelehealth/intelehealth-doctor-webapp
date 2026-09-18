@@ -515,6 +515,10 @@ body.font-lato td {
   }
 }
 
+.modal-md.ddx-ttx-override-reason-panel {
+  max-width: min(92vw, 1180px) !important;
+}
+
 .modal-md {
   width: 490px;
   max-width: 90% !important;
