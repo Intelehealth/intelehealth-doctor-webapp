@@ -53,10 +53,16 @@ export class ReportsComponent {
     this.getWebrtcStatus();
   }
   
+  // patientId falls back to a UUID room_id when there's no matching OpenMRS patient identifier; drop those rows.
+  private isUuid(value: any): boolean {
+    return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+  }
+
   getWebrtcStatus() {
     this.reportService.geWebrtcStatus().subscribe({
       next: (res: any) => {
         let data = res?.data?.callData || [];
+        data = data.filter(item => !this.isUuid(item.patientId));
         this.callData = data.map(item => {
           let tableCol: any = {}
           this.callDataColumns.forEach(col => {
@@ -93,17 +99,12 @@ export class ReportsComponent {
         end_time: call.end_timeD
       };
     });
-    let arryWithCol = newCallData.map(({ start_timeD, end_timeD, ...rest }) => rest);
-    const header = Object.keys(arryWithCol[0]);
-    const csv = arryWithCol.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify(row[fieldName]))
+    const csv = newCallData.map((row) =>
+      this.callDataColumns
+        .map((col) => JSON.stringify(row[col.key]))
         .join(',')
     );
-    let headers = [];
-    this.callDataColumns.forEach(col => {
-      return header.includes(col.key) ? headers.push(col.label) : null;
-    });
+    const headers = this.callDataColumns.map(col => col.label);
     csv.unshift(headers.join(','));
     const csvArray = csv.join('\r\n');
 
