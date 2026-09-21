@@ -1816,6 +1816,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dSearchSubject.next(event.term);
   }
 
+  //  add a diagnosis typed in free text
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
+
   /**
    * Search diagnosis for a given value
    * @param {string} val - search value
