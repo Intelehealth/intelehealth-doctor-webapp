@@ -1,0 +1,55 @@
+<div class="intel-con-modal ddx-ttx-override-reason-modal" data-test-id="ddxTtxOverrideReasonModal">
+  <div class="close-btn-con">
+    <button class="modal-close-btn" type="button" (click)="close()" data-test-id="btnCloseDdxTtxOverrideReason">
+      <img src="assets/svgs/CloseX.svg" alt="" />
+    </button>
+  </div>
+
+  <div class="modal-con mt-2">
+    <h6 data-test-id="lblDdxTtxOverrideReasonTitle">{{ 'Reason required' | translate }}</h6>
+    <p class="text-muted mt-1" data-test-id="lblDdxTtxOverrideReasonSubtitle">
+      {{ (items.length === 1
+          ? 'This entry was not one of the AI suggestions. Please add a reason before saving.'
+          : 'These entries were not among the AI suggestions. Please add a reason for each before saving.') | translate }}
+    </p>
+
+    <div class="override-reason-list">
+      <div class="override-reason-group" *ngFor="let group of groups">
+        <div class="surface-heading" [attr.data-test-id]="'lblOverrideSurface' + group.surfaceLabel">
+          {{ group.surfaceLabel | translate }}
+          <span class="surface-count" *ngIf="group.items.length > 1">({{ group.items.length }})</span>
+        </div>
+
+        <div class="group-items">
+          <div class="override-reason-item" *ngFor="let item of group.items" [class.complete]="isComplete(item)">
+            <div class="item-title">
+              <span class="check" *ngIf="isComplete(item)" aria-hidden="true">&#10003;</span>
+              <span class="item-value">{{ item.selectedValue }}</span>
+            </div>
+
+            <textarea class="form-control" rows="3" [(ngModel)]="item.reason" required
+              (blur)="item.touched = true"
+              [class.required]="showRequired(item)"
+              [attr.data-test-id]="'etOverrideReason' + item.index"
+              [placeholder]="'Describe the reason (required)' | translate"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-action-btn-con">
+    <span class="progress-text" *ngIf="items.length > 1" data-test-id="lblOverrideReasonProgress">
+      {{ completedCount }} / {{ items.length }} {{ 'reasons provided' | translate }}
+    </span>
+    <div class="action-btns">
+      <button class="modal-btn white-btn" type="button" (click)="close()" data-test-id="btnCancelDdxTtxOverrideReason">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button class="modal-btn blue-btn" type="button" [disabled]="!allFilled || submitting"
+        (click)="submit()" data-test-id="btnSubmitDdxTtxOverrideReason">
+        {{ (submitting ? 'Saving...' : 'Confirm & Save') | translate }}
+      </button>
+    </div>
+  </div>
+</div>
