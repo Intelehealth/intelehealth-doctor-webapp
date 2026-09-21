@@ -391,7 +391,7 @@ export class VisitSummaryV2Service {
   }
 
   createVisitNote(visit: VisitModel, providerUuid: string): Observable<EncounterModel> {
-    return this.encounterService.postEncounter({
+    return this.encounterService.getOrCreateEncounter({
       patient: visit.patient?.uuid,
       encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
       encounterProviders: [

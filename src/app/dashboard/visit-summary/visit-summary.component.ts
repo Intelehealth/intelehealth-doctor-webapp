@@ -116,6 +116,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitCompleted: EncounterModel | boolean;
   hasReferral: EncounterModel | boolean;
   visitNotePresent: EncounterModel;
+  isCreatingVisitNote = false;
   isVisitNoteProvider = false;
   isNamcoDoctorLoggedIn = false;
   referSpecialityForm: FormGroup;
@@ -1558,22 +1559,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       visit: this.visit.uuid,
       encounterDatetime: new Date(Date.now() - 30000),
     };
-    this.encounterService.postEncounter(json).subscribe((response) => {
-      this.visitNotePresent = response;
-      this.notifyHwForVisitStarted();
-      // save diagnosis from case summary
-      if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
-        let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
-        if(diagnosisData){
-          this.diagnosisSecondaryForm.patchValue({diagnosis:diagnosisData.value})
-          this.saveDiagnosisSecondary().subscribe(res=>{
-              this.getVisit(this.visit.uuid);
-          });
+    this.encounterService.getOrCreateEncounter(json).subscribe({
+      next: (response) => {
+        this.isCreatingVisitNote = false;
+        this.visitNotePresent = response;
+        this.notifyHwForVisitStarted();
+        // save diagnosis from case summary
+        if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
+          let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
+          if(diagnosisData){
+            this.diagnosisSecondaryForm.patchValue({diagnosis:diagnosisData.value})
+            this.saveDiagnosisSecondary().subscribe(res=>{
+                this.getVisit(this.visit.uuid);
+            });
+          } else {
+            this.getVisit(this.visit.uuid);
+          }
         } else {
           this.getVisit(this.visit.uuid);
         }
-      } else {
-        this.getVisit(this.visit.uuid);
+      },
+      error: () => {
+        this.isCreatingVisitNote = false;
       }
     });
   }
@@ -1599,22 +1606,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       visit: this.visit.uuid,
       encounterDatetime: new Date(Date.now() - 30000),
     };
-    this.encounterService.postEncounter(json).subscribe((response) => {
-      this.visitNotePresent = response;
-      this.notifyHwForVisitStarted();
-      // save diagnosis from case summary
-      if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
-        let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
-        if(diagnosisData){
-          this.diagnosisSecondaryForm.patchValue({diagnosis:diagnosisData.value})
-          this.saveDiagnosisSecondary().subscribe(res=>{
-              this.getVisit(this.visit.uuid);
-          });
+    this.encounterService.getOrCreateEncounter(json).subscribe({
+      next: (response) => {
+        this.isCreatingVisitNote = false;
+        this.visitNotePresent = response;
+        this.notifyHwForVisitStarted();
+        // save diagnosis from case summary
+        if(environment.brandName == "KCDO" && this.checkUpReasonData.length >= 1){
+          let diagnosisData = this.checkUpReasonData[0].data?.find(obj=>obj.key.includes("Diagnosis"));
+          if(diagnosisData){
+            this.diagnosisSecondaryForm.patchValue({diagnosis:diagnosisData.value})
+            this.saveDiagnosisSecondary().subscribe(res=>{
+                this.getVisit(this.visit.uuid);
+            });
+          } else {
+            this.getVisit(this.visit.uuid);
+          }
         } else {
           this.getVisit(this.visit.uuid);
         }
-      } else {
-        this.getVisit(this.visit.uuid);
+      },
+      error: () => {
+        this.isCreatingVisitNote = false;
       }
     });
   }
@@ -2913,6 +2926,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createVisitNoteEncounter(): void {
+    if (this.isCreatingVisitNote) { return; }
+    this.isCreatingVisitNote = true;
     if (this.isNamcoDoctorLoggedIn) {
       return this.startSpecialistVisitNote()
     } else {

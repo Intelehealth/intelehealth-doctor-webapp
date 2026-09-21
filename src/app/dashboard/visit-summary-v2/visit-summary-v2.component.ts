@@ -28,6 +28,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   activeTopTab = 'Current visits';
 
   visitNoteStarted = false;
+  isStartingVisitNote = false;
 
   get visibleTopTabs(): string[] {
     return this.visitNoteStarted
@@ -322,13 +323,20 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   }
 
   startVisitNote(): void {
-    if (!this.visit) { return; }
-    this.v2Service.createVisitNote(this.visit, this.providerUuid).subscribe(() => {
-      this.notifyHwForVisitStarted();
-      this.visitNoteExists = true;
-      this.visitNoteStarted = true;
-      this.loadVisit();
-      setTimeout(() => this.setTopTab('Doctor\'s Note'));
+    if (!this.visit || this.isStartingVisitNote) { return; }
+    this.isStartingVisitNote = true;
+    this.v2Service.createVisitNote(this.visit, this.providerUuid).subscribe({
+      next: () => {
+        this.isStartingVisitNote = false;
+        this.notifyHwForVisitStarted();
+        this.visitNoteExists = true;
+        this.visitNoteStarted = true;
+        this.loadVisit();
+        setTimeout(() => this.setTopTab('Doctor\'s Note'));
+      },
+      error: () => {
+        this.isStartingVisitNote = false;
+      }
     });
   }
 

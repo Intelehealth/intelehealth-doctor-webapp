@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -19,6 +20,32 @@ export class EncounterService {
   postEncounter(json): Observable<any> {
     const url = `${this.baseURL}/encounter`;
     return this.http.post(url, json);
+  }
+
+  /**
+  * Non-voided encounters of the given type already on the visit, freshly fetched
+  * from OpenMRS (not from any locally cached visit state).
+  * @param {string} visitUuid - Visit uuid
+  * @param {string} encounterTypeUuid - Encounter type uuid
+  * @return {Observable<any[]>}
+  */
+  getEncountersForVisit(visitUuid: string, encounterTypeUuid: string): Observable<any[]> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.baseURL}/visit/${visitUuid}?v=custom:(encounters:(uuid,display,voided,encounterDatetime,encounterProviders,encounterType:(uuid,display)))`;
+    return this.http.get(url).pipe(
+      map((res: any) => (res?.encounters || []).filter((e: any) => !e?.voided && e?.encounterType?.uuid === encounterTypeUuid))
+    );
+  }
+
+  /**
+  * Re-checks OpenMRS for an existing (non-voided) encounter of this type on the visit
+  * @param {any} json - { patient, encounterType, encounterProviders, visit, encounterDatetime }
+  * @return {Observable<any>}
+  */
+  getOrCreateEncounter(json): Observable<any> {
+    return this.getEncountersForVisit(json.visit, json.encounterType).pipe(
+      switchMap((existing) => existing.length ? of(existing[0]) : this.postEncounter(json))
+    );
   }
 
   /**
