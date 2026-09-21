@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from '../../core/page-title/page-title.service';
-import { getCacheData } from '../../utils/utility-functions';
+import { getCacheData, isUuid } from '../../utils/utility-functions';
 import { languages } from 'src/config/constant';
 import * as moment from 'moment';
 import { ReoportService } from 'src/app/services/report.service';
@@ -57,6 +57,7 @@ export class ReportsComponent {
     this.reportService.geWebrtcStatus().subscribe({
       next: (res: any) => {
         let data = res?.data?.callData || [];
+        data = data.filter(item => !isUuid(item.patientId));
         this.callData = data.map(item => {
           let tableCol: any = {}
           this.callDataColumns.forEach(col => {
@@ -93,17 +94,12 @@ export class ReportsComponent {
         end_time: call.end_timeD
       };
     });
-    let arryWithCol = newCallData.map(({ start_timeD, end_timeD, ...rest }) => rest);
-    const header = Object.keys(arryWithCol[0]);
-    const csv = arryWithCol.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify(row[fieldName]))
+    const csv = newCallData.map((row) =>
+      this.callDataColumns
+        .map((col) => JSON.stringify(row[col.key]))
         .join(',')
     );
-    let headers = [];
-    this.callDataColumns.forEach(col => {
-      return header.includes(col.key) ? headers.push(col.label) : null;
-    });
+    const headers = this.callDataColumns.map(col => col.label);
     csv.unshift(headers.join(','));
     const csvArray = csv.join('\r\n');
 

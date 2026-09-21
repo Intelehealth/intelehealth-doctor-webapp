@@ -2463,7 +2463,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
-            followUpType: this.isFeatureAvailable('followUpType')
+            followUpType: this.isFeatureAvailable('followUpType') && wantFollowUp === 'Yes'
               ? (followUpType ?? (environment.isTurnServer ? 'Telemedicine' : null))
               : null
           });
@@ -2487,9 +2487,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       ? `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`
       : null;
 
+    const followUpType = this.followUpForm.value.wantFollowUp === 'Yes' ? this.followUpForm.value.followUpType : null;
+
     if (this.followUpForm.value.uuid) {
       this.encounterService.updateObs(this.followUpForm.value.uuid, { value }).pipe(tap((response: ObsModel) => {
-        this.followUpForm.patchValue({ present: true});
+        this.followUpForm.patchValue({ present: true, followUpType });
         this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
       })).subscribe();
     } else {
@@ -2500,7 +2502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           value: value,
           encounter: this.visitNotePresent.uuid
         }).pipe(tap((response: ObsModel) => {
-          this.followUpForm.patchValue({ present: true});
+          this.followUpForm.patchValue({ present: true, followUpType });
           this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
         })).subscribe();
      }
