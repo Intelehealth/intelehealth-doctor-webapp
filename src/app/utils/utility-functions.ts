@@ -33,6 +33,11 @@ export function isJsonString(str) {
   }
 }
 
+// A UUID (e.g. room_id) falls back into patientId when there's no matching OpenMRS patient identifier.
+export function isUuid(value: any): boolean {
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 export function getEncounterProviderUUID() {
   return getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER).encounterProviders[0].provider.uuid;
 }

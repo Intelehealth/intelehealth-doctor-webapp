@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from '../../core/page-title/page-title.service';
-import { getCacheData } from '../../utils/utility-functions';
+import { getCacheData, isUuid } from '../../utils/utility-functions';
 import { languages } from 'src/config/constant';
 import * as moment from 'moment';
 import { ReoportService } from 'src/app/services/report.service';
@@ -53,16 +53,11 @@ export class ReportsComponent {
     this.getWebrtcStatus();
   }
   
-  // patientId falls back to a UUID room_id when there's no matching OpenMRS patient identifier; drop those rows.
-  private isUuid(value: any): boolean {
-    return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
-  }
-
   getWebrtcStatus() {
     this.reportService.geWebrtcStatus().subscribe({
       next: (res: any) => {
         let data = res?.data?.callData || [];
-        data = data.filter(item => !this.isUuid(item.patientId));
+        data = data.filter(item => !isUuid(item.patientId));
         this.callData = data.map(item => {
           let tableCol: any = {}
           this.callDataColumns.forEach(col => {
