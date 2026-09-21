@@ -1816,6 +1816,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dSearchSubject.next(event.term);
   }
 
+  // Lets the doctor add a diagnosis typed in free text when nothing in the
+  // SNOMED-CT/getdiags results matches (ng-select's addTag hook).
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
+
   /**
    * Search diagnosis for a given value
    * @param {string} val - search value
