@@ -451,10 +451,68 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     if (!isNamcoConsented) {
       return false;
     }
-    return this.referrals.some((r: ReferralModel) =>
-      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
-      (r.facility || '').trim().toLowerCase() === 'namco hospital'
-    );
+    return this.hasNamcoReferralAdded;
+  }
+
+  /**
+  * Whether the given speciality name is a NAMCO doctor/specialization.
+  * @param {string} speciality - Speciality name
+  * @returns {boolean}
+  */
+  isNamcoSpeciality(speciality: string | undefined): boolean {
+    return (speciality || '').trim().toLowerCase().startsWith('namco');
+  }
+
+  /**
+  * Whether a referral with the given speciality/facility targets NAMCO — i.e. would become
+  * "the" NAMCO referral for this visit.
+  * @param {string} speciality - Referral speciality
+  * @param {string} facility - Referral facility
+  * @returns {boolean}
+  */
+  isNamcoReferralTarget(speciality: string | undefined, facility: string | undefined): boolean {
+    return this.isNamcoSpeciality(speciality) && (facility || '').trim().toLowerCase() === 'namco hospital';
+  }
+
+  /**
+  * True once a NAMCO referral has already been added to this visit's Referral section — used
+  * to cap NAMCO referrals at one per visit without affecting other specialists/facilities.
+  * @returns {boolean}
+  */
+  get hasNamcoReferralAdded(): boolean {
+    return this.referrals.some((r: ReferralModel) => this.isNamcoReferralTarget(r.speciality, r.facility));
+  }
+
+  /**
+   * True when the patient has declined consent for the NAMCO referral (Referral Consent
+   * decision = NAMCO, consent = No) — blocks selecting/saving a NAMCO referral for this visit.
+   */
+  get isNamcoConsentDeclined(): boolean {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm) {
+      return false;
+    }
+    return this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'No';
+  }
+
+  /**
+  * "Referral to" options, filtered by the Referral Consent decision and the picked Referral
+  * facility: NAMCO consent or a NAMCO Hospital facility shows only NAMCO doctors, PHC consent
+  * excludes NAMCO doctors, anything else (or the feature being off) is unfiltered.
+  * @returns {DropdownItemModel[]}
+  */
+  get filteredReferSpecializations(): DropdownItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.referSpecializations;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    const isNamcoFacility = (this.addReferralForm?.value?.facility || '').trim().toLowerCase() === 'namco hospital';
+    if (decision === 'NAMCO' || isNamcoFacility) {
+      return (this.referSpecializations || []).filter((s) => this.isNamcoSpeciality(s.name));
+    }
+    if (decision === 'PHC') {
+      return (this.referSpecializations || []).filter((s) => !this.isNamcoSpeciality(s.name));
+    }
+    return this.referSpecializations;
   }
 
   checkIfDiagnosisPresent(): void {
@@ -1371,6 +1429,22 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   * @returns {void}
   */
   addReferral(): void {
+    const candidate = this.selectedReferrals.length > 0
+      ? { speciality: (this.selectedReferrals[0] as any).referral_to, facility: (this.selectedReferrals[0] as any).referral_facility }
+      : { speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility };
+    if (this.appConfigService?.namco_referral_section && this.isNamcoReferralTarget(candidate.speciality, candidate.facility)) {
+      // The patient declined consent for the NAMCO referral.
+      if (this.isNamcoConsentDeclined) {
+        this.toastr.warning(this.translateService.instant("This visit will not be referred to a NAMCO doctor because 'Refer to NAMCO' is set to 'No'."), this.translateService.instant('Referral Not Allowed'));
+        return;
+      }
+      // A NAMCO referral only fills once per visit.
+      if (this.hasNamcoReferralAdded) {
+        this.toastr.warning(this.translateService.instant('A NAMCO referral has already been added for this visit.'), this.translateService.instant('Referral Already Added'));
+        return;
+      }
+    }
+
     if (this.selectedReferrals.length > 0) {
       const selectedReferral = this.selectedReferrals[0] as any;
       const refer_reason = selectedReferral.remark ? selectedReferral.remark : '';

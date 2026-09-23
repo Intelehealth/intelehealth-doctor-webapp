@@ -20,7 +20,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -115,6 +115,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitEnded: EncounterModel | string;
   visitCompleted: EncounterModel | boolean;
   hasReferral: EncounterModel | boolean;
+  // Guards createReferralEncounterForNamco() against creating a duplicate Referral encounter
+  // if it gets invoked again (e.g. a double click on Share Prescription) before the first call
+  // has finished.
+  isCreatingNamcoReferralEncounter = false;
   visitNotePresent: EncounterModel;
   isCreatingVisitNote = false;
   isVisitNoteProvider = false;
@@ -2471,6 +2475,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {void}
   */
   addReferral(): void {
+    if (this.appConfigService?.namco_referral_section && this.isNamcoReferralTarget(this.addReferralForm.value.speciality, this.addReferralForm.value.facility)) {
+      // The patient declined consent for the NAMCO referral.
+      if (this.isNamcoConsentDeclined) {
+        this.coreService.showToast("warning", "This visit will not be referred to a NAMCO doctor because 'Refer to NAMCO' is set to 'No'.", 'Referral Not Allowed', 'warning-referral-consent-declined-toast');
+        return;
+      }
+      // A NAMCO referral only fills once per visit.
+      if (this.hasNamcoReferralAdded) {
+        this.coreService.showToast("warning", 'A NAMCO referral has already been added for this visit.', 'Referral Already Added', 'warning-referral-already-added-toast');
+        return;
+      }
+    }
+
     if (this.addReferralForm.invalid) {
       return;
     }
@@ -2635,10 +2652,69 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!isNamcoConsented) {
       return null;
     }
-    return this.referrals.find((r: ReferralModel) =>
-      (r.speciality || '').trim().toLowerCase().startsWith('namco') &&
-      (r.facility || '').trim().toLowerCase() === 'namco hospital'
-    ) || null;
+    return this.referrals.find((r: ReferralModel) => this.isNamcoReferralTarget(r.speciality, r.facility)) || null;
+  }
+
+  /**
+  * Whether the given speciality name is a NAMCO doctor/specialization.
+  * @param {string} speciality - Speciality name
+  * @returns {boolean}
+  */
+  isNamcoSpeciality(speciality: string | undefined): boolean {
+    return (speciality || '').trim().toLowerCase().startsWith('namco');
+  }
+
+  /**
+  * Whether a referral with the given speciality/facility targets NAMCO — i.e. would become
+  * "the" NAMCO referral for this visit.
+  * @param {string} speciality - Referral speciality
+  * @param {string} facility - Referral facility
+  * @returns {boolean}
+  */
+  isNamcoReferralTarget(speciality: string | undefined, facility: string | undefined): boolean {
+    return this.isNamcoSpeciality(speciality) && (facility || '').trim().toLowerCase() === 'namco hospital';
+  }
+
+  /**
+  * True once a NAMCO referral has already been added to this visit's Referral section —
+  * used to cap NAMCO referrals at one per visit without affecting other specialists/facilities.
+  * @returns {boolean}
+  */
+  get hasNamcoReferralAdded(): boolean {
+    return this.referrals.some((r: ReferralModel) => this.isNamcoReferralTarget(r.speciality, r.facility));
+  }
+
+  /**
+  * True when the patient has declined consent for the NAMCO referral (Referral Consent
+  * decision = NAMCO, consent = No) — blocks selecting/saving a NAMCO referral for this visit.
+  * @returns {boolean}
+  */
+  get isNamcoConsentDeclined(): boolean {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm) {
+      return false;
+    }
+    return this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'No';
+  }
+
+  /**
+  * "Referral to" options, filtered by the Referral Consent decision and the picked Referral
+  * facility: NAMCO consent or a NAMCO Hospital facility shows only NAMCO doctors, PHC consent
+  * excludes NAMCO doctors, anything else (or the feature being off) is unfiltered.
+  * @returns {DropdownItemModel[]}
+  */
+  get filteredReferSpecializations(): DropdownItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.referSpecializations;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    const isNamcoFacility = (this.addReferralForm?.value?.facility || '').trim().toLowerCase() === 'namco hospital';
+    if (decision === 'NAMCO' || isNamcoFacility) {
+      return (this.referSpecializations || []).filter((s) => this.isNamcoSpeciality(s.name));
+    }
+    if (decision === 'PHC') {
+      return (this.referSpecializations || []).filter((s) => !this.isNamcoSpeciality(s.name));
+    }
+    return this.referSpecializations;
   }
 
   /**
@@ -2657,6 +2733,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!namcoReferral || !this.visitNotePresent) {
       return of(null);
     }
+
+    // Guard against a duplicate Referral encounter if this is called again (e.g. a double
+    // click on Share Prescription) before the first call has finished creating it.
+    if (this.isCreatingNamcoReferralEncounter) {
+      return of(null);
+    }
+    this.isCreatingNamcoReferralEncounter = true;
 
     const routingSpecialization = (namcoReferral.speciality || '').trim();
 
@@ -2694,7 +2777,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.saveRoutingSpecialization(freshVisit.attributes || [], routingSpecialization).pipe(map(() => referralEncounter))
           )
         );
-      })
+      }),
+      finalize(() => { this.isCreatingNamcoReferralEncounter = false; })
     );
   }
 
@@ -3638,7 +3722,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Handle referrals
       for (const referral of this.referrals) {
-        if (referral.uuid) continue;
+        if (referral.uuid || referral.pendingSave) continue;
+        referral.pendingSave = true;
         postObsRequests.push(
           this.encounterService.postObs({
             concept: conceptIds.conceptReferral,
@@ -3646,7 +3731,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             obsDatetime: new Date(),
             value: `${referral.speciality??''}:${referral.facility??''}:${referral.priority??''}:${referral?.reason??''}`,
             encounter: this.visitNotePresent.uuid
-          }).pipe(tap((res: ObsModel) => referral.uuid = res.uuid))
+          }).pipe(
+            tap((res: ObsModel) => referral.uuid = res.uuid),
+            finalize(() => { referral.pendingSave = false; })
+          )
         );
       }
 

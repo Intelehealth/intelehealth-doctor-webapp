@@ -1294,8 +1294,38 @@
               </mat-expansion-panel>
             </ng-template>
 
+            <mat-expansion-panel
+              [expanded]="true"
+              #panelDoctorRcom
+              hideToggle
+              class="overflow-show"
+              *ngIf="appConfigService?.patient_visit_summary?.dp_recommendation_group"
+            >
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/advice.svg" alt="" width="44px" />
+                    <h6 class="mb-0 ml-2">{{'Recommendation'| translate}}</h6>
+                  </div>
+                </mat-panel-title>
+                <mat-icon>{{ panelDoctorRcom.expanded ? "remove" : "add" }}</mat-icon>
+              </mat-expansion-panel-header>
+              <ng-container *ngIf="panelDoctorRcom.expanded">
+                <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
+              </ng-container>
+            </mat-expansion-panel>
+
+            <ng-container *ngIf="!appConfigService?.patient_visit_summary?.dp_recommendation_group">
+              <ng-template *ngTemplateOutlet="tplDrRcom" ></ng-template>
+            </ng-container>
+
+            <ng-container *ngIf="brandName">
+              <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
+            </ng-container>
+
             <app-notes #notes [title]="'Note'" [expanded]="true" [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [visit]="visit"
-              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)"></app-notes>
+              [visitNotePresent]="visitNotePresent" [isMCCUser]="isMCCUser" *ngIf="isFeatureAvailable('visitNotes') && !hasAILLMEnabled"  (notesChanged)="onNotesChanged($event)">
+            </app-notes>
 
             <mat-expansion-panel [expanded]="true" #panel5 hideToggle class="overflow-show"
               *ngIf="isFeatureAvailable('advice') && !hasAILLMEnabled" data-test-id="expansionPanelAdvice">
@@ -1382,35 +1412,6 @@
                 </div>
               </form>
             </mat-expansion-panel>
-
-            <mat-expansion-panel
-              [expanded]="true"
-              #panelDoctorRcom
-              hideToggle
-              class="overflow-show"
-              *ngIf="appConfigService?.patient_visit_summary?.dp_recommendation_group"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="intel-accordion-title">
-                    <img src="assets/svgs/advice.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Recommendation'| translate}}</h6>
-                  </div>
-                </mat-panel-title>
-                <mat-icon>{{ panelDoctorRcom.expanded ? "remove" : "add" }}</mat-icon>
-              </mat-expansion-panel-header>
-              <ng-container *ngIf="panelDoctorRcom.expanded">
-                <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
-              </ng-container>
-            </mat-expansion-panel>
-
-            <ng-container *ngIf="!appConfigService?.patient_visit_summary?.dp_recommendation_group">
-              <ng-template *ngTemplateOutlet="tplDrRcom" ></ng-template>
-            </ng-container>
-
-            <ng-container *ngIf="brandName">
-              <ng-template *ngTemplateOutlet="tplDrRcom"></ng-template>
-            </ng-container>
 
             <app-referral-consent *ngIf="!isNamcoDoctorLoggedIn && !hasAILLMEnabled && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
               [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
@@ -2160,7 +2161,8 @@
               </app-follow-up-instruction>
             </ng-template>
 
-            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" *ngIf="!brandName && !hasAILLMEnabled" data-test-id="matExpReferral">
+            <mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show"
+              *ngIf="!brandName && !hasAILLMEnabled && (!appConfigService?.namco_referral_section || referralConsentForm?.value?.decision !== 'No referral')" data-test-id="matExpReferral">
               <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
                 <mat-panel-title data-test-id="matPanelTitleReferral">
                   <div class="intel-accordion-title" data-test-id="divAccordionTitleReferral">
@@ -2178,13 +2180,11 @@
                   <table class="table" aria-describedby="" data-test-id="tblReferral">
                     <thead>
                       <tr>
-                        <th scope="col" data-test-id="thReferralTo">{{ 'Referral to' | translate }}</th>
-                        <th scope="col" *ngIf="isFeatureAvailable('referralFacility', true)"
-                          data-test-id="thReferralFacility">
+                        <th scope="col" *ngIf="isFeatureAvailable('referralFacility', true)" data-test-id="thReferralFacility">
                           {{ 'Referral facility'|translate }}
                         </th>
-                        <th scope="col" *ngIf="isFeatureAvailable('priorityOfReferral', true)"
-                          data-test-id="thReferralPriority">
+                        <th scope="col" data-test-id="thReferralTo">{{ 'Referral to' | translate }}</th>
+                        <th scope="col" *ngIf="isFeatureAvailable('priorityOfReferral', true)" data-test-id="thReferralPriority">
                           {{ 'Priority of Referral'|translate }}
                         </th>
                         <th scope="col" data-test-id="thReferralRemarks">{{ 'Remarks'|translate }}</th>
@@ -2194,10 +2194,10 @@
                     <tbody>
                   <ng-container *ngIf="referrals.length; else noReferrals">
                     <tr *ngFor="let r of referrals; let i = index" [attr.data-test-id]="'rowReferral' + i">
-                      <td [attr.data-test-id]="'tdReferralSpeciality' + i">{{ r.speciality | translate }}</td>
                       <td *ngIf="isFeatureAvailable('referralFacility', true)" [attr.data-test-id]="'tdReferralFacility' + i">
                         {{ r.facility | translate }}
                       </td>
+                      <td [attr.data-test-id]="'tdReferralSpeciality' + i">{{ r.speciality | translate }}</td>
                       <td *ngIf="isFeatureAvailable('priorityOfReferral', true)" [attr.data-test-id]="'tdReferralPriority' + i">
                         {{ r.priority | translate }}
                       </td>
@@ -2218,7 +2218,7 @@
                           </td>
                         </tr>
                       </ng-template>
-                      <ng-container *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
+                      <ng-container *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded && !hasNamcoReferralAdded">
                         <!-- Add More Referral Button -->
                         <tr *ngIf="addMoreReferral" data-test-id="rowAddMoreReferralBtn">
                           <td colspan="6" class="px-0">
@@ -2234,17 +2234,6 @@
 
                         <!-- Add Referral Form Row -->
                         <tr *ngIf="!addMoreReferral && !isMCCUser" data-test-id="rowReferralForm">
-                          <td>
-                            <ng-select appendTo=".visit-summary-tab-group" class="visit-select"
-                              formControlName="speciality" bindLabel="label" bindValue="label" [clearable]="false"
-                              [searchable]="true" [addTag]="true" placeholder="{{'Select specialization'|translate}}*"
-                              data-test-id="selectReferralSpecialityVisitSummary">
-                              <ng-option *ngFor="let specialization of referSpecializations" [value]="specialization.name" [attr.data-test-id]="'optionReferralSpeciality' + specialization.name"
->
-                                {{ (specialization.name) | translate }}
-                              </ng-option>
-                            </ng-select>
-                          </td>
                           <td *ngIf="isFeatureAvailable('referralFacility', true)">
                             <ng-select class="visit-select" appendTo=".visit-summary-tab-group"
                               formControlName="facility" bindLabel="label" bindValue="label" [clearable]="false"
@@ -2253,6 +2242,16 @@
                               <ng-option *ngFor="let facility of facilities" [value]="facility.name"  [attr.data-test-id]="'optionReferralFacility' + facility.name"
 >
                                 {{ (facility.name) | translate }}
+                              </ng-option>
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select appendTo=".visit-summary-tab-group" class="visit-select"
+                              formControlName="speciality" bindLabel="label" bindValue="label" [clearable]="false"
+                              [searchable]="true" [addTag]="true" placeholder="{{'Select specialization'|translate}}*"
+                              data-test-id="selectReferralSpecialityVisitSummary">
+                              <ng-option *ngFor="let specialization of filteredReferSpecializations" [value]="specialization.name" [attr.data-test-id]="'optionReferralSpeciality' + specialization.name">
+                                {{ (specialization.name) | translate }}
                               </ng-option>
                             </ng-select>
                           </td>

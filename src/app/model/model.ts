@@ -505,7 +505,8 @@ export interface ReferralModel {
   speciality?: string,
   facility?: string,
   priority?: string,
-  reason?: string
+  reason?: string,
+  pendingSave?: boolean
 }
 
 export interface TestModel {

@@ -78,19 +78,19 @@ export const doctorDetails = {
 
 export const facility = {
   facilities :[
-    { id : 1 , name : 'HSC'},
-    { id : 2 , name : 'PHC'},
-    { id : 3 , name : 'CHC'},
-    { id : 4 , name : 'SDH'},
-    { id : 5 , name : 'DH'},
-    { id : 6 , name : 'TH'},
-    { id : 7 , name : 'GH'},
-    { id : 8 , name : 'RH'},
-    { id : 8 , name : 'Anganwadi Center'},
-    { id : 8 , name : 'HWC'},
-    { id : 8 , name : 'Government District Hospital'},
-    { id : 8 , name : 'Private Hospital'},
-    { id : 8 , name : 'NAMCO Hospital'},
+    { id : 1 , name : 'NAMCO Hospital'},
+    { id : 2 , name : 'HSC'},
+    { id : 3 , name : 'PHC'},
+    { id : 4 , name : 'CHC'},
+    { id : 5 , name : 'SDH'},
+    { id : 6 , name : 'DH'},
+    { id : 7 , name : 'TH'},
+    { id : 8 , name : 'GH'},
+    { id : 9 , name : 'RH'},
+    { id : 10 , name : 'Anganwadi Center'},
+    { id : 11 , name : 'HWC'},
+    { id : 12 , name : 'Government District Hospital'},
+    { id : 13 , name : 'Private Hospital'},
   ]
 };
 
