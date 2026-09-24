@@ -46,9 +46,9 @@
       <button class="modal-btn white-btn" type="button" (click)="close()" data-test-id="btnCancelDdxTtxOverrideReason">
         {{ 'Cancel' | translate }}
       </button>
-      <button class="modal-btn blue-btn" type="button" [disabled]="!allFilled || submitting"
+      <button class="modal-btn blue-btn" type="button" [disabled]="!allFilled"
         (click)="submit()" data-test-id="btnSubmitDdxTtxOverrideReason">
-        {{ (submitting ? 'Saving...' : 'Confirm & Save') | translate }}
+        {{ 'Confirm & Save' | translate }}
       </button>
     </div>
   </div>

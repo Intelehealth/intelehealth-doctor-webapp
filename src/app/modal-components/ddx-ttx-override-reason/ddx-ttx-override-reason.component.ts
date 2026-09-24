@@ -1,12 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DdxTtxOverrideService, DdxTtxOverrideSurface, DdxTtxOverrideDiagnosis } from 'src/app/services/ddx-ttx-override.service';
-import { CoreService } from 'src/app/services/core/core.service';
+
+export type OverrideReasonSurface = 'diagnosis' | 'medication';
 
 export interface OverrideReasonItem {
-  surface: DdxTtxOverrideSurface;
+  surface: OverrideReasonSurface;
   surfaceLabel: string;
   selectedValue: string;
+  target?: { overrideReason?: string };
   reason?: string;
   touched?: boolean;
   index?: number;
@@ -18,10 +19,6 @@ export interface OverrideReasonGroup {
 }
 
 export interface DdxTtxOverrideReasonDialogData {
-  visitId: number;
-  doctorId: number;
-  patientId: number;
-  diagnosesSnapshot: DdxTtxOverrideDiagnosis[];
   items: OverrideReasonItem[];
 }
 
@@ -34,13 +31,10 @@ export class DdxTtxOverrideReasonComponent {
   items: OverrideReasonItem[];
   // groups holds the same item references as items, not copies.
   groups: OverrideReasonGroup[] = [];
-  submitting = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DdxTtxOverrideReasonDialogData,
     private dialogRef: MatDialogRef<DdxTtxOverrideReasonComponent>,
-    private ddxTtxOverrideService: DdxTtxOverrideService,
-    private coreService: CoreService,
   ) {
     this.items = (data.items || []).map((item, index) => ({ ...item, index, reason: item.reason || '', touched: false }));
 
@@ -71,39 +65,8 @@ export class DdxTtxOverrideReasonComponent {
   }
 
   submit(): void {
-    if (!this.allFilled || this.submitting) return;
-    this.submitting = true;
-
-    const diagnoses = (this.data.diagnosesSnapshot || []).map(d => {
-      const override = this.items.find(i => i.surface === 'diagnosis' && i.selectedValue === d.name);
-      return override ? { ...d, reason: override.reason.trim() } : d;
-    });
-
-    const treatments = this.items
-      .filter(i => i.surface !== 'diagnosis')
-      .map(i => ({
-        surface: i.surface as any,
-        selected_value: i.selectedValue,
-        ai_assisted: 'N' as const,
-        reason: i.reason.trim(),
-      }));
-
-    this.ddxTtxOverrideService.save({
-      visit_id: this.data.visitId,
-      doctor_id: this.data.doctorId,
-      patient_id: this.data.patientId,
-      diagnoses,
-      treatments,
-    }).subscribe({
-      next: () => {
-        this.submitting = false;
-        this.dialogRef.close(this.items);
-      },
-      error: () => {
-        this.submitting = false;
-        this.coreService.showToast('error', 'Could not save the reason(s). Please try again.', 'Error', 'ddxTtxOverrideReasonErrorToast');
-      }
-    });
+    if (!this.allFilled) return;
+    this.dialogRef.close(this.items.map(item => ({ ...item, reason: item.reason.trim() })));
   }
 
   close(): void {

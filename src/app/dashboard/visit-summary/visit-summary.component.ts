@@ -14,7 +14,6 @@ import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import { OverrideReasonItem } from 'src/app/modal-components/ddx-ttx-override-reason/ddx-ttx-override-reason.component';
-import { DdxTtxOverrideDiagnosis } from 'src/app/services/ddx-ttx-override.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
@@ -3156,39 +3155,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private currentDiagnosesSnapshot(): DdxTtxOverrideDiagnosis[] {
-    return (this.ddxCompRef?.instance?.existingDiagnosis || [])
-      .filter((d: DiagnosisModel) => !!d?.diagnosisName)
-      .map((d: DiagnosisModel) => ({ name: d.diagnosisName, ai_assisted: d.from ? 'Y' : 'N' } as DdxTtxOverrideDiagnosis));
-  }
-
   private collectPendingOverrides(): OverrideReasonItem[] {
     if (!this.hasAILLMEnabled) return [];
     const items: OverrideReasonItem[] = [];
 
     for (const diagnosis of (this.ddxCompRef?.instance?.existingDiagnosis || [])) {
       if (!diagnosis?.uuid && !diagnosis?.from) {
-        items.push({ surface: 'diagnosis', surfaceLabel: 'Diagnosis', selectedValue: diagnosis.diagnosisName });
+        items.push({ surface: 'diagnosis', surfaceLabel: 'Diagnosis', selectedValue: diagnosis.diagnosisName, target: diagnosis });
       }
     }
     for (const medicine of (this.standardMedicines || [])) {
       if (!medicine?.uuid && !medicine?.aiGenerated) {
-        items.push({ surface: 'medication', surfaceLabel: 'Medication', selectedValue: medicine.drug });
-      }
-    }
-    for (const advice of (this.advices || [])) {
-      if (!advice?.uuid && !advice?.fromAi) {
-        items.push({ surface: 'advice', surfaceLabel: 'Advice', selectedValue: advice.value });
-      }
-    }
-    for (const test of (this.tests || [])) {
-      if (!test?.uuid && !test?.fromAi) {
-        items.push({ surface: 'investigation', surfaceLabel: 'Investigation/Test', selectedValue: test.value });
-      }
-    }
-    for (const referral of (this.referrals || [])) {
-      if (!referral?.uuid && !referral?.fromAi) {
-        items.push({ surface: 'referral', surfaceLabel: 'Referral', selectedValue: referral.speciality });
+        items.push({ surface: 'medication', surfaceLabel: 'Medication', selectedValue: medicine.drug, target: medicine });
       }
     }
 
@@ -3201,14 +3179,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       proceed();
       return;
     }
-    this.coreService.openDdxTtxOverrideReasonModal({
-      visitId: this.visit?.id,
-      doctorId: this.provider?.id,
-      patientId: this.visit?.patient?.id,
-      diagnosesSnapshot: this.currentDiagnosesSnapshot(),
-      items
-    }).subscribe((result: any) => {
+    this.coreService.openDdxTtxOverrideReasonModal({ items }).subscribe((result: OverrideReasonItem[] | null) => {
       if (result) {
+        result.forEach(item => { if (item.target) item.target.overrideReason = item.reason; });
         proceed();
       }
     });
@@ -4269,6 +4242,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         if (selectedDiag.diagnosisType) payload["Diagnosis type"] = selectedDiag.diagnosisType;
         if (selectedDiag.diagnosisStatus) payload["Diagnosis status"] = selectedDiag.diagnosisStatus;
         payload.ai_assisted = 'Y';
+        if (selectedDiag.overrideReason) payload.reason = selectedDiag.overrideReason;
       }
 
       diagnoses.push(payload);
@@ -4286,6 +4260,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           rationale: [{"NA": "N/A"}],
           rank: String(nonAiRank++),
           ai_assisted: 'N',
+          ...(diagnosis.overrideReason && { reason: diagnosis.overrideReason }),
         });
       });
 
@@ -4352,6 +4327,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         payload.instructions = selectedMed.instructRemark;
         payload.frequency = selectedMed.frequency;
         payload.ai_assisted = selectedMed.modified ? 'M' : 'Y';
+        if (selectedMed.overrideReason) payload.reason = selectedMed.overrideReason;
       } else {
         // Unselected AI medication — use AI-suggested values, no ai_assisted flag
         payload.dose = aiMed?.dosage || aiMed?.dose;
@@ -4382,6 +4358,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           ...(medication.likelihood && { likelihood: medication.likelihood }),
           rank: String(nonAiRank++),
           ai_assisted: 'N',
+          ...(medication.overrideReason && { reason: medication.overrideReason }),
         });
       });
 

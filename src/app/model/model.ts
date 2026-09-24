@@ -67,7 +67,6 @@ export interface ProviderAttributeTypeModel {
 }
 
 export interface ProviderModel {
-  id?: number,
   uuid: string,
   attributes?: ProviderAttributeModel[],
   person?: {
@@ -336,7 +335,6 @@ export interface RecentVisitsApiResponseModel {
 }
 
 export interface PatientModel {
-  id?: number,
   uuid: string,
   identifiers: PatientIdentifierModel[],
   attributes?: PersonAttributeModel[],
@@ -425,8 +423,7 @@ export interface ObsModel {
       uuid?: string
     }
   }
-  comment?: string,
-  fromAi?: boolean
+  comment?: string
 }
 
 export interface ScheduleModel {
@@ -468,7 +465,6 @@ export interface ScheduledMonthModel {
 }
 
 export interface VisitModel {
-  id?: number,
   uuid: string,
   attributes?: VisitAttributeModel[],
   display?: string,
@@ -504,14 +500,12 @@ export interface ReferralModel {
   speciality?: string,
   facility?: string,
   priority?: string,
-  reason?: string,
-  fromAi?: boolean
+  reason?: string
 }
 
 export interface TestModel {
   uuid?: string,
-  value?: string,
-  fromAi?: boolean
+  value?: string
 }
 
 export interface MedicineModel {
@@ -536,6 +530,7 @@ export interface StandardMedicineModel {
   modified?: boolean,
   rationale?: string[],
   likelihood?: string,
+  overrideReason?: string,
   originalAiData?: {
     dose?: string,
     durationNo?: string,
@@ -566,6 +561,7 @@ export interface DiagnosisModel {
   rationale?: string[],
   from?: string,
   likelihood?: string,
+  overrideReason?: string,
 }
 
 export interface DocImagesModel {
