@@ -560,7 +560,7 @@
                   <ng-select class="visit-select custom1" appendTo=".visit-summary-tab-group" formControlName="facility"
                     bindLabel="label" bindValue="label" [clearable]="false" [searchable]="true" [addTag]="true"
                     placeholder="{{'Select or type'|translate}}" data-test-id="selectReferralFacilityVisitSummary">
-                    <ng-option *ngFor="let facility of facilities" [value]="facility.name">
+                    <ng-option *ngFor="let facility of filteredFacilities" [value]="facility.name">
                       {{ (facility.name) |translate }}
                     </ng-option>
                   </ng-select>

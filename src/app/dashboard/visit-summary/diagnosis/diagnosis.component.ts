@@ -108,6 +108,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
   @Input() referralConsentForm: FormGroup;
+  @Input() isNamcoDoctorLoggedIn: boolean = false;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
   @Output() adviceSaved = new EventEmitter<any>();
@@ -441,10 +442,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
    * True once this patient has a confirmed NAMCO referral (Referral Consent decision = NAMCO
    * with consent = Yes, plus a matching NAMCO Hospital entry in the Referral section) — mirrors
    * visit-summary.component.ts's getConfirmedNamcoReferral(). Follow-up doesn't apply once the
-   * patient has been routed to a specialist for this visit.
+   * *referring GP* has handed the patient off to a specialist for this visit — but the NAMCO
+   * doctor who actually receives the referral still needs to be able to set their own
+   * follow-up, so this never blocks their own view of the visit.
    */
   get isNamcoReferralConfirmed(): boolean {
-    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm) {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm || this.isNamcoDoctorLoggedIn) {
       return false;
     }
     const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
@@ -513,6 +516,25 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       return (this.referSpecializations || []).filter((s) => !this.isNamcoSpeciality(s.name));
     }
     return this.referSpecializations;
+  }
+
+  /**
+  * "Referral facility" options, filtered by the Referral Consent decision: PHC excludes
+  * NAMCO Hospital, anything else (or the feature being off) is unfiltered.
+  * @returns {DataItemModel[]}
+  */
+  get filteredFacilities(): DataItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.facilities;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    if (decision === 'NAMCO') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() === 'namco hospital');
+    }
+    if (decision === 'PHC') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() !== 'namco hospital');
+    }
+    return this.facilities;
   }
 
   checkIfDiagnosisPresent(): void {

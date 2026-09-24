@@ -239,6 +239,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ddxCompRef.instance.patientInteractionNotesForm = this.patientInteractionNotesForm;
         this.ddxCompRef.instance.hasAILLMEnabled = this.hasAILLMEnabled;
         this.ddxCompRef.instance.referralConsentForm = this.referralConsentForm;
+        this.ddxCompRef.instance.isNamcoDoctorLoggedIn = this.isNamcoDoctorLoggedIn;
 
         // this.ddxCompRef.instance.diagnosisReceived.subscribe((digData:any)=>{
         //   if(this.visitNotePresent && !this.visitEnded && this.isVisitNoteProvider && !this.visitCompleted){
@@ -2718,6 +2719,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+  * "Referral facility" options, filtered by the Referral Consent decision: PHC excludes
+  * NAMCO Hospital, anything else (or the feature being off) is unfiltered.
+  * @returns {DataItemModel[]}
+  */
+  get filteredFacilities(): DataItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.facilities;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    if (decision === 'NAMCO') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() === 'namco hospital');
+    }
+    if (decision === 'PHC') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() !== 'namco hospital');
+    }
+    return this.facilities;
+  }
+
+  /**
   * Creates a NAMCO Referral encounter when consent and specialization match,
   * and sets Routing Specialization.
   * Gated by the namco_referral_section feature flag; otherwise uses normal Visit Complete flow.
@@ -3223,10 +3243,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                     visitdetail.doctor.gender = p.provider.person.gender;
                     visitdetail.doctor.person_uuid = p.provider.person.uuid;
                   });
+                  this.pastVisits.push(visitdetail);
+                  this.dataSource = new MatTableDataSource(this.pastVisits);
                 }
               });
-              this.pastVisits.push(visitdetail);
-              this.dataSource = new MatTableDataSource(this.pastVisits);
             });
           }
         });
