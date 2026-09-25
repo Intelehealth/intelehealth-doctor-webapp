@@ -59,7 +59,6 @@ import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
 import { QmsComponent } from './admin-actions/qms/qms.component';
 import { InsightsComponent } from './insights/insights.component';
-import { AiIssueReportsComponent } from './admin-actions/ai-issue-reports/ai-issue-reports.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
 
 
@@ -175,10 +174,6 @@ const routes: Routes = [
             component: InsightsComponent
           },
           {
-            path: 'ai-issue-reports',
-            component: AiIssueReportsComponent
-          },
-          {
             path: 'prescription-notes',
             component: PrescriptionNotesComponent
           },
@@ -225,7 +220,6 @@ const routes: Routes = [
     AiLlmComponent,
     InsightsComponent,
     PrescriptionNotesComponent,
-    AiIssueReportsComponent,
     QmsComponent
   ],
   imports: [
