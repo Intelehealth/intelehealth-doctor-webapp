@@ -170,7 +170,14 @@
       <span class="vs2-dx-chip" *ngFor="let s of aiSuggestions"
         [ngClass]="'vs2-dx-' + s.likelihood.toLowerCase()" [class.vs2-dx-selected]="isDiagnosisSelected(s.name)"
         (click)="toggleAiSuggestion(s)">
-        <mat-icon class="vs2-dx-mark">{{ isDiagnosisSelected(s.name) ? 'check' : 'add' }}</mat-icon>
+        <svg class="vs2-dx-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path *ngIf="isDiagnosisSelected(s.name)" d="M20 6.5L9 17.5L4 12.5" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+          <path *ngIf="!isDiagnosisSelected(s.name)" d="M12 5V19" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+          <path *ngIf="!isDiagnosisSelected(s.name)" d="M5 12H19" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
         <span class="vs2-dx-name">{{ s.name }}</span>
         <span class="vs2-dx-badge">
           {{ s.likelihood }} Likely <span class="vs2-dx-pct" *ngIf="s.confidence !== null">{{ confidenceLabel(s) }}</span>
@@ -205,27 +212,6 @@
       (click)="toggleSearchResult(r)">
       <mat-icon>{{ isDiagnosisSelected(r.name) ? 'check' : 'add' }}</mat-icon> {{ r.name }}
     </button>
-  </div>
-
-  <div class="vs2-improve" *ngIf="aiDiagnosisState === 'ready'">
-    <div class="vs2-improve-head" (click)="improveExpanded = !improveExpanded">
-      <img src="assets/svgs/ayu-new.svg" alt="" />
-      <span class="vs2-improve-title">Improve Ai Suggestions <em>(optional)</em></span>
-      <mat-icon>{{ improveExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
-    <ng-container *ngIf="improveExpanded">
-      <p class="vs2-improve-sub">Add more clinical context only if Ai suggestions are insufficient.</p>
-      <textarea class="vs2-textarea vs2-improve-text" rows="2" [(ngModel)]="improveContextText"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Describe anything clinically important..&#10;e.g. Patient is pregnant - Recent travel history"></textarea>
-      <div class="vs2-dx-quick-row">
-        <button class="vs2-dx-quick" *ngFor="let c of contextChips" [class.vs2-dx-quick-on]="isContextChipOn(c)"
-          (click)="toggleContextChip(c)">
-          <mat-icon>{{ isContextChipOn(c) ? 'check' : 'add' }}</mat-icon> {{ c }}
-        </button>
-      </div>
-      <button class="vs2-btn-block" (click)="updateAiSuggestions()">Update AI Suggestions</button>
-    </ng-container>
   </div>
 
   <ng-container *ngIf="selectedDiagnoses.length">
@@ -288,7 +274,7 @@
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newNoteText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelNote()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addNote()">Add</button>
+    <button class="vs2-btn-add" [disabled]="!newNoteText.trim()" (click)="addNote()">Add Note</button>
   </div>
 </section>
 
@@ -593,7 +579,7 @@
   </ng-select>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-add" [disabled]="!newTestText" (click)="addTest()">Add Test</button>
   </div>
 </section>
 
@@ -628,7 +614,7 @@
         [addTag]="true"
         [searchable]="true"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Select specialization">
       </ng-select>
     </div>
     <div class="vs2-field">
@@ -640,7 +626,7 @@
         [addTag]="true"
         [searchable]="true"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Select Facility">
       </ng-select>
     </div>
     <div class="vs2-field">
@@ -652,17 +638,17 @@
         [addTag]="false"
         [searchable]="false"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Elective">
       </ng-select>
     </div>
     <div class="vs2-field">
-      <span class="vs2-field-label">Referral For (Reason)</span>
-      <input class="vs2-input" placeholder="Enter" [(ngModel)]="newReferral.reason" />
+      <span class="vs2-field-label">Referral for(Reason)</span>
+      <input class="vs2-input" placeholder="Enter Reason" [(ngModel)]="newReferral.reason" />
     </div>
   </div>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelReferral()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addReferral()">Save</button>
+    <button class="vs2-btn-add" [disabled]="!newReferral.speciality" (click)="addReferral()">Add</button>
   </div>
 
   <ng-container *ngIf="referrals.length">
@@ -730,6 +716,8 @@
       <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="saveFollowUp()" /> No</label>
     </div>
     <ng-container *ngIf="wantFollowUp">
+      <ul class="vs2-bullet-list vs2-interaction-list">
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Quick follow-up</span>
         <span class="vs2-quick-fu">
@@ -739,10 +727,14 @@
                   (click)="applyQuickFollowUp(d)">{{ d }} Days</button>
         </span>
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
         <input class="vs2-input vs2-date" type="date" [min]="minFollowUpDate" [(ngModel)]="followUpDate" (ngModelChange)="onFollowUpDateChange()" />
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select time<span class="vs2-req">*</span></span>
         <ng-select
@@ -754,11 +746,15 @@
           placeholder="Select time">
         </ng-select>
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Reason for follow-up</span>
         <input class="vs2-input" placeholder="Type here" [(ngModel)]="followUpReason" />
       </div>
-      <button class="vs2-btn-primary" (click)="saveFollowUp()">Save</button>
+      </li>
+      </ul>
+      <button class="vs2-btn-primary" [disabled]="!followUpDate || !followUpTime" (click)="saveFollowUp()">Save</button>
     </ng-container>
   </ng-container>
 </section>

@@ -41,8 +41,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   sections: SectionNavItem[] = [
     { key: 'consultation', label: 'Consultation details', icon: 'assets/svgs/consultation-details.svg' },
     { key: 'checkup', label: 'Check-up reason', icon: 'assets/svgs/check-up-reason.svg' },
-    { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
     { key: 'vitals', label: 'Vitals', icon: 'assets/svgs/vitals.svg' },
+    { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
     { key: 'physical', label: 'Physical examination', icon: 'assets/svgs/physical-examination.svg' },
     { key: 'documents', label: 'Additional documents', icon: 'assets/svgs/additional-documents.svg' },
     { key: 'refer', label: 'Refer to specialist', icon: 'assets/svgs/refer-to-specialist.svg' }

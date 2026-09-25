@@ -3,6 +3,8 @@ $purple: #2e1e91;
 $purple-soft: #efe8ff;
 $green: #34c08a;
 $green-soft: #e6fff3;
+$green-strong: #0e8a5f;
+$amber-strong: #b4600a;
 $red: #e54848;
 $red-soft: #fde9e9;
 $grey-text: #7f7b92;
@@ -843,6 +845,21 @@ app-past-visits {
   }
 }
 
+
+.vs2-btn-primary:disabled,
+.vs2-btn-add:disabled,
+.vs2-btn-soft:disabled,
+.vs2-btn-block:disabled {
+  background: $grey-soft;
+  color: $grey-text;
+  cursor: not-allowed;
+  opacity: 1;
+
+  &:hover {
+    background: $grey-soft;
+  }
+}
+
 .vs2-btn-soft {
   background: $purple-soft;
   color: $purple;
@@ -1067,6 +1084,12 @@ app-past-visits {
 
 .vs2-interaction-list li {
   margin-bottom: 4px;
+
+  &::before {
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+  }
 }
 
 .vs2-connect-actions {
@@ -1284,6 +1307,11 @@ app-past-visits {
   color: $navy;
   cursor: pointer;
   background: #fff;
+  position: relative;
+
+  &:hover {
+    z-index: 20;
+  }
 
   .vs2-dx-badge {
     border-radius: 6px;
@@ -1294,9 +1322,15 @@ app-past-visits {
     color: $grey-text;
   }
 
-  .vs2-dx-info,
-  .vs2-dx-mark {
+  .vs2-dx-info {
     font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $grey-text;
+  }
+
+  .vs2-dx-mark {
+    flex: none;
     width: 18px;
     height: 18px;
     color: $grey-text;
@@ -1305,13 +1339,17 @@ app-past-visits {
   &.vs2-dx-high {
     border-color: #bdeedd;
 
-    .vs2-dx-badge { background: $green-soft; color: #1f9d6e; }
+    .vs2-dx-badge { background: $green-soft; color: $green-strong; }
+
+    .vs2-dx-mark { color: $green-strong; }
   }
 
   &.vs2-dx-moderate {
     border-color: #f6d9a8;
 
-    .vs2-dx-badge { background: #fff4e2; color: #c2760f; }
+    .vs2-dx-badge { background: #fff4e2; color: $amber-strong; }
+
+    .vs2-dx-mark { color: $amber-strong; }
   }
 
   &.vs2-dx-selected {
@@ -1330,10 +1368,11 @@ app-past-visits {
 .vs2-dx-why {
   display: none;
   position: absolute;
-  bottom: calc(100% + 10px);
+  top: calc(100% + 10px);
   right: -8px;
-  z-index: 5;
+  z-index: 20;
   width: 240px;
+  max-width: min(240px, 80vw);
   cursor: default;
   background: #fff;
   border: 1px solid $border;
@@ -1360,6 +1399,7 @@ app-past-visits {
   }
 }
 
+.vs2-dx-chip:hover .vs2-dx-why,
 .vs2-dx-info-wrap:hover .vs2-dx-why {
   display: block;
 }
@@ -1981,7 +2021,7 @@ app-past-visits {
 
 .vs2-share-row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: 16px;
 }
 
