@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -25,15 +25,7 @@ export class AiIssueReportService {
   constructor(private http: HttpClient) { }
 
   create(payload: AiIssueReportPayload): Observable<any> {
-    return this.http.post(`${this.base}/ai-issue-reports`, payload);
-  }
-
-  list(criteria: { status?: string; ai_surface?: string; page?: number; pageSize?: number } = {}): Observable<any> {
-    let params = new HttpParams();
-    Object.keys(criteria).forEach((k) => {
-      const v = (criteria as any)[k];
-      if (v !== null && v !== undefined && v !== '') params = params.set(k, v);
-    });
-    return this.http.get(`${this.base}/ai-issue-reports`, { params });
+    const target = payload.ai_surface?.startsWith('ttx') ? 'ttx' : 'ddx';
+    return this.http.post(`${this.base}/${target}/error`, payload);
   }
 }
