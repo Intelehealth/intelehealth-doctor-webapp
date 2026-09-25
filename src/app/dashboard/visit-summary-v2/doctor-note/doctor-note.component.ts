@@ -21,7 +21,7 @@ import {
   DIAGNOSIS_SEARCH_DEBOUNCE_MS, DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_STATUSES, DIAGNOSIS_TYPES,
   DOSE_OPTIONS, DRUG_OPTIONS, DURATION_UNIT_OPTIONS, FACILITY_OPTIONS, FREQUENCY_OPTIONS,
   INSTRUCTION_OPTIONS, MEDICINE_SEARCH_MAX_RESULTS, MEDICINE_SEARCH_MIN_LENGTH,
-  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, REFERRAL_PRIORITIES,
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, DEFAULT_REFERRAL_PRIORITY, REFERRAL_PRIORITIES,
   TIMING_OPTIONS
 } from './doctor-note.constants';
 
@@ -117,7 +117,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   referralSpecialityOptions: string[] = [];
   newReferral: { speciality: string | null; facility: string | null; priority: string | null; reason: string } =
-    { speciality: null, facility: null, priority: null, reason: '' };
+    { speciality: null, facility: null, priority: DEFAULT_REFERRAL_PRIORITY, reason: '' };
   referrals: DraftReferral[] = [];
 
   wantFollowUp = false;
@@ -745,7 +745,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   cancelReferral(): void {
-    this.newReferral = { speciality: null, facility: null, priority: null, reason: '' };
+    this.newReferral = { speciality: null, facility: null, priority: DEFAULT_REFERRAL_PRIORITY, reason: '' };
   }
 
   addNote(): void {

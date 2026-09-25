@@ -27,6 +27,9 @@ export const INSTRUCTION_OPTIONS: string[] = instructionRemarks.map(i => i.name)
 export const FACILITY_OPTIONS: string[] = facility.facilities.map(f => f.name);
 export const REFERRAL_PRIORITIES: string[] = refer_prioritie.refer_priorities.map(p => p.name);
 
+export const DEFAULT_REFERRAL_PRIORITY: string =
+  REFERRAL_PRIORITIES.find(p => p === 'Elective') ?? REFERRAL_PRIORITIES[0];
+
 export const FREQUENCY_OPTIONS: string[] = [
   'Once daily', 'Twice daily', 'Three times daily', 'Four times daily',
   'Every 30 minutes', 'Every hour', 'Every four hours', 'Every eight hours',
