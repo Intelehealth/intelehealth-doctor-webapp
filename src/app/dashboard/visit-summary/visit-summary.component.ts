@@ -2789,7 +2789,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             },
           ],
           visit: this.visit.uuid,
-          encounterDatetime: new Date(),
+          encounterDatetime: new Date(Date.now() - 30000),
         };
 
         return this.encounterService.postEncounter(json).pipe(
