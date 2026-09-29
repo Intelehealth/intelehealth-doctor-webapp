@@ -1,0 +1,39 @@
+<div class="intel-con-modal queue-modal" data-test-id="pauseQueueModal">
+  <div class="queue-modal-close">
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClosePauseQueue">
+      <img src="assets/svgs/CloseX.svg" alt="Close" />
+    </button>
+  </div>
+
+  <div class="modal-con">
+    <div class="queue-modal-icon orange">
+      <img src="assets/svgs/queue-break.svg" alt="" data-test-id="imgPauseQueue" />
+    </div>
+    <h6 class="mt-3" data-test-id="lblPauseQueueTitle">{{ 'Pause Queue?' | translate }}</h6>
+    <p class="mt-2 text-center" data-test-id="lblPauseQueueMessage">
+      {{ 'Patients will see updated wait times while you are away.' | translate }}
+    </p>
+  </div>
+
+  <div class="preset-row">
+    <button *ngFor="let preset of presets" type="button" class="preset-btn"
+      [class.selected]="selectedPreset === preset" (click)="selectPreset(preset)"
+      [attr.data-test-id]="'btnPreset' + preset">
+      {{ preset }} {{ 'min' | translate }}
+    </button>
+  </div>
+
+  <input class="custom-duration-input" type="number" min="1" [(ngModel)]="customDuration"
+    (ngModelChange)="onCustomDurationChange()" [placeholder]="'Custom duration (minutes)' | translate"
+    data-test-id="inputCustomDuration" />
+
+  <div class="modal-action-btn-con">
+    <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)" data-test-id="btnCancelPauseQueue">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button class="modal-btn blue-btn" type="button" [disabled]="!duration" (click)="close(true)"
+      data-test-id="btnConfirmBreak">
+      {{ 'Confirm Break' | translate }}
+    </button>
+  </div>
+</div>

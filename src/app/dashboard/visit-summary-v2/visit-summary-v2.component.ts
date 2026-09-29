@@ -42,8 +42,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   sections: SectionNavItem[] = [
     { key: 'consultation', label: 'Consultation details', icon: 'assets/svgs/consultation-details.svg' },
     { key: 'checkup', label: 'Check-up reason', icon: 'assets/svgs/check-up-reason.svg' },
-    { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
     { key: 'vitals', label: 'Vitals', icon: 'assets/svgs/vitals.svg' },
+    { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
     { key: 'physical', label: 'Physical examination', icon: 'assets/svgs/physical-examination.svg' },
     { key: 'documents', label: 'Additional documents', icon: 'assets/svgs/additional-documents.svg' },
     { key: 'refer', label: 'Refer to specialist', icon: 'assets/svgs/refer-to-specialist.svg' }
@@ -58,8 +58,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     { key: 'dn-advice', label: 'Advice', icon: 'assets/svgs/advice.svg' },
     { key: 'dn-test', label: 'Test', icon: 'assets/svgs/test.svg' },
     { key: 'dn-referral', label: 'Referral-Out', icon: 'assets/svgs/referal.svg' },
-    { key: 'dn-followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' },
-    { key: 'dn-documents', label: 'Additional documents', icon: 'assets/svgs/additional-document-purple.svg' }
+    { key: 'dn-followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' }
   ];
 
   patient: Patient | null = null;

@@ -42,7 +42,8 @@
                     <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom" formControlName="diagnosisName"
                       (search)="onKeyUp($event)" (change)="onDiagnosisChange($event)" [items]="diagnosis$ | async"
                       bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true"
-                      placeholder="{{'Select diagnosis'|translate}}" [addTag]="false" data-test-id="selectDiagnosisName">
+                      placeholder="{{'Select diagnosis'|translate}}" [addTag]="addDiagnosisTag" addTagText="Add new diagnosis:"
+                      data-test-id="selectDiagnosisName">
                     </ng-select>
                   </div>
                 </div>
@@ -729,7 +730,7 @@
         </div>
       </li>
       <ng-container *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-        <li *ngIf="isFeatureAvailable('followUpType')">
+        <li *ngIf="isFeatureAvailable('followUpType') && !isTurnServer">
           <div class="row">
             <label for="follow-up" class="col-sm-3 col-form-label">{{'Follow-up type' | translate}}</label>
             <div class="col-sm-9 d-flex align-items-center">

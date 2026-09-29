@@ -536,6 +536,7 @@ export interface StandardMedicineModel {
   modified?: boolean,
   rationale?: string[],
   likelihood?: string,
+  overrideReason?: string,
   originalAiData?: {
     dose?: string,
     durationNo?: string,
@@ -566,6 +567,7 @@ export interface DiagnosisModel {
   rationale?: string[],
   from?: string,
   likelihood?: string,
+  overrideReason?: string,
 }
 
 export interface DocImagesModel {
