@@ -30,9 +30,7 @@ ngOnInit(): void {
    fetchLanguages() {
     this.appConfigService.fetchAllLanguage().subscribe(res => {
       this.languages = res.languages || [];
-      console.log("Available languages:", this.languages);
       const cachedLang = localStorage.getItem(languages.SELECTED_LANGUAGE);
-      console.log("Cached language:", cachedLang);
       if (cachedLang) {
         this.languageForm.patchValue({ language: cachedLang });
       }

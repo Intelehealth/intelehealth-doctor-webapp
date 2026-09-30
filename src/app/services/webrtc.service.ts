@@ -71,6 +71,15 @@ export class WebrtcService {
       }));
   }
 
+  generateMagicLink(visitUuid: string, roomId: string, doctorName?: string, patientName?: string) {
+    return this.http.post(`${environment.webrtcTokenServerUrl}api/magic-link`, {
+      visitUuid,
+      roomId,
+      doctorName,
+      patientName,
+    });
+  }
+
   startRecording(payload) {
     return this.http.post(`${environment.webrtcTokenServerUrl}api/startRecording`, payload);
   }
@@ -131,7 +140,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setCameraEnabled(true);
         } catch (error) {
-          console.log("camera enable error", error)
           try { handleMediaError({ source: 'camera', error }); } catch(_e) {}
         }
 
@@ -139,7 +147,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setMicrophoneEnabled(true);
         } catch (error) {
-          console.log("microphone enable error", error)
           try { handleMediaError({ source: 'microphone', error }); } catch(_e) {}
         }
       })
@@ -152,7 +159,6 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
       // Reconnection-related events
       .on(RoomEvent.SignalReconnecting, () => {
-        console.info("Signal (websocket) is reconnecting");
         this.signalReconnecting$.next();
       })
       .on(RoomEvent.Reconnecting, () => {
@@ -161,7 +167,6 @@ export class WebrtcService {
         this.isReconnecting$.next(true);
       })
       .on(RoomEvent.Reconnected, () => {
-        console.log("🔄 Reconnected!");    
         this.isCurrentlyReconnecting = false;
         this.isReconnecting$.next(false);
       })
@@ -169,7 +174,6 @@ export class WebrtcService {
         // Emit per-participant quality updates for UI consumption
         if ((participant as any)?.isLocal) {
           this.localConnectionQuality$.next(quality);
-          console.log(quality, " : localConnectionQuality");
         }
       });
 
@@ -182,7 +186,7 @@ export class WebrtcService {
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
-      console.log('error: ', error);
+      console.error('error: ', error);
     }
   }
 
@@ -221,9 +225,15 @@ export class WebrtcService {
     }
 
     if (track.kind === Track.Kind.Audio) {
+      try {
+        this.remoteContainer.querySelectorAll('audio').forEach((a: any) => a.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     } else if (track.kind === Track.Kind.Video) {
       element.style.height = '100%';
+      try {
+        this.remoteContainer.querySelectorAll('video').forEach((v: any) => v.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     }
   }
@@ -233,8 +243,8 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    // remove tracks from all attached elements
-    track?.detach();
+    const detached: any = track?.detach();
+    (Array.isArray(detached) ? detached : [detached]).forEach((el: any) => el?.remove?.());
   }
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
@@ -256,8 +266,9 @@ export class WebrtcService {
    * Method to toggle local video
    */
   public toggleVideo() {
-    this.room.localParticipant.setCameraEnabled(!this.room.localParticipant.isCameraEnabled);
-    return this.room.localParticipant.isCameraEnabled;
+    const next = !this.room.localParticipant.isCameraEnabled;
+    this.room.localParticipant.setCameraEnabled(next).catch(() => {});
+    return !next;
   }
 
 
@@ -265,8 +276,9 @@ export class WebrtcService {
    * Method to toggle local audio
    */
   public toggleAudio() {
-    this.room.localParticipant.setMicrophoneEnabled(!this.room.localParticipant.isMicrophoneEnabled);
-    return this.room.localParticipant.isMicrophoneEnabled;
+    const next = !this.room.localParticipant.isMicrophoneEnabled;
+    this.room.localParticipant.setMicrophoneEnabled(next).catch(() => {});
+    return !next;
   }
 
   handleDisconnect() {
@@ -294,6 +306,17 @@ export class WebrtcService {
       this.room.localParticipant.unpublishTrack(mic, true);
     }
 
+    this.stopAllLocalTracks();
+  }
+
+  private stopAllLocalTracks() {
+    try {
+      this.room?.localParticipant?.trackPublications?.forEach((pub: any) => {
+        pub?.track?.stop?.();
+        const mst = pub?.track?.mediaStreamTrack;
+        if (mst && mst.readyState !== 'ended') mst.stop();
+      });
+    } catch (e) {}
   }
 
   get remoteContainer() {
@@ -346,12 +369,9 @@ export class WebrtcService {
   /**
    * Noop function to be passed as default function if nothing passed
    */
-  noop() {
-    console.log('Not Implemented.')
-  }
+  noop() { }
 
   autoStartRecording(payload){
-    console.log("calling auto egress recording api...");
      return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
   }
 

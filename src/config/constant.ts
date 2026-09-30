@@ -38,6 +38,10 @@ export const visitTypes = {
     FOLLOW_UP:'Follow-up',
     NEW:'New',
     PATIENT_INTERACTION_COMMENT:'Patient Interaction Comment',
+    REFERRAL:'Referral',
+    REFERRED_VISIT:'Referred Visit',
+    ROUTING_SPECIALIZATION:'Routing Specialization',
+    SPECIALIST_VISIT_NOTE:'Specialist Visit Note',
     // AI_DIAGNOSIS_SUPPORT:'AI Diagnosis Support',
     // LLM_REGENERATION: 'LLM Regeneration'
 }
@@ -74,18 +78,19 @@ export const doctorDetails = {
 
 export const facility = {
   facilities :[
-    { id : 1 , name : 'HSC'},
-    { id : 2 , name : 'PHC'},
-    { id : 3 , name : 'CHC'},
-    { id : 4 , name : 'SDH'},
-    { id : 5 , name : 'DH'},
-    { id : 6 , name : 'TH'},
-    { id : 7 , name : 'GH'},
-    { id : 8 , name : 'RH'},
-    { id : 8 , name : 'Anganwadi Center'},
-    { id : 8 , name : 'HWC'},
-    { id : 8 , name : 'Government District Hospital'},
-    { id : 8 , name : 'Private Hospital'},
+    { id : 1 , name : 'NAMCO Hospital'},
+    { id : 2 , name : 'HSC'},
+    { id : 3 , name : 'PHC'},
+    { id : 4 , name : 'CHC'},
+    { id : 5 , name : 'SDH'},
+    { id : 6 , name : 'DH'},
+    { id : 7 , name : 'TH'},
+    { id : 8 , name : 'GH'},
+    { id : 9 , name : 'RH'},
+    { id : 10 , name : 'Anganwadi Center'},
+    { id : 11 , name : 'HWC'},
+    { id : 12 , name : 'Government District Hospital'},
+    { id : 13 , name : 'Private Hospital'},
   ]
 };
 
@@ -252,6 +257,7 @@ export const conceptIds = {
   conceptDiscussionSummary: 'b673cd54-a01d-4d8a-9c07-8fb19bf4982c',
   conceptFrequencyList: '9847b24f-8434-4ade-8978-157184c435d2',
   conceptRecommendation: '59873e7c-0085-497d-8611-8722d9872143',
+  conceptReferralConsent: '11c16a5b-d4df-4274-abf1-d02e91d308f1',
   // conceptLLM: '155b6ee1-db3c-4da1-aaa7-cef48bd8440d',
   // conceptDiagnosisName: 'ecae4841-7d37-479e-b5bb-38645689f44d',
   // conceptDiagnosisLikelihood: 'fb1fa50d-bebd-4eb3-a95c-22ed20b9ec83',

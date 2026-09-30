@@ -155,7 +155,6 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
-    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 
@@ -294,6 +293,16 @@ export class ConfigService {
   updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/feature/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Get a single feature config by its key
+   * @param {string} key - feature key
+   * @return {Observable<any>}
+   */
+  getFeatureByKey(key: string): Observable<any> {
+    const url = `${this.baseURL}/feature/getByKey/${key}`;
+    return this.http.get(url);
   }
 
   /*

@@ -38,6 +38,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   room = "";
   initiator = "dr";
   nurseId: string = null;
+  hwPersonUuid: string = null;
   connectToDrId = "";
   isStreamAvailable: any;
   localStream: MediaStream;
@@ -74,11 +75,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   private hasShownPoorToast: boolean = false;
   private hasShownReconnectToast: boolean = false;
-
   private callDurationStr: string = '00:00';
-  
   // Reconnection state management
   public isReconnecting: boolean = false;
+
   private reconnectionSubscriptions: any[] = [];
 
   // Connection quality state
@@ -106,6 +106,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
+    this.hwPersonUuid = (patientVisitProvider?.provider as any)?.person?.uuid;
     this.connectToDrId = this.data.connectToDrId;
     this.callType = this.data.callType;
     if (this.data.initiator) this.initiator = this.data.initiator;
@@ -194,11 +195,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
-    console.log("this.webrtcSvc.token",this.webrtcSvc.token);
     if (!this.webrtcSvc.token) return;
     // Attach reconnection handlers BEFORE creating the room to catch early events
     this.attachRoomReconnectionHandlers();
-    
+
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
@@ -299,6 +299,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  get peerLabel(): string {
+    return environment.isTurnServer ? 'Patient' : 'Health Worker';
+  }
+
   /**
   * Callback for call connect
   * @param {boolean} val - Dialog result
@@ -314,11 +318,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       appToken: this.webrtcSvc.appToken,
       socketId: this.socketSvc?.socket?.id,
       initiator: this.initiator,
-      callType : this.callType
+      callType : this.callType,
+      autoJoin: environment.isTurnServer ? 'true' : 'false'
     };
     this.analytics.logEvent('on-call-connect', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
+    this.socketSvc.emitHwEvent("call", {
+      ...this.socketSvc.incomingCallData,
+      nurseId: this.hwPersonUuid || this.nurseId,
+      patientName: this.data?.patientName,
+      patientOpenMrsId: this.data?.patientOpenMrsId
+    });
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
@@ -331,9 +342,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.analytics.logEvent('call_time_up', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
         this.endCallInRoom();
 
-        this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
+        this.toastr.info(`${this.peerLabel} not available to pick the call, please try again later.`, null, { timeOut: 3000 });
       }
     }, ringingTimeout);
+
+    if ((this.webrtcSvc.room as any)?.remoteParticipants?.size > 0) {
+      this.handleParticipantConnect();
+    }
   }
 
   /**
@@ -341,6 +356,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   async handleParticipantConnect(): Promise<void> {
+    if (this.callConnected) return;
     this.callConnected = true;
     this.callStartedAt = moment();
     if (this.callType === 'audio') {
@@ -355,7 +371,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.emitEvent('call-connected', this.incomingData);
     this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
-    if(this.callType === 'video' && this.isVideoRecordingEnabled) {
+    if(this.callType === 'video' && this.isVideoRecordingEnabled && !this.recodingStarted) {
+      this.recodingStarted = true;
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -369,11 +386,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       })
       .toPromise()
       .then((res: RecordingResponse) => {
-        this.recodingStarted = true
         this.tableId = res.recordingId
         this.analytics.logEvent('call-recoding-started', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
       })
       .catch(err => {
+      this.recodingStarted = false;
       this.analytics.logEvent('call-recoding-error', 'engagement', 'call_button', 1, {
         doctorUserId: this.data?.connectToDrId,
         doctorName: this.doctorName,
@@ -386,7 +403,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         callDuration: this.callDuration,
         error: err
       });
-      console.log("start recoding error", err)
+      console.error("start recording error", err)
       });
     }
   }
@@ -510,10 +527,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   handleParticipantDisconnected() {
-    // Suppress transient disconnect toast during reconnect attempts
-    if (!this.webrtcSvc.isCurrentlyReconnecting) {
-      this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
-    }
+    this.toastr.info(`Call ended from ${this.peerLabel}'s end.`, null, { timeOut: 2000 });
     this.callConnected = false;
     this.socketSvc.incomingCallData = null;
     this.endCallInRoom();
@@ -610,7 +624,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
         this.endCallInRoom();
-        this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
+        this.toastr.info(`Call rejected by ${this.peerLabel}`, null, { timeOut: 2000 });
         this.analytics.logEvent('hw_call_reject', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
       }
@@ -618,7 +632,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
       if (data === 'app') {
-        this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
+        this.toastr.info(`Call ended from ${this.peerLabel} end.`, null, { timeOut: 2000 });
 
          this.analytics.logEvent('hw_ended_call', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
       }
@@ -669,7 +683,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
           const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
           if (timeDiffSec > 0) {
           const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
-          console.log('Video bitrate (bps):', bitrate);
 
           this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 200 kbps
           }
@@ -687,6 +700,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+
   /**
   * Attach LiveKit room reconnection handlers to update UI and logic
   * @return {void}
@@ -700,7 +714,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     const isReconnectingSub = this.webrtcSvc.isReconnecting$.subscribe((isReconnecting) => {
-      console.log('Reconnection state changed:', isReconnecting);
       this.ngZone.run(() => {
         this.isReconnecting = isReconnecting;        
         if (isReconnecting) {
@@ -758,7 +771,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             callDuration: this.callDuration,
             error: err
           });
-            console.log("stop recoding error", err)
           });
       }
     }, 0);
@@ -869,8 +881,25 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.dialogRef.removePanelClass('minimized');
       this.dialogRef.updatePosition(null);
     }
+    this.setBackdropClickThrough(this._minimized);
     this.analytics.logEvent('toggle_window', 'engagement', 'window_button', 1, this.buildAnalyticsEventPayload());
 
+  }
+
+  /**
+  * Make the dialog backdrop transparent and click-through so the app behind
+  * stays usable while the call window is minimized
+  * @param {boolean} clickThrough - Whether the backdrop should be click-through
+  * @return {void}
+  */
+  private setBackdropClickThrough(clickThrough: boolean): void {
+    const container = document.querySelector('.cdk-overlay-container');
+    if (!container) { return; }
+    if (clickThrough) {
+      container.classList.add('vc-call-minimized');
+    } else {
+      container.classList.remove('vc-call-minimized');
+    }
   }
 
   /**
@@ -924,6 +953,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     
     this.webrtcSvc.disconnect();
     this.webrtcSvc.token = '';
+    this.setBackdropClickThrough(false);
   }
 
   checkPatientRegField(fieldName: string): boolean {

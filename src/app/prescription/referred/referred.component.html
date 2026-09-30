@@ -1,0 +1,144 @@
+<div class="container-fluid" data-test-id="referredContainer">
+  <div class="row" data-test-id="referredRow">
+    <div class="col-md-12 p-0" data-test-id="referredCol">
+      <mat-accordion class="intel-accordion-con" multi data-test-id="accordionReferred">
+
+        <mat-expansion-panel [expanded]="true" data-test-id="matExpReferred">
+          <mat-expansion-panel-header data-test-id="matExpHeaderReferred">
+            <mat-panel-title data-test-id="panelTitleReferred">
+              <div class="intel-accordion-title" data-test-id="accordionTitleReferred">
+                <img src="assets/svgs/pad-2.svg" alt="" width="44px" data-test-id="iconReferredVisit" />
+                <h6 class="mb-0 ml-2" data-test-id="lblReferredVisit">
+                  {{'Referred Visits'|translate}} ({{referredVisitsCount}})
+                </h6>
+                <mat-icon
+                  class="info_icon"
+                  aria-hidden="false"
+                  aria-label="help icon"
+                  matTooltip="{{'Visits referred/routed to another specialization'|translate}}"
+                  matTooltipPosition="right"
+                  data-test-id="matIcoHelpReferred"
+                >help_outline</mat-icon>
+
+                <div class="input-group search-bar ml-auto" data-test-id="searchBarReferred" (click)="$event.stopPropagation();">
+                  <input
+                    type="text"
+                    #refSearchInput
+                    class="form-control"
+                    placeholder="{{ 'Search' | translate }}"
+                    aria-label="search1"
+                    aria-describedby="basic-addon1"
+                    (keyup)="applyFilter($event)"
+                    (keydown.Space)="$event.stopPropagation()"
+                    (keydown.Enter)="$event.stopPropagation()"
+                    data-test-id="etSearchReferred"
+                  />
+                  <div class="input-group-append" data-test-id="searchAppendReferred">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource.filter" data-test-id="searchIconReferred">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                    <button
+                      data-test-id="btnResetRefSerach"
+                      mat-icon-button
+                      aria-label="Reset referred search"
+                      *ngIf="dataSource.filter"
+                      (click)="clearFilter()"
+                    >
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="mat-elevation-z8" data-test-id="tableContainerReferred">
+            <table mat-table [dataSource]="dataSource" data-test-id="referredVisitsTable">
+
+              <!-- Patient Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thPatient"> {{'Patient'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refPatient'+j">
+                  <div class="d-flex align-items-center">
+                    <img src="{{ checkPatientRegField('Profile Photo') ? baseUrl + '/personimage/' + element.person.uuid : '' }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{checkPatientRegField('Middle Name') &&  element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="age">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thAge"> {{'Age'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refAge'+j">
+                  {{element.person.age}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="visit_created">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thVisitCreated"> {{'Visit Created'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refCreated'+j">
+                  {{element.visit_created}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thLocation"> {{'Location'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refLocation'+j">
+                  {{element.location.name}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="cheif_complaint">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thComplaint"> {{'Chief Complaint'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refComplaint'+j">
+                  {{element.cheif_complaint}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thStatus"> {{'Status'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refStatus'+j">
+                  {{element.status|translate}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="referred_to">
+                <th mat-header-cell *matHeaderCellDef data-test-id="thReferredTo"> {{'Referred To'|translate}} </th>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'refReferredTo'+j">
+                  <div class="purple-pill" *ngIf="element?.routing_specialization" data-test-id="pillReferredTo">
+                    <span class="dot"></span>
+                    <span data-test-id="lblReferredTo">{{'To'|translate}} {{element?.routing_specialization}}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow data-test-id="noDataRow">
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                  {{'No data to display.'|translate}}
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns" data-test-id="headerRow"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; let x=index; columns: displayedColumns;"
+                [attr.data-test-id]="'ref'+x"
+                [routerLink]="['/dashboard/visit-summary', row?.uuid]"
+              ></tr>
+            </table>
+
+            <mat-paginator
+              #referredPaginator
+              hidePageSize
+              [pageSizeOptions]="[5, 10, 20]"
+              [pageSize]="pageSize"
+              [length]="referredVisitsCount"
+              (page)="getData($event)"
+              aria-label="Select page of periodic elements"
+              data-test-id="matPaginatorReferred"
+            ></mat-paginator>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>

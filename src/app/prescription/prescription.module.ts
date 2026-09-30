@@ -6,6 +6,7 @@ import { PrescriptionComponent } from './prescription.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SentComponent } from './sent/sent.component';
 import { CompletedComponent } from './completed/completed.component';
+import { ReferredComponent } from './referred/referred.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -28,7 +29,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   declarations: [
     PrescriptionComponent,
     SentComponent,
-    CompletedComponent
+    CompletedComponent,
+    ReferredComponent
   ],
   imports: [
     CommonModule,

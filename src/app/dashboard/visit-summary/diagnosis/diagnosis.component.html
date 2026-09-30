@@ -15,6 +15,8 @@
 
   <ng-container *ngIf="hasAILLMEnabled">
     <app-aillmddx [patientInfo]="patientInfo" [visit]="visit" (diagnosisSelected)="onAIDiagnosisSelected()"
+      (rationaleOpened)="onRationaleOpened($event)"
+      (reportIssue)="openReportIssue('ddx')"
       [existingDiagnosis]="existingDiagnosis" [notes]="patientInteractionNotesForm.value.value"
       [visitCompleted]="visitCompleted" data-test-id="appAillmddxComponent"></app-aillmddx>
   </ng-container>
@@ -113,6 +115,10 @@
           <div class="suggested-box" *ngIf="aillmddxComponent?.diagnosisList.length > 0" data-test-id="divAyuSuggestedDiagnosisBox">
             <div style="margin-top: 0;display: flex;justify-content: space-between;" data-test-id="divAyuSuggestedDiagnosisHeader">
               <h4 style="font-weight: bold;" data-test-id="h4AyuSuggestedDiagnosis"><img class="mr-2" src="assets/svgs/ayu-ddx.svg" alt="" data-test-id="imgAyuDdxIcon" /> Ayu suggested diagnosis</h4>
+              <button type="button" class="report-issue-btn" (click)="openReportIssue('ddx')"
+                title="{{ 'Report an issue with these suggestions' | translate }}" data-test-id="btnReportDdxPanelIssue">
+                <img src="assets/svgs/alert-triangle.svg" alt="" width="22" height="22" />
+              </button>
             </div>
             <div *ngFor="let diagnosis of aillmddxComponent?.diagnosisList; let i = index"
               class="d-flex align-items-center mb-2"
@@ -127,6 +133,22 @@
                 {{ diagnosis.diagnosis }}
                 <span class="text-muted ms-2" [attr.data-test-id]="'spanAyuDiagnosisLikelihood' + i">({{ diagnosis.likelihood }} likely)</span>
               </label>
+            </div>
+            <div class="confirm-treatment-wrap" *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
+              <button type="button" class="confirm-treatment-btn"
+                [disabled]="isTreatmentDisabled"
+                (click)="confirmAndSuggestTreatment()"
+                data-test-id="btnConfirmSuggestTreatment">
+                <ng-container *ngIf="!isTreatmentLoading">
+                  <img src="assets/svgs/ayu-ddx.svg" alt="" class="mr-2" />
+                  {{ 'Confirm & Suggest Treatment Plan' | translate }}
+                </ng-container>
+                <ng-container *ngIf="isTreatmentLoading">
+                  <span class="confirm-spinner mr-2"></span>
+                  {{ 'Suggesting treatment plan...' | translate }}
+                </ng-container>
+              </button>
+              <p class="confirm-treatment-hint">{{ 'This will call AI APIs to suggest the treatment plan.' | translate }}</p>
             </div>
           </div>
         </div>
@@ -239,7 +261,13 @@
     <lib-aillmtx-medication [patientInfo]="patientInfo" [visit]="visit" (medicationSelected)="onAIMedicineSelected()"
       [existingMedication]="existingMedication" [diagnosisName]="diagnosisName"
       [patientAllergies]="patientAllergies" [patientCurrentMedications]="patientCurrentMedications"
-      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted" data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
+      [allergyDataStatus]="allergyDataStatus" [visitCompleted]="visitCompleted"
+      (reportPanelIssue)="openReportIssue('ttx_medication')"
+      (reportSuggestionIssue)="onMedicationSuggestionReport($event)"
+      [treatmentLoading]="isTreatmentLoading"
+      [treatmentDisabled]="isTreatmentDisabled"
+      (requestTreatmentPlan)="confirmAndSuggestTreatment()"
+      data-test-id="libAillmtxMedicationComponent"></lib-aillmtx-medication>
   </ng-container>
   <ng-container>
     <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()"  class="medication-form-container"
@@ -476,7 +504,12 @@
   </ng-container>
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show" data-test-id="matExpReferral">
+<app-referral-consent *ngIf="referralConsentForm && appConfigService?.namco_referral_section" [referralConsentForm]="referralConsentForm"
+  [isVisitNoteProvider]="isVisitNoteProvider" [visitEnded]="visitEnded" [isMCCUser]="isMCCUser">
+</app-referral-consent>
+
+<mat-expansion-panel [expanded]="true" #panel7 hideToggle class="overflow-show"
+  *ngIf="!appConfigService?.namco_referral_section || referralConsentForm?.value?.decision !== 'No referral'" data-test-id="matExpReferral">
 
   <mat-expansion-panel-header data-test-id="matExpHeaderReferral">
     <mat-panel-title data-test-id="matPanelTitleReferral">
@@ -500,8 +533,8 @@
       <table class="table table1" aria-describedby="">
         <thead>
           <tr>
-            <th width="25%" class="border-top-0" data-test-id="thReferralTo">{{'Referral to' | translate}}</th>
             <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('referralFacility', true)" data-test-id="thReferralFacility">{{'Referral facility'|translate}}</th>
+            <th width="25%" class="border-top-0" data-test-id="thReferralTo">{{'Referral to' | translate}}</th>
             <th  width="25%" class="border-top-0" *ngIf="isFeatureAvailable('priorityOfReferral', true)" data-test-id="thPriorityOfReferral">{{'Priority of Referral'|translate}}
             </th>
             <th width="25%"class="border-top-0" data-test-id="thRemarks">{{'Remarks'|translate}}</th>
@@ -509,7 +542,7 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded">
+          <ng-container *ngIf="!isMCCUser && isVisitNoteProvider && !visitEnded && !hasNamcoReferralAdded">
             <tr *ngIf="addMoreReferral">
               <td colspan="6" class="px-0">
                 <div class="form-group mb-0">
@@ -522,25 +555,25 @@
               </td>
             </tr>
             <tr *ngIf="!addMoreReferral && !isMCCUser">
+              <td *ngIf="isFeatureAvailable('referralFacility', true)">
+                <div class="form-group mb-0">
+                  <ng-select class="visit-select custom1" appendTo=".visit-summary-tab-group" formControlName="facility"
+                    bindLabel="label" bindValue="label" [clearable]="false" [searchable]="true" [addTag]="true"
+                    placeholder="{{'Select or type'|translate}}" data-test-id="selectReferralFacilityVisitSummary">
+                    <ng-option *ngFor="let facility of filteredFacilities" [value]="facility.name">
+                      {{ (facility.name) |translate }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </td>
               <td>
                 <div class="form-group mb-0">
                   <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom1" formControlName="speciality"
                     bindLabel="label" bindValue="label" [clearable]="false" [searchable]="true" [addTag]="true"
                     placeholder="{{'Select or type'|translate}}"
                     data-test-id="selectReferralSpecialityVisitSummary">
-                    <ng-option *ngFor="let specialization of referSpecializations" [value]="specialization.name">
+                    <ng-option *ngFor="let specialization of filteredReferSpecializations" [value]="specialization.name">
                       {{ (specialization.name) |translate }}
-                    </ng-option>
-                  </ng-select>
-                </div>
-              </td>
-              <td *ngIf="isFeatureAvailable('referralFacility', true)">
-                <div class="form-group mb-0">
-                  <ng-select class="visit-select custom1" appendTo=".visit-summary-tab-group" formControlName="facility"
-                    bindLabel="label" bindValue="label" [clearable]="false" [searchable]="true" [addTag]="true"
-                    placeholder="{{'Select or type'|translate}}" data-test-id="selectReferralFacilityVisitSummary">
-                    <ng-option *ngFor="let facility of facilities" [value]="facility.name">
-                      {{ (facility.name) |translate }}
                     </ng-option>
                   </ng-select>
                 </div>
@@ -585,8 +618,8 @@
         <table class="table table1 mt-3" aria-describedby="">
           <tbody>
              <tr *ngFor="let r of referrals; let i = index">
-              <td  width="26%" [attr.data-test-id]="'tdReferralTo-' + i">{{ (r.speciality) | translate }}</td>
               <td  width="26%" *ngIf="isFeatureAvailable('referralFacility', true)" [attr.data-test-id]="'tdReferralFacility-' + i" >{{ (r.facility) | translate }}</td>
+              <td  width="26%" [attr.data-test-id]="'tdReferralTo-' + i">{{ (r.speciality) | translate }}</td>
               <td  width="26%" *ngIf="isFeatureAvailable('priorityOfReferral', true)" [attr.data-test-id]="'tdReferralPriority-' + i">{{ (r.priority) | translate }}</td>
               <td  width="25%" [attr.data-test-id]="'tdReferralReason-' + i">{{ r.reason }}</td>
               <td class="pr-0 pt-0">
@@ -634,6 +667,11 @@
       [existingFollowUp]="existingFollowUp" [diagnosisName]="diagnosisName"></lib-aillmtx-followup>
   </ng-container> -->
 
+  <div class="alert alert-warning d-flex align-items-center" *ngIf="isNamcoReferralConfirmed" data-test-id="msgFollowUpBlockedByReferral">
+    <mat-icon class="mr-2">info</mat-icon>
+    <span>{{ 'You have selected this patient for referral to NAMCO. Follow-up is not applicable and cannot be filled for this visit.' | translate }}</span>
+  </div>
+
   <div class="table-responsive" *ngIf="followUpForm.value.present">
     <table class="table" aria-describedby="">
       <thead>
@@ -672,9 +710,10 @@
           <label for="follow-up" class="col-sm-3 col-form-label">{{'Do you want to have follow up with the patient?' |
             translate}}</label>
           <div class="col-sm-9 d-flex align-items-center">
-            <div class="pretty p-default p-round">
+            <div class="pretty p-default p-round" [class.followup-referral-disabled]="isNamcoReferralConfirmed">
               <input type="radio" value="{{'Yes' | translate}}" formControlName="wantFollowUp"
-                data-test-id="radioFollowUpYes" />
+                data-test-id="radioFollowUpYes"
+                [attr.disabled]="isNamcoReferralConfirmed ? 'disabled' : null" />
               <div class="state p-success">
                 <label>{{'Yes'|translate}}</label>
               </div>

@@ -56,6 +56,8 @@ const environmentFileContent = `
     baseURLCoreApp: '${process.env.BASE_URL_CORD_APP}',
     baseURLLegacy: '${process.env.BASE_URL_LEGACY}',
     mindmapURL: '${process.env.MIND_MAP_URL}',
+    insightsEnabled: ${process.env.INSIGHTS_ENABLED === 'true'},
+    turnNotifyURL: '${process.env.TURN_NOTIFY_URL}',
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
@@ -84,7 +86,8 @@ const environmentFileContent = `
     featureList: ${process.env.FEATURES_LIST},
     gaMeasurementId: '${process.env.GAMEASUREMENTID}',
     kaleyraApiKey: '${process.env.KALEYRA_API_KEY}',
-    doctorPhoneNumber: '${process.env.DOCTOR_PHONE_NUMBER}'
+    doctorPhoneNumber: '${process.env.DOCTOR_PHONE_NUMBER}',
+    isTurnServer: ${process.env.IS_TURN_SERVER},
   };
 `;
 

@@ -42,7 +42,6 @@ export class PatientDiagnosticsComponent {
   */
   getPatientDiagnostics(): void {
     this.configService.getDiagnostics().subscribe((res: any)=>{
-      console.log('res: ', res);
       this.diagnosticsData = res.patient_diagnostics;
       this.sectionData = res?.patient_diagnostics_section;
       this.sectionEnabled = this.sectionData?.is_enabled;

@@ -57,7 +57,10 @@ import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dro
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
 import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
+import { InsightsComponent } from './insights/insights.component';
+import { AiIssueReportsComponent } from './admin-actions/ai-issue-reports/ai-issue-reports.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
+import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
 
 
 // AoT requires an exported function for factories
@@ -164,8 +167,20 @@ const routes: Routes = [
             component: AiLlmComponent
           },
           {
+            path: 'insights',
+            component: InsightsComponent
+          },
+          {
+            path: 'ai-issue-reports',
+            component: AiIssueReportsComponent
+          },
+          {
             path: 'prescription-notes',
             component: PrescriptionNotesComponent
+          },
+          {
+            path: 'namco-referral',
+            component: NamcoReferralComponent
           },
           {
             path: '',
@@ -208,7 +223,10 @@ const routes: Routes = [
     HomeScreenComponent,
     WebrtcLogComponent,
     AiLlmComponent,
-    PrescriptionNotesComponent
+    InsightsComponent,
+    PrescriptionNotesComponent,
+    NamcoReferralComponent,
+    AiIssueReportsComponent
   ],
   imports: [
     CommonModule,

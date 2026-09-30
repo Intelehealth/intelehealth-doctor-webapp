@@ -6005,6 +6005,8 @@
   "Patient Visit Summary" : "Сводка визита пациента",
   "WebRTC":"ВебRTC",
   "ABHA ID": "Идентификатор АБХА",
+  "ABHA Number": "Номер АБХА",
+  "ABHA Address": "Адрес АБХА",
   "Publish": "Публиковать",
   "Enable/Disable": "Включить/отключить",
   "Diagnostic": "Диагностика",

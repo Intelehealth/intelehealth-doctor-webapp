@@ -187,7 +187,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           case doctorDetails.FONT_OF_SIGN:
             break;
           case doctorDetails.PHONE_NUMBER:
-            console.log(this.getAttributeValue(attrType.uuid, attrType.display));
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             this.phoneNumberValid = (personalFormValues.phoneNumber) ?  true : false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);

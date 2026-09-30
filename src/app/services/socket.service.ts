@@ -22,6 +22,7 @@ import { notifications } from 'src/config/constant';
 })
 export class SocketService {
   public socket: any;
+  public hwSocket: any;
   public incoming;
   public incomingCallData = {};
   public activeUsers: SocketUserModel[] = [];
@@ -75,12 +76,19 @@ export class SocketService {
     if (forceInit && this.socket?.id && this.socket?.disconnect) {
       this.socket.disconnect();
     }
+    if (forceInit && this.hwSocket?.disconnect) {
+      this.hwSocket.disconnect();
+    }
     if (!this.socket || forceInit) {
       if (!sessionStorage.webrtcDebug) {
         setCacheData('socketQuery', `userId=${this.userUuid}&name=${this.userName}`);
       }
 
       this.socket = io(environment.socketURL, {
+        query: getCacheData(false, 'socketQuery'),
+      });
+
+      this.hwSocket = io(environment.socketURL + '/hw', {
         query: getCacheData(false, 'socketQuery'),
       });
 
@@ -126,6 +134,10 @@ export class SocketService {
 
   public emitEvent(action, data) {
     this.socket?.emit(action, data);
+  }
+
+  public emitHwEvent(action, data) {
+    this.hwSocket?.emit(action, data);
   }
 
   public onEvent(action) {
@@ -208,7 +220,10 @@ export class SocketService {
 
   close() {
     try {
-      this.socket.close();
+      this.socket?.close();
+    } catch (error) { }
+    try {
+      this.hwSocket?.close();
     } catch (error) { }
   }
 

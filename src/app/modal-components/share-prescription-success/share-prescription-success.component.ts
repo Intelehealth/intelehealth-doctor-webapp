@@ -22,9 +22,17 @@ export class SharePrescriptionSuccessComponent implements OnInit {
   // Specialization
   private specialization: string = '';
 
+  // True when this visit was referred to a NAMCO specialist rather than completed —
+  // no prescription/Visit Complete encounter was created, so the copy shown differs.
+  isReferral: boolean = false;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SharePrescriptionSuccessComponent>,
-  private visitService: VisitService) { }
+  private visitService: VisitService) {
+    if (data && data.isReferral) {
+      this.isReferral = true;
+    }
+  }
 
   /**
   * Initialize component and load visit counts
@@ -69,7 +77,7 @@ export class SharePrescriptionSuccessComponent implements OnInit {
   * @return {void}
   */
   private fetchPriorityVisits(): void {
-    this.visitService.getPriorityVisits(this.specialization, 1).subscribe({
+    this.visitService.getPriorityVisits(this.specialization, 1, true).subscribe({
       next: (response) => {
         if (response.success) {
           this.priorityVisitsCount = response.totalCount || 0;
@@ -88,7 +96,7 @@ export class SharePrescriptionSuccessComponent implements OnInit {
   * @return {void}
   */
   private fetchAwaitingVisits(): void {
-    this.visitService.getAwaitingVisits(this.specialization, 1).subscribe({
+    this.visitService.getAwaitingVisits(this.specialization, 1, true).subscribe({
       next: (response) => {
         if (response.success) {
           this.awaitingVisitsCount = response.totalCount || 0;
@@ -107,7 +115,7 @@ export class SharePrescriptionSuccessComponent implements OnInit {
   * @return {void}
   */
   private fetchInProgressVisits(): void {
-    this.visitService.getInProgressVisits(this.specialization, 1).subscribe({
+    this.visitService.getInProgressVisits(this.specialization, 1, true).subscribe({
       next: (response) => {
         if (response.success) {
           this.inProgressVisitsCount = response.totalCount || 0;

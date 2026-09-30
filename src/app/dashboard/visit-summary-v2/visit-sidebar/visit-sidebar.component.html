@@ -1,0 +1,59 @@
+<aside class="vs2-sidebar">
+  <div class="vs2-scope-toggle">
+    <button
+      *ngFor="let s of visitScopeTabs"
+      class="vs2-scope-btn"
+      [class.active]="activeVisitScope === s"
+      (click)="scopeChange.emit(s)">
+      {{ s }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="activeVisitScope === 'Current visits'">
+    <nav class="vs2-section-nav">
+      <button
+        *ngFor="let sec of sections"
+        class="vs2-section-link"
+        [class.active]="activeSection === sec.key"
+        (click)="sectionSelect.emit(sec.key)">
+        <img class="vs2-section-icon-img" [src]="sec.icon" alt="" />
+        <span class="vs2-section-label">{{ sec.label }}</span>
+      </button>
+    </nav>
+
+    <div class="vs2-nav-group-label" *ngIf="visitNoteStarted">Doctor's Note</div>
+    <nav class="vs2-section-nav" *ngIf="visitNoteStarted">
+      <button
+        *ngFor="let sec of doctorNoteNav"
+        class="vs2-section-link"
+        [class.active]="activeSection === sec.key"
+        (click)="sectionSelect.emit(sec.key)">
+        <img class="vs2-section-icon-img" [src]="sec.icon" alt="" />
+        <span class="vs2-section-label">{{ sec.label }}</span>
+      </button>
+    </nav>
+  </ng-container>
+
+  <div class="vs2-timeline" *ngIf="activeVisitScope === 'Past Visits'">
+    <ng-container *ngFor="let group of pastVisitsTimeline">
+      <div class="vs2-timeline-date">
+        <span>{{ group.date }}</span>
+        <span class="vs2-timeline-badge" *ngIf="group.current">Current</span>
+      </div>
+      <button
+        *ngFor="let v of group.visits"
+        class="vs2-timeline-item"
+        [class.active]="activePastVisitKey === v.key"
+        (click)="pastVisitSelect.emit(v.key)">
+        <span class="vs2-timeline-rail">
+          <span class="vs2-timeline-dot"></span>
+        </span>
+        <span class="vs2-timeline-card">
+          <span class="vs2-timeline-title">{{ v.title }}</span>
+          <span class="vs2-timeline-med">{{ v.med }}</span>
+          <span class="vs2-timeline-by" [class.referred]="v.referred">{{ v.by }}</span>
+        </span>
+      </button>
+    </ng-container>
+  </div>
+</aside>

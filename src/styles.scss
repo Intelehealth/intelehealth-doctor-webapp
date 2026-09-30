@@ -413,6 +413,10 @@ body.font-lato td {
 
 /* Tooltip CSS */
 
+.mat-drawer {
+  overflow-y: unset !important;
+}
+
 .info-message-tooltip {
   font-family: DM Sans;
   font-size: 12px;
@@ -779,6 +783,21 @@ body.font-lato td {
 
   .mat-dialog-container {
     width: fit-content;
+  }
+}
+
+.cdk-overlay-container.vc-call-minimized {
+  .cdk-overlay-backdrop {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .cdk-global-overlay-wrapper {
+    pointer-events: none;
+  }
+
+  .vc-modal-lg.minimized {
+    pointer-events: auto;
   }
 }
 

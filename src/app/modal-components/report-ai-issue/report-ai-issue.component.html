@@ -1,0 +1,38 @@
+<div class="intel-con-modal report-ai-issue-modal" data-test-id="reportAiIssueModal">
+  <div class="close-btn-con">
+    <button class="modal-close-btn" (click)="close()" data-test-id="btnCloseReportAiIssue">
+      <img src="assets/svgs/CloseX.svg" alt="" />
+    </button>
+  </div>
+
+  <div class="modal-con mt-2">
+    <h6 data-test-id="lblReportAiIssueTitle">{{ 'Report an AI issue' | translate }}</h6>
+    <p class="text-muted mt-1" data-test-id="lblReportAiIssueSubtitle" *ngIf="data.suggestionRef">
+      {{ 'Flagging:' | translate }} {{ data.suggestionRef }}
+    </p>
+
+    <div class="reason-chip-group mt-3">
+      <button type="button" *ngFor="let r of reasons" class="reason-chip"
+        [class.selected]="selectedReason === r.code"
+        (click)="selectReason(r.code)"
+        [attr.data-test-id]="'chipReason' + r.code">
+        {{ r.label | translate }}
+      </button>
+    </div>
+
+    <div class="form-group w-100 mt-3">
+      <label>{{ 'Additional details (optional)' | translate }}</label>
+      <textarea class="form-control" rows="3" [(ngModel)]="details" data-test-id="etReportAiIssueDetails"></textarea>
+    </div>
+  </div>
+
+  <div class="modal-action-btn-con">
+    <button class="modal-btn white-btn mr-3" type="button" (click)="close()" data-test-id="btnCancelReportAiIssue">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button class="modal-btn blue-btn" type="button" [disabled]="!selectedReason || submitting"
+      (click)="submit()" data-test-id="btnSubmitReportAiIssue">
+      {{ (submitting ? 'Submitting...' : 'Submit') | translate }}
+    </button>
+  </div>
+</div>

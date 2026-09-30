@@ -49,7 +49,7 @@ export class DiagnosisService {
   */
   getObs(patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(uuid,visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 
@@ -131,7 +131,7 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   saveManualDiagnosis(payload: any): Observable<any> {
-    const url = `${environment.base}/ddx/manual`;
+    const url = `${environment.mindmapURL}/ddx/manual`;
     return this.http.post(url, payload);
   }
 
@@ -141,7 +141,7 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   saveManualTreatment(payload: any): Observable<any> {
-    const url = `${environment.base}/ttx/manual`;
+    const url = `${environment.mindmapURL}/ttx/manual`;
     return this.http.post(url, payload);
   }
 }
