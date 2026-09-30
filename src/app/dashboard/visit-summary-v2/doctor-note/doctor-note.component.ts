@@ -112,7 +112,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   openBundle: AdviceBundle | null = null;
 
   newTestText: string | null = null;
-  testOptions: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
@@ -239,7 +238,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
-    this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
   }
