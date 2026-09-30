@@ -112,7 +112,7 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready'">
+  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiResponseReceived">
     <div class="vs2-ayu-banner" (click)="aiSummaryExpanded = !aiSummaryExpanded">
       <img class="vs2-ayu-icon" src="assets/svgs/ayu-logo.svg" alt="" />
       <div class="vs2-ayu-text">
@@ -581,7 +581,7 @@
     (keyup.enter)="addTest()" />
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
-    <button class="vs2-btn-add" [disabled]="!newTestText" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-add" [disabled]="!newTestText?.trim()" (click)="addTest()">Add Test</button>
   </div>
 </section>
 
