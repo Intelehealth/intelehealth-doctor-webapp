@@ -108,7 +108,6 @@ export class MindmapService {
     this.http
       .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, { visit_uuid: visitUuid })
       .subscribe({
-        next: () => console.log('Turn prescription notify sent'),
         error: (err) => console.error('Turn prescription notify failed:', err)
       });
   }
@@ -151,9 +150,7 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload for notification:",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Reschedule notification sent successfully'),
       error: (err) => console.error('Failed to send reschedule notification:', err)
     });
   }
@@ -182,9 +179,7 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload===",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Cancel notification sent successfully'),
       error: (err) => console.error('Failed to send cancel notification:', err)
     });
   }

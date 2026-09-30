@@ -140,10 +140,6 @@ export class ReferredComponent implements OnInit, AfterViewInit, OnChanges {
     );
 
     this.dataSource = result.currentPageData;
-
-    if (result.debugInfo) {
-      console.log('Referred Pagination Debug:', result.debugInfo);
-    }
   }
 
   private updatePaginator(): void {

@@ -71,7 +71,7 @@ export class AyuComponent implements OnInit {
         this.licenceKeySelecter();
       },
       (err) => {
-        console.log("Something went wrong");
+        console.error("Something went wrong", err);
       }
     );
   }

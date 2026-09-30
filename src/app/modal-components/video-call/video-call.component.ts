@@ -195,7 +195,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
-    console.log("this.webrtcSvc.token",this.webrtcSvc.token);
     if (!this.webrtcSvc.token) return;
     // Attach reconnection handlers BEFORE creating the room to catch early events
     this.attachRoomReconnectionHandlers();
@@ -404,7 +403,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         callDuration: this.callDuration,
         error: err
       });
-      console.log("start recoding error", err)
+      console.error("start recording error", err)
       });
     }
   }
