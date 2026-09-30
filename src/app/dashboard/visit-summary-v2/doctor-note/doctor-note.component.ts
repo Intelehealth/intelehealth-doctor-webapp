@@ -73,6 +73,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   selectedDiagnoses: SelectedDiagnosis[] = [];
 
   aiClinicalSummary = '';
+  aiResponseReceived = false;
   aiSuggestions: AiDiagnosisSuggestion[] = [];
 
   diagnosisSearchTerm = '';
@@ -112,7 +113,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   openBundle: AdviceBundle | null = null;
 
   newTestText: string | null = null;
-  testOptions: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
@@ -239,7 +239,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
-    this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
   }
@@ -402,6 +401,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.aiDiagnosisState = 'ready';
     this.aiSuggestions = [];
     this.aiClinicalSummary = '';
+    this.aiResponseReceived = false;
   }
 
   retryAiDiagnosis(): void {
@@ -416,8 +416,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   private loadAiDiagnosis(notes = ''): void {
     if (!this.visit || !this.patientInfo) { return; }
     this.aiDiagnosisState = 'loading';
+    this.aiResponseReceived = false;
     this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted).subscribe({
       next: result => {
+        this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;
         this.aiSuggestions = result.suggestions;
         this.ayuSuggestedQuestions = result.questions;
@@ -702,9 +704,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   addTest(): void {
-    if (!this.newTestText || !this.canWrite()) { return; }
-    const value = this.newTestText;
-    if (this.tests.find(t => t.value === value)) {
+    const value = (this.newTestText || '').trim();
+    if (!value || !this.canWrite()) { return; }
+    if (this.tests.find(t => t.value.trim().toLowerCase() === value.toLowerCase())) {
       this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
       return;
     }

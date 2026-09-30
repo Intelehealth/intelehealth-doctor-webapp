@@ -737,8 +737,29 @@ app-past-visits {
   color: $navy;
   cursor: pointer;
 
-  input {
-    accent-color: $purple;
+  input[type='radio'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    border: 1.5px solid #c7c5d3;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:checked {
+      border-color: $purple;
+      background: $purple;
+      box-shadow: inset 0 0 0 2.5px #fff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba($purple, 0.4);
+      outline-offset: 1px;
+    }
   }
 }
 
@@ -893,7 +914,8 @@ app-past-visits {
 
   .vs2-ayu-icon {
     width: 32px;
-    height: 32px;
+    height: auto;
+    flex-shrink: 0;
   }
 
   .vs2-ayu-text {
@@ -972,10 +994,14 @@ app-past-visits {
 
 .vs2-ayu-q-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+}
+
+.vs2-ayu-q-body {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .vs2-ayu-tag {
@@ -985,12 +1011,15 @@ app-past-visits {
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-block;
+  margin-bottom: 6px;
 }
 
 .vs2-ayu-q-actions {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .vs2-ayu-yes,
@@ -1129,8 +1158,15 @@ app-past-visits {
   margin-left: 4px;
 }
 
-.vs2-radio-green input {
-  accent-color: $green;
+.vs2-radio-green input[type='radio'] {
+  &:checked {
+    border-color: $green;
+    background: $green;
+  }
+
+  &:focus-visible {
+    outline-color: rgba($green, 0.4);
+  }
 }
 
 
@@ -1141,6 +1177,11 @@ app-past-visits {
   font-size: 13px;
   line-height: 1.7;
   color: $navy;
+}
+
+.vs2-summary-empty {
+  color: $grey-text;
+  font-style: italic;
 }
 
 .vs2-ai-dx-title {
