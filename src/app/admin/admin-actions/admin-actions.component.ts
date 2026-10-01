@@ -149,6 +149,13 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
+      title: "QMS",
+      desc: "Manage QMS functionality",
+      icon: "assets/svgs/patient-visit-summary.svg",
+      path: "admin/actions/qms",
+      isLocalPath: true
+    },
+    {
       title: "Prescription Notes",
       desc: "Manage specialty-wise notes printed on prescriptions",
       icon: "assets/svgs/advice.svg",
