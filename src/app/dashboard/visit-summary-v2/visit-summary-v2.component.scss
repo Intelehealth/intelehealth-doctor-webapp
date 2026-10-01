@@ -13,6 +13,7 @@ $border: #ecebf1;
 $page-bg: #f5f6fa;
 $card-bg: #ffffff;
 $section-bg: #f7f8fc;
+$radio-ring: #e4ddf9;
 $app-header-h: 72px; 
 
 app-visit-summary-v2 {
@@ -564,12 +565,6 @@ app-past-visits {
   gap: 10px;
 }
 
-.vs2-placeholder {
-  color: $grey-text;
-  font-size: 14px;
-  font-style: italic;
-}
-
 .vs2-symptom-group {
   margin-bottom: 12px;
 }
@@ -732,24 +727,62 @@ app-past-visits {
 .vs2-radio {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
   color: $navy;
   cursor: pointer;
 
-  input {
-    accent-color: $purple;
-  }
-}
+  // Drawn radio (per design): light ring; checked = green ring + dot; disabled + checked = grey
+  input[type='radio'] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-content: center;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    border: 2px solid $radio-ring;
+    border-radius: 50%;
+    background: #fff;
+    cursor: inherit;
+    transition: border-color 0.15s ease;
 
-.vs2-select {
-  border: 1px solid $border;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
-  color: $navy;
-  min-width: 200px;
-  background: #fff;
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $green;
+      transform: scale(0);
+      transition: transform 0.15s ease;
+    }
+
+    &:checked {
+      border-color: $green;
+
+      &::before {
+        transform: scale(1);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba($green, 0.35);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:disabled:checked {
+      border-color: $grey-text;
+
+      &::before {
+        background: $grey-text;
+      }
+    }
+  }
 }
 
 .vs2-ng-select {
@@ -1129,8 +1162,178 @@ app-past-visits {
   margin-left: 4px;
 }
 
-.vs2-radio-green input {
-  accent-color: $green;
+.vs2-radio-disabled {
+  cursor: not-allowed;
+}
+
+.vs2-namco-note {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: $navy;
+  font-size: 13px;
+}
+
+// Primary Doctor's Note (read-only view of the referring doctor's note)
+.vs2-pdn-dx-box {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.vs2-pdn-dx-name {
+  font-size: 14px;
+  color: $navy;
+}
+
+.vs2-chip-outline {
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: $navy;
+  background: #fff;
+}
+
+.vs2-namco-grid.vs2-pdn-med-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.vs2-namco-grid.vs2-pdn-ref-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.vs2-pdn-label {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 13px;
+  color: $navy;
+}
+
+.vs2-radio-readonly {
+  cursor: default;
+
+  input[type='radio']:disabled {
+    cursor: default;
+  }
+}
+
+@media (max-width: 768px) {
+  .vs2-namco-grid.vs2-pdn-med-grid,
+  .vs2-namco-grid.vs2-pdn-ref-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// NAMCO specialist layout: stacked collapsible cards instead of one content panel
+.vs2-content.vs2-content-cards {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.vs2-card {
+  background: $card-bg;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+  margin-bottom: 20px;
+}
+
+.vs2-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: $navy;
+  }
+
+  mat-icon {
+    color: $grey-text;
+  }
+}
+
+.vs2-card-body {
+  padding: 0 24px 20px;
+}
+
+.vs2-section-toggle {
+  cursor: pointer;
+}
+
+.vs2-note-doc-empty {
+  margin: 0 0 12px;
+}
+
+.vs2-sdn-med-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.vs2-sdn-med-table {
+  margin-bottom: 8px;
+
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr 0.8fr 0.5fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .vs2-sdn-med-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.vs2-namco-list > li {
+  padding: 12px 0;
+  border-bottom: 1px solid $border;
+
+  .vs2-form-row {
+    margin-bottom: 0;
+  }
+}
+
+.vs2-namco-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 14px;
+  color: $navy;
+}
+
+.vs2-namco-grid-head {
+  margin-top: 8px;
+  border-bottom: 1px solid $border;
+  font-size: 13px;
+  color: $grey-text;
+}
+
+.vs2-namco-grid-row {
+  border-bottom: 1px solid $border;
+}
+
+.vs2-namco-grid-form .vs2-input {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .vs2-namco-grid {
+    grid-template-columns: minmax(0, 1fr) 32px;
+  }
+
+  .vs2-namco-grid-head {
+    display: none;
+  }
 }
 
 
@@ -1687,51 +1890,6 @@ app-past-visits {
 
 
 
-.vs2-improve {
-  margin-bottom: 18px;
-}
-
-.vs2-improve-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
-
-  mat-icon {
-    margin-left: auto;
-    color: $navy;
-  }
-}
-
-.vs2-improve-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: $purple;
-
-  em {
-    font-style: normal;
-    font-weight: 400;
-    color: $navy;
-  }
-}
-
-.vs2-improve-sub {
-  font-size: 12.5px;
-  color: $grey-text;
-  margin: 2px 0 10px;
-}
-
-.vs2-improve-text {
-  background: $section-bg;
-  border: none;
-  margin-bottom: 12px;
-}
-
 .vs2-btn-block:disabled {
   background: $purple-soft;
   color: #a9a4c4;
@@ -1904,42 +2062,9 @@ app-past-visits {
   margin-left: 2px;
 }
 
-.vs2-check {
-  font-weight: 400;
-  color: $grey-text;
-  margin-left: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-
-  input {
-    accent-color: $purple;
-  }
-}
-
-.vs2-link-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: $green-soft;
-  color: #1f9d6e;
-  border: 1px solid #bdeedd;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-
-  img {
-    width: 16px;
-    height: 16px;
-  }
-}
-
 .vs2-med-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -2284,41 +2409,6 @@ app-past-visits {
 
 .vs2-no-bullet-row {
   grid-template-columns: 150px 1fr;
-}
-
-.vs2-dropzone {
-  border: 1.5px dashed #cfc8ec;
-  border-radius: 12px;
-  background: #faf9fd;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-
-  mat-icon {
-    color: $purple;
-    font-size: 32px;
-    width: 32px;
-    height: 32px;
-  }
-}
-
-.vs2-dropzone-text {
-  font-size: 14px;
-  color: $navy;
-
-  a {
-    color: $purple;
-    font-weight: 600;
-    text-decoration: none;
-  }
-}
-
-.vs2-dropzone-hint {
-  font-size: 12px;
-  color: $grey-text;
 }
 
 @media (max-width: 980px) {

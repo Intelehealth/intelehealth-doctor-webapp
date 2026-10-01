@@ -1,0 +1,93 @@
+<section id="section-dn-referral" class="vs2-section-card">
+  <div class="vs2-section-title">
+    <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
+    <span>Referral</span>
+    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+
+  <ul class="vs2-bullet-list vs2-namco-list">
+    <li>
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Where this patient be referred?</span>
+        <label class="vs2-radio" *ngFor="let d of referralDecisions" [class.vs2-radio-disabled]="locked">
+          <input type="radio" name="namcoReferralDecision" [value]="d.value" [checked]="decision === d.value"
+            [disabled]="locked" (change)="onDecisionChange(d.value)" /> {{ d.label }}
+        </label>
+      </div>
+    </li>
+    <li *ngIf="decision === decisionNamco">
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Has the patient consented to this referral?</span>
+        <label class="vs2-radio" *ngFor="let c of consentOptions" [class.vs2-radio-disabled]="locked">
+          <input type="radio" name="namcoReferralConsent" [value]="c" [checked]="consent === c"
+            [disabled]="locked" (change)="onConsentChange(c)" /> {{ c }}
+        </label>
+      </div>
+    </li>
+  </ul>
+
+  <p class="vs2-namco-note" *ngIf="showLockedHint">Remove the added referral to change where this patient is referred.</p>
+  <p class="vs2-namco-note" *ngIf="decision === decisionNamco && consent === consentNo">
+    The patient has not consented, so this visit will not be referred to a NAMCO doctor.
+  </p>
+
+  <ng-container *ngIf="showTable">
+    <div class="vs2-namco-grid vs2-namco-grid-head">
+      <span>Referral to</span>
+      <span>Referral facility</span>
+      <span>Priority of Referral</span>
+      <span>Remarks</span>
+      <span></span>
+    </div>
+
+    <div class="vs2-namco-grid vs2-namco-grid-row" *ngFor="let r of referrals; let i = index">
+      <span>{{ r.speciality }}</span>
+      <span>{{ r.facility || '-' }}</span>
+      <span>{{ r.priority || '-' }}</span>
+      <span>{{ r.reason && r.reason !== '-' ? r.reason : '-' }}</span>
+      <span class="vs2-added-actions">
+        <mat-icon class="vs2-delete-icon" (click)="delete(i)">delete_outline</mat-icon>
+      </span>
+    </div>
+
+    <ng-container *ngIf="showForm">
+      <div class="vs2-namco-grid vs2-namco-grid-form">
+        <ng-select
+          class="vs2-ng-select vs2-ng-select-grid"
+          [items]="filteredSpecialityOptions"
+          [(ngModel)]="newReferral.speciality"
+          [addTag]="true"
+          [searchable]="true"
+          [clearable]="true"
+          placeholder="Select or type">
+        </ng-select>
+        <ng-select
+          class="vs2-ng-select vs2-ng-select-grid"
+          [items]="filteredFacilityOptions"
+          [(ngModel)]="newReferral.facility"
+          (ngModelChange)="refreshOptions()"
+          [addTag]="true"
+          [searchable]="true"
+          [clearable]="true"
+          placeholder="Select or type">
+        </ng-select>
+        <ng-select
+          class="vs2-ng-select vs2-ng-select-grid"
+          [items]="referralPriorities"
+          [(ngModel)]="newReferral.priority"
+          [addTag]="false"
+          [searchable]="false"
+          [clearable]="true"
+          placeholder="Elective">
+        </ng-select>
+        <input class="vs2-input" placeholder="Enter" [(ngModel)]="newReferral.reason" />
+        <span></span>
+      </div>
+      <div class="vs2-btn-row">
+        <button class="vs2-btn-cancel" (click)="cancel()">Cancel</button>
+        <button class="vs2-btn-add" [disabled]="!newReferral.speciality" (click)="save()">Save</button>
+      </div>
+    </ng-container>
+  </ng-container>
+</section>

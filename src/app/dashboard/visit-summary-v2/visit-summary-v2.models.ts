@@ -4,6 +4,11 @@ export interface SectionNavItem {
   icon: string;
 }
 
+export interface NavGroup {
+  label: string;
+  items: SectionNavItem[];
+}
+
 export interface DetailRow {
   label: string;
   value: string;

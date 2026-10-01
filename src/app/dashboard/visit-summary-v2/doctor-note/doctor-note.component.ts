@@ -1,14 +1,15 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, isNamcoDoctor } from 'src/app/utils/utility-functions';
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import {
-  DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftMedication, DraftReferral,
+  DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftInstruction, DraftMedication, DraftReferral,
   DraftTest, DraftTextItem, VisitSummaryV2Service
 } from '../visit-summary-v2.service';
 import {
@@ -24,6 +25,7 @@ import {
   ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, DEFAULT_REFERRAL_PRIORITY, REFERRAL_PRIORITIES,
   TIMING_OPTIONS
 } from './doctor-note.constants';
+import { NamcoReferralOutComponent } from '../namco-referral-out/namco-referral-out.component';
 
 @Component({
   selector: 'app-doctor-note',
@@ -38,6 +40,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() visit!: VisitModel;
   @Input() patientInfo!: PatientModel;
   @Input() visitCompleted = false;
+  @Input() visitReferred = false;
 
   readonly contextChips = CONTEXT_CHIPS;
   readonly diagnosisTypes = DIAGNOSIS_TYPES;
@@ -57,6 +60,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   patientInteractionUuid = '';
   prescriptionShared = false;
   savingPatientInteraction = false;
+  savedSpokenToPatient: boolean | null = null;
   ayuQuestionsExpanded = false;
   ayuSuggestedQuestions: AyuSuggestedQuestion[] = [];
   ayuRefineText = '';
@@ -66,9 +70,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   aiDiagnosisState: AiDiagnosisState = 'loading';
   aiSummaryExpanded = false;
-  improveExpanded = true;
-  improveContextText = '';
-  selectedContextChips: string[] = [];
   whySuggestion: AiDiagnosisSuggestion | null = null;
   selectedDiagnoses: SelectedDiagnosis[] = [];
 
@@ -102,7 +103,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   private editMedicineUuid = '';
   private editMedicineIndex = -1;
   medInstructionText = '';
-  medInstructions: DraftTextItem[] = [];
+  savingMedInstruction = false;
+  medInstructions: DraftInstruction[] = [];
 
   adviceSearchTerm = '';
   adviceResults: string[] = [];
@@ -120,6 +122,11 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     { speciality: null, facility: null, priority: DEFAULT_REFERRAL_PRIORITY, reason: '' };
   referrals: DraftReferral[] = [];
 
+  /** Referring (non-NAMCO) doctor with the NAMCO referral flow on — Referral section is app-namco-referral-out. */
+  namcoReferralEnabled = false;
+  private isReferringToNamco = false;
+  @ViewChild(NamcoReferralOutComponent) private namcoReferral?: NamcoReferralOutComponent;
+
   wantFollowUp = false;
   followUpType: string | null = null;
   followUpDate = '';
@@ -135,7 +142,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   constructor(
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService,
-    private router: Router
+    private router: Router,
+    private appConfigService: AppConfigService
   ) {}
 
   private getPatientOpenMrsId(): string {
@@ -159,10 +167,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   get whatsAppLink(): string | null {
-    if (!this.patientPhoneNo) {
-      return null;
-    }
-    return `https://wa.me/${this.patientPhoneNo.replace(/[^\d]/g, '')}`;
+    return this.v2Service.whatsAppLink(this.patientPhoneNo);
   }
 
   answerAyuQuestion(q: AyuSuggestedQuestion, answer: string): void {
@@ -199,6 +204,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     ).subscribe({
       next: (res: any) => {
         this.patientInteractionUuid = res?.uuid || this.patientInteractionUuid;
+        this.savedSpokenToPatient = this.spokenToPatient;
         this.savingPatientInteraction = false;
         this.coreService.showToast('success', 'Patient interaction saved', 'Saved', 'success-patient-interaction-toast');
       },
@@ -214,6 +220,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.patientInteractionUuid = attr.uuid;
     if (attr.value) {
       this.spokenToPatient = attr.value.toLowerCase() === 'yes';
+      this.savedSpokenToPatient = this.spokenToPatient;
     }
   }
 
@@ -242,13 +249,15 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
+    // The Referral Consent step only applies to the referring (non-NAMCO) doctor.
+    this.namcoReferralEnabled = !!this.appConfigService?.namco_referral_section && !isNamcoDoctor(this.provider);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visitCompleted'] && this.visitCompleted) {
       this.prescriptionShared = true;
     }
-    if ((changes['visitUuid'] || changes['patientUuid']) && this.patientUuid && this.visitUuid) {
+    if ((changes['visitUuid'] || changes['patientUuid'] || changes['visitNoteUuid']) && this.patientUuid && this.visitUuid) {
       this.loadDraft();
     }
     if (changes['visit'] && this.visit) {
@@ -260,7 +269,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   private loadDraft(): void {
-    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid).subscribe(draft => {
+    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid, [this.visitNoteUuid].filter(Boolean)).subscribe(draft => {
       this.addedDiagnoses = draft.diagnoses;
       this.addedMedicines = draft.medications;
       this.advices = draft.advices;
@@ -380,24 +389,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
   }
 
-  isContextChipOn(chip: string): boolean {
-    return this.selectedContextChips.includes(chip);
-  }
-
-  toggleContextChip(chip: string): void {
-    const index = this.selectedContextChips.indexOf(chip);
-    if (index > -1) {
-      this.selectedContextChips.splice(index, 1);
-    } else {
-      this.selectedContextChips.push(chip);
-    }
-  }
-
-  updateAiSuggestions(): void {
-    this.whySuggestion = null;
-    this.loadAiDiagnosis(this.buildAiNotes());
-  }
-
   addDiagnosisManually(): void {
     this.aiDiagnosisState = 'ready';
     this.aiSuggestions = [];
@@ -405,12 +396,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiDiagnosis(): void {
-    this.loadAiDiagnosis(this.buildAiNotes());
-  }
-
-  private buildAiNotes(): string {
-    return [this.buildAyuNotes(), this.improveContextText, ...this.selectedContextChips]
-      .filter(Boolean).join('\n');
+    this.loadAiDiagnosis(this.buildAyuNotes());
   }
 
   private loadAiDiagnosis(notes = ''): void {
@@ -450,7 +436,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteDiagnosis(index: number, uuid?: string): void {
-    this.removeItem(this.addedDiagnoses, index, uuid);
+    this.v2Service.removeDraftItem(this.addedDiagnoses, index, uuid);
   }
 
   get medicationPanelState(): AiMedicationState {
@@ -608,7 +594,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteMedicine(index: number, uuid?: string): void {
-    this.removeItem(this.addedMedicines, index, uuid);
+    this.v2Service.removeDraftItem(this.addedMedicines, index, uuid);
   }
 
   toggleBundle(bundle: AdviceBundle): void {
@@ -667,7 +653,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteAdvice(index: number, uuid?: string): void {
-    this.removeItem(this.advices, index, uuid);
+    this.v2Service.removeDraftItem(this.advices, index, uuid);
   }
 
   cancelAdvice(): void {
@@ -684,6 +670,11 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (this.isTestAdded(value)) { return; }
     this.newTestText = value;
     this.addTest();
+  }
+
+  /** Follow-up doesn't apply once the patient is handed off to a NAMCO specialist. */
+  get isNamcoReferralConfirmed(): boolean {
+    return !!this.namcoReferral?.confirmedNamcoReferral;
   }
 
   applyAiReferral(referral: { speciality: string; facility: string; priority: string; reason: string }): void {
@@ -715,7 +706,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteTest(index: number, uuid?: string): void {
-    this.removeItem(this.tests, index, uuid);
+    this.v2Service.removeDraftItem(this.tests, index, uuid);
   }
 
   cancelTest(): void {
@@ -741,7 +732,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteReferral(index: number, uuid?: string): void {
-    this.removeItem(this.referrals, index, uuid);
+    this.v2Service.removeDraftItem(this.referrals, index, uuid);
   }
 
   cancelReferral(): void {
@@ -758,7 +749,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteNote(index: number, uuid?: string): void {
-    this.removeItem(this.outcomeNotes, index, uuid);
+    this.v2Service.removeDraftItem(this.outcomeNotes, index, uuid);
   }
 
   cancelNote(): void {
@@ -766,17 +757,19 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   addMedInstruction(): void {
-    if (!this.medInstructionText || !this.canWrite()) { return; }
+    if (!this.medInstructionText?.trim() || !this.canWrite() || this.savingMedInstruction) { return; }
     const value = this.medInstructionText;
-    const existingUuid = this.medInstructions[0]?.uuid;
-    this.v2Service.saveAdditionalInstruction(this.patientUuid, this.visitNoteUuid, value, existingUuid).subscribe(res => {
-      this.medInstructions = [{ value, uuid: res?.uuid || existingUuid }];
-      this.medInstructionText = '';
-    });
+    this.savingMedInstruction = true;
+    this.v2Service.saveAdditionalInstruction(this.patientUuid, this.visitNoteUuid, value, this.medInstructions[0] || null)
+      .pipe(finalize(() => { this.savingMedInstruction = false; }))
+      .subscribe(saved => {
+        this.medInstructions = [saved];
+        this.medInstructionText = '';
+      });
   }
 
   deleteMedInstruction(index: number, uuid?: string): void {
-    this.removeItem(this.medInstructions, index, uuid);
+    this.v2Service.removeDraftItem(this.medInstructions, index, uuid);
   }
 
   cancelMedInstruction(): void {
@@ -841,10 +834,49 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       this.coreService.showToast('warning', 'Diagnosis not added', 'Diagnosis Required', 'warning-diagnosis-required-toast');
       return;
     }
-    this.coreService.openSharePrescriptionConfirmModal().subscribe((confirmed: boolean) => {
+    if (this.namcoReferral && !this.namcoReferral.validateForShare()) { return; }
+    const namcoReferral = this.namcoReferral?.confirmedNamcoReferral || null;
+    this.coreService.openSharePrescriptionConfirmModal({ namcoReferral }).subscribe((confirmed: boolean) => {
       if (!confirmed) { return; }
-      this.completeVisitAndShare();
+      if (namcoReferral) {
+        this.referToNamco(namcoReferral);
+      } else {
+        this.completeVisitAndShare();
+      }
     });
+  }
+
+  /**
+  * Route the visit to the NAMCO specialist (Referral encounter + Routing Specialization)
+  * instead of completing it.
+  */
+  private referToNamco(namcoReferral: DraftReferral): void {
+    if (this.isReferringToNamco) { return; }
+    this.isReferringToNamco = true;
+    this.v2Service.createNamcoReferralEncounter(this.visit, this.provider?.uuid, namcoReferral.speciality)
+      .pipe(finalize(() => { this.isReferringToNamco = false; }))
+      .subscribe({
+        next: (referralEncounter) => {
+          if (!referralEncounter) { this.completeVisitAndShare(); return; }
+          this.visitReferred = true;
+          this.prescriptionShared = true;
+          this.coreService.openSharePrescriptionSuccessModal({ isReferral: true }).subscribe((result: string | boolean) => {
+            if (result === 'view') {
+              this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
+            } else if (result === 'dashboard') {
+              this.router.navigate(['/dashboard']);
+            }
+          });
+        },
+        error: () => {
+          this.coreService.openSharePrescriptionErrorModal({
+            msg: 'Unable to send the referral due to poor network connection. Please try again or come back later',
+            confirmBtnText: 'Try again'
+          }).subscribe((retry: boolean) => {
+            if (retry) { this.referToNamco(namcoReferral); }
+          });
+        }
+      });
   }
 
   private completeVisitAndShare(): void {

@@ -1,0 +1,209 @@
+<section id="section-pdn-interaction" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('interaction')">
+    <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
+    <span>Patient interaction</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['interaction'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['interaction']">
+    <ul class="vs2-bullet-list vs2-interaction-list">
+      <li>
+        <div class="vs2-form-row">
+          <span class="vs2-field-label">Connect with patient</span>
+          <span class="vs2-connect-actions">
+            <a class="vs2-icon-circle" [class.vs2-icon-circle-disabled]="!patientPhoneNo"
+              [attr.href]="patientPhoneNo ? 'tel:' + patientPhoneNo : null">
+              <img src="assets/svgs/phone-black.svg" alt="Call patient" />
+            </a>
+            <a class="vs2-icon-circle" [class.vs2-icon-circle-disabled]="!patientPhoneNo"
+              [attr.href]="whatsAppLink" target="_blank" rel="noopener">
+              <img src="assets/svgs/whatsapp-black.svg" alt="WhatsApp patient" />
+            </a>
+            <span class="vs2-connect-hint">
+              {{ patientPhoneNo ? 'Click here to connect with the patient' : 'Phone number is not available' }}
+            </span>
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="vs2-form-row">
+          <span class="vs2-field-label">Have you spoken with the patient directly?</span>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnSpoken" [checked]="spokenToPatient === true" disabled /> Yes</label>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnSpoken" [checked]="spokenToPatient === false" disabled /> No</label>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="section-pdn-diagnosis" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('diagnosis')">
+    <img class="vs2-section-icon-img" src="assets/svgs/diagnosis.svg" alt="" />
+    <span>Diagnosis</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['diagnosis'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['diagnosis']">
+    <ng-container *ngIf="note?.diagnoses?.length; else noEntries">
+      <h4 class="vs2-subhead vs2-subhead-purple">Added Diagnosis</h4>
+      <div class="vs2-pdn-dx-box" *ngFor="let dx of note?.diagnoses">
+        <span class="vs2-pdn-dx-name">{{ dx.name }}</span>
+        <div class="vs2-added-chips">
+          <span class="vs2-chip vs2-chip-solid-sm" *ngIf="dx.type">{{ dx.type }}</span>
+          <span class="vs2-chip vs2-chip-outline" *ngIf="dx.status">{{ dx.status }}</span>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-pdn-note" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('note')">
+    <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
+    <span>Note</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['note'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['note']">
+    <ul class="vs2-bullet-list" *ngIf="note?.notes?.length; else noEntries">
+      <li *ngFor="let n of note?.notes">{{ n.value }}</li>
+    </ul>
+  </div>
+</section>
+
+<section id="section-pdn-medication" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('medication')">
+    <img class="vs2-section-icon-img" src="assets/svgs/medication.svg" alt="" />
+    <span>Medication</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['medication'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['medication']">
+    <ng-container *ngIf="note?.medications?.length; else noEntries">
+      <h4 class="vs2-subhead vs2-subhead-purple">Added Medication</h4>
+      <div class="vs2-namco-grid vs2-pdn-med-grid vs2-namco-grid-head">
+        <span>Drug name</span>
+        <span>Strength</span>
+        <span>No. of days</span>
+        <span>Timing</span>
+        <span>Remarks</span>
+      </div>
+      <div class="vs2-namco-grid vs2-pdn-med-grid vs2-namco-grid-row" *ngFor="let m of note?.medications">
+        <span>{{ m.drug }}</span>
+        <span>{{ m.dose || '-' }}</span>
+        <span>{{ m.durationNo || '-' }}</span>
+        <span>{{ m.frequency || '-' }}</span>
+        <span>{{ m.instructRemark || '-' }}</span>
+      </div>
+    </ng-container>
+    <ng-container>
+      <span class="vs2-pdn-label">Additional instructions</span>
+      <ul class="vs2-bullet-list">
+        <li>{{ note?.additionalInstruction ? note?.additionalInstruction?.value : 'No additional instructions' }}</li>
+      </ul>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-pdn-advice" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('advice')">
+    <img class="vs2-section-icon-img" src="assets/svgs/advice.svg" alt="" />
+    <span>Advice</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['advice'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['advice']">
+    <ng-container *ngIf="note?.advices?.length; else noEntries">
+      <span class="vs2-pdn-label">Advice</span>
+      <ul class="vs2-bullet-list">
+        <li *ngFor="let a of note?.advices">{{ a.value }}</li>
+      </ul>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-pdn-test" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('test')">
+    <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
+    <span>Test</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['test'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['test']">
+    <ng-container *ngIf="note?.tests?.length; else noEntries">
+      <span class="vs2-pdn-label">Test</span>
+      <ul class="vs2-bullet-list">
+        <li *ngFor="let t of note?.tests">{{ t.value }}</li>
+      </ul>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-pdn-referral" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('referral')">
+    <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
+    <span>Referral-Out</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['referral'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['referral']">
+    <ng-container *ngIf="note?.referrals?.length; else noEntries">
+      <div class="vs2-namco-grid vs2-pdn-ref-grid vs2-namco-grid-head">
+        <span>Referral to</span>
+        <span>Referral facility</span>
+        <span>Priority of Referral</span>
+        <span>Remarks</span>
+      </div>
+      <div class="vs2-namco-grid vs2-pdn-ref-grid vs2-namco-grid-row" *ngFor="let r of note?.referrals">
+        <span>{{ r.speciality }}</span>
+        <span>{{ r.facility || '-' }}</span>
+        <span>{{ r.priority || '-' }}</span>
+        <span>{{ r.reason && r.reason !== '-' ? r.reason : '-' }}</span>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<section id="section-pdn-followup" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('followup')">
+    <img class="vs2-section-icon-img" src="assets/svgs/follow-up.svg" alt="" />
+    <span>Follow-up</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['followup'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['followup']">
+    <ul class="vs2-bullet-list vs2-interaction-list">
+      <li>
+        <div class="vs2-form-row">
+          <span class="vs2-field-label">Do you want to have follow up with the patient</span>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!!followUp" disabled /> Yes</label>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!followUp" disabled /> No</label>
+        </div>
+      </li>
+      <ng-container *ngIf="followUp">
+        <li *ngIf="followUp.date">
+          <div class="vs2-form-row">
+            <span class="vs2-field-label">Date</span>
+            <span>{{ followUp.date | date : 'dd MMMM yyyy' }}</span>
+          </div>
+        </li>
+        <li *ngIf="followUp.time">
+          <div class="vs2-form-row">
+            <span class="vs2-field-label">Time</span>
+            <span>{{ followUp.time }}</span>
+          </div>
+        </li>
+        <li *ngIf="followUp.reason">
+          <div class="vs2-form-row">
+            <span class="vs2-field-label">Reason for follow-up</span>
+            <span>{{ followUp.reason }}</span>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</section>
+
+<ng-template #noEntries>
+  <p class="vs2-field-hint vs2-note-doc-empty">Not added</p>
+</ng-template>

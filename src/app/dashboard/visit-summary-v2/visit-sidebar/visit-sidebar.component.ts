@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { SectionNavItem, TimelineGroup } from '../visit-summary-v2.models';
+import { NavGroup, SectionNavItem, TimelineGroup } from '../visit-summary-v2.models';
 
 @Component({
   selector: 'app-visit-sidebar',
@@ -11,9 +11,8 @@ export class VisitSidebarComponent {
   @Input() activeVisitScope!: string;
 
   @Input() sections: SectionNavItem[] = [];
-  @Input() doctorNoteNav: SectionNavItem[] = [];
+  @Input() noteNavGroups: NavGroup[] = [];
   @Input() activeSection!: string;
-  @Input() visitNoteStarted = false;
 
   @Input() pastVisitsTimeline: TimelineGroup[] = [];
   @Input() activePastVisitKey!: string;

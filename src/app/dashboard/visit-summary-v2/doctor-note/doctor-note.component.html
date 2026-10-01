@@ -1,8 +1,3 @@
-<div id="section-doctor-note" class="vs2-content-header vs2-dn-header">
-  <h2>Doctor's Note</h2>
-  <mat-icon>expand_less</mat-icon>
-</div>
-
 <section id="section-dn-interaction" class="vs2-section-card">
   <div class="vs2-section-title">
     <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
@@ -94,12 +89,14 @@
     <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Have you spoken with the patient directly?</span>
-        <label class="vs2-radio vs2-radio-green"><input type="radio" name="spoken" [value]="true" [(ngModel)]="spokenToPatient" /> Yes</label>
-        <label class="vs2-radio vs2-radio-green"><input type="radio" name="spoken" [value]="false" [(ngModel)]="spokenToPatient" /> No</label>
+        <label class="vs2-radio"><input type="radio" name="spoken" [value]="true" [(ngModel)]="spokenToPatient" /> Yes</label>
+        <label class="vs2-radio"><input type="radio" name="spoken" [value]="false" [(ngModel)]="spokenToPatient" /> No</label>
       </div>
     </li>
   </ul>
-  <button class="vs2-btn-soft" [disabled]="savingPatientInteraction" (click)="savePatientInteraction()">Save</button>
+  <button class="vs2-btn-soft" [disabled]="savingPatientInteraction || spokenToPatient === savedSpokenToPatient" (click)="savePatientInteraction()">
+    {{ spokenToPatient === savedSpokenToPatient ? 'Saved' : 'Save' }}
+  </button>
 </section>
 
 <section id="section-dn-diagnosis" class="vs2-section-card">
@@ -401,7 +398,7 @@
       <div class="vs2-med-card-grid">
         <span class="vs2-med-col-label">Timing</span>
         <span class="vs2-med-col-label">Strength</span>
-        <span class="vs2-med-col-label">No.of days</span>
+        <span class="vs2-med-col-label">No. of days</span>
         <span class="vs2-med-col-label">Remarks</span>
 
         <ng-container *ngIf="!m.editing">
@@ -461,7 +458,7 @@
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="medInstructionText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelMedInstruction()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addMedInstruction()">Add</button>
+    <button class="vs2-btn-add" [disabled]="!medInstructionText.trim() || savingMedInstruction" (click)="addMedInstruction()">Add</button>
   </div>
 </section>
 
@@ -536,7 +533,7 @@
 
   <div class="vs2-btn-row">
     <button class="vs2-btn-outline" (click)="cancelAdvice()">Cancel</button>
-    <button class="vs2-btn-soft" (click)="addAdvice()">Add Advice</button>
+    <button class="vs2-btn-soft" [disabled]="!selectedAdvices.length" (click)="addAdvice()">Add Advice</button>
   </div>
 </section>
 
@@ -583,7 +580,17 @@
   </div>
 </section>
 
-<section id="section-dn-referral" class="vs2-section-card">
+<app-namco-referral-out
+  *ngIf="namcoReferralEnabled"
+  [patientUuid]="patientUuid"
+  [visitUuid]="visitUuid"
+  [visitNoteUuid]="visitNoteUuid"
+  [referrals]="referrals"
+  [visitReferred]="visitReferred"
+  [prescriptionShared]="prescriptionShared">
+</app-namco-referral-out>
+
+<section id="section-dn-referral" class="vs2-section-card" *ngIf="!namcoReferralEnabled">
   <div class="vs2-section-title">
     <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
     <span>Referral-Out</span>
@@ -677,7 +684,11 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <div class="vs2-ai-followup" *ngIf="aiFollowUp">
+  <p class="vs2-namco-note" *ngIf="isNamcoReferralConfirmed">
+    Follow-up is not needed as this patient is being referred to a NAMCO doctor.
+  </p>
+
+  <div class="vs2-ai-followup" *ngIf="aiFollowUp && !isNamcoReferralConfirmed">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
@@ -712,10 +723,10 @@
   <ng-container *ngIf="!followUpUuid">
     <div class="vs2-form-row">
       <span class="vs2-field-label">Do you want to have follow up with the patient</span>
-      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" /> Yes</label>
+      <label class="vs2-radio" [class.vs2-radio-disabled]="isNamcoReferralConfirmed"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" [disabled]="isNamcoReferralConfirmed" /> Yes</label>
       <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="saveFollowUp()" /> No</label>
     </div>
-    <ng-container *ngIf="wantFollowUp">
+    <ng-container *ngIf="wantFollowUp && !isNamcoReferralConfirmed">
       <ul class="vs2-bullet-list vs2-interaction-list">
       <li>
       <div class="vs2-form-row">
