@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-visit-summary.svg" alt="" height="44px" />
+          <div>
+            <h6 class="mb-0">{{ "QMS" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "QMS" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [checked]="qmsFeature.is_enabled" (change)="updateQmsStatus($event)"
+                  data-test-id="checkboxQmsToggle" />
+                <div class="state">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnPublishQmsTop">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="sectionStatus" [ngClass]="!qmsFeature.is_enabled ? 'text-greyout' : ''">
+            {{ "Queue Management System (QMS) is currently" | translate }}
+            <strong>{{ (qmsFeature.is_enabled ? "enabled" : "disabled") | translate }}</strong>.
+            {{ "Use the toggle above to change it, then click Publish to apply the change." | translate }}
+          </div>
+
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnPublishQms">
+            {{ "Publish" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
