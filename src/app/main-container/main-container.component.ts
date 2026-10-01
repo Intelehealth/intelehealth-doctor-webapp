@@ -201,7 +201,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             this.getSpecialization()
           ).subscribe(_response => {
           });
-        }).catch((_) => console.log);
+        }).catch(() => { });
       } else {
         const fp = await FingerprintJS.load();
         const result = await fp.get();

@@ -3332,7 +3332,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {Array}
   */
   getImagesBySection(section: string): Array<DocImagesModel> {
-    return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+    return this.eyeImages.filter(o => (o.section || '').split(' - ')[0].trim().toLowerCase() === (section || '').trim().toLowerCase());
   }
 
   notifyHwForVisitStarted(): void {

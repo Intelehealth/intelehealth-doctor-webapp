@@ -186,7 +186,7 @@ export class WebrtcService {
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
-      console.log('error: ', error);
+      console.error('error: ', error);
     }
   }
 
@@ -369,9 +369,7 @@ export class WebrtcService {
   /**
    * Noop function to be passed as default function if nothing passed
    */
-  noop() {
-    console.log('Not Implemented.')
-  }
+  noop() { }
 
   autoStartRecording(payload){
      return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
