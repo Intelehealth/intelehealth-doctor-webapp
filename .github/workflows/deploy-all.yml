@@ -16,7 +16,7 @@ on:
           - pathqa
   push:
     branches:
-      - nas-ida5-development-master
+      - pull-nas-ida5-development-master
 
 jobs:
   set-matrix:
