@@ -151,7 +151,7 @@ export class AdminActionsComponent implements OnInit {
     {
       title: "QMS",
       desc: "Manage QMS functionality",
-      icon: "assets/svgs/patient-visit-summary.svg",
+      icon: "assets/svgs/menu-queue.svg",
       path: "admin/actions/qms",
       isLocalPath: true
     },

@@ -4821,7 +4821,7 @@
   "Burn": "जलना",
   "Depression": "अवसाद",
   "Dental caries": "दाँतों की सड़न",
-  "Pneumonia": "निमोनिया"
+  "Pneumonia": "निमोनिया",
   "Asthma": "दमा",
   "Candidiasis": "कैंडिडिआसिस",
   "Covid suspected": "कोविड संदिग्ध",
@@ -5017,7 +5017,12 @@
   "Download": "डाउनलोड",
   "Today's Appointment": "आज की नियुक्ति",
   "patient's complaint": "रोगी की शिकायत",
-  "Prior treatment sought": "पहले लिया गया उपचार"
+  "Prior treatment sought": "पहले लिया गया उपचार",
+  "QMS": "क्यूएमएस",
+  "Queue Management System (QMS) is currently enabled.": "क्यू प्रबंधन प्रणाली (क्यूएमएस) इस समय सक्षम है।",
+  "Queue Management System (QMS) is currently disabled.": "क्यू प्रबंधन प्रणाली (क्यूएमएस) इस समय अक्षम है।",
+  "Use the toggle above to change it, then click Publish to apply all pending configuration changes.": "इसे बदलने के लिए ऊपर दिए गए टॉगल का उपयोग करें, फिर सभी लंबित कॉन्फ़िगरेशन परिवर्तनों को लागू करने के लिए प्रकाशित करें पर क्लिक करें।",
+  "The QMS setting is not available on this server.": "इस सर्वर पर क्यूएमएस सेटिंग उपलब्ध नहीं है।"
 }
 
 

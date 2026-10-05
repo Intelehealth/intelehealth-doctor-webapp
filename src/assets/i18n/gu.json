@@ -390,8 +390,13 @@
   "ENT Specialist": "ENT વિશેષજ્ઞ",
   "Eye Specialist": "અંખ નિષ્ણાત",
   "Dental Surgeon": "દાંત વિષેષજ્ઞ",
-  "Other Specialist*": "અન્ય નિષ્ણાત*"
-  }
+  "Other Specialist*": "અન્ય નિષ્ણાત*",
+  "QMS": "ક્યુએમએસ",
+  "Queue Management System (QMS) is currently enabled.": "કતાર વ્યવસ્થાપન સિસ્ટમ (ક્યુએમએસ) હાલમાં સક્ષમ છે.",
+  "Queue Management System (QMS) is currently disabled.": "કતાર વ્યવસ્થાપન સિસ્ટમ (ક્યુએમએસ) હાલમાં અક્ષમ છે.",
+  "Use the toggle above to change it, then click Publish to apply all pending configuration changes.": "તેને બદલવા માટે ઉપરના ટૉગલનો ઉપયોગ કરો, પછી બધા બાકી રહેલા રૂપરેખાંકન ફેરફારો લાગુ કરવા માટે પ્રકાશિત કરો પર ક્લિક કરો.",
+  "The QMS setting is not available on this server.": "આ સર્વર પર ક્યુએમએસ સેટિંગ ઉપલબ્ધ નથી."
+}
 
 
 
