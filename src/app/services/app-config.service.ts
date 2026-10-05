@@ -27,6 +27,7 @@ export class AppConfigService {
   public patient_reg_other: boolean;
   public patient_reg_address: boolean;
   public abha_section: boolean;
+  public qms_section: boolean;
   public sidebar_menus: { [key: string]: boolean };
   public patient_visit_sections: PatientVisitSection[]
   public dropdown_values: DropdownValuesModel[]

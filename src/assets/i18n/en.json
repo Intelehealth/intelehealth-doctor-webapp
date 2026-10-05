@@ -6120,5 +6120,10 @@
   "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility.",
   "Review of Imaging":"Review of Imaging",
   "Review with Reports":"Review with Reports",
-  "Reschedule Referral":"Referral"
+  "Reschedule Referral":"Referral",
+  "QMS": "QMS",
+  "Queue Management System (QMS) is currently enabled.": "Queue Management System (QMS) is currently enabled.",
+  "Queue Management System (QMS) is currently disabled.": "Queue Management System (QMS) is currently disabled.",
+  "Use the toggle above to change it, then click Publish to apply all pending configuration changes.": "Use the toggle above to change it, then click Publish to apply all pending configuration changes.",
+  "The QMS setting is not available on this server.": "The QMS setting is not available on this server."
 }

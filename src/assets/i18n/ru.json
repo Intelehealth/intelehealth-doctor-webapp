@@ -6121,5 +6121,10 @@
   "Use this if you wish to seek a second opinion from an external facility.":"Используйте это, если вы хотите получить второе мнение от стороннего учреждения.",
   "Review of Imaging":"Обзор изображений",
   "Review with Reports":"Обзор с отчетами",
-  "Reschedule Referral":"Перепланировать"
+  "Reschedule Referral":"Перепланировать",
+  "QMS": "QMS",
+  "Queue Management System (QMS) is currently enabled.": "Система управления очередью (QMS) в настоящее время включена.",
+  "Queue Management System (QMS) is currently disabled.": "Система управления очередью (QMS) в настоящее время отключена.",
+  "Use the toggle above to change it, then click Publish to apply all pending configuration changes.": "Используйте переключатель выше, чтобы изменить это, затем нажмите «Опубликовать», чтобы применить все ожидающие изменения конфигурации.",
+  "The QMS setting is not available on this server.": "Настройка QMS недоступна на этом сервере."
 }
