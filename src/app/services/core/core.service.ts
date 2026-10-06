@@ -14,6 +14,7 @@ import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-int
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
 import { PrescribeIvFluidComponent } from 'src/app/modal-components/prescribe-iv-fluid/prescribe-iv-fluid.component';
 import { PrescribeMedicationComponent } from 'src/app/modal-components/prescribe-medication/prescribe-medication.component';
+import { PastVisitHistoryComponent } from 'src/app/modal-components/past-visit-history/past-visit-history.component';
 import { PrescribeOxytocinComponent } from 'src/app/modal-components/prescribe-oxytocin/prescribe-oxytocin.component';
 import { PrescribePlanComponent } from 'src/app/modal-components/prescribe-plan/prescribe-plan.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
@@ -107,6 +108,11 @@ export class CoreService {
 
   openPrescribeMedicationModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(PrescribeMedicationComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openPastVisitHistoryModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(PastVisitHistoryComponent, { panelClass: "modal-lg", data });
     return dialogRef.afterClosed();
   }
 

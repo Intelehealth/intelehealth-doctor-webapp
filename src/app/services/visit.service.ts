@@ -47,8 +47,8 @@ export class VisitService {
     // this.completedVisit = new Array();
   }
 
-  recentVisits(id): Observable<any> {
-    const url = `${this.baseURL}/visit?patient=${id}&v=full`;
+  recentVisits(id, v = "full"): Observable<any> {
+    const url = `${this.baseURL}/visit?patient=${id}&v=${v}`;
     return this.http.get(url);
   }
 

@@ -528,3 +528,8 @@ th:last-child {
     margin-top: 0.5rem;
   }
 }
+
+.past-details-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

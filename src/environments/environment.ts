@@ -26,7 +26,7 @@ const { captchaSiteKey, siteKey } = CAPTCHA_KEYS[CLIENT];
 export const environment = {
   production: false,
   client: CLIENT,
-  hasStage3: CLIENT === 'nepal',
+  hasStage3: true,
   
   forceEzaziBranding: false,
   base,

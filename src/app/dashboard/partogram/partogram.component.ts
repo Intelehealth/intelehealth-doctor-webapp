@@ -32,6 +32,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     environment.client === 'nepal' ||
     globalThis?.location?.hostname?.toLowerCase().includes('nepal');
   hasStage3Trigger = false;
+  pastVisitsCount = 0;
 
   pos = { top: 0, left: 0, x: 0, y: 0 };
   ele: any;
@@ -478,6 +479,26 @@ export class PartogramComponent implements OnInit, OnDestroy {
     globalThis.open(whatsappLink, '_blank');
   }
 
+  loadPastVisitsCount() {
+    if (!this.patient?.uuid) return;
+    this.visitService.recentVisits(this.patient.uuid, 'custom:(uuid)').subscribe({
+      next: (res: any) => {
+        const results: any[] = Array.isArray(res?.results) ? res.results : [];
+        this.pastVisitsCount = results.filter(v => v.uuid !== this.visit?.uuid).length;
+      },
+      error: () => { this.pastVisitsCount = 0; }
+    });
+  }
+
+  viewPastDetails() {
+    if (!this.pastVisitsCount) return;
+    this.coreService.openPastVisitHistoryModal({
+      patientName: this.pinfo?.name,
+      patientUuid: this.patient?.uuid,
+      currentVisitUuid: this.visit?.uuid
+    }).subscribe();
+  }
+
   printPartogram() {
     this.helperService.printPartogramNative('partogram-print-table');
   }
@@ -514,6 +535,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         this.ngxUiLoaderService.stop();
         this.visit = visit;
         this.patient = visit?.patient;
+        this.loadPastVisitsCount();
         this.readPatientAttributes();
         this.readStageData();
         this.readVisitHolder();
@@ -554,6 +576,32 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Admission encounter obs take precedence over the patient attributes
+   * for the partogram header details.
+   */
+  readAdmissionEncounterInfo() {
+    const admissionEnc = this.visit?.encounters?.find((e: any) => e?.encounterType?.display === 'Admission');
+    if (!admissionEnc?.obs?.length) return;
+    const conceptToKey: Record<string, string> = {
+      'Hospital ID': 'HospitalID',
+      'Parity': 'Parity',
+      'GRAVIDA': 'Gravida',
+      'Labor Onset': 'LaborOnset',
+      'Active Labor Diagnosed': 'ActiveLaborDiagnosed',
+      'Membrane Ruptured Timestamp': 'MembraneRupturedTimestamp',
+      'Risk factors': 'Riskfactors',
+      'Last Menstrual Period (LMP)': 'LMP',
+      'Estimated Date of Delivery (EDD)': 'EDD'
+    };
+    admissionEnc.obs.forEach((o: any) => {
+      const key = conceptToKey[o?.concept?.display];
+      if (key && o.value !== null && o.value !== undefined && String(o.value).trim() !== '') {
+        this.pinfo[key] = typeof o.value === 'string' ? o.value.trim() : o.value;
+      }
+    });
+  }
+
   readPatientAttributes() {
     for (let x = 0; x < this.patient?.attributes.length; x++) {
       this.pinfo[this.patient?.attributes[x]?.attributeType.display.replace(/ /g, '')] = this.patient?.attributes[x]?.value;
@@ -562,8 +610,12 @@ export class PartogramComponent implements OnInit, OnDestroy {
     if (lmpAttr) { this.pinfo['LMP'] = lmpAttr.value; }
     const eddAttr = this.patient?.attributes?.find((a: any) => a.attributeType.display === 'Estimated Date of Delivery (EDD)');
     if (eddAttr) { this.pinfo['EDD'] = eddAttr.value; }
+    const hospitalId = this.patient?.attributes?.find((a: any) => a.attributeType.display === 'Hospital ID');
+    if (hospitalId) { this.pinfo['HospitalID'] = hospitalId.value; }
+    this.readAdmissionEncounterInfo();
     if (this.pinfo['ActiveLaborDiagnosed']) {
-      this.pinfo['ActiveLaborDiagnosed'] = moment(this.pinfo['ActiveLaborDiagnosed'], 'DD/MM/YYYY hh:mm A').toISOString();
+      const aldParsed = moment(String(this.pinfo['ActiveLaborDiagnosed']).trim(), [moment.ISO_8601, 'DD/MM/YYYY hh:mm A', 'DD/MM/YYYY HH:mm', 'DD/MM/YYYY'] as any, true);
+      this.pinfo['ActiveLaborDiagnosed'] = aldParsed.isValid() ? aldParsed.toISOString() : null;
     }
     if (this.pinfo['MembraneRupturedTimestamp']) {
       const mrVal = String(this.pinfo['MembraneRupturedTimestamp']).trim();
@@ -582,8 +634,6 @@ export class PartogramComponent implements OnInit, OnDestroy {
     this.pinfo['name'] = this.patient?.person.display;
     this.pinfo['gender'] = this.patient?.person.gender;
     this.pinfo['openMrsId'] = this.patient?.identifiers[0]?.identifier;
-    const hospitalId  = this.patient?.attributes?.find((a: any) => a.attributeType.display === 'Hospital ID');
-    if (hospitalId) { this.pinfo['HospitalID'] = hospitalId.value; }
     const providerAttributes = this.visit.encounters[0]?.encounterProviders[0]?.provider?.attributes;
     if (providerAttributes?.length) {
       let attr = providerAttributes.find((o: any) => o.attributeType.display == 'whatsapp');
@@ -599,6 +649,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     const visitCompleteEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'Visit Complete');
     const stage3OutcomeEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'DELIVERY_OUTCOME_STAGE3');
     
+    console.log(environment.hasStage3 ,  !!stage3OutcomeEnc)
     // For Nepal: check if DELIVERY_OUTCOME_STAGE3 encounter is present
     this.hasStage3Trigger = environment.hasStage3 && !!stage3OutcomeEnc;
     

@@ -3,7 +3,9 @@
     <div class="col-md-12 p-0">
       <div class="intel-card">
         <div class="card-body">
-          <div class="py-2 d-flex align-items-center justify-content-end">
+          <div class="py-2 d-flex align-items-center justify-content-between">
+            <button class="blue-btn cursor-pointer past-details-btn" type="button" [disabled]="!pastVisitsCount" [matTooltip]="pastVisitsCount ? '' : 'No past visits'" matTooltipPosition="below" (click)="viewPastDetails()">View Past Details</button>
+            <div class="d-flex align-items-center">
             <button class="blue-btn mr-1" type="button" (click)="zoomIn()">Zoom In [+]</button>
             <button class="blue-btn mr-1" type="button" (click)="zoomOut()">Zoom Out [-]</button>
             <button class="blue-btn mr-1" type="button" (click)="zoomReset()">Reset</button>
@@ -13,6 +15,7 @@
             <button class="icon-action-btn" type="button" (click)="printPartogram()" matTooltip="Print" matTooltipPosition="below">
               <mat-icon>print</mat-icon>
             </button>
+            </div>
           </div>
           <div style="height: 2000px; border: 1px solid black;">
             <pan-zoom [config]="panZoomConfig">
@@ -1231,7 +1234,7 @@
             <div class="card-header d-flex align-items-center justify-content-between">
               <h6 class="mb-0">Visit Complete Details</h6>
               <button
-                *ngIf="isNepalClient && hasStage3Trigger"
+                *ngIf="hasStage3Trigger"
                 class="blue-btn"
                 type="button"
                 (click)="openStage3()"
@@ -1289,6 +1292,6 @@
 </div>
 
 <div class="webrtc-controls">
-  <img *ngIf="!isNepalClient" class="img shadow" src="assets/svgs/video-square.svg" (click)="startCall()" alt=""/>
+  <img class="img shadow" src="assets/svgs/video-square.svg" (click)="startCall()" alt=""/>
   <img class="img shadow" src="assets/svgs/chat-square.svg" (click)="startChat()" alt=""/>
 </div>

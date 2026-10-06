@@ -26,7 +26,7 @@ const DEPLOY_BASE = window.location.pathname.endsWith('/')
 export const environment = {
   production: true,
   client: CLIENT,
-  hasStage3: CLIENT === 'nepal',
+  hasStage3: true,
 
   forceEzaziBranding: false,
   base:            `${window.location.protocol}//${window.location.host}`,

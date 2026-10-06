@@ -1,0 +1,40 @@
+<div class="past-visit-modal">
+  <div class="modal-title" mat-dialog-title>
+    <div>
+      <h6 class="mb-0 title">Past Visit History</h6>
+      <small class="subtitle">{{patientName}}<ng-container *ngIf="patientName"> · </ng-container>{{visits.length}} {{visits.length === 1 ? 'visit' : 'visits'}} on record</small>
+    </div>
+    <button class="modal-close-btn cursor-pointer" type="button" (click)="close()"><img src="assets/svgs/Close.svg" alt="Close"></button>
+  </div>
+  <div class="modal-body" mat-dialog-content>
+    <p class="state-msg" *ngIf="loading">Loading past visits...</p>
+    <p class="state-msg" *ngIf="error">Unable to load past visits. <a class="cursor-pointer" (click)="loadVisits()">Retry</a></p>
+    <p class="state-msg" *ngIf="!loading && !error && !visits.length">No past visits found.</p>
+    <div class="visit-card" *ngFor="let v of visits; let i = index" [class.open]="expandedIndex === i">
+      <button type="button" class="visit-header cursor-pointer" (click)="toggle(i)">
+        <span class="visit-number">{{i + 1}}</span>
+        <span class="visit-heading">
+          <span class="visit-date">Visit — {{v.date}}</span>
+          <span class="visit-type">{{v.title || '-'}}</span>
+        </span>
+        <mat-icon class="chevron">{{expandedIndex === i ? 'expand_less' : 'expand_more'}}</mat-icon>
+      </button>
+      <div class="visit-details" *ngIf="expandedIndex === i">
+        <div class="detail"><label>Date of Active Labour Diagnosed</label><p>{{v.activeLabourDiagnosed || '-'}}</p></div>
+        <div class="detail"><label>Date of Delivery</label><p>{{v.deliveryDate || '-'}}</p></div>
+        <div class="detail"><label>Risk Factors</label><p>{{v.riskFactors || '-'}}</p></div>
+        <div class="detail"><label>Parity</label><p>{{v.parity || '-'}}</p></div>
+        <div class="detail"><label>Mode of Delivery</label><p>{{v.modeOfDelivery || '-'}}</p></div>
+        <div class="detail"><label>Baby Status</label><p>{{v.babyStatus || '-'}}</p></div>
+        <div class="detail"><label>Mother Status</label><p>{{v.motherStatus || '-'}}</p></div>
+        <div class="detail">
+          <label>Final Outcome Report</label>
+          <p>
+            <a *ngIf="v.reportUrl; else noReport" class="report-link cursor-pointer" (click)="openReport(v)"><span class="report-text">View Report</span><mat-icon>open_in_new</mat-icon></a>
+            <ng-template #noReport>-</ng-template>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

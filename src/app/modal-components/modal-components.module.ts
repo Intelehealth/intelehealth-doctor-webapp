@@ -30,6 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { PrescribeMedicationComponent } from './prescribe-medication/prescribe-medication.component';
 import { PrescribeIvFluidComponent } from './prescribe-iv-fluid/prescribe-iv-fluid.component';
+import { PastVisitHistoryComponent } from './past-visit-history/past-visit-history.component';
 import { PrescribeOxytocinComponent } from './prescribe-oxytocin/prescribe-oxytocin.component';
 import { PrescribePlanComponent } from './prescribe-plan/prescribe-plan.component';
 import { AddAssessmentComponent } from './add-assessment/add-assessment.component';
@@ -58,7 +59,8 @@ import { ViewAsssessmentComponent } from './view-asssessment/view-asssessment.co
         PrescribePlanComponent,
         AddAssessmentComponent,
         ViewPlanComponent,
-        ViewAsssessmentComponent
+        ViewAsssessmentComponent,
+        PastVisitHistoryComponent
     ],
     imports: [
         CommonModule,
