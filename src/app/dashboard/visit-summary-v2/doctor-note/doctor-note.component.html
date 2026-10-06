@@ -8,7 +8,7 @@
 
   <div class="vs2-ayu-card" [class.vs2-ayu-open]="ayuQuestionsExpanded">
     <div class="vs2-ayu-banner" (click)="ayuQuestionsExpanded = !ayuQuestionsExpanded">
-      <img class="vs2-ayu-icon" src="assets/svgs/ayu-new.svg" alt="" />
+      <img class="vs2-ayu-icon" src="assets/svgs/ayu-logo.svg" alt="" />
       <div class="vs2-ayu-text">
         <span class="vs2-ayu-title">Ayu Suggested Questions</span>
         <span class="vs2-ayu-subtitle">Based on current symptoms and missing information</span>
@@ -38,7 +38,15 @@
 
       <div class="vs2-ayu-question" *ngFor="let q of ayuSuggestedQuestions; let i = index">
         <div class="vs2-ayu-q-top">
-          <span class="vs2-ayu-tag" *ngIf="q.category">{{ q.category }}</span>
+          <div class="vs2-ayu-q-body">
+            <span class="vs2-ayu-tag" *ngIf="q.category">{{ q.category }}</span>
+            <p class="vs2-ayu-q-text">{{ q.question }}</p>
+            <p class="vs2-ayu-q-hint" *ngIf="q.hint">{{ q.hint }}</p>
+            <input class="vs2-input vs2-ayu-answer-input" *ngIf="q.editing" [(ngModel)]="q.answer"
+              [ngModelOptions]="{ standalone: true }" placeholder="Type your answer"
+              (blur)="q.editing = false" (keyup.enter)="q.editing = false" />
+            <span class="vs2-ayu-answer" *ngIf="q.answer && !q.editing">{{ q.answer }}</span>
+          </div>
           <span class="vs2-ayu-q-actions">
             <ng-container *ngIf="!q.answer && !q.editing">
               <button class="vs2-ayu-yes" (click)="answerAyuQuestion(q, 'Yes')">Yes</button>
@@ -48,12 +56,6 @@
             <mat-icon class="vs2-ayu-edit" *ngIf="q.answer || q.editing" (click)="editAyuQuestion(q)">edit_note</mat-icon>
           </span>
         </div>
-        <p class="vs2-ayu-q-text">{{ q.question }}</p>
-        <p class="vs2-ayu-q-hint" *ngIf="q.hint">{{ q.hint }}</p>
-        <input class="vs2-input vs2-ayu-answer-input" *ngIf="q.editing" [(ngModel)]="q.answer"
-          [ngModelOptions]="{ standalone: true }" placeholder="Type your answer"
-          (blur)="q.editing = false" (keyup.enter)="q.editing = false" />
-        <span class="vs2-ayu-answer" *ngIf="q.answer && !q.editing">{{ q.answer }}</span>
       </div>
 
       <h4 class="vs2-ayu-refine-title">Refine AI Suggestions(optional)</h4>
@@ -107,20 +109,23 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiClinicalSummary">
+  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiResponseReceived">
     <div class="vs2-ayu-banner" (click)="aiSummaryExpanded = !aiSummaryExpanded">
-      <img class="vs2-ayu-icon" src="assets/svgs/ayu-new.svg" alt="" />
+      <img class="vs2-ayu-icon" src="assets/svgs/ayu-logo.svg" alt="" />
       <div class="vs2-ayu-text">
         <span class="vs2-ayu-title">Ai Clinical Summary</span>
       </div>
       <mat-icon class="vs2-ayu-chevron">{{ aiSummaryExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
     </div>
-    <p class="vs2-summary-text" *ngIf="aiSummaryExpanded">{{ aiClinicalSummary }}</p>
+    <ng-container *ngIf="aiSummaryExpanded">
+      <p class="vs2-summary-text" *ngIf="aiClinicalSummary">{{ aiClinicalSummary }}</p>
+      <p class="vs2-summary-text vs2-summary-empty" *ngIf="!aiClinicalSummary">No clinical summary was generated for this visit.</p>
+    </ng-container>
   </div>
 
   <div class="vs2-ai-dx-head">
     <h4 class="vs2-ai-dx-title">
-      <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Diagnosis
+      <img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Diagnosis
     </h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ddx')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
@@ -285,7 +290,7 @@
 
   <div class="vs2-ai-dx-head">
     <h4 class="vs2-ai-dx-title">
-      <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Medication
+      <img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Medication
     </h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_medication')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
@@ -471,7 +476,7 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiAdvices.length">
-    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Advice</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Advice</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
@@ -546,7 +551,7 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiTests.length">
-    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Tests</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Tests</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
@@ -565,18 +570,15 @@
   </div>
 
   <span class="vs2-field-label">Test<span class="vs2-req">*</span></span>
-  <ng-select
-    class="vs2-ng-select vs2-ng-select-grid"
-    [items]="testOptions"
+  <input
+    class="vs2-input"
+    placeholder="Type here"
     [(ngModel)]="newTestText"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    placeholder="Add test to patient">
-  </ng-select>
+    [ngModelOptions]="{ standalone: true }"
+    (keyup.enter)="addTest()" />
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
-    <button class="vs2-btn-add" [disabled]="!newTestText" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-add" [disabled]="!newTestText?.trim()" (click)="addTest()">Add Test</button>
   </div>
 </section>
 
@@ -599,7 +601,7 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiReferrals.length">
-    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Referral</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Referral</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
@@ -689,7 +691,7 @@
   </p>
 
   <div class="vs2-ai-followup" *ngIf="aiFollowUp && !isNamcoReferralConfirmed">
-    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Follow-up</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup')" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>

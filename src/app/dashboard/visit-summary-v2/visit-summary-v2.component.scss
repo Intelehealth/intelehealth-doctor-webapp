@@ -926,7 +926,8 @@ app-past-visits {
 
   .vs2-ayu-icon {
     width: 32px;
-    height: 32px;
+    height: auto;
+    flex-shrink: 0;
   }
 
   .vs2-ayu-text {
@@ -1005,10 +1006,14 @@ app-past-visits {
 
 .vs2-ayu-q-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+}
+
+.vs2-ayu-q-body {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .vs2-ayu-tag {
@@ -1018,12 +1023,15 @@ app-past-visits {
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-block;
+  margin-bottom: 6px;
 }
 
 .vs2-ayu-q-actions {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .vs2-ayu-yes,
@@ -1344,6 +1352,11 @@ app-past-visits {
   font-size: 13px;
   line-height: 1.7;
   color: $navy;
+}
+
+.vs2-summary-empty {
+  color: $grey-text;
+  font-style: italic;
 }
 
 .vs2-ai-dx-title {

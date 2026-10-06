@@ -623,10 +623,6 @@ export class VisitSummaryV2Service {
     return this.conceptAnswers('0308000d-77a2-46e0-a6fa-a8c1dcbc3141');
   }
 
-  getTestsList(): Observable<string[]> {
-    return this.conceptAnswers(conceptIds.conceptInvestigationsTest);
-  }
-
   private conceptAnswers(conceptUuid: string): Observable<string[]> {
     return this.diagnosisService.concept(conceptUuid).pipe(
       map((res: any) => (res?.answers || []).map((a: any) => a.display).filter(Boolean)),
