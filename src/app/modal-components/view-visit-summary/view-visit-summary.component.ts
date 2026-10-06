@@ -474,7 +474,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {arra}
   */
   getImagesBySection(section){
-    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
+    return this.eyeImages.filter(o => (o.section || '').split(' - ')[0].trim().toLowerCase() === (section || '').trim().toLowerCase());
   }
 
   /**
