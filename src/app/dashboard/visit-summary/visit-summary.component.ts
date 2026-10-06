@@ -1392,6 +1392,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       callType: callType
     });
     
+    // WhatsApp patients have no app to ring, so send them the join link.
+    // Fire-and-forget: the doctor's call must not wait on the message.
+    if (this.isTurnServer && this.visit.patient?.uuid) {
+      this.webrtcSvc.generateMagicLink(
+        this.visit.uuid,
+        this.visit.patient.uuid,
+        getCacheData(false, doctorDetails.DOCTOR_NAME) || this.provider?.person?.display,
+        this.patient?.person?.display,
+        true
+      ).subscribe({
+        next: (res: any) => {
+          if (res?.notified === false) {
+            console.error('Call link not sent to patient:', res?.notifyError);
+          }
+        },
+        error: (err) => console.error('Call link request failed:', err),
+      });
+    }
+
     this.isCalling = true;
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
