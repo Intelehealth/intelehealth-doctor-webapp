@@ -30,7 +30,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn" , "nasprod"]' >> "$GITHUB_OUTPUT"
+            echo 'targets=["dev","turn","ttxai","testturn","nasprod"]' >> "$GITHUB_OUTPUT"
              
           fi
 
