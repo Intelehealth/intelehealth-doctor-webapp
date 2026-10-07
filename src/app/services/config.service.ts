@@ -523,16 +523,6 @@ export class ConfigService {
     const url = `${this.baseURL}/ai-llm/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
-  
-  /**
-   * Get feature config by key
-   * @param {string} key - feature key
-   * @returns {Observable<any>}
-   */
-  getFeatureByKey(key: string): Observable<any> {
-    const url = `${this.baseURL}/feature/getByKey/${key}`;
-    return this.http.get(url);
-  }
 
   /**
    * @returns {Observable<any>}
