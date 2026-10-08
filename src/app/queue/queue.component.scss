@@ -87,6 +87,10 @@ $orange-soft: #FDEFE0;
 }
 
 .break-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
   padding: 10px 16px;
   border-radius: 10px;
@@ -94,6 +98,64 @@ $orange-soft: #FDEFE0;
   color: #9A5A17;
   font-size: 14px;
   font-weight: 600;
+
+  .break-countdown {
+    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .resume-btn {
+    padding: 6px 14px;
+    border: 1px solid currentColor;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.off-shift-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: $violet-soft;
+  color: $violet-text;
+  font-size: 14px;
+  font-weight: 600;
+
+  .resume-btn {
+    padding: 6px 14px;
+    border: 1px solid currentColor;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.queue-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+  filter: grayscale(1);
 }
 
 .queue-card {
@@ -207,6 +269,14 @@ $orange-soft: #FDEFE0;
 
   &.status-on-call {
     color: $green;
+  }
+
+  &.status-assigned {
+    color: $violet-text;
+  }
+
+  &.status-awaiting-prescription {
+    color: $orange;
   }
 
   &.status-next-in-queue {

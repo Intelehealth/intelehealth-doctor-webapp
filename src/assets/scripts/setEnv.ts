@@ -61,6 +61,7 @@ const environmentFileContent = `
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
+    queueURL: '${process.env.QUEUE_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
     socketURL: '${process.env.SOCKET_URL}',
     captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',

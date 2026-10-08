@@ -1,55 +1,61 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EndShiftComponent } from './modals/end-shift/end-shift.component';
 import { PauseQueueComponent } from './modals/pause-queue/pause-queue.component';
 import { CallNotHappenedComponent } from './modals/call-not-happened/call-not-happened.component';
 import { CallDoneComponent } from './modals/call-done/call-done.component';
-import { DoctorAvailability, QueuePatient, QueueStatus, QUEUE_STATUS_LABELS } from './queue.model';
-import { getCacheData } from '../utils/utility-functions';
-import { doctorDetails } from 'src/config/constant';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { DoctorStatus, DoctorStatusResponse, QueuePatient, QueueStatus, QueueVisitEntry, QueueVisitsResponse, QUEUE_STATUS_LABELS } from './queue.model';
+import { getAge, getCacheData, getSpecialization } from '../utils/utility-functions';
+import { doctorDetails, visitTypes } from 'src/config/constant';
+import { VisitService } from '../services/visit.service';
+import { QueueService } from '../services/queue.service';
 
-const MOCK_QUEUE: QueuePatient[] = [
-  { visitUuid: 'v1', patientUuid: 'p1', name: 'Suresh Deshmukh', gender: 'F', age: '24y', status: 'on_call', hw: 'Priya', location: 'TM Clinic 1', chiefComplaint: 'Fever' },
-  { visitUuid: 'v2', patientUuid: 'p2', name: 'Aman Sharma', gender: 'M', age: '18y', status: 'next_in_queue', hw: 'Ramesh', location: 'TM Clinic 2', chiefComplaint: 'Fever & Cough' },
-  { visitUuid: 'v3', patientUuid: 'p3', name: 'Suresh Deshmane', gender: 'M', age: '12d 6h', status: 'waiting', hw: 'Dipali', location: 'TM Clinic 1', chiefComplaint: 'Fever, Headache & Cough' },
-  { visitUuid: 'v4', patientUuid: 'p4', name: 'Nikita Agrawal', gender: 'F', age: '48y', status: 'waiting', hw: 'Jitesh', location: 'TM Clinic 3', chiefComplaint: 'Back pain' },
-  { visitUuid: 'v5', patientUuid: 'p5', name: 'Nitin Wagh', gender: 'M', age: '18m 15d', status: 'waiting', hw: 'Manda', location: 'TM Clinic 2', chiefComplaint: 'Runny nose' },
-  { visitUuid: 'v1', patientUuid: 'p1', name: 'Suresh Deshmukh', gender: 'F', age: '24y', status: 'on_call', hw: 'Priya', location: 'TM Clinic 1', chiefComplaint: 'Fever' },
-  { visitUuid: 'v2', patientUuid: 'p2', name: 'Aman Sharma', gender: 'M', age: '18y', status: 'next_in_queue', hw: 'Ramesh', location: 'TM Clinic 2', chiefComplaint: 'Fever & Cough' },
-  { visitUuid: 'v3', patientUuid: 'p3', name: 'Suresh Deshmane', gender: 'M', age: '12d 6h', status: 'waiting', hw: 'Dipali', location: 'TM Clinic 1', chiefComplaint: 'Fever, Headache & Cough' },
-  { visitUuid: 'v4', patientUuid: 'p4', name: 'Nikita Agrawal', gender: 'F', age: '48y', status: 'waiting', hw: 'Jitesh', location: 'TM Clinic 3', chiefComplaint: 'Back pain' },
-  { visitUuid: 'v5', patientUuid: 'p5', name: 'Nitin Wagh', gender: 'M', age: '18m 15d', status: 'waiting', hw: 'Manda', location: 'TM Clinic 2', chiefComplaint: 'Runny nose' }
-];
+const QUEUE_VISIT_REPRESENTATION = 'custom:(uuid,location:(display),' +
+  'patient:(uuid,person:(display,gender,age,birthdate)),' +
+  'encounters:(uuid,encounterType:(display),obs:(uuid,display,value,concept:(display)),' +
+  'encounterProviders:(provider:(uuid,person:(uuid,display)))))';
 
 @Component({
   selector: 'app-queue',
   templateUrl: './queue.component.html',
   styleUrls: ['./queue.component.scss']
 })
-export class QueueComponent implements OnInit {
+export class QueueComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['patient', 'age', 'status', 'hw', 'location', 'chiefComplaint', 'actions'];
   statusLabels = QUEUE_STATUS_LABELS;
 
   allPatients: QueuePatient[] = [];
-  availability: DoctorAvailability = 'available';
+  loadingQueue = false;
+  availability: DoctorStatus = 'online';
+  statusUpdating = false;
 
   breakEndsAt: Date | null = null;
+  breakRemainingMs = 0;
+  private breakTicker: ReturnType<typeof setInterval> | null = null;
 
   pageIndex = 0;
   pageSize = 5;
 
-  constructor(private dialog: MatDialog, private router: Router) { }
+  constructor(
+    private dialog: MatDialog,
+    private router: Router,
+    private queueService: QueueService,
+    private visitService: VisitService,
+    private toastr: ToastrService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.loadQueue();
   }
 
-  /**
-  * Time-of-day greeting shown above the doctor's name
-  * @return {string}
-  */
+  ngOnDestroy(): void {
+    this.stopBreakTimer();
+  }
+
   get greeting(): string {
     const hour = new Date().getHours();
     if (hour < 12) {
@@ -58,131 +64,270 @@ export class QueueComponent implements OnInit {
     return hour < 17 ? 'Good Afternoon' : 'Good Evening';
   }
 
-  /**
-  * Logged-in doctor's display name
-  * @return {string}
-  */
   get doctorName(): string {
     return getCacheData(true, doctorDetails.PROVIDER)?.person?.display ?? '';
   }
 
-  /**
-  * Load today's queue.
-  * @return {void}
-  */
   loadQueue(): void {
-    this.allPatients = MOCK_QUEUE;
-    this.pageIndex = 0;
+    const doctorUuid = this.doctorUuid;
+    const speciality = this.speciality;
+    if (!doctorUuid || !speciality) {
+      return;
+    }
+    this.loadingQueue = true;
+    this.queueService.getDoctorVisits(doctorUuid, speciality).subscribe({
+      next: (res: QueueVisitsResponse) => {
+        this.loadingQueue = false;
+        const entries = [res?.data?.currentVisit, ...(res?.data?.items ?? [])].filter(Boolean) as QueueVisitEntry[];
+        this.allPatients = entries.map((entry: QueueVisitEntry) => this.toQueuePatient(entry));
+        this.pageIndex = 0;
+        this.hydrateVisiblePage();
+      },
+      error: () => {
+        this.loadingQueue = false;
+        this.allPatients = [];
+      }
+    });
   }
 
-  /**
-  * Rows visible on the current page
-  * @return {QueuePatient[]}
-  */
+  private toQueuePatient(entry: QueueVisitEntry): QueuePatient {
+    return {
+      queueEntryId: entry.queueEntryId,
+      visitUuid: entry.visitUuid,
+      patientUuid: entry.patientUuid,
+      name: '',
+      gender: 'O',
+      age: '',
+      status: this.toQueueStatus(entry),
+      hw: '',
+      location: '',
+      chiefComplaint: '',
+      loaded: false
+    };
+  }
+
+  private toQueueStatus(entry: QueueVisitEntry): QueueStatus {
+    switch (entry.status) {
+      case 'CALL_CONNECTING':
+      case 'CALL_CONNECTED':
+        return 'on_call';
+      case 'ASSIGNED':
+        return 'assigned';
+      case 'CALL_COMPLETED':
+        return 'awaiting_prescription';
+      case 'COMPLETED':
+        return 'completed';
+      default:
+        return entry.position === 1 ? 'next_in_queue' : 'waiting';
+    }
+  }
+
+  private hydrateVisiblePage(): void {
+    this.pagedPatients.filter((row: QueuePatient) => !row.loaded).forEach((row: QueuePatient) => {
+      row.loaded = true;
+      this.visitService.getVisitDetails(row.visitUuid, QUEUE_VISIT_REPRESENTATION).subscribe({
+        next: (visit: any) => this.applyVisitDetails(row, visit),
+        error: () => { }
+      });
+    });
+  }
+
+  private applyVisitDetails(row: QueuePatient, visit: any): void {
+    const person = visit?.patient?.person;
+    row.name = person?.display ?? '';
+    row.gender = person?.gender ?? 'O';
+    row.age = person?.birthdate ? getAge(person.birthdate, this.translateService, true) : `${person?.age ?? ''}`;
+    row.location = visit?.location?.display ?? '';
+    row.hw = this.getHealthWorker(visit?.encounters ?? []);
+    row.chiefComplaint = this.getChiefComplaint(visit?.encounters ?? []);
+  }
+
+  private getHealthWorker(encounters: any[]): string {
+    const initial = encounters.find((enc: any) => enc?.encounterType?.display === visitTypes.ADULTINITIAL) ?? encounters[0];
+    return initial?.encounterProviders?.[0]?.provider?.person?.display ?? '';
+  }
+
+  private getChiefComplaint(encounters: any[]): string {
+    const complaints: string[] = [];
+    encounters.forEach((enc: any) => {
+      if (enc?.encounterType?.display !== visitTypes.ADULTINITIAL) {
+        return;
+      }
+      (enc.obs ?? []).forEach((obs: any) => {
+        if (obs?.concept?.display !== visitTypes.CURRENT_COMPLAINT) {
+          return;
+        }
+        const parts = `${this.visitService.getData(obs)?.value ?? ''}`.split('<b>');
+        for (let i = 0; i < parts.length; i++) {
+          const title = parts[i]?.split('<')[0];
+          if (title && title.length > 1 && !title.match(visitTypes.ASSOCIATED_SYMPTOMS)) {
+            complaints.push(title.trim());
+          }
+        }
+      });
+    });
+    return complaints.join(', ');
+  }
+
   get pagedPatients(): QueuePatient[] {
     const start = this.pageIndex * this.pageSize;
     return this.allPatients.slice(start, start + this.pageSize);
   }
 
-  /**
-  * Total number of pages, at least 1 so the pager always renders
-  * @return {number}
-  */
   get totalPages(): number {
     return Math.max(1, Math.ceil(this.allPatients.length / this.pageSize));
   }
 
-  /**
-  * Page numbers for the numbered pager
-  * @return {number[]}
-  */
   get pageNumbers(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
-  /**
-  * Move to a page, ignoring out-of-range requests
-  * @param {number} page - Zero-based page index
-  * @return {void}
-  */
   goToPage(page: number): void {
     if (page < 0 || page >= this.totalPages) {
       return;
     }
     this.pageIndex = page;
+    this.hydrateVisiblePage();
   }
 
-  /**
-  * CSS modifier for a status chip
-  * @param {QueueStatus} status - Row status
-  * @return {string}
-  */
+  get queueDisabled(): boolean {
+    return this.availability !== 'online';
+  }
+
   statusClass(status: QueueStatus): string {
     return `status-${status.replace(/_/g, '-')}`;
   }
 
-  /**
-  * Set the doctor as available, cancelling any active break
-  * @return {void}
-  */
-  setAvailable(): void {
-    this.availability = 'available';
-    this.breakEndsAt = null;
+  private startBreakTimer(): void {
+    this.stopBreakTimer();
+    if (!this.breakEndsAt) {
+      return;
+    }
+    this.tickBreak();
+    this.breakTicker = setInterval(() => this.tickBreak(), 1000);
   }
 
-  /**
-  * Ask for a break duration and pause the queue
-  * @return {void}
-  */
+  private tickBreak(): void {
+    if (!this.breakEndsAt) {
+      this.stopBreakTimer();
+      return;
+    }
+    this.breakRemainingMs = Math.max(0, this.breakEndsAt.getTime() - Date.now());
+    if (this.breakRemainingMs > 0) {
+      return;
+    }
+    this.breakEndsAt = null;
+    this.stopBreakTimer();
+    this.updateStatus('online', null, true);
+  }
+
+  private stopBreakTimer(): void {
+    if (this.breakTicker) {
+      clearInterval(this.breakTicker);
+      this.breakTicker = null;
+    }
+    this.breakRemainingMs = 0;
+  }
+
+  get breakCountdown(): string {
+    const totalSeconds = Math.ceil(this.breakRemainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${`${seconds}`.padStart(2, '0')}`;
+  }
+
+  private get doctorUuid(): string {
+    return getCacheData(true, doctorDetails.USER)?.uuid;
+  }
+
+  private get speciality(): string {
+    return getSpecialization(getCacheData(true, doctorDetails.PROVIDER)?.attributes);
+  }
+
+  private updateStatus(status: DoctorStatus, breakEndsAt: Date | null = null, isAutoResume = false): void {
+    const doctorUuid = this.doctorUuid;
+    const speciality = this.speciality;
+    if (!doctorUuid) {
+      return;
+    }
+    if (!speciality) {
+      this.toastr.warning(this.translateService.instant('Please set the speciality'), this.translateService.instant('Speciality Missing'));
+      return;
+    }
+
+    const previousStatus = this.availability;
+    const previousBreakEndsAt = this.breakEndsAt;
+    this.stopBreakTimer();
+    this.availability = status;
+    this.breakEndsAt = breakEndsAt;
+    this.statusUpdating = true;
+
+    this.queueService.updateDoctorStatus(doctorUuid, status, speciality).subscribe({
+      next: (res: DoctorStatusResponse) => {
+        this.statusUpdating = false;
+        this.availability = res?.data?.status ?? status;
+        if (this.availability === 'away' && this.breakEndsAt) {
+          this.startBreakTimer();
+        } else {
+          this.breakEndsAt = null;
+        }
+        if (isAutoResume && this.availability === 'online') {
+          this.toastr.success(this.translateService.instant('Your break is over, you are back online.'),
+            this.translateService.instant('Break ended'));
+        }
+        if (res?.data?.heldInConsult && res?.data?.requestedStatus !== res?.data?.status) {
+          this.toastr.info(this.translateService.instant('You will be moved once your ongoing consultation ends.'),
+            this.translateService.instant('Status change pending'));
+        }
+      },
+      error: (err: unknown) => {
+        this.statusUpdating = false;
+        this.availability = previousStatus;
+        this.breakEndsAt = previousBreakEndsAt;
+        if (previousStatus === 'away' && previousBreakEndsAt) {
+          this.startBreakTimer();
+        }
+        if (typeof err === 'string' && err.trim()) {
+          return;
+        }
+        this.toastr.error(this.translateService.instant('Could not update your status, please try again.'),
+          this.translateService.instant('Status update failed'));
+      }
+    });
+  }
+
+  setAvailable(): void {
+    this.updateStatus('online');
+  }
+
   openPauseQueue(): void {
     this.dialog.open(PauseQueueComponent, { panelClass: ['modal-md', 'queue-modal-panel'], width: '520px', hasBackdrop: true, disableClose: true })
       .afterClosed().subscribe((minutes: number | null) => {
         if (!minutes) {
           return;
         }
-        this.availability = 'on_break';
-        this.breakEndsAt = new Date(Date.now() + minutes * 60 * 1000);
+        this.updateStatus('away', new Date(Date.now() + minutes * 60 * 1000));
       });
   }
 
-  /**
-  * Confirm and end the shift for the day
-  * @return {void}
-  */
   openEndShift(): void {
     this.dialog.open(EndShiftComponent, { panelClass: ['modal-md', 'queue-modal-panel'], width: '520px', hasBackdrop: true, disableClose: true })
       .afterClosed().subscribe((confirmed: boolean) => {
         if (!confirmed) {
           return;
         }
-        this.availability = 'off_shift';
-        this.breakEndsAt = null;
+        this.updateStatus('offline');
       });
   }
 
-  /**
-  * Open the visit summary for a patient
-  * @param {QueuePatient} patient - Selected row
-  * @return {void}
-  */
   viewSummary(patient: QueuePatient): void {
     this.router.navigate(['/dashboard', 'visit-summary', patient.visitUuid]);
   }
 
-  /**
-  * Start the consultation for a patient
-  * @param {QueuePatient} patient - Selected row
-  * @return {void}
-  */
   startCall(patient: QueuePatient): void {
     this.router.navigate(['/dashboard', 'visit-summary', patient.visitUuid]);
   }
 
-  /**
-  * Mark a call as done and offer to write the prescription
-  * @param {QueuePatient} patient - Selected row
-  * @return {void}
-  */
   markCallDone(patient: QueuePatient): void {
     this.dialog.open(CallDoneComponent, {
       panelClass: ['modal-md', 'queue-modal-panel'],
@@ -199,11 +344,6 @@ export class QueueComponent implements OnInit {
     });
   }
 
-  /**
-  * Capture why a call did not happen and continue to the prescription
-  * @param {QueuePatient} patient - Selected row
-  * @return {void}
-  */
   markCallDidNotHappen(patient: QueuePatient): void {
     this.dialog.open(CallNotHappenedComponent, { panelClass: ['modal-md', 'queue-modal-panel'], width: '520px', hasBackdrop: true, disableClose: true })
       .afterClosed().subscribe((reason: string | null) => {
