@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ViewVisitSummaryComponent } from './view-visit-summary.component';
+import { LanguageFieldUpdate } from './language-fields-update.component';
 
-describe('ViewVisitSummaryComponent', () => {
-  let component: ViewVisitSummaryComponent;
-  let fixture: ComponentFixture<ViewVisitSummaryComponent>;
+describe('LanguageFieldUpdate', () => {
+  let component: LanguageFieldUpdate;
+  let fixture: ComponentFixture<LanguageFieldUpdate>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ViewVisitSummaryComponent ]
+      declarations: [ LanguageFieldUpdate ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ViewVisitSummaryComponent);
+    fixture = TestBed.createComponent(LanguageFieldUpdate);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
