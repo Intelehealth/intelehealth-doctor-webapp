@@ -234,6 +234,21 @@ export class VisitService {
     return data;
   }
 
+  parseChiefComplaints(rawValue: string | null | undefined): string[] {
+    if (!rawValue) {
+      return [];
+    }
+    const sections = `${rawValue}`.replace(new RegExp('\u25ba', 'g'), '').split('<b>');
+    const complaints: string[] = [];
+    for (let i = 1; i < sections.length; i++) {
+      const title = sections[i].split('<')[0]?.trim();
+      if (title && !title.match(visitTypes.ASSOCIATED_SYMPTOMS)) {
+        complaints.push(title);
+      }
+    }
+    return complaints;
+  }
+
   /**
   * Get awaiting visits
   * @param {string} speciality - Visit speciality

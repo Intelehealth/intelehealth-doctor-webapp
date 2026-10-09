@@ -59,7 +59,7 @@
 
     <div class="queue-table-con" [class.queue-disabled]="queueDisabled"
       [attr.aria-disabled]="queueDisabled">
-      <table mat-table [dataSource]="pagedPatients" matTableResponsive class="queue-table"
+      <table mat-table [dataSource]="patients" matTableResponsive class="queue-table"
         data-test-id="tableTodaysQueue">
 
         <ng-container matColumnDef="patient">
@@ -149,15 +149,15 @@
         {{ 'Loading your queue...' | translate }}
       </p>
 
-      <p class="no-records" *ngIf="!loadingQueue && !allPatients.length" data-test-id="lblNoQueueRecords">
+      <p class="no-records" *ngIf="!loadingQueue && !patients.length" data-test-id="lblNoQueueRecords">
         {{ 'No patients in the queue right now.' | translate }}
       </p>
     </div>
 
-    <div class="queue-pager" *ngIf="allPatients.length" [class.queue-disabled]="queueDisabled"
+    <div class="queue-pager" *ngIf="totalPatients" [class.queue-disabled]="queueDisabled"
       data-test-id="queuePager">
       <span class="pager-count" data-test-id="lblPagerCount">
-        {{ pagedPatients.length }} {{ 'of' | translate }} {{ allPatients.length }} {{ 'Patient' | translate }}
+        {{ patients.length }} {{ 'of' | translate }} {{ totalPatients }} {{ 'Patient' | translate }}
       </span>
       <button type="button" class="pager-arrow" [disabled]="pageIndex === 0" (click)="goToPage(pageIndex - 1)"
         data-test-id="btnPrevPage">

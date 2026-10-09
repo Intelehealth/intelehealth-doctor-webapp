@@ -1,25 +1,29 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
 
-import { ViewVisitSummaryComponent } from './view-visit-summary.component';
+import { LanguageFieldUpdate } from './language-fields-update.component';
 
-describe('ViewVisitSummaryComponent', () => {
-  let component: ViewVisitSummaryComponent;
-  let fixture: ComponentFixture<ViewVisitSummaryComponent>;
+describe('LanguageFieldUpdate', () => {
+  let component: LanguageFieldUpdate;
+  let dialogRef: any;
+  let configService: any;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ViewVisitSummaryComponent ]
-    })
-    .compileComponents();
-  });
+  const data = {
+    fieldName: 'Chief complaint',
+    fields: [{ lang: 'en', value: 'Fever' }]
+  } as any;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ViewVisitSummaryComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    dialogRef = { close: jasmine.createSpy('close') };
+    configService = {};
+
+    component = new LanguageFieldUpdate(data, dialogRef, configService, new FormBuilder());
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('takes the field name from the dialog data', () => {
+    expect(component.fieldName).toBe('Chief complaint');
   });
 });

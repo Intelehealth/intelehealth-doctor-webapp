@@ -10,6 +10,7 @@
     "start": "npm run config-dev && ng serve",
     "build": "npm run config-prod && ng build --configuration production --aot",
     "test": "ng test --include src/app/admin/admin-actions/webrtc",
+    "test:queue": "ng test --include src/app/queue --include src/app/services/queue.service.spec.ts --include src/app/services/doctor-availability.service.spec.ts --include src/app/services/visit.service.spec.ts",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prepare": "husky install",

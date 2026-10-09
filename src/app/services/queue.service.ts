@@ -16,13 +16,21 @@ export class QueueService {
   getDoctorVisits(doctorUuid: string, speciality: string, limit = 50, offset = 0): Observable<QueueVisitsResponse> {
     const params = new HttpParams()
       .set('speciality', speciality)
-      .set('includeEta', 'true')
       .set('limit', `${limit}`)
       .set('offset', `${offset}`);
     return this.http.get<QueueVisitsResponse>(`${this.baseURL}/queue/doctor/${doctorUuid}/visits`, { params });
   }
 
-  updateDoctorStatus(doctorUuid: string, status: DoctorStatus, speciality: string): Observable<DoctorStatusResponse> {
-    return this.http.patch<DoctorStatusResponse>(`${this.baseURL}/doctor/${doctorUuid}/status`, { status, speciality });
+  updateDoctorStatus(
+    doctorUuid: string,
+    status: DoctorStatus,
+    speciality: string,
+    breakEndsAt: Date | null = null
+  ): Observable<DoctorStatusResponse> {
+    const body: { status: DoctorStatus; speciality: string; breakEndsAt?: string } = { status, speciality };
+    if (breakEndsAt) {
+      body.breakEndsAt = breakEndsAt.toISOString();
+    }
+    return this.http.patch<DoctorStatusResponse>(`${this.baseURL}/doctor/${doctorUuid}/status`, body);
   }
 }
