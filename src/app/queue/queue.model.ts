@@ -1,4 +1,4 @@
-export type QueueStatus = 'on_call' | 'assigned' | 'awaiting_prescription' | 'next_in_queue' | 'waiting' | 'completed';
+export type QueueStatus = 'on_call' | 'assigned' | 'awaiting_prescription' | 'next_in_queue' | 'waiting' | 'completed' | 'cancelled';
 
 export interface QueuePatient {
   queueEntryId: number;
@@ -100,11 +100,7 @@ export const QUEUE_STATUS_LABELS: Record<QueueStatus, string> = {
   awaiting_prescription: 'Awaiting Prescription',
   next_in_queue: 'Next in Queue',
   waiting: 'Waiting',
-  completed: 'Completed'
+  completed: 'Completed',
+  cancelled: 'Cancelled'
 };
 
-export const DOCTOR_STATUS_LABELS: Record<DoctorStatus, string> = {
-  online: 'Available',
-  away: 'On a break',
-  offline: 'Shift ended'
-};

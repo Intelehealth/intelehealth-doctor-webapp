@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EndShiftComponent } from './modals/end-shift/end-shift.component';
@@ -35,6 +35,7 @@ export class QueueComponent implements OnInit, OnDestroy {
 
   breakEndsAt: Date | null = null;
   breakRemainingMs = 0;
+  autoResumeFailed = false;
   private breakTicker: ReturnType<typeof setInterval> | null = null;
 
   pageIndex = 0;
@@ -45,6 +46,7 @@ export class QueueComponent implements OnInit, OnDestroy {
     private router: Router,
     private queueService: QueueService,
     private visitService: VisitService,
+    private zone: NgZone,
     private toastr: ToastrService,
     private translateService: TranslateService) { }
 
@@ -78,7 +80,9 @@ export class QueueComponent implements OnInit, OnDestroy {
     this.queueService.getDoctorVisits(doctorUuid, speciality).subscribe({
       next: (res: QueueVisitsResponse) => {
         this.loadingQueue = false;
-        const entries = [res?.data?.currentVisit, ...(res?.data?.items ?? [])].filter(Boolean) as QueueVisitEntry[];
+        const current = res?.data?.currentVisit;
+        const items = (res?.data?.items ?? []).filter((item: QueueVisitEntry) => item?.queueEntryId !== current?.queueEntryId);
+        const entries = [current, ...items].filter(Boolean) as QueueVisitEntry[];
         this.allPatients = entries.map((entry: QueueVisitEntry) => this.toQueuePatient(entry));
         this.pageIndex = 0;
         this.hydrateVisiblePage();
@@ -117,6 +121,8 @@ export class QueueComponent implements OnInit, OnDestroy {
         return 'awaiting_prescription';
       case 'COMPLETED':
         return 'completed';
+      case 'CANCELLED':
+        return 'cancelled';
       default:
         return entry.position === 1 ? 'next_in_queue' : 'waiting';
     }
@@ -127,7 +133,7 @@ export class QueueComponent implements OnInit, OnDestroy {
       row.loaded = true;
       this.visitService.getVisitDetails(row.visitUuid, QUEUE_VISIT_REPRESENTATION).subscribe({
         next: (visit: any) => this.applyVisitDetails(row, visit),
-        error: () => { }
+        error: () => { row.loaded = false; }
       });
     });
   }
@@ -136,7 +142,9 @@ export class QueueComponent implements OnInit, OnDestroy {
     const person = visit?.patient?.person;
     row.name = person?.display ?? '';
     row.gender = person?.gender ?? 'O';
-    row.age = person?.birthdate ? getAge(person.birthdate, this.translateService, true) : `${person?.age ?? ''}`;
+    row.age = person?.birthdate
+      ? getAge(person.birthdate, this.translateService, true)
+      : (person?.age != null ? `${person.age} y` : '');
     row.location = visit?.location?.display ?? '';
     row.hw = this.getHealthWorker(visit?.encounters ?? []);
     row.chiefComplaint = this.getChiefComplaint(visit?.encounters ?? []);
@@ -204,7 +212,13 @@ export class QueueComponent implements OnInit, OnDestroy {
       return;
     }
     this.tickBreak();
-    this.breakTicker = setInterval(() => this.tickBreak(), 1000);
+    this.zone.runOutsideAngular(() => {
+      this.breakTicker = setInterval(() => this.zone.run(() => this.tickBreak()), 1000);
+    });
+  }
+
+  get breakBannerVisible(): boolean {
+    return this.availability === 'away' && (!!this.breakEndsAt || this.autoResumeFailed);
   }
 
   private tickBreak(): void {
@@ -255,9 +269,14 @@ export class QueueComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (status === this.availability && !breakEndsAt && !isAutoResume) {
+      return;
+    }
+
     const previousStatus = this.availability;
     const previousBreakEndsAt = this.breakEndsAt;
     this.stopBreakTimer();
+    this.autoResumeFailed = false;
     this.availability = status;
     this.breakEndsAt = breakEndsAt;
     this.statusUpdating = true;
@@ -287,6 +306,7 @@ export class QueueComponent implements OnInit, OnDestroy {
         if (previousStatus === 'away' && previousBreakEndsAt) {
           this.startBreakTimer();
         }
+        this.autoResumeFailed = isAutoResume;
         if (typeof err === 'string' && err.trim()) {
           return;
         }

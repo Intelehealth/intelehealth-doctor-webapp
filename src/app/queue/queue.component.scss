@@ -103,22 +103,6 @@ $orange-soft: #FDEFE0;
     margin-left: 4px;
     font-variant-numeric: tabular-nums;
   }
-
-  .resume-btn {
-    padding: 6px 14px;
-    border: 1px solid currentColor;
-    border-radius: 8px;
-    background: transparent;
-    color: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  }
 }
 
 .off-shift-banner {
@@ -133,21 +117,21 @@ $orange-soft: #FDEFE0;
   color: $violet-text;
   font-size: 14px;
   font-weight: 600;
+}
 
-  .resume-btn {
-    padding: 6px 14px;
-    border: 1px solid currentColor;
-    border-radius: 8px;
-    background: transparent;
-    color: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+.resume-btn {
+  padding: 6px 14px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
@@ -290,6 +274,11 @@ $orange-soft: #FDEFE0;
 
   &.status-completed {
     color: $violet;
+  }
+
+  &.status-cancelled {
+    color: $muted;
+    text-decoration: line-through;
   }
 }
 

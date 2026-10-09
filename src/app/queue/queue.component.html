@@ -25,10 +25,13 @@
     </div>
   </div>
 
-  <div class="break-banner" *ngIf="availability === 'away' && breakEndsAt" data-test-id="breakBanner">
-    <span>
+  <div class="break-banner" *ngIf="breakBannerVisible" data-test-id="breakBanner">
+    <span *ngIf="breakEndsAt">
       {{ 'Queue paused until' | translate }} {{ breakEndsAt | date: 'shortTime' }}
       <strong class="break-countdown" data-test-id="lblBreakCountdown">({{ breakCountdown }})</strong>
+    </span>
+    <span *ngIf="!breakEndsAt && autoResumeFailed" data-test-id="lblAutoResumeFailed">
+      {{ 'Your break is over but we could not bring you back online.' | translate }}
     </span>
     <button type="button" class="resume-btn" [disabled]="statusUpdating" (click)="setAvailable()"
       data-test-id="btnResumeNow">
