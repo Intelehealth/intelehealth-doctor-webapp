@@ -40,6 +40,17 @@ const targetPath = isProduction
   ? './src/environments/environment.prod.ts'
   : './src/environments/environment.ts';
 
+const REQUIRED_VARS = ['BASE_URL', 'MIND_MAP_URL', 'CONFIG_URL', 'QUEUE_URL'];
+
+const missingRequired = REQUIRED_VARS.filter((name) => !process.env[name]);
+if (missingRequired.length) {
+  console.error(
+    `\nMissing required variables in .env: ${missingRequired.join(', ')}.\n` +
+    `Add them to the .env on this host (see .env.example) and run the build again.\n`
+  );
+  process.exit(1);
+}
+
 let showCaptcha = process.env.SHOW_CAPTCHA;
 
 if (environment === 'test') {
@@ -61,6 +72,7 @@ const environmentFileContent = `
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
+    queueURL: '${process.env.QUEUE_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
     socketURL: '${process.env.SOCKET_URL}',
     captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',

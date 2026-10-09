@@ -7,23 +7,44 @@
     </div>
 
     <div class="availability-toggle" data-test-id="availabilityToggle">
-      <button type="button" class="availability-btn available" [class.active]="availability === 'available'"
-        (click)="setAvailable()" [matTooltip]="'Available' | translate" data-test-id="btnAvailable">
+      <button type="button" class="availability-btn available" [class.active]="availability === 'online'"
+        [disabled]="statusUpdating" (click)="setAvailable()" [matTooltip]="'Available' | translate"
+        data-test-id="btnAvailable">
         <img src="assets/svgs/queue-available.svg" alt="" />
       </button>
-      <button type="button" class="availability-btn break" [class.active]="availability === 'on_break'"
-        (click)="openPauseQueue()" [matTooltip]="'Take a break' | translate" data-test-id="btnTakeBreak">
+      <button type="button" class="availability-btn break" [class.active]="availability === 'away'"
+        [disabled]="statusUpdating" (click)="openPauseQueue()" [matTooltip]="'Take a break' | translate"
+        data-test-id="btnTakeBreak">
         <img src="assets/svgs/queue-break.svg" alt="" />
       </button>
-      <button type="button" class="availability-btn off-shift" [class.active]="availability === 'off_shift'"
-        (click)="openEndShift()" [matTooltip]="'End shift' | translate" data-test-id="btnEndShift">
+      <button type="button" class="availability-btn off-shift" [class.active]="availability === 'offline'"
+        [disabled]="statusUpdating" (click)="openEndShift()" [matTooltip]="'End shift' | translate"
+        data-test-id="btnEndShift">
         <img src="assets/svgs/queue-end-shift.svg" alt="" />
       </button>
     </div>
   </div>
 
-  <div class="break-banner" *ngIf="availability === 'on_break' && breakEndsAt" data-test-id="breakBanner">
-    {{ 'Queue paused until' | translate }} {{ breakEndsAt | date: 'shortTime' }}
+  <div class="break-banner" *ngIf="breakBannerVisible" data-test-id="breakBanner">
+    <span *ngIf="breakEndsAt">
+      {{ 'Queue paused until' | translate }} {{ breakEndsAt | date: 'shortTime' }}
+      <strong class="break-countdown" data-test-id="lblBreakCountdown">({{ breakCountdown }})</strong>
+    </span>
+    <span *ngIf="!breakEndsAt && autoResumeFailed" data-test-id="lblAutoResumeFailed">
+      {{ 'Your break is over but we could not bring you back online.' | translate }}
+    </span>
+    <button type="button" class="resume-btn" [disabled]="statusUpdating" (click)="setAvailable()"
+      data-test-id="btnResumeNow">
+      {{ 'Resume now' | translate }}
+    </button>
+  </div>
+
+  <div class="off-shift-banner" *ngIf="availability === 'offline'" data-test-id="offShiftBanner">
+    <span>{{ 'Your shift has ended. You will not receive new consultations.' | translate }}</span>
+    <button type="button" class="resume-btn" [disabled]="statusUpdating" (click)="setAvailable()"
+      data-test-id="btnStartShift">
+      {{ 'Start shift' | translate }}
+    </button>
   </div>
 
   <div class="queue-card">
@@ -36,8 +57,9 @@
         [matTooltip]="'Patients waiting for a consultation today' | translate" />
     </div>
 
-    <div class="queue-table-con">
-      <table mat-table [dataSource]="pagedPatients" matTableResponsive class="queue-table"
+    <div class="queue-table-con" [class.queue-disabled]="queueDisabled"
+      [attr.aria-disabled]="queueDisabled">
+      <table mat-table [dataSource]="patients" matTableResponsive class="queue-table"
         data-test-id="tableTodaysQueue">
 
         <ng-container matColumnDef="patient">
@@ -45,7 +67,7 @@
           <td mat-cell *matCellDef="let row">
             <div class="patient-cell">
               <img class="patient-avatar" src="assets/svgs/user.svg" alt="" />
-              <span class="patient-name" [matTooltip]="row.name">{{ row.name }} ({{ row.gender }})</span>
+              <span class="patient-name" [matTooltip]="row.name">{{ row.name }}<ng-container *ngIf="row.name"> ({{ row.gender }})</ng-container></span>
             </div>
           </td>
         </ng-container>
@@ -83,19 +105,20 @@
           <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | translate }}</th>
           <td mat-cell *matCellDef="let row">
             <div class="actions-cell">
-              <button type="button" class="row-btn ghost-btn" (click)="viewSummary(row)"
-                data-test-id="btnViewSummary">
+              <button type="button" class="row-btn ghost-btn" [disabled]="queueDisabled"
+                (click)="viewSummary(row)" data-test-id="btnViewSummary">
                 {{ 'View Summary' | translate }}
               </button>
 
-              <button type="button" class="row-btn primary-btn" *ngIf="row.status === 'on_call'"
-                (click)="startCall(row)" data-test-id="btnStartCall">
+              <button type="button" class="row-btn primary-btn"
+                *ngIf="row.status === 'assigned' || row.status === 'on_call'"
+                [disabled]="queueDisabled" (click)="startCall(row)" data-test-id="btnStartCall">
                 <img src="assets/svgs/video-w.svg" alt="" />
                 {{ 'Start' | translate }}
               </button>
 
               <button type="button" class="kebab-btn" [matMenuTriggerFor]="rowMenu"
-                (click)="$event.stopPropagation()" data-test-id="btnRowMenu">
+                [disabled]="queueDisabled" (click)="$event.stopPropagation()" data-test-id="btnRowMenu">
                 <mat-icon>more_vert</mat-icon>
               </button>
 
@@ -119,17 +142,22 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"
-          [class.on-call-row]="row.status === 'on_call'"></tr>
+          [class.on-call-row]="row.status === 'on_call' || row.status === 'assigned'"></tr>
       </table>
 
-      <p class="no-records" *ngIf="!allPatients.length" data-test-id="lblNoQueueRecords">
+      <p class="no-records" *ngIf="loadingQueue" data-test-id="lblQueueLoading">
+        {{ 'Loading your queue...' | translate }}
+      </p>
+
+      <p class="no-records" *ngIf="!loadingQueue && !patients.length" data-test-id="lblNoQueueRecords">
         {{ 'No patients in the queue right now.' | translate }}
       </p>
     </div>
 
-    <div class="queue-pager" *ngIf="allPatients.length" data-test-id="queuePager">
+    <div class="queue-pager" *ngIf="totalPatients" [class.queue-disabled]="queueDisabled"
+      data-test-id="queuePager">
       <span class="pager-count" data-test-id="lblPagerCount">
-        {{ pagedPatients.length }} {{ 'of' | translate }} {{ allPatients.length }} {{ 'Patient' | translate }}
+        {{ patients.length }} {{ 'of' | translate }} {{ totalPatients }} {{ 'Patient' | translate }}
       </span>
       <button type="button" class="pager-arrow" [disabled]="pageIndex === 0" (click)="goToPage(pageIndex - 1)"
         data-test-id="btnPrevPage">
