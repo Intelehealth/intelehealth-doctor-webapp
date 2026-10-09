@@ -142,6 +142,7 @@ export class AuthService {
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(() => {
       deleteCacheData('currentUser');
       deleteCacheData(doctorDetails.USER);
+      deleteCacheData(doctorDetails.USER_NAME);
       deleteCacheData(doctorDetails.PROVIDER);
       deleteCacheData(doctorDetails.DOCTOR_NAME);
       deleteCacheData(doctorDetails.ROLE);
