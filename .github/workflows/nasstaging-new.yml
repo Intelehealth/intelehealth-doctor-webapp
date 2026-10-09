@@ -2,7 +2,7 @@ name: Nasstaging-new
 on:
   push:
     branches:
-      - pull-nas-ida5-development-master
+      - nas-ida5-development-master
   workflow_dispatch:  # Allows manual trigger
   
 jobs:
