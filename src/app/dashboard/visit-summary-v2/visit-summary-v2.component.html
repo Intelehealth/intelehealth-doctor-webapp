@@ -8,9 +8,8 @@
       [visitScopeTabs]="visitScopeTabs"
       [activeVisitScope]="activeVisitScope"
       [sections]="sections"
-      [doctorNoteNav]="doctorNoteNav"
+      [noteNavGroups]="noteNavGroups"
       [activeSection]="activeSection"
-      [visitNoteStarted]="visitNoteStarted"
       [pastVisitsTimeline]="pastVisitsTimeline"
       [activePastVisitKey]="activePastVisitKey"
       (scopeChange)="setVisitScope($event)"
@@ -32,13 +31,71 @@
           </button>
         </div>
 
-        <main class="vs2-content">
+        <!-- Collapsible cards: Current visits, then the doctor's note(s). One opens at a time from the tabs. -->
+        <main class="vs2-content vs2-content-cards">
 
-          <div class="vs2-content-header">
-            <h2>{{ activeVisitScope }}</h2>
-            <mat-icon>expand_less</mat-icon>
+          <div class="vs2-card" id="card-current-visits">
+            <div class="vs2-card-header" (click)="toggleCard(currentVisitsTab)">
+              <h2>{{ currentVisitsTab }}</h2>
+              <mat-icon>{{ expandedCards[currentVisitsTab] ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </div>
+            <div class="vs2-card-body" [hidden]="!expandedCards[currentVisitsTab]">
+              <ng-container [ngTemplateOutlet]="currentVisitDetails"></ng-container>
+            </div>
           </div>
 
+          <div class="vs2-card" id="card-primary-note" *ngIf="isNamcoDoctorLoggedIn && primaryVisitNoteUuid">
+            <div class="vs2-card-header" (click)="toggleCard(primaryNoteTab)">
+              <h2>{{ primaryNoteTab }}</h2>
+              <mat-icon>{{ expandedCards[primaryNoteTab] ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </div>
+            <div class="vs2-card-body" [hidden]="!expandedCards[primaryNoteTab]">
+              <app-primary-note-view
+                [patientUuid]="patientUuid"
+                [visitUuid]="visitId"
+                [primaryVisitNoteUuid]="primaryVisitNoteUuid"
+                [patientPhoneNo]="patient?.contactNo || ''"
+                [visit]="visit">
+              </app-primary-note-view>
+            </div>
+          </div>
+
+          <!-- Doctor's Note (normal doctor) or Specialist Doctor's Note (NAMCO doctor) -->
+          <div class="vs2-card" id="section-doctor-note" *ngIf="visitNoteStarted">
+            <div class="vs2-card-header" (click)="toggleCard(noteTab)">
+              <h2>{{ noteTab }}</h2>
+              <mat-icon>{{ expandedCards[noteTab] ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </div>
+            <!-- [hidden] rather than *ngIf, so collapsing keeps in-progress entries and AI results -->
+            <div class="vs2-card-body" [hidden]="!expandedCards[noteTab]">
+              <app-doctor-note
+                *ngIf="!isNamcoDoctorLoggedIn"
+                [patientUuid]="patientUuid"
+                [patientPhoneNo]="patient?.contactNo"
+                [visit]="visit"
+                [patientInfo]="patientModel"
+                [visitCompleted]="visitEnded"
+                [visitReferred]="visitReferred"
+                [visitUuid]="visitId"
+                [visitNoteUuid]="visitNoteUuid">
+              </app-doctor-note>
+
+              <app-specialist-doctor-note
+                *ngIf="isNamcoDoctorLoggedIn"
+                [patientUuid]="patientUuid"
+                [patientPhoneNo]="patient?.contactNo || ''"
+                [visit]="visit"
+                [visitCompleted]="visitCompleted"
+                [visitUuid]="visitId"
+                [visitNoteUuid]="visitNoteUuid"
+                [noteEncounterUuids]="noteEncounterUuids">
+              </app-specialist-doctor-note>
+            </div>
+          </div>
+
+        </main>
+
+        <ng-template #currentVisitDetails>
           <app-current-visit-details
             [consultationDetails]="consultationDetails"
             [chiefComplaints]="chiefComplaints"
@@ -53,23 +110,12 @@
             [documents]="documents"
             [chwNote]="chwNote"
             [specializations]="specializations"
+            [referToSpecialistEnabled]="referToSpecialistEnabled"
             [visitNoteStarted]="visitNoteStarted"
             (startVisit)="startVisitNote()"
             (reassign)="reassignVisit($event)">
           </app-current-visit-details>
-
-          <app-doctor-note
-            *ngIf="visitNoteStarted"
-            [patientUuid]="patientUuid"
-            [patientPhoneNo]="patient?.contactNo"
-            [visit]="visit"
-            [patientInfo]="patientModel"
-            [visitCompleted]="visitEnded"
-            [visitUuid]="visitId"
-            [visitNoteUuid]="visitNoteUuid">
-          </app-doctor-note>
-
-        </main>
+        </ng-template>
       </ng-container>
 
       <ng-container *ngIf="activeVisitScope === 'Past Visits'">

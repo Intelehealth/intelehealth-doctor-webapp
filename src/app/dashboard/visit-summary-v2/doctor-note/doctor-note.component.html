@@ -1,8 +1,3 @@
-<div id="section-doctor-note" class="vs2-content-header vs2-dn-header">
-  <h2>Doctor's Note</h2>
-  <mat-icon>expand_less</mat-icon>
-</div>
-
 <section id="section-dn-interaction" class="vs2-section-card">
   <div class="vs2-section-title">
     <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
@@ -13,7 +8,7 @@
 
   <div class="vs2-ayu-card" [class.vs2-ayu-open]="ayuQuestionsExpanded">
     <div class="vs2-ayu-banner" (click)="ayuQuestionsExpanded = !ayuQuestionsExpanded">
-      <img class="vs2-ayu-icon" src="assets/svgs/ayu-new.svg" alt="" />
+      <img class="vs2-ayu-icon" src="assets/svgs/ayu-logo.svg" alt="" />
       <div class="vs2-ayu-text">
         <span class="vs2-ayu-title">Ayu Suggested Questions</span>
         <span class="vs2-ayu-subtitle">Based on current symptoms and missing information</span>
@@ -43,7 +38,15 @@
 
       <div class="vs2-ayu-question" *ngFor="let q of ayuSuggestedQuestions; let i = index">
         <div class="vs2-ayu-q-top">
-          <span class="vs2-ayu-tag" *ngIf="q.category">{{ q.category }}</span>
+          <div class="vs2-ayu-q-body">
+            <span class="vs2-ayu-tag" *ngIf="q.category">{{ q.category }}</span>
+            <p class="vs2-ayu-q-text">{{ q.question }}</p>
+            <p class="vs2-ayu-q-hint" *ngIf="q.hint">{{ q.hint }}</p>
+            <input class="vs2-input vs2-ayu-answer-input" *ngIf="q.editing" [(ngModel)]="q.answer"
+              [ngModelOptions]="{ standalone: true }" placeholder="Type your answer"
+              (blur)="q.editing = false" (keyup.enter)="q.editing = false" />
+            <span class="vs2-ayu-answer" *ngIf="q.answer && !q.editing">{{ q.answer }}</span>
+          </div>
           <span class="vs2-ayu-q-actions">
             <ng-container *ngIf="!q.answer && !q.editing">
               <button class="vs2-ayu-yes" (click)="answerAyuQuestion(q, 'Yes')">Yes</button>
@@ -53,12 +56,6 @@
             <mat-icon class="vs2-ayu-edit" *ngIf="q.answer || q.editing" (click)="editAyuQuestion(q)">edit_note</mat-icon>
           </span>
         </div>
-        <p class="vs2-ayu-q-text">{{ q.question }}</p>
-        <p class="vs2-ayu-q-hint" *ngIf="q.hint">{{ q.hint }}</p>
-        <input class="vs2-input vs2-ayu-answer-input" *ngIf="q.editing" [(ngModel)]="q.answer"
-          [ngModelOptions]="{ standalone: true }" placeholder="Type your answer"
-          (blur)="q.editing = false" (keyup.enter)="q.editing = false" />
-        <span class="vs2-ayu-answer" *ngIf="q.answer && !q.editing">{{ q.answer }}</span>
       </div>
 
       <h4 class="vs2-ayu-refine-title">Refine AI Suggestions(optional)</h4>
@@ -94,12 +91,14 @@
     <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Have you spoken with the patient directly?</span>
-        <label class="vs2-radio vs2-radio-green"><input type="radio" name="spoken" [value]="true" [(ngModel)]="spokenToPatient" /> Yes</label>
-        <label class="vs2-radio vs2-radio-green"><input type="radio" name="spoken" [value]="false" [(ngModel)]="spokenToPatient" /> No</label>
+        <label class="vs2-radio"><input type="radio" name="spoken" [value]="true" [(ngModel)]="spokenToPatient" /> Yes</label>
+        <label class="vs2-radio"><input type="radio" name="spoken" [value]="false" [(ngModel)]="spokenToPatient" /> No</label>
       </div>
     </li>
   </ul>
-  <button class="vs2-btn-soft" [disabled]="savingPatientInteraction" (click)="savePatientInteraction()">Save</button>
+  <button class="vs2-btn-soft" [disabled]="savingPatientInteraction || spokenToPatient === savedSpokenToPatient" (click)="savePatientInteraction()">
+    {{ spokenToPatient === savedSpokenToPatient ? 'Saved' : 'Save' }}
+  </button>
 </section>
 
 <section id="section-dn-diagnosis" class="vs2-section-card">
@@ -110,20 +109,28 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiClinicalSummary">
+  <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiResponseReceived">
     <div class="vs2-ayu-banner" (click)="aiSummaryExpanded = !aiSummaryExpanded">
-      <img class="vs2-ayu-icon" src="assets/svgs/ayu-new.svg" alt="" />
+      <img class="vs2-ayu-icon" src="assets/svgs/ayu-logo.svg" alt="" />
       <div class="vs2-ayu-text">
         <span class="vs2-ayu-title">Ai Clinical Summary</span>
       </div>
       <mat-icon class="vs2-ayu-chevron">{{ aiSummaryExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
     </div>
-    <p class="vs2-summary-text" *ngIf="aiSummaryExpanded">{{ aiClinicalSummary }}</p>
+    <ng-container *ngIf="aiSummaryExpanded">
+      <p class="vs2-summary-text" *ngIf="aiClinicalSummary">{{ aiClinicalSummary }}</p>
+      <p class="vs2-summary-text vs2-summary-empty" *ngIf="!aiClinicalSummary">No clinical summary was generated for this visit.</p>
+    </ng-container>
   </div>
 
-  <h4 class="vs2-ai-dx-title">
-    <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Diagnosis
-  </h4>
+  <div class="vs2-ai-dx-head">
+    <h4 class="vs2-ai-dx-title">
+      <img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Diagnosis
+    </h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ddx')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+  </div>
 
   <div class="vs2-ai-panel" *ngIf="aiDiagnosisState === 'loading'">
     <div class="vs2-ai-loading-head">
@@ -165,63 +172,48 @@
       <span class="vs2-dx-chip" *ngFor="let s of aiSuggestions"
         [ngClass]="'vs2-dx-' + s.likelihood.toLowerCase()" [class.vs2-dx-selected]="isDiagnosisSelected(s.name)"
         (click)="toggleAiSuggestion(s)">
-        <mat-icon class="vs2-dx-check" *ngIf="isDiagnosisSelected(s.name)">check</mat-icon>
-        <span class="vs2-dx-dot" *ngIf="!isDiagnosisSelected(s.name)"></span>
+        <svg class="vs2-dx-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path *ngIf="isDiagnosisSelected(s.name)" d="M20 6.5L9 17.5L4 12.5" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+          <path *ngIf="!isDiagnosisSelected(s.name)" d="M12 5V19" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+          <path *ngIf="!isDiagnosisSelected(s.name)" d="M5 12H19" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
         <span class="vs2-dx-name">{{ s.name }}</span>
-        <span class="vs2-dx-badge">{{ s.likelihood }} Likely</span>
-        <mat-icon class="vs2-dx-info" (click)="toggleWhy(s, $event)">info_outline</mat-icon>
+        <span class="vs2-dx-badge">
+          {{ s.likelihood }} Likely <span class="vs2-dx-pct" *ngIf="s.confidence !== null">{{ confidenceLabel(s) }}</span>
+        </span>
+        <span class="vs2-dx-info-wrap" *ngIf="s.reasons.length">
+          <mat-icon class="vs2-dx-info" (click)="toggleWhy(s, $event)">info_outline</mat-icon>
+          <span class="vs2-dx-why" [class.vs2-dx-why-open]="whySuggestion === s" (click)="$event.stopPropagation()">
+            <h5>Why {{ s.name }}?</h5>
+            <ul class="vs2-bullet-list">
+              <li *ngFor="let r of s.reasons">{{ r }}</li>
+            </ul>
+          </span>
+        </span>
       </span>
-    </div>
-
-    <div class="vs2-dx-why" *ngIf="whySuggestion">
-      <h5>Why {{ whySuggestion.name }}?</h5>
-      <ul class="vs2-bullet-list">
-        <li *ngFor="let r of whySuggestion.reasons">{{ r }}</li>
-      </ul>
     </div>
   </ng-container>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="diagnosisResults"
-    [(ngModel)]="selectedDiagnosis"
-    bindLabel="name"
-    [searchable]="true"
-    [clearable]="true"
-    [addTag]="false"
-    [minTermLength]="3"
-    typeToSearchText="Type at least 3 characters"
-    (search)="onDiagnosisSearch($event)"
-    (change)="onDiagnosisPicked($event)"
-    placeholder="Type to search diagnosis">
-  </ng-select>
-
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickDiagnoses" [class.vs2-dx-quick-on]="isDiagnosisSelected(q)"
-      (click)="toggleQuickDiagnosis(q)">
-      <mat-icon>{{ isDiagnosisSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
-    </button>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="diagnosisSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onDiagnosisSearch($event)"
+      placeholder="Type to search diagnosis" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="diagnosisSearchTerm" (click)="clearDiagnosisSearch()">close</mat-icon>
   </div>
 
-  <div class="vs2-improve" *ngIf="aiDiagnosisState === 'ready'">
-    <div class="vs2-improve-head" (click)="improveExpanded = !improveExpanded">
-      <img src="assets/svgs/ayu-new.svg" alt="" />
-      <span class="vs2-improve-title">Improve Ai Suggestions <em>(optional)</em></span>
-      <mat-icon>{{ improveExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
-    <ng-container *ngIf="improveExpanded">
-      <p class="vs2-improve-sub">Add more clinical context only if Ai suggestions are insufficient.</p>
-      <textarea class="vs2-textarea vs2-improve-text" rows="2" [(ngModel)]="improveContextText"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Describe anything clinically important..&#10;e.g. Patient is pregnant - Recent travel history"></textarea>
-      <div class="vs2-dx-quick-row">
-        <button class="vs2-dx-quick" *ngFor="let c of contextChips" [class.vs2-dx-quick-on]="isContextChipOn(c)"
-          (click)="toggleContextChip(c)">
-          <mat-icon>{{ isContextChipOn(c) ? 'check' : 'add' }}</mat-icon> {{ c }}
-        </button>
-      </div>
-      <button class="vs2-btn-block" (click)="updateAiSuggestions()">Update AI Suggestions</button>
-    </ng-container>
+  <div class="vs2-dx-quick-row" *ngIf="diagnosisSearchTerm">
+    <span class="vs2-dx-search-hint" *ngIf="diagnosisSearching">Searching…</span>
+    <span class="vs2-dx-search-hint" *ngIf="!diagnosisSearching && !diagnosisResults.length">
+      No matching diagnosis found
+    </span>
+    <button class="vs2-dx-quick" *ngFor="let r of diagnosisResults" [class.vs2-dx-quick-on]="isDiagnosisSelected(r.name)"
+      (click)="toggleSearchResult(r)">
+      <mat-icon>{{ isDiagnosisSelected(r.name) ? 'check' : 'add' }}</mat-icon> {{ r.name }}
+    </button>
   </div>
 
   <ng-container *ngIf="selectedDiagnoses.length">
@@ -284,7 +276,7 @@
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newNoteText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelNote()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addNote()">Add</button>
+    <button class="vs2-btn-add" [disabled]="!newNoteText.trim()" (click)="addNote()">Add Note</button>
   </div>
 </section>
 
@@ -296,9 +288,14 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <h4 class="vs2-ai-dx-title">
-    <img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Medication
-  </h4>
+  <div class="vs2-ai-dx-head">
+    <h4 class="vs2-ai-dx-title">
+      <img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Medication
+    </h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_medication')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+  </div>
 
   <div class="vs2-ai-panel vs2-ai-empty" *ngIf="medicationPanelState === 'no-diagnosis'">
     <span class="vs2-ai-empty-icon"><img src="assets/svgs/diagnosis.svg" alt="" /></span>
@@ -347,37 +344,37 @@
       <span class="vs2-dx-chip" *ngFor="let s of aiMedicationSuggestions"
         [ngClass]="'vs2-dx-' + s.likelihood.toLowerCase()" [class.vs2-dx-selected]="isMedicineSelected(s.name)"
         (click)="toggleAiMedication(s)">
-        <mat-icon class="vs2-dx-check" *ngIf="isMedicineSelected(s.name)">check</mat-icon>
-        <span class="vs2-dx-dot" *ngIf="!isMedicineSelected(s.name)"></span>
+        <mat-icon class="vs2-dx-mark">{{ isMedicineSelected(s.name) ? 'check' : 'add' }}</mat-icon>
         <span class="vs2-dx-name">{{ isMedicineSelected(s.name) ? s.name : s.label }}</span>
-        <span class="vs2-dx-badge">{{ s.likelihood }} Likely</span>
-        <mat-icon class="vs2-dx-info" (click)="toggleMedicationWhy(s, $event)">info_outline</mat-icon>
+        <span class="vs2-dx-badge">
+          {{ s.likelihood }} Likely <span class="vs2-dx-pct" *ngIf="s.confidence !== null">{{ confidenceLabel(s) }}</span>
+        </span>
+        <span class="vs2-dx-info-wrap" *ngIf="s.reasons.length">
+          <mat-icon class="vs2-dx-info" (click)="toggleMedicationWhy(s, $event)">info_outline</mat-icon>
+          <span class="vs2-dx-why" [class.vs2-dx-why-open]="whyMedication === s" (click)="$event.stopPropagation()">
+            <h5>Why {{ s.name }} ?</h5>
+            <ul class="vs2-bullet-list">
+              <li *ngFor="let r of s.reasons">{{ r }}</li>
+            </ul>
+          </span>
+        </span>
       </span>
-    </div>
-
-    <div class="vs2-dx-why" *ngIf="whyMedication">
-      <h5>Why {{ whyMedication.name }} ?</h5>
-      <ul class="vs2-bullet-list">
-        <li *ngFor="let r of whyMedication.reasons">{{ r }}</li>
-      </ul>
     </div>
   </ng-container>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="drugOptions"
-    [(ngModel)]="searchedDrug"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    (change)="onMedicinePicked($event)"
-    placeholder="Type to search medication">
-  </ng-select>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="medicineSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onMedicineSearch($event)"
+      placeholder="Type to search medication" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="medicineSearchTerm" (click)="clearMedicineSearch()">close</mat-icon>
+  </div>
 
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickMedicines" [class.vs2-dx-quick-on]="isMedicineSelected(q)"
-      (click)="toggleQuickMedicine(q)">
-      <mat-icon>{{ isMedicineSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
+  <div class="vs2-dx-quick-row" *ngIf="medicineSearchTerm">
+    <span class="vs2-dx-search-hint" *ngIf="!medicineResults.length">Keep typing to search medication</span>
+    <button class="vs2-dx-quick" *ngFor="let r of medicineResults" [class.vs2-dx-quick-on]="isMedicineSelected(r)"
+      (click)="toggleMedicineResult(r)">
+      <mat-icon>{{ isMedicineSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
     </button>
   </div>
 
@@ -406,7 +403,7 @@
       <div class="vs2-med-card-grid">
         <span class="vs2-med-col-label">Timing</span>
         <span class="vs2-med-col-label">Strength</span>
-        <span class="vs2-med-col-label">No.of days</span>
+        <span class="vs2-med-col-label">No. of days</span>
         <span class="vs2-med-col-label">Remarks</span>
 
         <ng-container *ngIf="!m.editing">
@@ -466,7 +463,7 @@
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="medInstructionText"></textarea>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelMedInstruction()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addMedInstruction()">Add</button>
+    <button class="vs2-btn-add" [disabled]="!medInstructionText.trim() || savingMedInstruction" (click)="addMedInstruction()">Add</button>
   </div>
 </section>
 
@@ -479,7 +476,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiAdvices.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Advice</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Advice</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let a of aiAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(a)"
         (click)="toggleAdvice(a)">
@@ -509,21 +510,18 @@
     </div>
   </div>
 
-  <ng-select
-    class="vs2-ng-select vs2-dx-search"
-    [items]="adviceOptions"
-    [(ngModel)]="newAdviceText"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    (change)="onAdvicePicked($event)"
-    placeholder="Type to search advice or type custom advice">
-  </ng-select>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="adviceSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onAdviceSearch($event)"
+      placeholder="Type to search advice or type custom advice" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="adviceSearchTerm" (click)="clearAdviceSearch()">close</mat-icon>
+  </div>
 
-  <div class="vs2-dx-quick-row">
-    <button class="vs2-dx-quick" *ngFor="let q of quickAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(q)"
-      (click)="toggleAdvice(q)">
-      <mat-icon>{{ isAdviceSelected(q) ? 'check' : 'add' }}</mat-icon> {{ q }}
+  <div class="vs2-dx-quick-row" *ngIf="adviceSearchTerm">
+    <button class="vs2-dx-quick" *ngFor="let r of adviceResults" [class.vs2-dx-quick-on]="isAdviceSelected(r)"
+      (click)="toggleAdvice(r)">
+      <mat-icon>{{ isAdviceSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
     </button>
   </div>
 
@@ -540,7 +538,7 @@
 
   <div class="vs2-btn-row">
     <button class="vs2-btn-outline" (click)="cancelAdvice()">Cancel</button>
-    <button class="vs2-btn-soft" (click)="addAdvice()">Add Advice</button>
+    <button class="vs2-btn-soft" [disabled]="!selectedAdvices.length" (click)="addAdvice()">Add Advice</button>
   </div>
 </section>
 
@@ -553,7 +551,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiTests.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Tests</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Tests</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestAdded(t)"
         (click)="addAiTest(t)">
@@ -568,22 +570,29 @@
   </div>
 
   <span class="vs2-field-label">Test<span class="vs2-req">*</span></span>
-  <ng-select
-    class="vs2-ng-select vs2-ng-select-grid"
-    [items]="testOptions"
+  <input
+    class="vs2-input"
+    placeholder="Type here"
     [(ngModel)]="newTestText"
-    [addTag]="true"
-    [searchable]="true"
-    [clearable]="true"
-    placeholder="Add test to patient">
-  </ng-select>
+    [ngModelOptions]="{ standalone: true }"
+    (keyup.enter)="addTest()" />
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-add" [disabled]="!newTestText?.trim()" (click)="addTest()">Add Test</button>
   </div>
 </section>
 
-<section id="section-dn-referral" class="vs2-section-card">
+<app-namco-referral-out
+  *ngIf="namcoReferralEnabled"
+  [patientUuid]="patientUuid"
+  [visitUuid]="visitUuid"
+  [visitNoteUuid]="visitNoteUuid"
+  [referrals]="referrals"
+  [visitReferred]="visitReferred"
+  [prescriptionShared]="prescriptionShared">
+</app-namco-referral-out>
+
+<section id="section-dn-referral" class="vs2-section-card" *ngIf="!namcoReferralEnabled">
   <div class="vs2-section-title">
     <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
     <span>Referral-Out</span>
@@ -592,7 +601,11 @@
   <div class="vs2-divider"></div>
 
   <ng-container *ngIf="aiReferrals.length">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Referral</h4>
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Referral</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let r of aiReferrals" (click)="applyAiReferral(r)">
         <mat-icon>add</mat-icon> {{ r.speciality }}<ng-container *ngIf="r.facility"> - {{ r.facility }}</ng-container>
@@ -610,7 +623,7 @@
         [addTag]="true"
         [searchable]="true"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Select specialization">
       </ng-select>
     </div>
     <div class="vs2-field">
@@ -622,7 +635,7 @@
         [addTag]="true"
         [searchable]="true"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Select Facility">
       </ng-select>
     </div>
     <div class="vs2-field">
@@ -634,17 +647,17 @@
         [addTag]="false"
         [searchable]="false"
         [clearable]="true"
-        placeholder="Select or type">
+        placeholder="Elective">
       </ng-select>
     </div>
     <div class="vs2-field">
-      <span class="vs2-field-label">Referral For (Reason)</span>
-      <input class="vs2-input" placeholder="Enter" [(ngModel)]="newReferral.reason" />
+      <span class="vs2-field-label">Referral for(Reason)</span>
+      <input class="vs2-input" placeholder="Enter Reason" [(ngModel)]="newReferral.reason" />
     </div>
   </div>
   <div class="vs2-btn-row">
     <button class="vs2-btn-cancel" (click)="cancelReferral()">Cancel</button>
-    <button class="vs2-btn-add" (click)="addReferral()">Save</button>
+    <button class="vs2-btn-add" [disabled]="!newReferral.speciality" (click)="addReferral()">Add</button>
   </div>
 
   <ng-container *ngIf="referrals.length">
@@ -673,8 +686,16 @@
   </div>
   <div class="vs2-divider"></div>
 
-  <div class="vs2-ai-followup" *ngIf="aiFollowUp">
-    <h4 class="vs2-ai-dx-title"><img src="assets/svgs/ayu-new.svg" alt="" /> AI-Suggested Follow-up</h4>
+  <p class="vs2-namco-note" *ngIf="isNamcoReferralConfirmed">
+    Follow-up is not needed as this patient is being referred to a NAMCO doctor.
+  </p>
+
+  <div class="vs2-ai-followup" *ngIf="aiFollowUp && !isNamcoReferralConfirmed">
+    <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Follow-up</h4>
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup')" title="Report an issue with these suggestions">
+      <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
+    </button>
+    </div>
     <button class="vs2-dx-quick" (click)="applyAiFollowUp()">
       <mat-icon>add</mat-icon> {{ aiFollowUp.duration }}<ng-container *ngIf="aiFollowUp.reason"> - {{ aiFollowUp.reason }}</ng-container>
     </button>
@@ -704,10 +725,12 @@
   <ng-container *ngIf="!followUpUuid">
     <div class="vs2-form-row">
       <span class="vs2-field-label">Do you want to have follow up with the patient</span>
-      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" /> Yes</label>
+      <label class="vs2-radio" [class.vs2-radio-disabled]="isNamcoReferralConfirmed"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" [disabled]="isNamcoReferralConfirmed" /> Yes</label>
       <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="saveFollowUp()" /> No</label>
     </div>
-    <ng-container *ngIf="wantFollowUp">
+    <ng-container *ngIf="wantFollowUp && !isNamcoReferralConfirmed">
+      <ul class="vs2-bullet-list vs2-interaction-list">
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Quick follow-up</span>
         <span class="vs2-quick-fu">
@@ -717,10 +740,14 @@
                   (click)="applyQuickFollowUp(d)">{{ d }} Days</button>
         </span>
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
         <input class="vs2-input vs2-date" type="date" [min]="minFollowUpDate" [(ngModel)]="followUpDate" (ngModelChange)="onFollowUpDateChange()" />
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select time<span class="vs2-req">*</span></span>
         <ng-select
@@ -732,34 +759,21 @@
           placeholder="Select time">
         </ng-select>
       </div>
+      </li>
+      <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Reason for follow-up</span>
         <input class="vs2-input" placeholder="Type here" [(ngModel)]="followUpReason" />
       </div>
-      <button class="vs2-btn-primary" (click)="saveFollowUp()">Save</button>
+      </li>
+      </ul>
+      <button class="vs2-btn-primary" [disabled]="!followUpDate || !followUpTime" (click)="saveFollowUp()">Save</button>
     </ng-container>
   </ng-container>
 </section>
 
-<section id="section-dn-documents" class="vs2-section-card">
-  <div class="vs2-section-title">
-    <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
-    <span>Additional documents</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
-  </div>
-  <div class="vs2-divider"></div>
-
-  <div class="vs2-list-item" *ngFor="let doc of uploadedDocs">
-    <span class="vs2-detail-label">{{ doc.name }}</span>
-    <mat-icon class="vs2-delete-icon">delete_outline</mat-icon>
-  </div>
-
-  <div class="vs2-dropzone">
-    <mat-icon>cloud_upload</mat-icon>
-    <span class="vs2-dropzone-text">Drag &amp; drop files or <a href="javascript:void(0)">Browse</a></span>
-    <span class="vs2-dropzone-hint">Supported formats: Images, JPEG, PNG, GIF, PDF, DOC, Excel, PPT</span>
-  </div>
-  <button class="vs2-btn-primary vs2-mt" (click)="sharePrescription()">
+<div class="vs2-share-row">
+  <button class="vs2-btn-primary" (click)="sharePrescription()">
     {{ prescriptionShared ? 'Update Prescription' : 'Share Prescription' }}
   </button>
-</section>
+</div>

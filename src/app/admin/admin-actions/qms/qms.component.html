@@ -1,0 +1,53 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/menu-queue.svg" alt="" height="44px" />
+          <div>
+            <h6 class="mb-0">{{ "QMS" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "QMS" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [(ngModel)]="qmsFeature.is_enabled" [disabled]="!canEdit"
+                  (change)="updateQmsStatus($event.target.checked)" data-test-id="checkboxQmsToggle" />
+                <div class="state">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" [disabled]="!canEdit" (click)="onPublish()"
+              data-test-id="btnPublishQmsTop">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="sectionStatus text-greyout" *ngIf="featureMissing" data-test-id="msgQmsUnavailable">
+            {{ "The QMS setting is not available on this server." | translate }}
+          </div>
+
+          <ng-container *ngIf="!featureMissing">
+            <div class="sectionStatus" [ngClass]="!qmsFeature.is_enabled ? 'text-greyout' : ''">
+              <ng-container *ngIf="qmsFeature.is_enabled">
+                {{ "Queue Management System (QMS) is currently enabled." | translate }}
+              </ng-container>
+              <ng-container *ngIf="!qmsFeature.is_enabled">
+                {{ "Queue Management System (QMS) is currently disabled." | translate }}
+              </ng-container>
+              {{ "Use the toggle above to change it, then click Publish to apply all pending configuration changes." | translate }}
+            </div>
+
+            <button type="button" class="btn-block mt-3" [disabled]="!canEdit" (click)="onPublish()"
+              data-test-id="btnPublishQms">
+              {{ "Publish" | translate }}
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

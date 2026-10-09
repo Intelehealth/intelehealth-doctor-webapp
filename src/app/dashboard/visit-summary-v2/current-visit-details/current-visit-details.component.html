@@ -1,56 +1,59 @@
 <section id="section-consultation" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('consultation')">
     <img class="vs2-section-icon-img" src="assets/svgs/consultation-details.svg" alt="" />
     <span>Consultation details</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['consultation'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-  <div class="vs2-detail-grid">
-    <div class="vs2-detail-row" *ngFor="let row of consultationDetails">
-      <span class="vs2-detail-label">{{ row.label }}</span>
-      <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value }}</span>
+  <div class="vs2-section-body" *ngIf="!collapsed['consultation']">
+    <div class="vs2-detail-grid">
+      <div class="vs2-detail-row" *ngFor="let row of consultationDetails">
+        <span class="vs2-detail-label">{{ row.label }}</span>
+        <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value }}</span>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="section-checkup" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('checkup')">
     <img class="vs2-section-icon-img" src="assets/svgs/check-up-reason.svg" alt="" />
     <span>Check-up reason</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['checkup'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+    <div class="vs2-section-body" *ngIf="!collapsed['checkup']">
+      <h4 class="vs2-subhead">Chief complaint</h4>
+      <div class="vs2-complaint-chips">
+      <span class="vs2-chip vs2-chip-solid" *ngFor="let c of chiefComplaints">{{ c }}</span>
+    </div>
 
-  <h4 class="vs2-subhead">Chief complaint</h4>
-  <div class="vs2-complaint-chips">
-    <span class="vs2-chip vs2-chip-solid" *ngFor="let c of chiefComplaints">{{ c }}</span>
-  </div>
-
-  <div class="vs2-complaint-block" *ngFor="let detail of complaintDetails">
-    <h4 class="vs2-subhead vs2-subhead-strong">{{ detail.title }}</h4>
-    <div class="vs2-detail-list">
-      <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of detail.rows">
-        <span class="vs2-detail-label">{{ row.label }}</span>
-        <span class="vs2-detail-value">{{ row.value }}</span>
+    <div class="vs2-complaint-block" *ngFor="let detail of complaintDetails">
+      <h4 class="vs2-subhead vs2-subhead-strong">{{ detail.title }}</h4>
+      <div class="vs2-detail-list">
+        <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of detail.rows">
+          <span class="vs2-detail-label">{{ row.label }}</span>
+          <span class="vs2-detail-value">{{ row.value }}</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <h4 class="vs2-subhead vs2-subhead-strong">Associated symptoms</h4>
-  <div class="vs2-symptom-group" *ngFor="let grp of associatedSymptoms">
-    <div class="vs2-symptom-label">{{ grp.label }}:</div>
-    <p class="vs2-symptom-text">{{ grp.text }}</p>
+    <h4 class="vs2-subhead vs2-subhead-strong">Associated symptoms</h4>
+    <div class="vs2-symptom-group" *ngFor="let grp of associatedSymptoms">
+      <div class="vs2-symptom-label">{{ grp.label }}:</div>
+      <p class="vs2-symptom-text">{{ grp.text }}</p>
+    </div>
   </div>
 </section>
 
 <section id="section-history" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('history')">
     <img class="vs2-section-icon-img" src="assets/svgs/medical-history.svg" alt="" />
     <span>Medical history</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['history'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-
+  <div class="vs2-section-body" *ngIf="!collapsed['history']">
   <h4 class="vs2-subhead">Patient history</h4>
   <div class="vs2-detail-list">
     <div class="vs2-detail-row vs2-detail-row-wide" *ngFor="let row of patientHistory">
@@ -66,32 +69,34 @@
       <span class="vs2-detail-value">{{ row.value }}</span>
     </div>
   </div>
+  </div>
 </section>
 
 <section id="section-vitals" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('vitals')">
     <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
     <span>Vitals</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['vitals'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-
+  <div class="vs2-section-body" *ngIf="!collapsed['vitals']">
   <div class="vs2-vitals-grid">
     <div class="vs2-vital-cell" *ngFor="let v of vitals">
       <span class="vs2-vital-label">{{ v.label }}</span>
       <span class="vs2-vital-value">{{ v.value }}</span>
     </div>
   </div>
+  </div>
 </section>
 
 <section id="section-physical" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('physical')">
     <img class="vs2-section-icon-img" src="assets/svgs/physical-examination.svg" alt="" />
     <span>Physical examination</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['physical'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-
+  <div class="vs2-section-body" *ngIf="!collapsed['physical']">
   <ng-container *ngIf="generalExams.length || eyeImages.length">
     <h4 class="vs2-subhead">General exams</h4>
     <div class="vs2-detail-list">
@@ -116,16 +121,17 @@
       <li *ngFor="let f of abdomenFindings">{{ f }}</li>
     </ul>
   </ng-container>
+  </div>
 </section>
 
 <section id="section-documents" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('documents')">
     <img class="vs2-section-icon-img" src="assets/svgs/additional-documents.svg" alt="" />
     <span>Additional documents</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['documents'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-
+  <div class="vs2-section-body" *ngIf="!collapsed['documents']">
   <div class="vs2-doc-row">
     <ng-container *ngFor="let doc of documents">
       <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'" (click)="previewDocument(doc)">
@@ -137,16 +143,17 @@
       </div>
     </ng-container>
   </div>
+  </div>
 </section>
 
-<section id="section-refer" class="vs2-section-card">
-  <div class="vs2-section-title">
+<section id="section-refer" class="vs2-section-card" *ngIf="referToSpecialistEnabled; else startVisitNoteCard">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('refer')">
     <img class="vs2-section-icon-img" src="assets/svgs/refer-to-specialist.svg" alt="" />
     <span>Refer to specialist</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['refer'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
-
+  <div class="vs2-section-body" *ngIf="!collapsed['refer']">
   <div class="vs2-refer-row">
     <span class="vs2-detail-label vs2-no-bullet">Refer to another speciality</span>
     <label class="vs2-radio">
@@ -172,11 +179,21 @@
     <button class="vs2-btn-primary" (click)="reassign.emit(selectedSpecialization)">Re-assign</button>
   </ng-container>
 
-  <ng-container *ngIf="!referToSpecialist">
-    <div class="vs2-note-box">
-      <span class="vs2-note-label">Note:</span>
-      <span class="vs2-note-text">{{ chwNote }}</span>
-    </div>
-    <button class="vs2-btn-primary" *ngIf="!visitNoteStarted" (click)="startVisit.emit()">Start Visit Note</button>
-  </ng-container>
+  <ng-container *ngIf="!referToSpecialist" [ngTemplateOutlet]="startVisitNote"></ng-container>
+  </div>
 </section>
+
+<!-- Shown in place of "Refer to specialist" when the admin has disabled that section -->
+<ng-template #startVisitNoteCard>
+  <section class="vs2-section-card">
+    <ng-container [ngTemplateOutlet]="startVisitNote"></ng-container>
+  </section>
+</ng-template>
+
+<ng-template #startVisitNote>
+  <div class="vs2-note-box">
+    <span class="vs2-note-label">Note:</span>
+    <span class="vs2-note-text">{{ chwNote }}</span>
+  </div>
+  <button class="vs2-btn-primary" *ngIf="!visitNoteStarted" (click)="startVisit.emit()">Start Visit Note</button>
+</ng-template>

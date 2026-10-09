@@ -8,7 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
-import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT } from 'aiddx-library';
+import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT, CONFIG_SERVICE } from 'aiddx-library';
 import { getCacheData, isFeaturePresent, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -86,6 +86,7 @@ class PickDateAdapter extends NativeDateAdapter {
     AiddxService,
     AiTxService,
     { provide: ENVIRONMENT, useValue: environment },
+    { provide: CONFIG_SERVICE, useExisting: AppConfigService },
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
   ],
@@ -134,6 +135,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   diagnosisCode: { value: string } = { value: '' };
 
   hasAILLMEnabled: boolean = false;
+  isTurnServer: boolean = environment.isTurnServer;
+  readonly OTHERS_SPECIALITY = 'Others';
 
   medicines: MedicineModel[] = [];
   advices: ObsModel[] = [];
@@ -230,6 +233,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       reason: new FormControl(null)
     });
 
+    // "Others" needs the doctor to type what specialty they mean, in Remarks.
+    this.addReferralForm.get('speciality').valueChanges.subscribe((speciality) => {
+      const reasonControl = this.addReferralForm.get('reason');
+      if (speciality === this.OTHERS_SPECIALITY) {
+        reasonControl.setValidators([Validators.required]);
+      } else {
+        reasonControl.clearValidators();
+      }
+      reasonControl.updateValueAndValidity();
+    });
+
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
@@ -237,12 +251,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
       followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
-      followUpType: new FormControl(null)
+      followUpType: new FormControl(this.isTurnServer ? 'Telemedicine' : null)
     });
 
 
     this.diagnosis$ = this.diagnosisSubject.asObservable();
-    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.referSpecializations = [
+      ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
+      ...(this.isTurnServer ? [{ id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true }] : []),
+    ];
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
 
@@ -588,6 +605,9 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
     this.diagnosisValidated = false;
     this.dSearchSubject.next(event.term);
   }
+
+  // Lets the doctor add a diagnosis typed in free text.
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
 
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
@@ -1575,12 +1595,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
               followUpTime = time ? time : null;
             }
-
-            // Only try to get Type if the feature is enabled
-            if (this.isFeatureAvailable('followUpType')) {
-              const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
-              followUpType = type && type !== 'null' ? type : null;
-            }
+          }
+          // Only try to get Type if the feature is enabled and a follow-up was actually requested
+          if (this.isFeatureAvailable('followUpType') && wantFollowUp === 'Yes') {
+            const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
+            followUpType = type && type !== 'null' ? type : (this.isTurnServer ? 'Telemedicine' : null);
           }
           this.followUpDatetime = obs.value;
           this.followUpForm.patchValue({
@@ -1638,11 +1657,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
         this.followUpSaved.emit(this.followUpForm.value);
       }
     } else {
+      const noFollowUpValue = this.followUpForm.value.wantFollowUp;
       this.encounterService.postObs({
         concept: conceptIds.conceptFollow,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
-        value: this.followUpForm.value.wantFollowUp,
+        value: noFollowUpValue,
         encounter: this.visitNotePresent.uuid
       }).subscribe ( (res) => {
           this.followUpForm.patchValue({
@@ -1652,7 +1672,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
             followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
-            followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+            followUpType : null
           });
           if (this.aillmtxFollowupComponent) {
             this.aillmtxFollowupComponent.existingFollowUp.push({
@@ -1661,7 +1681,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
               followUpDate : null,
               followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
               followUpReason : null,
-              followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+              followUpType : null
             });
           }
       });
@@ -1675,7 +1695,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
+      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: this.isTurnServer ? 'Telemedicine' : null }
       this.followUpForm.patchValue(followUp);
       this.followUpDatetime = null;
       if (this.aillmtxFollowupComponent) {

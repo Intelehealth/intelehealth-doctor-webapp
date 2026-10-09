@@ -27,11 +27,13 @@ export class AppConfigService {
   public patient_reg_other: boolean;
   public patient_reg_address: boolean;
   public abha_section: boolean;
+  public qms_section: boolean;
   public sidebar_menus: { [key: string]: boolean };
   public patient_visit_sections: PatientVisitSection[]
   public dropdown_values: DropdownValuesModel[]
   public patient_diagnostics_section: boolean;
   public ai_llm_section: boolean;
+  public ai_llm: { [key: string]: boolean };
   public ai_llm_recording_section:  boolean;
   public namco_referral_section: boolean;
   public prescription_notes_section: boolean;

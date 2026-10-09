@@ -13,10 +13,10 @@ on:
           - ttxai
           - testturn
           - nasprod
-           
+          - pathqa
   push:
     branches:
-      - nas-ida5-development-master
+      - pull-nas-ida5-development-master
 
 jobs:
   set-matrix:
@@ -30,8 +30,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn" , "nasprod"]' >> "$GITHUB_OUTPUT"
-             
+            echo 'targets=["dev","turn","ttxai","testturn","nasprod","pathqa"]' >> "$GITHUB_OUTPUT"
           fi
 
   build-and-deploy:
@@ -67,7 +66,10 @@ jobs:
             nasprod)
               echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
-            *)    
+            pathqa)
+              echo "host=${{ secrets.PATHQA_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
               ;;
@@ -108,6 +110,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/deploy/webapp/
+            chmod 644 webapp_image.tar.gz
             gunzip -c webapp_image.tar.gz | docker load
             docker stop webapp-container || true
             docker rm webapp-container || true

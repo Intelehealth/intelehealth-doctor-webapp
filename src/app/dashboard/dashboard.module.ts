@@ -46,6 +46,9 @@ import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-si
 import { CurrentVisitDetailsComponent } from './visit-summary-v2/current-visit-details/current-visit-details.component';
 import { DoctorNoteComponent } from './visit-summary-v2/doctor-note/doctor-note.component';
 import { PastVisitsComponent } from './visit-summary-v2/past-visits/past-visits.component';
+import { NamcoReferralOutComponent } from './visit-summary-v2/namco-referral-out/namco-referral-out.component';
+import { SpecialistDoctorNoteComponent } from './visit-summary-v2/specialist-doctor-note/specialist-doctor-note.component';
+import { PrimaryNoteViewComponent } from './visit-summary-v2/primary-note-view/primary-note-view.component';
 import { PrimaryDoctorNoteComponent } from './visit-summary/primary-doctor-note/primary-doctor-note.component';
 
 // AoT requires an exported function for factories
@@ -73,6 +76,9 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     CurrentVisitDetailsComponent,
     DoctorNoteComponent,
     PastVisitsComponent,
+    NamcoReferralOutComponent,
+    SpecialistDoctorNoteComponent,
+    PrimaryNoteViewComponent,
     PrimaryDoctorNoteComponent,
   ],
   imports: [

@@ -50,7 +50,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Regular Imports
 import { environment } from "../environments/environment";
-import { ENVIRONMENT } from "aiddx-library";
+import { CONFIG_SERVICE, ENVIRONMENT } from "aiddx-library";
 import { SocketService } from "./services/socket.service";
 import { AppRoutingModule } from './app-routing.module';
 import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
@@ -199,6 +199,7 @@ registerLocaleData(localeEn);
     CookieService,
     SocketService,
     { provide: ENVIRONMENT, useValue: environment },
+    { provide: CONFIG_SERVICE, useExisting: AppConfigService },
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

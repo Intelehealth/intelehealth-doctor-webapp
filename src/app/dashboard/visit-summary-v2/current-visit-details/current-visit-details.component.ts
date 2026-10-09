@@ -24,14 +24,25 @@ export class CurrentVisitDetailsComponent {
   @Input() chwNote = '';
   @Input() visitNoteStarted = false;
   @Input() specializations: string[] = [];
+  @Input() referToSpecialistEnabled = true;
 
   referToSpecialist = true;
+  collapsed: Record<string, boolean> = {};
   selectedSpecialization: string | null = null;
 
   @Output() startVisit = new EventEmitter<void>();
   @Output() reassign = new EventEmitter<string>();
 
   constructor(private coreService: CoreService) {}
+
+  toggleSection(key: string): void {
+    this.collapsed[key] = !this.collapsed[key];
+  }
+
+  /** Open a section (e.g. when it's picked from the sidebar). */
+  expandSection(key: string): void {
+    this.collapsed[key] = false;
+  }
 
   previewEyeImages(index: number): void {
     this.coreService.openImagesPreviewModal({

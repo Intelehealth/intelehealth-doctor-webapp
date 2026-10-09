@@ -4,6 +4,11 @@ export interface SectionNavItem {
   icon: string;
 }
 
+export interface NavGroup {
+  label: string;
+  items: SectionNavItem[];
+}
+
 export interface DetailRow {
   label: string;
   value: string;
@@ -112,6 +117,7 @@ export type SuggestionSource = 'ai' | 'manual';
 export interface AiDiagnosisSuggestion {
   name: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
 }
 
@@ -119,6 +125,7 @@ export interface AiMedicationSuggestion {
   name: string;
   label: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
   timing?: string;
   strength?: string;

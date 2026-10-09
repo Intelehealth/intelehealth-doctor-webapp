@@ -1,15 +1,15 @@
-<div class="container-fluid">
+<div class="container-fluid" [class.turn-server-scroll]="isTurnServer">
   <div class="row">
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment && checkIfDateOldThanOneDay(visitAppointment).includes('Due')">
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
       <div class="appointment-banner">
         <div>
           <h6>{{'Appointment starts in'|translate}}</h6>
           <p>
             <img src="assets/svgs/clock-green.svg" alt="" data-test-id="clockIcon" />
-            {{ checkIfDateOldThanOneDay(visitAppointment) }}
+            {{ getAppointmentStartsIn(visitAppointment) }}
           </p>
         </div>
-        <div>
+        <!-- <div>
           <a
             class="start-call-btn"
             href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
@@ -18,7 +18,7 @@
           >
             {{'Start call'|translate}}
           </a>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -41,11 +41,14 @@
                   <h6 data-test-id="etPatientName">
                     <span>{{ patient?.person?.preferredName?.givenName }}</span>
                     <span *ngIf="checkPatientRegField('Middle Name') && patient?.person?.preferredName?.middleName">{{ ' ' + patient?.person?.preferredName?.middleName }}</span>
-                    <span>{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
+                    <span *ngIf="patient?.person?.preferredName?.familyName && patient?.person?.preferredName?.familyName !== '.'">{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
                     <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ", " + (patient?.person.birthdate ? getAge(patient?.person.birthdate, true) : patient?.person.age) + ")" }}</span>
                   </h6>
-                  <p data-test-id="etPatienOpenMRSId" *ngIf="isFeatureAvailable('tnmStaging')">{{ getPersonAttributeValue('TMH Case Number') }}</p>
-                  <p data-test-id="etPatienOpenMRSId" *ngIf="!isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
+                  <!-- Turn servers always show the OpenMRS ID (Turn patients have no TMH Case Number).
+                       Other servers (dev, pathqa) keep the original tnmStaging/TMH behavior unchanged. -->
+                  <p data-test-id="etPatienOpenMRSId" *ngIf="isTurnServer">{{ getPatientIdentifier('OpenMRS ID') }}</p>
+                  <p data-test-id="etPatienOpenMRSId" *ngIf="!isTurnServer && isFeatureAvailable('tnmStaging')">{{ getPersonAttributeValue('TMH Case Number') }}</p>
+                  <p data-test-id="etPatienOpenMRSId" *ngIf="!isTurnServer && !isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
                 </div>
               </div>
             </div>
@@ -113,7 +116,7 @@
                         target="_blank"
                         class="icon-btn"
                         data-test-id="linkWhatsApp"
-                        (click)="startWhatsAppCall(true)"
+                        (click)="onPatientWhatsAppClick(true)"
                       >
                         <img src="assets/svgs/whatsapp-icon.svg" width="28px" height="28px" alt="" />
                       </a>
@@ -122,6 +125,7 @@
                         target="_blank"
                         class="icon-btn"
                         data-test-id="linkPhoneNumber"
+                        (click)="onPatientPhoneClick()"
                       >
                         <img src="assets/svgs/phone-circle.svg" width="28px" height="28px" alt="" />
                       </a>
@@ -1161,7 +1165,7 @@
                             <ng-select appendTo=".visit-summary-tab-group" class="visit-select custom"
                               formControlName="diagnosisName" (search)="onKeyUp($event)" (change)="onDiagnosisChange($event)"
                               [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true"
-                              placeholder="{{ 'Select diagnosis' | translate }}" [addTag]="false" data-test-id="selectDiagnosisName"
+                              placeholder="{{ 'Select diagnosis' | translate }}" [addTag]="addDiagnosisTag" addTagText="Add new diagnosis:" data-test-id="selectDiagnosisName"
                             >
                               <ng-template ng-label-tmp let-item="item">
                                 <span class="diagnosis-selected-label" [attr.data-test-id]="item.name">
@@ -2358,7 +2362,7 @@
                   </li>
                   <ng-container
                     *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'">
-                    <li *ngIf="isFeatureAvailable('followUpType')">
+                    <li *ngIf="isFeatureAvailable('followUpType') && !isTurnServer">
                       <div class="row">
                         <label class="col-sm-3 col-form-label" data-test-id="lblFollowUpType">
                           {{'Follow-up type' | translate}}

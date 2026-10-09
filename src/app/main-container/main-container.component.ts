@@ -69,6 +69,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   thumbnailLogoURL: string = '';
   pvs: PatientVisitSummaryConfigModel;
   sidebarMenus: any;
+  qmsSection: boolean;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -94,6 +95,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.routeUrl = this.breadcrumbs[0]?.url;
     this.pvs = { ...this.appConfigService.patient_visit_summary };
     this.sidebarMenus = this.appConfigService.sidebar_menus
+    this.qmsSection = this.appConfigService.qms_section
   }
 
   ngOnInit(): void {

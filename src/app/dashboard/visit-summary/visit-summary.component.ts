@@ -13,6 +13,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, Validators } from
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
+import { OverrideReasonItem } from 'src/app/modal-components/ddx-ttx-override-reason/ddx-ttx-override-reason.component';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
@@ -30,7 +31,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, isNamcoDoctor, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, isNamcoDoctor, getSourceEncounterUuids, checkIfDateOldThanOneDay as getAppointmentCountdown } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -1518,9 +1519,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     const caller = doctorPhoneNumber ? doctorPhoneNumber : environment.doctorPhoneNumber;
     this.providerService.kaleyraClick2Call(caller, this.hwPhoneNo, custom, '0', notes).subscribe({
       next: (data) => {
+        this.analytics.logEvent('kaleyra_call_initiated', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+          visitId: visitUuid,
+          location: this.clinicName
+        });
         this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
       },
       error: (error) => {
+        this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          visitId: visitUuid,
+          location: this.clinicName,
+          reason: error?.message ?? 'unknown'
+        });
         this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
       }
     });
@@ -1542,6 +1555,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       return `${minutes} minutes ago`;
     }
     return `${hours} hrs ago`;
+  }
+
+  /**
+  * Countdown/label for an upcoming appointment; shows "Due" once it has passed
+  * @param {string} data - Appointment date in string format
+  * @return {string}
+  */
+  getAppointmentStartsIn(data: string): string {
+    return getAppointmentCountdown(data);
   }
 
   /**
@@ -1890,6 +1912,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dSearchSubject.next(event.term);
   }
 
+  //  add a diagnosis typed in free text
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
+
   /**
    * Search diagnosis for a given value
    * @param {string} val - search value
@@ -2164,15 +2189,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     return match ? match.drug : null;
   }
 
+  // Additional Instructions shares conceptAdvice with Advice 
+  static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
+
   /**
   * Save additional instruction
   * @returns {void}
   */
   saveAdditionalInstruction(): Observable<any> {
+    const markedValue = `${VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX}${this.additionalInstructionForm.value.value}`;
     if (this.additionalInstructionForm.value.uuid) {
       if (this.additionalInstructionForm.valid)
         return this.encounterService.updateObs(this.additionalInstructionForm.value.uuid, {
-          value: this.additionalInstructionForm.value.value
+          value: markedValue
         })
       else
         return this.diagnosisService.deleteObs(this.additionalInstructionForm.value.uuid).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: null })))
@@ -2181,7 +2210,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         concept: conceptIds.conceptMed,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
-        value: this.additionalInstructionForm.value.value,
+        value: markedValue,
         encounter: this.visitNotePresent.uuid
       }).pipe(tap((response: ObsModel) => this.additionalInstructionForm.patchValue({ uuid: response.uuid })));
     } else {
@@ -2252,18 +2281,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
-        
-            if (this.additionalInstructionForm && !obs.value.includes('</a>')) {
-            
-              if (!obs.value.includes(':') || obs.value.split(':').length < 3) {
-              
-                if (!this.advicesList.includes(obs.value)) {
-                  this.additionalInstructions = obs;
-                  if (this.additionalInstructionForm) {
-                    this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
-                  }
-                }
-              }
+            if (this.additionalInstructionForm && obs.value.startsWith(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.additionalInstructions = obs;
+              const value = obs.value.slice(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX.length);
+              this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value });
             }
           }
         });
@@ -2281,11 +2302,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
-            if (!obs.value.includes('</a>')) {
-              // Exclude additional instructions from advices list
-              if (!this.additionalInstructions || this.additionalInstructions.uuid !== obs.uuid) {
-                this.advices.push(obs);
-              }
+            // Additional Instructions shares this concept but is marked, so exclude it here.
+            if (!obs.value.includes('</a>') && !obs.value.startsWith(VisitSummaryComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.advices.push(obs);
             }
           }
         });
@@ -2563,7 +2582,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
-            followUpType: this.isFeatureAvailable('followUpType')
+            followUpType: this.isFeatureAvailable('followUpType') && wantFollowUp === 'Yes'
               ? (followUpType ?? (environment.isTurnServer ? '-' : null))
               : null
           });
@@ -2585,9 +2604,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       ? `${this.followUpForm.value.followUpDate},Time:${this.followUpForm.value.followUpTime}`
       : null;
 
+    const followUpType = this.followUpForm.value.wantFollowUp === 'Yes' ? this.followUpForm.value.followUpType : null;
+
     if (this.followUpForm.value.uuid) {
       this.encounterService.updateObs(this.followUpForm.value.uuid, { value }).pipe(tap((response: ObsModel) => {
-        this.followUpForm.patchValue({ present: true});
+        this.followUpForm.patchValue({ present: true, followUpType });
         this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
       })).subscribe();
     } else {
@@ -2598,7 +2619,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           value: value,
           encounter: this.visitNotePresent.uuid
         }).pipe(tap((response: ObsModel) => {
-          this.followUpForm.patchValue({ present: true});
+          this.followUpForm.patchValue({ present: true, followUpType });
           this.notifyHwForAvailablePrescription(`Follow-up scheduled for ${this.visit?.patient?.person?.display || 'Patient'}`, "", followUpDate);
         })).subscribe();
      }
@@ -2825,7 +2846,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @returns {boolean}
   */
   sharePrescription(): boolean {
-    if (environment.isTurnServer && this.addReferralForm.value.speciality === this.OTHERS_SPECIALITY && !this.addReferralForm.value.reason) {
+    const activeReferralForm = this.hasAILLMEnabled ? this.ddxCompRef?.instance?.addReferralForm : this.addReferralForm;
+    if (environment.isTurnServer && activeReferralForm?.value.speciality === this.OTHERS_SPECIALITY && !activeReferralForm.value.reason) {
       this.toastr.warning(this.translateService.instant('Please specify the specialty in Remarks'), this.translateService.instant('Remarks Required'));
       return false;
     }
@@ -2874,151 +2896,165 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.changedFields = [];
-    this.saveAllObs().subscribe({
-      next: (responses) => {
-        this.changesMade = false;
-        //Calculate consultation duration
-        const consultationDuration = this.consultationStartTime
-          ? (new Date().getTime() - this.consultationStartTime.getTime()) / 1000 // duration in seconds
-          : null;
-        const isFollowUpVisit = this.visit?.demarcation === visitTypes.FOLLOW_UP;
+    this.gateOnPendingOverrides(() => {
+      this.saveAllObs().subscribe({
+        next: (responses) => {
+          this.changesMade = false;
+          //Calculate consultation duration
+          const consultationDuration = this.consultationStartTime
+            ? (new Date().getTime() - this.consultationStartTime.getTime()) / 1000 // duration in seconds
+            : null;
+          const isFollowUpVisit = this.visit?.demarcation === visitTypes.FOLLOW_UP;
 
-        const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
-        //Open Share Prescription Confirmation Modal
-        const namcoReferral = this.getConfirmedNamcoReferral();
-        this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion, namcoReferral }).subscribe((res: boolean) => {
-          if (res) {
-            const completeVisit = () => {
-              if (this.isVisitNoteProvider) {
-                if (this.provider.attributes.length) {
-                  if (navigator.onLine) {
-                    if (!this.visitCompleted) {
-                      this.encounterService.postEncounter({
-                        patient: this.visit.patient.uuid,
-                        encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
-                        encounterProviders: [
-                          {
-                            provider: this.provider.uuid,
-                            encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
-                          },
-                        ],
-                        visit: this.visit.uuid,
-                        encounterDatetime: new Date(Date.now() - 30000),
-                        obs: [
-                          {
-                            concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
-                            value: JSON.stringify(this.getDoctorDetails()),
-                          },
-                        ]
-                      }).subscribe((post) => {
-                        this.visitCompleted = true;
-                        const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
-                        // Prescription just shared -> notify the patient on WhatsApp
+          const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
+          //Open Share Prescription Confirmation Modal
+          const namcoReferral = this.getConfirmedNamcoReferral();
+          this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion, namcoReferral }).subscribe((res: boolean) => {
+            if (res) {
+              const completeVisit = () => {
+                if (this.isVisitNoteProvider) {
+                  if (this.provider.attributes.length) {
+                    if (navigator.onLine) {
+                      if (!this.visitCompleted) {
+                        this.encounterService.postEncounter({
+                          patient: this.visit.patient.uuid,
+                          encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e', // visit complete encounter type uuid
+                          encounterProviders: [
+                            {
+                              provider: this.provider.uuid,
+                              encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03', // Doctor encounter role
+                            },
+                          ],
+                          visit: this.visit.uuid,
+                          encounterDatetime: new Date(Date.now() - 30000),
+                          obs: [
+                            {
+                              concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', // Doctor details concept uuid
+                              value: JSON.stringify(this.getDoctorDetails()),
+                            },
+                          ]
+                        }).subscribe((post) => {
+                          this.visitCompleted = true;
+                          const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
+                          // Prescription just shared -> notify the patient on WhatsApp.
+                        // Fetch the visit fresh (now that the encounter above is confirmed
+                        // created) and send it along,
+                          if (environment.isTurnServer) {
+                            this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid),
+                          });
+                          }
+                          this.notifyHwForAvailablePrescription("","",followUpDate);
+                          this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
+
+                          // if (this.appConfigService.abha_section) {
+                          //   this.updateAbhaDetails(post.uuid);
+                          // }
+
+                          this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                            next: (linkSvcRes: ApiResponseModel) => {
+                              const link = linkSvcRes.data.hash;
+                              this.visitService.postAttribute(
+                                this.visit.uuid,
+                                {
+                                  attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
+                                  value: `/i/${link}`,
+                                }).subscribe();
+                              this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                                if (result === 'view') {
+                                  // Open visit summary modal here....
+                                  this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                                } else if (result === 'dashboard') {
+                                  this.router.navigate(['/dashboard']);
+                                }
+                              });
+                            },
+                            error: (err) => {
+                            this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
+                              this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                                if (result === 'view') {
+                                  // Open visit summary modal here....
+                                  this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                                } else if (result === 'dashboard') {
+                                  this.router.navigate(['/dashboard']);
+                                }
+                              });
+                            }
+                          });
+                        });
+                      } else {
+                        // Update Prescription: re-notify the patient on WhatsApp, same as Share Prescription.
                         if (environment.isTurnServer) {
-                          this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+                          this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true),
+                          });
                         }
-                        this.notifyHwForAvailablePrescription("","",followUpDate);
-                        this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
-
-                        // if (this.appConfigService.abha_section) {
-                        //   this.updateAbhaDetails(post.uuid);
-                        // }
-
-                        this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                          next: (linkSvcRes: ApiResponseModel) => {
-                            const link = linkSvcRes.data.hash;
-                            this.visitService.postAttribute(
-                              this.visit.uuid,
-                              {
-                                attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
-                                value: `/i/${link}`,
-                              }).subscribe();
-                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                              if (result === 'view') {
-                                // Open visit summary modal here....
-                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                              } else if (result === 'dashboard') {
-                                this.router.navigate(['/dashboard']);
-                              }
-                            });
-                          },
-                          error: (err) => {
-                          this.coreService.showToast("error",err.message,"Error","error-share-prescription-toast");
-                            this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                              if (result === 'view') {
-                                // Open visit summary modal here....
-                                this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                              } else if (result === 'dashboard') {
-                                this.router.navigate(['/dashboard']);
-                              }
-                            });
+                        this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
+                          if (result === 'view') {
+                            // Open visit summary modal here....
+                            this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                          } else if (result === 'dashboard') {
+                            this.router.navigate(['/dashboard']);
                           }
                         });
-                      });
+                      }
                     } else {
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
-                        if (result === 'view') {
-                          // Open visit summary modal here....
-                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                        } else if (result === 'dashboard') {
-                          this.router.navigate(['/dashboard']);
+                      this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                        if (c) {
+                          // Do nothing
                         }
                       });
                     }
                   } else {
-                    this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+                    this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
                       if (c) {
-                        // Do nothing
+                        this.router.navigate(['/dashboard/profile']);
                       }
                     });
                   }
                 } else {
-                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: boolean) => {
+                  this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
                     if (c) {
-                      this.router.navigate(['/dashboard/profile']);
-                    }
-                  });
-                }
-              } else {
-                this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: boolean) => {
-                  if (c) {
-                    this.router.navigate(['/dashboard']);
-                  }
-                });
-              }
-            };
-
-            this.createReferralEncounterForNamco().subscribe({
-              next: (referralEncounter) => {
-                if (referralEncounter) {
-                  this.hasReferral = referralEncounter;
-                  // The visit stays open (referred to a specialist) instead of being completed,
-                  // so completeVisit()'s own success modal never runs for this path — show one
-                  // here instead, so the doctor still gets closing confirmation for their referral.
-                  this.coreService.openSharePrescriptionSuccessModal({ isReferral: true }).subscribe((result: string | boolean) => {
-                    if (result === 'view') {
-                      this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                    } else if (result === 'dashboard') {
                       this.router.navigate(['/dashboard']);
                     }
                   });
-                } else {
+                }
+              };
+
+              this.createReferralEncounterForNamco().subscribe({
+                next: (referralEncounter) => {
+                  if (referralEncounter) {
+                    this.hasReferral = referralEncounter;
+                    // The visit stays open (referred to a specialist) instead of being completed,
+                    // so completeVisit()'s own success modal never runs for this path — show one
+                    // here instead, so the doctor still gets closing confirmation for their referral.
+                    this.coreService.openSharePrescriptionSuccessModal({ isReferral: true }).subscribe((result: string | boolean) => {
+                      if (result === 'view') {
+                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                      } else if (result === 'dashboard') {
+                        this.router.navigate(['/dashboard']);
+                      }
+                    });
+                  } else {
+                    completeVisit();
+                  }
+                },
+                error: (error) => {
+                  console.error('Error creating Referral encounter', error);
                   completeVisit();
                 }
-              },
-              error: (error) => {
-                console.error('Error creating Referral encounter', error);
-                completeVisit();
-              }
-            });
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error saving observations', error);
-      }
+              });
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error saving observations', error);
+        }
+      });
     });
-
+    return true;
   }
 
   /**
@@ -3469,11 +3505,45 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isCallInProgress = false;
     this.isWhatsappCallWarningShown = false;
     this.callTimerInterval.unsubscribe();
+    this.analytics.logEvent('whatsapp_call_ended', 'engagement', 'whatsapp_call_button', this.callDuration, {
+      doctorUserId: this.visitSummaryService.userId,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit?.uuid,
+      location: this.clinicName,
+      callDuration: this.callDuration
+    });
     this.arrCallDurations.push({ callDuration: this.callDuration, timestamp: this.callDurationTimeStamp })
     if (this.callDurationsUuid)
       this.visitService.updateAttribute(this.visit.uuid, this.callDurationsUuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
     else
       this.visitService.postAttribute(this.visit.uuid, { attributeType: visitAttributeTypes.patientCallDuration, value: JSON.stringify(this.arrCallDurations) }).subscribe();
+  }
+
+  contactAnalyticsPayload() {
+    return {
+      doctorUserId: this.visitSummaryService.userId,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      visitId: this.visit?.uuid,
+      location: this.clinicName
+    };
+  }
+
+  /**
+  * Track the patient WhatsApp icon, then start the timed call if enabled
+  * @param {boolean} isScroll - Scroll to the interaction form
+  * @returns {void}
+  */
+  onPatientWhatsAppClick(isScroll: boolean = false) {
+    this.analytics.logEvent('whatsapp_link_opened', 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload());
+    this.startWhatsAppCall(isScroll);
+  }
+
+  /**
+  * Track the patient phone icon; the tel: href does the dialling
+  * @returns {void}
+  */
+  onPatientPhoneClick() {
+    this.analytics.logEvent('patient_phone_dialled', 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload());
   }
 
   /**
@@ -3487,6 +3557,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.isCallInProgress) {
         this.isCallInProgress = true;
         this.callDurationTimeStamp = Date.now()
+        this.analytics.logEvent('whatsapp_call_started', 'engagement', 'whatsapp_call_button', 1, {
+          doctorUserId: this.visitSummaryService.userId,
+          patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+          visitId: this.visit?.uuid,
+          location: this.clinicName
+        });
         this.callTimerInterval = interval(1000).subscribe(val => {
           this.callDuration = val;
         })
@@ -3607,6 +3683,38 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       return of(false)
     }
+  }
+
+  private collectPendingOverrides(): OverrideReasonItem[] {
+    if (!this.hasAILLMEnabled) return [];
+    const items: OverrideReasonItem[] = [];
+
+    for (const diagnosis of (this.ddxCompRef?.instance?.existingDiagnosis || [])) {
+      if (!diagnosis?.uuid && !diagnosis?.from) {
+        items.push({ surface: 'diagnosis', surfaceLabel: 'Diagnosis', selectedValue: diagnosis.diagnosisName, target: diagnosis });
+      }
+    }
+    for (const medicine of (this.standardMedicines || [])) {
+      if (!medicine?.uuid && !medicine?.aiGenerated) {
+        items.push({ surface: 'medication', surfaceLabel: 'Medication', selectedValue: medicine.drug, target: medicine });
+      }
+    }
+
+    return items;
+  }
+
+  private gateOnPendingOverrides(proceed: () => void): void {
+    const items = this.collectPendingOverrides();
+    if (!items.length) {
+      proceed();
+      return;
+    }
+    this.coreService.openDdxTtxOverrideReasonModal({ items }).subscribe((result: OverrideReasonItem[] | null) => {
+      if (result) {
+        result.forEach(item => { if (item.target) item.target.overrideReason = item.reason; });
+        proceed();
+      }
+    });
   }
 
   saveAllObs(): Observable<any> {
@@ -4040,54 +4148,56 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   
   saveAsDraft() {
     // Get all fields that have been changed
-    this.changedFields = Object.keys(this.updatedObsData).filter(key => 
+    this.changedFields = Object.keys(this.updatedObsData).filter(key =>
       this.updatedObsData[key] !== this.obsData[key]
     );
 
-    this.saveAllObs().subscribe({
-      next: (responses) => {     
-        // Unsubscribe from all existing subscriptions
-        this.unsubscribeFromFormTracking();
-        
-        // Reset tracking states
-        this.obsData = {
-          notes: [],
-          familyHistoryNote: [],
-          pastMedicalHistoryNote: [], 
-          followUp: false,
-          followUpInstruction: this.followUpInstructionComponentRef?.addInstructionForm?.value?.instructions || [],
-          diagnosis: [],
-          addMedicine: [],
-          addStandardMedicine: [],
-          additionalInstruction: null,
-          addAdvice: [],
-          addTests: [],
-          test: null,
-          addReferral: [],
-          discussionSummary: null,
-          patientCallStatus: null,
-          diagnosisSecondary: null,
-          referralSecondary: null,
-          patientInteractionComment: null,
-          hwInteraction: null,
-          patientInteraction: null,
-          referralConsent: null,
-          medicine: []
-        };
-        
-        // Update base state and reset tracking state
-        this.updatedObsData = {...this.obsData};
-        this.changesMade = false;
-        
-        // Reinitialize form tracking
-        this.trackFormChanges();
-        
-        this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
-      },
-      error: (error) => {
-        console.error('Error saving observations', error);
-        this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
-      }
+    this.gateOnPendingOverrides(() => {
+      this.saveAllObs().subscribe({
+        next: (responses) => {
+          // Unsubscribe from all existing subscriptions
+          this.unsubscribeFromFormTracking();
+
+          // Reset tracking states
+          this.obsData = {
+            notes: [],
+            familyHistoryNote: [],
+            pastMedicalHistoryNote: [],
+            followUp: false,
+            followUpInstruction: this.followUpInstructionComponentRef?.addInstructionForm?.value?.instructions || [],
+            diagnosis: [],
+            addMedicine: [],
+            addStandardMedicine: [],
+            additionalInstruction: null,
+            addAdvice: [],
+            addTests: [],
+            test: null,
+            addReferral: [],
+            discussionSummary: null,
+            patientCallStatus: null,
+            diagnosisSecondary: null,
+            referralSecondary: null,
+            patientInteractionComment: null,
+            hwInteraction: null,
+            patientInteraction: null,
+            referralConsent: null,
+            medicine: []
+          };
+
+          // Update base state and reset tracking state
+          this.updatedObsData = {...this.obsData};
+          this.changesMade = false;
+
+          // Reinitialize form tracking
+          this.trackFormChanges();
+
+          this.coreService.showToast("success", 'Changes saved successfully', 'Success', 'success-changes-saved-toast');
+        },
+        error: (error) => {
+          console.error('Error saving observations', error);
+          this.coreService.showToast("error", 'Error saving changes', 'Error', 'error-saving-changes-toast');
+        }
+      });
     });
   }
 
@@ -4682,6 +4792,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         if (selectedDiag.diagnosisType) payload["Diagnosis type"] = selectedDiag.diagnosisType;
         if (selectedDiag.diagnosisStatus) payload["Diagnosis status"] = selectedDiag.diagnosisStatus;
         payload.ai_assisted = 'Y';
+        if (selectedDiag.overrideReason) payload.reason = selectedDiag.overrideReason;
       }
 
       diagnoses.push(payload);
@@ -4699,6 +4810,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           rationale: [{"NA": "N/A"}],
           rank: String(nonAiRank++),
           ai_assisted: 'N',
+          ...(diagnosis.overrideReason && { reason: diagnosis.overrideReason }),
         });
       });
 
@@ -4765,6 +4877,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         payload.instructions = selectedMed.instructRemark;
         payload.frequency = selectedMed.frequency;
         payload.ai_assisted = selectedMed.modified ? 'M' : 'Y';
+        if (selectedMed.overrideReason) payload.reason = selectedMed.overrideReason;
       } else {
         // Unselected AI medication — use AI-suggested values, no ai_assisted flag
         payload.dose = aiMed?.dosage || aiMed?.dose;
@@ -4795,6 +4908,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           ...(medication.likelihood && { likelihood: medication.likelihood }),
           rank: String(nonAiRank++),
           ai_assisted: 'N',
+          ...(medication.overrideReason && { reason: medication.overrideReason }),
         });
       });
 

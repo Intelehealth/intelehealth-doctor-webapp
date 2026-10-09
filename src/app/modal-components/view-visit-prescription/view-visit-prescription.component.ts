@@ -360,13 +360,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 uuid: obs.uuid
               });
             }
-          } else {
-            this.additionalInstructions.push(obs);
           }
         }
       });
     });
   }
+
+  // Additional Instructions shares conceptAdvice with Advice
+
+  static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
 
   /**
   * Get advices for the visit
@@ -378,8 +380,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
-            if (!obs.value.includes('</a>')) {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            if (obs.value.includes('</a>')) return;
+            if (obs.value.startsWith(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.additionalInstructions.push({
+                ...obs,
+                value: obs.value.slice(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX.length),
+              });
+            } else {
               this.advices.push(obs);
             }
           }
@@ -440,13 +448,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             const result = obs.value.split(',').filter(Boolean);
             const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
-            const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
             followUpTime = time ? time : null;
             followUpReason = remark ? remark : null;
-            followUpType = type && type !== 'null' ? type : null;
             wantFollowUp = 'Yes';
           }
+          // Type: fragment can also be present on a 'No' follow-up obs, so parse it independent of wantFollowUp
+          const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
+          followUpType = type && type !== 'null' ? type : (environment.isTurnServer ? 'Telemedicine' : null);
           this.followUp = {
             present: true,
             wantFollowUp,
@@ -651,11 +660,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         signatureValue = await this.toObjectUrl(`${this.signature.value}`);
     }
 
+    // ArogyaPath 2.0 branding is Turn-only; other servers keep the Intelehealth name.
+    const brandLabel = environment.isTurnServer ? 'ArogyaPath 2.0' : 'Intelehealth';
+
     const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 40 ],
-      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      watermark: { text: brandLabel.toUpperCase(), color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
           { text: ''},
@@ -665,7 +677,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage: { toString: () => string; }, pageCount: string) => {
         return {
           columns: [
-            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
+            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: `Copyright ©2023 ${brandLabel}, a 501 (c)(3) & Section 8 non-profit organisation`, fontSize: 8, margin: [5, 0, 0, 0]} ],
             { text: '\n\n'+currentPage.toString() + ' of ' + pageCount, width:"7%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
@@ -680,7 +692,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: `${brandLabel} e-Prescription`,
                   alignment: 'center',
                   style: 'header'
                 },
@@ -726,6 +738,33 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
+                      [
+                        {
+                          colSpan: 2,
+                          ul: [
+                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPersonAttributeValue('TMH Case Number') !== 'NA' ? this.getPersonAttributeValue('TMH Case Number') : this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
                   sectionName:'cheifComplaint',
                   table: {
                     widths: [30, '*'],
@@ -764,33 +803,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           colSpan: 2,
                           ul: [
                             ...this.getRecords('Vitals')
-                          ]
-                        }
-                      ]
-                    ]
-                  },
-                  layout: {
-                    defaultBorder: false
-                  }
-                },
-                '',
-                '',
-                ''
-              ],
-              [
-                {
-                  colSpan: 4,
-                  table: {
-                    widths: [30, '*'],
-                    headerRows: 1,
-                    body: [
-                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
-                      [
-                        {
-                          colSpan: 2,
-                          ul: [
-                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPersonAttributeValue('TMH Case Number') !== 'NA' ? this.getPersonAttributeValue('TMH Case Number') : this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
@@ -898,13 +910,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   alignment: 'right',
                   stack: isValidSign
                   ? [
-                      { image: `${this.signature.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0] },
+                      { image: `${this.signature.value}`, width: 100, height: 60, margin: [0, 5, 0, 0] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -10, 0, 0] },
                       { text: `${this.consultedDoctor?.typeOfProfession}` },
                       { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
                     ]
                   : [
-                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -40, 0, 0] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, 20, 0, 0] },
                       { text: `${this.consultedDoctor?.typeOfProfession}` },
                       { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
                     ]
@@ -1071,9 +1083,16 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           }
           break;
       case 'cheifComplaint':
-        if(this.appConfigService?.patient_visit_summary?.dp_dignosis_secondary && this.checkUpReasonData.length > 0){
-          this.checkUpReasonData[0].data.forEach((cc:any)=>{
-            records.push({text: [{text: cc.key, bold: true}, cc.value.changingThisBreaksApplicationSecurity], margin: [0, 5, 0, 5]});
+        // Show every complaint's name plus its detail rows (onset, duration, etc.),
+        // not just the bare complaint name -- dp_dignosis_secondary only changes
+        // where the detail value's HTML comes from, not whether details show at all.
+        if (this.checkUpReasonData.length > 0) {
+          this.checkUpReasonData.forEach((complaint: any) => {
+            records.push({ text: [{ text: complaint.title, bold: true }], margin: [0, 5, 0, 2] });
+            (complaint.data || []).forEach((cc: any) => {
+              const value = cc.value?.changingThisBreaksApplicationSecurity ?? cc.value ?? '';
+              records.push({ text: [{ text: `${cc.key}: `, bold: true }, value], margin: [10, 0, 0, 2] });
+            });
           });
         } else if (this.cheifComplaints.length) {
           this.cheifComplaints.forEach(cc => {

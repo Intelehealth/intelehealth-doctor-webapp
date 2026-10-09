@@ -229,6 +229,15 @@ export class SetupCalendarComponent implements OnInit {
     let max = moment(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`, 'YYYY-MMMM-D').endOf('month');
     this.minDate = (min < today) ? today.format('YYYY-MM-DD') : min.format('YYYY-MM-DD');
     this.maxDate = max.format('YYYY-MM-DD');
+
+    // Relax minDate to the schedule's own startDate if it's already in the past, so the datepicker doesn't reject its own saved value.
+    const existingStartDate = this.selectedMonthSchedule?.startDate;
+    if (existingStartDate) {
+      const existingStart = moment(existingStartDate);
+      if (existingStart.isValid() && existingStart.isBefore(moment(this.minDate))) {
+        this.minDate = existingStart.format('YYYY-MM-DD');
+      }
+    }
   }
 
   /**
@@ -490,7 +499,14 @@ export class SetupCalendarComponent implements OnInit {
         if (res.status) {
           this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
           this.submitted = false;
+        } else {
+          // Surface a server-reported failure instead of failing silently.
+          this.toastr.error(this.translateService.instant(res.message || "Failed to save the schedule."), this.translateService.instant("Save Failed!"));
         }
+      },
+      // Surface network/HTTP errors instead of failing silently.
+      error: () => {
+        this.toastr.error(this.translateService.instant("Failed to save the schedule. Please try again."), this.translateService.instant("Save Failed!"));
       },
     });
   }
