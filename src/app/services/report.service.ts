@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { isFeaturePresent } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 
 @Injectable({
   providedIn: "root",
@@ -18,7 +19,8 @@ export class ReoportService {
           {
             startDate: body.selectedData.value.field1,
             endDate: body.selectedData.value.field2,
-            receiver: body.selectedData.value.field3
+            receiver: body.selectedData.value.field3,
+            username: this.getSessionUsername()
           },
           { reportProgress: true, observe: "events" });
       }
@@ -33,13 +35,23 @@ export class ReoportService {
           {
             startDate: body.selectedData.value.field1,
             endDate: body.selectedData.value.field2,
-            receiver: body.selectedData.value.field3
+            receiver: body.selectedData.value.field3,
+            username: this.getSessionUsername()
           },
           { reportProgress: true, observe: "events" });
       }
       return this.http.get(
         `${environment.base}/vl/${body.selectedData.value.field1}/${body.selectedData.value.field2}`, { reportProgress: true, observe: "events" });
     }
+  }
+
+  /**
+   * Logged-in username, passed to the report script for the audit log.
+   * Saved at login; falls back to the OpenMRS session user for sessions started before it was stored.
+   */
+  private getSessionUsername(): string {
+    const username = getCacheData(false, doctorDetails.USER_NAME);
+    return username;
   }
 
   geWebrtcStatus() {
