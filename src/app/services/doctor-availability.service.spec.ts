@@ -2,6 +2,9 @@ import { of, throwError } from 'rxjs';
 
 import { DoctorAvailabilityService } from './doctor-availability.service';
 import { DoctorStatus } from '../queue/queue.model';
+import { doctorDetails } from 'src/config/constant';
+
+const CACHE_KEY = 'doctorAvailability:doc-1';
 
 describe('DoctorAvailabilityService', () => {
   let queueService: any;
@@ -15,8 +18,13 @@ describe('DoctorAvailabilityService', () => {
 
   const build = () => new DoctorAvailabilityService(queueService, zone);
 
+  const clearAvailabilityCache = () => Object.keys(localStorage)
+    .filter((key: string) => key.startsWith('doctorAvailability'))
+    .forEach((key: string) => localStorage.removeItem(key));
+
   beforeEach(() => {
-    localStorage.removeItem('doctorAvailability');
+    clearAvailabilityCache();
+    localStorage.setItem(doctorDetails.USER, JSON.stringify({ uuid: 'doc-1' }));
     queueService = {
       updateDoctorStatus: jasmine.createSpy('updateDoctorStatus').and.returnValue(statusResponse('online'))
     };
@@ -27,7 +35,8 @@ describe('DoctorAvailabilityService', () => {
   });
 
   afterEach(() => {
-    localStorage.removeItem('doctorAvailability');
+    clearAvailabilityCache();
+    localStorage.removeItem(doctorDetails.USER);
   });
 
   it('starts online when nothing was cached', () => {
@@ -142,7 +151,7 @@ describe('DoctorAvailabilityService', () => {
     });
 
     it('does not restore a break that already ran out', () => {
-      localStorage.setItem('doctorAvailability', JSON.stringify({
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
         status: 'away',
         breakEndsAt: new Date(Date.now() - 60000).toISOString(),
         requestedStatus: 'away',
@@ -156,7 +165,7 @@ describe('DoctorAvailabilityService', () => {
     });
 
     it('ignores a cached break end that is not a date', () => {
-      localStorage.setItem('doctorAvailability', JSON.stringify({
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
         status: 'away', breakEndsAt: 'not-a-date', requestedStatus: null, heldInConsult: false
       }));
 

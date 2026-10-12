@@ -120,15 +120,24 @@ describe('QueueComponent', () => {
       expect(component.queueDisabled).toBeTrue();
     });
 
-    it('sends the doctor back online when a break runs out', () => {
+    it('confirms the doctor is back online once the service resumes the break', () => {
       component.ngOnInit();
+      availabilityService.update.calls.reset();
+      availabilityService.snapshot = state({ status: 'online' });
 
       expired$.next();
 
-      const [, , status, , isAutoResume] = availabilityService.update.calls.mostRecent().args;
-      expect(status).toBe('online');
-      expect(isAutoResume).toBeTrue();
       expect(toastr.success).toHaveBeenCalled();
+      expect(availabilityService.update).not.toHaveBeenCalled();
+    });
+
+    it('warns when the service could not resume the break', () => {
+      component.ngOnInit();
+      availabilityService.snapshot = state({ status: 'away', autoResumeFailed: true });
+
+      expired$.next();
+
+      expect(toastr.error).toHaveBeenCalled();
     });
 
     it('stops listening once the screen is destroyed', () => {

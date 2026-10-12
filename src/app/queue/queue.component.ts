@@ -65,7 +65,7 @@ export class QueueComponent implements OnInit, OnDestroy {
 
     this.availabilityService.breakExpired
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.updateStatus('online', null, true));
+      .subscribe(() => this.onBreakExpired());
 
     this.availabilityService.hydrate(this.doctorUuid, this.speciality)
       .pipe(takeUntil(this.destroy$))
@@ -78,6 +78,20 @@ export class QueueComponent implements OnInit, OnDestroy {
     this.stopQueueRefresh();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private onBreakExpired(): void {
+    const state = this.availabilityService.snapshot;
+    if (state.autoResumeFailed) {
+      this.toastr.error(this.translateService.instant('Your break is over but we could not bring you back online.'),
+        this.translateService.instant('Status update failed'));
+      return;
+    }
+    if (state.status === 'online') {
+      this.toastr.success(this.translateService.instant('Your break is over, you are back online.'),
+        this.translateService.instant('Break ended'));
+      this.loadQueue();
+    }
   }
 
   private applyAvailability(state: AvailabilityState): void {

@@ -6,7 +6,6 @@ const { argv } = require('yargs');
 require('dotenv').config();
 const environment = argv.environment;
 
-
 function writeFileUsingFS(targetPath, environmentFileContent) {
   writeFile(targetPath, environmentFileContent, function (err) {
     if (err) {
@@ -18,7 +17,6 @@ function writeFileUsingFS(targetPath, environmentFileContent) {
   });
 }
 
-
 // Providing path to the `environments` directory
 const envDirectory = './src/environments';
 
@@ -26,19 +24,6 @@ const envDirectory = './src/environments';
 if (!existsSync(envDirectory)) {
   mkdirSync(envDirectory);
 }
-
-//creates the `environment.prod.ts` and `environment.ts` file if it does not exist
-writeFileUsingFS('./src/environments/environment.prod.ts', '');
-writeFileUsingFS('./src/environments/environment.ts', '');
-
-
-// Checks whether command line argument of `prod` was provided signifying production mode
-const isProduction = environment === 'prod';
-
-// choose the correct targetPath based on the environment chosen
-const targetPath = isProduction
-  ? './src/environments/environment.prod.ts'
-  : './src/environments/environment.ts';
 
 const REQUIRED_VARS = ['BASE_URL', 'MIND_MAP_URL', 'CONFIG_URL', 'QUEUE_URL'];
 
@@ -50,6 +35,18 @@ if (missingRequired.length) {
   );
   process.exit(1);
 }
+
+//creates the `environment.prod.ts` and `environment.ts` file if it does not exist
+writeFileUsingFS('./src/environments/environment.prod.ts', '');
+writeFileUsingFS('./src/environments/environment.ts', '');
+
+// Checks whether command line argument of `prod` was provided signifying production mode
+const isProduction = environment === 'prod';
+
+// choose the correct targetPath based on the environment chosen
+const targetPath = isProduction
+  ? './src/environments/environment.prod.ts'
+  : './src/environments/environment.ts';
 
 let showCaptcha = process.env.SHOW_CAPTCHA;
 

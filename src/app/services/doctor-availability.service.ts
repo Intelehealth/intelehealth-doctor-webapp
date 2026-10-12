@@ -2,10 +2,11 @@ import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { DoctorStatus, DoctorStatusResponse } from '../queue/queue.model';
-import { getCacheData, setCacheData, deleteCacheData } from '../utils/utility-functions';
+import { getCacheData, setCacheData, deleteCacheData, getSpecialization } from '../utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 import { QueueService } from './queue.service';
 
-const AVAILABILITY_CACHE_KEY = 'doctorAvailability';
+const AVAILABILITY_CACHE_PREFIX = 'doctorAvailability';
 
 export interface AvailabilityState {
   status: DoctorStatus;
@@ -35,6 +36,18 @@ export class DoctorAvailabilityService {
 
   constructor(private queueService: QueueService, private zone: NgZone) {
     this.startBreakTimer();
+  }
+
+  private get doctorUuid(): string {
+    return getCacheData(true, doctorDetails.USER)?.uuid ?? '';
+  }
+
+  private get speciality(): string {
+    return getSpecialization(getCacheData(true, doctorDetails.PROVIDER)?.attributes);
+  }
+
+  private get cacheKey(): string {
+    return `${AVAILABILITY_CACHE_PREFIX}:${this.doctorUuid || 'unknown'}`;
   }
 
   get changes(): Observable<AvailabilityState> {
@@ -127,7 +140,7 @@ export class DoctorAvailabilityService {
   clear(): void {
     this.stopBreakTimer();
     this.hydrated = false;
-    deleteCacheData(AVAILABILITY_CACHE_KEY);
+    deleteCacheData(this.cacheKey);
     this.state$.next({
       status: 'online',
       breakEndsAt: null,
@@ -167,7 +180,21 @@ export class DoctorAvailabilityService {
     }
     this.stopBreakTimer();
     this.patch({ breakEndsAt: null, status });
-    this.expired$.next();
+    this.resumeAfterBreak();
+  }
+
+  private resumeAfterBreak(): void {
+    const doctorUuid = this.doctorUuid;
+    const speciality = this.speciality;
+    if (!doctorUuid || !speciality) {
+      this.patch({ autoResumeFailed: true });
+      this.expired$.next();
+      return;
+    }
+    this.update(doctorUuid, speciality, 'online', null, true).subscribe({
+      next: () => this.expired$.next(),
+      error: () => this.expired$.next()
+    });
   }
 
   private patch(changes: Partial<AvailabilityState>): void {
@@ -183,11 +210,11 @@ export class DoctorAvailabilityService {
       requestedStatus: state.requestedStatus,
       heldInConsult: state.heldInConsult
     };
-    setCacheData(AVAILABILITY_CACHE_KEY, JSON.stringify(cached));
+    setCacheData(this.cacheKey, JSON.stringify(cached));
   }
 
   private restore(): AvailabilityState {
-    const cached: CachedAvailability | null = getCacheData(true, AVAILABILITY_CACHE_KEY);
+    const cached: CachedAvailability | null = getCacheData(true, this.cacheKey);
     const endsAt = cached?.breakEndsAt ? new Date(cached.breakEndsAt) : null;
     const breakEndsAt = endsAt && !isNaN(endsAt.getTime()) && endsAt.getTime() > Date.now() ? endsAt : null;
     return {
