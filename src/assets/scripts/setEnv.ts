@@ -6,7 +6,6 @@ const { argv } = require('yargs');
 require('dotenv').config();
 const environment = argv.environment;
 
-
 function writeFileUsingFS(targetPath, environmentFileContent) {
   writeFile(targetPath, environmentFileContent, function (err) {
     if (err) {
@@ -18,7 +17,6 @@ function writeFileUsingFS(targetPath, environmentFileContent) {
   });
 }
 
-
 // Providing path to the `environments` directory
 const envDirectory = './src/environments';
 
@@ -27,10 +25,20 @@ if (!existsSync(envDirectory)) {
   mkdirSync(envDirectory);
 }
 
+const REQUIRED_VARS = ['BASE_URL', 'MIND_MAP_URL', 'CONFIG_URL', 'QUEUE_URL'];
+
+const missingRequired = REQUIRED_VARS.filter((name) => !process.env[name]);
+if (missingRequired.length) {
+  console.error(
+    `\nMissing required variables in .env: ${missingRequired.join(', ')}.\n` +
+    `Add them to the .env on this host (see .env.example) and run the build again.\n`
+  );
+  process.exit(1);
+}
+
 //creates the `environment.prod.ts` and `environment.ts` file if it does not exist
 writeFileUsingFS('./src/environments/environment.prod.ts', '');
 writeFileUsingFS('./src/environments/environment.ts', '');
-
 
 // Checks whether command line argument of `prod` was provided signifying production mode
 const isProduction = environment === 'prod';
@@ -61,6 +69,7 @@ const environmentFileContent = `
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
+    queueURL: '${process.env.QUEUE_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
     socketURL: '${process.env.SOCKET_URL}',
     captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',
