@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -13,6 +14,10 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(catchError(err => {
       if (request.url.includes('/ddx')) {
         return next.handle(request);
+      }
+      // QMS lookups are optional checks handled by the caller; never log out or toast for them
+      if (environment.qmsURL && request.url.startsWith(environment.qmsURL)) {
+        return throwError(err);
       }
       if ([401, 403].indexOf(err.status) != -1) {
         this.authService.logOut();

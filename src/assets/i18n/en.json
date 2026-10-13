@@ -6120,5 +6120,12 @@
   "Use this if you wish to seek a second opinion from an external facility.":"Use this if you wish to seek a second opinion from an external facility.",
   "Review of Imaging":"Review of Imaging",
   "Review with Reports":"Review with Reports",
-  "Reschedule Referral":"Referral"
+  "Reschedule Referral":"Referral",
+  "You can't start this visit as this patient is not next in queue": "You can't start this visit as this patient is not next in queue",
+  "Not next in queue": "Not next in queue",
+  "Unable to claim visit": "Unable to claim visit",
+  "This visit was just claimed by another doctor": "This visit was just claimed by another doctor",
+  "This visit was cancelled": "This visit was cancelled",
+  "You must be online in the queue to claim this visit": "You must be online in the queue to claim this visit",
+  "This visit can't be claimed right now": "This visit can't be claimed right now"
 }

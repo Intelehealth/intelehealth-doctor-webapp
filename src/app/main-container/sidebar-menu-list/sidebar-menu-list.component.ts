@@ -11,6 +11,7 @@ export class SidebarMenuListComponent {
   @Input('adminUnread') adminUnread: number;
   @Input('pvs') pvs: any;
   @Input('menus') menus: any;
+  @Input('qmsEnabled') qmsEnabled = false;
   @Output('toggleSidebar') onToggleSidebar = new EventEmitter();
 
 

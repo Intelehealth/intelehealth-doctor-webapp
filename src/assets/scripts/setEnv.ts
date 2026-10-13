@@ -59,6 +59,7 @@ const environmentFileContent = `
     insightsEnabled: ${process.env.INSIGHTS_ENABLED === 'true'},
     turnNotifyURL: '${process.env.TURN_NOTIFY_URL}',
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
+    qmsURL: '${process.env.QMS_URL}',
     configURL: '${process.env.CONFIG_URL}',
     abhaURL: '${process.env.ABHA_URL}',
     notificationURL: '${process.env.NOTIFICATION_URL}',

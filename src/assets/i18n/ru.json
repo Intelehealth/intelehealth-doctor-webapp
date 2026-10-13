@@ -6121,5 +6121,12 @@
   "Use this if you wish to seek a second opinion from an external facility.":"Используйте это, если вы хотите получить второе мнение от стороннего учреждения.",
   "Review of Imaging":"Обзор изображений",
   "Review with Reports":"Обзор с отчетами",
-  "Reschedule Referral":"Перепланировать"
+  "Reschedule Referral":"Перепланировать",
+  "You can't start this visit as this patient is not next in queue": "Вы не можете начать этот визит, так как этот пациент не следующий в очереди",
+  "Not next in queue": "Не следующий в очереди",
+  "Unable to claim visit": "Не удалось принять визит",
+  "This visit was just claimed by another doctor": "Этот визит только что принял другой врач",
+  "This visit was cancelled": "Этот визит был отменён",
+  "You must be online in the queue to claim this visit": "Чтобы принять этот визит, вы должны быть в сети в очереди",
+  "This visit can't be claimed right now": "Этот визит сейчас нельзя принять"
 }
