@@ -17,6 +17,7 @@ import { MindmapService } from 'src/app/services/mindmap.service';
 import { CurrentVisitDetailsComponent } from './current-visit-details/current-visit-details.component';
 import { PrimaryNoteViewComponent } from './primary-note-view/primary-note-view.component';
 import { SpecialistDoctorNoteComponent } from './specialist-doctor-note/specialist-doctor-note.component';
+import { DoctorNoteComponent } from './doctor-note/doctor-note.component';
 import { VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import {
   CURRENT_VISITS_TITLE, PRIMARY_NOTE_TITLE, SPECIALIST_NOTE_TITLE
@@ -52,6 +53,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   @ViewChild(CurrentVisitDetailsComponent) private currentVisitDetails?: CurrentVisitDetailsComponent;
   @ViewChild(PrimaryNoteViewComponent) private primaryNoteView?: PrimaryNoteViewComponent;
   @ViewChild(SpecialistDoctorNoteComponent) private specialistNote?: SpecialistDoctorNoteComponent;
+  @ViewChild(DoctorNoteComponent) private doctorNote?: DoctorNoteComponent;
 
   /** Sidebar groups below the Current visits sections — one per doctor's note shown. */
   noteNavGroups: NavGroup[] = [];
@@ -66,8 +68,10 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     { key: 'consultation', label: 'Consultation details', icon: 'assets/svgs/consultation-details.svg' },
     { key: 'checkup', label: 'Check-up reason', icon: 'assets/svgs/check-up-reason.svg' },
     { key: 'vitals', label: 'Vitals', icon: 'assets/svgs/vitals.svg' },
+    { key: 'diagnostics', label: 'Diagnostics', icon: 'assets/svgs/diagnosis-green.svg' },
     { key: 'history', label: 'Medical history', icon: 'assets/svgs/medical-history.svg' },
     { key: 'physical', label: 'Physical examination', icon: 'assets/svgs/physical-examination.svg' },
+    { key: 'notes', label: 'Additional notes', icon: 'assets/svgs/note-icon-green.svg' },
     { key: 'documents', label: 'Additional documents', icon: 'assets/svgs/additional-documents.svg' },
     { key: 'refer', label: 'Refer to specialist', icon: 'assets/svgs/refer-to-specialist.svg' }
   ];
@@ -75,6 +79,12 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
 
   /** "Refer to specialist" is controlled from Admin Actions > Patient Visit Sections. */
   referToSpecialistEnabled = true;
+
+  /** Needs both the Diagnostics feature and its Patient Visit Section turned on, as in the old summary. */
+  diagnosticsEnabled = false;
+
+  /** Needs both the visit summary "notes" setting and its Patient Visit Section turned on, as in the old summary. */
+  additionalNotesEnabled = false;
 
   /** Doctor's note sections; each note's sidebar keys are "<prefix>-<key>" (its section ids). */
   private static readonly NOTE_NAV: SectionNavItem[] = [
@@ -87,7 +97,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     { key: 'referral', label: 'Referral-Out', icon: 'assets/svgs/referal.svg' },
     { key: 'followup', label: 'Follow-up', icon: 'assets/svgs/follow-up.svg' }
   ];
-  private readonly doctorNoteNav = VisitSummaryV2Component.noteNav('dn');
+  /** Doctor's note only — history notes are added in ngOnInit when enabled in the visit summary config. */
+  private doctorNoteNav = VisitSummaryV2Component.noteNav('dn');
   private readonly specialistNoteNav = VisitSummaryV2Component.noteNav('sdn');
   private readonly primaryNoteNav = VisitSummaryV2Component.noteNav('pdn');
 
@@ -103,9 +114,11 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   patientHistory: DetailRow[] = [];
   familyHistory: DetailRow[] = [];
   vitals: VitalCell[] = [];
+  diagnostics: VitalCell[] = [];
   generalExams: DetailRow[] = [];
   eyeImages: string[] = [];
   abdomenFindings: string[] = [];
+  additionalNote = '';
   documents: DocItem[] = [];
   specializations: string[] = [];
 
@@ -177,6 +190,23 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     if (!this.referToSpecialistEnabled) {
       this.sections = this.sections.filter(s => s.key !== 'refer');
     }
+    this.diagnosticsEnabled = !!this.appConfigService?.patient_diagnostics_section && this.isVisitSectionEnabled(VISIT_SECTIONS.diagnostics.key);
+    if (!this.diagnosticsEnabled) {
+      this.sections = this.sections.filter(s => s.key !== 'diagnostics');
+    }
+    this.additionalNotesEnabled = !!this.appConfigService?.patient_visit_summary?.notes_section
+      && this.isVisitSectionEnabled(VISIT_SECTIONS.additional_notes.key);
+    if (!this.additionalNotesEnabled) {
+      this.sections = this.sections.filter(s => s.key !== 'notes');
+    }
+    const visitSummaryConfig = this.appConfigService?.patient_visit_summary;
+    this.doctorNoteNav = [
+      ...(visitSummaryConfig?.family_history_notes
+        ? [{ key: 'dn-family-history', label: 'Family History Notes', icon: 'assets/svgs/note.svg' }] : []),
+      ...(visitSummaryConfig?.past_medical_history_notes
+        ? [{ key: 'dn-past-medical-history', label: 'Past Medical History Notes', icon: 'assets/svgs/note.svg' }] : []),
+      ...this.doctorNoteNav
+    ];
     this.loadVisit();
   }
 
@@ -328,9 +358,11 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.patientHistory = data.patientHistory;
     this.familyHistory = data.familyHistory;
     this.vitals = data.vitals;
+    this.diagnostics = data.diagnostics;
     this.generalExams = data.generalExams;
     this.abdomenFindings = data.abdomenFindings;
     this.eyeImages = data.eyeImages;
+    this.additionalNote = data.additionalNote;
     this.documents = data.documents;
     this.cacheVisitProvider(this.visit);
     this.checkOpenChatBoxFlag();
@@ -387,7 +419,9 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
       this.primaryNoteView?.expandSection(key.slice(4));
     } else if (key.startsWith('sdn-')) {
       this.specialistNote?.expandSection(key.slice(4));
-    } else if (!key.startsWith('dn-')) {
+    } else if (key.startsWith('dn-')) {
+      this.doctorNote?.expandSection(key.slice(3));
+    } else {
       this.currentVisitDetails?.expandSection(key);
     }
   }

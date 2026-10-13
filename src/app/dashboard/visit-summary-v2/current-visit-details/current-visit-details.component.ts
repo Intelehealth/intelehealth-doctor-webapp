@@ -17,9 +17,13 @@ export class CurrentVisitDetailsComponent {
   @Input() patientHistory: DetailRow[] = [];
   @Input() familyHistory: DetailRow[] = [];
   @Input() vitals: VitalCell[] = [];
+  @Input() diagnostics: VitalCell[] = [];
+  @Input() diagnosticsEnabled = false;
   @Input() generalExams: DetailRow[] = [];
   @Input() eyeImages: string[] = [];
   @Input() abdomenFindings: string[] = [];
+  @Input() additionalNote = '';
+  @Input() additionalNotesEnabled = false;
   @Input() documents: DocItem[] = [];
   @Input() chwNote = '';
   @Input() visitNoteStarted = false;

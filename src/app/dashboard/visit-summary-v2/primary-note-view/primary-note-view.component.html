@@ -149,14 +149,14 @@
   <div class="vs2-section-body" *ngIf="!collapsed['referral']">
     <ng-container *ngIf="note?.referrals?.length; else noEntries">
       <div class="vs2-namco-grid vs2-pdn-ref-grid vs2-namco-grid-head">
-        <span>Referral to</span>
         <span>Referral facility</span>
+        <span>Referral to</span>
         <span>Priority of Referral</span>
         <span>Remarks</span>
       </div>
       <div class="vs2-namco-grid vs2-pdn-ref-grid vs2-namco-grid-row" *ngFor="let r of note?.referrals">
-        <span>{{ r.speciality }}</span>
         <span>{{ r.facility || '-' }}</span>
+        <span>{{ r.speciality }}</span>
         <span>{{ r.priority || '-' }}</span>
         <span>{{ r.reason && r.reason !== '-' ? r.reason : '-' }}</span>
       </div>
@@ -176,11 +176,11 @@
       <li>
         <div class="vs2-form-row">
           <span class="vs2-field-label">Do you want to have follow up with the patient</span>
-          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!!followUp" disabled /> Yes</label>
-          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!followUp" disabled /> No</label>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!!followUp?.wantFollowUp" disabled /> Yes</label>
+          <label class="vs2-radio vs2-radio-readonly"><input type="radio" name="pdnFollowUp" [checked]="!followUp?.wantFollowUp" disabled /> No</label>
         </div>
       </li>
-      <ng-container *ngIf="followUp">
+      <ng-container *ngIf="followUp?.wantFollowUp">
         <li *ngIf="followUp.date">
           <div class="vs2-form-row">
             <span class="vs2-field-label">Date</span>

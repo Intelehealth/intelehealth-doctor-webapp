@@ -23,6 +23,8 @@ import { FOLLOW_UP_TYPES, FOLLOW_UP_TYPE_TELEMEDICINE, SPECIALIST_DIAGNOSIS_STAT
  * The NAMCO specialist's own note, saved against their "Specialist Visit Note" encounter.
  * Plain entry forms only (no AI), per the Specialist Doctor's Note design.
  */
+import { followUpDateToString } from '../follow-up-date';
+
 @Component({
   selector: 'app-specialist-doctor-note',
   templateUrl: './specialist-doctor-note.component.html',
@@ -37,6 +39,12 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
   @Input() patientPhoneNo = '';
   @Input() visit!: VisitModel;
   @Input() visitCompleted = false;
+
+  /** Kaleyra call to the visit's health worker — hidden for MCC users, as in the old Visit Summary. */
+  hwPhoneNo = '';
+  readonly isMCCUser = this.v2Service.isMCCUser();
+  /** "Connect with patient" (call / WhatsApp the patient) isn't used in the NAS project. */
+  readonly connectWithPatientEnabled = environment.brandName !== 'NAS';
 
   readonly diagnosisTypes = DIAGNOSIS_TYPES;
   readonly diagnosisStatuses = SPECIALIST_DIAGNOSIS_STATUSES;
@@ -95,9 +103,11 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
   followUpReason = '';
   followUpType = this.defaultFollowUpType;
   followUpUuid = '';
+  /** The saved follow-up obs is a "Yes" (with a date) rather than a "No" — shown in the follow-up table. */
+  savedFollowUpYes = false;
   savingFollowUp = false;
   followUpTimeSlots: string[] = [];
-  minFollowUpDate = new Date().toISOString().slice(0, 10);
+  minFollowUpDate = followUpDateToString(new Date());
 
   private provider = getCacheData(true, doctorDetails.PROVIDER);
 
@@ -133,6 +143,7 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     }
     if (changes['visit'] && this.visit) {
       this.loadPatientInteraction();
+      this.hwPhoneNo = this.v2Service.getHwPhoneNo(this.visit);
     }
   }
 
@@ -152,6 +163,7 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
         this.followUpReason = draft.followUp.reason;
         this.followUpType = draft.followUp.type || this.defaultFollowUpType;
         this.followUpUuid = draft.followUp.uuid;
+        this.savedFollowUpYes = draft.followUp.wantFollowUp;
         this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
       }
     });
@@ -172,6 +184,10 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
 
   get whatsAppLink(): string | null {
     return this.v2Service.whatsAppLink(this.patientPhoneNo);
+  }
+
+  startKaleyraCall(): void {
+    this.v2Service.startKaleyraCall(this.visit, this.hwPhoneNo);
   }
 
   /**
@@ -349,7 +365,21 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
   }
 
   onWantFollowUpChange(): void {
-    if (this.wantFollowUp === false) { this.deleteFollowUp(); }
+    if (this.wantFollowUp === false) { this.saveNoFollowUp(); }
+  }
+
+  /** "No" is saved as a Follow-up obs with the value "No" (replacing any saved follow-up), as in the old Visit Summary. */
+  private saveNoFollowUp(): void {
+    this.followUpDate = '';
+    this.followUpTime = null;
+    this.followUpReason = '';
+    this.followUpType = this.defaultFollowUpType;
+    if (!this.canWrite()) { return; }
+    this.v2Service.saveNoFollowUp(this.patientUuid, this.visitNoteUuid, this.followUpUuid || undefined)
+      .subscribe(res => {
+        this.followUpUuid = res?.uuid || this.followUpUuid;
+        this.savedFollowUpYes = false;
+      });
   }
 
   saveFollowUp(): void {
@@ -359,8 +389,9 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     this.v2Service.saveFollowUp(this.patientUuid, this.visitNoteUuid, fu, this.followUpUuid || undefined)
       .pipe(finalize(() => { this.savingFollowUp = false; }))
       .subscribe(res => {
-        // A follow-up uuid switches the section to its saved view.
+        // A saved "Yes" follow-up switches the section to its saved view.
         this.followUpUuid = res?.uuid || this.followUpUuid;
+        this.savedFollowUpYes = true;
         this.coreService.showToast('success', 'Follow-up saved', 'Saved', 'success-follow-up-toast');
       });
   }
@@ -370,6 +401,7 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     if (!this.followUpUuid) { return; }
     this.v2Service.deleteObs(this.followUpUuid).subscribe(() => {
       this.followUpUuid = '';
+      this.savedFollowUpYes = false;
       this.wantFollowUp = null;
       this.followUpDate = '';
       this.followUpTime = null;

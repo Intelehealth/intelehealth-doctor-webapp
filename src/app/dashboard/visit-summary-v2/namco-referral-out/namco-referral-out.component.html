@@ -1,10 +1,11 @@
 <section id="section-dn-referral" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleCollapsed()">
     <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
     <span>Referral</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed">
 
   <ul class="vs2-bullet-list vs2-namco-list">
     <li>
@@ -34,16 +35,16 @@
 
   <ng-container *ngIf="showTable">
     <div class="vs2-namco-grid vs2-namco-grid-head">
-      <span>Referral to</span>
       <span>Referral facility</span>
+      <span>Referral to</span>
       <span>Priority of Referral</span>
       <span>Remarks</span>
       <span></span>
     </div>
 
     <div class="vs2-namco-grid vs2-namco-grid-row" *ngFor="let r of referrals; let i = index">
-      <span>{{ r.speciality }}</span>
       <span>{{ r.facility || '-' }}</span>
+      <span>{{ r.speciality }}</span>
       <span>{{ r.priority || '-' }}</span>
       <span>{{ r.reason && r.reason !== '-' ? r.reason : '-' }}</span>
       <span class="vs2-added-actions">
@@ -55,8 +56,9 @@
       <div class="vs2-namco-grid vs2-namco-grid-form">
         <ng-select
           class="vs2-ng-select vs2-ng-select-grid"
-          [items]="filteredSpecialityOptions"
-          [(ngModel)]="newReferral.speciality"
+          [items]="filteredFacilityOptions"
+          [(ngModel)]="newReferral.facility"
+          (ngModelChange)="refreshOptions()"
           [addTag]="true"
           [searchable]="true"
           [clearable]="true"
@@ -64,9 +66,8 @@
         </ng-select>
         <ng-select
           class="vs2-ng-select vs2-ng-select-grid"
-          [items]="filteredFacilityOptions"
-          [(ngModel)]="newReferral.facility"
-          (ngModelChange)="refreshOptions()"
+          [items]="filteredSpecialityOptions"
+          [(ngModel)]="newReferral.speciality"
           [addTag]="true"
           [searchable]="true"
           [clearable]="true"
@@ -90,4 +91,5 @@
       </div>
     </ng-container>
   </ng-container>
+  </div>
 </section>

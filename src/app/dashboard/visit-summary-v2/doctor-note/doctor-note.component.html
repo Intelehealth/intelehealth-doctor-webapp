@@ -1,10 +1,44 @@
-<section id="section-dn-interaction" class="vs2-section-card">
-  <div class="vs2-section-title">
-    <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
-    <span>Patient interaction</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+<section id="section-dn-family-history" class="vs2-section-card" *ngIf="familyHistoryNotesEnabled">
+  <ng-container *ngTemplateOutlet="historyNoteSection; context: { kind: 'family', key: 'family-history', title: 'Family History Notes' }"></ng-container>
+</section>
+
+<section id="section-dn-past-medical-history" class="vs2-section-card" *ngIf="pastMedicalHistoryNotesEnabled">
+  <ng-container *ngTemplateOutlet="historyNoteSection; context: { kind: 'pastMedical', key: 'past-medical-history', title: 'Past Medical History Notes' }"></ng-container>
+</section>
+
+<ng-template #historyNoteSection let-kind="kind" let-key="key" let-title="title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection(key)">
+    <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
+    <span>{{ title }}</span>
+    <mat-icon class="vs2-chevron">{{ collapsed[key] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed[key]">
+
+  <div class="vs2-list-item" *ngFor="let n of historyNotes[kind]; let i = index">
+    <span class="vs2-detail-label">{{ n.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteHistoryNote(kind, i, n.uuid)">delete_outline</mat-icon>
+  </div>
+
+  <label class="vs2-field-label vs2-mt">Note<span class="vs2-req">*</span>
+    <span class="vs2-field-hint">(Not shared with the patient)</span>
+  </label>
+  <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newHistoryNoteText[kind]"></textarea>
+  <div class="vs2-btn-row">
+    <button class="vs2-btn-cancel" (click)="cancelHistoryNote(kind)">Cancel</button>
+    <button class="vs2-btn-add" [disabled]="!newHistoryNoteText[kind]?.trim()" (click)="addHistoryNote(kind)">Add Note</button>
+  </div>
+  </div>
+</ng-template>
+
+<section id="section-dn-interaction" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('interaction')">
+    <img class="vs2-section-icon-img" src="assets/svgs/patient-interaction.svg" alt="" />
+    <span>Patient interaction</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['interaction'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['interaction']">
 
   <div class="vs2-ayu-card" [class.vs2-ayu-open]="ayuQuestionsExpanded">
     <div class="vs2-ayu-banner" (click)="ayuQuestionsExpanded = !ayuQuestionsExpanded">
@@ -70,7 +104,7 @@
   </div>
 
   <ul class="vs2-bullet-list vs2-interaction-list">
-    <li>
+    <li *ngIf="connectWithPatientEnabled">
       <div class="vs2-form-row">
         <span class="vs2-field-label">Connect with patient</span>
         <span class="vs2-connect-actions">
@@ -88,6 +122,18 @@
         </span>
       </div>
     </li>
+    <li *ngIf="!isMCCUser">
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Connect with health worker</span>
+        <span class="vs2-connect-actions">
+          <button type="button" class="vs2-icon-circle" [class.vs2-icon-circle-disabled]="!hwPhoneNo"
+            [disabled]="!hwPhoneNo" (click)="startKaleyraCall()">
+            <img src="assets/svgs/phone-black.svg" alt="Kaleyra Call" />
+          </button>
+          <span class="vs2-connect-hint">Call via Kaleyra - Connect to Health Worker</span>
+        </span>
+      </div>
+    </li>
     <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Have you spoken with the patient directly?</span>
@@ -99,15 +145,17 @@
   <button class="vs2-btn-soft" [disabled]="savingPatientInteraction || spokenToPatient === savedSpokenToPatient" (click)="savePatientInteraction()">
     {{ spokenToPatient === savedSpokenToPatient ? 'Saved' : 'Save' }}
   </button>
+  </div>
 </section>
 
 <section id="section-dn-diagnosis" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('diagnosis')">
     <img class="vs2-section-icon-img" src="assets/svgs/diagnosis.svg" alt="" />
     <span>Diagnosis</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['diagnosis'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['diagnosis']">
 
   <div class="vs2-ayu-card vs2-summary-card" *ngIf="aiDiagnosisState === 'ready' && aiResponseReceived">
     <div class="vs2-ayu-banner" (click)="aiSummaryExpanded = !aiSummaryExpanded">
@@ -255,15 +303,17 @@
       </div>
     </div>
   </ng-container>
+  </div>
 </section>
 
 <section id="section-dn-note" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('note')">
     <img class="vs2-section-icon-img" src="assets/svgs/note.svg" alt="" />
     <span>Note/Outcome</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['note'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['note']">
 
   <div class="vs2-list-item" *ngFor="let n of outcomeNotes; let i = index">
     <span class="vs2-detail-label">{{ n.value }}</span>
@@ -278,15 +328,17 @@
     <button class="vs2-btn-cancel" (click)="cancelNote()">Cancel</button>
     <button class="vs2-btn-add" [disabled]="!newNoteText.trim()" (click)="addNote()">Add Note</button>
   </div>
+  </div>
 </section>
 
 <section id="section-dn-medication" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('medication')">
     <img class="vs2-section-icon-img" src="assets/svgs/medication.svg" alt="" />
     <span>Medication</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['medication'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['medication']">
 
   <div class="vs2-ai-dx-head">
     <h4 class="vs2-ai-dx-title">
@@ -465,15 +517,17 @@
     <button class="vs2-btn-cancel" (click)="cancelMedInstruction()">Cancel</button>
     <button class="vs2-btn-add" [disabled]="!medInstructionText.trim() || savingMedInstruction" (click)="addMedInstruction()">Add</button>
   </div>
+  </div>
 </section>
 
 <section id="section-dn-advice" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('advice')">
     <img class="vs2-section-icon-img" src="assets/svgs/advice.svg" alt="" />
     <span>Advice</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['advice'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['advice']">
 
   <ng-container *ngIf="aiAdvices.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Advice</h4>
@@ -540,15 +594,17 @@
     <button class="vs2-btn-outline" (click)="cancelAdvice()">Cancel</button>
     <button class="vs2-btn-soft" [disabled]="!selectedAdvices.length" (click)="addAdvice()">Add Advice</button>
   </div>
+  </div>
 </section>
 
 <section id="section-dn-test" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('test')">
     <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
     <span>Test</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['test'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['test']">
 
   <ng-container *ngIf="aiTests.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Tests</h4>
@@ -580,6 +636,7 @@
     <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
     <button class="vs2-btn-add" [disabled]="!newTestText?.trim()" (click)="addTest()">Add Test</button>
   </div>
+  </div>
 </section>
 
 <app-namco-referral-out
@@ -593,12 +650,13 @@
 </app-namco-referral-out>
 
 <section id="section-dn-referral" class="vs2-section-card" *ngIf="!namcoReferralEnabled">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('referral')">
     <img class="vs2-section-icon-img" src="assets/svgs/referal.svg" alt="" />
     <span>Referral-Out</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['referral'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['referral']">
 
   <ng-container *ngIf="aiReferrals.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Referral</h4>
@@ -615,18 +673,6 @@
 
   <div class="vs2-med-grid vs2-ref-grid">
     <div class="vs2-field">
-      <span class="vs2-field-label">Referral to</span>
-      <ng-select
-        class="vs2-ng-select vs2-ng-select-grid"
-        [items]="referralSpecialityOptions"
-        [(ngModel)]="newReferral.speciality"
-        [addTag]="true"
-        [searchable]="true"
-        [clearable]="true"
-        placeholder="Select specialization">
-      </ng-select>
-    </div>
-    <div class="vs2-field">
       <span class="vs2-field-label">Referral facility</span>
       <ng-select
         class="vs2-ng-select vs2-ng-select-grid"
@@ -636,6 +682,18 @@
         [searchable]="true"
         [clearable]="true"
         placeholder="Select Facility">
+      </ng-select>
+    </div>
+    <div class="vs2-field">
+      <span class="vs2-field-label">Referral to</span>
+      <ng-select
+        class="vs2-ng-select vs2-ng-select-grid"
+        [items]="referralSpecialityOptions"
+        [(ngModel)]="newReferral.speciality"
+        [addTag]="true"
+        [searchable]="true"
+        [clearable]="true"
+        placeholder="Select specialization">
       </ng-select>
     </div>
     <div class="vs2-field">
@@ -676,15 +734,17 @@
       </div>
     </div>
   </ng-container>
+  </div>
 </section>
 
 <section id="section-dn-followup" class="vs2-section-card">
-  <div class="vs2-section-title">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('followup')">
     <img class="vs2-section-icon-img" src="assets/svgs/follow-up.svg" alt="" />
     <span>Follow-up</span>
-    <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    <mat-icon class="vs2-chevron">{{ collapsed['followup'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['followup']">
 
   <p class="vs2-namco-note" *ngIf="isNamcoReferralConfirmed">
     Follow-up is not needed as this patient is being referred to a NAMCO doctor.
@@ -701,18 +761,19 @@
     </button>
   </div>
 
-  <div class="vs2-table vs2-fu-note-table" *ngIf="followUpUuid">
+  <!-- Type column only when the follow-up Type can be picked (followUpTypeEnabled). -->
+  <div class="vs2-table vs2-fu-note-table" [class.vs2-fu-note-table-no-type]="!followUpTypeEnabled" *ngIf="followUpUuid">
     <div class="vs2-table-head">
       <span>Follow Up Requested</span>
-      <span>Type</span>
+      <span *ngIf="followUpTypeEnabled">Type</span>
       <span>Date</span>
       <span>Time</span>
       <span>Reason</span>
       <span></span>
     </div>
     <div class="vs2-table-row">
-      <span>Yes</span>
-      <span>{{ followUpType || '-' }}</span>
+      <span>{{ savedFollowUpYes ? 'Yes' : 'No' }}</span>
+      <span *ngIf="followUpTypeEnabled">{{ savedFollowUpYes ? (followUpType || '-') : '-' }}</span>
       <span>{{ followUpDate ? (followUpDate | date : 'dd MMMM yyyy') : '-' }}</span>
       <span>{{ followUpTime || '-' }}</span>
       <span>{{ followUpReason || '-' }}</span>
@@ -726,10 +787,18 @@
     <div class="vs2-form-row">
       <span class="vs2-field-label">Do you want to have follow up with the patient</span>
       <label class="vs2-radio" [class.vs2-radio-disabled]="isNamcoReferralConfirmed"><input type="radio" name="wantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" [disabled]="isNamcoReferralConfirmed" /> Yes</label>
-      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="saveFollowUp()" /> No</label>
+      <label class="vs2-radio"><input type="radio" name="wantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="wantFollowUp = false; saveFollowUp()" /> No</label>
     </div>
     <ng-container *ngIf="wantFollowUp && !isNamcoReferralConfirmed">
       <ul class="vs2-bullet-list vs2-interaction-list">
+      <li *ngIf="followUpTypeEnabled">
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Follow-up type</span>
+        <label class="vs2-radio" *ngFor="let t of followUpTypes">
+          <input type="radio" name="dnFollowUpType" [value]="t" [(ngModel)]="followUpType" /> {{ t }}
+        </label>
+      </div>
+      </li>
       <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Quick follow-up</span>
@@ -744,7 +813,7 @@
       <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
-        <input class="vs2-input vs2-date" type="date" [min]="minFollowUpDate" [(ngModel)]="followUpDate" (ngModelChange)="onFollowUpDateChange()" />
+        <app-follow-up-date-picker [value]="followUpDate" [min]="minFollowUpDate" (valueChange)="followUpDate = $event; onFollowUpDateChange()"></app-follow-up-date-picker>
       </div>
       </li>
       <li>
@@ -770,6 +839,7 @@
       <button class="vs2-btn-primary" [disabled]="!followUpDate || !followUpTime" (click)="saveFollowUp()">Save</button>
     </ng-container>
   </ng-container>
+  </div>
 </section>
 
 <div class="vs2-share-row">

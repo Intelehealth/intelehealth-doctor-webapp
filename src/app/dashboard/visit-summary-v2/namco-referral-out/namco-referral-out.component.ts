@@ -46,10 +46,22 @@ export class NamcoReferralOutComponent implements OnInit, OnChanges {
   newReferral: { speciality: string | null; facility: string | null; priority: string | null; reason: string } =
     { speciality: null, facility: null, priority: DEFAULT_REFERRAL_PRIORITY, reason: '' };
 
+  /** Section collapse, like the other Doctor's Note sections. */
+  collapsed = false;
+
   constructor(
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService
   ) {}
+
+  toggleCollapsed(): void {
+    this.collapsed = !this.collapsed;
+  }
+
+  /** Open the section (e.g. when it's picked from the sidebar). */
+  expand(): void {
+    this.collapsed = false;
+  }
 
   ngOnInit(): void {
     this.specialityOptions = this.v2Service.getReferralSpecialities();

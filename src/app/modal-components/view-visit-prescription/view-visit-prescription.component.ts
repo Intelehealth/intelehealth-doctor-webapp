@@ -158,6 +158,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   }
                 });
                 encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
+                  if (!this.consultedDoctor) { return; }
                   this.consultedDoctor.gender = p.provider.person.gender;
                   this.consultedDoctor.person_uuid = p.provider.person.uuid;
                   this.consultedDoctor.attributes = p.provider.attributes;
@@ -167,12 +168,45 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 });
               }
             });
+
+            // Not completed yet (e.g. referred to NAMCO, or viewed before sharing): there is no
+            // Visit Complete "Doctor details", so take the consulted doctor from the doctor's note.
+            if (!this.consultedDoctor) {
+              this.consultedDoctor = this.getDoctorFromVisitNote(visit.encounters);
+            }
           }
         });
       }
     }, (error) => {
 
     });
+  }
+
+  /**
+  * Consulted doctor from the doctor's note encounter, for a visit not completed yet — same shape as
+  * the Visit Complete "Doctor details" (name, uuid, profile attributes by name, e.g. typeOfProfession,
+  * specialization). Prefers the NAMCO specialist's note when there is one.
+  * @param {EncounterModel[]} encounters - Visit encounters
+  * @returns {any} - Doctor details, or undefined when there is no doctor's note
+  */
+  getDoctorFromVisitNote(encounters: EncounterModel[]): any {
+    const noteOf = (type: string) => encounters.find((e: EncounterModel) => e.encounterType?.display === type && e.encounterProviders?.length);
+    const note = noteOf(visitTypes.SPECIALIST_VISIT_NOTE) || noteOf(visitTypes.VISIT_NOTE);
+    const provider: any = note?.encounterProviders?.[0]?.provider;
+    if (!provider) { return undefined; }
+    const doctor: any = {
+      name: provider.person?.display,
+      uuid: provider.uuid,
+      gender: provider.person?.gender,
+      person_uuid: provider.person?.uuid,
+      attributes: provider.attributes
+    };
+    (provider.attributes || []).forEach((attr: any) => {
+      if (attr.voided) { return; }
+      const key = attr.attributeType?.display || attr.display?.split(':')[0]?.trim();
+      if (key && !(key in doctor)) { doctor[key] = attr.value; }
+    });
+    return doctor;
   }
 
   /**

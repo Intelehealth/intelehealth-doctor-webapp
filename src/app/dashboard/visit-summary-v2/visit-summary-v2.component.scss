@@ -14,6 +14,7 @@ $page-bg: #f5f6fa;
 $card-bg: #ffffff;
 $section-bg: #f7f8fc;
 $radio-ring: #e4ddf9;
+$vs2-action-inset: 16px;
 $app-header-h: 72px; 
 
 app-visit-summary-v2 {
@@ -538,6 +539,11 @@ app-past-visits {
 
   &.vs2-highlight {
     color: $red;
+    font-weight: 600;
+  }
+
+  &.vs2-success {
+    color: $green;
     font-weight: 600;
   }
 }
@@ -1148,6 +1154,11 @@ app-past-visits {
   align-items: center;
   justify-content: center;
 
+  // <button> variant (Kaleyra call)
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
   img {
     width: 18px;
     height: 18px;
@@ -1310,10 +1321,10 @@ app-past-visits {
 
 .vs2-namco-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 32px;
   gap: 8px;
   align-items: center;
-  padding: 10px 0;
+  padding: 10px $vs2-action-inset 10px 0;
   font-size: 14px;
   color: $navy;
 }
@@ -1726,8 +1737,12 @@ app-past-visits {
   gap: 14px;
   border: 1px solid $green;
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 12px $vs2-action-inset 12px 14px;
   margin-bottom: 12px;
+
+  > .vs2-delete-icon {
+    margin-left: auto;
+  }
 
   .vs2-dx-row-check {
     color: $green;
@@ -1757,7 +1772,7 @@ app-past-visits {
 
 .vs2-segmented {
   display: inline-flex;
-  gap: 6px;
+  // gap: 6px;
   padding-left: 12px;
   border-left: 1px solid $border;
 
@@ -2020,7 +2035,7 @@ app-past-visits {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding-right: 4px;
+    padding-right: $vs2-action-inset;
   }
 }
 
@@ -2116,6 +2131,212 @@ app-past-visits {
   max-width: 220px;
 }
 
+// Follow-up date field (FollowUpDatePickerComponent) — same look as the old Visit Summary's .input-group.
+.vs2-date-picker {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  max-width: 260px;
+  height: 48px;
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  background: var(--color-offWhite);
+  box-sizing: border-box;
+
+  .vs2-date-picker-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 46px;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: var(--color-darkestBlue);
+    outline: none;
+    cursor: pointer;
+
+    &::placeholder {
+      color: #b2afbe;
+    }
+  }
+
+  .vs2-date-picker-toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    padding: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// Follow-up calendar popup (FollowUpDatePickerComponent). Rendered in a CDK overlay, so these rules
+// are global — this stylesheet uses ViewEncapsulation.None.
+.vs2-fu-calendar {
+  width: 296px;
+  padding: 14px 12px 12px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(29, 27, 58, 0.16);
+  font-family: inherit;
+}
+
+// Mo–Su row + 6-week grid.
+.vs2-fu-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+  justify-items: center;
+}
+
+.vs2-fu-cal-weekday {
+  padding-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $navy;
+}
+
+.vs2-fu-cal-day {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 13px;
+  color: $navy;
+  cursor: pointer;
+
+  // Previous / next month's days.
+  &.outside {
+    color: #b2afbe;
+  }
+
+  &.today {
+    font-weight: 700;
+  }
+
+  &:hover:not(:disabled):not(.selected) {
+    background: $purple-soft;
+  }
+
+  &.selected {
+    background: $green;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+// Month / year lists (opened from the header chips).
+.vs2-fu-cal-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.vs2-fu-cal-list-item {
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  color: $navy;
+  cursor: pointer;
+
+  &:hover:not(:disabled):not(.selected) {
+    background: $purple-soft;
+  }
+
+  &.selected {
+    background: $green;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+// Calendar header: ‹ [Jul ⌄] [2021 ⌄] ›
+.vs2-fu-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.vs2-fu-cal-periods {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vs2-fu-cal-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $purple;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+.vs2-fu-cal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: $navy;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $grey-text;
+  }
+
+  &.active,
+  &:hover {
+    background: $purple-soft;
+  }
+}
+
 .vs2-textarea {
   width: 100%;
   min-height: 70px;
@@ -2140,7 +2361,7 @@ app-past-visits {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 4px 0;
+  padding: 4px $vs2-action-inset 4px 0;
   margin-bottom: 6px;
 }
 
@@ -2208,6 +2429,7 @@ app-past-visits {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-right: $vs2-action-inset;
 }
 
 .vs2-added-name {
@@ -2220,6 +2442,12 @@ app-past-visits {
   display: inline-flex;
   align-items: center;
   gap: 12px;
+}
+
+// In table / grid rows the actions sit at the end of their cell, not the start.
+.vs2-table-row > .vs2-added-actions,
+.vs2-namco-grid > .vs2-added-actions {
+  justify-self: end;
 }
 
 .vs2-edit-icon {
@@ -2274,6 +2502,12 @@ app-past-visits {
   .vs2-table-head,
   .vs2-table-row {
     grid-template-columns: 1.4fr 1fr 1.2fr 1fr 1.6fr 0.5fr;
+  }
+
+  // Doctor's note: no Type column.
+  &.vs2-fu-note-table-no-type .vs2-table-head,
+  &.vs2-fu-note-table-no-type .vs2-table-row {
+    grid-template-columns: 1.4fr 1.2fr 1fr 1.6fr 0.5fr;
   }
 }
 

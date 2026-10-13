@@ -135,7 +135,8 @@
       <mat-icon class="vs2-chevron">expand_less</mat-icon>
     </div>
     <div class="vs2-divider"></div>
-    <div class="vs2-doc-row">
+    <p class="vs2-symptom-text" *ngIf="!visit.documents?.length">No additional docs available!</p>
+    <div class="vs2-doc-row" *ngIf="visit.documents?.length">
       <ng-container *ngFor="let doc of visit.documents">
         <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'" (click)="previewDocument(doc)">
           <img [src]="doc.src" alt="" onerror="this.style.display='none'" />
@@ -271,14 +272,14 @@
     <div class="vs2-divider"></div>
     <div class="vs2-table vs2-ref-table">
       <div class="vs2-table-head">
-        <span>Referral to</span>
         <span>Referral facility</span>
+        <span>Referral to</span>
         <span>Priority of referral</span>
         <span>Referral for(Reason)</span>
       </div>
       <div class="vs2-table-row">
-        <span>{{ visit.prescription.referral.to }}</span>
         <span>{{ visit.prescription.referral.facility }}</span>
+        <span>{{ visit.prescription.referral.to }}</span>
         <span>{{ visit.prescription.referral.priority }}</span>
         <span>{{ visit.prescription.referral.reason }}</span>
       </div>

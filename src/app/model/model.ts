@@ -744,6 +744,8 @@ export interface PatientVisitSummaryConfigModel {
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean
   standard_medication: boolean
+  family_history_notes?: boolean
+  past_medical_history_notes?: boolean
 }
 
 export interface PagerdutyList {

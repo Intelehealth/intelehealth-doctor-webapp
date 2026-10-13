@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
-import { getCacheData, isNamcoDoctor } from 'src/app/utils/utility-functions';
+import { environment } from 'src/environments/environment';
+import { getCacheData, isFeaturePresent, isNamcoDoctor } from 'src/app/utils/utility-functions';
+import { FOLLOW_UP_TYPE_TELEMEDICINE, FOLLOW_UP_TYPES } from '../specialist-doctor-note/specialist-doctor-note.constants';
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -27,6 +29,10 @@ import {
 } from './doctor-note.constants';
 import { NamcoReferralOutComponent } from '../namco-referral-out/namco-referral-out.component';
 
+type HistoryNoteKind = 'family' | 'pastMedical';
+
+import { followUpDateToString } from '../follow-up-date';
+
 @Component({
   selector: 'app-doctor-note',
   templateUrl: './doctor-note.component.html',
@@ -42,6 +48,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() visitCompleted = false;
   @Input() visitReferred = false;
 
+  /** Kaleyra call to the visit's health worker — hidden for MCC users, as in the old Visit Summary. */
+  hwPhoneNo = '';
+  readonly isMCCUser = this.v2Service.isMCCUser();
+  /** "Connect with patient" (call / WhatsApp the patient) isn't used in the NAS project. */
+  readonly connectWithPatientEnabled = environment.brandName !== 'NAS';
+
   readonly contextChips = CONTEXT_CHIPS;
   readonly diagnosisTypes = DIAGNOSIS_TYPES;
   readonly diagnosisStatuses = DIAGNOSIS_STATUSES;
@@ -56,7 +68,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   readonly facilityOptions = FACILITY_OPTIONS;
   readonly referralPriorities = REFERRAL_PRIORITIES;
 
-  spokenToPatient = true;
+  spokenToPatient: boolean  = null;
   patientInteractionUuid = '';
   prescriptionShared = false;
   savingPatientInteraction = false;
@@ -85,6 +97,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   newNoteText = '';
   outcomeNotes: DraftTextItem[] = [];
+
+  /** Shown when enabled in Patient Visit Summary config, as in the old Visit Summary. */
+  familyHistoryNotesEnabled = false;
+  pastMedicalHistoryNotesEnabled = false;
+  historyNotes: Record<HistoryNoteKind, DraftTextItem[]> = { family: [], pastMedical: [] };
+  newHistoryNoteText: Record<HistoryNoteKind, string> = { family: '', pastMedical: '' };
 
   aiMedicationState: AiMedicationState = 'ready';
   whyMedication: AiMedicationSuggestion | null = null;
@@ -127,15 +145,25 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   private isReferringToNamco = false;
   @ViewChild(NamcoReferralOutComponent) private namcoReferral?: NamcoReferralOutComponent;
 
-  wantFollowUp = false;
-  followUpType: string | null = null;
+  wantFollowUp: boolean | null = null;
+  /** On a turn server the Type isn't asked and is always Telemedicine, as in the old Visit Summary. */
+  private readonly defaultFollowUpType: string | null = environment.isTurnServer ? FOLLOW_UP_TYPE_TELEMEDICINE : null;
+  followUpType: string | null = this.defaultFollowUpType;
+  readonly followUpTypes = FOLLOW_UP_TYPES;
+  /**
+  * Follow-up Type (In person / Telemedicine) — same rule as the old Visit Summary for a normal doctor:
+  * only with the "followUpType" feature on and not on a turn server. Drives both the selector and the
+  * Type column, so the column is shown only when there is a Type to pick.
+  */
+  readonly followUpTypeEnabled = isFeaturePresent('followUpType') && !environment.isTurnServer;
   followUpDate = '';
   followUpTime: string | null = null;
   followUpReason = '';
   followUpUuid = '';
+  savedFollowUpYes = false;
   followUpTimeSlots: string[] = [];
   readonly quickFollowUpDays = [3, 7, 10, 30];
-  minFollowUpDate = new Date().toISOString().slice(0, 10);
+  minFollowUpDate = followUpDateToString(new Date());
 
   private provider = getCacheData(true, doctorDetails.PROVIDER);
 
@@ -166,8 +194,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     }).subscribe();
   }
 
+  /** Collapsed state per section, keyed like the sidebar ids without the "dn-" prefix. */
+  collapsed: Record<string, boolean> = {};
+
+  toggleSection(key: string): void {
+    this.collapsed[key] = !this.collapsed[key];
+  }
+
+  /** Open a section (e.g. when it's picked from the sidebar). */
+  expandSection(key: string): void {
+    this.collapsed[key] = false;
+    // With NAMCO referral on, the Referral section is the NAMCO Referral-Out card instead.
+    if (key === 'referral') { this.namcoReferral?.expand(); }
+  }
+
   get whatsAppLink(): string | null {
     return this.v2Service.whatsAppLink(this.patientPhoneNo);
+  }
+
+  startKaleyraCall(): void {
+    this.v2Service.startKaleyraCall(this.visit, this.hwPhoneNo);
   }
 
   answerAyuQuestion(q: AyuSuggestedQuestion, answer: string): void {
@@ -197,7 +243,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   savePatientInteraction(): void {
-    if (!this.visitUuid || this.savingPatientInteraction) { return; }
+    if (!this.visitUuid || this.savingPatientInteraction || this.spokenToPatient === null) { return; }
     this.savingPatientInteraction = true;
     this.v2Service.savePatientInteraction(
       this.visitUuid, this.spokenToPatient ? 'Yes' : 'No', this.patientInteractionUuid
@@ -250,6 +296,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
     // The Referral Consent step only applies to the referring (non-NAMCO) doctor.
     this.namcoReferralEnabled = !!this.appConfigService?.namco_referral_section && !isNamcoDoctor(this.provider);
+    this.familyHistoryNotesEnabled = !!this.appConfigService?.patient_visit_summary?.family_history_notes;
+    this.pastMedicalHistoryNotesEnabled = !!this.appConfigService?.patient_visit_summary?.past_medical_history_notes;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -261,6 +309,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     }
     if (changes['visit'] && this.visit) {
       this.loadPatientInteraction();
+      this.hwPhoneNo = this.v2Service.getHwPhoneNo(this.visit);
     }
     if ((changes['visit'] || changes['patientInfo']) && this.visit && this.patientInfo) {
       this.loadInteractionNote();
@@ -275,6 +324,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       this.tests = draft.tests;
       this.referrals = draft.referrals;
       this.outcomeNotes = draft.notes;
+      this.historyNotes = { family: draft.familyHistoryNotes, pastMedical: draft.pastMedicalHistoryNotes };
       this.medInstructions = draft.additionalInstruction ? [draft.additionalInstruction] : [];
       if (draft.followUp) {
         this.wantFollowUp = draft.followUp.wantFollowUp;
@@ -283,6 +333,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.followUpReason = draft.followUp.reason;
         this.followUpType = draft.followUp.type || null;
         this.followUpUuid = draft.followUp.uuid;
+        this.savedFollowUpYes = draft.followUp.wantFollowUp;
         this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
       }
       if (this.addedDiagnoses.length) {
@@ -758,6 +809,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.newNoteText = '';
   }
 
+  addHistoryNote(kind: HistoryNoteKind): void {
+    const value = this.newHistoryNoteText[kind];
+    if (!value?.trim() || !this.canWrite()) { return; }
+    const save$ = kind === 'family'
+      ? this.v2Service.saveFamilyHistoryNote(this.patientUuid, this.visitNoteUuid, value)
+      : this.v2Service.savePastMedicalHistoryNote(this.patientUuid, this.visitNoteUuid, value);
+    save$.subscribe(res => {
+      this.historyNotes[kind].push({ value, uuid: res?.uuid || '' });
+      this.newHistoryNoteText[kind] = '';
+    });
+  }
+
+  deleteHistoryNote(kind: HistoryNoteKind, index: number, uuid?: string): void {
+    this.v2Service.removeDraftItem(this.historyNotes[kind], index, uuid);
+  }
+
+  cancelHistoryNote(kind: HistoryNoteKind): void {
+    this.newHistoryNoteText[kind] = '';
+  }
+
   addMedInstruction(): void {
     if (!this.medInstructionText?.trim() || !this.canWrite() || this.savingMedInstruction) { return; }
     const value = this.medInstructionText;
@@ -780,10 +851,18 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   saveFollowUp(): void {
     if (!this.canWrite()) { return; }
+    if (this.wantFollowUp === null) { return; }
     if (!this.wantFollowUp) {
-      if (this.followUpUuid) {
-        this.v2Service.deleteObs(this.followUpUuid).subscribe(() => { this.followUpUuid = ''; });
-      }
+      // Saved "No" shows in the follow-up table with "-" for type/date/time/reason, as in the old UI.
+      this.followUpType = this.defaultFollowUpType;
+      this.followUpDate = '';
+      this.followUpTime = null;
+      this.followUpReason = '';
+      this.v2Service.saveNoFollowUp(this.patientUuid, this.visitNoteUuid, this.followUpUuid || undefined)
+        .subscribe(res => {
+          this.followUpUuid = res?.uuid || this.followUpUuid;
+          this.savedFollowUpYes = false;
+        });
       return;
     }
     if (!this.followUpDate) { return; }
@@ -794,7 +873,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       type: this.followUpType || ''
     };
     this.v2Service.saveFollowUp(this.patientUuid, this.visitNoteUuid, fu, this.followUpUuid || undefined)
-      .subscribe(res => { this.followUpUuid = res?.uuid || this.followUpUuid; });
+      .subscribe(res => {
+        this.followUpUuid = res?.uuid || this.followUpUuid;
+        this.savedFollowUpYes = true;
+      });
   }
 
   applyQuickFollowUp(days: number): void {
@@ -822,8 +904,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!this.followUpUuid) { return; }
     this.v2Service.deleteObs(this.followUpUuid).subscribe(() => {
       this.followUpUuid = '';
-      this.wantFollowUp = false;
-      this.followUpType = null;
+      this.savedFollowUpYes = false;
+      this.wantFollowUp = null;
+      this.followUpType = this.defaultFollowUpType;
       this.followUpDate = '';
       this.followUpTime = null;
       this.followUpReason = '';

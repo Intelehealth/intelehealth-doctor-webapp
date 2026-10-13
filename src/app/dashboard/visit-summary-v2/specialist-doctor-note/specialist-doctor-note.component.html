@@ -7,7 +7,7 @@
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['interaction']">
   <ul class="vs2-bullet-list vs2-interaction-list">
-    <li>
+    <li *ngIf="connectWithPatientEnabled">
       <div class="vs2-form-row">
         <span class="vs2-field-label">Connect with patient</span>
         <span class="vs2-connect-actions">
@@ -22,6 +22,18 @@
           <span class="vs2-connect-hint">
             {{ patientPhoneNo ? 'Click here to connect with the patient' : 'Phone number is not available' }}
           </span>
+        </span>
+      </div>
+    </li>
+    <li *ngIf="!isMCCUser">
+      <div class="vs2-form-row">
+        <span class="vs2-field-label">Connect with health worker</span>
+        <span class="vs2-connect-actions">
+          <button type="button" class="vs2-icon-circle" [class.vs2-icon-circle-disabled]="!hwPhoneNo"
+            [disabled]="!hwPhoneNo" (click)="startKaleyraCall()">
+            <img src="assets/svgs/phone-black.svg" alt="Kaleyra Call" />
+          </button>
+          <span class="vs2-connect-hint">Call via Kaleyra - Connect to Health Worker</span>
         </span>
       </div>
     </li>
@@ -322,8 +334,8 @@
       <span></span>
     </div>
     <div class="vs2-table-row">
-      <span>Yes</span>
-      <span>{{ followUpType || '-' }}</span>
+      <span>{{ savedFollowUpYes ? 'Yes' : 'No' }}</span>
+      <span>{{ savedFollowUpYes ? (followUpType || '-') : '-' }}</span>
       <span>{{ followUpDate ? (followUpDate | date : 'dd MMMM yyyy') : '-' }}</span>
       <span>{{ followUpTime || '-' }}</span>
       <span>{{ followUpReason || '-' }}</span>
@@ -338,8 +350,8 @@
     <li>
       <div class="vs2-form-row">
         <span class="vs2-field-label">Do you want to have follow up with the patient</span>
-        <label class="vs2-radio"><input type="radio" name="sdnWantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" (change)="onWantFollowUpChange()" /> Yes</label>
-        <label class="vs2-radio"><input type="radio" name="sdnWantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="onWantFollowUpChange()" /> No</label>
+        <label class="vs2-radio"><input type="radio" name="sdnWantFollowUp" [value]="true" [(ngModel)]="wantFollowUp" (change)="wantFollowUp = true; onWantFollowUpChange()" /> Yes</label>
+        <label class="vs2-radio"><input type="radio" name="sdnWantFollowUp" [value]="false" [(ngModel)]="wantFollowUp" (change)="wantFollowUp = false; onWantFollowUpChange()" /> No</label>
       </div>
     </li>
     <ng-container *ngIf="wantFollowUp">
@@ -354,7 +366,7 @@
       <li>
         <div class="vs2-form-row">
           <span class="vs2-field-label">Select date<span class="vs2-req">*</span></span>
-          <input class="vs2-input vs2-date" type="date" [min]="minFollowUpDate" [(ngModel)]="followUpDate" (ngModelChange)="onFollowUpDateChange()" />
+          <app-follow-up-date-picker [value]="followUpDate" [min]="minFollowUpDate" (valueChange)="followUpDate = $event; onFollowUpDateChange()"></app-follow-up-date-picker>
         </div>
       </li>
       <li>

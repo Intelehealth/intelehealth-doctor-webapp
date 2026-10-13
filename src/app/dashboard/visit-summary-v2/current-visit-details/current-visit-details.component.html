@@ -9,7 +9,7 @@
     <div class="vs2-detail-grid">
       <div class="vs2-detail-row" *ngFor="let row of consultationDetails">
         <span class="vs2-detail-label">{{ row.label }}</span>
-        <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight">{{ row.value }}</span>
+        <span class="vs2-detail-value" [class.vs2-highlight]="row.highlight" [class.vs2-success]="row.success">{{ row.value }}</span>
       </div>
     </div>
   </div>
@@ -46,6 +46,40 @@
   </div>
 </section>
 
+<section id="section-vitals" class="vs2-section-card">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('vitals')">
+    <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
+    <span>Vitals</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['vitals'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['vitals']">
+    <div class="vs2-vitals-grid">
+      <div class="vs2-vital-cell" *ngFor="let v of vitals">
+        <span class="vs2-vital-label">{{ v.label }}</span>
+        <span class="vs2-vital-value">{{ v.value || 'Not informed' }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="section-diagnostics" class="vs2-section-card" *ngIf="diagnosticsEnabled">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('diagnostics')">
+    <img class="vs2-section-icon-img" src="assets/svgs/diagnosis-green.svg" alt="" />
+    <span>Diagnostics</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['diagnostics'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['diagnostics']">
+    <div class="vs2-vitals-grid">
+      <div class="vs2-vital-cell" *ngFor="let d of diagnostics">
+        <span class="vs2-vital-label" [style.font-weight]="d.bold ? 'bold' : null">{{ d.label }}</span>
+        <span class="vs2-vital-value" [style.font-weight]="d.bold ? 'bold' : null">{{ d.value }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="section-history" class="vs2-section-card">
   <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('history')">
     <img class="vs2-section-icon-img" src="assets/svgs/medical-history.svg" alt="" />
@@ -72,23 +106,6 @@
   </div>
 </section>
 
-<section id="section-vitals" class="vs2-section-card">
-  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('vitals')">
-    <img class="vs2-section-icon-img" src="assets/svgs/vitals.svg" alt="" />
-    <span>Vitals</span>
-    <mat-icon class="vs2-chevron">{{ collapsed['vitals'] ? 'expand_more' : 'expand_less' }}</mat-icon>
-  </div>
-  <div class="vs2-divider"></div>
-  <div class="vs2-section-body" *ngIf="!collapsed['vitals']">
-  <div class="vs2-vitals-grid">
-    <div class="vs2-vital-cell" *ngFor="let v of vitals">
-      <span class="vs2-vital-label">{{ v.label }}</span>
-      <span class="vs2-vital-value">{{ v.value }}</span>
-    </div>
-  </div>
-  </div>
-</section>
-
 <section id="section-physical" class="vs2-section-card">
   <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('physical')">
     <img class="vs2-section-icon-img" src="assets/svgs/physical-examination.svg" alt="" />
@@ -105,7 +122,7 @@
         <span class="vs2-detail-value">{{ row.value }}</span>
       </div>
       <div class="vs2-detail-row vs2-detail-row-wide" *ngIf="eyeImages.length">
-        <span class="vs2-detail-label">Eye images</span>
+        <span class="vs2-detail-label">Images</span>
         <div class="vs2-thumb-row">
           <div class="vs2-thumb" *ngFor="let img of eyeImages; let i = index" (click)="previewEyeImages(i)">
             <img [src]="img" alt="eye image" onerror="this.style.display='none'" />
@@ -124,6 +141,18 @@
   </div>
 </section>
 
+<section id="section-notes" class="vs2-section-card" *ngIf="additionalNotesEnabled">
+  <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('notes')">
+    <img class="vs2-section-icon-img" src="assets/svgs/note-icon-green.svg" alt="" />
+    <span>Additional notes</span>
+    <mat-icon class="vs2-chevron">{{ collapsed['notes'] ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  <div class="vs2-divider"></div>
+  <div class="vs2-section-body" *ngIf="!collapsed['notes']">
+    <p class="vs2-symptom-text">{{ additionalNote || 'No additional notes available!' }}</p>
+  </div>
+</section>
+
 <section id="section-documents" class="vs2-section-card">
   <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('documents')">
     <img class="vs2-section-icon-img" src="assets/svgs/additional-documents.svg" alt="" />
@@ -132,7 +161,8 @@
   </div>
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['documents']">
-  <div class="vs2-doc-row">
+  <p class="vs2-symptom-text" *ngIf="!documents.length">No additional docs available!</p>
+  <div class="vs2-doc-row" *ngIf="documents.length">
     <ng-container *ngFor="let doc of documents">
       <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'" (click)="previewDocument(doc)">
         <img [src]="doc.src" alt="document" onerror="this.style.display='none'" />

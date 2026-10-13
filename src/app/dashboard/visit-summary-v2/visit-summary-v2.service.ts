@@ -4,7 +4,11 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { visitTypes, conceptIds, doctorDetails, visitAttributeTypes } from 'src/config/constant';
-import { calculateBMI, convertCelsiusToFahrenheit } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, getCacheData } from 'src/app/utils/utility-functions';
+import { NgxRolesService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { ProviderService } from 'src/app/services/provider.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 import {
   ApiResponseModel, EncounterModel, ObsApiResponseModel, ObsModel,
   PatientModel, VisitModel, VitalModel
@@ -45,6 +49,8 @@ export interface DraftNote {
   referrals: DraftReferral[];
   followUp: DraftFollowUp | null;
   notes: DraftTextItem[];
+  familyHistoryNotes: DraftTextItem[];
+  pastMedicalHistoryNotes: DraftTextItem[];
   additionalInstruction: DraftInstruction | null;
 }
 
@@ -74,9 +80,11 @@ export interface CurrentVisitData {
   patientHistory: DetailRow[];
   familyHistory: DetailRow[];
   vitals: VitalCell[];
+  diagnostics: VitalCell[];
   generalExams: DetailRow[];
   abdomenFindings: string[];
   eyeImages: string[];
+  additionalNote: string;
   documents: DocItem[];
 }
 
@@ -100,8 +108,82 @@ export class VisitSummaryV2Service {
     private helper: VisitSummaryHelperService,
     private appConfigService: AppConfigService,
     private aiddxService: AiddxService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private providerService: ProviderService,
+    private rolesService: NgxRolesService,
+    private toastr: ToastrService,
+    private analytics: AnalyticsService
   ) {}
+
+  /** MCC users don't get the Kaleyra call button, as in the old Visit Summary. */
+  isMCCUser(): boolean {
+    return !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
+  }
+
+  /** Phone number of the health worker who created the visit (provider of the ADULTINITIAL encounter). */
+  getHwPhoneNo(visit: VisitModel): string {
+    const encounter = (visit?.encounters || []).find(e =>
+      e.display?.match(visitTypes.ADULTINITIAL) !== null && e.encounterProviders?.length);
+    let phoneNo = '';
+    (encounter?.encounterProviders?.[0]?.provider as any)?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
+        phoneNo = attribute.value;
+      }
+    });
+    return phoneNo;
+  }
+
+  /**
+  * Connect the logged-in doctor to the visit's health worker through Kaleyra click2call — same
+  * checks, payload, toasts and analytics as the old Visit Summary's startKaleyraCall().
+  */
+  startKaleyraCall(visit: VisitModel, hwPhoneNo: string): void {
+    if (!hwPhoneNo) {
+      this.toastr.error('Health worker phone number is not available');
+      return;
+    }
+    if (!visit?.uuid) {
+      this.toastr.error('Visit ID is not available');
+      return;
+    }
+    const provider = getCacheData(true, doctorDetails.PROVIDER);
+    let doctorPhoneNumber = '';
+    provider?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null) {
+        doctorPhoneNumber = attribute.value;
+      }
+    });
+    if (!doctorPhoneNumber) {
+      this.toastr.error('Doctor phone number is not available. Please update your profile with a valid phone number.');
+      return;
+    }
+    this.toastr.info('Initiating Kaleyra call...');
+    // custom = doctoruuid:patientuuid, notes = visituuid:nurseuuid
+    const nurseUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid || '';
+    const custom = `${provider?.uuid}:${visit.patient?.uuid}`;
+    const notes = `${visit.uuid}:${nurseUuid}`;
+    const location = visit.location?.display || '';
+    this.providerService.kaleyraClick2Call(doctorPhoneNumber, hwPhoneNo, custom, '0', notes).subscribe({
+      next: () => {
+        this.analytics.logEvent('kaleyra_call_initiated', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          patientOpenMrsId: this.patientIdentifier(visit.patient as any, 'OpenMRS ID'),
+          visitId: visit.uuid,
+          location
+        });
+        this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
+      },
+      error: (error) => {
+        this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          visitId: visit.uuid,
+          location,
+          reason: error?.message ?? 'unknown'
+        });
+        this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
+      }
+    });
+  }
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
     return this.diagnosisService.getObs(patientUuid, conceptIds.conceptNote).pipe(
@@ -386,6 +468,7 @@ export class VisitSummaryV2Service {
   }
 
   private followUpForPrescription(value: string): { suggested: string; date: string; time: string; reason: string } {
+    if (this.isNoFollowUp(value)) { return { suggested: 'No', date: '', time: '', reason: '' }; }
     const parts = value.split(',').filter(Boolean);
     return {
       suggested: 'Yes',
@@ -467,7 +550,9 @@ export class VisitSummaryV2Service {
       test: getObs(conceptIds.conceptTest),
       referral: getObs(conceptIds.conceptReferral),
       followUp: getObs(conceptIds.conceptFollow),
-      note: getObs(conceptIds.conceptNote)
+      note: getObs(conceptIds.conceptNote),
+      familyHistoryNote: getObs(conceptIds.conceptFamilyHistoryNotes),
+      pastMedicalHistoryNote: getObs(conceptIds.conceptPastMedicalHistoryNotes)
     }).pipe(map(res => {
       const { advices, additionalInstruction: adviceInstruction } = this.parseAdviceAndInstruction(res.advice, visitUuid);
       const additionalInstruction = this.parseMedicationInstruction(res.medication, visitUuid) || adviceInstruction;
@@ -479,7 +564,9 @@ export class VisitSummaryV2Service {
         tests: this.parseTests(res.test, visitUuid),
         referrals: this.parseReferrals(res.referral, visitUuid),
         followUp: this.parseFollowUp(res.followUp, visitUuid),
-        notes: this.parseTextItems(res.note, visitUuid)
+        notes: this.parseTextItems(res.note, visitUuid),
+        familyHistoryNotes: this.parseTextItems(res.familyHistoryNote, visitUuid),
+        pastMedicalHistoryNotes: this.parseTextItems(res.pastMedicalHistoryNote, visitUuid)
       };
     }));
   }
@@ -590,6 +677,11 @@ export class VisitSummaryV2Service {
     let followUp: DraftFollowUp | null = null;
     (res.results || []).forEach((obs: ObsModel) => {
       if (obs.encounter?.visit?.uuid !== visitUuid) { return; }
+      // "No follow-up" is stored as the plain value "No", as the old Visit Summary saves it.
+      if (this.isNoFollowUp(obs.value)) {
+        followUp = { wantFollowUp: false, date: '', time: '', reason: '', type: '', uuid: obs.uuid || '' };
+        return;
+      }
       let date = '', time = '', reason = '', type = '';
       if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
         const parts = obs.value.split(',').filter(Boolean);
@@ -659,6 +751,14 @@ export class VisitSummaryV2Service {
     return this.postObs(conceptIds.conceptNote, patientUuid, encounterUuid, value);
   }
 
+  saveFamilyHistoryNote(patientUuid: string, encounterUuid: string, value: string): Observable<ObsModel> {
+    return this.postObs(conceptIds.conceptFamilyHistoryNotes, patientUuid, encounterUuid, value);
+  }
+
+  savePastMedicalHistoryNote(patientUuid: string, encounterUuid: string, value: string): Observable<ObsModel> {
+    return this.postObs(conceptIds.conceptPastMedicalHistoryNotes, patientUuid, encounterUuid, value);
+  }
+
   /**
   * Save the additional instruction. A new one is a Medication obs holding the plain text, the
   * same as the old Visit Summary's saveAdditionalInstruction() (diagnosis.component.ts), so the
@@ -687,6 +787,18 @@ export class VisitSummaryV2Service {
       return this.encounterService.updateObs(existingUuid, { concept: conceptIds.conceptFollow, person: patientUuid, obsDatetime: new Date(), value, encounter: encounterUuid });
     }
     return this.postObs(conceptIds.conceptFollow, patientUuid, encounterUuid, value);
+  }
+
+  /**
+  * Save "No follow-up" — a Follow-up obs with the value "No", updating the existing follow-up obs
+  * if there is one, the same as the old Visit Summary's saveFollowUp().
+  */
+  saveNoFollowUp(patientUuid: string, encounterUuid: string, existingUuid?: string): Observable<ObsModel> {
+    return this.writeObs(conceptIds.conceptFollow, patientUuid, encounterUuid, 'No', existingUuid);
+  }
+
+  private isNoFollowUp(value: any): boolean {
+    return String(value ?? '').trim().toLowerCase() === 'no';
   }
 
   /**
@@ -929,9 +1041,13 @@ export class VisitSummaryV2Service {
       patientHistory,
       familyHistory,
       vitals,
+      diagnostics: this.buildDiagnostics(encounters),
       generalExams,
       abdomenFindings,
       eyeImages: this.buildImageSources(eyeImagesRes, visit.uuid),
+      additionalNote: this.appConfigService.patient_visit_summary?.notes_section
+        ? ((visit.attributes || []).find((a: any) => a.attributeType?.display === 'AdditionalNote')?.value || '')
+        : '',
       documents: this.buildDocuments(docsRes, visit.uuid)
     };
   }
@@ -949,6 +1065,7 @@ export class VisitSummaryV2Service {
     const contactNo = this.personAttr(patient, 'Telephone Number');
     const gender = this.mapGender(p?.gender);
     const isMale = gender === 'Male';
+    const abhaEnabled = !!this.appConfigService?.abha_section;
 
     return {
       name: name || (p?.display || ''),
@@ -960,6 +1077,8 @@ export class VisitSummaryV2Service {
       weight: weightVital?.value ? `${weightVital.value}Kg` : '',
       allergies: allergyNames.slice(0, 2),
       extraAllergiesCount: Math.max(allergyNames.length - 2, 0),
+      abhaNumber: abhaEnabled ? this.patientIdentifierCI(patient, 'abha number') : '',
+      abhaAddress: abhaEnabled ? this.patientIdentifierCI(patient, 'abha address') : '',
       pregnancy: isMale ? '' : (pregnancyRow?.value || ''),
       contactNo: contactNo !== 'NA' ? contactNo : '',
       occupation: this.valOrEmpty(this.personAttr(patient, 'occupation')),
@@ -1000,10 +1119,21 @@ export class VisitSummaryV2Service {
       { label: 'Visit ID', value: this.maskVisitId(visit.uuid) },
       { label: 'Appointment on', value: apptDate ? this.formatDate(apptDate) : 'No appointment' },
       { label: 'Visit created', value: this.formatDateTime(visit.startDatetime) },
-      { label: 'Status', value: visitStatus, highlight: visitStatus === visitTypes.PRIORITY_VISIT },
+      { label: 'Status', value: visitStatus, highlight: visitStatus === visitTypes.PRIORITY_VISIT, 
+        success: [
+          visitTypes.AWAITING_VISIT, visitTypes.IN_PROGRESS_VISIT, visitTypes.COMPLETED_VISIT, visitTypes.ENDED_VISIT
+        ].includes(visitStatus)
+      },
       { label: 'Visit uploaded', value: this.formatDateTime((visit as any).dateCreated) },
-      { label: 'Location', value: this.titleCase(clinicName) }
+      { label: 'Location', value: this.titleCase(clinicName) },
+      { label: 'Provided by', value: this.getVisitProviderName(visit.encounters || []) }
     ];
+  }
+
+  private getVisitProviderName(encounters: EncounterModel[]): string {
+    const adultInitial = encounters.find(e => e.display?.match(visitTypes.ADULTINITIAL) !== null && e.encounterProviders?.length);
+    const name = adultInitial?.encounterProviders[0]?.provider?.person?.display;
+    return name ? `Nurse : ${name}` : 'NA';
   }
 
   private getVisitStatus(encounters: EncounterModel[]): string {
@@ -1026,6 +1156,18 @@ export class VisitSummaryV2Service {
         value: value ?? (/blood\s*group/i.test(v.name || '') ? 'NA' : '')
       };
     });
+  }
+
+  /** Diagnostic test results — recorded on the Vitals encounter, configured via Admin > Diagnostics. */
+  private buildDiagnostics(encounters: EncounterModel[]): VitalCell[] {
+    if (!this.appConfigService.patient_diagnostics_section) { return []; }
+    const vitalObs = this.getVitalObs(encounters);
+    const config: VitalModel[] = [...(this.appConfigService.patient_diagnostics || [])];
+    return config.map(d => ({
+      label: d.name,
+      value: this.getObsValue(d.uuid, d.key, vitalObs, config) || 'No information',
+      bold: d.name === 'HbA1c'
+    }));
   }
 
   private getVitalObs(encounters: EncounterModel[]): ObsModel[] {
@@ -1198,6 +1340,12 @@ export class VisitSummaryV2Service {
       if (attr.attributeType?.display === attrType) { val = attr.value; }
     });
     return val;
+  }
+
+  private patientIdentifierCI(patient: PatientModel, identifierType: string): string {
+    return patient?.identifiers?.find(
+      (idf: any) => idf.identifierType?.display?.toLowerCase() === identifierType
+    )?.identifier || '';
   }
 
   private patientIdentifier(patient: PatientModel, identifierType: string): string {

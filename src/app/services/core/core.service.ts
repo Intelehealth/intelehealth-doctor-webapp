@@ -249,7 +249,7 @@ export class CoreService {
    * @return {Observable<any>} - Dialog result
    */
   openVisitPrescriptionModal(data: { uuid: string }): Observable<any> {
-    const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, {
+    const dialogRef = this.dialog.open(LibPresciptionComponent, {
       panelClass: "modal-lg",
       data,
       hasBackdrop: true,

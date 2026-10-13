@@ -13,6 +13,7 @@ export interface DetailRow {
   label: string;
   value: string;
   highlight?: boolean;
+  success?: boolean;
 }
 
 export interface ComplaintDetail {
@@ -28,6 +29,7 @@ export interface SymptomGroup {
 export interface VitalCell {
   label: string;
   value: string;
+  bold?: boolean;
 }
 
 export interface DocItem {
@@ -96,6 +98,8 @@ export interface Patient {
   weight: string;
   allergies: string[];
   extraAllergiesCount: number;
+  abhaNumber: string;
+  abhaAddress: string;
   pregnancy: string;
   contactNo: string;
   occupation: string;
