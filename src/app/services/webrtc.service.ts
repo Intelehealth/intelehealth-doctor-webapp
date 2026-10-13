@@ -66,12 +66,14 @@ export class WebrtcService {
       }));
   }
 
-  generateMagicLink(visitUuid: string, roomId: string, doctorName?: string, patientName?: string) {
+  generateMagicLink(visitUuid: string, roomId: string, doctorName?: string, patientName?: string, notify?: boolean, phone?: string) {
     return this.http.post(`${environment.webrtcTokenServerUrl}api/magic-link`, {
       visitUuid,
       roomId,
       doctorName,
       patientName,
+      notify,
+      phone,
     });
   }
 
