@@ -1,3 +1,62 @@
+// The in-progress card attaches flush to the bottom of the patient-info card.
+.patient-sticky-wrap.has-banner {
+  margin-bottom: 3rem;
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  [data-test-id="patientInfoMainContainer"] {
+    margin-bottom: 0 !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+
+    .intel-card {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  [data-test-id="visitInProgressBanner"] {
+    position: relative;
+    margin-bottom: 0 !important;
+    border-radius: 0 0 12px 12px;
+
+    .intel-card {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      box-shadow: none;
+    }
+
+    // Same inset as the patient-info content above (card-body 24px + section 16px),
+    // so the text lines up with the patient photo/name column.
+    // Divider styled like the .card-header line used across the app's cards.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: #EFE8FF;
+    }
+
+    .card-body {
+      padding: 20px 40px;
+    }
+  }
+}
+
+.visit-in-progress-msg {
+  margin: 0;
+  font-family: DM Sans;
+  font-size: 16px;
+  line-height: 150%;
+  font-weight: 500;
+  color: #B45309; // warning
+}
+
 .appointment-banner {
   display: flex;
   align-items: center;
@@ -37,24 +96,29 @@
   }
 }
 
-// Sticky patient info (non-Turn servers only). The card pins to the top while
-// the rest scrolls.
-[data-test-id="patientInfoMainContainer"] {
+// Sticky patient info + in-progress message (non-Turn servers only). The
+// wrapper pins both cards to the top while the rest scrolls.
+.patient-sticky-wrap {
   position: sticky;
   top: 64px;
   z-index: 100;
+}
+
+[data-test-id="patientInfoMainContainer"] {
   background: var(--color-white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
   border-radius: 12px;
 }
 
 // On Turn servers the whole page scrolls -- the patient-info card scrolls away
 // with the rest of the content instead of sticking.
-.turn-server-scroll [data-test-id="patientInfoMainContainer"] {
+.turn-server-scroll .patient-sticky-wrap {
   position: static;
   top: auto;
   z-index: auto;
+}
+
+.turn-server-scroll [data-test-id="patientInfoMainContainer"] {
   box-shadow: none;
 }
 

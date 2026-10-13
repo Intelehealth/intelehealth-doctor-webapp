@@ -14,6 +14,8 @@ import {
 } from './visit-summary-v2.models';
 import { CurrentVisitData, VisitSummaryV2Service } from './visit-summary-v2.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { NgxRolesService } from 'ngx-permissions';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-visit-summary-v2',
@@ -98,6 +100,19 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   clinicName = '';
   visitEnded = false;
   isVisitNoteProvider = false;
+  visitNoteDoctorName = '';
+
+  get showVisitInProgressBanner(): boolean {
+    return this.visitNoteExists && !this.isVisitNoteProvider && !!this.visitNoteDoctorName
+      && !this.rolesService.getRole('ORGANIZATIONAL:MCC');
+  }
+
+  get visitInProgressMessage(): string {
+    const key = 'This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.';
+    const msg = this.translateService.instant(key, { name: this.visitNoteDoctorName });
+    // Falls back to manual substitution if the translation entry has not loaded yet.
+    return msg.replace('{{name}}', this.visitNoteDoctorName);
+  }
   hasWebRTCEnabled = false;
   hasAudioEnabled = false;
   hasVideoEnabled = false;
@@ -115,7 +130,9 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     private appConfigService: AppConfigService,
     private analytics: AnalyticsService,
     private visitSummaryService: VisitSummaryHelperService,
-    private mindmapService: MindmapService
+    private mindmapService: MindmapService,
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService
   ) {
     this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
   }
@@ -261,6 +278,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.clinicName = data.clinicName;
     this.visitEnded = data.visitEnded;
     this.isVisitNoteProvider = !!this.providerUuid && data.visitNoteProviderUuids.includes(this.providerUuid);
+    this.visitNoteDoctorName = data.visitNoteDoctorName;
     this.consultationDetails = data.consultationDetails;
     this.chiefComplaints = data.chiefComplaints;
     this.complaintDetails = data.complaintDetails;

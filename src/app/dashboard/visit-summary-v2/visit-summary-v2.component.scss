@@ -353,6 +353,38 @@ app-past-visits {
   }
 }
 
+// Attached flush to the bottom of the patient header card, same inset/background.
+.vs2-in-progress-banner {
+  flex: 0 0 auto;
+  margin-top: 0;
+  background: $card-bg;
+  position: relative;
+  border-radius: 0 0 14px 14px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+  font-size: 15px;
+  line-height: 150%;
+  font-weight: 500;
+  color: $amber-strong;
+
+  // Inset divider, same colour as the other section lines on this page.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 22px;
+    right: 22px;
+    height: 1px;
+    background: $border;
+  }
+}
+
+app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: none;
+}
+
 .vs2-body {
   flex: 1 1 auto;
   min-height: 0;

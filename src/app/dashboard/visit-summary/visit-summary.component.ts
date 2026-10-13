@@ -117,6 +117,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitCompleted: EncounterModel | boolean;
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
+  visitNoteDoctorName = '';
+
+  get showVisitInProgressBanner(): boolean {
+    return !!this.visitNotePresent && !this.isVisitNoteProvider && !this.isMCCUser && !!this.visitNoteDoctorName;
+  }
+
+  get visitInProgressMessage(): string {
+    const key = 'This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.';
+    const msg = this.translateService.instant(key, { name: this.visitNoteDoctorName });
+    // Falls back to manual substitution if the translation entry has not loaded yet.
+    return msg.replace('{{name}}', this.visitNoteDoctorName);
+  }
   referSpecialityForm: FormGroup;
   provider: ProviderModel;
   showAll = true;
@@ -790,6 +802,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                   this.isVisitNoteProvider = true;
                 }
               });
+              const visitNoteProvider = this.visitNotePresent.encounterProviders[0];
+              this.visitNoteDoctorName = (visitNoteProvider?.provider?.person?.display || visitNoteProvider?.display?.split(':')[0] || '')
+                .replace(/^\s*dr\.?\s+/i, '');
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfMedicationPresent();
