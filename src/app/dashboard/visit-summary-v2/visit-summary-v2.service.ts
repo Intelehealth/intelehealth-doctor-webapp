@@ -118,9 +118,9 @@ export class VisitSummaryV2Service {
       : this.visitService.postAttribute(visitUuid, payload);
   }
 
-  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
+  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false, recompute = false): Observable<AiDiagnosisResult> {
     const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
-    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared).pipe(
+    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared, recompute).pipe(
       map((res: any) => this.buildAiDiagnosisResult(res))
     );
   }
