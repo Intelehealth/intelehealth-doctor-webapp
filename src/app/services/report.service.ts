@@ -47,11 +47,9 @@ export class ReoportService {
 
   /**
    * Logged-in username, passed to the report script for the audit log.
-   * Saved at login; falls back to the OpenMRS session user for sessions started before it was stored.
    */
   private getSessionUsername(): string {
-    const username = getCacheData(false, doctorDetails.USER_NAME);
-    return username;
+    return getCacheData(false, doctorDetails.USER_NAME);
   }
 
   geWebrtcStatus() {

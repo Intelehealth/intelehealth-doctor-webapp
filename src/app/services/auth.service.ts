@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -10,6 +10,7 @@ import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
+import { DoctorAvailabilityService } from "./doctor-availability.service";
 import { doctorDetails } from "src/config/constant";
 import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
 
@@ -32,7 +33,8 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private rolesService: NgxRolesService,
-    private permissionsService: NgxPermissionsService
+    private permissionsService: NgxPermissionsService,
+    private injector: Injector
   ) {
     let locStorageUser = getCacheData(true,'currentUser');
     this.currentUserSubject = new BehaviorSubject<any>(getCacheData(true,'currentUser'));
@@ -149,6 +151,7 @@ export class AuthService {
       deleteCacheData('xsddsdass');
       deleteCacheData('token');
       deleteCacheData('socketQuery');
+      this.injector.get(DoctorAvailabilityService).clear();
       this.cookieService.deleteAll();
       this.currentUserSubject.next(null);
       this.permissionsService.flushPermissions();
