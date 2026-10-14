@@ -120,14 +120,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitNoteDoctorName = '';
 
   get showVisitInProgressBanner(): boolean {
-    return !!this.visitNotePresent && !this.isVisitNoteProvider && !this.isMCCUser && !!this.visitNoteDoctorName;
-  }
-
-  get visitInProgressMessage(): string {
-    const key = 'This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.';
-    const msg = this.translateService.instant(key, { name: this.visitNoteDoctorName });
-    // Falls back to manual substitution if the translation entry has not loaded yet.
-    return msg.replace('{{name}}', this.visitNoteDoctorName);
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor(
+      !!this.visitNotePresent, this.isVisitNoteProvider, this.isMCCUser, this.visitNoteDoctorName
+    );
   }
   referSpecialityForm: FormGroup;
   provider: ProviderModel;
@@ -786,6 +781,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             // check if visit note exists for this visit
             this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
+            this.visitNoteDoctorName = this.visitSummaryService.getVisitNoteDoctorName(this.visitNotePresent);
             // check if visit complete exists for this visit
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if Patient Exit Survey exists for this visit
@@ -802,9 +798,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                   this.isVisitNoteProvider = true;
                 }
               });
-              const visitNoteProvider = this.visitNotePresent.encounterProviders[0];
-              this.visitNoteDoctorName = (visitNoteProvider?.provider?.person?.display || visitNoteProvider?.display?.split(':')[0] || '')
-                .replace(/^\s*dr\.?\s+/i, '');
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfMedicationPresent();

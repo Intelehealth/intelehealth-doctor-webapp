@@ -1,12 +1,15 @@
+// Same warning amber as the visit-summary-v2 banner ($amber-strong there).
+$amber-strong: #b4600a;
+
 // The in-progress card attaches flush to the bottom of the patient-info card.
+// Bottom spacing (mb-5) lives on the sticky wrapper itself so no transparent
+// margin band is pinned over the scrolling content.
 .patient-sticky-wrap.has-banner {
-  margin-bottom: 3rem;
   background: var(--color-white);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  [data-test-id="patientInfoMainContainer"] {
-    margin-bottom: 0 !important;
+  .patient-info-main {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: none;
@@ -18,9 +21,8 @@
     }
   }
 
-  [data-test-id="visitInProgressBanner"] {
+  .visit-in-progress-card {
     position: relative;
-    margin-bottom: 0 !important;
     border-radius: 0 0 12px 12px;
 
     .intel-card {
@@ -29,8 +31,6 @@
       box-shadow: none;
     }
 
-    // Same inset as the patient-info content above (card-body 24px + section 16px),
-    // so the text lines up with the patient photo/name column.
     // Divider styled like the .card-header line used across the app's cards.
     &::before {
       content: '';
@@ -42,6 +42,8 @@
       background: #EFE8FF;
     }
 
+    // Same inset as the patient-info content above (card-body 24px + section 16px),
+    // so the text lines up with the patient photo/name column.
     .card-body {
       padding: 20px 40px;
     }
@@ -50,11 +52,11 @@
 
 .visit-in-progress-msg {
   margin: 0;
-  font-family: DM Sans;
+  font-family: 'DM Sans';
   font-size: 16px;
   line-height: 150%;
   font-weight: 500;
-  color: #B45309; // warning
+  color: $amber-strong;
 }
 
 .appointment-banner {
@@ -104,9 +106,10 @@
   z-index: 100;
 }
 
-[data-test-id="patientInfoMainContainer"] {
+.patient-info-main {
   background: var(--color-white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
   border-radius: 12px;
 }
 
@@ -118,7 +121,7 @@
   z-index: auto;
 }
 
-.turn-server-scroll [data-test-id="patientInfoMainContainer"] {
+.turn-server-scroll .patient-info-main {
   box-shadow: none;
 }
 

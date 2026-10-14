@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { EMPTY, forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
@@ -83,8 +82,7 @@ export class VisitSummaryV2Service {
     private helper: VisitSummaryHelperService,
     private appConfigService: AppConfigService,
     private aiddxService: AiddxService,
-    private aiTxService: AiTxService,
-    private http: HttpClient
+    private aiTxService: AiTxService
   ) {}
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
@@ -243,27 +241,8 @@ export class VisitSummaryV2Service {
           appointment: this.appointmentService.getAppointment(visit.uuid).pipe(catchError(() => of(null))),
           eyeImages: this.diagnosisService.getObs(patientUuid, conceptIds.conceptPhysicalExamination).pipe(catchError(() => of({ results: [] } as ObsApiResponseModel))),
           docs: this.diagnosisService.getObs(patientUuid, conceptIds.conceptAdditionlDocument).pipe(catchError(() => of({ results: [] } as ObsApiResponseModel)))
-        }).pipe(
-          map(res => this.assemble(visit, res.patient, res.appointment, res.eyeImages, res.docs)),
-          switchMap((data: CurrentVisitData) => this.withVisitNoteDoctorName(data))
-        );
+        }).pipe(map(res => this.assemble(visit, res.patient, res.appointment, res.eyeImages, res.docs)));
       })
-    );
-  }
-
-  /**
-   * Visit-note provider name is normally part of the visit payload; when it is missing,
-   * look the provider up by uuid so the "in progress with Dr. X" message can still name them.
-   */
-  private withVisitNoteDoctorName(data: CurrentVisitData): Observable<CurrentVisitData> {
-    const providerUuid = data.visitNoteProviderUuids?.[0];
-    if (data.visitNoteDoctorName || !providerUuid) { return of(data); }
-    return this.http.get(`${this.baseURL}/provider/${providerUuid}?v=custom:(uuid,display,person:(display))`).pipe(
-      map((p: any) => {
-        const name = (p?.person?.display || p?.display || '').split(':')[0].replace(/^\s*dr\.?\s+/i, '').trim();
-        return { ...data, visitNoteDoctorName: name };
-      }),
-      catchError(() => of(data))
     );
   }
 
@@ -763,9 +742,7 @@ export class VisitSummaryV2Service {
       clinicName,
       visitEnded: !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
       visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
-      visitNoteDoctorName: ((visitNote?.encounterProviders || [])
-        .map((ep: any) => ep?.provider?.person?.display || ep?.provider?.display || ep?.display?.split(':')[0])
-        .find(Boolean) || '').replace(/^\s*dr\.?\s+/i, '').trim(),
+      visitNoteDoctorName: this.helper.getVisitNoteDoctorName(visitNote),
       consultationDetails: this.buildConsultationDetails(visit, appointment, visitStatus, clinicName),
       chiefComplaints,
       complaintDetails,

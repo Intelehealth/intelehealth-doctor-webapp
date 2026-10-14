@@ -56,6 +56,26 @@ export class VisitSummaryHelperService {
     return encounters.find(({ display = '' }) => display.includes(visitType));
   };
 
+  /**
+   * Name of the doctor who started the visit note, without a leading "Dr."
+   * (the message template adds it). Empty when there is no visit note or provider.
+   * @param visitNote - Visit note encounter
+   */
+  getVisitNoteDoctorName(visitNote?: EncounterModel): string {
+    const name = (visitNote?.encounterProviders || [])
+      .map((ep) => ep?.provider?.person?.display || ep?.display?.split(':')[0])
+      .find(Boolean) || '';
+    return name.replace(/^\s*dr\.?\s+/i, '').trim();
+  }
+
+  /**
+   * Whether to show "visit already in progress with Dr. X": a visit note exists, it was started
+   * by someone else, the user is not an MCC user and the doctor can be named.
+   */
+  isVisitInProgressWithAnotherDoctor(visitNoteExists: boolean, isVisitNoteProvider: boolean, isMCCUser: boolean, doctorName: string): boolean {
+    return visitNoteExists && !isVisitNoteProvider && !isMCCUser && !!doctorName;
+  }
+
   checkIfAttributeExists(attrs: VisitAttributeModel[], attribute = 'Visit Speciality') {
     let currentAttr: VisitAttributeModel;
     attrs.forEach((attr: VisitAttributeModel) => {
