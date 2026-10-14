@@ -5,9 +5,22 @@ import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper
 
 /**
  * Covers the "visit already in progress with Dr. X" state of the original visit summary screen.
- * The component has ~20 injected services, so they are stubbed and every method other than
- * getVisit() is spied out; only getVisit() and the banner getter run for real.
+ * The component has ~20 injected services, so they are stubbed. getVisit() runs for real; the
+ * component methods it fans out to are spied out (see COLLABORATORS) because they are covered
+ * elsewhere and need unrelated data. Only the visit note doctor name and the banner getter are asserted.
  */
+/** Methods getVisit() calls that are unrelated to the in-progress message. */
+const COLLABORATORS: (keyof VisitSummaryComponent)[] = [
+  'checkVisitStatus', 'getAbhaDetails', 'getPastVisitHistory', 'maybeAutoStartCall',
+  'checkIfPatientInteractionPresent', 'checkIfDiagnosisPresent', 'checkIfMedicationPresent',
+  'checkIfAdditionalInstructionPresent', 'getAdvicesList', 'checkIfAdvicePresent', 'getTestsList',
+  'checkIfTestPresent', 'checkIfReferralPresent', 'checkIfFollowUpPresent', 'checkIfReferralConsentPresent',
+  'checkIfPatientCallDurationPresent', 'checkIfCallStatusPresent', 'checkIfDiscussionSummaryPresent',
+  'getFrequencyList', 'getAdditionalNote', 'getAppointment', 'getVisitProvider', 'getVitalObs',
+  'getCheckUpReason', 'getPhysicalExamination', 'getEyeImages', 'getMedicalHistory',
+  'getVisitAdditionalDocs', 'logUserEvent', 'checkOpenChatBoxFlag', 'lazyLoadDDx'
+];
+
 describe('VisitSummaryComponent - in-progress visit message', () => {
   const ME = 'provider-me';
 
@@ -49,13 +62,7 @@ describe('VisitSummaryComponent - in-progress visit message', () => {
       stub, appConfigService, rolesService, stub, stub, stub, stub, stub
     );
 
-    // Stub every method (not getters) except getVisit, which is the code under test.
-    Object.getOwnPropertyNames(VisitSummaryComponent.prototype).forEach((name) => {
-      const descriptor = Object.getOwnPropertyDescriptor(VisitSummaryComponent.prototype, name);
-      if (name !== 'constructor' && name !== 'getVisit' && typeof descriptor.value === 'function') {
-        spyOn(component, name);
-      }
-    });
+    COLLABORATORS.forEach((name) => spyOn(component, name));
 
     component.provider = { uuid: ME };
     return component;

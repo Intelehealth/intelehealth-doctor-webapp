@@ -62,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: 'DM Sans';
+  font-family: DM Sans;
   background: #E6FFF3;
   border-radius: 12px;
   padding: 24px;
@@ -125,7 +125,7 @@
 }
 
 .patient-info-wrapper {
-  font-family: 'DM Sans';
+  font-family: DM Sans;
 
   .patient-info-section {
     padding-left: 16px !important;
@@ -200,7 +200,7 @@
 }
 
 ::ng-deep .visit-summary-tab-group.mat-tab-group {
-  font-family: 'DM Sans';
+  font-family: DM Sans;
 
   .mat-tab-header {
     padding: 24px 24px 0px;
@@ -309,7 +309,7 @@
 }
 
 .items-list {
-  font-family: 'DM Sans';
+  font-family: DM Sans;
   font-size: 16px;
   padding: 24px 0px 0px 24px;
   margin-bottom: 0px;
@@ -348,7 +348,7 @@
 }
 
 .note-con {
-  font-family: 'DM Sans';
+  font-family: DM Sans;
   font-size: 14px;
   line-height: 150%;
   color: var(--color-gray)
@@ -668,7 +668,7 @@ textarea.form-control {
   border-radius: 8px;
   border: none;
   outline: none;
-  font-family: 'DM Sans';
+  font-family: DM Sans;
   font-weight: bold;
   font-size: 18px;
   line-height: 150%;
@@ -702,7 +702,7 @@ textarea.form-control {
 
 table {
   width: 100%;
-  font-family: 'DM Sans';
+  font-family: DM Sans;
 }
 
 .ddx-table {
