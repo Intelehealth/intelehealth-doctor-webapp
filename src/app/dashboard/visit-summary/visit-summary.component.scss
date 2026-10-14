@@ -1,5 +1,4 @@
-// Same warning amber as the visit-summary-v2 banner ($amber-strong there).
-$amber-strong: #b4600a;
+@import 'src/app/dashboard/visit-summary-tokens.scss';
 
 // The in-progress card attaches flush to the bottom of the patient-info card.
 // Bottom spacing (mb-5) lives on the sticky wrapper itself so no transparent
@@ -31,7 +30,7 @@ $amber-strong: #b4600a;
       box-shadow: none;
     }
 
-    // Divider styled like the .card-header line used across the app's cards.
+    // Inset divider, same colour token as the visit-summary-v2 banner.
     &::before {
       content: '';
       position: absolute;
@@ -39,7 +38,7 @@ $amber-strong: #b4600a;
       left: 24px;
       right: 24px;
       height: 1px;
-      background: #EFE8FF;
+      background: $border;
     }
 
     // Same inset as the patient-info content above (card-body 24px + section 16px),
@@ -63,7 +62,7 @@ $amber-strong: #b4600a;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: DM Sans;
+  font-family: 'DM Sans';
   background: #E6FFF3;
   border-radius: 12px;
   padding: 24px;
@@ -126,7 +125,7 @@ $amber-strong: #b4600a;
 }
 
 .patient-info-wrapper {
-  font-family: DM Sans;
+  font-family: 'DM Sans';
 
   .patient-info-section {
     padding-left: 16px !important;
@@ -201,7 +200,7 @@ $amber-strong: #b4600a;
 }
 
 ::ng-deep .visit-summary-tab-group.mat-tab-group {
-  font-family: DM Sans;
+  font-family: 'DM Sans';
 
   .mat-tab-header {
     padding: 24px 24px 0px;
@@ -310,7 +309,7 @@ $amber-strong: #b4600a;
 }
 
 .items-list {
-  font-family: DM Sans;
+  font-family: 'DM Sans';
   font-size: 16px;
   padding: 24px 0px 0px 24px;
   margin-bottom: 0px;
@@ -349,7 +348,7 @@ $amber-strong: #b4600a;
 }
 
 .note-con {
-  font-family: DM Sans;
+  font-family: 'DM Sans';
   font-size: 14px;
   line-height: 150%;
   color: var(--color-gray)
@@ -669,7 +668,7 @@ textarea.form-control {
   border-radius: 8px;
   border: none;
   outline: none;
-  font-family: DM Sans;
+  font-family: 'DM Sans';
   font-weight: bold;
   font-size: 18px;
   line-height: 150%;
@@ -703,7 +702,7 @@ textarea.form-control {
 
 table {
   width: 100%;
-  font-family: DM Sans;
+  font-family: 'DM Sans';
 }
 
 .ddx-table {
