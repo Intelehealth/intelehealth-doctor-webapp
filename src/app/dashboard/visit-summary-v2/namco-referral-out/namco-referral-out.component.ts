@@ -100,8 +100,9 @@ export class NamcoReferralOutComponent implements OnInit, OnChanges {
     return !!this.decision && this.referrals.length > 0 && !this.visitReferred && !this.prescriptionShared;
   }
 
-  /** Referral form: shown for "Refer to PHC", or "Refer to Namco" with consent — one NAMCO referral per visit. */
+  /** Referral form: shown for "Refer to PHC", or "Refer to Namco" with consent — only until one referral is added. */
   get showForm(): boolean {
+    if (this.referrals.length > 0) { return false; }
     if (this.decision === REFERRAL_DECISION_PHC) { return true; }
     return this.decision === REFERRAL_DECISION_NAMCO && this.consent === REFERRAL_CONSENT_YES && !this.hasNamcoReferral;
   }

@@ -1291,8 +1291,8 @@ app-past-visits {
   margin: 0 0 12px;
 }
 
-.vs2-sdn-med-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+.vs2-med-grid.vs2-sdn-med-grid {
+  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
 }
 
 .vs2-sdn-med-table {
@@ -2092,7 +2092,7 @@ app-past-visits {
 
 .vs2-med-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -2683,8 +2683,9 @@ app-past-visits {
     grid-template-columns: 1fr;
   }
   .vs2-med-grid,
+  .vs2-med-grid.vs2-sdn-med-grid,
   .vs2-ref-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .vs2-table {
     overflow-x: auto;
