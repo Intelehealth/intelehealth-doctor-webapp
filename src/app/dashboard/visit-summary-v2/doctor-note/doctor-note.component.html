@@ -456,7 +456,7 @@
         <span class="vs2-med-col-label">Timing</span>
         <span class="vs2-med-col-label">Strength</span>
         <span class="vs2-med-col-label">No. of days</span>
-        <span class="vs2-med-col-label">Remarks</span>
+        <span class="vs2-med-col-label">Instruction (Remarks)</span>
 
         <ng-container *ngIf="!m.editing">
           <span class="vs2-med-col-value">{{ m.timing || '-' }}</span>
@@ -472,7 +472,8 @@
             [addTag]="true" [clearable]="false" placeholder="Strength"></ng-select>
           <ng-select class="vs2-ng-select vs2-ng-select-grid" [items]="dayOptions" [(ngModel)]="m.days"
             [addTag]="true" [clearable]="false" placeholder="Enter day"></ng-select>
-          <input class="vs2-input" [(ngModel)]="m.remarks" placeholder="Enter Remarks" />
+          <ng-select class="vs2-ng-select vs2-ng-select-grid" [items]="instructionOptions" [(ngModel)]="m.remarks"
+            [addTag]="true" [searchable]="true" [clearable]="true" placeholder="Select or type"></ng-select>
         </ng-container>
       </div>
     </div>
@@ -489,7 +490,7 @@
         <span>Frequency</span>
         <span>Duration (no.)</span>
         <span>Duration (units)</span>
-        <span>Instructions</span>
+        <span>Instruction (Remarks)</span>
         <span></span>
       </div>
       <div class="vs2-table-row" *ngFor="let m of addedMedicines; let i = index">
@@ -600,7 +601,7 @@
 <section id="section-dn-test" class="vs2-section-card">
   <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('test')">
     <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
-    <span>Test</span>
+    <span>Investigations</span>
     <mat-icon class="vs2-chevron">{{ collapsed['test'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
@@ -613,28 +614,42 @@
     </button>
     </div>
     <div class="vs2-dx-quick-row">
-      <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestAdded(t)"
-        (click)="addAiTest(t)">
-        <mat-icon>{{ isTestAdded(t) ? 'check' : 'add' }}</mat-icon> {{ t }}
+      <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestSelected(t)"
+        (click)="toggleTest(t)">
+        <mat-icon>{{ isTestSelected(t) ? 'check' : 'add' }}</mat-icon> {{ t }}
       </button>
     </div>
   </ng-container>
 
-  <div class="vs2-list-item" *ngFor="let t of tests; let i = index">
-    <span class="vs2-detail-label">{{ t.value }}</span>
-    <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="testSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onTestSearch($event)"
+      placeholder="Type to search test or type custom test" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="testSearchTerm" (click)="clearTestSearch()">close</mat-icon>
   </div>
 
-  <span class="vs2-field-label">Test<span class="vs2-req">*</span></span>
-  <input
-    class="vs2-input"
-    placeholder="Type here"
-    [(ngModel)]="newTestText"
-    [ngModelOptions]="{ standalone: true }"
-    (keyup.enter)="addTest()" />
+  <div class="vs2-dx-quick-row" *ngIf="testSearchTerm">
+    <button class="vs2-dx-quick" *ngFor="let r of testResults" [class.vs2-dx-quick-on]="isTestSelected(r)"
+      (click)="toggleTest(r)">
+      <mat-icon>{{ isTestSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
+    </button>
+  </div>
+
+  <ul class="vs2-bullet-list vs2-advice-list">
+    <li *ngFor="let t of selectedTests; let i = index">
+      {{ t }}
+      <mat-icon class="vs2-delete-icon" (click)="removeSelectedTest(i)">delete_outline</mat-icon>
+    </li>
+    <li *ngFor="let t of tests; let i = index">
+      {{ t.value }}
+      <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
+    </li>
+  </ul>
+
   <div class="vs2-btn-row">
-    <button class="vs2-btn-cancel" (click)="cancelTest()">Cancel</button>
-    <button class="vs2-btn-add" [disabled]="!newTestText?.trim()" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-outline" (click)="cancelTest()">Cancel</button>
+    <button class="vs2-btn-soft" [disabled]="!selectedTests.length" (click)="addTest()">Add Test</button>
   </div>
   </div>
 </section>

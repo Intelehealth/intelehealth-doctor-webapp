@@ -146,6 +146,8 @@ export interface AiFollowUp {
 
 export interface AiTreatmentResult {
   medicines: AiMedicationSuggestion[];
+  /** Raw AI medications, in AI rank order — sent to /ttx/manual like the old Visit Summary. */
+  rawMedicines: any[];
   advices: string[];
   tests: string[];
   referrals: { speciality: string; facility: string; priority: string; reason: string }[];
@@ -167,8 +169,10 @@ export interface SelectedMedicine {
   strength: string;
   days: string;
   durationUnit?: string;
-  remarks: string;
+  remarks: string | null;
   editing?: boolean;
+  uuid?: string;
+  addedIndex?: number;
 }
 
 export interface AyuSuggestedQuestion {
@@ -187,5 +191,7 @@ export interface AdviceBundle {
 export interface AiDiagnosisResult {
   summary: string;
   suggestions: AiDiagnosisSuggestion[];
+  /** Raw AI diagnoses, in AI rank order — sent to /ddx/manual like the old Visit Summary. */
+  raw: any[];
   questions: AyuSuggestedQuestion[];
 }

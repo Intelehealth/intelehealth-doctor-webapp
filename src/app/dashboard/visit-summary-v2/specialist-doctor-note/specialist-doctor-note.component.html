@@ -127,12 +127,10 @@
   </div>
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['note']">
-  <ul class="vs2-bullet-list">
-    <li class="vs2-list-item" *ngFor="let n of notes; let i = index">
-      <span class="vs2-detail-label">{{ n.value }}</span>
-      <mat-icon class="vs2-delete-icon" (click)="deleteNote(i, n.uuid)">delete_outline</mat-icon>
-    </li>
-  </ul>
+  <div class="vs2-list-item" *ngFor="let n of notes; let i = index">
+    <span class="vs2-detail-label">{{ n.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteNote(i, n.uuid)">delete_outline</mat-icon>
+  </div>
 
   <label class="vs2-field-label vs2-mt">Note<span class="vs2-req">*</span>
     <span class="vs2-field-hint">(Not shared with patient)</span>
@@ -158,7 +156,7 @@
       <span>Drug Name</span>
       <span>Strength</span>
       <span>Timing</span>
-      <span>Remarks</span>
+      <span>Instruction (Remarks)</span>
       <span>No. of days</span>
       <span></span>
     </div>
@@ -195,8 +193,10 @@
       </ng-select>
     </div>
     <div class="vs2-field">
-      <span class="vs2-field-label">Remarks</span>
-      <input class="vs2-input" placeholder="Enter Remarks" [(ngModel)]="newMedicine.instructRemark" />
+      <span class="vs2-field-label">Instruction (Remarks)</span>
+      <ng-select class="vs2-ng-select vs2-ng-select-grid" [items]="instructionOptions" [(ngModel)]="newMedicine.instructRemark"
+        [addTag]="true" [searchable]="true" [clearable]="true" placeholder="Select or type">
+      </ng-select>
     </div>
     <div class="vs2-field">
       <span class="vs2-field-label">No. of days</span>
@@ -210,12 +210,10 @@
     <button class="vs2-btn-add" [disabled]="!newMedicine.drug || !newMedicine.dose || !newMedicine.durationNo" (click)="addMedicine()">Add</button>
   </div>
 
-  <ul class="vs2-bullet-list">
-    <li class="vs2-list-item" *ngFor="let ins of medInstructions; let i = index">
-      <span class="vs2-detail-label">{{ ins.value }}</span>
-      <mat-icon class="vs2-delete-icon" (click)="deleteMedInstruction(i, ins.uuid)">delete_outline</mat-icon>
-    </li>
-  </ul>
+  <div class="vs2-list-item" *ngFor="let ins of medInstructions; let i = index">
+    <span class="vs2-detail-label">{{ ins.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteMedInstruction(i, ins.uuid)">delete_outline</mat-icon>
+  </div>
   <label class="vs2-field-label vs2-mt">Additional instructions<span class="vs2-req">*</span></label>
   <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="medInstructionText"></textarea>
   <div class="vs2-btn-row">
@@ -233,17 +231,35 @@
   </div>
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['advice']">
-  <ul class="vs2-bullet-list">
-    <li class="vs2-list-item" *ngFor="let a of advices; let i = index">
-      <span class="vs2-detail-label">{{ a.value }}</span>
-      <mat-icon class="vs2-delete-icon" (click)="deleteAdvice(i, a.uuid)">delete_outline</mat-icon>
-    </li>
-  </ul>
-  <label class="vs2-field-label">Advice<span class="vs2-req">*</span></label>
-  <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newAdviceText"></textarea>
+  <!-- Suggestions from the advice list (as in the old UI), or a custom advice → selected → Add Advice -->
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="adviceSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onAdviceSearch($event)"
+      placeholder="Type to search advice or type custom advice" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="adviceSearchTerm" (click)="clearAdviceSearch()">close</mat-icon>
+  </div>
+
+  <div class="vs2-dx-quick-row" *ngIf="adviceSearchTerm">
+    <button class="vs2-dx-quick" *ngFor="let r of adviceResults" [class.vs2-dx-quick-on]="isAdviceSelected(r)"
+      (click)="toggleAdvice(r)">
+      <mat-icon>{{ isAdviceSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
+    </button>
+  </div>
+
+  <!-- Same row style as Diagnosis -->
+  <div class="vs2-list-item" *ngFor="let a of selectedAdvices; let i = index">
+    <span class="vs2-detail-label">{{ a }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="removeSelectedAdvice(i)">delete_outline</mat-icon>
+  </div>
+  <div class="vs2-list-item" *ngFor="let a of advices; let i = index">
+    <span class="vs2-detail-label">{{ a.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteAdvice(i, a.uuid)">delete_outline</mat-icon>
+  </div>
+
   <div class="vs2-btn-row">
-    <button class="vs2-btn-cancel" (click)="newAdviceText = ''">Cancel</button>
-    <button class="vs2-btn-add" [disabled]="!newAdviceText.trim() || savingAdvice" (click)="addAdvice()">Add Advice</button>
+    <button class="vs2-btn-outline" (click)="cancelAdvice()">Cancel</button>
+    <button class="vs2-btn-soft" [disabled]="!selectedAdvices.length" (click)="addAdvice()">Add Advice</button>
   </div>
   </div>
 </section>
@@ -251,22 +267,39 @@
 <section id="section-sdn-test" class="vs2-section-card">
   <div class="vs2-section-title vs2-section-toggle" (click)="toggleSection('test')">
     <img class="vs2-section-icon-img" src="assets/svgs/test.svg" alt="" />
-    <span>Test</span>
+    <span>Investigations</span>
     <mat-icon class="vs2-chevron">{{ collapsed['test'] ? 'expand_more' : 'expand_less' }}</mat-icon>
   </div>
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['test']">
-  <ul class="vs2-bullet-list">
-    <li class="vs2-list-item" *ngFor="let t of tests; let i = index">
-      <span class="vs2-detail-label">{{ t.value }}</span>
-      <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
-    </li>
-  </ul>
-  <label class="vs2-field-label">Test<span class="vs2-req">*</span></label>
-  <textarea class="vs2-textarea" placeholder="Type here" [(ngModel)]="newTestText"></textarea>
+  <div class="vs2-dx-search">
+    <mat-icon class="vs2-dx-search-icon">search</mat-icon>
+    <input class="vs2-dx-search-input" type="text" [ngModel]="testSearchTerm"
+      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onTestSearch($event)"
+      placeholder="Type to search test or type custom test" />
+    <mat-icon class="vs2-dx-search-clear" *ngIf="testSearchTerm" (click)="clearTestSearch()">close</mat-icon>
+  </div>
+
+  <div class="vs2-dx-quick-row" *ngIf="testSearchTerm">
+    <button class="vs2-dx-quick" *ngFor="let r of testResults" [class.vs2-dx-quick-on]="isTestSelected(r)"
+      (click)="toggleTest(r)">
+      <mat-icon>{{ isTestSelected(r) ? 'check' : 'add' }}</mat-icon> {{ r }}
+    </button>
+  </div>
+
+  <!-- Same row style as Diagnosis -->
+  <div class="vs2-list-item" *ngFor="let t of selectedTests; let i = index">
+    <span class="vs2-detail-label">{{ t }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="removeSelectedTest(i)">delete_outline</mat-icon>
+  </div>
+  <div class="vs2-list-item" *ngFor="let t of tests; let i = index">
+    <span class="vs2-detail-label">{{ t.value }}</span>
+    <mat-icon class="vs2-delete-icon" (click)="deleteTest(i, t.uuid)">delete_outline</mat-icon>
+  </div>
+
   <div class="vs2-btn-row">
-    <button class="vs2-btn-cancel" (click)="newTestText = ''">Cancel</button>
-    <button class="vs2-btn-add" [disabled]="!newTestText.trim()" (click)="addTest()">Add Test</button>
+    <button class="vs2-btn-outline" (click)="cancelTest()">Cancel</button>
+    <button class="vs2-btn-soft" [disabled]="!selectedTests.length" (click)="addTest()">Add Test</button>
   </div>
   </div>
 </section>

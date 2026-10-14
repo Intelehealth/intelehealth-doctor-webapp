@@ -26,7 +26,9 @@ import {
   ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
-import { AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE } from './doctor-note/doctor-note.constants';
+import {
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE
+} from './doctor-note/doctor-note.constants';
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
 export interface DiagnosisOption { name: string; code: string; }
@@ -231,6 +233,7 @@ export class VisitSummaryV2Service {
     const questions = res?.result?.data?.further_questions || [];
     return {
       summary: res?.conclusion || res?.result?.data?.conclusion || '',
+      raw: results,
       suggestions: results.map((r: any) => ({
         name: r?.diagnosis || '',
         likelihood: this.mapLikelihood(r?.likelihood),
@@ -276,6 +279,7 @@ export class VisitSummaryV2Service {
   private buildAiTreatmentResult(res: any): AiTreatmentResult {
     const data = res?.result?.data || {};
     return {
+      rawMedicines: data.medications || data.result || [],
       medicines: (data.medications || data.result || []).map((m: any) => ({
         name: m?.name || '',
         label: m?.name || '',
@@ -715,6 +719,23 @@ export class VisitSummaryV2Service {
     return this.conceptAnswers('0308000d-77a2-46e0-a6fa-a8c1dcbc3141');
   }
 
+  /** Test suggestions — answers of the Investigations/Test concept, as in the old Visit Summary. */
+  getTestsList(): Observable<string[]> {
+    return this.conceptAnswers(conceptIds.conceptInvestigationsTest);
+  }
+
+  searchOptions(options: string[], term: string): string[] {
+    const query = (term || '').trim().toLowerCase();
+    if (query.length < ADVICE_SEARCH_MIN_LENGTH) { return []; }
+    const starts = options.filter(o => o.toLowerCase().startsWith(query));
+    const contains = options.filter(o => !o.toLowerCase().startsWith(query) && o.toLowerCase().includes(query));
+    const results = [...starts, ...contains].slice(0, ADVICE_SEARCH_MAX_RESULTS);
+    if (!results.some(r => r.toLowerCase() === query)) {
+      results.push(term.trim());
+    }
+    return results;
+  }
+
   private conceptAnswers(conceptUuid: string): Observable<string[]> {
     return this.diagnosisService.concept(conceptUuid).pipe(
       map((res: any) => (res?.answers || []).map((a: any) => a.display).filter(Boolean)),
@@ -927,6 +948,104 @@ export class VisitSummaryV2Service {
     return phoneNo ? `https://wa.me/${phoneNo.replace(/[^\d]/g, '')}` : null;
   }
 
+  /**
+  * Send the visit's diagnoses to /ddx/manual — same payload as the old Visit Summary's
+  * sendDiagnosisToManualDDxAPI(): every AI diagnosis with its AI rank (plus the doctor's type/status
+  * and ai_assisted 'Y' when chosen), then each non-AI diagnosis ranked from 99 with ai_assisted 'N'.
+  */
+  sendManualDiagnoses(visitUuid: string, diagnoses: { name: string; type: string; status: string }[], aiRaw: any[] = []): Observable<any> {
+    const selected = diagnoses || [];
+    const aiList = aiRaw || [];
+    if (!visitUuid || (!selected.length && !aiList.length)) { return of(null); }
+    const aiNames = new Set(aiList.map((d: any) => (d?.diagnosis || '').toLowerCase()));
+    const payload: any[] = aiList.map((ai: any, index: number) => {
+      const chosen = selected.find(d => (d.name || '').toLowerCase() === (ai?.diagnosis || '').toLowerCase());
+      const item: any = {
+        diagnosis: ai?.diagnosis || '',
+        ...(ai?.summarised_rationale?.length && { summarised_rationale: ai.summarised_rationale }),
+        ...(ai?.rationale?.length && { rationale: ai.rationale }),
+        ...(ai?.likelihood && { likelihood: ai.likelihood }),
+        rank: String(index + 1)
+      };
+      if (chosen) {
+        if (chosen.type) { item['Diagnosis type'] = chosen.type; }
+        if (chosen.status) { item['Diagnosis status'] = chosen.status; }
+        item.ai_assisted = 'Y';
+      }
+      return item;
+    });
+    let nonAiRank = 99;
+    selected.filter(d => !aiNames.has((d.name || '').toLowerCase())).forEach(d => {
+      payload.push({
+        diagnosis: d.name || '',
+        ...(d.type && { 'Diagnosis type': d.type }),
+        ...(d.status && { 'Diagnosis status': d.status }),
+        rationale: [{ NA: 'N/A' }],
+        rank: String(nonAiRank++),
+        ai_assisted: 'N'
+      });
+    });
+    return payload.length
+      ? this.diagnosisService.saveManualDiagnosis({ visitUuid, diagnoses: payload }).pipe(catchError(() => of(null)))
+      : of(null);
+  }
+
+  /**
+  * Send the visit's medications to /ttx/manual — same payload as the old Visit Summary's
+  * sendMedicationToManualTTxAPI(): every AI medication with its AI rank (the doctor's values and
+  * ai_assisted 'Y', or 'M' when changed from the AI values, when chosen), then each non-AI medication
+  * ranked from 99 with ai_assisted 'N'.
+  */
+  sendManualTreatment(visitUuid: string, medicines: DraftMedication[], aiRaw: any[] = []): Observable<any> {
+    const selected = medicines || [];
+    const aiList = aiRaw || [];
+    if (!visitUuid || (!selected.length && !aiList.length)) { return of(null); }
+    const norm = (v: any) => `${v ?? ''}`.toLowerCase().trim();
+    const matchedNames = new Set<string>();
+    const payload: any[] = aiList.map((ai: any, index: number) => {
+      const aiName = norm(ai?.name || ai?.drug || ai?.medication);
+      const chosen = selected.find(m => norm(m.drug) === aiName || aiName.includes(norm(m.drug)) || norm(m.drug).includes(aiName));
+      const item: any = {
+        medication: ai?.name || ai?.drug || ai?.medication || '',
+        ...(ai?.rationale?.length && { rationale: Array.isArray(ai.rationale) ? ai.rationale.join('\n') : ai.rationale }),
+        ...(ai?.likelihood && { likelihood: ai.likelihood }),
+        rank: String(index + 1)
+      };
+      if (chosen) {
+        matchedNames.add(norm(chosen.drug));
+        const modified = norm(chosen.dose) !== norm(ai?.dosage || ai?.dose)
+          || norm(chosen.durationNo) !== norm(ai?.duration)
+          || norm(chosen.durationUnit) !== norm(ai?.duration_unit)
+          || norm(chosen.instructRemark) !== norm(ai?.instructions)
+          || norm(chosen.frequency) !== norm(ai?.frequency);
+        Object.assign(item, {
+          dose: chosen.dose, duration: chosen.durationNo, duration_unit: chosen.durationUnit,
+          instructions: chosen.instructRemark, frequency: chosen.frequency, ai_assisted: modified ? 'M' : 'Y'
+        });
+      } else {
+        Object.assign(item, {
+          dose: ai?.dosage || ai?.dose, duration: ai?.duration, duration_unit: ai?.duration_unit,
+          instructions: ai?.instructions, frequency: ai?.frequency
+        });
+      }
+      return item;
+    });
+    let nonAiRank = 99;
+    selected.filter(m => !matchedNames.has(norm(m.drug))).forEach(m => {
+      payload.push({
+        medication: m.drug || '',
+        dose: m.dose, duration: m.durationNo, duration_unit: m.durationUnit,
+        instructions: m.instructRemark, frequency: m.frequency,
+        rationale: 'N/A',
+        rank: String(nonAiRank++),
+        ai_assisted: 'N'
+      });
+    });
+    return payload.length
+      ? this.diagnosisService.saveManualTreatment({ visitUuid, medications: payload }).pipe(catchError(() => of(null)))
+      : of(null);
+  }
+
   completeVisit(visitUuid: string, patientUuid: string, provider: any): Observable<any> {
     return this.encounterService.postEncounter({
       patient: patientUuid,
@@ -1092,23 +1211,49 @@ export class VisitSummaryV2Service {
 
   private buildAddress(addr: any): DetailRow[] {
     if (!addr) { return []; }
-    const rows: DetailRow[] = [
-      { label: 'Household number', value: addr.address1 },
-      { label: 'Corresponding address 1', value: addr.address2 },
-      { label: 'Village/Town/City', value: addr.cityVillage },
-      { label: 'State', value: addr.stateProvince },
-      { label: 'Country', value: addr.country },
-      { label: 'Postal Code', value: addr.postalCode }
+    const enabledFields = this.enabledPatientRegFields();
+    const rows: { field: string; label: string; value: any }[] = [
+      { field: 'Household Number', label: 'Household number', value: addr.address6 },
+      { field: 'Corresponding Address 1', label: 'Corresponding address 1', value: addr.address1 },
+      { field: 'Corresponding Address 2', label: 'Corresponding address 2', value: addr.address2 },
+      { field: 'Block', label: 'Block', value: addr.address3 },
+      { field: 'Village/Town/City', label: 'Village/Town/City', value: addr.cityVillage },
+      { field: 'District', label: 'District', value: addr.countyDistrict },
+      { field: 'State', label: 'State', value: addr.stateProvince },
+      { field: 'Country', label: 'Country', value: addr.country },
+      { field: 'Postal Code', label: 'Postal Code', value: addr.postalCode }
     ];
-    return rows.filter(r => r.value).map(r => ({ label: r.label, value: String(r.value) }));
+    return rows
+      .filter(r => enabledFields.has(r.field) && r.value)
+      .map(r => ({ label: r.label, value: String(r.value) }));
+  }
+
+  /** Names of the patient registration fields enabled in the app config (old checkPatientRegField). */
+  private enabledPatientRegFields(): Set<string> {
+    const config: any = this.appConfigService.patient_registration || {};
+    const names = Object.keys(config).reduce((all: string[], group: string) =>
+      all.concat((config[group] || []).filter((f: any) => f.is_enabled).map((f: any) => f.name)), []);
+    return new Set(names);
   }
 
   private buildOther(patient: PatientModel): DetailRow[] {
-    const rows: DetailRow[] = [
-      { label: 'National ID', value: this.personAttr(patient, 'NationalID') },
-      { label: 'Occupation', value: this.personAttr(patient, 'occupation') }
+    const enabledFields = this.enabledPatientRegFields();
+    // field (registration config name) / label / person attribute type
+    const rows: { field: string; label: string; attr: string }[] = [
+      { field: 'Occupation', label: 'Occupation', attr: 'occupation' },
+      { field: 'Education', label: 'Education', attr: 'Education Level' },
+      { field: 'National ID', label: 'National ID', attr: 'NationalID' },
+      { field: 'Economic Category', label: 'Economic Category', attr: 'Economic Status' },
+      { field: 'Social Category', label: 'Social Category', attr: 'Caste' },
+      { field: 'TMH Case Number', label: 'TMH Case Number', attr: 'TMH Case Number' },
+      { field: 'Discipline', label: 'Discipline', attr: 'Discipline' },
+      { field: 'Department', label: 'Department', attr: 'Department' },
+      { field: 'Relative Phone Number', label: 'Relative Phone Number', attr: 'Relative Phone Number' }
     ];
-    return rows.filter(r => r.value && r.value !== 'NA');
+    return rows
+      .filter(r => enabledFields.has(r.field))
+      .map(r => ({ label: r.label, value: this.personAttr(patient, r.attr) }))
+      .filter(r => r.value && r.value !== 'NA');
   }
 
   private buildConsultationDetails(

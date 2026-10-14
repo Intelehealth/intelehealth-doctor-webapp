@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 import { getCacheData, isFeaturePresent, isNamcoDoctor } from 'src/app/utils/utility-functions';
@@ -88,6 +88,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   aiClinicalSummary = '';
   aiResponseReceived = false;
   aiSuggestions: AiDiagnosisSuggestion[] = [];
+  /** Raw AI diagnoses / medications (AI rank order) — sent with the doctor's choices to /ddx/manual and /ttx/manual. */
+  private aiDiagnosisRaw: any[] = [];
+  private aiMedicationRaw: any[] = [];
 
   diagnosisSearchTerm = '';
   diagnosisSearching = false;
@@ -116,11 +119,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   aiReferrals: { speciality: string; facility: string; priority: string; reason: string }[] = [];
   aiFollowUp: AiFollowUp | null = null;
 
-  newMedicine: { drug: string | null; dose: string | null; frequency: string | null; durationNo: string; durationUnit: string | null; instructRemark: string | null } =
-    { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
   addedMedicines: DraftMedication[] = [];
-  private editMedicineUuid = '';
-  private editMedicineIndex = -1;
   medInstructionText = '';
   savingMedInstruction = false;
   medInstructions: DraftInstruction[] = [];
@@ -132,7 +131,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   selectedAdvices: string[] = [];
   openBundle: AdviceBundle | null = null;
 
-  newTestText: string | null = null;
+  testOptions: string[] = [];
+  testSearchTerm = '';
+  testResults: string[] = [];
+  selectedTests: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
@@ -292,6 +294,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
+    this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
     // The Referral Consent step only applies to the referring (non-NAMCO) doctor.
@@ -408,16 +411,27 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   submitSelectedDiagnoses(): void {
-    if (!this.canWrite()) { return; }
-    [...this.selectedDiagnoses].forEach(dx => {
+    if (!this.canWrite() || !this.selectedDiagnoses.length) { return; }
+    const saves = [...this.selectedDiagnoses].map(dx => {
       const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
-      this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).subscribe(res => {
+      return this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).pipe(tap(res => {
         this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
         const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
         if (index > -1) { this.selectedDiagnoses.splice(index, 1); }
-        this.loadAiTreatment();
-      });
+      }));
     });
+    // Once saved: send all the visit's diagnoses + the AI list to /ddx/manual (as the old Visit Summary
+    // does when new diagnoses are saved), then refresh the AI medication for the new diagnoses.
+    forkJoin(saves).subscribe(() => {
+      this.sendManualDiagnoses();
+      this.loadAiTreatment();
+    });
+  }
+
+  private sendManualDiagnoses(): void {
+    // Not sent when diagnoses are captured as secondary-level free text (old dp_diagnosis_secondary).
+    if (isFeaturePresent('dp_diagnosis_secondary')) { return; }
+    this.v2Service.sendManualDiagnoses(this.visitUuid, this.addedDiagnoses, this.aiDiagnosisRaw).subscribe();
   }
 
   private loadAiTreatment(): void {
@@ -427,6 +441,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.v2Service.loadAiTreatment(this.patientInfo, this.visit, diagnosis, this.visitCompleted).subscribe({
       next: result => {
         this.aiMedicationSuggestions = result.medicines;
+        this.aiMedicationRaw = result.rawMedicines || [];
         this.aiAdvices = result.advices;
         this.aiTests = result.tests;
         this.aiReferrals = result.referrals;
@@ -459,6 +474,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;
         this.aiSuggestions = result.suggestions;
+        this.aiDiagnosisRaw = result.raw || [];
         this.ayuSuggestedQuestions = result.questions;
         this.aiDiagnosisState = 'ready';
       },
@@ -558,7 +574,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       strength: suggestion?.strength || '',
       days: suggestion?.days || '',
       durationUnit: suggestion?.durationUnit || '',
-      remarks: suggestion?.remarks || '',
+      remarks: suggestion?.remarks || null,
       editing: !suggestion?.timing || !suggestion?.strength || !suggestion?.days
     });
   }
@@ -572,6 +588,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   cancelMedicineEdit(index: number): void {
     const m = this.selectedMedicines[index];
     if (!m) { return; }
+    if (m.uuid) {
+      this.restoreEditedMedicine(index);
+      return;
+    }
     if (!m.timing && !m.strength && !m.days && !m.remarks) {
       this.selectedMedicines.splice(index, 1);
       return;
@@ -580,25 +600,43 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   removeSelectedMedicine(index: number): void {
+    if (this.selectedMedicines[index]?.uuid) {
+      this.restoreEditedMedicine(index);
+      return;
+    }
     this.selectedMedicines.splice(index, 1);
   }
 
   submitSelectedMedicines(): void {
     if (!this.canWrite() || !this.canSubmitMedicines) { return; }
-    [...this.selectedMedicines].forEach(m => {
+    const batch = [...this.selectedMedicines];
+    const hasNew = batch.some(m => !m.uuid);
+    const saves = batch.map(m => {
       const med = {
         drug: m.drug,
         dose: m.strength,
         frequency: m.timing,
         durationNo: m.days,
         durationUnit: m.durationUnit || DEFAULT_MEDICINE_DURATION_UNIT,
-        instructRemark: m.remarks
+        instructRemark: m.remarks || ''
       };
-      this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
-        this.addedMedicines.push({ ...med, uuid: res?.uuid || '' });
-        const index = this.selectedMedicines.findIndex(x => x.drug === m.drug);
+      return this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med, m.uuid || undefined).pipe(tap(res => {
+        const saved = { ...med, uuid: res?.uuid || m.uuid || '' };
+        if (m.uuid) {
+          this.addedMedicines.splice(Math.min(m.addedIndex ?? this.addedMedicines.length, this.addedMedicines.length), 0, saved);
+        } else {
+          this.addedMedicines.push(saved);
+        }
+        const index = this.selectedMedicines.indexOf(m);
         if (index > -1) { this.selectedMedicines.splice(index, 1); }
-      });
+      }));
+    });
+    // Once saved: when new medications were added, send all the visit's medications + the AI list to
+    // /ttx/manual (as the old Visit Summary does); editing an existing one doesn't send.
+    forkJoin(saves).subscribe(() => {
+      if (hasNew) {
+        this.v2Service.sendManualTreatment(this.visitUuid, this.addedMedicines, this.aiMedicationRaw).subscribe();
+      }
     });
   }
 
@@ -611,39 +649,33 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.loadAiTreatment();
   }
 
-  addMedicine(): void {
-    if (!this.canWrite()) { return; }
-    const m = this.newMedicine;
-    if (!m.drug || !m.dose || !m.durationNo || !/^[0-9]+$/.test(m.durationNo) || !m.durationUnit) { return; }
-    const med = {
-      drug: m.drug || '', dose: m.dose || '', frequency: m.frequency || '',
-      durationNo: m.durationNo || '', durationUnit: m.durationUnit || '', instructRemark: m.instructRemark || ''
-    };
-    this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med, this.editMedicineUuid || undefined).subscribe(res => {
-      const item = { ...med, uuid: res?.uuid || this.editMedicineUuid };
-      if (this.editMedicineIndex > -1) {
-        this.addedMedicines[this.editMedicineIndex] = item;
-      } else {
-        this.addedMedicines.push(item);
-      }
-      this.cancelMedicine();
+  editMedicine(index: number): void {
+    const m = this.addedMedicines[index];
+    if (!m || this.selectedMedicines.some(s => s.uuid && s.uuid === m.uuid)) { return; }
+    this.addedMedicines.splice(index, 1);
+    this.selectedMedicines.push({
+      drug: m.drug,
+      source: 'manual',
+      timing: m.frequency || '',
+      strength: m.dose || '',
+      days: m.durationNo || '',
+      durationUnit: m.durationUnit || '',
+      remarks: m.instructRemark || null,
+      editing: true,
+      uuid: m.uuid,
+      addedIndex: index
     });
   }
 
-  editMedicine(index: number): void {
-    const m = this.addedMedicines[index];
-    this.newMedicine = {
-      drug: m.drug || null, dose: m.dose || null, frequency: m.frequency || null,
-      durationNo: m.durationNo || '', durationUnit: m.durationUnit || null, instructRemark: m.instructRemark || null
+  private restoreEditedMedicine(index: number): void {
+    const m = this.selectedMedicines[index];
+    if (!m?.uuid) { return; }
+    this.selectedMedicines.splice(index, 1);
+    const original = {
+      drug: m.drug, dose: m.strength, frequency: m.timing, durationNo: m.days,
+      durationUnit: m.durationUnit || '', instructRemark: m.remarks || '', uuid: m.uuid
     };
-    this.editMedicineIndex = index;
-    this.editMedicineUuid = m.uuid || '';
-  }
-
-  cancelMedicine(): void {
-    this.newMedicine = { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
-    this.editMedicineIndex = -1;
-    this.editMedicineUuid = '';
+    this.addedMedicines.splice(Math.min(m.addedIndex ?? this.addedMedicines.length, this.addedMedicines.length), 0, original);
   }
 
   deleteMedicine(index: number, uuid?: string): void {
@@ -716,13 +748,37 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   isTestAdded(value: string): boolean {
-    return this.tests.some(t => t.value.toLowerCase() === value.toLowerCase());
+    return this.tests.some(t => t.value.trim().toLowerCase() === value.trim().toLowerCase());
   }
 
-  addAiTest(value: string): void {
-    if (this.isTestAdded(value)) { return; }
-    this.newTestText = value;
-    this.addTest();
+  isTestSelected(value: string): boolean {
+    return this.selectedTests.some(t => t.toLowerCase() === value.toLowerCase()) || this.isTestAdded(value);
+  }
+
+  toggleTest(value: string): void {
+    if (this.isTestAdded(value)) {
+      this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
+      return;
+    }
+    const index = this.selectedTests.findIndex(t => t.toLowerCase() === value.toLowerCase());
+    if (index > -1) {
+      this.selectedTests.splice(index, 1);
+    } else {
+      this.selectedTests.push(value);
+    }
+  }
+
+  onTestSearch(term: string): void {
+    this.testSearchTerm = term;
+    this.testResults = this.v2Service.searchOptions(this.testOptions, term);
+  }
+
+  clearTestSearch(): void {
+    this.onTestSearch('');
+  }
+
+  removeSelectedTest(index: number): void {
+    this.selectedTests.splice(index, 1);
   }
 
   /** Follow-up doesn't apply once the patient is handed off to a NAMCO specialist. */
@@ -745,17 +801,17 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.followUpReason = this.aiFollowUp.reason || this.followUpReason;
   }
 
+  /** Save every selected test (like "Add Advice"). */
   addTest(): void {
-    const value = (this.newTestText || '').trim();
-    if (!value || !this.canWrite()) { return; }
-    if (this.tests.find(t => t.value.trim().toLowerCase() === value.toLowerCase())) {
-      this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
-      return;
-    }
-    this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
-      this.tests.push({ value, uuid: res?.uuid || '' });
-      this.newTestText = null;
+    if (!this.selectedTests.length || !this.canWrite()) { return; }
+    [...this.selectedTests].forEach(value => {
+      this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
+        this.tests.push({ value, uuid: res?.uuid || '' });
+        const index = this.selectedTests.indexOf(value);
+        if (index > -1) { this.selectedTests.splice(index, 1); }
+      });
     });
+    this.clearTestSearch();
   }
 
   deleteTest(index: number, uuid?: string): void {
@@ -763,7 +819,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   cancelTest(): void {
-    this.newTestText = null;
+    this.clearTestSearch();
+    this.selectedTests = [];
   }
 
   addReferral(): void {

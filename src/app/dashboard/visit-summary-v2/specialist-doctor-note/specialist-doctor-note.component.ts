@@ -4,7 +4,7 @@ import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import {
@@ -15,7 +15,7 @@ import {
   DAY_OPTIONS, DEFAULT_DIAGNOSIS_CODE,
   DEFAULT_MEDICINE_DURATION_UNIT, DEFAULT_REFERRAL_PRIORITY, DIAGNOSIS_SEARCH_DEBOUNCE_MS,
   DIAGNOSIS_SEARCH_MIN_LENGTH, DIAGNOSIS_TYPES, DOSE_OPTIONS, DRUG_OPTIONS, FACILITY_OPTIONS,
-  REFERRAL_PRIORITIES, TIMING_OPTIONS
+  INSTRUCTION_OPTIONS, REFERRAL_PRIORITIES, TIMING_OPTIONS
 } from '../doctor-note/doctor-note.constants';
 import { FOLLOW_UP_TYPES, FOLLOW_UP_TYPE_TELEMEDICINE, SPECIALIST_DIAGNOSIS_STATUSES } from './specialist-doctor-note.constants';
 
@@ -52,6 +52,7 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
   readonly doseOptions = DOSE_OPTIONS;
   readonly timingOptions = TIMING_OPTIONS;
   readonly dayOptions = DAY_OPTIONS;
+  readonly instructionOptions = INSTRUCTION_OPTIONS;
   readonly facilityOptions = FACILITY_OPTIONS;
   readonly referralPriorities = REFERRAL_PRIORITIES;
   readonly followUpTypes = FOLLOW_UP_TYPES;
@@ -78,18 +79,24 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
   newNoteText = '';
   notes: DraftTextItem[] = [];
 
-  newMedicine: { drug: string | null; dose: string | null; frequency: string | null; instructRemark: string; durationNo: string | null } =
-    { drug: null, dose: null, frequency: null, instructRemark: '', durationNo: null };
+  newMedicine: { drug: string | null; dose: string | null; frequency: string | null; instructRemark: string | null; durationNo: string | null } =
+    { drug: null, dose: null, frequency: null, instructRemark: null, durationNo: null };
   medicines: DraftMedication[] = [];
   medInstructionText = '';
   savingMedInstruction = false;
   medInstructions: DraftInstruction[] = [];
 
-  newAdviceText = '';
-  savingAdvice = false;
+  /** Advice search — suggestions from the old Visit Summary's advice list: search chips → selected list → "Add Advice". */
+  adviceOptions: string[] = [];
+  adviceSearchTerm = '';
+  adviceResults: string[] = [];
+  selectedAdvices: string[] = [];
   advices: DraftAdvice[] = [];
 
-  newTestText = '';
+  testOptions: string[] = [];
+  testSearchTerm = '';
+  testResults: string[] = [];
+  selectedTests: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
@@ -131,6 +138,8 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
       this.diagnosisSearching = false;
     });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
+    this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
+    this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
   }
 
@@ -227,6 +236,11 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, dx).subscribe(res => {
       this.diagnoses.push({ ...dx, uuid: res?.uuid || '' });
       this.cancelDiagnosis();
+      // Send all the visit's diagnoses to /ddx/manual, as the old Visit Summary does (no AI list for
+      // a NAMCO doctor — the old UI turns AI off for them — so every diagnosis goes as non-AI).
+      if (!isFeaturePresent('dp_diagnosis_secondary')) {
+        this.v2Service.sendManualDiagnoses(this.visitUuid, this.diagnoses).subscribe();
+      }
     });
   }
 
@@ -262,11 +276,13 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
       this.medicines.push({ ...med, uuid: res?.uuid || '' });
       this.cancelMedicine();
+      // Send all the visit's medications to /ttx/manual, as the old Visit Summary does (non-AI for a NAMCO doctor).
+      this.v2Service.sendManualTreatment(this.visitUuid, this.medicines).subscribe();
     });
   }
 
   cancelMedicine(): void {
-    this.newMedicine = { drug: null, dose: null, frequency: null, instructRemark: '', durationNo: null };
+    this.newMedicine = { drug: null, dose: null, frequency: null, instructRemark: null, durationNo: null };
   }
 
   deleteMedicine(index: number, uuid?: string): void {
@@ -289,37 +305,112 @@ export class SpecialistDoctorNoteComponent implements OnInit, OnChanges {
     this.v2Service.removeDraftItem(this.medInstructions, index, uuid);
   }
 
-  addAdvice(): void {
-    const value = this.newAdviceText.trim();
-    if (!value || !this.canWrite() || this.savingAdvice) { return; }
-    if (this.advices.find(a => a.value === value)) {
+  isAdviceAdded(value: string): boolean {
+    return this.advices.some(a => a.value.trim().toLowerCase() === value.trim().toLowerCase());
+  }
+
+  isAdviceSelected(value: string): boolean {
+    return this.selectedAdvices.some(a => a.toLowerCase() === value.toLowerCase()) || this.isAdviceAdded(value);
+  }
+
+  toggleAdvice(value: string): void {
+    if (this.isAdviceAdded(value)) {
       this.coreService.showToast('warning', 'Advice already added, please add another advice.', 'Already Added', 'warning-advice-toast');
       return;
     }
-    this.savingAdvice = true;
-    this.v2Service.saveAdvice(this.patientUuid, this.visitNoteUuid, value)
-      .pipe(finalize(() => { this.savingAdvice = false; }))
-      .subscribe(res => {
+    const index = this.selectedAdvices.findIndex(a => a.toLowerCase() === value.toLowerCase());
+    if (index > -1) {
+      this.selectedAdvices.splice(index, 1);
+    } else {
+      this.selectedAdvices.push(value);
+    }
+  }
+
+  onAdviceSearch(term: string): void {
+    this.adviceSearchTerm = term;
+    this.adviceResults = this.v2Service.searchOptions(this.adviceOptions, term);
+  }
+
+  clearAdviceSearch(): void {
+    this.onAdviceSearch('');
+  }
+
+  removeSelectedAdvice(index: number): void {
+    this.selectedAdvices.splice(index, 1);
+  }
+
+  /** Save every selected advice. */
+  addAdvice(): void {
+    if (!this.selectedAdvices.length || !this.canWrite()) { return; }
+    [...this.selectedAdvices].forEach(value => {
+      this.v2Service.saveAdvice(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
         this.advices.push({ value, uuid: res?.uuid || '' });
-        this.newAdviceText = '';
+        const index = this.selectedAdvices.indexOf(value);
+        if (index > -1) { this.selectedAdvices.splice(index, 1); }
       });
+    });
+    this.clearAdviceSearch();
+  }
+
+  cancelAdvice(): void {
+    this.clearAdviceSearch();
+    this.selectedAdvices = [];
   }
 
   deleteAdvice(index: number, uuid?: string): void {
     this.v2Service.removeDraftItem(this.advices, index, uuid);
   }
 
-  addTest(): void {
-    const value = this.newTestText.trim();
-    if (!value || !this.canWrite()) { return; }
-    if (this.tests.find(t => t.value === value)) {
+  isTestAdded(value: string): boolean {
+    return this.tests.some(t => t.value.trim().toLowerCase() === value.trim().toLowerCase());
+  }
+
+  isTestSelected(value: string): boolean {
+    return this.selectedTests.some(t => t.toLowerCase() === value.toLowerCase()) || this.isTestAdded(value);
+  }
+
+  toggleTest(value: string): void {
+    if (this.isTestAdded(value)) {
       this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
       return;
     }
-    this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
-      this.tests.push({ value, uuid: res?.uuid || '' });
-      this.newTestText = '';
+    const index = this.selectedTests.findIndex(t => t.toLowerCase() === value.toLowerCase());
+    if (index > -1) {
+      this.selectedTests.splice(index, 1);
+    } else {
+      this.selectedTests.push(value);
+    }
+  }
+
+  onTestSearch(term: string): void {
+    this.testSearchTerm = term;
+    this.testResults = this.v2Service.searchOptions(this.testOptions, term);
+  }
+
+  clearTestSearch(): void {
+    this.onTestSearch('');
+  }
+
+  removeSelectedTest(index: number): void {
+    this.selectedTests.splice(index, 1);
+  }
+
+  /** Save every selected test. */
+  addTest(): void {
+    if (!this.selectedTests.length || !this.canWrite()) { return; }
+    [...this.selectedTests].forEach(value => {
+      this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
+        this.tests.push({ value, uuid: res?.uuid || '' });
+        const index = this.selectedTests.indexOf(value);
+        if (index > -1) { this.selectedTests.splice(index, 1); }
+      });
     });
+    this.clearTestSearch();
+  }
+
+  cancelTest(): void {
+    this.clearTestSearch();
+    this.selectedTests = [];
   }
 
   deleteTest(index: number, uuid?: string): void {
