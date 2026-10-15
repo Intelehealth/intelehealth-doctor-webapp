@@ -41,7 +41,6 @@ const CLAIM_CONFLICT_MESSAGES: { [code: string]: string } = {
   providedIn: 'root'
 })
 export class QueueService {
-  private qmsBaseURL = environment.qmsURL;
   private queueBaseURL = environment.queueURL;
 
   constructor(
@@ -62,7 +61,7 @@ export class QueueService {
   getQueueByVisit(visitUuid: string): Observable<QueueEntryStatus> {
     return this.http
       .get<{ success: boolean; data: QueueEntryStatus }>(
-        `${this.qmsBaseURL}/queue/visit/${visitUuid}`
+        `${this.queueBaseURL}/queue/visit/${visitUuid}`
       )
       .pipe(map(res => res?.data));
   }
@@ -73,7 +72,7 @@ export class QueueService {
   claimQueueEntry(queueEntryId: number): Observable<QueueEntryStatus> {
     return this.http
       .post<{ success: boolean; data: QueueEntryStatus }>(
-        `${this.qmsBaseURL}/queue/${queueEntryId}/claim`,
+        `${this.queueBaseURL}/queue/${queueEntryId}/claim`,
         {}
       )
       .pipe(map(res => res?.data));
@@ -89,7 +88,7 @@ export class QueueService {
   ): Observable<QueueEntryStatus | null> {
     return this.http
       .post<{ success: boolean; data: QueueEntryStatus }>(
-        `${this.qmsBaseURL}/queue/${queueEntryId}/release`,
+        `${this.queueBaseURL}/queue/${queueEntryId}/release`,
         { reason }
       )
       .pipe(

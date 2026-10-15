@@ -19,7 +19,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         return next.handle(request);
       }
       // QMS lookups are optional checks handled by the caller; never log out or toast for them
-      if (environment.qmsURL && request.url.startsWith(environment.qmsURL)) {
+      if (environment.queueURL && request.url.startsWith(environment.queueURL)) {
         return throwError(err);
       }
       if ([401, 403].indexOf(err.status) != -1) {
