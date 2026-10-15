@@ -22,6 +22,7 @@ import { VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import {
   CURRENT_VISITS_TITLE, PRIMARY_NOTE_TITLE, SPECIALIST_NOTE_TITLE
 } from './specialist-doctor-note/specialist-doctor-note.constants';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-visit-summary-v2',
@@ -151,6 +152,19 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   visitEnded = false;
   visitReferred = false;
   isVisitNoteProvider = false;
+  visitNoteDoctorName = '';
+  isMCCUser = false;
+
+  get showVisitInProgressBanner(): boolean {
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
+      visitNoteExists: this.visitNoteExists,
+      visitFinished: this.visitCompleted || this.visitEnded,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      isMCCUser: this.isMCCUser,
+      doctorName: this.visitNoteDoctorName
+    });
+  }
+
   hasWebRTCEnabled = false;
   hasAudioEnabled = false;
   hasVideoEnabled = false;
@@ -168,7 +182,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     private appConfigService: AppConfigService,
     private analytics: AnalyticsService,
     private visitSummaryService: VisitSummaryHelperService,
-    private mindmapService: MindmapService
+    private mindmapService: MindmapService,
+    private rolesService: NgxRolesService
   ) {
     this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
   }
@@ -182,6 +197,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
       this.noteTab = SPECIALIST_NOTE_TITLE;
       this.topTabs = [CURRENT_VISITS_TITLE, PRIMARY_NOTE_TITLE, this.noteTab];
     }
+    this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
     this.hasWebRTCEnabled = !!this.appConfigService?.webrtc_section;
     this.hasAudioEnabled = !!this.appConfigService?.webrtc?.audio_call;
     this.hasVideoEnabled = !!this.appConfigService?.webrtc?.video_call;
@@ -351,6 +367,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.visitEnded = data.visitEnded;
     this.visitReferred = data.visitReferred;
     this.isVisitNoteProvider = !!this.providerUuid && data.visitNoteProviderUuids.includes(this.providerUuid);
+    this.visitNoteDoctorName = data.visitNoteDoctorName;
     this.consultationDetails = data.consultationDetails;
     this.chiefComplaints = data.chiefComplaints;
     this.complaintDetails = data.complaintDetails;

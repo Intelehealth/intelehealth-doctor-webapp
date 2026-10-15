@@ -47,6 +47,7 @@ import durationUnitList from 'src/app/core/data/durationUnitList';
 import instructionRemarks from 'src/app/core/data/instructionRemarks';
 import { keepOnlyPairedEvents } from 'src/app/utils/paired-events';
 import { AnalyticsService } from 'src/app/services/analytics.service';
+import { QueueGateResult, QueueService } from 'src/app/services/queue.service';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -124,6 +125,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   isCreatingVisitNote = false;
   isVisitNoteProvider = false;
   isNamcoDoctorLoggedIn = false;
+  visitNoteDoctorName = '';
+
+  get showVisitInProgressBanner(): boolean {
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
+      visitNoteExists: !!this.visitNotePresent,
+      visitFinished: !!this.visitCompleted || !!this.visitEnded,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      isMCCUser: this.isMCCUser,
+      doctorName: this.visitNoteDoctorName
+    });
+  }
   referSpecialityForm: FormGroup;
   provider: ProviderModel;
   showAll = true;
@@ -363,6 +375,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   isWhatsappCallWarningShown = false;
   consultationStartTime: Date; // Track consultation start time
+  startingVisitNote = false; // Queue check / claim / encounter creation in flight
 
   reasons = {
     'Completed': [
@@ -495,7 +508,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     private analytics: AnalyticsService,
     private webrtcSvc: WebrtcService,
     private providerService: ProviderService,
-    private insight: InsightService) {
+    private insight: InsightService,
+    private queueService: QueueService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
     });
@@ -797,6 +811,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             } else {
               this.visitNotePresent = this.getVisitNotePresentForNormalDoctor(visit.encounters);
             }
+            this.visitNoteDoctorName = this.visitSummaryService.getVisitNoteDoctorName(this.visitNotePresent);
             // check if visit complete exists for this visit
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if this visit has been referred to a specialist
@@ -1647,6 +1662,25 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   // startSpecialistVisitNote(): void {
   startVisitNote(): void {
+    if (this.startingVisitNote) return;
+    this.startingVisitNote = true;
+    this.queueService.prepareVisitNote(this.visit?.uuid).subscribe((result: QueueGateResult) => {
+      if (!result.allowed) {
+        this.startingVisitNote = false;
+        this.isCreatingVisitNote = false;
+        this.coreService.showToast('warning', result.message, result.title, 'warning-not-next-in-queue-toast');
+        return;
+      }
+      this.createVisitNote(result.claimedQueueEntryId);
+    });
+  }
+
+  /**
+  * Create the visit note encounter
+  * @param {number} claimedQueueEntryId - Queue entry claimed for this visit, released again if the visit note fails
+  * @return {void}
+  */
+  createVisitNote(claimedQueueEntryId?: number): void {
     // Capture consultation start time
     this.consultationStartTime = new Date();
 
@@ -1665,6 +1699,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.encounterService.getOrCreateEncounter(json).subscribe({
       next: (response) => {
         this.isCreatingVisitNote = false;
+        this.startingVisitNote = false;
         this.visitNotePresent = response;
         this.notifyHwForVisitStarted();
         // save diagnosis from case summary
@@ -1684,6 +1719,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       error: () => {
         this.isCreatingVisitNote = false;
+        this.startingVisitNote = false;
+        if (claimedQueueEntryId) {
+          this.queueService.releaseQueueEntry(claimedQueueEntryId, 'Visit note creation failed').subscribe();
+        }
       }
     });
   }
