@@ -2,6 +2,10 @@
 
   <app-patient-header-card *ngIf="patient" [patient]="patient"></app-patient-header-card>
 
+  <div class="vs2-in-progress-banner" *ngIf="showVisitInProgressBanner" data-test-id="visitInProgressBanner">
+    {{ 'This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.' | translate: { name: visitNoteDoctorName } }}
+  </div>
+
   <div class="vs2-body">
 
     <app-visit-sidebar

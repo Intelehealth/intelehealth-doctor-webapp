@@ -118,6 +118,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitCompleted: EncounterModel | boolean;
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
+  visitNoteDoctorName = '';
+
+  get showVisitInProgressBanner(): boolean {
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
+      visitNoteExists: !!this.visitNotePresent,
+      visitFinished: !!this.visitCompleted || !!this.visitEnded,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      isMCCUser: this.isMCCUser,
+      doctorName: this.visitNoteDoctorName
+    });
+  }
   referSpecialityForm: FormGroup;
   provider: ProviderModel;
   showAll = true;
@@ -777,6 +788,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             // check if visit note exists for this visit
             this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
+            this.visitNoteDoctorName = this.visitSummaryService.getVisitNoteDoctorName(this.visitNotePresent);
             // check if visit complete exists for this visit
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if Patient Exit Survey exists for this visit

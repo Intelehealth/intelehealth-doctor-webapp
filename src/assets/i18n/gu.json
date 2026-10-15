@@ -311,6 +311,7 @@
   "Unable to send prescription due to poor network connection. Please try again or come back later": "ખરાબ નેટવર્ક કનેક્શનને કારણે પ્રિસ્ક્રિપ્શન મોકલી શક્યું નથી. કૃપા કરીને ફરી પ્રયાસ કરો અથવા થોડા સમય પછી ફરી આવો",
   "Unable to send prescription since your profile is not complete.": "પોતાનો પ્રોફાઇલ પૂર્ણ ન હોવાથી પ્રિસ્ક્રિપ્શન મોકલી શક્યું નથી.",
   "Go to profile": "પ્રોફાઇલ પર જાવ",
+  "This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.": "આ મુલાકાત પહેલાથી જ ડૉ. {{name}} સાથે ચાલુ છે. તમે આ મુલાકાતમાં ફેરફાર કે સંપાદન કરી શકતા નથી.",
   "Unable to send prescription since this visit already in progress with another doctor.": "આ મુલાકાત બીજા ડૉક્ટર સાથે પહેલાથી જ ચાલુ હોવાથી પ્રિસ્ક્રિપ્શન મોકલી શકાતું નથી.",
   "Visit summary": "મુલાકાત સારાંશ",
   "Visit Summary": "મુલાકાત સારાંશ",

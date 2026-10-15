@@ -320,6 +320,7 @@
   "Unable to send prescription due to poor network connection. Please try again or come back later":"Невозможно отправить рецепт из-за плохого соединения с сетью. Пожалуйста, попробуйте еще раз или зайдите позже",
   "Unable to send prescription since your profile is not complete.":"Невозможно отправить рецепт, так как ваш профиль не заполнен.",
   "Go to profile":"Перейти к профилю",
+  "This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.":"Этот визит уже находится в процессе у врача {{name}}. Вы не можете редактировать или изменять этот визит.",
   "Unable to send prescription since this visit already in progress with another doctor.":"Невозможно отправить рецепт, так как этот визит уже находится в процессе у другого врача.",
   "Visit summary":"Сводка посещений",
   "Visit Summary":"Сводка посещений",

@@ -318,6 +318,7 @@
   "Unable to send prescription due to poor network connection. Please try again or come back later":"Unable to send prescription due to poor network connection. Please try again or come back later",
   "Unable to send prescription since your profile is not complete.":"Unable to send prescription since your profile is not complete.",
   "Go to profile":"Go to profile",
+  "This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.":"This visit is already in progress with Dr. {{name}}. You cannot edit or make changes to this visit.",
   "Unable to send prescription since this visit already in progress with another doctor.":"Unable to send prescription since this visit already in progress with another doctor.",
   "Visit summary":"Visit summary",
   "Visit Summary":"Visit Summary",

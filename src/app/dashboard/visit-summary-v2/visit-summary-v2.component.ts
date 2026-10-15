@@ -14,6 +14,7 @@ import {
 } from './visit-summary-v2.models';
 import { CurrentVisitData, VisitSummaryV2Service } from './visit-summary-v2.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-visit-summary-v2',
@@ -97,7 +98,21 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   patientModel!: PatientModel;
   clinicName = '';
   visitEnded = false;
+  visitCompleted = false;
   isVisitNoteProvider = false;
+  visitNoteDoctorName = '';
+  isMCCUser = false;
+
+  get showVisitInProgressBanner(): boolean {
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
+      visitNoteExists: this.visitNoteExists,
+      visitFinished: this.visitCompleted || this.visitEnded,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      isMCCUser: this.isMCCUser,
+      doctorName: this.visitNoteDoctorName
+    });
+  }
+
   hasWebRTCEnabled = false;
   hasAudioEnabled = false;
   hasVideoEnabled = false;
@@ -115,7 +130,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     private appConfigService: AppConfigService,
     private analytics: AnalyticsService,
     private visitSummaryService: VisitSummaryHelperService,
-    private mindmapService: MindmapService
+    private mindmapService: MindmapService,
+    private rolesService: NgxRolesService
   ) {
     this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
   }
@@ -123,6 +139,7 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.visitId = this.route.snapshot.paramMap.get('id') || '';
     this.providerUuid = getCacheData(true, doctorDetails.PROVIDER)?.uuid || '';
+    this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
     this.hasWebRTCEnabled = !!this.appConfigService?.webrtc_section;
     this.hasAudioEnabled = !!this.appConfigService?.webrtc?.audio_call;
     this.hasVideoEnabled = !!this.appConfigService?.webrtc?.video_call;
@@ -260,7 +277,9 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.patientModel = data.patientModel;
     this.clinicName = data.clinicName;
     this.visitEnded = data.visitEnded;
+    this.visitCompleted = data.visitCompleted;
     this.isVisitNoteProvider = !!this.providerUuid && data.visitNoteProviderUuids.includes(this.providerUuid);
+    this.visitNoteDoctorName = data.visitNoteDoctorName;
     this.consultationDetails = data.consultationDetails;
     this.chiefComplaints = data.chiefComplaints;
     this.complaintDetails = data.complaintDetails;
