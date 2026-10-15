@@ -130,7 +130,9 @@
             [disabled]="!hwPhoneNo" (click)="startKaleyraCall()">
             <img src="assets/svgs/phone-black.svg" alt="Kaleyra Call" />
           </button>
-          <span class="vs2-connect-hint">Call via Kaleyra - Connect to Health Worker</span>
+          <span class="vs2-connect-hint">
+            {{ hwPhoneNo ? 'Call via Kaleyra - Connect to Health Worker' : 'Phone number is not available' }}
+          </span>
         </span>
       </div>
     </li>

@@ -309,19 +309,4 @@
     </div>
   </section>
 
-  <section class="vs2-section-card">
-    <div class="vs2-section-title">
-      <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
-      <span>Additional documents</span>
-      <mat-icon class="vs2-chevron">expand_less</mat-icon>
-    </div>
-    <div class="vs2-divider"></div>
-    <div class="vs2-doc-row">
-      <div class="vs2-doc-pdf" *ngFor="let doc of visit.prescription.docs">
-        <span class="vs2-pdf-icon"><mat-icon>picture_as_pdf</mat-icon></span>
-        <span class="vs2-pdf-name">{{ doc.name }}</span>
-      </div>
-    </div>
-  </section>
-
 </main>

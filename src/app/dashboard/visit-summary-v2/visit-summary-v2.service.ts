@@ -4,7 +4,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { visitTypes, conceptIds, doctorDetails, visitAttributeTypes } from 'src/config/constant';
-import { calculateBMI, convertCelsiusToFahrenheit, getCacheData } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, getCacheData, getPrescriptionSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { ProviderService } from 'src/app/services/provider.service';
@@ -380,8 +380,13 @@ export class VisitSummaryV2Service {
     const cc = this.parseCheckUpReason(encounters);
     const mh = this.parseMedicalHistory(encounters);
     const pe = this.parsePhysicalExam(encounters);
-    const prescription = this.parsePrescription(encounters);
-    const referred = this.obsByConcept(encounters, conceptIds.conceptReferral).length > 0;
+    // Only the logged-in doctor's own prescription (normal doctor: Visit Note, NAMCO doctor: Specialist
+    // Visit Note) — never the two doctors' blended. No note of their own on this visit → the existing one.
+    const ownNote = this.ownNoteEncounters(visit);
+    const rxEncounters = ownNote.length ? ownNote : encounters;
+    const prescription = this.parsePrescription(rxEncounters);
+    if (ownNote.length) { prescription.doctor = this.doctorForNote(ownNote[0], encounters); }
+    const referred = this.obsByConcept(rxEncounters, conceptIds.conceptReferral).length > 0;
     const docName = prescription.doctor.name || '';
     const firstMed = prescription.meds[0];
     return {
@@ -438,6 +443,44 @@ export class VisitSummaryV2Service {
     };
   }
 
+  /** The logged-in doctor's own note encounter on a visit — same rule as View Prescription. */
+  private ownNoteEncounters(visit: VisitModel): EncounterModel[] {
+    const uuids = getPrescriptionSourceEncounterUuids(visit);
+    return (visit.encounters || []).filter(e => uuids.includes(e.uuid));
+  }
+
+  /**
+  * Doctor who wrote this note: the "Doctor details" saved when that same doctor completed the visit,
+  * else their own provider profile (e.g. a normal doctor's referred visit, completed by the NAMCO doctor).
+  */
+  private doctorForNote(note: EncounterModel, encounters: EncounterModel[]): { name: string; qualifications: string; speciality: string } {
+    const provider: any = note.encounterProviders?.[0]?.provider;
+    const completedBySameDoctor = encounters.filter(e =>
+      e.encounterType?.display === visitTypes.VISIT_COMPLETE &&
+      (e.encounterProviders || []).some((p: any) => p?.provider?.uuid && p.provider.uuid === provider?.uuid));
+    for (const enc of completedBySameDoctor) {
+      const detailsObs = (enc.obs || []).find((o: ObsModel) => o.concept?.display === 'Doctor details');
+      if (detailsObs) {
+        try {
+          const d = JSON.parse(detailsObs.value);
+          // "Qualification" is the profile's Type of profession, as in the old UI / prescription PDF.
+          return {
+            name: d.name || '',
+            qualifications: d[doctorDetails.TYPE_OF_PROFESSION] || '',
+            speciality: d[doctorDetails.SPECIALIZATION] || ''
+          };
+        } catch { }
+      }
+    }
+    const attr = (name: string) => (provider?.attributes || []).find((a: any) =>
+      !a?.voided && (a?.attributeType?.display || a?.display?.split(':')[0]?.trim()) === name)?.value || '';
+    return {
+      name: provider?.person?.display || '',
+      qualifications: attr(doctorDetails.TYPE_OF_PROFESSION),
+      speciality: attr(doctorDetails.SPECIALIZATION)
+    };
+  }
+
   private doctorFromEncounters(encounters: EncounterModel[]): { name: string; qualifications: string; speciality: string } {
     let doctor = { name: '', qualifications: '', speciality: '' };
     encounters.forEach(enc => {
@@ -445,7 +488,7 @@ export class VisitSummaryV2Service {
         if (o.concept?.display === 'Doctor details') {
           try {
             const d = JSON.parse(o.value);
-            doctor = { name: d.name || '', qualifications: d.Qualification || '', speciality: d.specialization || '' };
+            doctor = { name: d.name || '', qualifications: d[doctorDetails.TYPE_OF_PROFESSION] || '', speciality: d.specialization || '' };
           } catch { }
         }
       });
