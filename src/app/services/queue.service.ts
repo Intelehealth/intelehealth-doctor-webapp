@@ -1,9 +1,16 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { environment } from "../../environments/environment";
+
+import { environment } from '../../environments/environment';
 import { AppConfigService } from './app-config.service';
+import {
+  DoctorStatus,
+  DoctorStatusResponse,
+  QueueVisitsResponse
+} from '../queue/queue.model';
 
 export interface QueueEntryStatus {
   queueEntryId: number;
@@ -27,86 +34,168 @@ const CLAIM_CONFLICT_MESSAGES: { [code: string]: string } = {
   CASE_ALREADY_CLAIMED: 'This visit was just claimed by another doctor',
   CASE_CANCELLED: 'This visit was cancelled',
   DOCTOR_NOT_ONLINE: 'You must be online in the queue to claim this visit',
-  INVALID_STATE_TRANSITION: 'This visit can\'t be claimed right now'
+  INVALID_STATE_TRANSITION: "This visit can't be claimed right now"
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueueService {
-  private baseURL = environment.qmsURL;
+  private qmsBaseURL = environment.qmsURL;
+  private queueBaseURL = environment.queueURL;
 
-  constructor(private http: HttpClient, private appConfigService: AppConfigService) { }
+  constructor(
+    private http: HttpClient,
+    private appConfigService: AppConfigService
+  ) {}
 
   /**
-  * Whether the queue management system is enabled from configuration
-  * @return {boolean}
-  */
+   * Whether the queue management system is enabled from configuration.
+   */
   get isQmsEnabled(): boolean {
     return !!this.appConfigService.qms_section;
   }
 
   /**
-  * Get queue entry details for a visit
-  * @param {string} visitUuid - Visit uuid
-  * @return {Observable<QueueEntryStatus>}
-  */
+   * Get queue entry details for a visit.
+   */
   getQueueByVisit(visitUuid: string): Observable<QueueEntryStatus> {
-    return this.http.get<{ success: boolean; data: QueueEntryStatus }>(`${this.baseURL}/queue/visit/${visitUuid}`)
-      .pipe(map((res) => res?.data));
+    return this.http
+      .get<{ success: boolean; data: QueueEntryStatus }>(
+        `${this.qmsBaseURL}/queue/visit/${visitUuid}`
+      )
+      .pipe(map(res => res?.data));
   }
 
   /**
-  * Claim a waiting queue entry for the logged-in doctor (doctor is taken from the token)
-  * @param {number} queueEntryId - Queue entry id
-  * @return {Observable<QueueEntryStatus>}
-  */
+   * Claim a waiting queue entry for the logged-in doctor.
+   */
   claimQueueEntry(queueEntryId: number): Observable<QueueEntryStatus> {
-    return this.http.post<{ success: boolean; data: QueueEntryStatus }>(`${this.baseURL}/queue/${queueEntryId}/claim`, {})
-      .pipe(map((res) => res?.data));
+    return this.http
+      .post<{ success: boolean; data: QueueEntryStatus }>(
+        `${this.qmsBaseURL}/queue/${queueEntryId}/claim`,
+        {}
+      )
+      .pipe(map(res => res?.data));
   }
 
   /**
-  * Hand a claimed queue entry back to the queue. Errors are swallowed: this is best-effort cleanup.
-  * @param {number} queueEntryId - Queue entry id
-  * @param {string} reason - Why the case is being released
-  * @return {Observable<QueueEntryStatus | null>}
-  */
-  releaseQueueEntry(queueEntryId: number, reason: string): Observable<QueueEntryStatus | null> {
-    return this.http.post<{ success: boolean; data: QueueEntryStatus }>(`${this.baseURL}/queue/${queueEntryId}/release`, { reason })
-      .pipe(map((res) => res?.data), catchError(() => of(null)));
+   * Hand a claimed queue entry back to the queue.
+   * Errors are swallowed because this is best-effort cleanup.
+   */
+  releaseQueueEntry(
+    queueEntryId: number,
+    reason: string
+  ): Observable<QueueEntryStatus | null> {
+    return this.http
+      .post<{ success: boolean; data: QueueEntryStatus }>(
+        `${this.qmsBaseURL}/queue/${queueEntryId}/release`,
+        { reason }
+      )
+      .pipe(
+        map(res => res?.data),
+        catchError(() => of(null))
+      );
   }
 
   /**
-  * Check whether the visit note can be started and, if the visit is next in queue, claim it.
-  * - QMS disabled: allowed, old behaviour.
-  * - Position > 1: blocked, patient is not next in queue.
-  * - Position 1 (still waiting): claimed first; a 409 from claim blocks with its reason.
-  * - Already out of the waiting lanes (position null): allowed without claiming.
-  * Any other failure (QMS down, visit not queued) falls back to the old behaviour and allows it.
-  * @param {string} visitUuid - Visit uuid
-  * @return {Observable<QueueGateResult>}
-  */
+   * Check whether a visit note can be started.
+   *
+   * QMS disabled: allow the existing workflow.
+   * Position > 1: block because the patient is not next in queue.
+   * Position 1: claim the queue entry before starting the note.
+   * Position null: allow because the case has left the waiting lanes.
+   * Other lookup/claim failures: preserve the existing fallback behaviour.
+   */
   prepareVisitNote(visitUuid: string): Observable<QueueGateResult> {
     if (!this.isQmsEnabled || !visitUuid) {
       return of({ allowed: true });
     }
+
     return this.getQueueByVisit(visitUuid).pipe(
       catchError(() => of(null)),
       switchMap((entry: QueueEntryStatus | null) => {
         if (!entry || entry.position == null) {
           return of({ allowed: true });
         }
+
         if (entry.position > 1) {
-          return of({ allowed: false, title: 'Not next in queue', message: 'You can\'t start this visit as this patient is not next in queue' });
+          return of({
+            allowed: false,
+            title: 'Not next in queue',
+            message:
+              "You can't start this visit as this patient is not next in queue"
+          });
         }
+
         return this.claimQueueEntry(entry.queueEntryId).pipe(
-          map(() => ({ allowed: true, claimedQueueEntryId: entry.queueEntryId })),
-          catchError((err: HttpErrorResponse) => of(err?.status === 409
-            ? { allowed: false, title: 'Unable to claim visit', message: CLAIM_CONFLICT_MESSAGES[err?.error?.code] ?? 'This visit can\'t be claimed right now' }
-            : { allowed: true }))
+          map(() => ({
+            allowed: true,
+            claimedQueueEntryId: entry.queueEntryId
+          })),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              err?.status === 409
+                ? {
+                    allowed: false,
+                    title: 'Unable to claim visit',
+                    message:
+                      CLAIM_CONFLICT_MESSAGES[err?.error?.code] ??
+                      "This visit can't be claimed right now"
+                  }
+                : { allowed: true }
+            )
+          )
         );
       })
+    );
+  }
+
+  /**
+   * Get visits assigned to a doctor, filtered by speciality.
+   */
+  getDoctorVisits(
+    doctorUuid: string,
+    speciality: string,
+    limit = 50,
+    offset = 0
+  ): Observable<QueueVisitsResponse> {
+    const params = new HttpParams()
+      .set('speciality', speciality)
+      .set('limit', `${limit}`)
+      .set('offset', `${offset}`);
+
+    return this.http.get<QueueVisitsResponse>(
+      `${this.queueBaseURL}/queue/doctor/${doctorUuid}/visits`,
+      { params }
+    );
+  }
+
+  /**
+   * Update a doctor's queue availability/status.
+   */
+  updateDoctorStatus(
+    doctorUuid: string,
+    status: DoctorStatus,
+    speciality: string,
+    breakEndsAt: Date | null = null
+  ): Observable<DoctorStatusResponse> {
+    const body: {
+      status: DoctorStatus;
+      speciality: string;
+      breakEndsAt?: string;
+    } = {
+      status,
+      speciality
+    };
+
+    if (breakEndsAt) {
+      body.breakEndsAt = breakEndsAt.toISOString();
+    }
+
+    return this.http.patch<DoctorStatusResponse>(
+      `${this.queueBaseURL}/doctor/${doctorUuid}/status`,
+      body
     );
   }
 }

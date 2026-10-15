@@ -114,13 +114,9 @@ export class AppointmentsComponent implements OnInit {
         const obs = encounter.obs;
         obs.forEach((currentObs: CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
-            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                recent.push(obs1[0]);
-              }
-            }
+            recent = recent.concat(
+              this.visitService.parseChiefComplaints(this.visitService.getData2(currentObs)?.value_text)
+            );
           }
         });
       }

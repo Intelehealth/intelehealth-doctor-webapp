@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CoreService } from 'src/app/services/core/core.service';
+import { isReportEmailEnabled } from 'src/app/services/report.service';
 
 @Component({
   selector: 'app-report-list',
@@ -32,6 +33,8 @@ export class ReportListComponent {
       title: element.name,
       field1: 'Start date',
       field2: 'End date',
+      // data.field3 gates both the dialog's email input and its required/email validators (report-generator.component.ts).
+      field3: isReportEmailEnabled() ? 'Email address' : '',
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };

@@ -17,7 +17,9 @@ export class ReportGeneratorComponent {
     private dialogRef: MatDialogRef<ReportGeneratorComponent>) {
     this.reportForm = new FormGroup({
       field1: new FormControl('', [Validators.required]),
-      field2: new FormControl('', [Validators.required])
+      field2: new FormControl('', [Validators.required]),
+      // Only validated when the email field is shown (data.field3 set by the reports list).
+      field3: new FormControl('', data.field3 ? [Validators.required, Validators.email] : [])
     });
   }
 

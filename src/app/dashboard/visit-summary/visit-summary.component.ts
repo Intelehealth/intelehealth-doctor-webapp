@@ -1394,6 +1394,35 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       callType: callType
     });
     
+    // WhatsApp patients have no app to ring, so send them the join link.
+    // Fire-and-forget: the doctor's call must not wait on the message.
+    if (this.isTurnServer && this.visit.patient?.uuid) {
+      const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME) || this.provider?.person?.display;
+      const patientPhone = this.getPatientTelephone();
+      if (!patientPhone) {
+        console.error('no Telephone Number on this patient; call link will not be sent');
+      }
+      this.webrtcSvc.generateMagicLink(
+        this.visit.uuid,
+        this.visit.patient.uuid,
+        doctorName,
+        this.patient?.person?.display,
+        true,
+        patientPhone || undefined
+      ).subscribe({
+        next: (res: any) => {
+          if (res?.notified === false) {
+            console.error(' call link not sent to patient:', res?.notifyError);
+          } else if (res?.notified === undefined) {
+            console.warn(' backend did not attempt to notify (notified is undefined)');
+          }
+        },
+        error: (err) => console.error('magic-link request failed:', err?.status, err?.error || err),
+      });
+    } else {
+      console.warn('skipped: isTurnServer is false or visit has no patient uuid');
+    }
+
     this.isCalling = true;
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
@@ -4061,6 +4090,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       this.patientCallStatusForm.get('callStatus').setValue(null)
     }
     return null;
+  }
+
+  /**
+  * Patient's phone from the Telephone Number attribute shown on this page.
+  * Matched by attribute type uuid as well as display, since the display name can differ by locale/config.
+  * @return {string} - Phone number, or '' when the patient has none
+  */
+  getPatientTelephone(): string {
+    const TELEPHONE_ATTR_UUID = '14d4f066-15f5-102d-96e4-000c29c2a5d7';
+    const attr = this.patient?.person?.attributes?.find((a: PersonAttributeModel) =>
+      a?.attributeType?.uuid === TELEPHONE_ATTR_UUID || a?.attributeType?.display === 'Telephone Number'
+    );
+    const value = String(attr?.value ?? '').trim();
+    return value && value !== 'NA' ? value : '';
   }
 
   getPhoneNumber(getPatientNo: boolean = false): string{

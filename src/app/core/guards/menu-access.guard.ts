@@ -15,11 +15,19 @@ export class MenuAccessGuard implements CanActivate {
 
   canActivate(route: any): boolean {
     const menu = route.data?.menu || route.routeConfig?.data?.menu;
+    const feature = route.data?.feature || route.routeConfig?.data?.feature;
+    const isAdmin = !!this.roleService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR');
+
+    // A published config flag (e.g. qms_section) that switches a whole section off
+    if (feature && !isAdmin && this.appConfigService[feature] === false) {
+      this.router?.navigateByUrl('/dashboard');
+      return false;
+    }
+
     if (!menu) return true;
 
     const sidebar_menus = this.appConfigService.sidebar_menus;
-    const isAdmin = !!this.roleService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR');
-    
+
     if (!sidebar_menus || isAdmin) return true;
 
     if (sidebar_menus && !sidebar_menus[menu]) {
