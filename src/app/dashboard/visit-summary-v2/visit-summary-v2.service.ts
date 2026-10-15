@@ -75,6 +75,7 @@ export interface CurrentVisitData {
   visitReferred: boolean;
   visitCompleted: boolean;
   visitNoteProviderUuids: string[];
+  visitNoteDoctorName: string;
   consultationDetails: DetailRow[];
   chiefComplaints: string[];
   complaintDetails: ComplaintDetail[];
@@ -221,9 +222,9 @@ export class VisitSummaryV2Service {
       : this.visitService.postAttribute(visitUuid, payload);
   }
 
-  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
+  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false, recompute = false): Observable<AiDiagnosisResult> {
     const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
-    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared).pipe(
+    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared, recompute).pipe(
       map((res: any) => this.buildAiDiagnosisResult(res))
     );
   }
@@ -1196,6 +1197,7 @@ export class VisitSummaryV2Service {
       visitReferred: !!this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL),
       visitCompleted: !!this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE),
       visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
+      visitNoteDoctorName: this.helper.getVisitNoteDoctorName(visitNote),
       consultationDetails: this.buildConsultationDetails(visit, appointment, visitStatus, clinicName),
       chiefComplaints,
       complaintDetails,

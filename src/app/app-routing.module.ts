@@ -5,6 +5,7 @@ import { MainContainerComponent } from './main-container/main-container.componen
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { MenuAccessGuard } from './core/guards/menu-access.guard';
+import { QmsGuard } from './core/guards/qms.guard';
 
 const routes: Routes = [
   {
@@ -35,10 +36,9 @@ const routes: Routes = [
       {
         path: 'queue',
         data: {
-          breadcrumb: 'Queue',
-          feature: 'qms_section'
+          breadcrumb: 'Queue'
         },
-        canActivate: [MenuAccessGuard],
+        canActivate: [QmsGuard],
         loadChildren: () => import('./queue/queue.module').then(m => m.QueueModule)
       },
       {
