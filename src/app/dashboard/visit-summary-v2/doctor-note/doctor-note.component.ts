@@ -233,7 +233,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!notes || !this.canWrite()) { return; }
     this.v2Service.saveInteractionNote(this.patientUuid, this.visitNoteUuid, notes, this.ayuNoteUuid).subscribe(res => {
       this.ayuNoteUuid = res?.uuid || this.ayuNoteUuid;
-      this.loadAiDiagnosis(notes);
+      this.loadAiDiagnosis(notes, true);
     });
   }
 
@@ -462,14 +462,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiDiagnosis(): void {
-    this.loadAiDiagnosis(this.buildAyuNotes());
+    this.loadAiDiagnosis(this.buildAyuNotes(), true);
   }
 
-  private loadAiDiagnosis(notes = ''): void {
+  private loadAiDiagnosis(notes = '', recompute = false): void {
     if (!this.visit || !this.patientInfo) { return; }
     this.aiDiagnosisState = 'loading';
     this.aiResponseReceived = false;
-    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted).subscribe({
+    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted, recompute && !!notes.trim()).subscribe({
       next: result => {
         this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;

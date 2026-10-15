@@ -1,3 +1,63 @@
+@import 'src/app/dashboard/visit-summary-tokens.scss';
+
+// The in-progress card attaches flush to the bottom of the patient-info card.
+// Bottom spacing (mb-5) lives on the sticky wrapper itself so no transparent
+// margin band is pinned over the scrolling content.
+.patient-sticky-wrap.has-banner {
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .patient-info-main {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+
+    .intel-card {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  .visit-in-progress-card {
+    position: relative;
+    border-radius: 0 0 12px 12px;
+
+    .intel-card {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      box-shadow: none;
+    }
+
+    // Inset divider, same colour token as the visit-summary-v2 banner.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: $border;
+    }
+
+    // Same inset as the patient-info content above (card-body 24px + section 16px),
+    // so the text lines up with the patient photo/name column.
+    .card-body {
+      padding: 20px 40px;
+    }
+  }
+}
+
+.visit-in-progress-msg {
+  margin: 0;
+  font-family: 'DM Sans';
+  font-size: 16px;
+  line-height: 150%;
+  font-weight: 500;
+  color: $amber-strong;
+}
+
 .appointment-banner {
   display: flex;
   align-items: center;
@@ -37,11 +97,14 @@
   }
 }
 
-// Sticky patient info container
-[data-test-id="patientInfoMainContainer"] {
+// Sticky patient info + in-progress message container
+.patient-sticky-wrap {
   position: sticky;
   top: 64px;
   z-index: 100;
+}
+
+.patient-info-main {
   background: var(--color-white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
