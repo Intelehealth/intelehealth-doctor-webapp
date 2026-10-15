@@ -69,7 +69,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   thumbnailLogoURL: string = '';
   pvs: PatientVisitSummaryConfigModel;
   sidebarMenus: any;
-  qmsSection: boolean;
+  qmsSection: boolean = false;
 
   constructor(
     private cdref: ChangeDetectorRef,
