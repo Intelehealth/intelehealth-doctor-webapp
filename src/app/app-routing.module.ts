@@ -36,10 +36,9 @@ const routes: Routes = [
       {
         path: 'queue',
         data: {
-          breadcrumb: 'Queue',
-          feature: 'qms_section'
+          breadcrumb: 'Queue'
         },
-        canActivate: [MenuAccessGuard],
+        canActivate: [QmsGuard],
         loadChildren: () => import('./queue/queue.module').then(m => m.QueueModule)
       },
       {
