@@ -49,7 +49,7 @@ export class PastVisitHistoryComponent implements OnInit {
     if (!this.data?.patientUuid) return;
     this.loading = true;
     this.error = false;
-    // Nested obs only carry uuid/display in the default rep, so ask for concept and value explicitly
+    /* Nested obs only carry uuid/display in the default rep, so ask for concept and value explicitly */
     const rep = 'custom:(uuid,startDatetime,encounters:(uuid,encounterDatetime,encounterType:(display),obs:(uuid,value,concept:(uuid,display))))';
     this.visitService.recentVisits(this.data.patientUuid, rep).subscribe({
       next: (res: any) => {
@@ -72,31 +72,54 @@ export class PastVisitHistoryComponent implements OnInit {
     const admission = encounters.find(e => e?.encounterType?.display === 'Admission');
     const stage3 = encounters.find(e => e?.encounterType?.display === 'DELIVERY_OUTCOME_STAGE3');
     const complete = encounters.find(e => e?.encounterType?.display === 'Visit Complete');
-    const deliveryEnc = stage3 || complete;
-  console.log("this.obs", encounters)
+    const outOfTime = this.obs(complete, ['OUT OF TIME']);
+    const referType = this.obs(complete, ['Refer Type']);
     const deliveryMode = this.obs(stage3, ['Delivery Mode', 'Mode of Delivery', 'DELIVERY_MODE']);
     const deliveryDate = this.obs(stage3, ['Delivery Date', 'DATE OF DELIVERY', 'Birth Date', 'DELIVERY_DATE']);
     const deliveryTime = this.obs(stage3, ['Delivery Time', 'TIME OF DELIVERY', 'Birth Time', 'DELIVERY_TIME']);
-    // Mirrors the partogram pages: mother status only applies to a completed visit that ended with a newborn
-    // (not out of time / referred). Deceased flag is 'MOTHER DECEASED NEW' (epartogram) or a reason being recorded (partogram).
-    const isNewbornComplete = !!complete && !this.obs(complete, ['OUT OF TIME']) && !this.obs(complete, ['Refer Type']);
-    const motherDeceasedReason = this.obs(complete, ['MOTHER DECEASED REASON']);
-    const motherDeceased = this.obs(complete, ['MOTHER DECEASED NEW']).toUpperCase() === 'YES' || !!motherDeceasedReason;
+
+    /* Same sources as the partogram: the outcome picked on Visit Complete, falling back to the stage 3 birth type */
+    let birthOutcome = this.obs(complete, ['Birth Outcome']);
+    if (birthOutcome.toUpperCase() === 'OTHER') {
+      birthOutcome = this.obs(complete, ['Birth Outcome Other']) || birthOutcome;
+    }
+    const babyStatus = birthOutcome || this.obs(stage3, ['Baby status', 'Baby Status', 'BIRTH_TYPE']);
+
+    /*
+     * Mother status: for newborn outcomes it is Healthy/Death (flag is 'MOTHER DECEASED NEW' on the epartogram,
+     * a recorded reason on the partogram); for visits ended in stage 1/2 it is the visit outcome, as on the mobile app.
+     */
+    const motherSource = complete || stage3;
+    const motherDeceasedReason = this.obs(motherSource, ['MOTHER DECEASED REASON']);
+    const motherDeceased = this.obs(motherSource, ['MOTHER DECEASED NEW']).toUpperCase() === 'YES' || !!motherDeceasedReason;
+    let motherStatus = '-';
+    if (outOfTime) {
+      motherStatus = `Out Of Time (${outOfTime})`;
+    } else if (referType) {
+      const referOther = referType === 'Other' ? this.obs(complete, ['Refer Type Other']) : '';
+      motherStatus = referOther ? `${referType} (${referOther})` : referType;
+    } else if (motherSource) {
+      motherStatus = motherDeceased ? `Death${motherDeceasedReason ? ` (${motherDeceasedReason})` : ''}` : 'Healthy';
+    }
+
+    /* Heading shows the admission date of the visit, not the visit record's start date */
+    const admissionDate = this.obs(admission, ['Admission_Date']) || admission?.encounterDatetime;
 
     return {
       visitUuid: visit.uuid,
-      date: this.fmt(visit.startDatetime, 'DD MMMM YYYY'),
+      date: this.fmt(admissionDate, 'DD MMMM YYYY'),
       title: deliveryMode || '-',
       activeLabourDiagnosed: this.fmt(this.obs(admission, ['Active Labor Diagnosed']), 'DD MMMM YYYY, hh:mm A'),
-      deliveryDate: deliveryDate
-        ? this.fmt(deliveryTime ? `${deliveryDate} ${deliveryTime}` : deliveryDate, 'DD MMMM YYYY, hh:mm A')
-        : this.fmt(deliveryEnc?.encounterDatetime, 'DD MMMM YYYY, hh:mm A'),
+      /* Visits that ended in stage 1 or 2 have no delivery outcome encounter, so only that encounter decides */
+      deliveryDate: !stage3
+        ? '-'
+        : this.fmt(deliveryDate ? (deliveryTime ? `${deliveryDate} ${deliveryTime}` : deliveryDate) : stage3.encounterDatetime, 'DD MMMM YYYY, hh:mm A'),
       riskFactors: this.obs(admission, ['Risk factors']) || '-',
       parity: this.obs(admission, ['Parity']) || '-',
       modeOfDelivery: deliveryMode || '-',
-      babyStatus: this.obs(stage3, ['Baby status', 'Baby Status', 'BIRTH_TYPE']) || '-',
-      motherStatus: !isNewbornComplete ? '-' : motherDeceased ? `Death${motherDeceasedReason ? ` (${motherDeceasedReason})` : ''}` : 'Healthy',
-      // Same condition as the "View Stage 3" button on the partogram
+      babyStatus: babyStatus || '-',
+      motherStatus,
+      /* Same condition as the "View Stage 3" button on the partogram */
       reportUrl: environment.hasStage3 && stage3 ? `/dashboard/stage3/${visit.uuid}` : ''
     };
   }
