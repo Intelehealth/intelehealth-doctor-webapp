@@ -120,7 +120,8 @@
   z-index: auto;
 }
 
-.turn-server-scroll .patient-info-main {
+.turn-server-scroll .patient-info-main,
+.turn-server-scroll .patient-sticky-wrap.has-banner {
   box-shadow: none;
 }
 

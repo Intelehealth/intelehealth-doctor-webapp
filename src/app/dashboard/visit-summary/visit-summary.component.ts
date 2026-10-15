@@ -120,9 +120,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitNoteDoctorName = '';
 
   get showVisitInProgressBanner(): boolean {
-    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor(
-      !!this.visitNotePresent, this.isVisitNoteProvider, this.isMCCUser, this.visitNoteDoctorName
-    );
+    return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
+      visitNoteExists: !!this.visitNotePresent,
+      visitFinished: !!this.visitCompleted || !!this.visitEnded,
+      isVisitNoteProvider: this.isVisitNoteProvider,
+      isMCCUser: this.isMCCUser,
+      doctorName: this.visitNoteDoctorName
+    });
   }
   referSpecialityForm: FormGroup;
   provider: ProviderModel;

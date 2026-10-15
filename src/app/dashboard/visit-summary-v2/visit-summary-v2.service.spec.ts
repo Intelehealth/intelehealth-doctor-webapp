@@ -60,6 +60,13 @@ describe('VisitSummaryV2Service - visit note doctor', () => {
     expect(data.visitNoteDoctorName).toBe('');
   });
 
+  it('flags a visit as completed only when a Visit Complete encounter exists', () => {
+    const completeEncounter = { uuid: 'enc-2', display: 'Visit Complete 14/10/2026', encounterType: { display: 'Visit Complete' }, obs: [], encounterProviders: [] };
+
+    expect(load([visitNote([])]).visitCompleted).toBeFalse();
+    expect(load([visitNote([]), completeEncounter]).visitCompleted).toBeTrue();
+  });
+
   it('only reads the visit note provider, not other encounters', () => {
     const nurseEncounter = {
       uuid: 'enc-1',

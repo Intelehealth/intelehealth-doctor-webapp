@@ -26,6 +26,7 @@ describe('VisitSummaryV2Component - in-progress visit message', () => {
     patientModel: {},
     clinicName: '',
     visitEnded: false,
+    visitCompleted: false,
     visitNoteProviderUuids: ['provider-other'],
     visitNoteDoctorName: 'Jane Doe',
     consultationDetails: [],
@@ -94,6 +95,18 @@ describe('VisitSummaryV2Component - in-progress visit message', () => {
     expect(component.showVisitInProgressBanner).toBeFalse();
   });
 
+  it('does not show the message once the visit is completed', () => {
+    const component = create(visitData({ visitCompleted: true }));
+
+    expect(component.showVisitInProgressBanner).toBeFalse();
+  });
+
+  it('does not show the message once the visit has ended', () => {
+    const component = create(visitData({ visitEnded: true }));
+
+    expect(component.showVisitInProgressBanner).toBeFalse();
+  });
+
   it('does not show the message to MCC users, and checks the MCC role only once on init', () => {
     const component = create(visitData(), { name: 'ORGANIZATIONAL:MCC' });
 
@@ -121,7 +134,7 @@ describe('VisitSummaryV2Component - in-progress visit message rendering', () => 
   const render = (data: Partial<Record<string, any>>) => {
     const visitData = {
       visit: { encounters: [] }, visitNoteExists: true, visitNoteUuid: 'note-1', patientUuid: 'patient-1', specializations: [],
-      patient: {}, patientModel: {}, clinicName: '', visitEnded: false,
+      patient: {}, patientModel: {}, clinicName: '', visitEnded: false, visitCompleted: false,
       visitNoteProviderUuids: ['provider-other'], visitNoteDoctorName: 'Jane Doe', consultationDetails: [], chiefComplaints: [],
       complaintDetails: [], associatedSymptoms: [], patientHistory: [], familyHistory: [], vitals: [], generalExams: [],
       abdomenFindings: [], eyeImages: [], documents: [], ...data
@@ -169,6 +182,12 @@ describe('VisitSummaryV2Component - in-progress visit message rendering', () => 
 
   it('does not render the message for the doctor who started the visit note', () => {
     expect(render({ visitNoteProviderUuids: ['provider-me'] })).toBeNull();
+  });
+
+  it('does not render the message once the visit is completed or ended', () => {
+    expect(render({ visitCompleted: true })).toBeNull();
+    TestBed.resetTestingModule();
+    expect(render({ visitEnded: true })).toBeNull();
   });
 
   it('does not render the message when there is no visit note', () => {

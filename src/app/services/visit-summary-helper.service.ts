@@ -65,15 +65,17 @@ export class VisitSummaryHelperService {
     const name = (visitNote?.encounterProviders || [])
       .map((ep) => ep?.provider?.person?.display || ep?.display?.split(':')[0])
       .find(Boolean) || '';
-    return name.replace(/^\s*dr\.?\s+/i, '').trim();
+    return name.replace(/^\s*dr(\.\s*|\s+)/i, '').trim();
   }
 
   /**
-   * Whether to show "visit already in progress with Dr. X": a visit note exists, it was started
-   * by someone else, the user is not an MCC user and the doctor can be named.
+   * Whether to show "visit already in progress with Dr. X": a visit note exists and the visit is
+   * still open, it was started by someone else, the user is not an MCC user and the doctor can be named.
    */
-  isVisitInProgressWithAnotherDoctor(visitNoteExists: boolean, isVisitNoteProvider: boolean, isMCCUser: boolean, doctorName: string): boolean {
-    return visitNoteExists && !isVisitNoteProvider && !isMCCUser && !!doctorName;
+  isVisitInProgressWithAnotherDoctor(state: {
+    visitNoteExists: boolean; visitFinished: boolean; isVisitNoteProvider: boolean; isMCCUser: boolean; doctorName: string;
+  }): boolean {
+    return state.visitNoteExists && !state.visitFinished && !state.isVisitNoteProvider && !state.isMCCUser && !!state.doctorName;
   }
 
   checkIfAttributeExists(attrs: VisitAttributeModel[], attribute = 'Visit Speciality') {

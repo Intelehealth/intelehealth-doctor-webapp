@@ -34,6 +34,10 @@ describe('VisitSummaryHelperService - visit in progress with another doctor', ()
       expect(service.getVisitNoteDoctorName(noteWith({ provider: { person: { display: 'dr Jane Doe' } } }))).toBe('Jane Doe');
     });
 
+    it('strips the prefix when there is no space after it ("Dr.Jane Doe")', () => {
+      expect(service.getVisitNoteDoctorName(noteWith({ provider: { person: { display: 'Dr.Jane Doe' } } }))).toBe('Jane Doe');
+    });
+
     it('does not strip a name that merely starts with the letters "Dr"', () => {
       expect(service.getVisitNoteDoctorName(noteWith({ provider: { person: { display: 'Drew Barry' } } }))).toBe('Drew Barry');
     });
@@ -63,24 +67,30 @@ describe('VisitSummaryHelperService - visit in progress with another doctor', ()
   });
 
   describe('isVisitInProgressWithAnotherDoctor', () => {
-    it('is true when a visit note was started by someone else and the doctor can be named', () => {
-      expect(service.isVisitInProgressWithAnotherDoctor(true, false, false, 'Jane Doe')).toBeTrue();
+    const open = { visitNoteExists: true, visitFinished: false, isVisitNoteProvider: false, isMCCUser: false, doctorName: 'Jane Doe' };
+
+    it('is true when an open visit note was started by someone else and the doctor can be named', () => {
+      expect(service.isVisitInProgressWithAnotherDoctor(open)).toBeTrue();
     });
 
     it('is false when there is no visit note', () => {
-      expect(service.isVisitInProgressWithAnotherDoctor(false, false, false, 'Jane Doe')).toBeFalse();
+      expect(service.isVisitInProgressWithAnotherDoctor({ ...open, visitNoteExists: false })).toBeFalse();
+    });
+
+    it('is false once the visit is completed or ended', () => {
+      expect(service.isVisitInProgressWithAnotherDoctor({ ...open, visitFinished: true })).toBeFalse();
     });
 
     it('is false for the doctor who started the visit', () => {
-      expect(service.isVisitInProgressWithAnotherDoctor(true, true, false, 'Jane Doe')).toBeFalse();
+      expect(service.isVisitInProgressWithAnotherDoctor({ ...open, isVisitNoteProvider: true })).toBeFalse();
     });
 
     it('is false for MCC users', () => {
-      expect(service.isVisitInProgressWithAnotherDoctor(true, false, true, 'Jane Doe')).toBeFalse();
+      expect(service.isVisitInProgressWithAnotherDoctor({ ...open, isMCCUser: true })).toBeFalse();
     });
 
     it('is false when the doctor name is empty', () => {
-      expect(service.isVisitInProgressWithAnotherDoctor(true, false, false, '')).toBeFalse();
+      expect(service.isVisitInProgressWithAnotherDoctor({ ...open, doctorName: '' })).toBeFalse();
     });
   });
 });

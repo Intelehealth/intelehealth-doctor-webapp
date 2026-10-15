@@ -36,8 +36,8 @@ describe('VisitSummaryComponent - in-progress visit message', () => {
     provider: { uuid, person: { display: name } }
   });
 
-  const create = (encounters: any[], isMCCUser = false): VisitSummaryComponent => {
-    const visit = { uuid: 'visit-1', patient: { uuid: 'patient-1' }, encounters, attributes: [] };
+  const create = (encounters: any[], isMCCUser = false, stopDatetime: string = null): VisitSummaryComponent => {
+    const visit = { uuid: 'visit-1', patient: { uuid: 'patient-1' }, encounters, attributes: [], stopDatetime };
     const visitService: any = {
       fetchVisitDetails: jasmine.createSpy('fetchVisitDetails').and.returnValue(of(visit)),
       patientInfo: jasmine.createSpy('patientInfo').and.returnValue(of({ uuid: 'patient-1' })),
@@ -100,6 +100,37 @@ describe('VisitSummaryComponent - in-progress visit message', () => {
     loadVisit(component);
 
     expect(component.visitNoteDoctorName).toBe('');
+    expect(component.showVisitInProgressBanner).toBeFalse();
+  }));
+
+  it('does not show the message once the visit is completed', fakeAsync(() => {
+    const component = create([
+      visitNote(provider('provider-other', 'Jane Doe')),
+      { uuid: 'enc-2', display: 'Visit Complete 14/10/2026', encounterProviders: [] }
+    ]);
+
+    loadVisit(component);
+
+    expect(component.visitNoteDoctorName).toBe('Jane Doe');
+    expect(component.showVisitInProgressBanner).toBeFalse();
+  }));
+
+  it('does not show the message once the patient exit survey is done', fakeAsync(() => {
+    const component = create([
+      visitNote(provider('provider-other', 'Jane Doe')),
+      { uuid: 'enc-3', display: 'Patient Exit Survey 14/10/2026', encounterProviders: [] }
+    ]);
+
+    loadVisit(component);
+
+    expect(component.showVisitInProgressBanner).toBeFalse();
+  }));
+
+  it('does not show the message once the visit has a stop time', fakeAsync(() => {
+    const component = create([visitNote(provider('provider-other', 'Jane Doe'))], false, '2026-10-14T12:00:00.000+0000');
+
+    loadVisit(component);
+
     expect(component.showVisitInProgressBanner).toBeFalse();
   }));
 
