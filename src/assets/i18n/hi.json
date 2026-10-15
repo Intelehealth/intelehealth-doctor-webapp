@@ -5024,7 +5024,8 @@
   "This visit was just claimed by another doctor": "यह विज़िट अभी किसी अन्य डॉक्टर ने क्लेम कर ली है",
   "This visit was cancelled": "यह विज़िट रद्द कर दी गई है",
   "You must be online in the queue to claim this visit": "इस विज़िट को क्लेम करने के लिए आपको कतार में ऑनलाइन होना चाहिए",
-  "This visit can't be claimed right now": "यह विज़िट अभी क्लेम नहीं की जा सकती"
+  "This visit can't be claimed right now": "यह विज़िट अभी क्लेम नहीं की जा सकती",
+  "This visit is already with another doctor": "यह विज़िट पहले से किसी अन्य डॉक्टर के पास है",
   "QMS": "क्यूएमएस",
   "Queue Management System (QMS) is currently enabled.": "क्यू प्रबंधन प्रणाली (क्यूएमएस) इस समय सक्षम है।",
   "Queue Management System (QMS) is currently disabled.": "क्यू प्रबंधन प्रणाली (क्यूएमएस) इस समय अक्षम है।",

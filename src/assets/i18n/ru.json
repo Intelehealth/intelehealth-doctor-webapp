@@ -6128,7 +6128,8 @@
   "This visit was just claimed by another doctor": "Этот визит только что принял другой врач",
   "This visit was cancelled": "Этот визит был отменён",
   "You must be online in the queue to claim this visit": "Чтобы принять этот визит, вы должны быть в сети в очереди",
-  "This visit can't be claimed right now": "Этот визит сейчас нельзя принять"
+  "This visit can't be claimed right now": "Этот визит сейчас нельзя принять",
+  "This visit is already with another doctor": "Этот визит уже у другого врача",
   "QMS": "QMS",
   "Queue Management System (QMS) is currently enabled.": "Система управления очередью (QMS) в настоящее время включена.",
   "Queue Management System (QMS) is currently disabled.": "Система управления очередью (QMS) в настоящее время отключена.",

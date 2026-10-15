@@ -848,7 +848,7 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
-      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
+      <button type="button" class="blue-btn" (click)="startVisitNote()" [disabled]="startingVisitNote" data-test-id="btnStartVisitNote" *ngxPermissionsExcept="['ORGANIZATIONAL:MCC']">
         {{'Start visit note'|translate}}
       </button>
     </div>

@@ -6127,7 +6127,8 @@
   "This visit was just claimed by another doctor": "This visit was just claimed by another doctor",
   "This visit was cancelled": "This visit was cancelled",
   "You must be online in the queue to claim this visit": "You must be online in the queue to claim this visit",
-  "This visit can't be claimed right now": "This visit can't be claimed right now"
+  "This visit can't be claimed right now": "This visit can't be claimed right now",
+  "This visit is already with another doctor": "This visit is already with another doctor",
   "QMS": "QMS",
   "Queue Management System (QMS) is currently enabled.": "Queue Management System (QMS) is currently enabled.",
   "Queue Management System (QMS) is currently disabled.": "Queue Management System (QMS) is currently disabled.",
