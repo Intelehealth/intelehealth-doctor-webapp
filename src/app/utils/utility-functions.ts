@@ -33,6 +33,11 @@ export function isJsonString(str) {
   }
 }
 
+// A UUID (e.g. room_id) falls back into patientId when there's no matching OpenMRS patient identifier.
+export function isUuid(value: any): boolean {
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 export function getEncounterProviderUUID() {
   return getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER).encounterProviders[0].provider.uuid;
 }
@@ -50,6 +55,13 @@ export function checkIfDateOldThanOneDay(data: string) {
   let hours = moment(data).diff(moment(), 'hours');
   let minutes = moment(data).diff(moment(), 'minutes');
   minutes = minutes - (hours * 60);
+
+  if (environment.isTurnServer) {
+    return minutes < 0
+      ? `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`
+      : moment(data).format('DD MMM, YYYY hh:mm A');
+  }
+
   let resString = "";
   if (hours >= 24) {
     resString = moment(data).format('DD MMM, YYYY hh:mm A');

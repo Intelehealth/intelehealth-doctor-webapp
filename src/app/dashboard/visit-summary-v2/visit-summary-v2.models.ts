@@ -4,10 +4,16 @@ export interface SectionNavItem {
   icon: string;
 }
 
+export interface NavGroup {
+  label: string;
+  items: SectionNavItem[];
+}
+
 export interface DetailRow {
   label: string;
   value: string;
   highlight?: boolean;
+  success?: boolean;
 }
 
 export interface ComplaintDetail {
@@ -23,6 +29,7 @@ export interface SymptomGroup {
 export interface VitalCell {
   label: string;
   value: string;
+  bold?: boolean;
 }
 
 export interface DocItem {
@@ -91,6 +98,8 @@ export interface Patient {
   weight: string;
   allergies: string[];
   extraAllergiesCount: number;
+  abhaNumber: string;
+  abhaAddress: string;
   pregnancy: string;
   contactNo: string;
   occupation: string;
@@ -112,6 +121,7 @@ export type SuggestionSource = 'ai' | 'manual';
 export interface AiDiagnosisSuggestion {
   name: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
 }
 
@@ -119,6 +129,7 @@ export interface AiMedicationSuggestion {
   name: string;
   label: string;
   likelihood: SuggestionLikelihood;
+  confidence: number | null;
   reasons: string[];
   timing?: string;
   strength?: string;
@@ -135,6 +146,8 @@ export interface AiFollowUp {
 
 export interface AiTreatmentResult {
   medicines: AiMedicationSuggestion[];
+  /** Raw AI medications, in AI rank order — sent to /ttx/manual like the old Visit Summary. */
+  rawMedicines: any[];
   advices: string[];
   tests: string[];
   referrals: { speciality: string; facility: string; priority: string; reason: string }[];
@@ -156,8 +169,10 @@ export interface SelectedMedicine {
   strength: string;
   days: string;
   durationUnit?: string;
-  remarks: string;
+  remarks: string | null;
   editing?: boolean;
+  uuid?: string;
+  addedIndex?: number;
 }
 
 export interface AyuSuggestedQuestion {
@@ -176,5 +191,7 @@ export interface AdviceBundle {
 export interface AiDiagnosisResult {
   summary: string;
   suggestions: AiDiagnosisSuggestion[];
+  /** Raw AI diagnoses, in AI rank order — sent to /ddx/manual like the old Visit Summary. */
+  raw: any[];
   questions: AyuSuggestedQuestion[];
 }

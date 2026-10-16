@@ -1,0 +1,26 @@
+<div class="intel-con-modal queue-modal" data-test-id="endShiftModal">
+  <div class="queue-modal-close">
+    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseEndShift">
+      <img src="assets/svgs/CloseX.svg" alt="Close" />
+    </button>
+  </div>
+
+  <div class="modal-con">
+    <div class="queue-modal-icon grey">
+      <img src="assets/svgs/queue-end-shift.svg" alt="" data-test-id="imgEndShift" />
+    </div>
+    <h6 class="mt-3" data-test-id="lblEndShiftTitle">{{ 'End Shift for today?' | translate }}</h6>
+    <p class="mt-2 text-center" data-test-id="lblEndShiftMessage">
+      {{ 'Healthworkers will see that you are unavailable. You will not receive new consultations today.' | translate }}
+    </p>
+  </div>
+
+  <div class="modal-action-btn-con">
+    <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)" data-test-id="btnCancelEndShift">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button class="modal-btn dark-btn" type="button" (click)="close(true)" data-test-id="btnConfirmEndShift">
+      {{ 'Log Off' | translate }}
+    </button>
+  </div>
+</div>

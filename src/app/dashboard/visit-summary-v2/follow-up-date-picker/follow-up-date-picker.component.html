@@ -1,0 +1,62 @@
+<div class="vs2-date-picker" cdkOverlayOrigin #origin="cdkOverlayOrigin">
+  <input type="text" class="vs2-date-picker-input" readonly [placeholder]="placeholder"
+    [value]="selectedDate ? (selectedDate | date : 'dd MMMM yyyy') : ''" (click)="toggle()" />
+  <button type="button" class="vs2-date-picker-toggle" aria-label="Open calendar" (click)="toggle()">
+    <img src="assets/svgs/calendar-date.svg" alt="" />
+  </button>
+</div>
+
+<ng-template cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="close()"
+  (detach)="close()">
+  <div class="vs2-fu-calendar" role="dialog" aria-label="Choose follow-up date">
+    <div class="vs2-fu-cal-header">
+      <button type="button" class="vs2-fu-cal-nav" [disabled]="!canGoPrevious()" (click)="previous()" aria-label="Previous">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span class="vs2-fu-cal-periods">
+        <button type="button" class="vs2-fu-cal-chip" [class.active]="view !== 'year'" (click)="showMonths()">
+          {{ months[viewMonth] }} <mat-icon>expand_more</mat-icon>
+        </button>
+        <button type="button" class="vs2-fu-cal-chip" [class.active]="view === 'year'" (click)="showYears()">
+          {{ viewYear }} <mat-icon>expand_more</mat-icon>
+        </button>
+      </span>
+      <button type="button" class="vs2-fu-cal-nav" (click)="next()" aria-label="Next">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <ng-container [ngSwitch]="view">
+      <!-- Days -->
+      <div *ngSwitchCase="'day'" class="vs2-fu-cal-days">
+        <span class="vs2-fu-cal-weekday" *ngFor="let w of weekdays">{{ w }}</span>
+        <ng-container *ngFor="let week of weeks">
+          <button type="button" class="vs2-fu-cal-day" *ngFor="let cell of week"
+            [class.outside]="!cell.inMonth"
+            [class.today]="cell.today"
+            [class.selected]="cell.selected"
+            [disabled]="cell.disabled"
+            (click)="pickDay(cell)">{{ cell.day }}</button>
+        </ng-container>
+      </div>
+
+      <!-- Months -->
+      <div *ngSwitchCase="'month'" class="vs2-fu-cal-list">
+        <button type="button" class="vs2-fu-cal-list-item" *ngFor="let m of months; let i = index"
+          [class.selected]="i === viewMonth" [disabled]="isMonthDisabled(i)" (click)="pickMonth(i)">{{ m }}</button>
+      </div>
+
+      <!-- Years -->
+      <div *ngSwitchCase="'year'" class="vs2-fu-cal-list">
+        <button type="button" class="vs2-fu-cal-list-item" *ngFor="let y of years"
+          [class.selected]="y === viewYear" [disabled]="isYearDisabled(y)" (click)="pickYear(y)">{{ y }}</button>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

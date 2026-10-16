@@ -31,6 +31,27 @@ export class VisitService {
   }
 
   /**
+  * Turn-server only: full visit representation the Turn prescription PDF is built
+  * from, sent along with the Turn notify call so Turn builds the PDF from this
+  * payload instead of re-reading OpenMRS right after the encounter was created.
+  * @param {string} uuid - Visit uuid
+  * @return {Observable<any>}
+  */
+  getVisitForPrescription(uuid: string): Observable<any> {
+    // Must match turn-io/prescription/openmrs.js's VISIT_CUSTOM_REP exactly.
+    const v =
+      "custom:(uuid,location:(display)," +
+      "patient:(uuid,identifiers:(identifier,identifierType:(name,display))," +
+      "person:(display,gender,age,birthdate,preferredName:(givenName,middleName,familyName)," +
+      "attributes:(value,attributeType:(display,uuid)),preferredAddress:(address1,address2,cityVillage,countyDistrict,stateProvince,postalCode)))," +
+      "encounters:(encounterDatetime,encounterType:(uuid,display)," +
+      "obs:(uuid,display,value,concept:(uuid,display),groupMembers:(uuid,display,value,concept:(uuid,display)))," +
+      "encounterProviders:(provider:(uuid,display,attributes:(value,attributeType:(display))))))";
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url);
+  }
+
+  /**
   * Get visits for a patient
   * @param {string} id - Patient uuid
   * @return {Observable<any>}
@@ -203,6 +224,21 @@ export class VisitService {
       data.value_text = value["en"];
     }
     return data;
+  }
+
+  parseChiefComplaints(rawValue: string | null | undefined): string[] {
+    if (!rawValue) {
+      return [];
+    }
+    const sections = `${rawValue}`.replace(new RegExp('\u25ba', 'g'), '').split('<b>');
+    const complaints: string[] = [];
+    for (let i = 1; i < sections.length; i++) {
+      const title = sections[i].split('<')[0]?.trim();
+      if (title && !title.match(visitTypes.ASSOCIATED_SYMPTOMS)) {
+        complaints.push(title);
+      }
+    }
+    return complaints;
   }
 
   /**

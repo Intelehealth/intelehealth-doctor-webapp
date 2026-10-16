@@ -4,7 +4,11 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { visitTypes, conceptIds, doctorDetails, visitAttributeTypes } from 'src/config/constant';
-import { calculateBMI, convertCelsiusToFahrenheit } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, getCacheData, getPrescriptionSourceEncounterUuids } from 'src/app/utils/utility-functions';
+import { NgxRolesService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { ProviderService } from 'src/app/services/provider.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 import {
   ApiResponseModel, EncounterModel, ObsApiResponseModel, ObsModel,
   PatientModel, VisitModel, VitalModel
@@ -22,7 +26,9 @@ import {
   ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
-import { AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE } from './doctor-note/doctor-note.constants';
+import {
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE
+} from './doctor-note/doctor-note.constants';
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
 export interface DiagnosisOption { name: string; code: string; }
@@ -32,6 +38,11 @@ export interface DraftTest { value: string; uuid: string; }
 export interface DraftReferral { speciality: string; facility: string; priority: string; reason: string; uuid: string; }
 export interface DraftFollowUp { wantFollowUp: boolean; date: string; time: string; reason: string; type: string; uuid: string; }
 export interface DraftTextItem { value: string; uuid: string; }
+/**
+ * The additional instruction. 
+ */
+export interface DraftInstruction extends DraftTextItem { stored: 'advice' | 'medication'; prefixed: boolean; }
+export interface DraftReferralConsent { decision: string; consent: string; uuid: string; }
 export interface DraftNote {
   diagnoses: DraftDiagnosis[];
   medications: DraftMedication[];
@@ -40,7 +51,9 @@ export interface DraftNote {
   referrals: DraftReferral[];
   followUp: DraftFollowUp | null;
   notes: DraftTextItem[];
-  additionalInstruction: DraftTextItem | null;
+  familyHistoryNotes: DraftTextItem[];
+  pastMedicalHistoryNotes: DraftTextItem[];
+  additionalInstruction: DraftInstruction | null;
 }
 
 export interface CurrentVisitData {
@@ -48,13 +61,21 @@ export interface CurrentVisitData {
   visit: VisitModel;
   visitNoteExists: boolean;
   visitNoteUuid: string;
+  /** Encounters this doctor's note obs are read from — own note (+ Referral encounter for a NAMCO doctor). */
+  noteEncounterUuids: string[];
+  /** Whether the referring (normal) doctor's own Visit Note exists on this visit. */
+  primaryVisitNoteExists: boolean;
+  primaryVisitNoteUuid: string;
   patientUuid: string;
   specializations: string[];
   patient: Patient;
   patientModel: PatientModel;
   clinicName: string;
   visitEnded: boolean;
+  visitReferred: boolean;
+  visitCompleted: boolean;
   visitNoteProviderUuids: string[];
+  visitNoteDoctorName: string;
   consultationDetails: DetailRow[];
   chiefComplaints: string[];
   complaintDetails: ComplaintDetail[];
@@ -62,11 +83,20 @@ export interface CurrentVisitData {
   patientHistory: DetailRow[];
   familyHistory: DetailRow[];
   vitals: VitalCell[];
+  diagnostics: VitalCell[];
   generalExams: DetailRow[];
   abdomenFindings: string[];
   eyeImages: string[];
+  additionalNote: string;
   documents: DocItem[];
 }
+
+/** Marker the old non-AI Visit Summary puts in front of an additional instruction's value. */
+const ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
+const VISIT_NOTE_ENCOUNTER_TYPE = 'd7151f82-c1f3-4152-a605-2f9ea7414a79';
+const SPECIALIST_VISIT_NOTE_ENCOUNTER_TYPE = '086f323a-b90b-49aa-a3ca-fb9ed8ab7426';
+const REFERRAL_ENCOUNTER_TYPE = '95f4ae7f-6caa-4c66-950f-7f3d6072ce56';
+const ROUTING_SPECIALIZATION_ATTRIBUTE_TYPE = '8128ee6a-af76-4c79-8c99-b7de54e13f8d';
 
 @Injectable({ providedIn: 'root' })
 export class VisitSummaryV2Service {
@@ -81,8 +111,82 @@ export class VisitSummaryV2Service {
     private helper: VisitSummaryHelperService,
     private appConfigService: AppConfigService,
     private aiddxService: AiddxService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private providerService: ProviderService,
+    private rolesService: NgxRolesService,
+    private toastr: ToastrService,
+    private analytics: AnalyticsService
   ) {}
+
+  /** MCC users don't get the Kaleyra call button, as in the old Visit Summary. */
+  isMCCUser(): boolean {
+    return !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
+  }
+
+  /** Phone number of the health worker who created the visit (provider of the ADULTINITIAL encounter). */
+  getHwPhoneNo(visit: VisitModel): string {
+    const encounter = (visit?.encounters || []).find(e =>
+      e.display?.match(visitTypes.ADULTINITIAL) !== null && e.encounterProviders?.length);
+    let phoneNo = '';
+    (encounter?.encounterProviders?.[0]?.provider as any)?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
+        phoneNo = attribute.value;
+      }
+    });
+    return phoneNo;
+  }
+
+  /**
+  * Connect the logged-in doctor to the visit's health worker through Kaleyra click2call — same
+  * checks, payload, toasts and analytics as the old Visit Summary's startKaleyraCall().
+  */
+  startKaleyraCall(visit: VisitModel, hwPhoneNo: string): void {
+    if (!hwPhoneNo) {
+      this.toastr.error('Health worker phone number is not available');
+      return;
+    }
+    if (!visit?.uuid) {
+      this.toastr.error('Visit ID is not available');
+      return;
+    }
+    const provider = getCacheData(true, doctorDetails.PROVIDER);
+    let doctorPhoneNumber = '';
+    provider?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null) {
+        doctorPhoneNumber = attribute.value;
+      }
+    });
+    if (!doctorPhoneNumber) {
+      this.toastr.error('Doctor phone number is not available. Please update your profile with a valid phone number.');
+      return;
+    }
+    this.toastr.info('Initiating Kaleyra call...');
+    // custom = doctoruuid:patientuuid, notes = visituuid:nurseuuid
+    const nurseUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid || '';
+    const custom = `${provider?.uuid}:${visit.patient?.uuid}`;
+    const notes = `${visit.uuid}:${nurseUuid}`;
+    const location = visit.location?.display || '';
+    this.providerService.kaleyraClick2Call(doctorPhoneNumber, hwPhoneNo, custom, '0', notes).subscribe({
+      next: () => {
+        this.analytics.logEvent('kaleyra_call_initiated', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          patientOpenMrsId: this.patientIdentifier(visit.patient as any, 'OpenMRS ID'),
+          visitId: visit.uuid,
+          location
+        });
+        this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
+      },
+      error: (error) => {
+        this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          visitId: visit.uuid,
+          location,
+          reason: error?.message ?? 'unknown'
+        });
+        this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
+      }
+    });
+  }
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
     return this.diagnosisService.getObs(patientUuid, conceptIds.conceptNote).pipe(
@@ -118,9 +222,9 @@ export class VisitSummaryV2Service {
       : this.visitService.postAttribute(visitUuid, payload);
   }
 
-  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false): Observable<AiDiagnosisResult> {
+  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false, recompute = false): Observable<AiDiagnosisResult> {
     const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
-    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared).pipe(
+    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared, recompute).pipe(
       map((res: any) => this.buildAiDiagnosisResult(res))
     );
   }
@@ -130,9 +234,11 @@ export class VisitSummaryV2Service {
     const questions = res?.result?.data?.further_questions || [];
     return {
       summary: res?.conclusion || res?.result?.data?.conclusion || '',
+      raw: results,
       suggestions: results.map((r: any) => ({
         name: r?.diagnosis || '',
         likelihood: this.mapLikelihood(r?.likelihood),
+        confidence: this.mapProbability(r?.probability),
         reasons: this.buildRationale(r)
       })).filter((s: AiDiagnosisSuggestion) => !!s.name),
       questions: questions.map((q: any) => {
@@ -147,6 +253,13 @@ export class VisitSummaryV2Service {
         };
       }).filter((q: AyuSuggestedQuestion) => !!q.question)
     };
+  }
+
+  private mapProbability(value: any): number | null {
+    if (value === null || value === undefined || value === '') { return null; }
+    const num = Number(value);
+    if (isNaN(num)) { return null; }
+    return Math.round(num <= 1 ? num * 100 : num);
   }
 
   private mapLikelihood(value: string): SuggestionLikelihood {
@@ -167,10 +280,12 @@ export class VisitSummaryV2Service {
   private buildAiTreatmentResult(res: any): AiTreatmentResult {
     const data = res?.result?.data || {};
     return {
+      rawMedicines: data.medications || data.result || [],
       medicines: (data.medications || data.result || []).map((m: any) => ({
         name: m?.name || '',
         label: m?.name || '',
         likelihood: this.mapConfidence(m?.confidence),
+        confidence: this.mapProbability(m?.confidence),
         reasons: this.toReasonList(m?.rationale),
         timing: m?.frequency || '',
         strength: m?.dosage || '',
@@ -221,7 +336,7 @@ export class VisitSummaryV2Service {
     return [];
   }
 
-  loadCurrentVisit(uuid: string): Observable<CurrentVisitData> {
+  loadCurrentVisit(uuid: string, isNamcoDoctor = false): Observable<CurrentVisitData> {
     return this.visitService.fetchVisitDetails(uuid).pipe(
       switchMap((visit: VisitModel) => {
         if (!visit) { return EMPTY; }
@@ -231,7 +346,7 @@ export class VisitSummaryV2Service {
           appointment: this.appointmentService.getAppointment(visit.uuid).pipe(catchError(() => of(null))),
           eyeImages: this.diagnosisService.getObs(patientUuid, conceptIds.conceptPhysicalExamination).pipe(catchError(() => of({ results: [] } as ObsApiResponseModel))),
           docs: this.diagnosisService.getObs(patientUuid, conceptIds.conceptAdditionlDocument).pipe(catchError(() => of({ results: [] } as ObsApiResponseModel)))
-        }).pipe(map(res => this.assemble(visit, res.patient, res.appointment, res.eyeImages, res.docs)));
+        }).pipe(map(res => this.assemble(visit, res.patient, res.appointment, res.eyeImages, res.docs, isNamcoDoctor)));
       })
     );
   }
@@ -266,8 +381,13 @@ export class VisitSummaryV2Service {
     const cc = this.parseCheckUpReason(encounters);
     const mh = this.parseMedicalHistory(encounters);
     const pe = this.parsePhysicalExam(encounters);
-    const prescription = this.parsePrescription(encounters);
-    const referred = this.obsByConcept(encounters, conceptIds.conceptReferral).length > 0;
+    // Only the logged-in doctor's own prescription (normal doctor: Visit Note, NAMCO doctor: Specialist
+    // Visit Note) — never the two doctors' blended. No note of their own on this visit → the existing one.
+    const ownNote = this.ownNoteEncounters(visit);
+    const rxEncounters = ownNote.length ? ownNote : encounters;
+    const prescription = this.parsePrescription(rxEncounters);
+    if (ownNote.length) { prescription.doctor = this.doctorForNote(ownNote[0], encounters); }
+    const referred = this.obsByConcept(rxEncounters, conceptIds.conceptReferral).length > 0;
     const docName = prescription.doctor.name || '';
     const firstMed = prescription.meds[0];
     return {
@@ -303,9 +423,9 @@ export class VisitSummaryV2Service {
   private parsePrescription(encounters: EncounterModel[]): PrescriptionData {
     const diagnosis = this.obsByConcept(encounters, conceptIds.conceptDiagnosis)
       .map(o => this.diagnosisFromValue(o.value)).filter(d => d.name);
-    const meds = this.obsByConcept(encounters, conceptIds.conceptMed).map(o => this.medFromValue(o.value));
+    const meds = this.obsByConcept(encounters, conceptIds.conceptMed).filter(o => !!o.value && !this.isMedicationInstruction(o.value)).map(o => this.medFromValue(o.value));
     const notes = this.obsByConcept(encounters, conceptIds.conceptNote).map(o => o.value).filter(v => !!v && !!String(v).trim());
-    const advice = this.obsByConcept(encounters, conceptIds.conceptAdvice).filter(o => !o.value.includes('</a>')).map(o => o.value);
+    const advice = this.obsByConcept(encounters, conceptIds.conceptAdvice).filter(o => !o.value.includes('</a>') && !o.value.startsWith(ADDITIONAL_INSTRUCTION_PREFIX)).map(o => o.value);
     const tests = this.obsByConcept(encounters, conceptIds.conceptTest).map(o => o.value);
     const instructions = this.obsByConcept(encounters, conceptIds.conceptFollowUpInstruction).map(o => o.value);
     const refObs = this.obsByConcept(encounters, conceptIds.conceptReferral);
@@ -324,6 +444,44 @@ export class VisitSummaryV2Service {
     };
   }
 
+  /** The logged-in doctor's own note encounter on a visit — same rule as View Prescription. */
+  private ownNoteEncounters(visit: VisitModel): EncounterModel[] {
+    const uuids = getPrescriptionSourceEncounterUuids(visit);
+    return (visit.encounters || []).filter(e => uuids.includes(e.uuid));
+  }
+
+  /**
+  * Doctor who wrote this note: the "Doctor details" saved when that same doctor completed the visit,
+  * else their own provider profile (e.g. a normal doctor's referred visit, completed by the NAMCO doctor).
+  */
+  private doctorForNote(note: EncounterModel, encounters: EncounterModel[]): { name: string; qualifications: string; speciality: string } {
+    const provider: any = note.encounterProviders?.[0]?.provider;
+    const completedBySameDoctor = encounters.filter(e =>
+      e.encounterType?.display === visitTypes.VISIT_COMPLETE &&
+      (e.encounterProviders || []).some((p: any) => p?.provider?.uuid && p.provider.uuid === provider?.uuid));
+    for (const enc of completedBySameDoctor) {
+      const detailsObs = (enc.obs || []).find((o: ObsModel) => o.concept?.display === 'Doctor details');
+      if (detailsObs) {
+        try {
+          const d = JSON.parse(detailsObs.value);
+          // "Qualification" is the profile's Type of profession, as in the old UI / prescription PDF.
+          return {
+            name: d.name || '',
+            qualifications: d[doctorDetails.TYPE_OF_PROFESSION] || '',
+            speciality: d[doctorDetails.SPECIALIZATION] || ''
+          };
+        } catch { }
+      }
+    }
+    const attr = (name: string) => (provider?.attributes || []).find((a: any) =>
+      !a?.voided && (a?.attributeType?.display || a?.display?.split(':')[0]?.trim()) === name)?.value || '';
+    return {
+      name: provider?.person?.display || '',
+      qualifications: attr(doctorDetails.TYPE_OF_PROFESSION),
+      speciality: attr(doctorDetails.SPECIALIZATION)
+    };
+  }
+
   private doctorFromEncounters(encounters: EncounterModel[]): { name: string; qualifications: string; speciality: string } {
     let doctor = { name: '', qualifications: '', speciality: '' };
     encounters.forEach(enc => {
@@ -331,7 +489,7 @@ export class VisitSummaryV2Service {
         if (o.concept?.display === 'Doctor details') {
           try {
             const d = JSON.parse(o.value);
-            doctor = { name: d.name || '', qualifications: d.Qualification || '', speciality: d.specialization || '' };
+            doctor = { name: d.name || '', qualifications: d[doctorDetails.TYPE_OF_PROFESSION] || '', speciality: d.specialization || '' };
           } catch { }
         }
       });
@@ -358,6 +516,7 @@ export class VisitSummaryV2Service {
   }
 
   private followUpForPrescription(value: string): { suggested: string; date: string; time: string; reason: string } {
+    if (this.isNoFollowUp(value)) { return { suggested: 'No', date: '', time: '', reason: '' }; }
     const parts = value.split(',').filter(Boolean);
     return {
       suggested: 'Yes',
@@ -390,10 +549,10 @@ export class VisitSummaryV2Service {
     return isNaN(dt.getTime()) ? '' : dt.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
   }
 
-  createVisitNote(visit: VisitModel, providerUuid: string): Observable<EncounterModel> {
+  createVisitNote(visit: VisitModel, providerUuid: string, isNamcoDoctor = false): Observable<EncounterModel> {
     return this.encounterService.getOrCreateEncounter({
       patient: visit.patient?.uuid,
-      encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
+      encounterType: isNamcoDoctor ? SPECIALIST_VISIT_NOTE_ENCOUNTER_TYPE : VISIT_NOTE_ENCOUNTER_TYPE,
       encounterProviders: [
         { provider: providerUuid, encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03' }
       ],
@@ -424,9 +583,14 @@ export class VisitSummaryV2Service {
     });
   }
 
-  loadDraftNote(patientUuid: string, visitUuid: string): Observable<DraftNote> {
+  loadDraftNote(patientUuid: string, visitUuid: string, encounterUuids: string[] = []): Observable<DraftNote> {
+    const ownObs = (res: ObsApiResponseModel): ObsApiResponseModel => encounterUuids.length
+      ? { ...res, results: (res.results || []).filter((obs: ObsModel) => encounterUuids.includes(obs.encounter?.uuid || '')) }
+      : res;
     const getObs = (concept: string) =>
-      this.diagnosisService.getObs(patientUuid, concept).pipe(catchError(() => of({ results: [] } as ObsApiResponseModel)));
+      this.diagnosisService.getObs(patientUuid, concept).pipe(map(ownObs),
+        catchError(() => of({ results: [] } as ObsApiResponseModel))
+      );
     return forkJoin({
       diagnosis: getObs(conceptIds.conceptDiagnosis),
       medication: getObs(conceptIds.conceptMed),
@@ -435,10 +599,11 @@ export class VisitSummaryV2Service {
       referral: getObs(conceptIds.conceptReferral),
       followUp: getObs(conceptIds.conceptFollow),
       note: getObs(conceptIds.conceptNote),
-      adviceList: this.getAdvicesList()
+      familyHistoryNote: getObs(conceptIds.conceptFamilyHistoryNotes),
+      pastMedicalHistoryNote: getObs(conceptIds.conceptPastMedicalHistoryNotes)
     }).pipe(map(res => {
-      const adviceNames: string[] = res.adviceList;
-      const { advices, additionalInstruction } = this.parseAdviceAndInstruction(res.advice, visitUuid, adviceNames);
+      const { advices, additionalInstruction: adviceInstruction } = this.parseAdviceAndInstruction(res.advice, visitUuid);
+      const additionalInstruction = this.parseMedicationInstruction(res.medication, visitUuid) || adviceInstruction;
       return {
         diagnoses: this.parseDiagnoses(res.diagnosis, visitUuid),
         medications: this.parseMedications(res.medication, visitUuid),
@@ -447,7 +612,9 @@ export class VisitSummaryV2Service {
         tests: this.parseTests(res.test, visitUuid),
         referrals: this.parseReferrals(res.referral, visitUuid),
         followUp: this.parseFollowUp(res.followUp, visitUuid),
-        notes: this.parseTextItems(res.note, visitUuid)
+        notes: this.parseTextItems(res.note, visitUuid),
+        familyHistoryNotes: this.parseTextItems(res.familyHistoryNote, visitUuid),
+        pastMedicalHistoryNotes: this.parseTextItems(res.pastMedicalHistoryNote, visitUuid)
       };
     }));
   }
@@ -458,24 +625,24 @@ export class VisitSummaryV2Service {
       .map((obs: ObsModel) => ({ value: obs.value, uuid: obs.uuid || '' }));
   }
 
-  private parseAdviceAndInstruction(res: ObsApiResponseModel, visitUuid: string, adviceNames: string[]): { advices: DraftAdvice[]; additionalInstruction: DraftTextItem | null } {
+  /**
+  * Split Advice obs into advices and a legacy additional instruction — only an obs marked with
+  * the [ADDITIONAL_INSTRUCTION] prefix is an instruction; everything else is advice.
+  */
+  private parseAdviceAndInstruction(res: ObsApiResponseModel, visitUuid: string): { advices: DraftAdvice[]; additionalInstruction: DraftInstruction | null } {
     const obsList = (res.results || []).filter((obs: ObsModel) =>
-      obs.encounter?.visit?.uuid === visitUuid && !obs.value.includes('</a>'));
-    let additionalInstruction: DraftTextItem | null = null;
+      obs.encounter?.visit?.uuid === visitUuid && !!obs.value && !obs.value.includes('</a>'));
+    let additionalInstruction: DraftInstruction | null = null;
+    const advices: DraftAdvice[] = [];
     obsList.forEach((obs: ObsModel) => {
-      if (this.isAdditionalInstruction(obs.value, adviceNames)) {
-        additionalInstruction = { value: obs.value, uuid: obs.uuid || '' };
+      if (obs.value.startsWith(ADDITIONAL_INSTRUCTION_PREFIX)) {
+        additionalInstruction = { value: obs.value.slice(ADDITIONAL_INSTRUCTION_PREFIX.length), uuid: obs.uuid || '', stored: 'advice', prefixed: true
+        };
+      } else {
+        advices.push({ value: obs.value, uuid: obs.uuid || '' });
       }
     });
-    const advices = obsList
-      .filter((obs: ObsModel) => obs.uuid !== additionalInstruction?.uuid)
-      .map((obs: ObsModel) => ({ value: obs.value, uuid: obs.uuid || '' }));
     return { advices, additionalInstruction };
-  }
-
-  private isAdditionalInstruction(value: string, adviceNames: string[]): boolean {
-    if (value.includes(':') && value.split(':').length >= 3) { return false; }
-    return !adviceNames.includes(value);
   }
 
   private parseDiagnoses(res: ObsApiResponseModel, visitUuid: string): DraftDiagnosis[] {
@@ -498,10 +665,30 @@ export class VisitSummaryV2Service {
     return out;
   }
 
+  /**
+  * A medication-concept obs that is really the additional instruction: marked with the
+  * [ADDITIONAL_INSTRUCTION] prefix, or free text without the "drug:strength:..." fields.
+  */
+  private isMedicationInstruction(value: string): boolean {
+    return value.startsWith(ADDITIONAL_INSTRUCTION_PREFIX) || !value.includes(':');
+  }
+
+  private parseMedicationInstruction(res: ObsApiResponseModel, visitUuid: string): DraftInstruction | null {
+    let instruction: DraftInstruction | null = null;
+    (res.results || []).forEach((obs: ObsModel) => {
+      if (obs.encounter?.visit?.uuid !== visitUuid || !obs.value || !this.isMedicationInstruction(obs.value)) { return; }
+      const prefixed = obs.value.startsWith(ADDITIONAL_INSTRUCTION_PREFIX);
+      const value = prefixed ? obs.value.slice(ADDITIONAL_INSTRUCTION_PREFIX.length) : obs.value;
+      instruction = { value, uuid: obs.uuid || '', stored: 'medication', prefixed };
+    });
+    return instruction;
+  }
+
   private parseMedications(res: ObsApiResponseModel, visitUuid: string): DraftMedication[] {
     const out: DraftMedication[] = [];
     (res.results || []).forEach((obs: ObsModel) => {
       if (obs.encounter?.visit?.uuid !== visitUuid) { return; }
+      if (!obs.value || this.isMedicationInstruction(obs.value)) { return; }
       const v = obs.value.split(':');
       out.push({
         drug: v[0] ?? '', dose: v[1] ?? '', durationNo: v[2] ?? '', durationUnit: v[3] ?? '',
@@ -538,6 +725,11 @@ export class VisitSummaryV2Service {
     let followUp: DraftFollowUp | null = null;
     (res.results || []).forEach((obs: ObsModel) => {
       if (obs.encounter?.visit?.uuid !== visitUuid) { return; }
+      // "No follow-up" is stored as the plain value "No", as the old Visit Summary saves it.
+      if (this.isNoFollowUp(obs.value)) {
+        followUp = { wantFollowUp: false, date: '', time: '', reason: '', type: '', uuid: obs.uuid || '' };
+        return;
+      }
       let date = '', time = '', reason = '', type = '';
       if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
         const parts = obs.value.split(',').filter(Boolean);
@@ -571,8 +763,21 @@ export class VisitSummaryV2Service {
     return this.conceptAnswers('0308000d-77a2-46e0-a6fa-a8c1dcbc3141');
   }
 
+  /** Test suggestions — answers of the Investigations/Test concept, as in the old Visit Summary. */
   getTestsList(): Observable<string[]> {
     return this.conceptAnswers(conceptIds.conceptInvestigationsTest);
+  }
+
+  searchOptions(options: string[], term: string): string[] {
+    const query = (term || '').trim().toLowerCase();
+    if (query.length < ADVICE_SEARCH_MIN_LENGTH) { return []; }
+    const starts = options.filter(o => o.toLowerCase().startsWith(query));
+    const contains = options.filter(o => !o.toLowerCase().startsWith(query) && o.toLowerCase().includes(query));
+    const results = [...starts, ...contains].slice(0, ADVICE_SEARCH_MAX_RESULTS);
+    if (!results.some(r => r.toLowerCase() === query)) {
+      results.push(term.trim());
+    }
+    return results;
   }
 
   private conceptAnswers(conceptUuid: string): Observable<string[]> {
@@ -611,8 +816,31 @@ export class VisitSummaryV2Service {
     return this.postObs(conceptIds.conceptNote, patientUuid, encounterUuid, value);
   }
 
-  saveAdditionalInstruction(patientUuid: string, encounterUuid: string, value: string, existingUuid?: string): Observable<ObsModel> {
-    return this.writeObs(conceptIds.conceptAdvice, patientUuid, encounterUuid, value, existingUuid);
+  saveFamilyHistoryNote(patientUuid: string, encounterUuid: string, value: string): Observable<ObsModel> {
+    return this.postObs(conceptIds.conceptFamilyHistoryNotes, patientUuid, encounterUuid, value);
+  }
+
+  savePastMedicalHistoryNote(patientUuid: string, encounterUuid: string, value: string): Observable<ObsModel> {
+    return this.postObs(conceptIds.conceptPastMedicalHistoryNotes, patientUuid, encounterUuid, value);
+  }
+
+  /**
+  * Save the additional instruction. A new one is a Medication obs holding the plain text, the
+  * same as the old Visit Summary's saveAdditionalInstruction() (diagnosis.component.ts), so the
+  * old and new UI read it back the same way. Editing an existing one only updates its value, in
+  * the format that obs was stored in.
+  * @return {Observable<DraftInstruction>} - The saved instruction
+  */
+  saveAdditionalInstruction(patientUuid: string, encounterUuid: string, value: string, existing?: DraftInstruction | null): Observable<DraftInstruction> {
+    if (existing?.uuid) {
+      const stored = existing.prefixed ? `${ADDITIONAL_INSTRUCTION_PREFIX}${value}` : value;
+      return this.encounterService.updateObs(existing.uuid, { value: stored }).pipe(
+        map((res: ObsModel) => ({ ...existing, value, uuid: res?.uuid || existing.uuid }))
+      );
+    }
+    return this.postObs(conceptIds.conceptMed, patientUuid, encounterUuid, value).pipe(
+      map((res: ObsModel) => ({ value, uuid: res?.uuid || '', stored: 'medication' as const, prefixed: false }))
+    );
   }
 
   saveFollowUp(patientUuid: string, encounterUuid: string, fu: { date: string; time: string; reason: string; type: string }, existingUuid?: string): Observable<ObsModel> {
@@ -626,6 +854,108 @@ export class VisitSummaryV2Service {
     return this.postObs(conceptIds.conceptFollow, patientUuid, encounterUuid, value);
   }
 
+  /**
+  * Save "No follow-up" — a Follow-up obs with the value "No", updating the existing follow-up obs
+  * if there is one, the same as the old Visit Summary's saveFollowUp().
+  */
+  saveNoFollowUp(patientUuid: string, encounterUuid: string, existingUuid?: string): Observable<ObsModel> {
+    return this.writeObs(conceptIds.conceptFollow, patientUuid, encounterUuid, 'No', existingUuid);
+  }
+
+  private isNoFollowUp(value: any): boolean {
+    return String(value ?? '').trim().toLowerCase() === 'no';
+  }
+
+  /**
+  * Load the referral decision (NAMCO/PHC/No referral), with patient consent for NAMCO, for this visit
+  * @param {string} patientUuid - Patient uuid
+  * @param {string} visitUuid - Visit uuid
+  * @param {string} visitNoteUuid - The doctor's own Visit Note encounter uuid
+  * @return {Observable<DraftReferralConsent | null>}
+  */
+  loadReferralConsent(patientUuid: string, visitUuid: string, visitNoteUuid: string): Observable<DraftReferralConsent | null> {
+    return this.diagnosisService.getObs(patientUuid, conceptIds.conceptReferralConsent).pipe(
+      map((res: ObsApiResponseModel) => {
+        const results = res.results || [];
+        const obs = results.find((o: ObsModel) => !!visitNoteUuid && o.encounter?.uuid === visitNoteUuid)
+          || results.find((o: ObsModel) => o.encounter?.visit?.uuid === visitUuid);
+        if (!obs?.value) { return null; }
+        const [decision, consent] = obs.value.split(':');
+        return { decision: decision || '', consent: consent || '', uuid: obs.uuid || '' };
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  /**
+  * Save the referral decision + (optional) patient consent as a single obs, e.g. "NAMCO:Yes"
+  * @return {Observable<ObsModel>}
+  */
+  saveReferralConsent(patientUuid: string, encounterUuid: string, decision: string, consent: string, existingUuid?: string): Observable<ObsModel> {
+    const value = consent ? `${decision}:${consent}` : decision;
+    return this.writeObs(conceptIds.conceptReferralConsent, patientUuid, encounterUuid, value, existingUuid);
+  }
+
+  /**
+  * Refer this visit to a NAMCO specialist: create the visit's Referral encounter (or reuse an
+  * existing one) and set its "Routing Specialization" attribute, which routes the visit to the
+  * NAMCO specialist's queue. The visit is NOT completed.
+  * @param {VisitModel} visit - The current visit
+  * @param {string} providerUuid - Referring doctor's provider uuid
+  * @param {string} speciality - NAMCO specialization to route the visit to
+  * @return {Observable<EncounterModel | null>} - The Referral encounter, or null if the visit has no Visit Note
+  */
+  createNamcoReferralEncounter(visit: VisitModel, providerUuid: string, speciality: string): Observable<EncounterModel | null> {
+    const routingSpecialization = (speciality || '').trim();
+    // Re-fetch the visit so an existing Referral encounter / Routing Specialization is never duplicated.
+    return this.visitService.fetchVisitDetails(visit.uuid).pipe(
+      switchMap((freshVisit: VisitModel) => {
+        const encounters = freshVisit?.encounters || [];
+        const attributes = freshVisit?.attributes || [];
+        const existingReferral = this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL);
+        if (existingReferral) {
+          return this.saveRoutingSpecialization(visit.uuid, attributes, routingSpecialization).pipe(map(() => existingReferral));
+        }
+        if (!this.getOwnVisitNote(encounters)) { return of(null); }
+        return this.encounterService.postEncounter({
+          patient: visit.patient?.uuid,
+          encounterType: REFERRAL_ENCOUNTER_TYPE,
+          encounterProviders: [
+            { provider: providerUuid, encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03' }
+          ],
+          visit: visit.uuid,
+          encounterDatetime: new Date(Date.now() - 30000)
+        }).pipe(
+          switchMap((referralEncounter: EncounterModel) =>
+            this.saveRoutingSpecialization(visit.uuid, attributes, routingSpecialization).pipe(map(() => referralEncounter))
+          )
+        );
+      })
+    );
+  }
+
+  private saveRoutingSpecialization(visitUuid: string, attributes: any[], specialization: string): Observable<any> {
+    const attr = this.helper.checkIfAttributeExists(attributes, visitTypes.ROUTING_SPECIALIZATION);
+    const payload = { attributeType: ROUTING_SPECIALIZATION_ATTRIBUTE_TYPE, value: specialization };
+    if (attr) {
+      return this.visitService.updateAttribute(visitUuid, attr.uuid, payload);
+    }
+    return this.visitService.postAttribute(visitUuid, payload);
+  }
+
+  /**
+  * The normal doctor's own "Visit Note" encounter — never the NAMCO specialist's
+  * "Specialist Visit Note", which also contains the "Visit Note" substring.
+  */
+  private getSpecialistVisitNote(encounters: EncounterModel[]): EncounterModel | undefined {
+    return (encounters || []).find(({ display = '' }) => display.includes(visitTypes.SPECIALIST_VISIT_NOTE));
+  }
+
+  private getOwnVisitNote(encounters: EncounterModel[]): EncounterModel | undefined {
+    return (encounters || []).find(({ display = '' }) =>
+      display.includes(visitTypes.VISIT_NOTE) && !display.includes(visitTypes.SPECIALIST_VISIT_NOTE));
+  }
+
   getReferralSpecialities(): string[] {
     const values = (this.appConfigService as any).dropdown_values?.['refer specialisation'] || [];
     return values.filter((v: any) => v?.is_enabled).map((v: any) => v.name).filter(Boolean);
@@ -637,6 +967,127 @@ export class VisitSummaryV2Service {
 
   deleteObs(uuid: string): Observable<any> {
     return this.diagnosisService.deleteObs(uuid);
+  }
+
+  /**
+  * Remove a note entry: delete its obs (if saved) and drop it from the list. The entry is found
+  * again once the delete returns, so another change to the list in the meantime can't make it
+  * remove the wrong row.
+  */
+  removeDraftItem<T extends { uuid?: string }>(list: T[], index: number, uuid?: string): void {
+    const item = list[index];
+    if (!item) { return; }
+    if (!uuid) {
+      list.splice(index, 1);
+      return;
+    }
+    this.deleteObs(uuid).subscribe(() => {
+      const at = list.indexOf(item);
+      if (at > -1) { list.splice(at, 1); }
+    });
+  }
+
+  /** WhatsApp chat link for a phone number, or null when there's no number. */
+  whatsAppLink(phoneNo: string | null | undefined): string | null {
+    return phoneNo ? `https://wa.me/${phoneNo.replace(/[^\d]/g, '')}` : null;
+  }
+
+  /**
+  * Send the visit's diagnoses to /ddx/manual — same payload as the old Visit Summary's
+  * sendDiagnosisToManualDDxAPI(): every AI diagnosis with its AI rank (plus the doctor's type/status
+  * and ai_assisted 'Y' when chosen), then each non-AI diagnosis ranked from 99 with ai_assisted 'N'.
+  */
+  sendManualDiagnoses(visitUuid: string, diagnoses: { name: string; type: string; status: string }[], aiRaw: any[] = []): Observable<any> {
+    const selected = diagnoses || [];
+    const aiList = aiRaw || [];
+    if (!visitUuid || (!selected.length && !aiList.length)) { return of(null); }
+    const aiNames = new Set(aiList.map((d: any) => (d?.diagnosis || '').toLowerCase()));
+    const payload: any[] = aiList.map((ai: any, index: number) => {
+      const chosen = selected.find(d => (d.name || '').toLowerCase() === (ai?.diagnosis || '').toLowerCase());
+      const item: any = {
+        diagnosis: ai?.diagnosis || '',
+        ...(ai?.summarised_rationale?.length && { summarised_rationale: ai.summarised_rationale }),
+        ...(ai?.rationale?.length && { rationale: ai.rationale }),
+        ...(ai?.likelihood && { likelihood: ai.likelihood }),
+        rank: String(index + 1)
+      };
+      if (chosen) {
+        if (chosen.type) { item['Diagnosis type'] = chosen.type; }
+        if (chosen.status) { item['Diagnosis status'] = chosen.status; }
+        item.ai_assisted = 'Y';
+      }
+      return item;
+    });
+    let nonAiRank = 99;
+    selected.filter(d => !aiNames.has((d.name || '').toLowerCase())).forEach(d => {
+      payload.push({
+        diagnosis: d.name || '',
+        ...(d.type && { 'Diagnosis type': d.type }),
+        ...(d.status && { 'Diagnosis status': d.status }),
+        rationale: [{ NA: 'N/A' }],
+        rank: String(nonAiRank++),
+        ai_assisted: 'N'
+      });
+    });
+    return payload.length
+      ? this.diagnosisService.saveManualDiagnosis({ visitUuid, diagnoses: payload }).pipe(catchError(() => of(null)))
+      : of(null);
+  }
+
+  /**
+  * Send the visit's medications to /ttx/manual — same payload as the old Visit Summary's
+  * sendMedicationToManualTTxAPI(): every AI medication with its AI rank (the doctor's values and
+  * ai_assisted 'Y', or 'M' when changed from the AI values, when chosen), then each non-AI medication
+  * ranked from 99 with ai_assisted 'N'.
+  */
+  sendManualTreatment(visitUuid: string, medicines: DraftMedication[], aiRaw: any[] = []): Observable<any> {
+    const selected = medicines || [];
+    const aiList = aiRaw || [];
+    if (!visitUuid || (!selected.length && !aiList.length)) { return of(null); }
+    const norm = (v: any) => `${v ?? ''}`.toLowerCase().trim();
+    const matchedNames = new Set<string>();
+    const payload: any[] = aiList.map((ai: any, index: number) => {
+      const aiName = norm(ai?.name || ai?.drug || ai?.medication);
+      const chosen = selected.find(m => norm(m.drug) === aiName || aiName.includes(norm(m.drug)) || norm(m.drug).includes(aiName));
+      const item: any = {
+        medication: ai?.name || ai?.drug || ai?.medication || '',
+        ...(ai?.rationale?.length && { rationale: Array.isArray(ai.rationale) ? ai.rationale.join('\n') : ai.rationale }),
+        ...(ai?.likelihood && { likelihood: ai.likelihood }),
+        rank: String(index + 1)
+      };
+      if (chosen) {
+        matchedNames.add(norm(chosen.drug));
+        const modified = norm(chosen.dose) !== norm(ai?.dosage || ai?.dose)
+          || norm(chosen.durationNo) !== norm(ai?.duration)
+          || norm(chosen.durationUnit) !== norm(ai?.duration_unit)
+          || norm(chosen.instructRemark) !== norm(ai?.instructions)
+          || norm(chosen.frequency) !== norm(ai?.frequency);
+        Object.assign(item, {
+          dose: chosen.dose, duration: chosen.durationNo, duration_unit: chosen.durationUnit,
+          instructions: chosen.instructRemark, frequency: chosen.frequency, ai_assisted: modified ? 'M' : 'Y'
+        });
+      } else {
+        Object.assign(item, {
+          dose: ai?.dosage || ai?.dose, duration: ai?.duration, duration_unit: ai?.duration_unit,
+          instructions: ai?.instructions, frequency: ai?.frequency
+        });
+      }
+      return item;
+    });
+    let nonAiRank = 99;
+    selected.filter(m => !matchedNames.has(norm(m.drug))).forEach(m => {
+      payload.push({
+        medication: m.drug || '',
+        dose: m.dose, duration: m.durationNo, duration_unit: m.durationUnit,
+        instructions: m.instructRemark, frequency: m.frequency,
+        rationale: 'N/A',
+        rank: String(nonAiRank++),
+        ai_assisted: 'N'
+      });
+    });
+    return payload.length
+      ? this.diagnosisService.saveManualTreatment({ visitUuid, medications: payload }).pipe(catchError(() => of(null)))
+      : of(null);
   }
 
   completeVisit(visitUuid: string, patientUuid: string, provider: any): Observable<any> {
@@ -713,7 +1164,8 @@ export class VisitSummaryV2Service {
     patient: PatientModel,
     appointment: ApiResponseModel | null,
     eyeImagesRes: ObsApiResponseModel,
-    docsRes: ObsApiResponseModel
+    docsRes: ObsApiResponseModel,
+    isNamcoDoctor: boolean
   ): CurrentVisitData {
     const encounters = visit.encounters || [];
     const clinicName = visit.location?.display || '';
@@ -723,19 +1175,29 @@ export class VisitSummaryV2Service {
     const { generalExams, abdomenFindings } = this.parsePhysicalExam(encounters);
     const { patientHistory, familyHistory } = this.parseMedicalHistory(encounters);
 
-    const visitNote = this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE);
+    const primaryVisitNote = this.getOwnVisitNote(encounters);
+    // A NAMCO doctor works in their own "Specialist Visit Note"; everyone else in the "Visit Note".
+    const visitNote = isNamcoDoctor ? this.getSpecialistVisitNote(encounters) : primaryVisitNote;
+    const referralEncounter = this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL);
+    const noteEncounterUuids = (isNamcoDoctor ? [visitNote?.uuid, referralEncounter?.uuid] : [visitNote?.uuid]).filter(Boolean) as string[];
     return {
       visitUuid: visit.uuid,
       visit,
       visitNoteExists: !!visitNote,
       visitNoteUuid: visitNote?.uuid || '',
+      noteEncounterUuids,
+      primaryVisitNoteExists: !!primaryVisitNote,
+      primaryVisitNoteUuid: primaryVisitNote?.uuid || '',
       patientUuid: visit.patient?.uuid || '',
       specializations: ((this.appConfigService as any).specialization || []).map((s: any) => s.name).filter(Boolean),
       patient: this.buildPatient(patient, vitals, patientHistory),
       patientModel: patient,
       clinicName,
       visitEnded: !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
+      visitReferred: !!this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL),
+      visitCompleted: !!this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE),
       visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
+      visitNoteDoctorName: this.helper.getVisitNoteDoctorName(visitNote),
       consultationDetails: this.buildConsultationDetails(visit, appointment, visitStatus, clinicName),
       chiefComplaints,
       complaintDetails,
@@ -743,9 +1205,13 @@ export class VisitSummaryV2Service {
       patientHistory,
       familyHistory,
       vitals,
+      diagnostics: this.buildDiagnostics(encounters),
       generalExams,
       abdomenFindings,
       eyeImages: this.buildImageSources(eyeImagesRes, visit.uuid),
+      additionalNote: this.appConfigService.patient_visit_summary?.notes_section
+        ? ((visit.attributes || []).find((a: any) => a.attributeType?.display === 'AdditionalNote')?.value || '')
+        : '',
       documents: this.buildDocuments(docsRes, visit.uuid)
     };
   }
@@ -763,6 +1229,7 @@ export class VisitSummaryV2Service {
     const contactNo = this.personAttr(patient, 'Telephone Number');
     const gender = this.mapGender(p?.gender);
     const isMale = gender === 'Male';
+    const abhaEnabled = !!this.appConfigService?.abha_section;
 
     return {
       name: name || (p?.display || ''),
@@ -774,6 +1241,8 @@ export class VisitSummaryV2Service {
       weight: weightVital?.value ? `${weightVital.value}Kg` : '',
       allergies: allergyNames.slice(0, 2),
       extraAllergiesCount: Math.max(allergyNames.length - 2, 0),
+      abhaNumber: abhaEnabled ? this.patientIdentifierCI(patient, 'abha number') : '',
+      abhaAddress: abhaEnabled ? this.patientIdentifierCI(patient, 'abha address') : '',
       pregnancy: isMale ? '' : (pregnancyRow?.value || ''),
       contactNo: contactNo !== 'NA' ? contactNo : '',
       occupation: this.valOrEmpty(this.personAttr(patient, 'occupation')),
@@ -787,23 +1256,49 @@ export class VisitSummaryV2Service {
 
   private buildAddress(addr: any): DetailRow[] {
     if (!addr) { return []; }
-    const rows: DetailRow[] = [
-      { label: 'Household number', value: addr.address1 },
-      { label: 'Corresponding address 1', value: addr.address2 },
-      { label: 'Village/Town/City', value: addr.cityVillage },
-      { label: 'State', value: addr.stateProvince },
-      { label: 'Country', value: addr.country },
-      { label: 'Postal Code', value: addr.postalCode }
+    const enabledFields = this.enabledPatientRegFields();
+    const rows: { field: string; label: string; value: any }[] = [
+      { field: 'Household Number', label: 'Household number', value: addr.address6 },
+      { field: 'Corresponding Address 1', label: 'Corresponding address 1', value: addr.address1 },
+      { field: 'Corresponding Address 2', label: 'Corresponding address 2', value: addr.address2 },
+      { field: 'Block', label: 'Block', value: addr.address3 },
+      { field: 'Village/Town/City', label: 'Village/Town/City', value: addr.cityVillage },
+      { field: 'District', label: 'District', value: addr.countyDistrict },
+      { field: 'State', label: 'State', value: addr.stateProvince },
+      { field: 'Country', label: 'Country', value: addr.country },
+      { field: 'Postal Code', label: 'Postal Code', value: addr.postalCode }
     ];
-    return rows.filter(r => r.value).map(r => ({ label: r.label, value: String(r.value) }));
+    return rows
+      .filter(r => enabledFields.has(r.field) && r.value)
+      .map(r => ({ label: r.label, value: String(r.value) }));
+  }
+
+  /** Names of the patient registration fields enabled in the app config (old checkPatientRegField). */
+  private enabledPatientRegFields(): Set<string> {
+    const config: any = this.appConfigService.patient_registration || {};
+    const names = Object.keys(config).reduce((all: string[], group: string) =>
+      all.concat((config[group] || []).filter((f: any) => f.is_enabled).map((f: any) => f.name)), []);
+    return new Set(names);
   }
 
   private buildOther(patient: PatientModel): DetailRow[] {
-    const rows: DetailRow[] = [
-      { label: 'National ID', value: this.personAttr(patient, 'NationalID') },
-      { label: 'Occupation', value: this.personAttr(patient, 'occupation') }
+    const enabledFields = this.enabledPatientRegFields();
+    // field (registration config name) / label / person attribute type
+    const rows: { field: string; label: string; attr: string }[] = [
+      { field: 'Occupation', label: 'Occupation', attr: 'occupation' },
+      { field: 'Education', label: 'Education', attr: 'Education Level' },
+      { field: 'National ID', label: 'National ID', attr: 'NationalID' },
+      { field: 'Economic Category', label: 'Economic Category', attr: 'Economic Status' },
+      { field: 'Social Category', label: 'Social Category', attr: 'Caste' },
+      { field: 'TMH Case Number', label: 'TMH Case Number', attr: 'TMH Case Number' },
+      { field: 'Discipline', label: 'Discipline', attr: 'Discipline' },
+      { field: 'Department', label: 'Department', attr: 'Department' },
+      { field: 'Relative Phone Number', label: 'Relative Phone Number', attr: 'Relative Phone Number' }
     ];
-    return rows.filter(r => r.value && r.value !== 'NA');
+    return rows
+      .filter(r => enabledFields.has(r.field))
+      .map(r => ({ label: r.label, value: this.personAttr(patient, r.attr) }))
+      .filter(r => r.value && r.value !== 'NA');
   }
 
   private buildConsultationDetails(
@@ -814,10 +1309,21 @@ export class VisitSummaryV2Service {
       { label: 'Visit ID', value: this.maskVisitId(visit.uuid) },
       { label: 'Appointment on', value: apptDate ? this.formatDate(apptDate) : 'No appointment' },
       { label: 'Visit created', value: this.formatDateTime(visit.startDatetime) },
-      { label: 'Status', value: visitStatus, highlight: visitStatus === visitTypes.PRIORITY_VISIT },
+      { label: 'Status', value: visitStatus, highlight: visitStatus === visitTypes.PRIORITY_VISIT, 
+        success: [
+          visitTypes.AWAITING_VISIT, visitTypes.IN_PROGRESS_VISIT, visitTypes.COMPLETED_VISIT, visitTypes.ENDED_VISIT
+        ].includes(visitStatus)
+      },
       { label: 'Visit uploaded', value: this.formatDateTime((visit as any).dateCreated) },
-      { label: 'Location', value: this.titleCase(clinicName) }
+      { label: 'Location', value: this.titleCase(clinicName) },
+      { label: 'Provided by', value: this.getVisitProviderName(visit.encounters || []) }
     ];
+  }
+
+  private getVisitProviderName(encounters: EncounterModel[]): string {
+    const adultInitial = encounters.find(e => e.display?.match(visitTypes.ADULTINITIAL) !== null && e.encounterProviders?.length);
+    const name = adultInitial?.encounterProviders[0]?.provider?.person?.display;
+    return name ? `Nurse : ${name}` : 'NA';
   }
 
   private getVisitStatus(encounters: EncounterModel[]): string {
@@ -840,6 +1346,18 @@ export class VisitSummaryV2Service {
         value: value ?? (/blood\s*group/i.test(v.name || '') ? 'NA' : '')
       };
     });
+  }
+
+  /** Diagnostic test results — recorded on the Vitals encounter, configured via Admin > Diagnostics. */
+  private buildDiagnostics(encounters: EncounterModel[]): VitalCell[] {
+    if (!this.appConfigService.patient_diagnostics_section) { return []; }
+    const vitalObs = this.getVitalObs(encounters);
+    const config: VitalModel[] = [...(this.appConfigService.patient_diagnostics || [])];
+    return config.map(d => ({
+      label: d.name,
+      value: this.getObsValue(d.uuid, d.key, vitalObs, config) || 'No information',
+      bold: d.name === 'HbA1c'
+    }));
   }
 
   private getVitalObs(encounters: EncounterModel[]): ObsModel[] {
@@ -1012,6 +1530,12 @@ export class VisitSummaryV2Service {
       if (attr.attributeType?.display === attrType) { val = attr.value; }
     });
     return val;
+  }
+
+  private patientIdentifierCI(patient: PatientModel, identifierType: string): string {
+    return patient?.identifiers?.find(
+      (idf: any) => idf.identifierType?.display?.toLowerCase() === identifierType
+    )?.identifier || '';
   }
 
   private patientIdentifier(patient: PatientModel, identifierType: string): string {

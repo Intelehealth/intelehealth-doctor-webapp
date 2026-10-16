@@ -523,7 +523,7 @@ export class ConfigService {
     const url = `${this.baseURL}/ai-llm/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
-  
+
   /**
    * @returns {Observable<any>}
    */

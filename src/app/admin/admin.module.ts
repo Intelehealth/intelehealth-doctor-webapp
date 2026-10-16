@@ -57,8 +57,8 @@ import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dro
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
 import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
+import { QmsComponent } from './admin-actions/qms/qms.component';
 import { InsightsComponent } from './insights/insights.component';
-import { AiIssueReportsComponent } from './admin-actions/ai-issue-reports/ai-issue-reports.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
 import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
 
@@ -167,12 +167,12 @@ const routes: Routes = [
             component: AiLlmComponent
           },
           {
-            path: 'insights',
-            component: InsightsComponent
+            path: 'qms',
+            component: QmsComponent
           },
           {
-            path: 'ai-issue-reports',
-            component: AiIssueReportsComponent
+            path: 'insights',
+            component: InsightsComponent
           },
           {
             path: 'prescription-notes',
@@ -226,7 +226,7 @@ const routes: Routes = [
     InsightsComponent,
     PrescriptionNotesComponent,
     NamcoReferralComponent,
-    AiIssueReportsComponent
+    QmsComponent
   ],
   imports: [
     CommonModule,

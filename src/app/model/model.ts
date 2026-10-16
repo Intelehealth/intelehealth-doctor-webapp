@@ -536,6 +536,7 @@ export interface StandardMedicineModel {
   modified?: boolean,
   rationale?: string[],
   likelihood?: string,
+  overrideReason?: string,
   originalAiData?: {
     dose?: string,
     durationNo?: string,
@@ -566,6 +567,7 @@ export interface DiagnosisModel {
   rationale?: string[],
   from?: string,
   likelihood?: string,
+  overrideReason?: string,
 }
 
 export interface DocImagesModel {
@@ -742,6 +744,8 @@ export interface PatientVisitSummaryConfigModel {
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean
   standard_medication: boolean
+  family_history_notes?: boolean
+  past_medical_history_notes?: boolean
 }
 
 export interface PagerdutyList {

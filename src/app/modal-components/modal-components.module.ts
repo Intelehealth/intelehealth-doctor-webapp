@@ -58,6 +58,7 @@ import { LibPresciptionModule } from 'lib-presciption';
 import { PlatformFieldsSelectonComponent } from './platform-fields-selecton/platform-fields-selecton.component'
 import { PrescriptionNotesEditComponent } from './prescription-notes-edit/prescription-notes-edit.component';
 import { ReportAiIssueComponent } from './report-ai-issue/report-ai-issue.component';
+import { DdxTtxOverrideReasonComponent } from './ddx-ttx-override-reason/ddx-ttx-override-reason.component';
 
 @NgModule({
     declarations: [
@@ -101,7 +102,8 @@ import { ReportAiIssueComponent } from './report-ai-issue/report-ai-issue.compon
         PatientRegValidationsComponent,
         PlatformFieldsSelectonComponent,
         PrescriptionNotesEditComponent,
-        ReportAiIssueComponent
+        ReportAiIssueComponent,
+        DdxTtxOverrideReasonComponent
     ],
     imports: [
         CommonModule,

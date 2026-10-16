@@ -12,6 +12,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { ConfirmDayOffComponent } from 'src/app/modal-components/confirm-day-off/confirm-day-off.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { ReportAiIssueComponent, ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
+import { DdxTtxOverrideReasonComponent, DdxTtxOverrideReasonDialogData } from 'src/app/modal-components/ddx-ttx-override-reason/ddx-ttx-override-reason.component';
 import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
 import { ConfirmOpenmrsIdComponent } from 'src/app/modal-components/confirm-openmrs-id/confirm-openmrs-id.component';
 import { FileDownloadComponent } from 'src/app/modal-components/file-download/file-download.component';
@@ -81,6 +82,18 @@ export class CoreService {
   openReportAiIssueModal(data: ReportAiIssueDialogData): Observable<any> {
     const dialogRef = this.dialog.open(ReportAiIssueComponent, {
       panelClass: "modal-md",
+      data,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef.afterClosed();
+  }
+
+  openDdxTtxOverrideReasonModal(data: DdxTtxOverrideReasonDialogData): Observable<any> {
+    const dialogRef = this.dialog.open(DdxTtxOverrideReasonComponent, {
+      panelClass: ["modal-md", "ddx-ttx-override-reason-panel"],
+      width: "92vw",
+      maxHeight: "92vh",
       data,
       hasBackdrop: true,
       disableClose: true,

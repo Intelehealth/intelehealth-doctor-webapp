@@ -13,7 +13,8 @@ on:
           - ttxai
           - testturn
           - nasprod
-
+          - pathqa
+          - nasstaging
   push:
     branches:
       - nas-ida5-development-master
@@ -30,13 +31,13 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn","nasprod"]' >> "$GITHUB_OUTPUT"
-
+            echo 'targets=["dev","turn","ttxai","testturn","nasprod","pathqa", "nasstaging"]' >> "$GITHUB_OUTPUT"
           fi
-
+ 
   build-and-deploy:
     needs: set-matrix
-    runs-on: ubuntu-latest
+    # pathqa is an ARM64 server -> build natively on GitHub's ARM runner (no slow QEMU emulation)
+    runs-on: ${{ matrix.target == 'pathqa' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -47,10 +48,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Resolve deploy host
+ 
+      - name: Resolve deploy host and platform
         id: resolve
         run: |
+          # Default platform for all x86 servers
+          PLATFORM="linux/amd64"
           case "${{ matrix.target }}" in
             dev)
               echo "host=${{ secrets.DEV_HOST }}" >> "$GITHUB_OUTPUT"
@@ -67,11 +70,19 @@ jobs:
             nasprod)
               echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
+            nasstaging)
+              echo "host=${{ secrets.NASSTAGING_HOST }}" >> "$GITHUB_OUTPUT"
+              ;;  
+            pathqa)
+              echo "host=${{ secrets.PATHQA_HOST }}" >> "$GITHUB_OUTPUT"
+              PLATFORM="linux/arm64"
+              ;;
             *)
               echo "Unknown matrix target: ${{ matrix.target }}" >&2
               exit 1
               ;;
           esac
+          echo "platform=$PLATFORM" >> "$GITHUB_OUTPUT"
 
       - name: Validate deployment host
         env:
@@ -112,12 +123,22 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
           scp -i ~/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$REMOTE_USER@$DEPLOY_HOST:/home/ubuntu/deploy/webapp/.env" .env
 
-      - name: Build and Save Docker Image
-        run: |
-          mv .env ./ || true
-          docker build -t intelehealth-webapp:latest .
-          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
+      - name: Build and Save Docker Image
+        env:
+          PLATFORM: ${{ steps.resolve.outputs.platform }}
+        run: |
+          echo "Building for $PLATFORM"
+          docker buildx build \
+            --platform "$PLATFORM" \
+            --load \
+            -t intelehealth-webapp:latest \
+            .
+          docker image inspect intelehealth-webapp:latest --format 'Built image arch: {{.Os}}/{{.Architecture}}'
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+ 
       - name: Upload Image to Server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -126,7 +147,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "webapp_image.tar.gz"
           target: "/home/ubuntu/deploy/webapp/"
-
+ 
       - name: Deploy Container
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -135,6 +156,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/deploy/webapp/
+            chmod 644 webapp_image.tar.gz
             gunzip -c webapp_image.tar.gz | docker load
             docker stop webapp-container || true
             docker rm webapp-container || true

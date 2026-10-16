@@ -308,7 +308,7 @@
                 <div class="input-group" data-test-id="daysOffInputGroup">
                   <input type="text" [value]="daysOffDates" class="form-control"
                     placeholder="{{'Select dates'|translate}}" readonly data-test-id="etDayOff">
-                  <input type="text" class="form-control hidden-input"  [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)" [matDatepicker]="picker3"
+                  <input type="text" class="form-control hidden-input"  [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)"
                     [matDatepicker]="picker3" readonly data-test-id="etDayOffSelect">
                   <mat-datepicker #picker3 [panelClass]="'daysOffCalendar'" [dateClass]="isDayOff"></mat-datepicker>
                   <div class="input-group-append" data-test-id="dpicSelDayOff">

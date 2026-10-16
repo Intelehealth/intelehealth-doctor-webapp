@@ -1,0 +1,60 @@
+.card-header-actions {
+  .btn {
+    height: 50px;
+    background: var(--color-darkBlue);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--color-white);
+    position: relative;
+    min-width: 100px;
+    font-weight: bold;
+  }
+}
+
+.btn-block {
+  display: none;
+  height: 50px;
+  background: var(--color-darkBlue);
+  border-radius: 8px;
+  font-size: 18px;
+  color: var(--color-white);
+  position: relative;
+  width: 100%;
+  font-weight: bold;
+}
+
+.card-header {
+  .msg {
+    font-size: 14px;
+    color: grey;
+    font-weight: normal;
+  }
+}
+
+.sectionStatus {
+  padding: 15px;
+  color: gray;
+  font-family: DM Sans;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.text-greyout {
+  opacity: 0.70;
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-wrap: nowrap;
+
+    .card-header-actions {
+      .btn {
+        display: none;
+      }
+    }
+  }
+
+  .btn-block {
+    display: block;
+  }
+}

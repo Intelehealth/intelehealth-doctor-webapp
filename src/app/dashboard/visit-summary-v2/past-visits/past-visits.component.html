@@ -135,7 +135,8 @@
       <mat-icon class="vs2-chevron">expand_less</mat-icon>
     </div>
     <div class="vs2-divider"></div>
-    <div class="vs2-doc-row">
+    <p class="vs2-symptom-text" *ngIf="!visit.documents?.length">No additional docs available!</p>
+    <div class="vs2-doc-row" *ngIf="visit.documents?.length">
       <ng-container *ngFor="let doc of visit.documents">
         <div class="vs2-doc-thumb" *ngIf="doc.type === 'image'" (click)="previewDocument(doc)">
           <img [src]="doc.src" alt="" onerror="this.style.display='none'" />
@@ -271,14 +272,14 @@
     <div class="vs2-divider"></div>
     <div class="vs2-table vs2-ref-table">
       <div class="vs2-table-head">
-        <span>Referral to</span>
         <span>Referral facility</span>
+        <span>Referral to</span>
         <span>Priority of referral</span>
         <span>Referral for(Reason)</span>
       </div>
       <div class="vs2-table-row">
-        <span>{{ visit.prescription.referral.to }}</span>
         <span>{{ visit.prescription.referral.facility }}</span>
+        <span>{{ visit.prescription.referral.to }}</span>
         <span>{{ visit.prescription.referral.priority }}</span>
         <span>{{ visit.prescription.referral.reason }}</span>
       </div>
@@ -304,21 +305,6 @@
         <span>{{ visit.prescription.followUp.date }}</span>
         <span>{{ visit.prescription.followUp.time }}</span>
         <span>{{ visit.prescription.followUp.reason }}</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="vs2-section-card">
-    <div class="vs2-section-title">
-      <img class="vs2-section-icon-img" src="assets/svgs/additional-document-purple.svg" alt="" />
-      <span>Additional documents</span>
-      <mat-icon class="vs2-chevron">expand_less</mat-icon>
-    </div>
-    <div class="vs2-divider"></div>
-    <div class="vs2-doc-row">
-      <div class="vs2-doc-pdf" *ngFor="let doc of visit.prescription.docs">
-        <span class="vs2-pdf-icon"><mat-icon>picture_as_pdf</mat-icon></span>
-        <span class="vs2-pdf-name">{{ doc.name }}</span>
       </div>
     </div>
   </section>
