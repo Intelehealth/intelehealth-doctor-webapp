@@ -3754,7 +3754,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private collectPendingOverrides(): OverrideReasonItem[] {
-    if (!this.hasAILLMEnabled) return [];
+    if (!this.hasAILLMEnabled || this.appConfigService?.ai_llm?.ai_override_reason_required !== true) return [];
     const items: OverrideReasonItem[] = [];
 
     for (const diagnosis of (this.ddxCompRef?.instance?.existingDiagnosis || [])) {
