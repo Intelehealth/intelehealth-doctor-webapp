@@ -168,6 +168,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/namco-referral",
       isLocalPath: true
     },
+    {
+      title: "Visit Summary V2",
+      desc: "Switch doctors to the new visit summary screen",
+      icon: "assets/svgs/consultation-details.svg",
+      path: "admin/actions/visit-summary-v2",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,
