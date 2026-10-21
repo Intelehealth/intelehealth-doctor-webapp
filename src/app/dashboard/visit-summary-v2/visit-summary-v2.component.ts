@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@ang
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PatientModel, VisitModel } from 'src/app/model/model';
-import { doctorDetails, visitTypes } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
+import { TranslateService } from '@ngx-translate/core';
 import { deleteCacheData, getCacheData, isNamcoDoctor, setCacheData } from 'src/app/utils/utility-functions';
 import { CoreService } from 'src/app/services/core/core.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
@@ -183,12 +184,14 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     private analytics: AnalyticsService,
     private visitSummaryService: VisitSummaryHelperService,
     private mindmapService: MindmapService,
-    private rolesService: NgxRolesService
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService
   ) {
     this.openChatFlag = !!this.router.getCurrentNavigation()?.extras?.state?.openChat;
   }
 
   ngOnInit(): void {
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.visitId = this.route.snapshot.paramMap.get('id') || '';
     const provider = getCacheData(true, doctorDetails.PROVIDER);
     this.providerUuid = provider?.uuid || '';
