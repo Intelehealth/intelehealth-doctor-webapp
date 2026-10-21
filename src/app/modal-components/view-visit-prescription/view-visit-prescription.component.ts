@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, pickPatientDisplayId, hasTmhCaseNumber } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -470,7 +470,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display == identifierType) {
+        if (idf.identifierType?.display == identifierType) {
           identifier = idf.identifier;
         }
       });
@@ -514,6 +514,34 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   getAge(birthdate: string, short = false): string {
     return getAge(birthdate, this.translateService, short);
+  }
+
+  /**
+  * ID shown under the patient's name on TMH deployments: TMH Case Number, else the OpenMRS ID
+  */
+  getPatientDisplayId(): string {
+    return pickPatientDisplayId(this.getPersonAttributeValue('TMH Case Number'), this.openMrsIdOrFirstIdentifier, this.translateService.instant('NA'));
+  }
+
+  /**
+  * Whether the ID shown under the patient's name is the OpenMRS ID because there is no TMH Case Number
+  */
+  showsOpenMrsIdFallback(): boolean {
+    return !hasTmhCaseNumber(this.getPersonAttributeValue('TMH Case Number'), this.translateService.instant('NA')) && !!this.openMrsIdOrFirstIdentifier;
+  }
+
+  /**
+  * Label (translation key) for the ID shown under the patient's name
+  */
+  getPatientDisplayIdLabel(): string {
+    return this.showsOpenMrsIdFallback() ? 'OpenMRS ID' : 'TMH Case Number';
+  }
+
+  /**
+  * The OpenMRS ID, or the first identifier when identifier type names were not returned by the server
+  */
+  private get openMrsIdOrFirstIdentifier(): string {
+    return this.getPatientIdentifier('OpenMRS ID') || this.patient?.identifiers?.[0]?.identifier;
   }
 
   /**
@@ -739,7 +767,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           ul: [
-                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPersonAttributeValue('TMH Case Number') !== 'NA' ? this.getPersonAttributeValue('TMH Case Number') : this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPatientDisplayId()}`], margin: [0, 5, 0, 5]},
                             {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }

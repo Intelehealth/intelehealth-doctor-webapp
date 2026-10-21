@@ -31,7 +31,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, checkIfDateOldThanOneDay as getAppointmentCountdown } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, checkIfDateOldThanOneDay as getAppointmentCountdown, pickPatientDisplayId, hasTmhCaseNumber } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -898,7 +898,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display === identifierType) {
+        if (idf.identifierType?.display === identifierType) {
           identifier = idf.identifier;
         }
       });
@@ -1224,6 +1224,34 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   getAge(birthdate: string, short = false): string {
     return getAge(birthdate, this.translateService, short);
+  }
+
+  /**
+  * ID shown under the patient's name on TMH deployments: TMH Case Number, else the OpenMRS ID
+  */
+  getPatientDisplayId(): string {
+    return pickPatientDisplayId(this.getPersonAttributeValue('TMH Case Number'), this.openMrsIdOrFirstIdentifier);
+  }
+
+  /**
+  * Whether the ID shown under the patient's name is the OpenMRS ID because there is no TMH Case Number
+  */
+  showsOpenMrsIdFallback(): boolean {
+    return !hasTmhCaseNumber(this.getPersonAttributeValue('TMH Case Number')) && !!this.openMrsIdOrFirstIdentifier;
+  }
+
+  /**
+  * Label (translation key) for the ID shown under the patient's name
+  */
+  getPatientDisplayIdLabel(): string {
+    return this.showsOpenMrsIdFallback() ? 'OpenMRS ID' : 'TMH Case Number';
+  }
+
+  /**
+  * The OpenMRS ID, or the first identifier when identifier type names were not returned by the server
+  */
+  private get openMrsIdOrFirstIdentifier(): string {
+    return this.getPatientIdentifier('OpenMRS ID') || this.patient?.identifiers?.[0]?.identifier;
   }
 
   /**

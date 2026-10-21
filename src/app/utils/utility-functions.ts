@@ -286,3 +286,21 @@ export  function isValidBase64Image(base64String) {
     return Promise.resolve(false);
   }
 }
+
+/**
+ * ID shown under the patient's name on TMH deployments (tnmStaging): the TMH Case Number,
+ * or the OpenMRS ID when the patient has none, so the header never shows just "NA".
+ * @param tmhCaseNumber - value of the "TMH Case Number" attribute, or the screen's "not available" text
+ * @param openMrsId - the patient's OpenMRS ID
+ * @param notAvailable - the text the screen uses for a missing attribute (translated on some screens)
+ */
+export function pickPatientDisplayId(tmhCaseNumber: string, openMrsId: string, notAvailable = 'NA'): string {
+  return hasTmhCaseNumber(tmhCaseNumber, notAvailable) ? tmhCaseNumber : (openMrsId || tmhCaseNumber);
+}
+
+/**
+ * Whether the patient really has a TMH Case Number (not empty and not the screen's "not available" text)
+ */
+export function hasTmhCaseNumber(tmhCaseNumber: string, notAvailable = 'NA'): boolean {
+  return !!tmhCaseNumber && tmhCaseNumber !== notAvailable;
+}
