@@ -38,6 +38,7 @@ export class AppConfigService {
   public ai_llm_recording_section:  boolean;
   public ai_llm_voice_transcript_section: boolean;
   public ai_llm_voice_transcript: VoiceTranscriptFlags;
+  public visit_summary_v2_section: boolean;
   public prescription_notes_section: boolean;
   public prescription_notes: { specialty: string; notes: string[]; is_enabled: boolean }[];
   constructor(private http: HttpClient) { }
