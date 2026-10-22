@@ -66,6 +66,7 @@ export interface PastVisit {
   patientHistory: DetailRow[];
   familyHistory: DetailRow[];
   vitals: VitalCell[];
+  diagnostics: VitalCell[];
   generalExams: DetailRow[];
   abdomenFindings: string[];
   eyeImages: string[];

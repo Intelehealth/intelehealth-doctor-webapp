@@ -90,7 +90,22 @@
     <div class="vs2-vitals-grid">
       <div class="vs2-vital-cell" *ngFor="let v of visit.vitals">
         <span class="vs2-vital-label">{{ v.label }}</span>
-        <span class="vs2-vital-value">{{ v.value }}</span>
+        <span class="vs2-vital-value">{{ v.value || 'No information' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="vs2-section-card">
+    <div class="vs2-section-title">
+      <img class="vs2-section-icon-img" src="assets/svgs/diagnosis-green.svg" alt="" />
+      <span>Past Diagnostics</span>
+      <mat-icon class="vs2-chevron">expand_less</mat-icon>
+    </div>
+    <div class="vs2-divider"></div>
+    <div class="vs2-vitals-grid">
+      <div class="vs2-vital-cell" *ngFor="let d of visit.diagnostics">
+        <span class="vs2-vital-label" [style.font-weight]="d.bold ? 'bold' : null">{{ d.label }}</span>
+        <span class="vs2-vital-value" [style.font-weight]="d.bold ? 'bold' : null">{{ d.value }}</span>
       </div>
     </div>
   </section>

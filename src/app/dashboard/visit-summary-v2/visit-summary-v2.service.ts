@@ -405,6 +405,7 @@ export class VisitSummaryV2Service {
       patientHistory: mh.patientHistory,
       familyHistory: mh.familyHistory,
       vitals: this.buildVitals(encounters),
+      diagnostics: this.buildDiagnostics(encounters),
       generalExams: pe.generalExams,
       abdomenFindings: pe.abdomenFindings,
       eyeImages: this.imageSrcsFromEncounters(encounters, conceptIds.conceptPhysicalExamination),
