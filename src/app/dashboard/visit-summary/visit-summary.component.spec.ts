@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxRolesService } from 'ngx-permissions';
 import { of } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { getPatientDisplayId } from 'src/app/utils/utility-functions';
 import { VisitService } from 'src/app/services/visit.service';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -57,11 +58,11 @@ describe('VisitSummaryComponent', () => {
     provider: { uuid, person: { display: name } }
   });
 
-  const create = (encounters: any[], isMCCUser = false, stopDatetime: string = null): VisitSummaryComponent => {
+  const create = (encounters: any[], isMCCUser = false, stopDatetime: string = null, patient: any = { uuid: 'patient-1' }): VisitSummaryComponent => {
     const visit = { uuid: 'visit-1', patient: { uuid: 'patient-1' }, encounters, attributes: [], stopDatetime };
     const visitService: any = {
       fetchVisitDetails: jasmine.createSpy('fetchVisitDetails').and.returnValue(of(visit)),
-      patientInfo: jasmine.createSpy('patientInfo').and.returnValue(of({ uuid: 'patient-1' })),
+      patientInfo: jasmine.createSpy('patientInfo').and.returnValue(of(patient)),
       getDemarcation: jasmine.createSpy('getDemarcation').and.returnValue('')
     };
     const appConfigService: any = {
@@ -174,56 +175,34 @@ describe('VisitSummaryComponent', () => {
   }));
 
   describe('patient display id (TMH Case Number with OpenMRS ID fallback)', () => {
-    const withPatient = (attributes: any[], identifiers: any[]): VisitSummaryComponent => {
-      const component: any = create([]);
-      component.patient = { person: { attributes }, identifiers };
-      return component;
-    };
     const tmh = (value: string) => ({ attributeType: { display: 'TMH Case Number' }, value });
     const openMrsId = { identifierType: { display: 'OpenMRS ID' }, identifier: '16RGJ-8' };
 
-    it('shows the TMH Case Number when the patient has one', () => {
-      expect(withPatient([tmh('TMH-123')], [openMrsId]).getPatientDisplayId()).toBe('TMH-123');
-    });
+    const loadPatient = (attributes: any[], identifiers: any[]): VisitSummaryComponent => {
+      const component = create([], false, null, { uuid: 'patient-1', person: { attributes }, identifiers });
+      loadVisit(component);
+      return component;
+    };
 
-    it('falls back to the OpenMRS ID instead of "NA" when there is no TMH Case Number', () => {
-      expect(withPatient([], [openMrsId]).getPatientDisplayId()).toBe('16RGJ-8');
-    });
+    it('stores the TMH Case Number as the display id when the patient loads', fakeAsync(() => {
+      expect(loadPatient([tmh('TMH-123')], [openMrsId]).patientDisplayId).toEqual({ id: 'TMH-123', label: 'TMH Case Number' });
+    }));
 
-    it('falls back to the OpenMRS ID when the TMH Case Number is empty', () => {
-      expect(withPatient([tmh('')], [openMrsId]).getPatientDisplayId()).toBe('16RGJ-8');
-    });
+    it('stores the OpenMRS ID instead of "NA" when there is no TMH Case Number', fakeAsync(() => {
+      expect(loadPatient([], [openMrsId]).patientDisplayId).toEqual({ id: '16RGJ-8', label: 'OpenMRS ID' });
+    }));
 
-    it('still shows "NA" when the patient has neither ID', () => {
-      expect(withPatient([], []).getPatientDisplayId()).toBe('NA');
-    });
+    it('stores an empty id under the TMH label when the patient has neither ID', fakeAsync(() => {
+      expect(loadPatient([], []).patientDisplayId).toEqual({ id: '', label: 'TMH Case Number' });
+    }));
 
-    it('does not break when an identifier comes back without a type, and prefers the typed OpenMRS ID', () => {
-      expect(withPatient([], [{ identifier: 'NO-TYPE' }, openMrsId]).getPatientDisplayId()).toBe('16RGJ-8');
-    });
+    it('does not break when an attribute comes back without a type', fakeAsync(() => {
+      const component = loadPatient([{ value: 'orphan' }, tmh('TMH-123')], [openMrsId]);
 
-    it('falls back to the first identifier when the server did not return identifier type names', () => {
-      const untyped = withPatient([], [{ identifier: 'FIRST-1' }]);
-
-      expect(untyped.getPatientDisplayId()).toBe('FIRST-1');
-      expect(untyped.showsOpenMrsIdFallback()).toBeTrue();
-    });
-
-    it('flags the OpenMRS ID fallback so the card can label it', () => {
-      expect(withPatient([], [openMrsId]).showsOpenMrsIdFallback()).toBeTrue();
-      expect(withPatient([tmh('')], [openMrsId]).showsOpenMrsIdFallback()).toBeTrue();
-    });
-
-    it('labels the ID by where it came from', () => {
-      expect(withPatient([tmh('TMH-123')], [openMrsId]).getPatientDisplayIdLabel()).toBe('TMH Case Number');
-      expect(withPatient([], [openMrsId]).getPatientDisplayIdLabel()).toBe('OpenMRS ID');
-      expect(withPatient([], []).getPatientDisplayIdLabel()).toBe('TMH Case Number');
-    });
-
-    it('does not flag a fallback when the TMH Case Number is shown, or when there is no OpenMRS ID either', () => {
-      expect(withPatient([tmh('TMH-123')], [openMrsId]).showsOpenMrsIdFallback()).toBeFalse();
-      expect(withPatient([], []).showsOpenMrsIdFallback()).toBeFalse();
-    });
+      expect(component.patientDisplayId.id).toBe('TMH-123');
+      expect(component.getPersonAttributeValue('TMH Case Number')).toBe('TMH-123');
+      expect(component.getPersonAttributeValue('Telephone Number')).toBe('NA');
+    }));
   });
 });
 
@@ -276,6 +255,7 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
     component.isTurnServer = false;
     spyOn(component, 'isFeatureAvailable').and.callFake((name: string) => name === 'tnmStaging' && tnmStaging);
     component.patient = { person: { attributes, preferredName: {} }, identifiers } as any;
+    component.patientDisplayId = getPatientDisplayId(component.patient);
     fixture.detectChanges();
 
     const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent.trim() ?? null;

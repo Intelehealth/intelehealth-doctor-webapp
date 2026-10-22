@@ -1,6 +1,6 @@
 import { languages, visitTypes } from "src/config/constant";
 import * as moment from 'moment';
-import { ProviderAttributeModel } from "../model/model";
+import { PatientModel, ProviderAttributeModel } from '../model/model';
 import { DecimalPipe } from "@angular/common";
 import { environment } from "src/environments/environment";
 
@@ -287,20 +287,26 @@ export  function isValidBase64Image(base64String) {
   }
 }
 
-/**
- * ID shown under the patient's name on TMH deployments (tnmStaging): the TMH Case Number,
- * or the OpenMRS ID when the patient has none, so the header never shows just "NA".
- * @param tmhCaseNumber - value of the "TMH Case Number" attribute, or the screen's "not available" text
- * @param openMrsId - the patient's OpenMRS ID
- * @param notAvailable - the text the screen uses for a missing attribute (translated on some screens)
- */
-export function pickPatientDisplayId(tmhCaseNumber: string, openMrsId: string, notAvailable = 'NA'): string {
-  return hasTmhCaseNumber(tmhCaseNumber, notAvailable) ? tmhCaseNumber : (openMrsId || tmhCaseNumber);
+export interface PatientDisplayId {
+  /** The ID to show; empty when the patient has neither a TMH Case Number nor an OpenMRS ID */
+  id: string;
+  /** Translation key of the label to show with the id */
+  label: string;
 }
 
 /**
- * Whether the patient really has a TMH Case Number (not empty and not the screen's "not available" text)
+ * ID shown under the patient's name on TMH deployments (tnmStaging): the TMH Case Number,
+ * or the OpenMRS ID when the patient has none, so the header never shows just "NA".
+ * An identifier is only used as the OpenMRS ID when it is typed "OpenMRS ID", or has no type at all
+ * (the server did not return identifier type names); an identifier of another type is never relabelled.
+ * @param patient - patient with person attributes and identifiers
  */
-export function hasTmhCaseNumber(tmhCaseNumber: string, notAvailable = 'NA'): boolean {
-  return !!tmhCaseNumber && tmhCaseNumber !== notAvailable;
+export function getPatientDisplayId(patient: PatientModel): PatientDisplayId {
+  const tmhCaseNumber = patient?.person?.attributes?.find((attr) => attr.attributeType?.display === 'TMH Case Number')?.value;
+  if (tmhCaseNumber && tmhCaseNumber !== 'NA') {
+    return { id: tmhCaseNumber, label: 'TMH Case Number' };
+  }
+  const openMrsId = patient?.identifiers?.find((idf) => idf.identifierType?.display === 'OpenMRS ID')?.identifier
+    || patient?.identifiers?.find((idf) => !idf.identifierType)?.identifier;
+  return openMrsId ? { id: openMrsId, label: 'OpenMRS ID' } : { id: '', label: 'TMH Case Number' };
 }

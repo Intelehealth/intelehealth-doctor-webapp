@@ -48,7 +48,7 @@
                     <!-- Turn servers always show the OpenMRS ID (Turn patients have no TMH Case Number).
                          Other servers (dev, pathqa) keep the tnmStaging/TMH behavior: TMH Case Number, else the OpenMRS ID. -->
                     <p data-test-id="etPatienOpenMRSId" *ngIf="isTurnServer">{{ getPatientIdentifier('OpenMRS ID') }}</p>
-                    <p data-test-id="etPatienOpenMRSId" *ngIf="!isTurnServer && isFeatureAvailable('tnmStaging')"><span data-test-id="etPatientIdLabel">{{ getPatientDisplayIdLabel() | translate }}: </span>{{ getPatientDisplayId() }}</p>
+                    <p data-test-id="etPatienOpenMRSId" *ngIf="!isTurnServer && isFeatureAvailable('tnmStaging')"><span data-test-id="etPatientIdLabel">{{ patientDisplayId?.label | translate }}: </span>{{ patientDisplayId?.id || 'NA' }}</p>
                     <p data-test-id="etPatienOpenMRSId" *ngIf="!isTurnServer && !isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
                   </div>
                 </div>
