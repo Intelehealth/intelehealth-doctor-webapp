@@ -37,7 +37,7 @@ const routes: Routes = [
   {
     path: 'elcg/:id',
     data: {
-      breadcrumb: 'WHO LCG View'
+      breadcrumb: 'LCG View'
     },
     component: PartogramComponent
   },
