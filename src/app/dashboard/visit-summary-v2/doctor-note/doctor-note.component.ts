@@ -6,6 +6,7 @@ import { doctorDetails } from 'src/config/constant';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
+import { QueueService } from 'src/app/services/queue.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import {
   DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftMedication, DraftReferral,
@@ -135,7 +136,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   constructor(
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService,
-    private router: Router
+    private router: Router,
+    private queueService: QueueService
   ) {}
 
   private getPatientOpenMrsId(): string {
@@ -854,6 +856,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       next: (res) => {
         if (!res) { this.showSharePrescriptionError(); return; }
         this.prescriptionShared = true;
+        this.queueService.markPrescriptionShared(this.visitUuid).subscribe();
         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
           if (result === 'view') {
             this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
