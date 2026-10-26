@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPrescriptionSourceEncounterUuids, isNamcoDoctor, getCacheData } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPrescriptionSourceEncounterUuids, isNamcoDoctor, getCacheData, getPatientDisplayId, PatientDisplayId } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -32,6 +32,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   visit: VisitModel;
   patient: PatientModel;
+  patientDisplayId: PatientDisplayId;
   baseUrl: string = environment.baseURL;
   visitStatus: string;
   providerName: string;
@@ -130,6 +131,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
+            this.patientDisplayId = getPatientDisplayId(patient);
             this.clinicName = visit.location.display;
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
@@ -512,7 +514,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display == identifierType) {
+        if (idf.identifierType?.display == identifierType) {
           identifier = idf.identifier;
         }
       });
@@ -567,7 +569,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
-        if (attrType === attr.attributeType.display) {
+        if (attrType === attr.attributeType?.display) {
           val = attr.value;
         }
       });
@@ -781,7 +783,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           ul: [
-                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPersonAttributeValue('TMH Case Number') !== 'NA' ? this.getPersonAttributeValue('TMH Case Number') : this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Patient ID:', bold: true}, ` ${getPatientDisplayId(this.patient).id || 'NA'}`], margin: [0, 5, 0, 5]},
                             {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
