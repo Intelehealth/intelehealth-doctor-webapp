@@ -31,7 +31,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
-import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, checkIfDateOldThanOneDay as getAppointmentCountdown } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, deleteCacheData, getCacheData, getAge, getFieldValueByLanguage, setCacheData, isFeaturePresent, getCallDuration, autoGrowTextZone, autoGrowAllTextAreaZone, obsStringify, obsParse, checkIfDateOldThanOneDay as getAppointmentCountdown, getPatientDisplayId, PatientDisplayId } from 'src/app/utils/utility-functions';
 import { doctorDetails, languages, visitTypes, facility, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds, visitAttributeTypes } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DiagnosticModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PatientVisitSection, PatientVisitSummaryConfigModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, SpecializationModel, TestModel, VisitAttributeModel, VisitModel, VitalModel, DiagnosticUnit, DiagnosticName, DropdownItemModel, StandardMedicineModel } from 'src/app/model/model';
@@ -119,6 +119,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
   visitNoteDoctorName = '';
+  patientDisplayId: PatientDisplayId;
 
   get showVisitInProgressBanner(): boolean {
     return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
@@ -777,6 +778,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
+            this.patientDisplayId = getPatientDisplayId(patient);
             // Debug: what patientInfo() actually returned for identifiers. If
             // typeDisplay is undefined here, the fetch representation didn't
             // expand identifiers (isTurnServer flag / build), so the header shows NA.
@@ -898,7 +900,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display === identifierType) {
+        if (idf.identifierType?.display === identifierType) {
           identifier = idf.identifier;
         }
       });
@@ -1235,7 +1237,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     let val = 'NA';
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
-        if (attrType === attr.attributeType.display) {
+        if (attrType === attr.attributeType?.display) {
           val = attr.value;
         }
       });
