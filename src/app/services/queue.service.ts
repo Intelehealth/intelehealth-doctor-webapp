@@ -78,6 +78,19 @@ export class QueueService {
   }
 
   /**
+   * Tell QMS the prescription was shared, which completes the visit's queue entry.
+   * Call once the visit complete encounter is created. QMS takes the doctor from the token.
+   * Best-effort, so errors are swallowed and a QMS outage doesn't affect sharing.
+   */
+  markPrescriptionShared(visitUuid: string): Observable<boolean> {
+    if (!this.isQmsEnabled || !visitUuid) {
+      return of(false);
+    }
+    return this.http.post<{ success: boolean }>(`${this.baseURL}/queue/visit/${visitUuid}/prescription-shared`, {}, this.callerHandledErrors)
+      .pipe(map(res => !!res?.success), catchError(() => of(false)));
+  }
+
+  /**
    * Check whether a visit note can be started.
    *
    * QMS disabled, or the visit is not in the queue / the lookup fails: allow (existing workflow).

@@ -2657,6 +2657,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       ]
                     }).subscribe((post) => {
                       this.visitCompleted = true;
+                      this.queueService.markPrescriptionShared(this.visit.uuid).subscribe();
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
                       // Prescription just shared -> notify the patient on WhatsApp.
                       // Fetch the visit fresh (now that the encounter above is confirmed

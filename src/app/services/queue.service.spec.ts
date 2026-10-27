@@ -163,6 +163,37 @@ describe('QueueService', () => {
     });
   });
 
+  describe('markPrescriptionShared', () => {
+    const run = (): boolean => {
+      let result: boolean;
+      service.markPrescriptionShared('visit-1').subscribe(r => result = r);
+      return result;
+    };
+
+    it('does not call the queue when QMS is disabled', () => {
+      appConfig.qms_section = false;
+
+      expect(run()).toBeFalse();
+      expect(http.post).not.toHaveBeenCalled();
+    });
+
+    it('tells the queue the prescription was shared for the visit', () => {
+      http.post.and.returnValue(of({ success: true, data: {} }));
+
+      expect(run()).toBeTrue();
+      const [url, body, options] = http.post.calls.mostRecent().args;
+      expect(url).toContain('/queue/visit/visit-1/prescription-shared');
+      expect(body).toEqual({});
+      expect(options.context.get(SKIP_ERROR_INTERCEPTOR)).toBeTrue();
+    });
+
+    it('swallows errors so sharing is never blocked by the queue', () => {
+      http.post.and.returnValue(throwError(new HttpErrorResponse({ status: 500 })));
+
+      expect(run()).toBeFalse();
+    });
+  });
+
   describe('updateDoctorStatus', () => {
     it('sends the status and speciality', () => {
       service.updateDoctorStatus('doc-1', 'online', 'General Physician');
