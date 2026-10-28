@@ -120,6 +120,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   isVisitNoteProvider = false;
   visitNoteDoctorName = '';
   patientDisplayId: PatientDisplayId;
+  // Show or hide the "OpenMRS ID" / "TMH Case Number" label next to the patient ID in the header. The ID itself is always shown.
+  showOpenMrsIdLabel = false;
+  showTmhCaseNumberLabel = false;
 
   get showVisitInProgressBanner(): boolean {
     return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
