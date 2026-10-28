@@ -210,7 +210,7 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
   const tmh = (value: string) => ({ attributeType: { display: 'TMH Case Number' }, value });
   const openMrsId = { identifierType: { display: 'OpenMRS ID' }, identifier: '16RGJ-8' };
 
-  const render = (attributes: any[], identifiers: any[], tnmStaging: boolean) => {
+  const render = (attributes: any[], identifiers: any[], tnmStaging: boolean, labels: { openMrs?: boolean; tmh?: boolean } = {}) => {
     const stub = {};
     TestBed.configureTestingModule({
       declarations: [VisitSummaryComponent],
@@ -256,6 +256,8 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
     spyOn(component, 'isFeatureAvailable').and.callFake((name: string) => name === 'tnmStaging' && tnmStaging);
     component.patient = { person: { attributes, preferredName: {} }, identifiers } as any;
     component.patientDisplayId = getPatientDisplayId(component.patient);
+    component.showOpenMrsIdLabel = !!labels.openMrs;
+    component.showTmhCaseNumberLabel = !!labels.tmh;
     fixture.detectChanges();
 
     const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent.trim() ?? null;
@@ -266,15 +268,15 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
   };
 
   it('shows the TMH Case Number with a "TMH Case Number:" label when the patient has one', () => {
-    expect(render([tmh('TMH-123')], [openMrsId], true)).toEqual({ id: 'TMH Case Number: TMH-123', label: 'TMH Case Number:' });
+    expect(render([tmh('TMH-123')], [openMrsId], true, { openMrs: true, tmh: true })).toEqual({ id: 'TMH Case Number: TMH-123', label: 'TMH Case Number:' });
   });
 
   it('keeps the "TMH Case Number:" label, with "NA", when the patient has no ID at all', () => {
-    expect(render([], [], true)).toEqual({ id: 'TMH Case Number: NA', label: 'TMH Case Number:' });
+    expect(render([], [], true, { openMrs: true, tmh: true })).toEqual({ id: 'TMH Case Number: NA', label: 'TMH Case Number:' });
   });
 
   it('shows the OpenMRS ID with an "OpenMRS ID:" label instead of "NA" when there is no TMH Case Number', () => {
-    const shown = render([], [openMrsId], true);
+    const shown = render([], [openMrsId], true, { openMrs: true, tmh: true });
 
     expect(shown.id).toBe('OpenMRS ID: 16RGJ-8');
     expect(shown.label).toBe('OpenMRS ID:');
@@ -282,5 +284,33 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
 
   it('shows the plain OpenMRS ID, with no label, when tnmStaging is off', () => {
     expect(render([], [openMrsId], false)).toEqual({ id: '16RGJ-8', label: null });
+  });
+
+  it('hides the TMH Case Number label by default and keeps the value visible', () => {
+    expect(render([tmh('TMH-123')], [openMrsId], true)).toEqual({ id: 'TMH-123', label: null });
+  });
+
+  it('hides the OpenMRS ID label by default and keeps the value visible', () => {
+    expect(render([], [openMrsId], true)).toEqual({ id: '16RGJ-8', label: null });
+  });
+
+  it('hides the label by default and keeps "NA" visible when the patient has no ID', () => {
+    expect(render([], [], true)).toEqual({ id: 'NA', label: null });
+  });
+
+  it('keeps the TMH Case Number label hidden when only the OpenMRS ID flag is true', () => {
+    expect(render([tmh('TMH-123')], [openMrsId], true, { openMrs: true })).toEqual({ id: 'TMH-123', label: null });
+  });
+
+  it('keeps the OpenMRS ID label hidden when only the TMH Case Number flag is true', () => {
+    expect(render([], [openMrsId], true, { tmh: true })).toEqual({ id: '16RGJ-8', label: null });
+  });
+
+  it('shows the TMH Case Number label when its flag is true', () => {
+    expect(render([tmh('TMH-123')], [openMrsId], true, { tmh: true }).label).toBe('TMH Case Number:');
+  });
+
+  it('shows the OpenMRS ID label when its flag is true', () => {
+    expect(render([], [openMrsId], true, { openMrs: true }).label).toBe('OpenMRS ID:');
   });
 });
