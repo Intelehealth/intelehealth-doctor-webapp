@@ -1,6 +1,6 @@
 import { languages, visitTypes, doctorDetails } from "src/config/constant";
 import * as moment from 'moment';
-import { EncounterModel, PatientIdentifierModel, PatientModel, PatientModel, ProviderAttributeModel } from '../model/model';
+import { EncounterModel, PatientIdentifierModel, PatientModel, ProviderAttributeModel } from '../model/model';
 import { DecimalPipe } from "@angular/common";
 import { environment } from "src/environments/environment";
 
