@@ -27,7 +27,8 @@ import {
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import {
-  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE,
+  DEFAULT_MEDICINE_DURATION_UNIT, DURATION_UNIT_IN_DAYS
 } from './doctor-note/doctor-note.constants';
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
@@ -262,6 +263,20 @@ export class VisitSummaryV2Service {
     return Math.round(num <= 1 ? num * 100 : num);
   }
 
+  /**
+  * Converts a duration to days, as the medication card edits days only: '2' 'Weeks' → '14' 'Days'
+  * (a month counts as 30 days, no unit means days). A non-numeric duration or unknown unit is kept as is.
+  */
+  toDurationInDays(durationNo: any, durationUnit: any): { durationNo: string; durationUnit: string } {
+    const no = `${durationNo ?? ''}`.trim();
+    const unit = `${durationUnit ?? ''}`.trim();
+    const factor = unit ? DURATION_UNIT_IN_DAYS[unit.toLowerCase().replace(/s$/, '')] : 1;
+    if (!no || !factor || isNaN(Number(no))) {
+      return { durationNo: no, durationUnit: unit };
+    }
+    return { durationNo: `${Number(no) * factor}`, durationUnit: DEFAULT_MEDICINE_DURATION_UNIT };
+  }
+
   private mapLikelihood(value: string): SuggestionLikelihood {
     const likelihood = (value || '').toLowerCase();
     if (likelihood.includes('high')) { return 'High'; }
@@ -281,18 +296,21 @@ export class VisitSummaryV2Service {
     const data = res?.result?.data || {};
     return {
       rawMedicines: data.medications || data.result || [],
-      medicines: (data.medications || data.result || []).map((m: any) => ({
-        name: m?.name || '',
-        label: m?.name || '',
-        likelihood: this.mapConfidence(m?.confidence),
-        confidence: this.mapProbability(m?.confidence),
-        reasons: this.toReasonList(m?.rationale),
-        timing: m?.frequency || '',
-        strength: m?.dosage || '',
-        days: m?.duration ? `${m.duration}` : '',
-        durationUnit: m?.duration_unit || '',
-        remarks: m?.instructions || ''
-      })).filter((m: AiMedicationSuggestion) => !!m.name),
+      medicines: (data.medications || data.result || []).map((m: any) => {
+        const duration = this.toDurationInDays(m?.duration, m?.duration_unit);
+        return {
+          name: m?.name || '',
+          label: m?.name || '',
+          likelihood: this.mapConfidence(m?.confidence),
+          confidence: this.mapProbability(m?.confidence),
+          reasons: this.toReasonList(m?.rationale),
+          timing: m?.frequency || '',
+          strength: m?.dosage || '',
+          days: duration.durationNo,
+          durationUnit: duration.durationUnit,
+          remarks: m?.instructions || ''
+        };
+      }).filter((m: AiMedicationSuggestion) => !!m.name),
       advices: (data.medical_advice || []).map((a: any) => a?.v || a).filter(Boolean),
       tests: (data.tests_to_be_done || []).map((t: any) => t?.test_name || t).filter(Boolean),
       referrals: (data.referral || []).map((r: any) => ({
@@ -1058,9 +1076,10 @@ export class VisitSummaryV2Service {
       };
       if (chosen) {
         matchedNames.add(norm(chosen.drug));
+        const aiDuration = this.toDurationInDays(ai?.duration, ai?.duration_unit);
         const modified = norm(chosen.dose) !== norm(ai?.dosage || ai?.dose)
-          || norm(chosen.durationNo) !== norm(ai?.duration)
-          || norm(chosen.durationUnit) !== norm(ai?.duration_unit)
+          || norm(chosen.durationNo) !== norm(aiDuration.durationNo)
+          || norm(chosen.durationUnit) !== norm(aiDuration.durationUnit)
           || norm(chosen.instructRemark) !== norm(ai?.instructions)
           || norm(chosen.frequency) !== norm(ai?.frequency);
         Object.assign(item, {

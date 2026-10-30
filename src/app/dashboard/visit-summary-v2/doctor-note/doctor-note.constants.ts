@@ -11,6 +11,7 @@ export const DEFAULT_DIAGNOSIS_CODE = 'NA';
 export const DEFAULT_DIAGNOSIS_TYPE = 'Primary';
 export const DEFAULT_DIAGNOSIS_STATUS = 'Provisional';
 export const DEFAULT_MEDICINE_DURATION_UNIT = 'Days';
+export const DURATION_UNIT_IN_DAYS: Record<string, number> = { day: 1, week: 7, month: 30 };
 export const MEDICINE_SEARCH_MIN_LENGTH = 2;
 export const MEDICINE_SEARCH_MAX_RESULTS = 8;
 export const ADVICE_SEARCH_MAX_RESULTS = 8;

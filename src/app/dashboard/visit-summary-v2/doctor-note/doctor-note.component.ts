@@ -573,7 +573,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       timing: suggestion?.timing || '',
       strength: suggestion?.strength || '',
       days: suggestion?.days || '',
-      durationUnit: suggestion?.durationUnit || '',
+      durationUnit: suggestion?.durationUnit || DEFAULT_MEDICINE_DURATION_UNIT,
       remarks: suggestion?.remarks || null,
       editing: !suggestion?.timing || !suggestion?.strength || !suggestion?.days
     });
@@ -653,13 +653,15 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     const m = this.addedMedicines[index];
     if (!m || this.selectedMedicines.some(s => s.uuid && s.uuid === m.uuid)) { return; }
     this.addedMedicines.splice(index, 1);
+    // The card edits only the no. of days, so a saved '2 Weeks' opens as 14 days.
+    const duration = this.v2Service.toDurationInDays(m.durationNo, m.durationUnit);
     this.selectedMedicines.push({
       drug: m.drug,
       source: 'manual',
       timing: m.frequency || '',
       strength: m.dose || '',
-      days: m.durationNo || '',
-      durationUnit: m.durationUnit || '',
+      days: duration.durationNo,
+      durationUnit: duration.durationUnit || DEFAULT_MEDICINE_DURATION_UNIT,
       remarks: m.instructRemark || null,
       editing: true,
       uuid: m.uuid,
