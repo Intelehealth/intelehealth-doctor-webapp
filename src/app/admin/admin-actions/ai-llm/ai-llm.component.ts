@@ -24,7 +24,7 @@ export class AiLlmComponent {
   sectionEnabled: boolean = false;
   allSectionData: any = {};
   displayedAILLMColumns: string[] = ["serialNo", "section", "is_enabled"];
-  displayedAILLMRecordingColumns: string[] = ["serialNo", "sectionr"];
+  displayedAILLMRecordingColumns: string[] = ["serialNo", "sectionr", "is_enabled"];
 
   tableData = [];
   aiLlmId: number;

@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, ElementRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { SKIP_ERROR_INTERCEPTOR } from '../core/interceptors/error-interceptor.context';
 import {
   LocalParticipant,
   LocalTrackPublication,
@@ -87,7 +88,29 @@ export class WebrtcService {
   }
 
   stopRecording(id: number, roomId: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`);
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`, {
+      context: new HttpContext().set(SKIP_ERROR_INTERCEPTOR, true)
+    });
+  }
+
+  /**
+  * Stop the recording while the page is being closed or reloaded, when an HttpClient
+  * request would be cancelled. keepalive lets the browser finish the request after unload.
+  */
+  stopRecordingOnUnload(id: number, roomId: string) {
+    fetch(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${encodeURIComponent(roomId)}`, { keepalive: true })
+      .catch(err => console.error('stop recording on unload failed', err));
+  }
+
+  /**
+  * Report a recording start/stop failure to the backend so it is logged and alerted on,
+  * not only sent to Google Analytics.
+  */
+  reportRecordingError(payload: { action: string, roomId: string, visitId?: string, doctorId?: string, patientId?: string, recordingId?: number, error: string }) {
+    this.http.post(`${environment.webrtcTokenServerUrl}api/recordingError`, payload, {
+      context: new HttpContext().set(SKIP_ERROR_INTERCEPTOR, true)
+    })
+      .subscribe({ error: err => console.error('report recording error failed', err) });
   }
 
   async createRoomAndConnectCall({

@@ -108,14 +108,26 @@
               <button
                 type="button"
                 class="video-ctrl-btn red"
-                (click)="endCallInRoom();setFlag();"
+                (click)="setFlag();endCallInRoom();"
                 data-test-id="btnEnd"
                [class.minimized]="_minimized"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
+              <!-- In the same row as the other controls so all four are centered together. -->
+              <button
+                *ngIf="!_minimized"
+                type="button"
+                class="video-ctrl-btn fullscreen-btn"
+                (click)="toggleWindow()"
+                data-test-id="btnToggleWindow"
+                title="Minimize"
+              >
+                <img src="assets/svgs/minimize-blue.svg" alt="" />
+              </button>
             </div>
-            <div class="window-controls" [class.minimized]="_minimized">
+            <!-- Minimized: covers the small video and shows the maximize button on hover. -->
+            <div class="window-controls" *ngIf="_minimized" [class.minimized]="_minimized">
               <button
                 type="button"
                 class="video-ctrl-btn fullscreen-btn"
@@ -165,7 +177,7 @@
             <button
             type="button"
             class="video-ctrl-btn red"
-            (click)="endCallInRoom();setFlag();"
+            (click)="setFlag();endCallInRoom();"
             data-test-id="btnEndCallWaiting"
           >
             <img src="assets/svgs/call-end.svg" alt="" />
