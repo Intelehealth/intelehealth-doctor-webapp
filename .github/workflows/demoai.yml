@@ -11,6 +11,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      # Upload to /tmp with a unique name so an old, root-owned file in the
+      # deploy folder can never block the upload again.
+      REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}.tar.gz
 
     steps:
       - name: Checkout Code
@@ -20,10 +24,8 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
           ssh-keyscan -H "${{ secrets.DEMOAI_HOST }}" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
@@ -41,23 +43,17 @@ jobs:
             : > .env
           fi
 
-          mv .env ./ || true
-
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
       - name: Build and Save Docker Image
         run: |
           docker build -t intelehealth-webapp:latest .
           docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
 
-      # STEP 3: Transfer the built image back to the server
+      # STEP 3: Transfer the built image to the server's /tmp
       - name: Upload Image to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEMOAI_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "webapp_image.tar.gz"
-          target: "/home/ubuntu/deploy/webapp/"
+        run: |
+          scp -i ~/.ssh/id_rsa webapp_image.tar.gz \
+            "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:$REMOTE_IMAGE"
 
       # STEP 4: Restart the container
       - name: Deploy Container
@@ -66,12 +62,14 @@ jobs:
           host: ${{ secrets.DEMOAI_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
           script: |
+            REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
             mkdir -p /home/ubuntu/deploy/webapp
-            touch /home/ubuntu/deploy/webapp/.env
+            [ -f /home/ubuntu/deploy/webapp/.env ] || touch /home/ubuntu/deploy/webapp/.env
 
-            cd /home/ubuntu/deploy/webapp/
-            gunzip -c webapp_image.tar.gz | docker load
+            gunzip -c "$REMOTE_IMAGE" | docker load
+            rm -f "$REMOTE_IMAGE"
 
             docker stop webapp-container || true
             docker rm webapp-container || true
@@ -84,4 +82,4 @@ jobs:
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
 
-            rm -f webapp_image.tar.gz
+            docker image prune -f
