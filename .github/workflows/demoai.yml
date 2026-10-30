@@ -2,7 +2,7 @@ name: Demoai
 on:
   push:
     branches:
-      - development-master
+      - development_master
     paths-ignore:
       - '.github/workflows/**'          # don't deploy when only workflow files change...
       - '!.github/workflows/demoai.yml' # ...except this workflow itself (use your real filename)
