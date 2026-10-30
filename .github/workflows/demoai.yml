@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - development-master
+    paths-ignore:
+      - '.github/workflows/**'          # don't deploy when only workflow files change...
+      - '!.github/workflows/demoai.yml' # ...except this workflow itself (use your real filename)
   workflow_dispatch:  # Allows manual trigger
   
 jobs:
