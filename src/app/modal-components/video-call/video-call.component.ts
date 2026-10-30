@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy, ViewChild, NgZone } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ViewChild, NgZone, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { ChatService } from 'src/app/services/chat.service';
@@ -6,8 +6,8 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
-import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
-import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track, ConnectionQuality } from 'livekit-client';
+import { getCacheData } from 'src/app/utils/utility-functions';
+import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track, ConnectionQuality, DisconnectReason } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, EncounterProviderModel, MessageModel, RecordingResponse } from 'src/app/model/model';
@@ -55,6 +55,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   connecting = false;
   callEndTimeout = null;
   endCall: boolean = false;
+  callAttemptId = this.newCallAttemptId();
+  callEndReported = false;
   patientRegFields: string[] = [];
   recodingStarted = false;
   tableId: number;
@@ -68,7 +70,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   lastAudioBytesSent = 0;
   lastAudioTimestamp = 0;
 
-  isVideoRecordingEnabled: boolean;
+  isRecordingEnabled: boolean;
 
   cameraIssue: boolean = false;
   microphoneIssue: boolean = false;
@@ -137,7 +139,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
     // set flag for audio/video enable/disable
 
-    this.isVideoRecordingEnabled = this.appConfigService.ai_llm_recording_section
+    // Admin > AI/LLM Recordings: the section switch, then the Video / Audio switch for this call type.
+    const recordingTypes = this.appConfigService.ai_llm_recording;
+    const typeEnabled = this.callType === 'audio' ? recordingTypes?.ai_audio : recordingTypes?.ai_video;
+    this.isRecordingEnabled = !!this.appConfigService.ai_llm_recording_section && typeEnabled !== false;
 
     // Subscribe to connection quality updates
     const localQualitySub = this.webrtcSvc.localConnectionQuality$.subscribe((q) => {
@@ -193,6 +198,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
 
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
+        this.reportCallOutcome(this.tokenFailureOutcome());
       });
     }
     if (!this.webrtcSvc.token) return;
@@ -210,7 +216,58 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this),
       handleParticipantConnect: this.handleParticipantConnect.bind(this),
       handleMediaError: this.handleMediaDeviceError.bind(this),
+    }).catch(err => {
+      console.error('LiveKit room connection failed', err);
+      this.reportCallOutcome(navigator.onLine === false ? 'networkUnavailable' : 'livekitFailed');
     });
+  }
+
+  /**
+  * Unique id for this call attempt
+  * @return {string} - Attempt id
+  */
+  private newCallAttemptId(): string {
+    const cryptoApi: any = typeof crypto !== 'undefined' ? crypto : null;
+    return cryptoApi?.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+  }
+
+  /**
+  * Ids of this attempt sent with every call event
+  * @return {object} - Attempt ids
+  */
+  get callAttemptPayload() {
+    return {
+      callAttemptId: this.callAttemptId,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      roomId: this.room,
+      nurseId: this.nurseId,
+      callType: this.callType,
+    };
+  }
+
+  /**
+  * Tell the backend how a doctor-initiated attempt failed, so its call_data row records it.
+  * Outcome keys are defined by the backend (portal/constants/call-outcomes.js).
+  * @param {string} outcome - Outcome key
+  * @return {void}
+  */
+  reportCallOutcome(outcome: string) {
+    if (this.initiator !== 'dr') return;
+    if (outcome !== 'micDenied' && outcome !== 'mediaFailed') {
+      if (this.callEndReported) return;
+      this.callEndReported = true;
+    }
+    this.socketSvc.emitEvent('call_outcome', { ...this.callAttemptPayload, outcome });
+  }
+
+  /**
+  * Call outcome for a failed token request. The error interceptor passes on only the message,
+  * so timeouts and service outages are not told apart from other API failures.
+  * @return {string} - Outcome key
+  */
+  tokenFailureOutcome(): string {
+    return navigator.onLine === false ? 'networkUnavailable' : 'initiationApiFailed';
   }
 
   /**
@@ -257,6 +314,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     this.toastr.error(userMsg, title, { timeOut: 5000 });
+
+    // Recorded as the outcome only if the attempt then ends without connecting.
+    if (!this.callConnected) {
+      const denied = errorName === 'NotAllowedError' || errorName === 'SecurityError';
+      this.reportCallOutcome(source === 'microphone' && denied ? 'micDenied' : 'mediaFailed');
+    }
 
     // Set indicator flags for UI badges
     if (source === 'camera') {
@@ -319,7 +382,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       socketId: this.socketSvc?.socket?.id,
       initiator: this.initiator,
       callType : this.callType,
-      autoJoin: environment.isTurnServer ? 'true' : 'false'
+      autoJoin: environment.isTurnServer ? 'true' : 'false',
+      callAttemptId: this.callAttemptId
     };
     this.analytics.logEvent('on-call-connect', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
@@ -338,6 +402,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
+      this.callEndReported = true;
       this.socketSvc.emitEvent('call_time_up', this.nurseId);
       this.analytics.logEvent('call_time_up', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
         this.endCallInRoom();
@@ -371,9 +436,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.emitEvent('call-connected', this.incomingData);
     this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
-    if(this.callType === 'video' && this.isVideoRecordingEnabled && !this.recodingStarted) {
+    if(this.isRecordingEnabled && !this.recodingStarted) {
       this.recodingStarted = true;
       await this.webrtcSvc.startRecording({
+        callType: this.callType,
         doctorName: this.doctorName,
         roomId: this.room,
         visitId: this.data?.visitId,
@@ -391,6 +457,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       })
       .catch(err => {
       this.recodingStarted = false;
+      const error = this.describeRecordingError(err);
       this.analytics.logEvent('call-recoding-error', 'engagement', 'call_button', 1, {
         doctorUserId: this.data?.connectToDrId,
         doctorName: this.doctorName,
@@ -401,8 +468,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         location:this.location,
         callType: this.callType,
         callDuration: this.callDuration,
-        error: err
+        error
       });
+      this.reportRecordingError('start', error);
       console.error("start recording error", err)
       });
     }
@@ -530,7 +598,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.toastr.info(`Call ended from ${this.peerLabel}'s end.`, null, { timeOut: 2000 });
     this.callConnected = false;
     this.socketSvc.incomingCallData = null;
-    this.endCallInRoom();
+    this.endCallInRoom('participant_left');
     clearTimeout(this.callEndTimeout);
   }
 
@@ -623,6 +691,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   initSocketEvents() {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
+        this.callEndReported = true;
         this.endCallInRoom();
         this.toastr.info(`Call rejected by ${this.peerLabel}`, null, { timeOut: 2000 });
         this.analytics.logEvent('hw_call_reject', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
@@ -743,21 +812,66 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   /**
+  * Stop the recording when the tab is closed or reloaded mid-call; ngOnDestroy does not
+  * run then, and the recording would otherwise stay open.
+  * @return {void}
+  */
+  @HostListener('window:pagehide')
+  stopRecordingOnPageHide() {
+    if (!this.recodingStarted) return;
+    this.recodingStarted = false;
+    this.webrtcSvc.stopRecordingOnUnload(this.tableId, this.room);
+  }
+
+  /**
+  * Turn an HTTP or runtime error into a short readable string for logging
+  * @param {any} err - Error from the recording request
+  * @return {string} error description
+  */
+  describeRecordingError(err): string {
+    const status = err?.status !== undefined ? `HTTP ${err.status}: ` : '';
+    const message = err?.error?.message || err?.message || String(err);
+    return `${status}${message}`;
+  }
+
+  /**
+  * Send a recording failure to the backend
+  * @param {string} action - start or stop
+  * @param {string} error - Error description
+  * @return {void}
+  */
+  reportRecordingError(action: string, error: string) {
+    this.webrtcSvc.reportRecordingError({
+      action,
+      roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      patientId: this.data?.patientId,
+      recordingId: this.tableId,
+      error
+    });
+  }
+
+  /**
   * End call and disconnect from the room
   * @return {void}
   */
   endCallInRoom(flag?) {
     setTimeout(async () => {
       this.close();
+      const stopRequest = this.recodingStarted
+        ? this.webrtcSvc.stopRecording(this.tableId, this.room).toPromise()
+        : null;
+      this.recodingStarted = false;
       this.webrtcSvc.room.disconnect(true);
-      if(this.recodingStarted && isFeaturePresent('webrtcRecording')) {
-        this.recodingStarted = false;
-        await this.webrtcSvc.stopRecording(this.tableId, this.room)
-          .toPromise()
+      if (stopRequest) {
+        await stopRequest
           .then(()=>{
             this.analytics.logEvent('call-recoding-stopped', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
           })
           .catch(err => {
+            const error = this.describeRecordingError(err);
+            this.reportRecordingError('stop', error);
             this.analytics.logEvent('call-recoding-stopped-error', 'engagement', 'call_button', 1, {
             doctorUserId: this.data?.connectToDrId,
             doctorName: this.doctorName,
@@ -769,7 +883,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             callType: this.callType,
             recordingId: this.tableId,
             callDuration: this.callDuration,
-            error: err
+            error
           });
           });
       }
@@ -779,18 +893,28 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.cleanupVideoElement('remoteVideo');
     this.webrtcSvc.handleDisconnect();
 
-    if (this.callDuration) {
-
+    // endCallInRoom also runs again from LiveKit's Disconnected event (flag is then its
+    // DisconnectReason); the end of the attempt is reported once.
+    // callStartedAt is set when the HW joined; callDuration reads "00:00" before that.
+    const connected = !!this.callStartedAt;
+    const liveKitFailure = typeof flag === 'number' && flag !== DisconnectReason.CLIENT_INITIATED;
+    if (this.callEndReported) {
+      // Already reported for this attempt.
+    } else if (connected) {
+      this.callEndReported = true;
       this.socketSvc.emitEvent("bye", {
+        ...this.callAttemptPayload,
         ...this.incomingData,
         nurseId: this.nurseId,
         webapp: true,
         initiator: this.initiator,
+        endedBy: this.endedBy(flag, liveKitFailure),
       });
        this.analytics.logEvent('bye_by_dr', 'engagement', 'end_call_button', 1, this.buildAnalyticsEventPayload());
     } else if(this.endCall) {
-
+      this.callEndReported = true;
       this.socketSvc.emitEvent("cancel_dr", {
+        ...this.callAttemptPayload,
         ...this.incomingData,
         nurseId: this.nurseId,
         webapp: true,
@@ -798,10 +922,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
 
     this.analytics.logEvent('cancel_by_dr', 'engagement', 'end_call_button', 1,  this.buildAnalyticsEventPayload());
-    } else if (this.callDuration === "" && !this.endCall && (flag === 'call_time_up')) {
+    } else if (flag === 'call_time_up') {
+      this.callEndReported = true;
       this.socketSvc.emitEvent('call_time_up', this.nurseId);
       this.analytics.logEvent('call_time_up', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
 
+    } else if (liveKitFailure) {
+      this.reportCallOutcome(navigator.onLine === false ? 'networkUnavailable' : 'livekitFailed');
     }
     clearInterval(this.videoBitrateCheckInterval);
     this.lastVideoBytesSent = 0;
@@ -809,6 +936,19 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.lastAudioBytesSent = 0;
     this.lastAudioTimestamp = 0;
     this.close();
+  }
+
+  /**
+  * Who or what ended a connected call, for the bye event
+  * @param {any} flag - endCallInRoom flag or LiveKit DisconnectReason
+  * @param {boolean} liveKitFailure - LiveKit disconnected the room on its own
+  * @return {string} - doctor, hw, network or dropped
+  */
+  endedBy(flag, liveKitFailure: boolean): string {
+    if (this.endCall) return 'doctor';
+    if (flag === 'participant_left') return 'hw';
+    if (liveKitFailure) return navigator.onLine === false ? 'network' : 'dropped';
+    return undefined;
   }
 
   cleanupVideoElement(videoElementId: string) {

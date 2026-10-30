@@ -141,7 +141,11 @@ export class VisitSummaryV2Service {
   * Connect the logged-in doctor to the visit's health worker through Kaleyra click2call — same
   * checks, payload, toasts and analytics as the old Visit Summary's startKaleyraCall().
   */
-  startKaleyraCall(visit: VisitModel, hwPhoneNo: string): void {
+  startKaleyraCall(visit: VisitModel, hwPhoneNo: string, screen = 'visit_summary_v2'): void {
+    this.analytics.logEvent('kaleyra_call_clicked', 'engagement', 'kaleyra_call_button', 1, {
+      ...this.contactAnalyticsPayload(visit, screen),
+      hasHwPhoneNo: !!hwPhoneNo
+    });
     if (!hwPhoneNo) {
       this.toastr.error('Health worker phone number is not available');
       return;
@@ -187,6 +191,28 @@ export class VisitSummaryV2Service {
         this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
       }
     });
+  }
+
+  /**
+  * Common Google Analytics params for patient/HW contact actions, same fields as the old
+  * Visit Summary's contactAnalyticsPayload() plus the screen the icon was clicked on.
+  */
+  contactAnalyticsPayload(visit: VisitModel, screen: string) {
+    return {
+      doctorUserId: this.helper.userId,
+      patientOpenMrsId: this.patientIdentifier(visit?.patient as any, 'OpenMRS ID'),
+      visitId: visit?.uuid,
+      location: visit?.location?.display || '',
+      screen
+    };
+  }
+
+  /**
+  * Track the patient phone / WhatsApp icons; the link itself does the dialling or opening.
+  */
+  logPatientContact(channel: 'phone' | 'whatsapp', visit: VisitModel, screen: string): void {
+    const event = channel === 'whatsapp' ? 'whatsapp_link_opened' : 'patient_phone_dialled';
+    this.analytics.logEvent(event, 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload(visit, screen));
   }
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
