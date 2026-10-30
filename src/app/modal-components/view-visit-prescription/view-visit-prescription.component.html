@@ -151,7 +151,7 @@
                 <span>{{ ' ' + patient?.person?.preferredName?.familyName }}</span>
                 <!-- <span *ngIf="checkPatientRegField('Gender')">{{ " (" + (patient?.person.gender | translate) + ") "}}</span> -->
               </h6>
-              <p data-test-id="etPatienOpenMRSId" *ngIf="isFeatureAvailable('tnmStaging')"><span data-test-id="etPatientIdLabel">{{ patientDisplayId?.label | translate }}: </span>{{ patientDisplayId?.id || ('NA' | translate) }}</p>
+              <p data-test-id="etPatienOpenMRSId" *ngIf="isFeatureAvailable('tnmStaging')"><span data-test-id="etPatientIdLabel" *ngIf="(patientDisplayId?.label === 'OpenMRS ID' && showOpenMrsIdLabel) || (patientDisplayId?.label === 'TMH Case Number' && showTmhCaseNumberLabel)">{{ patientDisplayId?.label | translate }}: </span>{{ patientDisplayId?.id || ('NA' | translate) }}</p>
               <p data-test-id="etPatienOpenMRSId" *ngIf="!isFeatureAvailable('tnmStaging')">{{ getPatientIdentifier('OpenMRS ID') }}</p>
             </div>
           </div>

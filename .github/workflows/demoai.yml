@@ -1,0 +1,85 @@
+name: Demoai
+on:
+  push:
+    branches:
+      - development_master
+    paths-ignore:
+      - '.github/workflows/**'          # don't deploy when only workflow files change...
+      - '!.github/workflows/demoai.yml' # ...except this workflow itself (use your real filename)
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Upload to /tmp with a unique name so an old, root-owned file in the
+      # deploy folder can never block the upload again.
+      REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}.tar.gz
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.DEMOAI_HOST }}" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Ensure remote deployment directory exists
+        run: |
+          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "mkdir -p /home/ubuntu/deploy/webapp"
+
+      # STEP 1: Fetch the .env from the server to use during the build
+      - name: Download .env via Native SCP
+        run: |
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "[ -f /home/ubuntu/deploy/webapp/.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env" .env
+          else
+            echo "Remote .env not found. Creating an empty local fallback so the workflow can continue."
+            : > .env
+          fi
+
+      # STEP 2: Build the Docker image (Dockerfile will now find the .env)
+      - name: Build and Save Docker Image
+        run: |
+          docker build -t intelehealth-webapp:latest .
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+
+      # STEP 3: Transfer the built image to the server's /tmp
+      - name: Upload Image to Server
+        run: |
+          scp -i ~/.ssh/id_rsa webapp_image.tar.gz \
+            "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:$REMOTE_IMAGE"
+
+      # STEP 4: Restart the container
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEMOAI_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
+            mkdir -p /home/ubuntu/deploy/webapp
+            [ -f /home/ubuntu/deploy/webapp/.env ] || touch /home/ubuntu/deploy/webapp/.env
+
+            gunzip -c "$REMOTE_IMAGE" | docker load
+            rm -f "$REMOTE_IMAGE"
+
+            docker stop webapp-container || true
+            docker rm webapp-container || true
+
+            # Note: We still mount the .env at runtime just in case
+            # your Node server (SSR) or Docker entrypoint needs it.
+            docker run -d \
+              --name webapp-container \
+              -p 83:80 \
+              --env-file /home/ubuntu/deploy/webapp/.env \
+              intelehealth-webapp:latest
+
+            docker image prune -f

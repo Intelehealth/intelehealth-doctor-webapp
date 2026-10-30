@@ -33,6 +33,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   visit: VisitModel;
   patient: PatientModel;
   patientDisplayId: PatientDisplayId;
+  // Show or hide the "OpenMRS ID" / "TMH Case Number" label next to the patient ID in the header. The ID itself is always shown.
+  showOpenMrsIdLabel = false;
+  showTmhCaseNumberLabel = false;
   baseUrl: string = environment.baseURL;
   visitStatus: string;
   providerName: string;

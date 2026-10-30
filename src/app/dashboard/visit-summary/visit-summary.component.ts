@@ -127,6 +127,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   isNamcoDoctorLoggedIn = false;
   visitNoteDoctorName = '';
   patientDisplayId: PatientDisplayId;
+  // Show or hide the "OpenMRS ID" / "TMH Case Number" label next to the patient ID in the header. The ID itself is always shown.
+  showOpenMrsIdLabel = false;
+  showTmhCaseNumberLabel = false;
 
   get showVisitInProgressBanner(): boolean {
     return this.visitSummaryService.isVisitInProgressWithAnotherDoctor({
@@ -3010,10 +3013,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                           ]
                         }).subscribe((post) => {
                           this.visitCompleted = true;
+                          this.queueService.markPrescriptionShared(this.visit.uuid).subscribe();
                           const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
                           // Prescription just shared -> notify the patient on WhatsApp.
-                        // Fetch the visit fresh (now that the encounter above is confirmed
-                        // created) and send it along,
+                          // Fetch the visit fresh (now that the encounter above is confirmed
+                          // created) and send it along,
                           if (environment.isTurnServer) {
                             this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
                             next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit),

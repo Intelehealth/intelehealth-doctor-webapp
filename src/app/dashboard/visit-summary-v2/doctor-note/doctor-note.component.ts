@@ -9,6 +9,7 @@ import { FOLLOW_UP_TYPE_TELEMEDICINE, FOLLOW_UP_TYPES } from '../specialist-doct
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { QueueService } from 'src/app/services/queue.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import {
   DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftInstruction, DraftMedication, DraftReferral,
@@ -173,7 +174,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService,
     private router: Router,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private queueService: QueueService
   ) {}
 
   private getPatientOpenMrsId(): string {
@@ -1028,6 +1030,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       next: (res) => {
         if (!res) { this.showSharePrescriptionError(); return; }
         this.prescriptionShared = true;
+        this.queueService.markPrescriptionShared(this.visitUuid).subscribe();
         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
           if (result === 'view') {
             this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
