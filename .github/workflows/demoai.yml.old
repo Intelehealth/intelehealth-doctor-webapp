@@ -2,7 +2,7 @@ name: Demoai
 on:
   push:
     branches:
-      - nas-ida5-development-master
+      - development-master
   workflow_dispatch:  # Allows manual trigger
   
 jobs:
