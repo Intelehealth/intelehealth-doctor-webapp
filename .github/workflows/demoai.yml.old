@@ -1,4 +1,4 @@
-name: Demoai-new
+name: Demoai
 on:
   push:
     branches:
@@ -62,7 +62,7 @@ jobs:
             # your Node server (SSR) or Docker entrypoint needs it.
             docker run -d \
               --name webapp-container \
-              -p 81:80 \
+              -p 83:80 \
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
             
