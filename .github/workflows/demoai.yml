@@ -7,7 +7,7 @@ on:
       - '.github/workflows/**'          # don't deploy when only workflow files change...
       - '!.github/workflows/demoai.yml' # ...except this workflow itself (use your real filename)
   workflow_dispatch:  # Allows manual trigger
-  
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -16,24 +16,36 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh-keyscan -H "${{ secrets.DEMOAI_HOST }}" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Ensure remote deployment directory exists
+        run: |
+          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "mkdir -p /home/ubuntu/deploy/webapp"
+
       # STEP 1: Fetch the .env from the server to use during the build
       - name: Download .env via Native SCP
         run: |
-          # Create the .ssh directory and add the private key
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          
-          # Add the server to known_hosts to prevent interactive prompts
-          ssh-keyscan -H ${{ secrets.DEMOAI_HOST }} >> ~/.ssh/known_hosts
-          
-          # Execute the download
-          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env .env
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "[ -f /home/ubuntu/deploy/webapp/.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env" .env
+          else
+            echo "Remote .env not found. Creating an empty local fallback so the workflow can continue."
+            : > .env
+          fi
+
+          mv .env ./ || true
+
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
       - name: Build and Save Docker Image
         run: |
-          # Move the downloaded .env to the root if scp nested it
-          mv .env ./ || true 
           docker build -t intelehealth-webapp:latest .
           docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
 
@@ -55,18 +67,21 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            mkdir -p /home/ubuntu/deploy/webapp
+            touch /home/ubuntu/deploy/webapp/.env
+
             cd /home/ubuntu/deploy/webapp/
             gunzip -c webapp_image.tar.gz | docker load
-            
+
             docker stop webapp-container || true
             docker rm webapp-container || true
-            
-            # Note: We still mount the .env at runtime just in case 
+
+            # Note: We still mount the .env at runtime just in case
             # your Node server (SSR) or Docker entrypoint needs it.
             docker run -d \
               --name webapp-container \
               -p 83:80 \
               --env-file /home/ubuntu/deploy/webapp/.env \
               intelehealth-webapp:latest
-            
-            rm webapp_image.tar.gz
+
+            rm -f webapp_image.tar.gz
