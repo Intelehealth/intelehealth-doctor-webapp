@@ -96,7 +96,7 @@ export interface VoicedocSessionResponse {
   providedIn: 'root'
 })
 export class VoicedocService {
-  private base = environment.voicedocURL;
+  private base = environment.mindmapURL;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 

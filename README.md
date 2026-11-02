@@ -127,7 +127,6 @@ BASE_URL=XXXXX
 BASE_URL_CORD_APP=XXXXX
 BASE_URL_LEGACY=XXXXX
 MIND_MAP_URL=XXXXX
-VOICEDOC_URL=XXXXX   # optional: base for /voicedoc endpoints, defaults to MIND_MAP_URL
 CONFIG_URL=XXXXX
 NOTIFICATION_URL=XXXXX
 SOCKET_URL=XXXXX
@@ -151,6 +150,6 @@ SHOW_CAPTCHA=true/false
 
 - Admin flags live under **Admin Actions → AI LLM → Voice Transcript** (config microservice `/ai-llm-voice-transcript`, master feature key `ai_llm_voice_transcript_section`). Sub-flags: `record_transcribe_webapp`, `record_transcribe_mobile`, `feed_ai_ddx`, `autofill_doctor_notes`. Changes apply only after **Publish**.
 - The doctor webapp records and transcribes a call only when the published config has `ai_llm_voice_transcript_section` on and `ai_llm_voice_transcript.record_transcribe_webapp === true` (`isVoiceTranscriptEnabled` in `src/app/utils/voice-transcript.ts`). Sessions are created with `source: 'webapp'`; a 403 from session creation skips audio capture, and a 403 on a chunk upload stops uploading.
-- Admins can browse recordings at `/admin/actions/ai-llm/voice-transcripts?source=webapp|mobile` (the "View" links on the two record & transcribe rows). It lists `GET {VOICEDOC_URL}/voicedoc/transcripts` 10 per page, newest first, and opens a detail dialog with the transcript and the generated summary (`GET /voicedoc/transcripts/:id`).
+- Admins can browse recordings at `/admin/actions/ai-llm/voice-transcripts` (the "View" link on the Doctor webapp record & transcribe row; All / Web / Mobile tabs map to `?source=`). It lists `GET {MIND_MAP_URL}/voicedoc/transcripts` 10 per page, newest first, and opens a detail dialog with the transcript and the generated summary (`GET /voicedoc/transcripts/:id`).
 
 [Disclaimer:] (https://github.com/Intelehealth/Intelehealth-Doctor-WebApp/blob/master/HEALTHCARE%20DISCLAIMER.md)

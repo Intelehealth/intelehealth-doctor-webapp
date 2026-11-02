@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { PageEvent } from "@angular/material/paginator";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { interval, Subject, Subscription } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
@@ -23,17 +23,15 @@ export type VoiceTranscriptLoadState = "ok" | "forbidden" | "error";
 })
 export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["startedAt", "patient", "visit", "doctor", "chw", "source", "duration", "chunks", "status", "actions"];
-  sourceOptions: { value: VoiceTranscriptSource | ""; label: string }[] = [
-    { value: "", label: "All" },
-    { value: "webapp", label: "Web" },
-    { value: "mobile", label: VOICE_TRANSCRIPT_SOURCE_LABELS.mobile }
+  sourceOptions: { value: VoiceTranscriptSource; label: string }[] = [
+    { value: "webapp", label: "Web" }
   ];
   sourceLabels: { [key: string]: string } = VOICE_TRANSCRIPT_SOURCE_LABELS;
   items: VoicedocTranscriptItem[] = [];
   total = 0;
   pageIndex = 0;
   pageSize = 10;
-  source: VoiceTranscriptSource | "" = "";
+  readonly source: VoiceTranscriptSource = "webapp";
   loading = false;
   state: VoiceTranscriptLoadState = "ok";
 
@@ -44,7 +42,6 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private voicedocService: VoicedocService,
     private dialog: MatDialog,
     private pageTitleService: PageTitleService,
@@ -54,9 +51,7 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
-      const source = params.get("source");
-      this.source = source === "webapp" || source === "mobile" ? source : "";
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.pageIndex = 0;
       this.loadTranscripts();
     });
@@ -102,7 +97,7 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
   refresh(): void {
     if (this.loading) return;
     this.refreshSub?.unsubscribe();
-    this.refreshSub = this.voicedocService.listTranscripts(this.pageIndex + 1, this.pageSize, this.source || undefined).subscribe({
+    this.refreshSub = this.voicedocService.listTranscripts(this.pageIndex + 1, this.pageSize, this.source).subscribe({
       next: res => {
         this.items = res?.data?.items ?? [];
         this.total = res?.data?.total ?? 0;
@@ -119,7 +114,7 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
     this.listSub?.unsubscribe();
     this.loading = true;
     this.state = "ok";
-    this.listSub = this.voicedocService.listTranscripts(this.pageIndex + 1, this.pageSize, this.source || undefined).subscribe({
+    this.listSub = this.voicedocService.listTranscripts(this.pageIndex + 1, this.pageSize, this.source).subscribe({
       next: res => {
         this.items = res?.data?.items ?? [];
         this.total = res?.data?.total ?? 0;
@@ -132,23 +127,6 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.state = err?.status === 403 ? "forbidden" : "error";
       }
-    });
-  }
-
-  get selectedTabIndex(): number {
-    return Math.max(0, this.sourceOptions.findIndex(option => option.value === this.source));
-  }
-
-  onTabChange(index: number): void {
-    const option = this.sourceOptions[index];
-    if (option && option.value !== this.source) this.onSourceChange(option.value);
-  }
-
-  onSourceChange(source: VoiceTranscriptSource | ""): void {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { source: source || null },
-      queryParamsHandling: "merge"
     });
   }
 

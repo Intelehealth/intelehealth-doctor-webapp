@@ -98,11 +98,11 @@ describe('VoiceTranscriptsComponent', () => {
     expect(rows[0].query(By.css('[title="visit-uuid-0-0000-0000"]'))).toBeTruthy();
   });
 
-  it('omits the source for "All" and ignores unknown values', () => {
-    setup('bogus');
+  it('always requests the Web source whatever the query param says', () => {
+    setup('mobile');
     voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
     create();
-    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, undefined);
+    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'webapp');
     expect(fixture.nativeElement.querySelector('[data-test-id="voiceTranscriptsEmptyState"]').textContent).toContain('No recordings found.');
   });
 
@@ -114,49 +114,26 @@ describe('VoiceTranscriptsComponent', () => {
 
     fixture.debugElement.query(By.directive(MatPaginator)).componentInstance.nextPage();
 
-    expect(voicedoc.listTranscripts).toHaveBeenCalledOnceWith(2, 10, undefined);
+    expect(voicedoc.listTranscripts).toHaveBeenCalledOnceWith(2, 10, 'webapp');
     expect(component.pageIndex).toBe(1);
   });
 
-  it('reloads from page 1 when the source query param changes and writes the filter to the URL', () => {
+  it('reloads from page 1 when the query params change', () => {
     setup();
     voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
     create();
-
-    component.onSourceChange('mobile');
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { source: 'mobile' }, queryParamsHandling: 'merge' }));
-
     component.pageIndex = 3;
-    queryParamMap.next(convertToParamMap({ source: 'mobile' }));
-    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'mobile');
-
-    component.onSourceChange('');
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { source: null } }));
-  });
-
-  it('selects the initial tab from the source query param', () => {
-    setup('mobile');
-    voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
-    create();
-    expect(component.selectedTabIndex).toBe(2);
-    expect(component.sourceOptions.map(o => o.label)).toEqual(['All', 'Web', 'Mobile']);
-  });
-
-  it('maps tab clicks to the source query param and reloads from page 1', () => {
-    setup();
-    voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
-    create();
-    expect(component.selectedTabIndex).toBe(0);
-
-    component.onTabChange(1);
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { source: 'webapp' }, queryParamsHandling: 'merge' }));
-    component.pageIndex = 3;
+    voicedoc.listTranscripts.calls.reset();
     queryParamMap.next(convertToParamMap({ source: 'webapp' }));
-    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'webapp');
-    expect(component.selectedTabIndex).toBe(1);
+    expect(voicedoc.listTranscripts).toHaveBeenCalledOnceWith(1, 10, 'webapp');
+    expect(component.pageIndex).toBe(0);
+  });
 
-    component.onTabChange(0);
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { source: null } }));
+  it('shows only the Web tab', () => {
+    setup();
+    voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
+    create();
+    expect(component.sourceOptions.map(o => o.label)).toEqual(['Web']);
   });
 
   it('shows "Admin access required" on 403', () => {
@@ -201,7 +178,7 @@ describe('VoiceTranscriptsComponent', () => {
       expect(voicedoc.listTranscripts).toHaveBeenCalledTimes(1);
       tick(1);
       expect(voicedoc.listTranscripts).toHaveBeenCalledTimes(2);
-      expect(voicedoc.listTranscripts.calls.mostRecent().args).toEqual([1, 10, undefined]);
+      expect(voicedoc.listTranscripts.calls.mostRecent().args).toEqual([1, 10, 'webapp']);
       tick(10000);
       expect(voicedoc.listTranscripts).toHaveBeenCalledTimes(3);
       expect(component.items[0].status).toBe('done');
@@ -265,13 +242,13 @@ describe('VoiceTranscriptsComponent', () => {
     }));
 
     it('refreshes immediately from the Refresh button using the current page', fakeAsync(() => {
-      setup('mobile');
+      setup();
       voicedoc.listTranscripts.and.returnValue(listResponse([withStatus(0, 'done')], 25));
       create();
       component.pageIndex = 2;
       voicedoc.listTranscripts.calls.reset();
       fixture.nativeElement.querySelector('[data-test-id="btnRefreshVoiceTranscripts"]').click();
-      expect(voicedoc.listTranscripts).toHaveBeenCalledOnceWith(3, 10, 'mobile');
+      expect(voicedoc.listTranscripts).toHaveBeenCalledOnceWith(3, 10, 'webapp');
       expect(component.pageIndex).toBe(2);
     }));
 

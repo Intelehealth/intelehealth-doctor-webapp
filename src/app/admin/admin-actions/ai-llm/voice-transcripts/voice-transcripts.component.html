@@ -21,8 +21,7 @@
 
         <div class="card-body">
           <div class="list-toolbar">
-            <mat-tab-group class="source-tabs" [disableRipple]="true" mat-align-tabs="start" [selectedIndex]="selectedTabIndex"
-              (selectedIndexChange)="onTabChange($event)" [attr.aria-label]="'Source' | translate" data-test-id="tabsVoiceTranscriptSource">
+            <mat-tab-group class="source-tabs" [disableRipple]="true" mat-align-tabs="start" [attr.aria-label]="'Source' | translate" data-test-id="tabsVoiceTranscriptSource">
               <mat-tab *ngFor="let option of sourceOptions" [label]="option.label"></mat-tab>
             </mat-tab-group>
             <button type="button" class="refresh-btn" [disabled]="loading" (click)="refresh()" data-test-id="btnRefreshVoiceTranscripts">

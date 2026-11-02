@@ -7,7 +7,7 @@ import { VoicedocService } from './voicedoc.service';
 describe('VoicedocService', () => {
   let service: VoicedocService;
   let http: HttpTestingController;
-  const base = `${environment.voicedocURL}/voicedoc`;
+  const base = `${environment.mindmapURL}/voicedoc`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
