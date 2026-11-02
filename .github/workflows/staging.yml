@@ -4,8 +4,8 @@ on:
     branches:
       - development_master
     paths-ignore:
-      - '.github/workflows/**'          # don't deploy when only workflow files change...
-      - '!.github/workflows/demoai.yml' # ...except this workflow itself (use your real filename)
+      - '.github/workflows/**'           # don't deploy when only workflow files change...
+      - '!.github/workflows/staging.yml' # ...except this workflow itself (use your real filename)
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -24,6 +24,8 @@ jobs:
       # deploy folder can never block the upload again.
       REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}-${{ matrix.name }}.tar.gz
       TARGET_HOST: ${{ secrets[matrix.host_secret] }}
+      DEPLOY_DIR: home/ubuntu/deploy/ida6/doctorwebapp   # relative to the SSH user's home directory
+      CONTAINER_NAME: ida6-webapp-container
 
     steps:
       - name: Checkout Code
@@ -40,16 +42,17 @@ jobs:
 
       - name: Ensure remote deployment directory exists
         run: |
-          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "mkdir -p home/ubuntu/deploy/ida6/doctorwebapp/"
+          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "mkdir -p $DEPLOY_DIR"
 
       # STEP 1: Fetch the .env from the server to use during the build
       - name: Download .env via Native SCP
         run: |
-          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "[ -f home/ubuntu/deploy/ida6/doctorwebapp/.env ]"; then
-            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST:home/ubuntu/deploy/ida6/doctorwebapp/.env" .env
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "[ -s $DEPLOY_DIR/.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST:$DEPLOY_DIR/.env" .env
+            echo "Fetched .env ($(wc -l < .env) lines)"
           else
-            echo "Remote .env not found on ${{ matrix.name }}. Creating an empty local fallback so the workflow can continue."
-            : > .env
+            echo "::error::$DEPLOY_DIR/.env is missing or empty on ${{ matrix.name }}. The production build needs it."
+            exit 1
           fi
 
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
@@ -73,22 +76,26 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
+            cd ~
             REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
-            mkdir -p home/ubuntu/deploy/ida6/doctorwebapp
-            [ -f home/ubuntu/deploy/ida6/doctorwebapp/.env ] || touch home/ubuntu/deploy/ida6/doctorwebapp/.env
+            DEPLOY_DIR="${{ env.DEPLOY_DIR }}"
+            CONTAINER_NAME="${{ env.CONTAINER_NAME }}"
+
+            mkdir -p "$DEPLOY_DIR"
+            [ -f "$DEPLOY_DIR/.env" ] || touch "$DEPLOY_DIR/.env"
 
             gunzip -c "$REMOTE_IMAGE" | docker load
             rm -f "$REMOTE_IMAGE"
 
-            docker stop webapp-container || true
-            docker rm webapp-container || true
+            docker stop "$CONTAINER_NAME" || true
+            docker rm "$CONTAINER_NAME" || true
 
             # Note: We still mount the .env at runtime just in case
             # your Node server (SSR) or Docker entrypoint needs it.
             docker run -d \
-              --name ida6-webapp-container \
+              --name "$CONTAINER_NAME" \
               -p 83:80 \
-              --env-file home/ubuntu/deploy/ida6/doctorwebapp/.env \
+              --env-file "$DEPLOY_DIR/.env" \
               intelehealth-webapp:latest
 
             docker image prune -f
