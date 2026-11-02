@@ -54,7 +54,7 @@ describe('VisitSummaryV2Component - in-progress visit message', () => {
     const helper = new VisitSummaryHelperService({} as any, {} as any, {} as any);
 
     const component = new VisitSummaryV2Component(
-      route, router, {} as any, v2Service, {} as any, {} as any, helper, {} as any, rolesService
+      route, router, {} as any, v2Service, {} as any, {} as any, helper, {} as any, rolesService, { use: () => {} } as any
     );
     component.ngOnInit();
     return component;
