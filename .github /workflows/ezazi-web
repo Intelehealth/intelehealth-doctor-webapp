@@ -1,4 +1,4 @@
-name: ezazi-web
+name: ezazi-web 
 
 on:
   push:
