@@ -1,0 +1,121 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <button mat-button routerLink="/admin/actions/ai-llm" data-test-id="btnBackToAILLM">
+        <mat-icon>arrow_back</mat-icon>
+        <span class="text-muted">{{ "Back to AI LLM" | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-diagnosis.svg" alt="" height="44px" />
+          <div>
+            <h6 class="mb-0">{{ "Voice Transcripts" | translate }}</h6>
+            <div class="msg">{{ "Recorded and transcribed calls, newest first" | translate }}</div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="list-toolbar">
+            <mat-tab-group class="source-tabs" [disableRipple]="true" mat-align-tabs="start" [selectedIndex]="selectedTabIndex"
+              (selectedIndexChange)="onTabChange($event)" [attr.aria-label]="'Source' | translate" data-test-id="tabsVoiceTranscriptSource">
+              <mat-tab *ngFor="let option of sourceOptions" [label]="option.label"></mat-tab>
+            </mat-tab-group>
+            <button type="button" class="refresh-btn" [disabled]="loading" (click)="refresh()" data-test-id="btnRefreshVoiceTranscripts">
+              <mat-icon>refresh</mat-icon>
+              <span>{{ "Refresh" | translate }}</span>
+            </button>
+          </div>
+          <mat-progress-bar *ngIf="loading" mode="indeterminate" data-test-id="progressVoiceTranscripts"></mat-progress-bar>
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="items" matTableResponsive>
+              <ng-container matColumnDef="startedAt">
+                <th mat-header-cell *matHeaderCellDef>{{ "Date & time" | translate }}</th>
+                <td mat-cell *matCellDef="let element">{{ element.startedAt ? (element.startedAt | date : "dd MMM, yyyy h:mm a") : "-" }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="patient">
+                <th mat-header-cell *matHeaderCellDef>{{ "Patient" | translate }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <div>{{ element.patientName || "-" }}</div>
+                  <div class="sub-text" *ngIf="element.patientIdentifier">{{ element.patientIdentifier }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="visit">
+                <th mat-header-cell *matHeaderCellDef>{{ "Visit" | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.title]="element.visitUuid">{{ shortUuid(element.visitUuid) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="doctor">
+                <th mat-header-cell *matHeaderCellDef>{{ "Doctor" | translate }}</th>
+                <td mat-cell *matCellDef="let element">{{ element.doctorName || "-" }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="chw">
+                <th mat-header-cell *matHeaderCellDef>{{ "Health worker" | translate }}</th>
+                <td mat-cell *matCellDef="let element">{{ element.chwName || "-" }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="source">
+                <th mat-header-cell *matHeaderCellDef>{{ "Source" | translate }}</th>
+                <td mat-cell *matCellDef="let element">{{ (sourceLabels[element.source] || element.source || "-") | translate }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="duration">
+                <th mat-header-cell *matHeaderCellDef>{{ "Duration" | translate }}</th>
+                <td mat-cell *matCellDef="let element">{{ duration(element.durationSec) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="chunks">
+                <th mat-header-cell *matHeaderCellDef>{{ "Chunks" | translate }}</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.chunksUploaded ?? 0 }}/{{ element.chunksReceived ?? 0 }}
+                  <span class="text-danger sub-text" *ngIf="element.chunksFailed > 0">({{ element.chunksFailed }} {{ "failed" | translate }})</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ "Status" | translate }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <span class="status-chip" [ngClass]="'status-' + element.status">{{ element.status | translate }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                  <a href="javascript:void(0)" class="view-link" (click)="openDetail(element)" data-test-id="linkViewVoiceTranscript">{{ "View" | translate }}</a>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length" data-test-id="voiceTranscriptsEmptyState">
+                  <ng-container [ngSwitch]="state">
+                    <span *ngSwitchCase="'forbidden'">{{ "Admin access required" | translate }}</span>
+                    <span *ngSwitchCase="'error'">
+                      {{ "Could not load transcripts." | translate }}
+                      <a href="javascript:void(0)" class="view-link ml-2" (click)="loadTranscripts()">{{ "Retry" | translate }}</a>
+                    </span>
+                    <span *ngSwitchDefault>{{ (loading ? "Loading..." : "No recordings found.") | translate }}</span>
+                  </ng-container>
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" data-test-id="rowVoiceTranscript"></tr>
+            </table>
+          </div>
+
+          <mat-paginator [length]="total" [pageIndex]="pageIndex" [pageSize]="pageSize" hidePageSize showFirstLastButtons
+            (page)="onPageChange($event)" aria-label="Select page of voice transcripts" data-test-id="matPaginatorVoiceTranscripts">
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

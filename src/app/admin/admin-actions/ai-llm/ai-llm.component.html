@@ -222,4 +222,90 @@
       </div>
     </div>
   </div>
+
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-diagnosis.svg" alt="" height="44px" />
+          <div>
+            <h6 class="mb-0">{{ "Voice Transcript" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "Voice Transcript" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [(ngModel)]="aiLlmVoiceTranscriptfeatures.is_enabled"
+                  (change)="updateAILLMVoiceTranscriptStatus($event.target.checked)" data-test-id="checkboxAILLMVoiceTranscriptToggle" />
+                <div class="state"><label></label></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnPublishVoiceTranscript">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="aiLlmVoiceTranscriptDataSource" matTableResponsive>
+              <ng-container matColumnDef="serialNo">
+                <th mat-header-cell *matHeaderCellDef>{{ "Sr. No." | translate }}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ aiLlmVoiceTranscriptPaginator?.pageIndex == 0 ? i + 1 : 1 + i + aiLlmVoiceTranscriptPaginator?.pageIndex * aiLlmVoiceTranscriptPaginator?.pageSize }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="section">
+                <th mat-header-cell *matHeaderCellDef>{{ "Section" | translate }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="priority-v d-flex flex-row align-items-center">
+                    {{ element.name }}
+                    <a *ngIf="voiceTranscriptSourceByKey[element.key]" href="javascript:void(0)" class="view-link ml-3"
+                      (click)="viewVoiceTranscripts(voiceTranscriptSourceByKey[element.key])"
+                      [attr.data-test-id]="'linkViewVoiceTranscripts-' + voiceTranscriptSourceByKey[element.key]">
+                      {{ "View" | translate }}
+                    </a>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="is_enabled">
+                <th mat-header-cell *matHeaderCellDef>{{ "Active" | translate }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="tooltip-box">
+                    <div class="pretty p-switch p-fill">
+                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateAILLMVoiceTranscriptEnabledStatus(element.id, $event.target.checked)" data-test-id="checkboxAILLMVoiceTranscriptToggleStatus"/>
+                      <div class="state">
+                        <label></label>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedAILLMVoiceTranscriptColumns.length">{{ "No data to display." | translate }}</td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedAILLMVoiceTranscriptColumns"></tr>
+              <tr mat-row [ngClass]="!aiLlmVoiceTranscriptfeatures.is_enabled ? 'text-greyout' : ''" *matRowDef="let row; columns: displayedAILLMVoiceTranscriptColumns"></tr>
+            </table>
+          </div>
+
+          <mat-paginator #aiLlmVoiceTranscriptPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" data-test-id="matPaginatorAILLMVoiceTranscript"></mat-paginator>
+
+          <div class="ai-llm-note mt-3">
+            <img src="assets/svgs/alert-triangle.svg" alt="" class="alert-icon" />
+            <span>
+              {{ "Calls are recorded and transcribed only when 'Voice Transcript' and the matching 'Record & transcribe calls' flag are both active and the configuration has been published." | translate }}
+            </span>
+          </div>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnPublishVoiceTranscriptMobile">
+            {{ "Publish" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

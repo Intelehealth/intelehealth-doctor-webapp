@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VideoCallComponent } from './video-call.component';
+import { VoicedocRecorderService } from 'src/app/services/voicedoc-recorder.service';
 
 describe('VideoCallComponent', () => {
   let component: VideoCallComponent;
@@ -8,7 +9,10 @@ describe('VideoCallComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VideoCallComponent ]
+      declarations: [ VideoCallComponent ],
+      providers: [
+        { provide: VoicedocRecorderService, useValue: { start: () => Promise.resolve(), stop: () => Promise.resolve() } }
+      ]
     })
     .compileComponents();
   });

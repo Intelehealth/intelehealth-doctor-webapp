@@ -561,6 +561,21 @@ export class ConfigService {
     return this.http.get(url);
   }
 
+  getAILLMVoiceTranscript(): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/all`;
+    return this.http.get(url);
+  }
+
+  updateAILLMVoiceTranscriptEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  getAILLMVoiceTranscriptByKey(key: String): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/getByKey/${key}`;
+    return this.http.get(url);
+  }
+
    /**
    * Update language platform mobile/webapp/both
    * @param {boolean} id - id of language

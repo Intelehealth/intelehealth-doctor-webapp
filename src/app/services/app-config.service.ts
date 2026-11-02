@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { Observable } from 'rxjs';
+import { VoiceTranscriptFlags } from '../utils/voice-transcript';
 import { LanguageModel, PatientRegistrationFieldsConfigModel, VitalModel, SpecializationModel, WebRTCConfigModel, PatientVisitSummaryConfigModel, PatientVisitSection, DropdownValuesModel } from '../model/model';
 
 @Injectable({
@@ -35,6 +36,8 @@ export class AppConfigService {
   public ai_llm_section: boolean;
   public ai_llm: { [key: string]: boolean };
   public ai_llm_recording_section:  boolean;
+  public ai_llm_voice_transcript_section: boolean;
+  public ai_llm_voice_transcript: VoiceTranscriptFlags;
   public prescription_notes_section: boolean;
   public prescription_notes: { specialty: string; notes: string[]; is_enabled: boolean }[];
   constructor(private http: HttpClient) { }

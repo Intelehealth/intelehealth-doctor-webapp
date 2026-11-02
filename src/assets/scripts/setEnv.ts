@@ -93,6 +93,7 @@ const environmentFileContent = `
     baseURLCoreApp: '${process.env.BASE_URL_CORD_APP}',
     baseURLLegacy: '${process.env.BASE_URL_LEGACY}',
     mindmapURL: '${getEnvValue('MIND_MAP_URL')}',
+    voicedocURL: '${getEnvValue('VOICEDOC_URL') || getEnvValue('MIND_MAP_URL')}',
     insightsEnabled: ${process.env.INSIGHTS_ENABLED === 'true'},
     turnNotifyURL: '${process.env.TURN_NOTIFY_URL}',
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',

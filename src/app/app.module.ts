@@ -133,6 +133,7 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
+        `${environment.voicedocURL}/voicedoc/`,
         `${environment.mindmapURL}/messages/`,
         `${environment.mindmapURL}/support/`,
         `${environment.mindmapURL}/auth/validateProviderAttribute`,
