@@ -24,7 +24,7 @@ jobs:
       # deploy folder can never block the upload again.
       REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}-${{ matrix.name }}.tar.gz
       TARGET_HOST: ${{ secrets[matrix.host_secret] }}
-      DEPLOY_DIR: home/ubuntu/deploy/ida6/doctorwebapp   # relative to the SSH user's home directory
+      DEPLOY_DIR: /home/ubuntu/deploy/ida6/doctorwebapp   # absolute path (leading slash)
       CONTAINER_NAME: ida6-webapp-container
 
     steps:
@@ -76,7 +76,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
-            cd ~
             REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
             DEPLOY_DIR="${{ env.DEPLOY_DIR }}"
             CONTAINER_NAME="${{ env.CONTAINER_NAME }}"
