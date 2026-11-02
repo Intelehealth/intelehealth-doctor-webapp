@@ -22,21 +22,21 @@
             <div class="d-flex align-items-center">
               <div class="pretty p-default p-round" data-test-id="wrapperReferralNamco">
                 <input type="radio" value="NAMCO" formControlName="decision" data-test-id="radioReferralNamco"
-                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded || referralConsentForm.value.uuid) ? 'disabled' : null" />
                 <div class="state p-success" data-test-id="stateReferralNamco">
                   <label data-test-id="labelReferralNamco">{{ 'Refer to NAMCO' | translate }}</label>
                 </div>
               </div>
               <div class="pretty p-default p-round" data-test-id="wrapperReferralPhc">
                 <input type="radio" value="PHC" formControlName="decision" data-test-id="radioReferralPhc"
-                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded || referralConsentForm.value.uuid) ? 'disabled' : null" />
                 <div class="state p-success" data-test-id="stateReferralPhc">
                   <label data-test-id="labelReferralPhc">{{ 'Refer to PHC' | translate }}</label>
                 </div>
               </div>
               <div class="pretty p-default p-round" data-test-id="wrapperReferralNone">
                 <input type="radio" value="No referral" formControlName="decision" data-test-id="radioReferralNone"
-                  [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                  [attr.disabled]="(!isVisitNoteProvider || visitEnded || referralConsentForm.value.uuid) ? 'disabled' : null" />
                 <div class="state p-success" data-test-id="stateReferralNone">
                   <label data-test-id="labelReferralNone">{{ 'No referral needed' | translate }}</label>
                 </div>
@@ -59,7 +59,7 @@
             <div class="pretty p-default p-round" data-test-id="wrapperReferralConsentYes">
               <input type="radio" value="{{ 'Yes' | translate }}" formControlName="consent"
                 data-test-id="radioReferralConsentYes"
-                [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                [attr.disabled]="(!isVisitNoteProvider || visitEnded || referralConsentForm.value.uuid) ? 'disabled' : null" />
               <div class="state p-success" data-test-id="stateReferralConsentYes">
                 <label data-test-id="labelReferralConsentYes">{{ 'Yes' | translate }}</label>
               </div>
@@ -67,7 +67,7 @@
             <div class="pretty p-default p-round" data-test-id="wrapperReferralConsentNo">
               <input type="radio" value="{{ 'No' | translate }}" formControlName="consent"
                 data-test-id="radioReferralConsentNo"
-                [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
+                [attr.disabled]="(!isVisitNoteProvider || visitEnded || referralConsentForm.value.uuid) ? 'disabled' : null" />
               <div class="state p-success" data-test-id="stateReferralConsentNo">
                 <label data-test-id="labelReferralConsentNo">{{ 'No' | translate }}</label>
               </div>

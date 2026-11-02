@@ -314,7 +314,6 @@ textarea.form-control {
 .intel-accordion-title {
   display: flex;
   align-items: center;
-  gap: 6px;
 
   .ayu-icon {
     width: 44px;
@@ -450,7 +449,6 @@ textarea.form-control {
   border: 1px solid #B5F2DF;
   border-radius: 10px;
   margin-top: 10px;
-  margin-bottom: 20px;
   padding: 15px;
   width: 100%;
   max-width: 500px;
@@ -573,6 +571,15 @@ textarea.form-control {
   //   font-size: 14px;
   //   color: #868e96;
   // }
+}
+
+.followup-referral-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+
+  * {
+    cursor: not-allowed !important;
+  }
 }
 
 .medication-form-container {

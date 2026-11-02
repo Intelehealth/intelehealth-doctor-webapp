@@ -139,7 +139,6 @@ export class FileUploadComponent implements OnChanges {
   }
 
   removeFile(){
-    console.log("this.options.deleteFileURL ==",this.options.deleteFileURL );
     if(this.options.deleteFileURL !== ''){
       this.configService.deleteImage(this.options.deleteFileURL,this.filePath).subscribe(res=>{
         this.onFileRemove.emit(res);

@@ -6,6 +6,7 @@ import { EncounterModel, ObsApiResponseModel, ObsModel, VisitModel } from 'src/a
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { conceptIds } from 'src/config/constant';
+import { getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-notes',
@@ -47,9 +48,10 @@ export class NotesComponent implements OnInit {
    */
   checkIfNotePresent(): void {
     this.notes = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this._visit);
     this.diagnosisSvc.getObs(this._visit.patient.uuid, this.conceptId).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this._visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.notes.push(obs);
         }
       });

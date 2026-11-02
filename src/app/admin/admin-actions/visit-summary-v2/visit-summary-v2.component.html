@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/consultation-details.svg" alt="" height="44px">
+          <div>
+            <h6 class="mb-0">
+              <span>{{'Visit Summary V2' | translate}}</span>
+              <div class="sub-title">
+                <span class="label">{{'Enable/Disable' | translate}} {{'Visit Summary V2' | translate }}</span>
+                <div class="pretty p-switch light-green light-red p-fill">
+                  <input type="checkbox" [checked]="visitSummaryV2Feature?.is_enabled" (change)="updateVisitSummaryV2Status($event.target.checked)" data-test-id="checkboxVisitSummaryV2ToggleStatus"/>
+                  <div class="state">
+                      <label></label>
+                  </div>
+                </div>
+              </div>
+            </h6>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnPublishVisitSummaryV2">{{'Publish' | translate}}</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="mb-0">{{'When enabled, doctors open the new visit summary screen instead of the old one. Changes apply after Publish, on the doctor’s next page load.' | translate}}</p>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnPublishVisitSummaryV2Mobile">{{'Publish' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

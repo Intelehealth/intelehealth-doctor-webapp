@@ -4,13 +4,6 @@ import { environment } from "src/environments/environment";
 import { getCacheData, isFeaturePresent } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
 
-/**
- * Report email (address field + POST /pl, /vl with a receiver) is on for Turn servers,
- * or anywhere the reportEmail feature is listed.
- */
-export const isReportEmailEnabled = (): boolean =>
-  environment.isTurnServer === true || isFeaturePresent('reportEmail');
-
 @Injectable({
   providedIn: "root",
 })
@@ -20,7 +13,7 @@ export class ReoportService {
 
   getReport(body) {
     if (body.reportId === 1) {
-      if (isReportEmailEnabled()) {
+      if (isFeaturePresent('reportEmail')) {
         return this.http.post(
           `${environment.base}/pl`,
           {
@@ -36,7 +29,7 @@ export class ReoportService {
     }
 
     if (body.reportId === 2) {
-      if (isReportEmailEnabled()) {
+      if (isFeaturePresent('reportEmail')) {
         return this.http.post(
           `${environment.base}/vl`,
           {
@@ -53,7 +46,7 @@ export class ReoportService {
   }
 
   /**
-   * Logged-in username, passed to the report script for the audit log. Saved at login.
+   * Logged-in username, passed to the report script for the audit log.
    */
   private getSessionUsername(): string {
     return getCacheData(false, doctorDetails.USER_NAME);

@@ -46,6 +46,10 @@
         background: var(--color-lightGray);
       }
 
+      .chip-item-gray {
+        background: #F3F3F3;
+      }
+
       .chip-item-green {
         background: #E6FFF3;
       }
@@ -60,6 +64,10 @@
       }
 
       .chip-item-blue {
+        background: var(--color-darkBlue);
+      }
+
+      .chip-item-gray {
         background: var(--color-darkBlue);
       }
 

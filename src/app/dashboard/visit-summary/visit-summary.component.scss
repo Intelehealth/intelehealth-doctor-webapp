@@ -97,8 +97,7 @@
   }
 }
 
-// Sticky patient info + in-progress message (non-Turn servers only). The
-// wrapper pins both cards to the top while the rest scrolls.
+// Sticky patient info + in-progress message container
 .patient-sticky-wrap {
   position: sticky;
   top: 64px;
@@ -112,26 +111,14 @@
   border-radius: 12px;
 }
 
-// On Turn servers the whole page scrolls -- the patient-info card scrolls away
-// with the rest of the content instead of sticking.
-.turn-server-scroll .patient-sticky-wrap {
-  position: static;
-  top: auto;
-  z-index: auto;
-}
-
-.turn-server-scroll .patient-info-main,
-.turn-server-scroll .patient-sticky-wrap.has-banner {
-  box-shadow: none;
-}
-
 .patient-info-wrapper {
   font-family: DM Sans;
 
   .patient-info-section {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
     // border-right: 1px solid rgba(178, 175, 190, 0.2);
+    flex-shrink: 0;
 
     .patient-img-item {
       display: flex;
@@ -147,7 +134,7 @@
 
       h6 {
         margin-bottom: 0px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         line-height: 150%;
         color: var(--color-darkestBlue);
@@ -156,7 +143,7 @@
       p {
         margin-bottom: 0px;
         color: var(--color-gray);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
       }
     }
@@ -164,17 +151,18 @@
     .patient-info-item {
       h6 {
         margin-bottom: 0px;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
         color: var(--color-gray);
+        white-space: nowrap;
       }
 
       p {
         margin-bottom: 0px;
         color: var(--color-darkestBlue);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
-        word-break: break-all;
+        overflow-wrap: break-word;
       }
     }
   }
@@ -187,17 +175,15 @@
 .row.patient-info-wrapper {
   display: flex;
   flex-wrap: nowrap;
-  gap: 20px;
+  // gap: 20px;
   justify-content: space-between;
+  overflow-x: auto;
 }
 
 .icon-btn {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
   border-radius: 50%;
   text-decoration: none;
-  margin: 5px;
+  margin: 2px;
 }
 
 ::ng-deep .visit-summary-tab-group.mat-tab-group {
@@ -989,8 +975,8 @@ th.mat-header-cell:last-child {
 
 .btn{
   position: absolute;
-  right: 50px;
-  top: 60px;
+  right: 20px;
+  top: 42px;
   border: none;
   background: none;
   outline: none;
@@ -1137,6 +1123,64 @@ th.mat-header-cell:last-child {
       margin-bottom: 6px;
     }
 
+    // Loader for the Ayu suggestion box, matching the bouncing-dots loader the
+    // ddx plugin renders inside the diagnosis panel.
+    .ayu-suggestions-loader {
+      padding: 24px 0;
+
+      .stats-loading {
+        padding: 6px 24px;
+        background: var(--color-lightGray, #f4f2f7);
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-darkBlue);
+        cursor: default;
+
+        div {
+          background: #0060ff;
+          display: inline-block;
+          height: 8px;
+          width: 8px;
+          border-radius: 100%;
+          animation: bouncedelay 1.4s infinite ease-in-out;
+          animation-fill-mode: both;
+        }
+
+        div.eins {
+          animation-delay: -0.32s;
+        }
+
+        div.zwei {
+          animation-delay: -0.16s;
+        }
+      }
+
+      .loading-text {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 18px;
+        color: #7f7b92;
+      }
+    }
+
+    @keyframes bouncedelay {
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
     .report-issue-btn {
       background: none;
       border: none;
@@ -1212,36 +1256,5 @@ th.mat-header-cell:last-child {
   max-width: 220px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.magic-link-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.magic-link-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 6px 6px 6px 12px;
-  border: 1px solid #d7dce5;
-  border-radius: 8px;
-  background: #f7f9fc;
-}
-
-.magic-link-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 13px;
-  color: #4a5568;
   text-overflow: ellipsis;
 }

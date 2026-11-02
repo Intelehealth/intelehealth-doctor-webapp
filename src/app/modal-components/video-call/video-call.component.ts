@@ -74,8 +74,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   microphoneIssue: boolean = false;
 
   private hasShownPoorToast: boolean = false;
-
+  private hasShownReconnectToast: boolean = false;
   private callDurationStr: string = '00:00';
+  // Reconnection state management
+  public isReconnecting: boolean = false;
 
   private reconnectionSubscriptions: any[] = [];
 
@@ -193,8 +195,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
-    console.log("this.webrtcSvc.token",this.webrtcSvc.token);
     if (!this.webrtcSvc.token) return;
+    // Attach reconnection handlers BEFORE creating the room to catch early events
+    this.attachRoomReconnectionHandlers();
 
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
@@ -368,7 +371,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.emitEvent('call-connected', this.incomingData);
     this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
-    if(this.callType === 'video' && this.isVideoRecordingEnabled) {
+    if(this.callType === 'video' && this.isVideoRecordingEnabled && !this.recodingStarted) {
+      this.recodingStarted = true;
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
         roomId: this.room,
@@ -382,11 +386,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       })
       .toPromise()
       .then((res: RecordingResponse) => {
-        this.recodingStarted = true
         this.tableId = res.recordingId
         this.analytics.logEvent('call-recoding-started', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
       })
       .catch(err => {
+      this.recodingStarted = false;
       this.analytics.logEvent('call-recoding-error', 'engagement', 'call_button', 1, {
         doctorUserId: this.data?.connectToDrId,
         doctorName: this.doctorName,
@@ -399,7 +403,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         callDuration: this.callDuration,
         error: err
       });
-      console.log("start recoding error", err)
+      console.error("start recording error", err)
       });
     }
   }
@@ -679,7 +683,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
           const bytesDiff = report.bytesSent - this.lastVideoBytesSent;
           if (timeDiffSec > 0) {
           const bitrate = (bytesDiff * 8) / timeDiffSec; // bits per second
-          console.log('Video bitrate (bps):', bitrate);
 
           this.videoBitrateTooLow = bitrate < 600_000; // e.g. < 200 kbps
           }
@@ -696,6 +699,45 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+
+  /**
+  * Attach LiveKit room reconnection handlers to update UI and logic
+  * @return {void}
+  */
+  private attachRoomReconnectionHandlers(): void {    
+    const signalReconnectingSub = this.webrtcSvc.signalReconnecting$.subscribe(() => {
+      // Update UI immediately for signal reconnection
+      this.ngZone.run(() => {
+        this.isReconnecting = true;
+      });
+    });
+
+    const isReconnectingSub = this.webrtcSvc.isReconnecting$.subscribe((isReconnecting) => {
+      this.ngZone.run(() => {
+        this.isReconnecting = isReconnecting;        
+        if (isReconnecting) {
+          if (!this.hasShownReconnectToast) {
+            this.toastr.warning('Network issue detected. Reconnecting...', 'Connection Lost', { 
+              timeOut: 3000
+            });
+            this.hasShownReconnectToast = true;
+          }
+        } 
+        // else {
+        //   // Reset toast flag and show success message
+        //   // this.hasShownReconnectToast = false;
+        //   // this.toastr.success('Connection restored successfully!', 'Reconnected', { 
+        //   //   timeOut: 2000
+        //   // });
+        // }
+      });
+    });
+
+    // Store subscriptions for cleanup
+    this.reconnectionSubscriptions.push(signalReconnectingSub, isReconnectingSub);
+  }
+
   setFlag() {
     this.endCall = true;
   }
@@ -729,7 +771,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             callDuration: this.callDuration,
             error: err
           });
-            console.log("stop recoding error", err)
           });
       }
     }, 0);

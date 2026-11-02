@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPatientDisplayId, PatientDisplayId } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPatientDisplayId, PatientDisplayId, getPrescriptionSourceEncounterUuids, isNamcoDoctor, getCacheData } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -82,6 +82,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   sanitizedValue: SafeHtml;
   recommendation: { uuid: string; value: any; };
   brandName = environment.brandName === 'KCDO';
+  isNamcoDoctorLoggedIn: boolean = isNamcoDoctor(getCacheData(true, doctorDetails.PROVIDER));
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -162,6 +163,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   }
                 });
                 encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
+                  if (!this.consultedDoctor) { return; }
                   this.consultedDoctor.gender = p.provider.person.gender;
                   this.consultedDoctor.person_uuid = p.provider.person.uuid;
                   this.consultedDoctor.attributes = p.provider.attributes;
@@ -171,12 +173,45 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 });
               }
             });
+
+            // Not completed yet (e.g. referred to NAMCO, or viewed before sharing): there is no
+            // Visit Complete "Doctor details", so take the consulted doctor from the doctor's note.
+            if (!this.consultedDoctor) {
+              this.consultedDoctor = this.getDoctorFromVisitNote(visit.encounters);
+            }
           }
         });
       }
     }, (error) => {
 
     });
+  }
+
+  /**
+  * Consulted doctor from the doctor's note encounter, for a visit not completed yet — same shape as
+  * the Visit Complete "Doctor details" (name, uuid, profile attributes by name, e.g. typeOfProfession,
+  * specialization). Prefers the NAMCO specialist's note when there is one.
+  * @param {EncounterModel[]} encounters - Visit encounters
+  * @returns {any} - Doctor details, or undefined when there is no doctor's note
+  */
+  getDoctorFromVisitNote(encounters: EncounterModel[]): any {
+    const noteOf = (type: string) => encounters.find((e: EncounterModel) => e.encounterType?.display === type && e.encounterProviders?.length);
+    const note = noteOf(visitTypes.SPECIALIST_VISIT_NOTE) || noteOf(visitTypes.VISIT_NOTE);
+    const provider: any = note?.encounterProviders?.[0]?.provider;
+    if (!provider) { return undefined; }
+    const doctor: any = {
+      name: provider.person?.display,
+      uuid: provider.uuid,
+      gender: provider.person?.gender,
+      person_uuid: provider.person?.uuid,
+      attributes: provider.attributes
+    };
+    (provider.attributes || []).forEach((attr: any) => {
+      if (attr.voided) { return; }
+      const key = attr.attributeType?.display || attr.display?.split(':')[0]?.trim();
+      if (key && !(key in doctor)) { doctor[key] = attr.value; }
+    });
+    return doctor;
   }
 
   /**
@@ -280,9 +315,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
             this.dignosisSecondary = obsParse(obs.value)
           } else {
@@ -313,9 +349,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfNotePresent() {
     this.notes = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.notes.push(obs);
         }
       });
@@ -327,9 +364,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent() {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.discussionSummary = obs.value
         }
       });
@@ -343,9 +381,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes(':')) {
             if(this.appConfigService.patient_visit_summary?.standard_medication){
               this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
@@ -376,7 +415,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfAdvicePresent() {
     this.advices = [];
-    this.additionalInstructions = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
@@ -401,10 +440,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfTestPresent() {
     this.tests = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.tests.push(obs);
           }
         });
@@ -417,10 +457,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfReferralPresent() {
     this.referrals = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if(this.appConfigService.patient_visit_summary?.dp_referral_secondary)
               this.referralSecondary = obs.value
             else if(obs.value.includes(":")) {
@@ -437,9 +478,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfFollowUpPresent() {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: string;
           if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
@@ -1423,6 +1465,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && this.isNamcoDoctorLoggedIn) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -1489,9 +1532,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
    */
   checkIfFollowUpInstructionsPresent(): void {
     this.followUpInstructions = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollowUpInstruction).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.followUpInstructions.push(obs);
         }
       });

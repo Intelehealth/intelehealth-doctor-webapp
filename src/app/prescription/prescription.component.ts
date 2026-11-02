@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
+import { DiagnosisService } from '../services/diagnosis.service';
+import { AppConfigService } from '../services/app-config.service';
 import * as moment from 'moment';
-import { getCacheData } from '../utils/utility-functions';
-import { doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { getCacheData, getAge, isNamcoDoctor } from '../utils/utility-functions';
+import { doctorDetails, visitTypes, conceptIds } from 'src/config/constant';
+import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ObsApiResponseModel, ObsModel, ProviderAttributeModel } from '../model/model';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { forkJoin, Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-prescription',
@@ -18,18 +20,30 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   active: number = 1;
   completedVisits: CustomVisitModel[] = [];
   prescriptionSent: CustomVisitModel[] = [];
+  referredVisits: CustomVisitModel[] = [];
   loaded1: boolean = false;
   loaded2: boolean = false;
+  loaded3: boolean = false;
+  isNamcoDoctor: boolean = false;
   specialization: string = '';
   prescriptionSentCount: number = 0;
   completedVisitsCount: number = 0;
+  referredVisitsCount: number = 0;
   allPrescriptionSent: any[] = [];
   allCompletedVisits: any[] = [];
+  allReferredVisits: any[] = [];
   searchTermComp: string = '';
   searchTerm: string = '';
+  searchTermRef: string = '';
   private sentSearch$ = new Subject<string>();
   private completedSearch$ = new Subject<string>();
-  constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
+  private referredSearch$ = new Subject<string>();
+  constructor(
+    private pageTitleService: PageTitleService,
+    private visitService: VisitService,
+    private diagnosisService: DiagnosisService,
+    public appConfigService: AppConfigService,
+  ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
@@ -38,9 +52,13 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
       }
+      this.isNamcoDoctor = isNamcoDoctor(provider);
     }
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
+    if(this.appConfigService?.namco_referral_section && !this.isNamcoDoctor) {
+      this.getReferredVisits();
+    }
 
      // Prescription Sent search debounce
     this.sentSearch$
@@ -62,6 +80,17 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
      .subscribe(term => {
        this.searchTerm = term;
        this.getCompletedVisits(1); // page reset
+      });
+
+    // Referred Visits search debounce
+    this.referredSearch$
+     .pipe(
+       debounceTime(400),
+       distinctUntilChanged()
+      )
+     .subscribe(term => {
+       this.searchTermRef = term;
+       this.getReferredVisits(1); // page reset
       });
   }
 
@@ -141,6 +170,89 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   }
 
   /**
+  * Get referred visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
+  getReferredVisits(page: number = 1) {
+    if(page == 1) this.referredVisits = []; this.allReferredVisits = [];
+    this.visitService.getReferredVisits(this.specialization, page).subscribe((rv: ApiResponseModel) => {
+      if (rv.success) {
+        this.referredVisitsCount = rv.totalCount;
+        let records = [];
+        for (let i = 0; i < rv.data.length; i++) {
+          let visit = rv.data[i];
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.status = this.getReferredVisitStatus(visit);
+          visit.routing_specialization = this.getRoutingSpecialization(visit);
+          visit.person.age = getAge(visit.person.birthdate, undefined, true);
+          records.push(visit);
+        }
+        this.allReferredVisits = [...this.allReferredVisits, ...records];
+        this.applyReferredSearch();
+        if(!this.loaded3) {
+          this.loaded3 = true;
+        }
+      }
+    });
+  }
+
+  applyReferredSearch() {
+    if (!this.searchTermRef) {
+      this.referredVisits = [...this.allReferredVisits];
+      return;
+    }
+    const term = this.searchTermRef.toLowerCase().trim();
+    this.referredVisits = this.allReferredVisits.filter(visit => {
+      const name = [
+        visit.patient_name?.given_name,
+        visit.patient_name?.middle_name,
+        visit.patient_name?.family_name
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return name.includes(term);
+    });
+  }
+
+  /**
+  * Get referred visits for a given page number and search term
+  * @param {Object} params - Object containing page, pageSize, and optional searchTerm
+  * @return {void}
+  */
+  getReferredVisitsData(params: {page: number, pageSize: number, searchTerm?: string}) {
+    if (params.searchTerm !== undefined) {
+      this.referredSearch$.next(params.searchTerm);
+      return;
+    }
+    this.getReferredVisits(params.page);
+  }
+
+  /**
+  * status is "Referred".
+  * @param {CustomVisitModel} _visit - Visit
+  * @return {string} - Visit stage label
+  */
+  getReferredVisitStatus(_visit: CustomVisitModel): string {
+    return 'Referred';
+  }
+
+  /**
+  * Get the specialization a visit was referred/routed to
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string} - Referred-to specialization, or empty string if not present
+  */
+  getRoutingSpecialization(visit: CustomVisitModel): string {
+    const attr = (visit.attributes || []).find(
+      (a: any) => a?.attribute_type?.name === visitTypes.ROUTING_SPECIALIZATION
+    );
+    return attr?.value_reference || '';
+  }
+
+  /**
   * Get prescriptions sent visits for a given page number
   * @param {number} page - Page number
   * @param {string} searchTerm - Optional search term
@@ -152,27 +264,74 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
     this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
-        let records = [];
-        for (let i = 0; i < ps.data.length; i++) {
-          let visit = ps.data[i];
+        const visitRequests: Observable<any>[] = ps.data.map((visit) => {
           let vcenc = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          records.push(visit);
-        }
-       // master list
-      this.allPrescriptionSent = [...this.allPrescriptionSent, ...records];
+          return this.getReferralStatus(visit).pipe(map((referralStatus) => {
+            visit.referral_status = referralStatus;
+            return visit;
+          }));
+        });
+        forkJoin(visitRequests).subscribe((records: CustomVisitModel[]) => {
+          // master list
+          this.allPrescriptionSent = [...this.allPrescriptionSent, ...records];
 
-      // apply search AFTER data loads5855
-      this.applySearch();
+          // apply search AFTER data loads
+          this.applySearch();
 
-        if(!this.loaded2) {;
-          this.loaded2 = true;
-        }
+          if(!this.loaded2) {
+            this.loaded2 = true;
+          }
+        });
       }
     });
+  }
+
+  /**
+  * Get the referral status pill (decision + patient consent) for a visit in the
+  * Prescription Sent tab. Visits here are completed and were never routed to NAMCO,
+  * so only these outcomes are possible: referred to PHC, no referral needed, or
+  * NAMCO referral declined by the patient. Referral Consent can only exist on the
+  * visit's single Visit Note encounter, so a plain visit-level match is sufficient.
+  * @param {CustomVisitModel} visit - Visit
+  * @return {Observable<{ label: string, statusClass: string } | null>}
+  */
+  getReferralStatus(visit: CustomVisitModel): Observable<{ label: string, statusClass: string } | null> {
+    return this.diagnosisService.getObs(visit.person.uuid, conceptIds.conceptReferralConsent).pipe(
+      map((response: ObsApiResponseModel) => {
+        const obs = response.results.find((o: ObsModel) => o.encounter?.visit?.uuid === visit.uuid);
+        if (!obs?.value) {
+          return null;
+        }
+        const [decision, consent] = obs.value.split(':');
+        return this.mapReferralStatus(decision, consent);
+      })
+    );
+  }
+
+  /**
+  * Map a Referral Consent decision + patient consent to a display label and pill color.
+  * @param {string} decision - 'NAMCO' | 'PHC' | 'No referral'
+  * @param {string} consent - 'Yes' | 'No' | undefined
+  * @return {{ label: string, statusClass: string } | null}
+  */
+  mapReferralStatus(decision: string, consent: string): { label: string, statusClass: string } | null {
+    if (decision === 'PHC') {
+      return { label: 'To PHC', statusClass: 'blue-pill' };
+    }
+    if (decision === 'No referral') {
+      return { label: 'No referral Needed', statusClass: 'gray-pill' };
+    }
+    if (decision === 'NAMCO' && consent === 'No') {
+      return { label: 'Referral Declined', statusClass: 'red-pill' };
+    }
+    if (decision === 'NAMCO' && consent === 'Yes') {
+      return { label: 'To NAMCO', statusClass: 'purple-pill' };
+    }
+    return null;
   }
 
  /**
@@ -332,5 +491,6 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
   ngOnDestroy() {
   this.sentSearch$.complete();
   this.completedSearch$.complete();
+  this.referredSearch$.complete();
 }
 }

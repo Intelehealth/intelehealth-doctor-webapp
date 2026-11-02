@@ -51,11 +51,24 @@
           outline: none;
         }
 
-        input[type="date"]::-webkit-calendar-picker-indicator {
-          content: url(../../../assets/svgs/calendar-date.svg);
-          border: none;
-          background: transparent;
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          input {
+            padding-right: 40px;
+          }
+        }
+
+        .datepicker-icon {
+          position: absolute;
+          right: 4px;
+          top: 50%;
+          transform: translateY(-50%);
           cursor: pointer;
+          background: transparent;
+          border: none;
         }
       }
 

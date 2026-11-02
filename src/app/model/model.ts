@@ -261,6 +261,10 @@ export interface CustomVisitModel {
     person_attribute?: any[]
   }
   prescription_started?:any
+  attributes?: any[]
+  routing_specialization?: string
+  status?: string
+  referral_status?: { label: string, statusClass: string }
 }
 
 export interface CustomEncounterModel {
@@ -419,6 +423,7 @@ export interface ObsModel {
     display?: string
   },
   encounter?: {
+    uuid?: string,
     visit?: {
       uuid?: string
     }
@@ -500,7 +505,8 @@ export interface ReferralModel {
   speciality?: string,
   facility?: string,
   priority?: string,
-  reason?: string
+  reason?: string,
+  pendingSave?: boolean
 }
 
 export interface TestModel {
@@ -738,6 +744,8 @@ export interface PatientVisitSummaryConfigModel {
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean
   standard_medication: boolean
+  family_history_notes?: boolean
+  past_medical_history_notes?: boolean
 }
 
 export interface PagerdutyList {

@@ -17,21 +17,36 @@ export class CurrentVisitDetailsComponent {
   @Input() patientHistory: DetailRow[] = [];
   @Input() familyHistory: DetailRow[] = [];
   @Input() vitals: VitalCell[] = [];
+  @Input() diagnostics: VitalCell[] = [];
+  @Input() diagnosticsEnabled = false;
   @Input() generalExams: DetailRow[] = [];
   @Input() eyeImages: string[] = [];
   @Input() abdomenFindings: string[] = [];
+  @Input() additionalNote = '';
+  @Input() additionalNotesEnabled = false;
   @Input() documents: DocItem[] = [];
   @Input() chwNote = '';
   @Input() visitNoteStarted = false;
   @Input() specializations: string[] = [];
+  @Input() referToSpecialistEnabled = true;
 
   referToSpecialist = true;
+  collapsed: Record<string, boolean> = {};
   selectedSpecialization: string | null = null;
 
   @Output() startVisit = new EventEmitter<void>();
   @Output() reassign = new EventEmitter<string>();
 
   constructor(private coreService: CoreService) {}
+
+  toggleSection(key: string): void {
+    this.collapsed[key] = !this.collapsed[key];
+  }
+
+  /** Open a section (e.g. when it's picked from the sidebar). */
+  expandSection(key: string): void {
+    this.collapsed[key] = false;
+  }
 
   previewEyeImages(index: number): void {
     this.coreService.openImagesPreviewModal({
