@@ -1,0 +1,155 @@
+.mat-elevation-z8 {
+  box-shadow: none;
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  font-family: DM Sans;
+}
+
+th.mat-header-cell {
+  border: none;
+  font-size: 14px !important;
+  font-weight: 700;
+  color: var(--color-gray);
+  height: 21px;
+}
+
+th.mat-header-cell, td.mat-cell {
+  border: none;
+  min-width: 60px;
+  padding-right: 24px;
+  white-space: nowrap;
+}
+
+td.mat-cell {
+  font-size: 15px;
+}
+
+tr.mat-row {
+  height: 64px;
+  border-radius: 8px;
+}
+
+tr.mat-row:nth-child(odd) {
+  background: #F7F7FA;
+}
+
+td:first-child,
+th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+td:last-child,
+th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.card-header {
+  .msg {
+    font-size: 14px;
+    color: grey;
+    font-weight: normal;
+  }
+}
+
+.sub-text {
+  font-size: 13px;
+  color: var(--color-gray);
+}
+
+.view-link {
+  color: var(--color-darkBlue);
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #EFE8FF;
+  border-radius: 8px;
+  background: var(--color-white);
+  color: var(--color-darkBlue);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 16px;
+  margin-right: 8px;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin-right: 4px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .source-tabs {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .refresh-btn {
+    margin-left: 16px;
+    margin-right: 0;
+    flex-shrink: 0;
+  }
+}
+
+.source-tabs ::ng-deep .mat-tab-body-wrapper {
+  display: none;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: capitalize;
+  background: #EFE8FF;
+  color: var(--color-darkBlue);
+
+  &.status-done {
+    background: #E6FFF3;
+    color: #0A7A45;
+  }
+
+  &.status-recording,
+  &.status-finalizing {
+    background: #FFF8E6;
+    color: #6B5300;
+  }
+
+  &.status-empty {
+    background: #F0F0F3;
+    color: var(--color-gray);
+  }
+
+  &.status-error {
+    background: #FDECEC;
+    color: #B42318;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-wrap: wrap;
+  }
+}

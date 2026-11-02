@@ -13,6 +13,8 @@ import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, EncounterProviderModel, MessageModel, RecordingResponse } from 'src/app/model/model';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { AnalyticsService } from 'src/app/services/analytics.service';
+import { VoicedocRecorderService } from 'src/app/services/voicedoc-recorder.service';
+import { isVoiceTranscriptEnabled } from 'src/app/utils/voice-transcript';
 
 @Component({
   selector: 'app-video-call',
@@ -57,6 +59,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   endCall: boolean = false;
   patientRegFields: string[] = [];
   recodingStarted = false;
+  transcriptionStarted = false;
   tableId: number;
   location: string;
 
@@ -92,7 +95,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private webrtcSvc: WebrtcService,
     private appConfigService: AppConfigService,
     private analytics: AnalyticsService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private voicedocRecorder: VoicedocRecorderService
   ) { }
 
   async ngOnInit() {
@@ -368,6 +372,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.emitEvent('call-connected', this.incomingData);
     this.analytics.logEvent('call-connected', 'engagement', 'call_button', 1,  this.buildAnalyticsEventPayload());
+    if (isVoiceTranscriptEnabled(this.appConfigService, 'webapp') && !this.transcriptionStarted) {
+      this.transcriptionStarted = true;
+      this.voicedocRecorder.start({
+        visitUuid: this.data?.visitId,
+        patientUuid: this.data?.patientId,
+        doctorUuid: this.provider?.uuid,
+        chwUuid: this.nurseId,
+        roomId: this.room
+      }).catch(err => {
+        this.analytics.logEvent('voicedoc-transcription-error', 'engagement', 'call_button', 1, { ...this.buildAnalyticsEventPayload(), error: err });
+      });
+    }
     if(this.callType === 'video' && this.isVideoRecordingEnabled) {
       await this.webrtcSvc.startRecording({
         doctorName: this.doctorName,
@@ -705,6 +721,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   endCallInRoom(flag?) {
+    this.stopTranscription();
     setTimeout(async () => {
       this.close();
       this.webrtcSvc.room.disconnect(true);
@@ -902,7 +919,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.cs.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
+  stopTranscription(): void {
+    if (this.transcriptionStarted) {
+      this.transcriptionStarted = false;
+      this.voicedocRecorder.stop();
+    }
+  }
+
   ngOnDestroy(): void {
+    this.stopTranscription();
     this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
     

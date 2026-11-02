@@ -146,4 +146,10 @@ FIREBASE_APP_ID=XXXXX
 SHOW_CAPTCHA=true/false
 ```
 
+## Voice Transcript (call recording & transcription)
+
+- Admin flags live under **Admin Actions → AI LLM → Voice Transcript** (config microservice `/ai-llm-voice-transcript`, master feature key `ai_llm_voice_transcript_section`). Sub-flags: `record_transcribe_webapp`, `record_transcribe_mobile`, `feed_ai_ddx`, `autofill_doctor_notes`. Changes apply only after **Publish**.
+- The doctor webapp records and transcribes a call only when the published config has `ai_llm_voice_transcript_section` on and `ai_llm_voice_transcript.record_transcribe_webapp === true` (`isVoiceTranscriptEnabled` in `src/app/utils/voice-transcript.ts`). Sessions are created with `source: 'webapp'`; a 403 from session creation skips audio capture, and a 403 on a chunk upload stops uploading.
+- Admins can browse recordings at `/admin/actions/ai-llm/voice-transcripts` (the "View" link on the Doctor webapp record & transcribe row; All / Web / Mobile tabs map to `?source=`). It lists `GET {MIND_MAP_URL}/voicedoc/transcripts` 10 per page, newest first, and opens a detail dialog with the transcript and the generated summary (`GET /voicedoc/transcripts/:id`).
+
 [Disclaimer:] (https://github.com/Intelehealth/Intelehealth-Doctor-WebApp/blob/master/HEALTHCARE%20DISCLAIMER.md)
