@@ -11,10 +11,21 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false   # a failure on one host won't cancel the other
+      matrix:
+        include:
+          - name: demoai
+            host_secret: DEMOAI_HOST
+          - name: staging
+            host_secret: STAGING_HOST
+
+    name: build-and-deploy (${{ matrix.name }})
     env:
       # Upload to /tmp with a unique name so an old, root-owned file in the
       # deploy folder can never block the upload again.
-      REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}.tar.gz
+      REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}-${{ matrix.name }}.tar.gz
+      TARGET_HOST: ${{ secrets[matrix.host_secret] }}
 
     steps:
       - name: Checkout Code
@@ -26,20 +37,20 @@ jobs:
           chmod 700 ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets.DEMOAI_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$TARGET_HOST" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Ensure remote deployment directory exists
         run: |
-          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "mkdir -p /home/ubuntu/deploy/webapp"
+          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "mkdir -p /home/ubuntu/deploy/webapp"
 
       # STEP 1: Fetch the .env from the server to use during the build
       - name: Download .env via Native SCP
         run: |
-          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "[ -f /home/ubuntu/deploy/webapp/.env ]"; then
-            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env" .env
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "[ -f /home/ubuntu/deploy/webapp/.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST:/home/ubuntu/deploy/webapp/.env" .env
           else
-            echo "Remote .env not found. Creating an empty local fallback so the workflow can continue."
+            echo "Remote .env not found on ${{ matrix.name }}. Creating an empty local fallback so the workflow can continue."
             : > .env
           fi
 
@@ -53,13 +64,13 @@ jobs:
       - name: Upload Image to Server
         run: |
           scp -i ~/.ssh/id_rsa webapp_image.tar.gz \
-            "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:$REMOTE_IMAGE"
+            "${{ secrets.REMOTE_USER }}@$TARGET_HOST:$REMOTE_IMAGE"
 
       # STEP 4: Restart the container
       - name: Deploy Container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEMOAI_HOST }}
+          host: ${{ env.TARGET_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
