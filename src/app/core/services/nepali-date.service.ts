@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as bikramSambat from 'bikram-sambat';
+import NepaliDateConverter, { dateConfigMap } from 'nepali-date-converter';
 
 export interface NepaliDate {
   year: number;
@@ -7,99 +7,33 @@ export interface NepaliDate {
   day: number;
 }
 
+/*
+ * BS <-> AD conversion backed by nepali-date-converter, the same library the
+ * FHW mobile app uses, so both apps always show the same BS date.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class NepaliDateService {
-  private readonly BS_MONTHS_DATA: number[][] = [
-    [365, 30,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [365, 30,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [365, 31,31,31,32,31,31,29,30,30,29,29,31],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [365, 31,31,31,32,31,31,29,30,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [365, 31,31,31,32,31,31,29,30,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,31,32,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,31,32,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 30,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,31,29,30,30,29,29,31],
-    [365, 30,31,31,32,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,31,30,29,30,29,30,30],
-    [365, 31,31,31,32,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,31,32,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,31,29,30,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,32,31,32,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,31,32,32,31,30,30,29,30,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,29,30,31],
-    [365, 31,31,31,32,31,31,29,30,30,29,29,31],
-    [365, 31,31,32,31,31,31,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,32,31,32,31,30,30,30,29,29,30,30],
-    [366, 31,32,31,32,31,30,30,30,29,30,29,31],
-    [365, 30,31,32,31,31,30,30,29,30,29,30,30],
-    [365, 31,31,32,31,31,30,30,29,30,29,30,30]
-  ];
-
   private readonly BS_YEAR_START = 2000;
-  private readonly REF_AD_YEAR = 1943;
-  private readonly REF_AD_MONTH_INDEX = 3;
-  private readonly REF_AD_DAY = 14;
+  private readonly BS_YEAR_END = 2090;
+  /* AD date of 1 Baisakh 2000 BS; the library mirrors earlier dates instead of rejecting them. */
+  private readonly AD_RANGE_START = new Date(1943, 3, 14, 0, 0, 0, 0);
+
+  private readonly configMonthKeys = [
+    'Baisakh',
+    'Jestha',
+    'Asar',
+    'Shrawan',
+    'Bhadra',
+    'Aswin',
+    'Kartik',
+    'Mangsir',
+    'Poush',
+    'Magh',
+    'Falgun',
+    'Chaitra'
+  ] as const;
 
   readonly monthNames = [
     'Baisakh',
@@ -121,7 +55,7 @@ export class NepaliDateService {
   }
 
   getSupportedBsYears(maxYear?: number): number[] {
-    const endYear = maxYear || (this.BS_YEAR_START + this.BS_MONTHS_DATA.length - 1);
+    const endYear = maxYear || this.BS_YEAR_END;
     const years: number[] = [];
 
     for (let year = endYear; year >= this.BS_YEAR_START; year--) {
@@ -132,93 +66,49 @@ export class NepaliDateService {
   }
 
   getDaysInBsMonth(bsYear: number, bsMonth: number): number {
-    const yearIndex = bsYear - this.BS_YEAR_START;
+    const yearConfig = dateConfigMap[String(bsYear)];
 
-    if (!this.BS_MONTHS_DATA[yearIndex] || bsMonth < 1 || bsMonth > 12) {
+    if (!yearConfig || bsMonth < 1 || bsMonth > 12) {
       return 30;
     }
 
-    return this.BS_MONTHS_DATA[yearIndex][bsMonth];
+    return yearConfig[this.configMonthKeys[bsMonth - 1]];
   }
 
   bsToGregorian(bsYear: number, bsMonth: number, bsDay: number): Date | null {
-    const yearIndex = bsYear - this.BS_YEAR_START;
-
-    if (!this.BS_MONTHS_DATA[yearIndex] || bsMonth < 1 || bsMonth > 12) {
-      return this.bsToGregorianFallback(bsYear, bsMonth, bsDay);
-    }
-
-    const daysInMonth = this.getDaysInBsMonth(bsYear, bsMonth);
-    if (bsDay < 1 || bsDay > daysInMonth) {
+    if (!dateConfigMap[String(bsYear)] || bsMonth < 1 || bsMonth > 12) {
       return null;
     }
 
-    let totalDays = 0;
-
-    for (let year = 0; year < yearIndex; year++) {
-      totalDays += this.BS_MONTHS_DATA[year][0];
+    if (bsDay < 1 || bsDay > this.getDaysInBsMonth(bsYear, bsMonth)) {
+      return null;
     }
 
-    for (let month = 1; month < bsMonth; month++) {
-      totalDays += this.BS_MONTHS_DATA[yearIndex][month];
+    try {
+      const adDate = new NepaliDateConverter(bsYear, bsMonth - 1, bsDay).toJsDate();
+      return new Date(adDate.getFullYear(), adDate.getMonth(), adDate.getDate(), 12, 0, 0, 0);
+    } catch {
+      return null;
     }
-
-    totalDays += (bsDay - 1);
-
-    const adDate = new Date(this.REF_AD_YEAR, this.REF_AD_MONTH_INDEX, this.REF_AD_DAY, 12, 0, 0, 0);
-    adDate.setDate(adDate.getDate() + totalDays);
-    adDate.setHours(12, 0, 0, 0);
-
-    return adDate;
   }
 
   gregorianToBs(gregorianDate: Date | string): NepaliDate | null {
     const target = this.normalizeDate(gregorianDate);
 
-    if (!target) {
+    if (!target || target < this.AD_RANGE_START) {
       return null;
     }
 
-    const refDate = new Date(this.REF_AD_YEAR, this.REF_AD_MONTH_INDEX, this.REF_AD_DAY, 12, 0, 0, 0);
-    const diffMs = target.getTime() - refDate.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
+    try {
+      const bsDate = new NepaliDateConverter(target);
+      return {
+        year: bsDate.getYear(),
+        month: bsDate.getMonth() + 1,
+        day: bsDate.getDate()
+      };
+    } catch {
       return null;
     }
-
-    let remaining = diffDays;
-    let yearIndex = 0;
-    let bsYear = this.BS_YEAR_START;
-
-    while (yearIndex < this.BS_MONTHS_DATA.length && remaining >= this.BS_MONTHS_DATA[yearIndex][0]) {
-      remaining -= this.BS_MONTHS_DATA[yearIndex][0];
-      bsYear += 1;
-      yearIndex += 1;
-    }
-
-    if (yearIndex >= this.BS_MONTHS_DATA.length) {
-      return this.gregorianToBsFallback(target);
-    }
-
-    let bsMonth = 1;
-    let bsDay = 1;
-
-    for (let month = 1; month <= 12; month++) {
-      const daysInMonth = this.BS_MONTHS_DATA[yearIndex][month];
-      if (remaining < daysInMonth) {
-        bsMonth = month;
-        bsDay = remaining + 1;
-        break;
-      }
-      remaining -= daysInMonth;
-    }
-
-    return {
-      year: bsYear,
-      month: bsMonth,
-      day: bsDay
-    };
   }
 
   formatBsDate(date: NepaliDate | null): string {
@@ -254,39 +144,6 @@ export class NepaliDateService {
 
     date.setHours(12, 0, 0, 0);
     return date;
-  }
-
-  private gregorianToBsFallback(date: Date): NepaliDate | null {
-    try {
-      const adDateText = `${date.getFullYear()}-${this.pad(date.getMonth() + 1)}-${this.pad(date.getDate())}`;
-      const converted = bikramSambat.toBik(adDateText);
-
-      if (!converted || !converted.year || !converted.month || !converted.day) {
-        return null;
-      }
-
-      return {
-        year: converted.year,
-        month: converted.month,
-        day: converted.day
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private bsToGregorianFallback(bsYear: number, bsMonth: number, bsDay: number): Date | null {
-    try {
-      const converted = bikramSambat.toGreg(bsYear, bsMonth, bsDay);
-
-      if (!converted || !converted.year || !converted.month || !converted.day) {
-        return null;
-      }
-
-      return new Date(converted.year, converted.month - 1, converted.day, 12, 0, 0, 0);
-    } catch {
-      return null;
-    }
   }
 
   private pad(value: number): string {

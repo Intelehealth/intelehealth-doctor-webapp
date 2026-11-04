@@ -1,7 +1,9 @@
 import { envConfig, Client } from './environment.generated';
 
 const HOSTNAME = window.location.hostname.toLowerCase();
-const CLIENT: Client = HOSTNAME.includes('nepalezazi') ? 'nepal' : 'ezazi';
+/* Hosts served by the Nepal deployment. `nezazi` is not a substring of `nepalezazi`, so both are listed. */
+const NEPAL_HOSTS = ['nepalezazi', 'nezazi'];
+const CLIENT: Client = NEPAL_HOSTS.some((h) => HOSTNAME.includes(h)) ? 'nepal' : 'ezazi';
 
 const CAPTCHA_KEYS: Record<Client, { captchaSiteKey: string; siteKey: string }> = {
   ezazi: {
