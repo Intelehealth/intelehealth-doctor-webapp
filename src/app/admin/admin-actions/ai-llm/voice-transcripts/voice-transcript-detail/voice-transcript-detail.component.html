@@ -20,7 +20,7 @@
       <div><label>{{ "Duration" | translate }}</label><span>{{ duration(detail.durationSec) }}</span></div>
       <div><label>{{ "Chunks" | translate }}</label><span>{{ detail.chunksUploaded ?? 0 }}/{{ detail.chunksReceived ?? 0 }}<ng-container *ngIf="detail.chunksFailed > 0"> ({{ detail.chunksFailed }} {{ "failed" | translate }})</ng-container></span></div>
       <div><label>{{ "Recording" | translate }}</label><span class="mono">{{ detail.recordingName || "-" }}</span></div>
-      <div *ngIf="full?.voicedocAccount !== undefined" data-test-id="voiceTranscriptAccount"><label>{{ "Jatayu account" | translate }}</label><span class="mono">{{ full.voicedocAccount || ("Shared (fallback)" | translate) }}</span></div>
+      <div *ngIf="full?.voicedocAccount !== undefined" data-test-id="voiceTranscriptAccount"><label>{{ "Account" | translate }}</label><span class="mono">{{ full.voicedocAccount || ("Shared (fallback)" | translate) }}</span></div>
       <div class="full" *ngIf="detail.error"><label>{{ "Error" | translate }}</label><span class="text-danger">{{ detail.error }}</span></div>
     </div>
 
