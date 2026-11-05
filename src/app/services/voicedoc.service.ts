@@ -10,7 +10,7 @@ export interface VoicedocSessionRequest {
   patientUuid: string;
   doctorUuid: string;
   chwUuid: string;
-  roomId: string;
+  roomId?: string;
   language?: string;
 }
 
@@ -41,6 +41,8 @@ export interface VoicedocTranscriptItem {
   error: string;
 }
 
+export type VoicedocNoteStatus = 'saved' | 'updated' | 'disabled' | 'no_encounter' | 'error';
+
 export type VoicedocChunkStatus = 'queued' | 'uploaded' | 'failed' | 'skipped';
 
 export interface VoicedocTranscriptChunk {
@@ -65,6 +67,13 @@ export interface VoicedocTranscriptDetail extends VoicedocTranscriptItem {
   summary: { [section: string]: any } | null;
   rawResponse?: { [key: string]: any } | null;
   combinedAudioResponse?: { [key: string]: any } | null;
+  voicedocAccount?: string | null;
+  visitSummary?: string | null;
+  visitSummaryResponse?: { [key: string]: any } | null;
+  visitSummaryAt?: string | null;
+  noteObsUuid?: string | null;
+  noteStatus?: VoicedocNoteStatus | null;
+  noteError?: string | null;
   chunks?: VoicedocTranscriptChunk[];
 }
 
@@ -112,6 +121,10 @@ export class VoicedocService {
 
   getTranscript(id: string): Observable<VoicedocTranscriptDetailResponse> {
     return this.http.get<VoicedocTranscriptDetailResponse>(`${this.base}/voicedoc/transcripts/${encodeURIComponent(id)}`);
+  }
+
+  regenerateVisitSummary(id: string): Observable<VoicedocTranscriptDetailResponse> {
+    return this.http.post<VoicedocTranscriptDetailResponse>(`${this.base}/voicedoc/transcripts/${encodeURIComponent(id)}/visit-summary`, {});
   }
 
   uploadChunk(sessionId: string, blob: Blob, chunkNumber: number, fields?: Record<string, string>): Observable<any> {

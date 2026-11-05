@@ -183,5 +183,58 @@ describe('VoicedocRecorderService', () => {
       await service.idle();
       expect(voicedoc.uploadChunk.calls.argsFor(0)[3]).toEqual({ localSources: '1', remoteSources: '1' });
     });
+
+    describe('mic mode', () => {
+      const micTrack = { id: 'laptop-mic', kind: 'audio', readyState: 'live', stop: jasmine.createSpy('stop') };
+      let getUserMedia: jasmine.Spy;
+
+      beforeEach(() => {
+        micTrack.stop.calls.reset();
+        getUserMedia = spyOn(navigator.mediaDevices, 'getUserMedia').and.returnValue(
+          Promise.resolve({ tracks: [micTrack], getTracks: () => [micTrack] } as any)
+        );
+      });
+
+      it('records the laptop mic on input 0, ignores the LiveKit room and releases the mic on stop', async () => {
+        await service.start(opts, 'mic');
+        expect(getUserMedia).toHaveBeenCalledWith({ audio: jasmine.objectContaining({ echoCancellation: true }) });
+        expect(nodeFor(micTrack).connect).toHaveBeenCalledWith(workletNode, 0, 0);
+        expect(nodeFor(localTrack)).toBeUndefined();
+        expect(nodeFor(remoteTrack)).toBeUndefined();
+        expect(service.state$.value).toBe('recording');
+        await service.stop();
+        expect(micTrack.stop).toHaveBeenCalled();
+        expect(service.state$.value).toBe('idle');
+        expect(voicedoc.endSession).toHaveBeenCalledWith('s1');
+      });
+
+      it('reports an error state and releases capture when the mic is denied', async () => {
+        getUserMedia.and.returnValue(Promise.reject(new Error('NotAllowedError')));
+        await service.start(opts, 'mic');
+        await (service as any).stopping;
+        expect(service.state$.value).toBe('error');
+        expect((service as any).ctx).toBeNull();
+        expect((service as any).active).toBeFalse();
+      });
+
+      it('drops audio while paused, flushes the partial chunk on pause and resumes on resume', async () => {
+        await service.start(opts, 'mic');
+        const send = (n: number) => workletNode.port.onmessage({ data: { samples: new Float32Array(n), stats: statsFor(0.1, 0, n) } });
+        send(16000);
+        service.pause();
+        expect(service.state$.value).toBe('paused');
+        await service.idle();
+        expect(voicedoc.uploadChunk).toHaveBeenCalledTimes(1);
+        send(160000);
+        await service.idle();
+        expect(voicedoc.uploadChunk).toHaveBeenCalledTimes(1);
+        service.resume();
+        expect(service.state$.value).toBe('recording');
+        send(160000);
+        await service.idle();
+        expect(voicedoc.uploadChunk).toHaveBeenCalledTimes(2);
+        expect(voicedoc.uploadChunk.calls.argsFor(1)[2]).toBe(2);
+      });
+    });
   });
 });

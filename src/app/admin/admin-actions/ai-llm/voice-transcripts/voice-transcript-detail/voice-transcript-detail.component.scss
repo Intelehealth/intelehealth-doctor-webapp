@@ -299,3 +299,28 @@
 .level-na {
   color: #7F7B92;
 }
+
+.visit-summary-box {
+  white-space: pre-wrap;
+}
+
+.visit-summary-meta {
+  font-size: 13px;
+  font-weight: 400;
+  color: #7d7a89;
+}
+
+.note-status {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #7d7a89;
+}
+
+.note-status-ok {
+  color: #1f9d6e;
+}
+
+.note-status-error {
+  color: #d93025;
+}
+

@@ -1168,6 +1168,10 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   align-items: center;
   justify-content: center;
 
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
   img {
     width: 18px;
     height: 18px;

@@ -34,7 +34,7 @@ describe('VoiceTranscriptDetailComponent', () => {
   };
 
   function create(response: any) {
-    voicedoc = jasmine.createSpyObj<VoicedocService>('VoicedocService', ['getTranscript']);
+    voicedoc = jasmine.createSpyObj<VoicedocService>('VoicedocService', ['getTranscript', 'regenerateVisitSummary']);
     voicedoc.getTranscript.and.returnValue(response);
     TestBed.configureTestingModule({
       declarations: [VoiceTranscriptDetailComponent],
@@ -140,7 +140,78 @@ describe('VoiceTranscriptDetailComponent', () => {
     }));
   });
 
+  describe('visit summary', () => {
+    const el = (id: string) => fixture.nativeElement.querySelector(`[data-test-id="${id}"]`);
+    const stored = {
+      ...detail,
+      endedAt: '2026-11-04T10:00:00Z',
+      visitSummary: 'Fever for three days, advised rest.',
+      visitSummaryAt: '2026-11-04T10:01:00Z',
+      visitSummaryResponse: { overall_summary: 'Fever for three days, advised rest.', visits_found: 2, visits: ['MR-p_v Nov 4 2026 03:49 PM', 'MR-p_v Nov 4 2026 04:10 PM'] },
+      noteStatus: 'saved',
+      noteObsUuid: 'obs-1'
+    };
+
+    it('shows the stored summary of all visit recordings and the doctor note status', () => {
+      create(of({ success: true, data: stored }));
+      expect(el('voiceTranscriptVisitSummary').textContent).toContain('Fever for three days');
+      expect(el('voiceTranscriptVisitSummaryCount').textContent).toContain('2');
+      expect(el('voiceTranscriptNoteStatus').textContent).toContain("Saved to doctor's notes");
+      expect(voicedoc.regenerateVisitSummary).not.toHaveBeenCalled();
+    });
+
+    it('explains why the note was not saved', () => {
+      create(of({ success: true, data: { ...stored, noteStatus: 'error', noteError: 'HTTP 500' } }));
+      expect(el('voiceTranscriptNoteStatus').textContent).toContain("Could not save to doctor's notes: HTTP 500");
+    });
+
+    it('regenerates on demand and shows an error when it fails', () => {
+      create(of({ success: true, data: stored }));
+      voicedoc.regenerateVisitSummary.and.returnValue(throwError({ status: 502 }));
+      el('linkRegenerateVisitSummary').click();
+      fixture.detectChanges();
+      expect(el('voiceTranscriptVisitSummaryError')).toBeTruthy();
+      voicedoc.regenerateVisitSummary.and.returnValue(of({ success: true, data: { ...stored, visitSummary: 'New merged summary', noteStatus: 'updated' } }) as any);
+      el('linkRegenerateVisitSummary').click();
+      fixture.detectChanges();
+      expect(voicedoc.regenerateVisitSummary).toHaveBeenCalledWith('t1');
+      expect(el('voiceTranscriptVisitSummary').textContent).toContain('New merged summary');
+      expect(el('voiceTranscriptNoteStatus').textContent).toContain("Updated in doctor's notes");
+    });
+
+    it('keeps polling for a few minutes after the call until the summary is generated', fakeAsync(() => {
+      const fresh = { ...detail, endedAt: new Date().toISOString(), visitSummary: null, visitSummaryAt: null };
+      create(of({ success: true, data: fresh }));
+      expect(el('voiceTranscriptVisitSummaryLoading')).toBeTruthy();
+      voicedoc.getTranscript.and.returnValue(of({ success: true, data: { ...stored, endedAt: fresh.endedAt } }) as any);
+      tick(10000);
+      fixture.detectChanges();
+      expect(el('voiceTranscriptVisitSummary').textContent).toContain('Fever for three days');
+      expect(fixture.componentInstance.pending).toBeFalse();
+      fixture.destroy();
+    }));
+  });
+
+  describe('chunks debug flag', () => {
+    afterEach(() => localStorage.removeItem('debug'));
+
+    it('hides the chunk table unless localStorage debug is on', () => {
+      localStorage.removeItem('debug');
+      create(of({ success: true, data: { ...detail, chunks: [{ chunkNumber: 1, status: 'uploaded', attempts: 1 }] } }));
+      expect(fixture.nativeElement.querySelector('[data-test-id="voiceTranscriptChunkTable"]')).toBeNull();
+    });
+
+    it('shows the chunk table when localStorage debug is true', () => {
+      localStorage.setItem('debug', 'true');
+      create(of({ success: true, data: { ...detail, chunks: [{ chunkNumber: 1, status: 'uploaded', attempts: 1 }] } }));
+      expect(fixture.nativeElement.querySelector('[data-test-id="voiceTranscriptChunkTable"]')).toBeTruthy();
+    });
+  });
+
   describe('raw JSON and chunks', () => {
+    beforeEach(() => localStorage.setItem('debug', '1'));
+    afterEach(() => localStorage.removeItem('debug'));
+
     const chunk = (over: any) => ({
       chunkNumber: 1, status: 'uploaded', attempts: 1, bytes: 320044, durationMs: 10000,
       localRms: 0.12, localPeak: 0.5, remoteRms: 0.08, remotePeak: 0.4, localSources: 1, remoteSources: 1,
