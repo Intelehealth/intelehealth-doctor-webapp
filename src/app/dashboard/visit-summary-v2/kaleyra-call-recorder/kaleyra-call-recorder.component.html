@@ -1,0 +1,44 @@
+<div class="kcr-backdrop" *ngIf="call && phase === 'ready'" data-test-id="kaleyraCallRecorder">
+  <div class="kcr-modal" role="dialog" aria-modal="true" aria-labelledby="kcrModalTitle">
+    <div class="kcr-modal-head">
+      <h2 id="kcrModalTitle" class="kcr-modal-title">Record this Kaleyra call</h2>
+      <button type="button" class="kcr-close" aria-label="Close" data-test-id="btnKaleyraRecorderClose" (click)="dismiss()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <p class="kcr-modal-text">Your phone will ring to connect you with the health worker. Start recording once the call is connected so the conversation can be transcribed.</p>
+    <div class="kcr-speaker" data-test-id="kaleyraSpeakerPrompt">
+      <mat-icon class="kcr-speaker-icon">volume_up</mat-icon>
+      <div>
+        <div class="kcr-speaker-title">Put the call on speaker</div>
+        <div class="kcr-speaker-text">Turn on your phone's speaker and place the phone next to your computer for the whole call. The recording listens through your computer's microphone, so it can hear the health worker only through your phone's speaker.</div>
+      </div>
+    </div>
+    <div class="kcr-modal-actions">
+      <button type="button" class="kcr-btn" data-test-id="btnKaleyraRecordLater" (click)="dismiss()">Not now</button>
+      <button type="button" class="kcr-btn kcr-btn-primary" data-test-id="btnKaleyraRecordStart" (click)="start()">
+        <mat-icon>fiber_manual_record</mat-icon>Start recording
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="kcr-bar" *ngIf="call && phase !== 'ready'" role="region" aria-label="Kaleyra call recording" data-test-id="kaleyraCallRecorderBar">
+  <div class="kcr-head">
+    <span class="kcr-dot" [class.kcr-dot-live]="phase === 'recording'" [class.kcr-dot-paused]="phase === 'paused'"></span>
+    <span class="kcr-title">{{ phase === 'paused' ? 'Recording paused' : 'Recording call' }}</span>
+    <span class="kcr-time" data-test-id="kaleyraRecorderTime">{{ elapsedLabel }}</span>
+  </div>
+  <p class="kcr-hint"><mat-icon>volume_up</mat-icon>Keep your phone on speaker</p>
+  <div class="kcr-actions">
+    <button *ngIf="phase === 'recording'" type="button" class="kcr-btn" data-test-id="btnKaleyraRecordPause" (click)="pause()">
+      <mat-icon>pause</mat-icon>Pause
+    </button>
+    <button *ngIf="phase === 'paused'" type="button" class="kcr-btn" data-test-id="btnKaleyraRecordResume" (click)="resume()">
+      <mat-icon>play_arrow</mat-icon>Resume
+    </button>
+    <button type="button" class="kcr-btn kcr-btn-danger" [disabled]="stopping" data-test-id="btnKaleyraRecordStop" (click)="confirmStop()">
+      <mat-icon>stop</mat-icon>Stop
+    </button>
+  </div>
+</div>

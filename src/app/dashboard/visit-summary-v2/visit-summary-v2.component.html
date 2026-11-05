@@ -133,6 +133,8 @@
     </div>
   </div>
 
+  <app-kaleyra-call-recorder></app-kaleyra-call-recorder>
+
   <div class="vs2-webrtc-controls" *ngIf="canStartCall">
     <img *ngIf="hasAudioEnabled" class="vs2-webrtc-btn vs2-webrtc-btn-audio" src="assets/svgs/audio-call.svg"
          alt="Start Audio Call" data-test-id="imgStartAudioCall" (click)="startCall('audio')" />

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -23,7 +23,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 import { AiddxService, AiTxService } from 'aiddx-library';
 import {
   AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
-  ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
+  ComplaintDetail, DetailRow, DocItem, KaleyraCallContext, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import {
@@ -119,6 +119,8 @@ export class VisitSummaryV2Service {
   ) {}
 
   /** MCC users don't get the Kaleyra call button, as in the old Visit Summary. */
+  readonly kaleyraCallStarted$ = new Subject<KaleyraCallContext>();
+
   isMCCUser(): boolean {
     return !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
   }

@@ -1,0 +1,100 @@
+name: staging
+on:
+  push:
+    branches:
+      - development_master
+    paths-ignore:
+      - '.github/workflows/**'           # don't deploy when only workflow files change...
+      - '!.github/workflows/staging.yml' # ...except this workflow itself (use your real filename)
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: staging
+            host_secret: STAGING_HOST
+
+    name: build-and-deploy (${{ matrix.name }})
+    env:
+      # Upload to /tmp with a unique name so an old, root-owned file in the
+      # deploy folder can never block the upload again.
+      REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}-${{ matrix.name }}.tar.gz
+      TARGET_HOST: ${{ secrets[matrix.host_secret] }}
+      DEPLOY_DIR: /home/ubuntu/deploy/ida6/doctorwebapp   # absolute path (leading slash)
+      CONTAINER_NAME: ida6-webapp-container
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$TARGET_HOST" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Ensure remote deployment directory exists
+        run: |
+          ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "mkdir -p $DEPLOY_DIR"
+
+      # STEP 1: Fetch the .env from the server to use during the build
+      - name: Download .env via Native SCP
+        run: |
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST" "[ -s $DEPLOY_DIR/.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@$TARGET_HOST:$DEPLOY_DIR/.env" .env
+            echo "Fetched .env ($(wc -l < .env) lines)"
+          else
+            echo "::error::$DEPLOY_DIR/.env is missing or empty on ${{ matrix.name }}. The production build needs it."
+            exit 1
+          fi
+
+      # STEP 2: Build the Docker image (Dockerfile will now find the .env)
+      - name: Build and Save Docker Image
+        run: |
+          docker build -t intelehealth-webapp:latest .
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+
+      # STEP 3: Transfer the built image to the server's /tmp
+      - name: Upload Image to Server
+        run: |
+          scp -i ~/.ssh/id_rsa webapp_image.tar.gz \
+            "${{ secrets.REMOTE_USER }}@$TARGET_HOST:$REMOTE_IMAGE"
+
+      # STEP 4: Restart the container
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.TARGET_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
+            DEPLOY_DIR="${{ env.DEPLOY_DIR }}"
+            CONTAINER_NAME="${{ env.CONTAINER_NAME }}"
+
+            mkdir -p "$DEPLOY_DIR"
+            [ -f "$DEPLOY_DIR/.env" ] || touch "$DEPLOY_DIR/.env"
+
+            gunzip -c "$REMOTE_IMAGE" | docker load
+            rm -f "$REMOTE_IMAGE"
+
+            docker stop "$CONTAINER_NAME" || true
+            docker rm "$CONTAINER_NAME" || true
+
+            # Note: We still mount the .env at runtime just in case
+            # your Node server (SSR) or Docker entrypoint needs it.
+            docker run -d \
+              --name "$CONTAINER_NAME" \
+              -p 83:80 \
+              --env-file "$DEPLOY_DIR/.env" \
+              intelehealth-webapp:latest
+
+            docker image prune -f

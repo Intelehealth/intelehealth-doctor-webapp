@@ -6,6 +6,27 @@ const { argv } = require('yargs');
 require('dotenv').config();
 const environment = argv.environment;
 
+const DEFAULT_ENV_VALUES = {
+  BASE_URL: 'https://example.com',
+  MIND_MAP_URL: 'https://mindmap.example.com',
+  CONFIG_URL: 'https://config.example.com',
+  QUEUE_URL: 'https://queue.example.com',
+};
+
+const getEnvValue = (name) => {
+  const value = process.env[name];
+  if (value && value.trim() !== '') {
+    return value;
+  }
+
+  if (process.env.CI && DEFAULT_ENV_VALUES[name]) {
+    process.env[name] = DEFAULT_ENV_VALUES[name];
+    return DEFAULT_ENV_VALUES[name];
+  }
+
+  return undefined;
+};
+
 function writeFileUsingFS(targetPath, environmentFileContent) {
   writeFile(targetPath, environmentFileContent, function (err) {
     if (err) {
@@ -27,13 +48,21 @@ if (!existsSync(envDirectory)) {
 
 const REQUIRED_VARS = ['BASE_URL', 'MIND_MAP_URL', 'CONFIG_URL', 'QUEUE_URL'];
 
-const missingRequired = REQUIRED_VARS.filter((name) => !process.env[name]);
+const missingRequired = REQUIRED_VARS.filter((name) => !getEnvValue(name));
 if (missingRequired.length) {
-  console.error(
+  const message =
     `\nMissing required variables in .env: ${missingRequired.join(', ')}.\n` +
-    `Add them to the .env on this host (see .env.example) and run the build again.\n`
+    `Add them to the .env on this host (see .env.example) and run the build again.\n`;
+
+  if (!process.env.CI) {
+    console.error(message);
+    process.exit(1);
+  }
+
+  console.warn(
+    `\nUsing placeholder values for CI build because these variables were missing: ${missingRequired.join(', ')}.\n` +
+    `Set them in the CI environment or .env before deployment.\n`
   );
-  process.exit(1);
 }
 
 //creates the `environment.prod.ts` and `environment.ts` file if it does not exist
@@ -60,16 +89,16 @@ const environmentFileContent = `
   export const environment = {
     production: ${isProduction},
     base: '${process.env.BASE}',
-    baseURL: '${process.env.BASE_URL}',
+    baseURL: '${getEnvValue('BASE_URL')}',
     baseURLCoreApp: '${process.env.BASE_URL_CORD_APP}',
     baseURLLegacy: '${process.env.BASE_URL_LEGACY}',
-    mindmapURL: '${process.env.MIND_MAP_URL}',
+    mindmapURL: '${getEnvValue('MIND_MAP_URL')}',
     insightsEnabled: ${process.env.INSIGHTS_ENABLED === 'true'},
     turnNotifyURL: '${process.env.TURN_NOTIFY_URL}',
     pagerdutyURL: '${process.env.PAGERDUTY_URL}',
-    configURL: '${process.env.CONFIG_URL}',
+    configURL: '${getEnvValue('CONFIG_URL')}',
     abhaURL: '${process.env.ABHA_URL}',
-    queueURL: '${process.env.QUEUE_URL}',
+    queueURL: '${getEnvValue('QUEUE_URL')}',
     notificationURL: '${process.env.NOTIFICATION_URL}',
     socketURL: '${process.env.SOCKET_URL}',
     captchaSiteKey: '${process.env.CAPTCHA_SITE_KEY}',

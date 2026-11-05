@@ -170,6 +170,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   private provider = getCacheData(true, doctorDetails.PROVIDER);
 
+  hwPhoneNo = '';
+  readonly isMCCUser = this.v2Service.isMCCUser();
+
   constructor(
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService,
@@ -214,6 +217,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   get whatsAppLink(): string | null {
     return this.v2Service.whatsAppLink(this.patientPhoneNo);
+  }
+
+  startKaleyraCall(): void {
+    this.v2Service.startKaleyraCall(this.visit, this.hwPhoneNo);
   }
 
   startKaleyraCall(): void {

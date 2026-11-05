@@ -262,3 +262,12 @@ th:last-child {
     flex-shrink: 0;
   }
 }
+
+.view-link {
+  pointer-events: auto;
+  color: var(--color-darkBlue);
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
