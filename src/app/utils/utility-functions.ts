@@ -4,6 +4,15 @@ import { PatientModel, ProviderAttributeModel } from '../model/model';
 import { DecimalPipe } from "@angular/common";
 import { environment } from "src/environments/environment";
 
+export function isDebugEnabled(): boolean {
+  try {
+    const value = String(localStorage.getItem('debug') ?? '').trim().toLowerCase();
+    return value === '1' || value === 'true' || value === 'yes' || value === 'on';
+  } catch (_e) {
+    return false;
+  }
+}
+
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
     try {

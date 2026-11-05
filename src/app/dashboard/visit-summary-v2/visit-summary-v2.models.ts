@@ -180,3 +180,10 @@ export interface AiDiagnosisResult {
   suggestions: AiDiagnosisSuggestion[];
   questions: AyuSuggestedQuestion[];
 }
+
+export interface KaleyraCallContext {
+  visitUuid: string;
+  patientUuid: string;
+  doctorUuid: string;
+  chwUuid: string;
+}

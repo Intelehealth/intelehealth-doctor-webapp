@@ -41,6 +41,7 @@ import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactiva
 import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
 import { ReferralConsentComponent } from './visit-summary/referral-consent/referral-consent.component';
 import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
+import { KaleyraCallRecorderComponent } from './visit-summary-v2/kaleyra-call-recorder/kaleyra-call-recorder.component';
 import { PatientHeaderCardComponent } from './visit-summary-v2/patient-header-card/patient-header-card.component';
 import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-sidebar.component';
 import { CurrentVisitDetailsComponent } from './visit-summary-v2/current-visit-details/current-visit-details.component';
@@ -67,6 +68,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     FollowUpInstructionComponent,
     DigitalStethoscopeComponent,
     VisitSummaryV2Component,
+    KaleyraCallRecorderComponent,
     PatientHeaderCardComponent,
     VisitSidebarComponent,
     CurrentVisitDetailsComponent,

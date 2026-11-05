@@ -2,7 +2,8 @@ import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { interval, Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import { VoicedocService, VoicedocTranscriptChunk, VoicedocTranscriptDetail, VoicedocTranscriptItem } from "src/app/services/voicedoc.service";
+import { VoicedocNoteStatus, VoicedocService, VoicedocTranscriptChunk, VoicedocTranscriptDetail, VoicedocTranscriptItem } from "src/app/services/voicedoc.service";
+import { isDebugEnabled } from "src/app/utils/utility-functions";
 import {
   buildSummarySections,
   ChunkLevelSummary,
@@ -18,6 +19,15 @@ import {
 } from "src/app/utils/voice-transcript";
 
 export const VOICE_TRANSCRIPT_DETAIL_POLL_MS = 10000;
+export const VISIT_SUMMARY_WAIT_MS = 10 * 60 * 1000;
+
+export const NOTE_STATUS_LABELS: Record<VoicedocNoteStatus, string> = {
+  saved: "Saved to doctor's notes",
+  updated: "Updated in doctor's notes",
+  disabled: "Not saved to doctor's notes (Autofill doctor notes is off)",
+  no_encounter: "Not saved: the visit has no doctor's note encounter yet",
+  error: "Could not save to doctor's notes"
+};
 
 export interface VoiceTranscriptChunkRow {
   chunk: VoicedocTranscriptChunk;
@@ -53,10 +63,15 @@ export class VoiceTranscriptDetailComponent implements OnInit, OnDestroy {
   levelSummary: ChunkLevelSummary | null = null;
   expandedChunks = new Set<number>();
   sourceLabels: { [key: string]: string } = VOICE_TRANSCRIPT_SOURCE_LABELS;
+  debug = isDebugEnabled();
+  regenerating = false;
+  regenerateFailed = false;
+  noteStatusLabels = NOTE_STATUS_LABELS;
 
   private sub: Subscription;
   private pollSub: Subscription;
   private refreshSub: Subscription;
+  private visitSummarySub: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: VoiceTranscriptDetailDialogData,
@@ -74,11 +89,28 @@ export class VoiceTranscriptDetailComponent implements OnInit, OnDestroy {
     this.stopPolling();
     this.sub?.unsubscribe();
     this.refreshSub?.unsubscribe();
+    this.visitSummarySub?.unsubscribe();
   }
 
   get pending(): boolean {
     const status = this.detail?.status;
-    return status === "recording" || status === "finalizing";
+    return status === "recording" || status === "finalizing" || this.awaitingVisitSummary;
+  }
+
+  get full(): VoicedocTranscriptDetail | null {
+    return (this.detail as VoicedocTranscriptDetail) ?? null;
+  }
+
+  get awaitingVisitSummary(): boolean {
+    const detail = this.full;
+    if (detail?.status !== "done" || detail.visitSummaryAt || !("visitSummary" in detail)) return false;
+    const ended = new Date(detail.endedAt || 0).getTime();
+    return Date.now() - ended < VISIT_SUMMARY_WAIT_MS;
+  }
+
+  get visitSummaryRecordings(): string[] {
+    const visits = this.full?.visitSummaryResponse?.visits;
+    return Array.isArray(visits) ? visits : [];
   }
 
   private get fetching(): boolean {
@@ -92,6 +124,23 @@ export class VoiceTranscriptDetailComponent implements OnInit, OnDestroy {
     this.chunkRows = (detail?.chunks || []).map(chunk => this.toChunkRow(chunk));
     this.levelSummary = this.chunkRows.length ? summarizeChunkLevels(detail.chunks) : null;
     if (this.showJson) this.jsonHtml = formatJsonHtml(this.detail);
+  }
+
+  regenerateVisitSummary(): void {
+    if (this.regenerating) return;
+    this.visitSummarySub?.unsubscribe();
+    this.regenerating = true;
+    this.regenerateFailed = false;
+    this.visitSummarySub = this.voicedocService.regenerateVisitSummary(this.data.id).subscribe({
+      next: res => {
+        this.regenerating = false;
+        this.applyDetail(res?.data ?? null);
+      },
+      error: () => {
+        this.regenerating = false;
+        this.regenerateFailed = true;
+      }
+    });
   }
 
   private toChunkRow(chunk: VoicedocTranscriptChunk): VoiceTranscriptChunkRow {

@@ -20,6 +20,7 @@
       <div><label>{{ "Duration" | translate }}</label><span>{{ duration(detail.durationSec) }}</span></div>
       <div><label>{{ "Chunks" | translate }}</label><span>{{ detail.chunksUploaded ?? 0 }}/{{ detail.chunksReceived ?? 0 }}<ng-container *ngIf="detail.chunksFailed > 0"> ({{ detail.chunksFailed }} {{ "failed" | translate }})</ng-container></span></div>
       <div><label>{{ "Recording" | translate }}</label><span class="mono">{{ detail.recordingName || "-" }}</span></div>
+      <div *ngIf="full?.voicedocAccount !== undefined" data-test-id="voiceTranscriptAccount"><label>{{ "Jatayu account" | translate }}</label><span class="mono">{{ full.voicedocAccount || ("Shared (fallback)" | translate) }}</span></div>
       <div class="full" *ngIf="detail.error"><label>{{ "Error" | translate }}</label><span class="text-danger">{{ detail.error }}</span></div>
     </div>
 
@@ -41,6 +42,27 @@
       <div class="block-title">{{ "Transcript" | translate }}</div>
       <div class="transcript-box" *ngIf="transcript; else noTranscript" data-test-id="voiceTranscriptText">{{ transcript }}</div>
       <ng-template #noTranscript><div class="state-msg">{{ "No transcript available." | translate }}</div></ng-template>
+
+      <ng-container *ngIf="detail?.status === 'done'">
+        <div class="block-title d-flex align-items-center justify-content-between">
+          <span>{{ "Visit Summary" | translate }}</span>
+          <span class="summary-actions">
+            <span class="visit-summary-meta mr-3" *ngIf="visitSummaryRecordings.length" data-test-id="voiceTranscriptVisitSummaryCount">
+              {{ "Covers" | translate }} {{ visitSummaryRecordings.length }} {{ (visitSummaryRecordings.length === 1 ? "recording" : "recordings") | translate }}
+            </span>
+            <a href="javascript:void(0)" class="view-link" *ngIf="!regenerating && !awaitingVisitSummary" (click)="regenerateVisitSummary()" data-test-id="linkRegenerateVisitSummary">{{ "Regenerate" | translate }}</a>
+          </span>
+        </div>
+        <div class="state-msg" *ngIf="regenerating || (awaitingVisitSummary && !full?.visitSummary)" data-test-id="voiceTranscriptVisitSummaryLoading">{{ "Generating visit summary..." | translate }}</div>
+        <div class="state-msg text-danger" *ngIf="regenerateFailed && !regenerating" data-test-id="voiceTranscriptVisitSummaryError">{{ "Could not generate the visit summary." | translate }}</div>
+        <ng-container *ngIf="!regenerating">
+          <div class="transcript-box visit-summary-box" *ngIf="full?.visitSummary; else noVisitSummary" data-test-id="voiceTranscriptVisitSummary">{{ full.visitSummary }}</div>
+          <ng-template #noVisitSummary><div class="state-msg" *ngIf="!awaitingVisitSummary">{{ "No visit summary available." | translate }}</div></ng-template>
+          <div class="note-status" *ngIf="full?.noteStatus" [class.note-status-ok]="full.noteStatus === 'saved' || full.noteStatus === 'updated'" [class.note-status-error]="full.noteStatus === 'error'" data-test-id="voiceTranscriptNoteStatus">
+            {{ noteStatusLabels[full.noteStatus] || full.noteStatus | translate }}<ng-container *ngIf="full.noteError && full.noteStatus === 'error'">: {{ full.noteError }}</ng-container>
+          </div>
+        </ng-container>
+      </ng-container>
 
       <div class="block-title d-flex align-items-center justify-content-between">
         <span>{{ "Summary" | translate }}</span>
@@ -68,7 +90,7 @@
         </ul>
       </div>
 
-      <ng-container *ngIf="chunkRows.length">
+      <ng-container *ngIf="debug && chunkRows.length">
         <div class="block-title">{{ "Chunks" | translate }}</div>
         <div class="level-summary" *ngIf="levelSummary" data-test-id="voiceTranscriptLevelSummary">
           <ng-container *ngIf="levelSummary.localMeasured || levelSummary.remoteMeasured; else noLevels">

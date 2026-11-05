@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Room, RoomEvent, Track } from 'livekit-client';
 import { WebrtcService } from './webrtc.service';
 import { VoicedocService, VoicedocSessionRequest } from './voicedoc.service';
@@ -10,6 +11,11 @@ const SAMPLES_PER_CHUNK = SAMPLE_RATE * 10;
 const MIN_TAIL_SAMPLES = SAMPLE_RATE / 2;
 const RETRY_DELAYS = [1000, 2000, 4000];
 const WORKLET_URL = 'assets/js/voicedoc-capture.worklet.js';
+const MIC_CONSTRAINTS: MediaTrackConstraints = {
+  echoCancellation: true,
+  noiseSuppression: false,
+  autoGainControl: true
+};
 const ROOM_EVENTS = [
   RoomEvent.TrackSubscribed,
   RoomEvent.TrackUnsubscribed,
@@ -17,6 +23,10 @@ const ROOM_EVENTS = [
   RoomEvent.LocalTrackUnpublished,
   RoomEvent.Reconnected
 ];
+
+export type VoicedocCaptureMode = 'room' | 'mic';
+
+export type VoicedocRecorderState = 'idle' | 'recording' | 'paused' | 'disabled' | 'error';
 
 interface QueuedChunk {
   blob: Blob;
@@ -33,7 +43,11 @@ interface AttachedSource {
   providedIn: 'root'
 })
 export class VoicedocRecorderService {
+  readonly state$ = new BehaviorSubject<VoicedocRecorderState>('idle');
   private active = false;
+  private paused = false;
+  private mode: VoicedocCaptureMode = 'room';
+  private micStream: MediaStream | null = null;
   private generation = 0;
   private ctx: AudioContext | null = null;
   private sink: AudioNode | null = null;
@@ -70,7 +84,7 @@ export class VoicedocRecorderService {
     private ngZone: NgZone
   ) { }
 
-  async start(opts: VoicedocSessionRequest): Promise<void> {
+  async start(opts: VoicedocSessionRequest, mode: VoicedocCaptureMode = 'room'): Promise<void> {
     if (this.active) return;
     this.active = true;
     const gen = ++this.generation;
@@ -79,6 +93,8 @@ export class VoicedocRecorderService {
       if (gen !== this.generation) return;
     }
     this.resetState();
+    this.mode = mode;
+    this.state$.next('recording');
     this.chunker = new MeteredPcmChunker(SAMPLES_PER_CHUNK);
     this.sessionPromise = this.voicedocSvc.createSession(opts).toPromise()
       .then(res => {
@@ -89,6 +105,7 @@ export class VoicedocRecorderService {
         if (err?.status === 403 && gen === this.generation) {
           this.disabled = true;
           this.releaseCapture();
+          this.state$.next('disabled');
         }
         return null;
       });
@@ -136,6 +153,11 @@ export class VoicedocRecorderService {
       this.sink = sink;
       this.mute = mute;
 
+      if (mode === 'mic') {
+        await this.attachMic(gen);
+        return;
+      }
+
       this.room = this.webrtcSvc.room || null;
       ROOM_EVENTS.forEach(evt => this.room?.on(evt as any, this.onRoomChange));
       this.ngZone.runOutsideAngular(() => {
@@ -144,6 +166,10 @@ export class VoicedocRecorderService {
       this.syncSources();
     } catch (err) {
       this.warnOnce('voicedoc: audio capture unavailable', err);
+      if (mode === 'mic' && gen === this.generation) {
+        this.state$.next('error');
+        this.stop();
+      }
     }
   }
 
@@ -153,8 +179,47 @@ export class VoicedocRecorderService {
     this.generation++;
     this.stopping = this.teardown().catch(() => {}).then(() => {
       this.stopping = null;
+      if (this.state$.value !== 'disabled' && this.state$.value !== 'error') {
+        this.state$.next('idle');
+      }
     });
     return this.stopping;
+  }
+
+  pause(): void {
+    if (!this.active || this.paused || this.disabled) return;
+    this.paused = true;
+    this.flush();
+    this.state$.next('paused');
+  }
+
+  resume(): void {
+    if (!this.active || !this.paused || this.disabled) return;
+    this.paused = false;
+    this.state$.next('recording');
+  }
+
+  private async attachMic(gen: number): Promise<void> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: MIC_CONSTRAINTS });
+      if (gen !== this.generation || this.disabled || !this.ctx || !this.sink) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      this.micStream = stream;
+      const node = this.ctx.createMediaStreamSource(stream);
+      if (this.splitInputs) {
+        node.connect(this.sink, 0, LOCAL_INPUT);
+      } else {
+        node.connect(this.sink);
+      }
+      this.sources.set('mic', { node, remote: false });
+    } catch (err) {
+      if (gen !== this.generation) return;
+      this.warnOnce('voicedoc: microphone unavailable', err);
+      this.state$.next('error');
+      this.stop();
+    }
   }
 
   async idle(): Promise<void> {
@@ -189,6 +254,8 @@ export class VoicedocRecorderService {
       try { source.node.disconnect(); } catch (_e) {}
     });
     this.sources.clear();
+    this.micStream?.getTracks().forEach(track => track.stop());
+    this.micStream = null;
     try { this.sink?.disconnect(); } catch (_e) {}
     try { this.mute?.disconnect(); } catch (_e) {}
     this.sink = null;
@@ -202,6 +269,9 @@ export class VoicedocRecorderService {
   }
 
   private resetState(): void {
+    this.paused = false;
+    this.mode = 'room';
+    this.micStream = null;
     this.ctx = null;
     this.sink = null;
     this.mute = null;
@@ -228,6 +298,7 @@ export class VoicedocRecorderService {
   }
 
   private syncSources(): void {
+    if (this.mode !== 'room') return;
     const ctx = this.ctx;
     const room = this.webrtcSvc.room;
     if (!ctx || !this.sink || ctx.state === 'closed') return;
@@ -273,7 +344,7 @@ export class VoicedocRecorderService {
   }
 
   private onBlock(block: Float32Array, stats: InputLevelStats[] | null): void {
-    if (!this.chunker || !block?.length) return;
+    if (!this.chunker || this.paused || !block?.length) return;
     this.chunker.push(block, stats).forEach(chunk => this.enqueueChunk(chunk));
   }
 

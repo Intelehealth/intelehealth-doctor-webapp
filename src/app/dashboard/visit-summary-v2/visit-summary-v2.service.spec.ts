@@ -26,7 +26,7 @@ describe('VisitSummaryV2Service - visit note doctor', () => {
 
     return new VisitSummaryV2Service(
       visitService, diagnosisService, appointmentService, {} as any, {} as any,
-      helper, appConfigService, {} as any, {} as any
+      helper, appConfigService, {} as any, {} as any, {} as any, {} as any, {} as any, {} as any
     );
   };
 

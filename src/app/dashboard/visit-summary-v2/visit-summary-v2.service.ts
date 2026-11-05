@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { visitTypes, conceptIds, doctorDetails, visitAttributeTypes } from 'src/config/constant';
-import { calculateBMI, convertCelsiusToFahrenheit } from 'src/app/utils/utility-functions';
+import { calculateBMI, convertCelsiusToFahrenheit, getCacheData } from 'src/app/utils/utility-functions';
+import { NgxRolesService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { ProviderService } from 'src/app/services/provider.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 import {
   ApiResponseModel, EncounterModel, ObsApiResponseModel, ObsModel,
   PatientModel, VisitModel, VitalModel
@@ -19,7 +23,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 import { AiddxService, AiTxService } from 'aiddx-library';
 import {
   AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
-  ComplaintDetail, DetailRow, DocItem, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
+  ComplaintDetail, DetailRow, DocItem, KaleyraCallContext, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import { AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE } from './doctor-note/doctor-note.constants';
@@ -83,8 +87,83 @@ export class VisitSummaryV2Service {
     private helper: VisitSummaryHelperService,
     private appConfigService: AppConfigService,
     private aiddxService: AiddxService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private providerService: ProviderService,
+    private rolesService: NgxRolesService,
+    private toastr: ToastrService,
+    private analytics: AnalyticsService
   ) {}
+
+  readonly kaleyraCallStarted$ = new Subject<KaleyraCallContext>();
+
+  isMCCUser(): boolean {
+    return !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
+  }
+
+  getHwPhoneNo(visit: VisitModel): string {
+    const encounter = (visit?.encounters || []).find(e =>
+      e.display?.match(visitTypes.ADULTINITIAL) !== null && e.encounterProviders?.length);
+    let phoneNo = '';
+    (encounter?.encounterProviders?.[0]?.provider as any)?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null && attribute.voided === false) {
+        phoneNo = attribute.value;
+      }
+    });
+    return phoneNo;
+  }
+
+  startKaleyraCall(visit: VisitModel, hwPhoneNo: string): void {
+    if (!hwPhoneNo) {
+      this.toastr.error('Health worker phone number is not available');
+      return;
+    }
+    if (!visit?.uuid) {
+      this.toastr.error('Visit ID is not available');
+      return;
+    }
+    const provider = getCacheData(true, doctorDetails.PROVIDER);
+    let doctorPhoneNumber = '';
+    provider?.attributes?.forEach((attribute: any) => {
+      if (attribute.display?.match(doctorDetails.PHONE_NUMBER) != null) {
+        doctorPhoneNumber = attribute.value;
+      }
+    });
+    if (!doctorPhoneNumber) {
+      this.toastr.error('Doctor phone number is not available. Please update your profile with a valid phone number.');
+      return;
+    }
+    this.toastr.info('Initiating Kaleyra call...');
+    const nurseUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid || '';
+    const custom = `${provider?.uuid}:${visit.patient?.uuid}`;
+    const notes = `${visit.uuid}:${nurseUuid}`;
+    const location = visit.location?.display || '';
+    this.providerService.kaleyraClick2Call(doctorPhoneNumber, hwPhoneNo, custom, '0', notes).subscribe({
+      next: () => {
+        this.analytics.logEvent('kaleyra_call_initiated', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          patientOpenMrsId: this.patientIdentifier(visit.patient as any, 'OpenMRS ID'),
+          visitId: visit.uuid,
+          location
+        });
+        this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
+        this.kaleyraCallStarted$.next({
+          visitUuid: visit.uuid,
+          patientUuid: visit.patient?.uuid || '',
+          doctorUuid: provider?.uuid || '',
+          chwUuid: nurseUuid
+        });
+      },
+      error: (error) => {
+        this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
+          doctorUserId: this.helper.userId,
+          visitId: visit.uuid,
+          location,
+          reason: error?.message ?? 'unknown'
+        });
+        this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
+      }
+    });
+  }
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
     return this.diagnosisService.getObs(patientUuid, conceptIds.conceptNote).pipe(
