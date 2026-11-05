@@ -177,6 +177,12 @@ export class VisitSummaryV2Service {
           location
         });
         this.toastr.success('Kaleyra call initiated successfully. You will be connected to the health worker.');
+        this.kaleyraCallStarted$.next({
+          visitUuid: visit.uuid,
+          patientUuid: visit.patient?.uuid || '',
+          doctorUuid: provider?.uuid || '',
+          chwUuid: nurseUuid
+        });
       },
       error: (error) => {
         this.analytics.logEvent('kaleyra_call_failed', 'engagement', 'kaleyra_call_button', 1, {
