@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { VisitSummaryV2Service, CurrentVisitData } from './visit-summary-v2.service';
@@ -78,5 +78,48 @@ describe('VisitSummaryV2Service - visit note doctor', () => {
     const data = load([nurseEncounter, visitNote([{ provider: { uuid: 'doc-1', person: { display: 'Jane Doe' } } }])]);
 
     expect(data.visitNoteDoctorName).toBe('Jane Doe');
+  });
+});
+
+describe('VisitSummaryV2Service - Kaleyra call', () => {
+  const visit: any = { uuid: 'visit-1', patient: { uuid: 'patient-1' }, location: { display: 'Clinic' } };
+  let providerService: any;
+  let toastr: any;
+  let service: VisitSummaryV2Service;
+  let started: any[];
+
+  beforeEach(() => {
+    localStorage.setItem('provider', JSON.stringify({ uuid: 'doc-1', attributes: [{ display: 'phoneNumber: 9999999999', value: '9999999999' }] }));
+    localStorage.setItem('patientVisitProvider', JSON.stringify({ provider: { uuid: 'chw-1' } }));
+    providerService = { kaleyraClick2Call: jasmine.createSpy('kaleyraClick2Call').and.returnValue(of({})) };
+    toastr = jasmine.createSpyObj('ToastrService', ['success', 'error', 'info']);
+    const helper: any = { userId: 'user-1' };
+    service = new VisitSummaryV2Service(
+      {} as any, {} as any, {} as any, {} as any, {} as any,
+      helper, {} as any, {} as any, {} as any, providerService, {} as any, toastr, { logEvent: () => {} } as any
+    );
+    started = [];
+    service.kaleyraCallStarted$.subscribe(call => started.push(call));
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('provider');
+    localStorage.removeItem('patientVisitProvider');
+  });
+
+  it('announces the started call so the recorder can open', () => {
+    service.startKaleyraCall(visit, '8888888888');
+
+    expect(providerService.kaleyraClick2Call).toHaveBeenCalledWith('9999999999', '8888888888', 'doc-1:patient-1', '0', 'visit-1:chw-1');
+    expect(started).toEqual([{ visitUuid: 'visit-1', patientUuid: 'patient-1', doctorUuid: 'doc-1', chwUuid: 'chw-1' }]);
+  });
+
+  it('does not announce a call that failed to start', () => {
+    providerService.kaleyraClick2Call.and.returnValue(throwError(() => new Error('down')));
+
+    service.startKaleyraCall(visit, '8888888888');
+
+    expect(started).toEqual([]);
+    expect(toastr.error).toHaveBeenCalled();
   });
 });
