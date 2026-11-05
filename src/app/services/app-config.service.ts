@@ -36,6 +36,7 @@ export class AppConfigService {
   public ai_llm_section: boolean;
   public ai_llm: { [key: string]: boolean };
   public ai_llm_recording_section:  boolean;
+  public namco_referral_section: boolean;
   public ai_llm_voice_transcript_section: boolean;
   public ai_llm_voice_transcript: VoiceTranscriptFlags;
   public visit_summary_v2_section: boolean;

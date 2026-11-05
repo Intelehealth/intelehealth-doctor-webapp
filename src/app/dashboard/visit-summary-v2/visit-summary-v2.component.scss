@@ -13,6 +13,8 @@ $grey-soft: #eceaf0;
 $page-bg: #f5f6fa;
 $card-bg: #ffffff;
 $section-bg: #f7f8fc;
+$radio-ring: #e4ddf9;
+$vs2-action-inset: 16px;
 $app-header-h: 72px; 
 
 app-visit-summary-v2 {
@@ -549,9 +551,9 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 }
 
 .vs2-detail-label {
-  color: $grey-text;
+  // color: $grey-text;
   font-size: 14px;
-  font-weight: 700;
+  // font-weight: 700;
   position: relative;
   padding-left: 14px;
 
@@ -569,6 +571,11 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 
   &.vs2-highlight {
     color: $red;
+    font-weight: 600;
+  }
+
+  &.vs2-success {
+    color: $green;
     font-weight: 600;
   }
 }
@@ -594,12 +601,6 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.vs2-placeholder {
-  color: $grey-text;
-  font-size: 14px;
-  font-style: italic;
 }
 
 .vs2-symptom-group {
@@ -764,45 +765,62 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 .vs2-radio {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
   color: $navy;
   cursor: pointer;
 
+  // Drawn radio (per design): light ring; checked = green ring + dot; disabled + checked = grey
   input[type='radio'] {
     appearance: none;
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-content: center;
+    width: 18px;
+    height: 18px;
     margin: 0;
-    flex-shrink: 0;
-    border: 1.5px solid #c7c5d3;
+    border: 2px solid $radio-ring;
     border-radius: 50%;
     background: #fff;
-    cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    cursor: inherit;
+    transition: border-color 0.15s ease;
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $green;
+      transform: scale(0);
+      transition: transform 0.15s ease;
+    }
 
     &:checked {
-      border-color: $purple;
-      background: $purple;
-      box-shadow: inset 0 0 0 2.5px #fff;
+      border-color: $green;
+
+      &::before {
+        transform: scale(1);
+      }
     }
 
     &:focus-visible {
-      outline: 2px solid rgba($purple, 0.4);
-      outline-offset: 1px;
+      outline: 2px solid rgba($green, 0.35);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:disabled:checked {
+      border-color: $grey-text;
+
+      &::before {
+        background: $grey-text;
+      }
     }
   }
-}
-
-.vs2-select {
-  border: 1px solid $border;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
-  color: $navy;
-  min-width: 200px;
-  background: #fff;
 }
 
 .vs2-ng-select {
@@ -1168,6 +1186,7 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   align-items: center;
   justify-content: center;
 
+  // <button> variant (Kaleyra call)
   border: none;
   padding: 0;
   cursor: pointer;
@@ -1194,14 +1213,177 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   margin-left: 4px;
 }
 
-.vs2-radio-green input[type='radio'] {
-  &:checked {
-    border-color: $green;
-    background: $green;
+.vs2-radio-disabled {
+  cursor: not-allowed;
+}
+
+.vs2-namco-note {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: $navy;
+  font-size: 13px;
+}
+
+// Primary Doctor's Note (read-only view of the referring doctor's note)
+.vs2-pdn-dx-box {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.vs2-pdn-dx-name {
+  font-size: 14px;
+  color: $navy;
+}
+
+.vs2-chip-outline {
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: $navy;
+  background: #fff;
+}
+
+.vs2-namco-grid.vs2-pdn-med-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.vs2-namco-grid.vs2-pdn-ref-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.vs2-pdn-label {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 13px;
+  color: $navy;
+}
+
+.vs2-radio-readonly {
+  cursor: default;
+
+  input[type='radio']:disabled {
+    cursor: default;
+  }
+}
+
+@media (max-width: 768px) {
+  .vs2-namco-grid.vs2-pdn-med-grid,
+  .vs2-namco-grid.vs2-pdn-ref-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// NAMCO specialist layout: stacked collapsible cards instead of one content panel
+.vs2-content.vs2-content-cards {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.vs2-card {
+  background: $card-bg;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(29, 27, 58, 0.05);
+  margin-bottom: 20px;
+}
+
+.vs2-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: $navy;
   }
 
-  &:focus-visible {
-    outline-color: rgba($green, 0.4);
+  mat-icon {
+    color: $grey-text;
+  }
+}
+
+.vs2-card-body {
+  padding: 0 24px 20px;
+}
+
+.vs2-section-toggle {
+  cursor: pointer;
+}
+
+.vs2-note-doc-empty {
+  margin: 0 0 12px;
+}
+
+.vs2-med-grid.vs2-sdn-med-grid {
+  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
+}
+
+.vs2-sdn-med-table {
+  margin-bottom: 8px;
+
+  .vs2-table-head,
+  .vs2-table-row {
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr 0.8fr 0.5fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .vs2-sdn-med-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.vs2-namco-list > li {
+  padding: 12px 0;
+  border-bottom: 1px solid $border;
+
+  .vs2-form-row {
+    margin-bottom: 0;
+  }
+}
+
+.vs2-namco-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 32px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px $vs2-action-inset 10px 0;
+  font-size: 14px;
+  color: $navy;
+}
+
+.vs2-namco-grid-head {
+  margin-top: 8px;
+  border-bottom: 1px solid $border;
+  font-size: 13px;
+  color: $grey-text;
+}
+
+.vs2-namco-grid-row {
+  border-bottom: 1px solid $border;
+}
+
+.vs2-namco-grid-form .vs2-input {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .vs2-namco-grid {
+    grid-template-columns: minmax(0, 1fr) 32px;
+  }
+
+  .vs2-namco-grid-head {
+    display: none;
   }
 }
 
@@ -1587,8 +1769,12 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   gap: 14px;
   border: 1px solid $green;
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 12px $vs2-action-inset 12px 14px;
   margin-bottom: 12px;
+
+  > .vs2-delete-icon {
+    margin-left: auto;
+  }
 
   .vs2-dx-row-check {
     color: $green;
@@ -1618,7 +1804,7 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 
 .vs2-segmented {
   display: inline-flex;
-  gap: 6px;
+  // gap: 6px;
   padding-left: 12px;
   border-left: 1px solid $border;
 
@@ -1764,51 +1950,6 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 
 
 
-.vs2-improve {
-  margin-bottom: 18px;
-}
-
-.vs2-improve-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
-
-  mat-icon {
-    margin-left: auto;
-    color: $navy;
-  }
-}
-
-.vs2-improve-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: $purple;
-
-  em {
-    font-style: normal;
-    font-weight: 400;
-    color: $navy;
-  }
-}
-
-.vs2-improve-sub {
-  font-size: 12.5px;
-  color: $grey-text;
-  margin: 2px 0 10px;
-}
-
-.vs2-improve-text {
-  background: $section-bg;
-  border: none;
-  margin-bottom: 12px;
-}
-
 .vs2-btn-block:disabled {
   background: $purple-soft;
   color: #a9a4c4;
@@ -1926,7 +2067,7 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding-right: 4px;
+    padding-right: $vs2-action-inset;
   }
 }
 
@@ -1981,42 +2122,9 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   margin-left: 2px;
 }
 
-.vs2-check {
-  font-weight: 400;
-  color: $grey-text;
-  margin-left: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-
-  input {
-    accent-color: $purple;
-  }
-}
-
-.vs2-link-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: $green-soft;
-  color: #1f9d6e;
-  border: 1px solid #bdeedd;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-
-  img {
-    width: 16px;
-    height: 16px;
-  }
-}
-
 .vs2-med-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -2055,6 +2163,212 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   max-width: 220px;
 }
 
+// Follow-up date field (FollowUpDatePickerComponent) — same look as the old Visit Summary's .input-group.
+.vs2-date-picker {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  max-width: 260px;
+  height: 48px;
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  background: var(--color-offWhite);
+  box-sizing: border-box;
+
+  .vs2-date-picker-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 46px;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: var(--color-darkestBlue);
+    outline: none;
+    cursor: pointer;
+
+    &::placeholder {
+      color: #b2afbe;
+    }
+  }
+
+  .vs2-date-picker-toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    padding: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// Follow-up calendar popup (FollowUpDatePickerComponent). Rendered in a CDK overlay, so these rules
+// are global — this stylesheet uses ViewEncapsulation.None.
+.vs2-fu-calendar {
+  width: 296px;
+  padding: 14px 12px 12px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(29, 27, 58, 0.16);
+  font-family: inherit;
+}
+
+// Mo–Su row + 6-week grid.
+.vs2-fu-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+  justify-items: center;
+}
+
+.vs2-fu-cal-weekday {
+  padding-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $navy;
+}
+
+.vs2-fu-cal-day {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 13px;
+  color: $navy;
+  cursor: pointer;
+
+  // Previous / next month's days.
+  &.outside {
+    color: #b2afbe;
+  }
+
+  &.today {
+    font-weight: 700;
+  }
+
+  &:hover:not(:disabled):not(.selected) {
+    background: $purple-soft;
+  }
+
+  &.selected {
+    background: $green;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+// Month / year lists (opened from the header chips).
+.vs2-fu-cal-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.vs2-fu-cal-list-item {
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  color: $navy;
+  cursor: pointer;
+
+  &:hover:not(:disabled):not(.selected) {
+    background: $purple-soft;
+  }
+
+  &.selected {
+    background: $green;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+// Calendar header: ‹ [Jul ⌄] [2021 ⌄] ›
+.vs2-fu-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.vs2-fu-cal-periods {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vs2-fu-cal-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $purple;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  &:disabled {
+    color: #d3d0dc;
+    cursor: default;
+  }
+}
+
+.vs2-fu-cal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: $navy;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $grey-text;
+  }
+
+  &.active,
+  &:hover {
+    background: $purple-soft;
+  }
+}
+
 .vs2-textarea {
   width: 100%;
   min-height: 70px;
@@ -2079,7 +2393,7 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 4px 0;
+  padding: 4px $vs2-action-inset 4px 0;
   margin-bottom: 6px;
 }
 
@@ -2147,6 +2461,7 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-right: $vs2-action-inset;
 }
 
 .vs2-added-name {
@@ -2159,6 +2474,12 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   display: inline-flex;
   align-items: center;
   gap: 12px;
+}
+
+// In table / grid rows the actions sit at the end of their cell, not the start.
+.vs2-table-row > .vs2-added-actions,
+.vs2-namco-grid > .vs2-added-actions {
+  justify-self: end;
 }
 
 .vs2-edit-icon {
@@ -2213,6 +2534,12 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   .vs2-table-head,
   .vs2-table-row {
     grid-template-columns: 1.4fr 1fr 1.2fr 1fr 1.6fr 0.5fr;
+  }
+
+  // Doctor's note: no Type column.
+  &.vs2-fu-note-table-no-type .vs2-table-head,
+  &.vs2-fu-note-table-no-type .vs2-table-row {
+    grid-template-columns: 1.4fr 1.2fr 1fr 1.6fr 0.5fr;
   }
 }
 
@@ -2363,41 +2690,6 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
   grid-template-columns: 150px 1fr;
 }
 
-.vs2-dropzone {
-  border: 1.5px dashed #cfc8ec;
-  border-radius: 12px;
-  background: #faf9fd;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-
-  mat-icon {
-    color: $purple;
-    font-size: 32px;
-    width: 32px;
-    height: 32px;
-  }
-}
-
-.vs2-dropzone-text {
-  font-size: 14px;
-  color: $navy;
-
-  a {
-    color: $purple;
-    font-weight: 600;
-    text-decoration: none;
-  }
-}
-
-.vs2-dropzone-hint {
-  font-size: 12px;
-  color: $grey-text;
-}
-
 @media (max-width: 980px) {
   .vs2-page {
     height: auto;
@@ -2423,8 +2715,9 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
     grid-template-columns: 1fr;
   }
   .vs2-med-grid,
+  .vs2-med-grid.vs2-sdn-med-grid,
   .vs2-ref-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .vs2-table {
     overflow-x: auto;

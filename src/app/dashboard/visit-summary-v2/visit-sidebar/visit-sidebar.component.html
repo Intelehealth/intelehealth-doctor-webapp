@@ -21,17 +21,19 @@
       </button>
     </nav>
 
-    <div class="vs2-nav-group-label" *ngIf="visitNoteStarted">Doctor's Note</div>
-    <nav class="vs2-section-nav" *ngIf="visitNoteStarted">
-      <button
-        *ngFor="let sec of doctorNoteNav"
-        class="vs2-section-link"
-        [class.active]="activeSection === sec.key"
-        (click)="sectionSelect.emit(sec.key)">
-        <img class="vs2-section-icon-img" [src]="sec.icon" alt="" />
-        <span class="vs2-section-label">{{ sec.label }}</span>
-      </button>
-    </nav>
+    <ng-container *ngFor="let group of noteNavGroups">
+      <div class="vs2-nav-group-label">{{ group.label }}</div>
+      <nav class="vs2-section-nav">
+        <button
+          *ngFor="let sec of group.items"
+          class="vs2-section-link"
+          [class.active]="activeSection === sec.key"
+          (click)="sectionSelect.emit(sec.key)">
+          <img class="vs2-section-icon-img" [src]="sec.icon" alt="" />
+          <span class="vs2-section-label">{{ sec.label }}</span>
+        </button>
+      </nav>
+    </ng-container>
   </ng-container>
 
   <div class="vs2-timeline" *ngIf="activeVisitScope === 'Past Visits'">

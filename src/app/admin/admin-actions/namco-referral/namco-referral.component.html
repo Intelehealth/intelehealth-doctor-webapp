@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/referral.svg" alt="" height="44px">
+          <div>
+            <h6 class="mb-0">
+              <span>{{'Namco Referral' | translate}}</span>
+              <div class="sub-title">
+                <span class="label">{{'Enable/Disable' | translate}} {{'Namco Referral' | translate }}</span>
+                <div class="pretty p-switch light-green light-red p-fill">
+                  <input type="checkbox" [checked]="namcoReferralFeature?.is_enabled" (change)="updateNamcoReferralStatus($event.target.checked)" data-test-id="checkboxNamcoReferralToggleStatus"/>
+                  <div class="state">
+                      <label></label>
+                  </div>
+                </div>
+              </div>
+            </h6>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnPublishNamcoReferral">{{'Publish' | translate}}</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="mb-0">{{'When disabled, referring a patient to NAMCO no longer creates a Referral encounter — the visit completes normally like any other referral.' | translate}}</p>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnPublishNamcoReferralMobile">{{'Publish' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

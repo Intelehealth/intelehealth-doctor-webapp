@@ -53,7 +53,6 @@ const routes: Routes = [
     component: GetStartedComponent
   },
   {
-   
     path: 'visit-summary/:id',
     data: {
       breadcrumb: 'Visit Summary',

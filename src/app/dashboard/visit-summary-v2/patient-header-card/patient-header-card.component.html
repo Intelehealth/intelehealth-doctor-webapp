@@ -28,6 +28,14 @@
             <span class="vs2-meta-value" *ngIf="!patient.allergies?.length">NA</span>
           </div>
         </div>
+        <div class="vs2-meta-item" *ngIf="patient.abhaNumber">
+          <span class="vs2-meta-label">ABHA Number</span>
+          <span class="vs2-meta-value">{{ patient.abhaNumber }}</span>
+        </div>
+        <div class="vs2-meta-item" *ngIf="patient.abhaAddress">
+          <span class="vs2-meta-label">ABHA Address</span>
+          <span class="vs2-meta-value">{{ patient.abhaAddress }}</span>
+        </div>
         <div class="vs2-meta-item" *ngIf="patient.pregnancy">
           <span class="vs2-meta-label">Pregnancy</span>
           <span class="vs2-meta-value vs2-meta-value-purple">{{ patient.pregnancy }}</span>

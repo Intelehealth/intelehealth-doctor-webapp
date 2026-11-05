@@ -1,15 +1,18 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
-import { getCacheData } from 'src/app/utils/utility-functions';
+import { environment } from 'src/environments/environment';
+import { getCacheData, isFeaturePresent, isNamcoDoctor } from 'src/app/utils/utility-functions';
+import { FOLLOW_UP_TYPE_TELEMEDICINE, FOLLOW_UP_TYPES } from '../specialist-doctor-note/specialist-doctor-note.constants';
 import { PatientModel, VisitModel } from 'src/app/model/model';
 import { CoreService } from 'src/app/services/core/core.service';
 import { QueueService } from 'src/app/services/queue.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
 import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
 import {
-  DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftMedication, DraftReferral,
+  DiagnosisOption, DraftAdvice, DraftDiagnosis, DraftInstruction, DraftMedication, DraftReferral,
   DraftTest, DraftTextItem, VisitSummaryV2Service
 } from '../visit-summary-v2.service';
 import {
@@ -25,6 +28,11 @@ import {
   ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, DEFAULT_REFERRAL_PRIORITY, REFERRAL_PRIORITIES,
   TIMING_OPTIONS
 } from './doctor-note.constants';
+import { NamcoReferralOutComponent } from '../namco-referral-out/namco-referral-out.component';
+
+type HistoryNoteKind = 'family' | 'pastMedical';
+
+import { followUpDateToString } from '../follow-up-date';
 
 @Component({
   selector: 'app-doctor-note',
@@ -39,6 +47,13 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   @Input() visit!: VisitModel;
   @Input() patientInfo!: PatientModel;
   @Input() visitCompleted = false;
+  @Input() visitReferred = false;
+
+  /** Kaleyra call to the visit's health worker — hidden for MCC users, as in the old Visit Summary. */
+  hwPhoneNo = '';
+  readonly isMCCUser = this.v2Service.isMCCUser();
+  /** "Connect with patient" (call / WhatsApp the patient) isn't used in the NAS project. */
+  readonly connectWithPatientEnabled = environment.brandName !== 'NAS';
 
   readonly contextChips = CONTEXT_CHIPS;
   readonly diagnosisTypes = DIAGNOSIS_TYPES;
@@ -54,10 +69,11 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   readonly facilityOptions = FACILITY_OPTIONS;
   readonly referralPriorities = REFERRAL_PRIORITIES;
 
-  spokenToPatient = true;
+  spokenToPatient: boolean  = null;
   patientInteractionUuid = '';
   prescriptionShared = false;
   savingPatientInteraction = false;
+  savedSpokenToPatient: boolean | null = null;
   ayuQuestionsExpanded = false;
   ayuSuggestedQuestions: AyuSuggestedQuestion[] = [];
   ayuRefineText = '';
@@ -67,15 +83,15 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   aiDiagnosisState: AiDiagnosisState = 'loading';
   aiSummaryExpanded = false;
-  improveExpanded = true;
-  improveContextText = '';
-  selectedContextChips: string[] = [];
   whySuggestion: AiDiagnosisSuggestion | null = null;
   selectedDiagnoses: SelectedDiagnosis[] = [];
 
   aiClinicalSummary = '';
   aiResponseReceived = false;
   aiSuggestions: AiDiagnosisSuggestion[] = [];
+  /** Raw AI diagnoses / medications (AI rank order) — sent with the doctor's choices to /ddx/manual and /ttx/manual. */
+  private aiDiagnosisRaw: any[] = [];
+  private aiMedicationRaw: any[] = [];
 
   diagnosisSearchTerm = '';
   diagnosisSearching = false;
@@ -85,6 +101,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   newNoteText = '';
   outcomeNotes: DraftTextItem[] = [];
+
+  /** Shown when enabled in Patient Visit Summary config, as in the old Visit Summary. */
+  familyHistoryNotesEnabled = false;
+  pastMedicalHistoryNotesEnabled = false;
+  historyNotes: Record<HistoryNoteKind, DraftTextItem[]> = { family: [], pastMedical: [] };
+  newHistoryNoteText: Record<HistoryNoteKind, string> = { family: '', pastMedical: '' };
 
   aiMedicationState: AiMedicationState = 'ready';
   whyMedication: AiMedicationSuggestion | null = null;
@@ -98,13 +120,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   aiReferrals: { speciality: string; facility: string; priority: string; reason: string }[] = [];
   aiFollowUp: AiFollowUp | null = null;
 
-  newMedicine: { drug: string | null; dose: string | null; frequency: string | null; durationNo: string; durationUnit: string | null; instructRemark: string | null } =
-    { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
   addedMedicines: DraftMedication[] = [];
-  private editMedicineUuid = '';
-  private editMedicineIndex = -1;
   medInstructionText = '';
-  medInstructions: DraftTextItem[] = [];
+  savingMedInstruction = false;
+  medInstructions: DraftInstruction[] = [];
 
   adviceSearchTerm = '';
   adviceResults: string[] = [];
@@ -113,7 +132,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   selectedAdvices: string[] = [];
   openBundle: AdviceBundle | null = null;
 
-  newTestText: string | null = null;
+  testOptions: string[] = [];
+  testSearchTerm = '';
+  testResults: string[] = [];
+  selectedTests: string[] = [];
   tests: DraftTest[] = [];
 
   referralSpecialityOptions: string[] = [];
@@ -121,15 +143,30 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     { speciality: null, facility: null, priority: DEFAULT_REFERRAL_PRIORITY, reason: '' };
   referrals: DraftReferral[] = [];
 
-  wantFollowUp = false;
-  followUpType: string | null = null;
+  /** Referring (non-NAMCO) doctor with the NAMCO referral flow on — Referral section is app-namco-referral-out. */
+  namcoReferralEnabled = false;
+  private isReferringToNamco = false;
+  @ViewChild(NamcoReferralOutComponent) private namcoReferral?: NamcoReferralOutComponent;
+
+  wantFollowUp: boolean | null = null;
+  /** On a turn server the Type isn't asked and is always Telemedicine, as in the old Visit Summary. */
+  private readonly defaultFollowUpType: string | null = environment.isTurnServer ? FOLLOW_UP_TYPE_TELEMEDICINE : null;
+  followUpType: string | null = this.defaultFollowUpType;
+  readonly followUpTypes = FOLLOW_UP_TYPES;
+  /**
+  * Follow-up Type (In person / Telemedicine) — same rule as the old Visit Summary for a normal doctor:
+  * only with the "followUpType" feature on and not on a turn server. Drives both the selector and the
+  * Type column, so the column is shown only when there is a Type to pick.
+  */
+  readonly followUpTypeEnabled = isFeaturePresent('followUpType') && !environment.isTurnServer;
   followUpDate = '';
   followUpTime: string | null = null;
   followUpReason = '';
   followUpUuid = '';
+  savedFollowUpYes = false;
   followUpTimeSlots: string[] = [];
   readonly quickFollowUpDays = [3, 7, 10, 30];
-  minFollowUpDate = new Date().toISOString().slice(0, 10);
+  minFollowUpDate = followUpDateToString(new Date());
 
   private provider = getCacheData(true, doctorDetails.PROVIDER);
 
@@ -140,7 +177,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     private v2Service: VisitSummaryV2Service,
     private coreService: CoreService,
     private router: Router,
-    private queueService: QueueService
+    private queueService: QueueService,
+    private appConfigService: AppConfigService
   ) {}
 
   private getPatientOpenMrsId(): string {
@@ -163,11 +201,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     }).subscribe();
   }
 
+  /** Collapsed state per section, keyed like the sidebar ids without the "dn-" prefix. */
+  collapsed: Record<string, boolean> = {};
+
+  toggleSection(key: string): void {
+    this.collapsed[key] = !this.collapsed[key];
+  }
+
+  /** Open a section (e.g. when it's picked from the sidebar). */
+  expandSection(key: string): void {
+    this.collapsed[key] = false;
+    // With NAMCO referral on, the Referral section is the NAMCO Referral-Out card instead.
+    if (key === 'referral') { this.namcoReferral?.expand(); }
+  }
+
   get whatsAppLink(): string | null {
-    if (!this.patientPhoneNo) {
-      return null;
-    }
-    return `https://wa.me/${this.patientPhoneNo.replace(/[^\d]/g, '')}`;
+    return this.v2Service.whatsAppLink(this.patientPhoneNo);
+  }
+
+  startKaleyraCall(): void {
+    this.v2Service.startKaleyraCall(this.visit, this.hwPhoneNo);
   }
 
   startKaleyraCall(): void {
@@ -201,13 +254,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   savePatientInteraction(): void {
-    if (!this.visitUuid || this.savingPatientInteraction) { return; }
+    if (!this.visitUuid || this.savingPatientInteraction || this.spokenToPatient === null) { return; }
     this.savingPatientInteraction = true;
     this.v2Service.savePatientInteraction(
       this.visitUuid, this.spokenToPatient ? 'Yes' : 'No', this.patientInteractionUuid
     ).subscribe({
       next: (res: any) => {
         this.patientInteractionUuid = res?.uuid || this.patientInteractionUuid;
+        this.savedSpokenToPatient = this.spokenToPatient;
         this.savingPatientInteraction = false;
         this.coreService.showToast('success', 'Patient interaction saved', 'Saved', 'success-patient-interaction-toast');
       },
@@ -223,6 +277,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.patientInteractionUuid = attr.uuid;
     if (attr.value) {
       this.spokenToPatient = attr.value.toLowerCase() === 'yes';
+      this.savedSpokenToPatient = this.spokenToPatient;
     }
   }
 
@@ -248,15 +303,20 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
 
     this.v2Service.getAdvicesList().subscribe(list => { this.adviceOptions = list; });
+    this.v2Service.getTestsList().subscribe(list => { this.testOptions = list; });
     this.referralSpecialityOptions = this.v2Service.getReferralSpecialities();
     this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots();
+    // The Referral Consent step only applies to the referring (non-NAMCO) doctor.
+    this.namcoReferralEnabled = !!this.appConfigService?.namco_referral_section && !isNamcoDoctor(this.provider);
+    this.familyHistoryNotesEnabled = !!this.appConfigService?.patient_visit_summary?.family_history_notes;
+    this.pastMedicalHistoryNotesEnabled = !!this.appConfigService?.patient_visit_summary?.past_medical_history_notes;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visitCompleted'] && this.visitCompleted) {
       this.prescriptionShared = true;
     }
-    if ((changes['visitUuid'] || changes['patientUuid']) && this.patientUuid && this.visitUuid) {
+    if ((changes['visitUuid'] || changes['patientUuid'] || changes['visitNoteUuid']) && this.patientUuid && this.visitUuid) {
       this.loadDraft();
     }
     if (changes['visit'] && this.visit) {
@@ -269,13 +329,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   private loadDraft(): void {
-    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid).subscribe(draft => {
+    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid, [this.visitNoteUuid].filter(Boolean)).subscribe(draft => {
       this.addedDiagnoses = draft.diagnoses;
       this.addedMedicines = draft.medications;
       this.advices = draft.advices;
       this.tests = draft.tests;
       this.referrals = draft.referrals;
       this.outcomeNotes = draft.notes;
+      this.historyNotes = { family: draft.familyHistoryNotes, pastMedical: draft.pastMedicalHistoryNotes };
       this.medInstructions = draft.additionalInstruction ? [draft.additionalInstruction] : [];
       if (draft.followUp) {
         this.wantFollowUp = draft.followUp.wantFollowUp;
@@ -284,6 +345,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.followUpReason = draft.followUp.reason;
         this.followUpType = draft.followUp.type || null;
         this.followUpUuid = draft.followUp.uuid;
+        this.savedFollowUpYes = draft.followUp.wantFollowUp;
         this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
       }
       if (this.addedDiagnoses.length) {
@@ -358,16 +420,27 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   submitSelectedDiagnoses(): void {
-    if (!this.canWrite()) { return; }
-    [...this.selectedDiagnoses].forEach(dx => {
+    if (!this.canWrite() || !this.selectedDiagnoses.length) { return; }
+    const saves = [...this.selectedDiagnoses].map(dx => {
       const payload = { name: dx.name, type: dx.type, status: dx.status, code: dx.code || DEFAULT_DIAGNOSIS_CODE };
-      this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).subscribe(res => {
+      return this.v2Service.saveDiagnosis(this.patientUuid, this.visitNoteUuid, payload).pipe(tap(res => {
         this.addedDiagnoses.push({ ...payload, uuid: res?.uuid || '' });
         const index = this.selectedDiagnoses.findIndex(d => d.name === dx.name);
         if (index > -1) { this.selectedDiagnoses.splice(index, 1); }
-        this.loadAiTreatment();
-      });
+      }));
     });
+    // Once saved: send all the visit's diagnoses + the AI list to /ddx/manual (as the old Visit Summary
+    // does when new diagnoses are saved), then refresh the AI medication for the new diagnoses.
+    forkJoin(saves).subscribe(() => {
+      this.sendManualDiagnoses();
+      this.loadAiTreatment();
+    });
+  }
+
+  private sendManualDiagnoses(): void {
+    // Not sent when diagnoses are captured as secondary-level free text (old dp_diagnosis_secondary).
+    if (isFeaturePresent('dp_diagnosis_secondary')) { return; }
+    this.v2Service.sendManualDiagnoses(this.visitUuid, this.addedDiagnoses, this.aiDiagnosisRaw).subscribe();
   }
 
   private loadAiTreatment(): void {
@@ -377,6 +450,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.v2Service.loadAiTreatment(this.patientInfo, this.visit, diagnosis, this.visitCompleted).subscribe({
       next: result => {
         this.aiMedicationSuggestions = result.medicines;
+        this.aiMedicationRaw = result.rawMedicines || [];
         this.aiAdvices = result.advices;
         this.aiTests = result.tests;
         this.aiReferrals = result.referrals;
@@ -389,24 +463,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     });
   }
 
-  isContextChipOn(chip: string): boolean {
-    return this.selectedContextChips.includes(chip);
-  }
-
-  toggleContextChip(chip: string): void {
-    const index = this.selectedContextChips.indexOf(chip);
-    if (index > -1) {
-      this.selectedContextChips.splice(index, 1);
-    } else {
-      this.selectedContextChips.push(chip);
-    }
-  }
-
-  updateAiSuggestions(): void {
-    this.whySuggestion = null;
-    this.loadAiDiagnosis(this.buildAiNotes(), true);
-  }
-
   addDiagnosisManually(): void {
     this.aiDiagnosisState = 'ready';
     this.aiSuggestions = [];
@@ -415,12 +471,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiDiagnosis(): void {
-    this.loadAiDiagnosis(this.buildAiNotes(), true);
-  }
-
-  private buildAiNotes(): string {
-    return [this.buildAyuNotes(), this.improveContextText, ...this.selectedContextChips]
-      .filter(Boolean).join('\n');
+    this.loadAiDiagnosis(this.buildAyuNotes(), true);
   }
 
   private loadAiDiagnosis(notes = '', recompute = false): void {
@@ -432,6 +483,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;
         this.aiSuggestions = result.suggestions;
+        this.aiDiagnosisRaw = result.raw || [];
         this.ayuSuggestedQuestions = result.questions;
         this.aiDiagnosisState = 'ready';
       },
@@ -462,7 +514,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteDiagnosis(index: number, uuid?: string): void {
-    this.removeItem(this.addedDiagnoses, index, uuid);
+    this.v2Service.removeDraftItem(this.addedDiagnoses, index, uuid);
   }
 
   get medicationPanelState(): AiMedicationState {
@@ -531,7 +583,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       strength: suggestion?.strength || '',
       days: suggestion?.days || '',
       durationUnit: suggestion?.durationUnit || '',
-      remarks: suggestion?.remarks || '',
+      remarks: suggestion?.remarks || null,
       editing: !suggestion?.timing || !suggestion?.strength || !suggestion?.days
     });
   }
@@ -545,6 +597,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   cancelMedicineEdit(index: number): void {
     const m = this.selectedMedicines[index];
     if (!m) { return; }
+    if (m.uuid) {
+      this.restoreEditedMedicine(index);
+      return;
+    }
     if (!m.timing && !m.strength && !m.days && !m.remarks) {
       this.selectedMedicines.splice(index, 1);
       return;
@@ -553,25 +609,43 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   removeSelectedMedicine(index: number): void {
+    if (this.selectedMedicines[index]?.uuid) {
+      this.restoreEditedMedicine(index);
+      return;
+    }
     this.selectedMedicines.splice(index, 1);
   }
 
   submitSelectedMedicines(): void {
     if (!this.canWrite() || !this.canSubmitMedicines) { return; }
-    [...this.selectedMedicines].forEach(m => {
+    const batch = [...this.selectedMedicines];
+    const hasNew = batch.some(m => !m.uuid);
+    const saves = batch.map(m => {
       const med = {
         drug: m.drug,
         dose: m.strength,
         frequency: m.timing,
         durationNo: m.days,
         durationUnit: m.durationUnit || DEFAULT_MEDICINE_DURATION_UNIT,
-        instructRemark: m.remarks
+        instructRemark: m.remarks || ''
       };
-      this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med).subscribe(res => {
-        this.addedMedicines.push({ ...med, uuid: res?.uuid || '' });
-        const index = this.selectedMedicines.findIndex(x => x.drug === m.drug);
+      return this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med, m.uuid || undefined).pipe(tap(res => {
+        const saved = { ...med, uuid: res?.uuid || m.uuid || '' };
+        if (m.uuid) {
+          this.addedMedicines.splice(Math.min(m.addedIndex ?? this.addedMedicines.length, this.addedMedicines.length), 0, saved);
+        } else {
+          this.addedMedicines.push(saved);
+        }
+        const index = this.selectedMedicines.indexOf(m);
         if (index > -1) { this.selectedMedicines.splice(index, 1); }
-      });
+      }));
+    });
+    // Once saved: when new medications were added, send all the visit's medications + the AI list to
+    // /ttx/manual (as the old Visit Summary does); editing an existing one doesn't send.
+    forkJoin(saves).subscribe(() => {
+      if (hasNew) {
+        this.v2Service.sendManualTreatment(this.visitUuid, this.addedMedicines, this.aiMedicationRaw).subscribe();
+      }
     });
   }
 
@@ -584,43 +658,37 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.loadAiTreatment();
   }
 
-  addMedicine(): void {
-    if (!this.canWrite()) { return; }
-    const m = this.newMedicine;
-    if (!m.drug || !m.dose || !m.durationNo || !/^[0-9]+$/.test(m.durationNo) || !m.durationUnit) { return; }
-    const med = {
-      drug: m.drug || '', dose: m.dose || '', frequency: m.frequency || '',
-      durationNo: m.durationNo || '', durationUnit: m.durationUnit || '', instructRemark: m.instructRemark || ''
-    };
-    this.v2Service.saveMedication(this.patientUuid, this.visitNoteUuid, med, this.editMedicineUuid || undefined).subscribe(res => {
-      const item = { ...med, uuid: res?.uuid || this.editMedicineUuid };
-      if (this.editMedicineIndex > -1) {
-        this.addedMedicines[this.editMedicineIndex] = item;
-      } else {
-        this.addedMedicines.push(item);
-      }
-      this.cancelMedicine();
+  editMedicine(index: number): void {
+    const m = this.addedMedicines[index];
+    if (!m || this.selectedMedicines.some(s => s.uuid && s.uuid === m.uuid)) { return; }
+    this.addedMedicines.splice(index, 1);
+    this.selectedMedicines.push({
+      drug: m.drug,
+      source: 'manual',
+      timing: m.frequency || '',
+      strength: m.dose || '',
+      days: m.durationNo || '',
+      durationUnit: m.durationUnit || '',
+      remarks: m.instructRemark || null,
+      editing: true,
+      uuid: m.uuid,
+      addedIndex: index
     });
   }
 
-  editMedicine(index: number): void {
-    const m = this.addedMedicines[index];
-    this.newMedicine = {
-      drug: m.drug || null, dose: m.dose || null, frequency: m.frequency || null,
-      durationNo: m.durationNo || '', durationUnit: m.durationUnit || null, instructRemark: m.instructRemark || null
+  private restoreEditedMedicine(index: number): void {
+    const m = this.selectedMedicines[index];
+    if (!m?.uuid) { return; }
+    this.selectedMedicines.splice(index, 1);
+    const original = {
+      drug: m.drug, dose: m.strength, frequency: m.timing, durationNo: m.days,
+      durationUnit: m.durationUnit || '', instructRemark: m.remarks || '', uuid: m.uuid
     };
-    this.editMedicineIndex = index;
-    this.editMedicineUuid = m.uuid || '';
-  }
-
-  cancelMedicine(): void {
-    this.newMedicine = { drug: null, dose: null, frequency: null, durationNo: '', durationUnit: null, instructRemark: null };
-    this.editMedicineIndex = -1;
-    this.editMedicineUuid = '';
+    this.addedMedicines.splice(Math.min(m.addedIndex ?? this.addedMedicines.length, this.addedMedicines.length), 0, original);
   }
 
   deleteMedicine(index: number, uuid?: string): void {
-    this.removeItem(this.addedMedicines, index, uuid);
+    this.v2Service.removeDraftItem(this.addedMedicines, index, uuid);
   }
 
   toggleBundle(bundle: AdviceBundle): void {
@@ -679,7 +747,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteAdvice(index: number, uuid?: string): void {
-    this.removeItem(this.advices, index, uuid);
+    this.v2Service.removeDraftItem(this.advices, index, uuid);
   }
 
   cancelAdvice(): void {
@@ -689,13 +757,42 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   isTestAdded(value: string): boolean {
-    return this.tests.some(t => t.value.toLowerCase() === value.toLowerCase());
+    return this.tests.some(t => t.value.trim().toLowerCase() === value.trim().toLowerCase());
   }
 
-  addAiTest(value: string): void {
-    if (this.isTestAdded(value)) { return; }
-    this.newTestText = value;
-    this.addTest();
+  isTestSelected(value: string): boolean {
+    return this.selectedTests.some(t => t.toLowerCase() === value.toLowerCase()) || this.isTestAdded(value);
+  }
+
+  toggleTest(value: string): void {
+    if (this.isTestAdded(value)) {
+      this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
+      return;
+    }
+    const index = this.selectedTests.findIndex(t => t.toLowerCase() === value.toLowerCase());
+    if (index > -1) {
+      this.selectedTests.splice(index, 1);
+    } else {
+      this.selectedTests.push(value);
+    }
+  }
+
+  onTestSearch(term: string): void {
+    this.testSearchTerm = term;
+    this.testResults = this.v2Service.searchOptions(this.testOptions, term);
+  }
+
+  clearTestSearch(): void {
+    this.onTestSearch('');
+  }
+
+  removeSelectedTest(index: number): void {
+    this.selectedTests.splice(index, 1);
+  }
+
+  /** Follow-up doesn't apply once the patient is handed off to a NAMCO specialist. */
+  get isNamcoReferralConfirmed(): boolean {
+    return !!this.namcoReferral?.confirmedNamcoReferral;
   }
 
   applyAiReferral(referral: { speciality: string; facility: string; priority: string; reason: string }): void {
@@ -713,25 +810,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.followUpReason = this.aiFollowUp.reason || this.followUpReason;
   }
 
+  /** Save every selected test (like "Add Advice"). */
   addTest(): void {
-    const value = (this.newTestText || '').trim();
-    if (!value || !this.canWrite()) { return; }
-    if (this.tests.find(t => t.value.trim().toLowerCase() === value.toLowerCase())) {
-      this.coreService.showToast('warning', 'Test already added, please add another test.', 'Already Added', 'warning-test-toast');
-      return;
-    }
-    this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
-      this.tests.push({ value, uuid: res?.uuid || '' });
-      this.newTestText = null;
+    if (!this.selectedTests.length || !this.canWrite()) { return; }
+    [...this.selectedTests].forEach(value => {
+      this.v2Service.saveTest(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
+        this.tests.push({ value, uuid: res?.uuid || '' });
+        const index = this.selectedTests.indexOf(value);
+        if (index > -1) { this.selectedTests.splice(index, 1); }
+      });
     });
+    this.clearTestSearch();
   }
 
   deleteTest(index: number, uuid?: string): void {
-    this.removeItem(this.tests, index, uuid);
+    this.v2Service.removeDraftItem(this.tests, index, uuid);
   }
 
   cancelTest(): void {
-    this.newTestText = null;
+    this.clearTestSearch();
+    this.selectedTests = [];
   }
 
   addReferral(): void {
@@ -753,7 +851,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteReferral(index: number, uuid?: string): void {
-    this.removeItem(this.referrals, index, uuid);
+    this.v2Service.removeDraftItem(this.referrals, index, uuid);
   }
 
   cancelReferral(): void {
@@ -770,25 +868,47 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   deleteNote(index: number, uuid?: string): void {
-    this.removeItem(this.outcomeNotes, index, uuid);
+    this.v2Service.removeDraftItem(this.outcomeNotes, index, uuid);
   }
 
   cancelNote(): void {
     this.newNoteText = '';
   }
 
-  addMedInstruction(): void {
-    if (!this.medInstructionText || !this.canWrite()) { return; }
-    const value = this.medInstructionText;
-    const existingUuid = this.medInstructions[0]?.uuid;
-    this.v2Service.saveAdditionalInstruction(this.patientUuid, this.visitNoteUuid, value, existingUuid).subscribe(res => {
-      this.medInstructions = [{ value, uuid: res?.uuid || existingUuid }];
-      this.medInstructionText = '';
+  addHistoryNote(kind: HistoryNoteKind): void {
+    const value = this.newHistoryNoteText[kind];
+    if (!value?.trim() || !this.canWrite()) { return; }
+    const save$ = kind === 'family'
+      ? this.v2Service.saveFamilyHistoryNote(this.patientUuid, this.visitNoteUuid, value)
+      : this.v2Service.savePastMedicalHistoryNote(this.patientUuid, this.visitNoteUuid, value);
+    save$.subscribe(res => {
+      this.historyNotes[kind].push({ value, uuid: res?.uuid || '' });
+      this.newHistoryNoteText[kind] = '';
     });
   }
 
+  deleteHistoryNote(kind: HistoryNoteKind, index: number, uuid?: string): void {
+    this.v2Service.removeDraftItem(this.historyNotes[kind], index, uuid);
+  }
+
+  cancelHistoryNote(kind: HistoryNoteKind): void {
+    this.newHistoryNoteText[kind] = '';
+  }
+
+  addMedInstruction(): void {
+    if (!this.medInstructionText?.trim() || !this.canWrite() || this.savingMedInstruction) { return; }
+    const value = this.medInstructionText;
+    this.savingMedInstruction = true;
+    this.v2Service.saveAdditionalInstruction(this.patientUuid, this.visitNoteUuid, value, this.medInstructions[0] || null)
+      .pipe(finalize(() => { this.savingMedInstruction = false; }))
+      .subscribe(saved => {
+        this.medInstructions = [saved];
+        this.medInstructionText = '';
+      });
+  }
+
   deleteMedInstruction(index: number, uuid?: string): void {
-    this.removeItem(this.medInstructions, index, uuid);
+    this.v2Service.removeDraftItem(this.medInstructions, index, uuid);
   }
 
   cancelMedInstruction(): void {
@@ -797,10 +917,18 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   saveFollowUp(): void {
     if (!this.canWrite()) { return; }
+    if (this.wantFollowUp === null) { return; }
     if (!this.wantFollowUp) {
-      if (this.followUpUuid) {
-        this.v2Service.deleteObs(this.followUpUuid).subscribe(() => { this.followUpUuid = ''; });
-      }
+      // Saved "No" shows in the follow-up table with "-" for type/date/time/reason, as in the old UI.
+      this.followUpType = this.defaultFollowUpType;
+      this.followUpDate = '';
+      this.followUpTime = null;
+      this.followUpReason = '';
+      this.v2Service.saveNoFollowUp(this.patientUuid, this.visitNoteUuid, this.followUpUuid || undefined)
+        .subscribe(res => {
+          this.followUpUuid = res?.uuid || this.followUpUuid;
+          this.savedFollowUpYes = false;
+        });
       return;
     }
     if (!this.followUpDate) { return; }
@@ -811,7 +939,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       type: this.followUpType || ''
     };
     this.v2Service.saveFollowUp(this.patientUuid, this.visitNoteUuid, fu, this.followUpUuid || undefined)
-      .subscribe(res => { this.followUpUuid = res?.uuid || this.followUpUuid; });
+      .subscribe(res => {
+        this.followUpUuid = res?.uuid || this.followUpUuid;
+        this.savedFollowUpYes = true;
+      });
   }
 
   applyQuickFollowUp(days: number): void {
@@ -839,8 +970,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!this.followUpUuid) { return; }
     this.v2Service.deleteObs(this.followUpUuid).subscribe(() => {
       this.followUpUuid = '';
-      this.wantFollowUp = false;
-      this.followUpType = null;
+      this.savedFollowUpYes = false;
+      this.wantFollowUp = null;
+      this.followUpType = this.defaultFollowUpType;
       this.followUpDate = '';
       this.followUpTime = null;
       this.followUpReason = '';
@@ -853,10 +985,49 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       this.coreService.showToast('warning', 'Diagnosis not added', 'Diagnosis Required', 'warning-diagnosis-required-toast');
       return;
     }
-    this.coreService.openSharePrescriptionConfirmModal().subscribe((confirmed: boolean) => {
+    if (this.namcoReferral && !this.namcoReferral.validateForShare()) { return; }
+    const namcoReferral = this.namcoReferral?.confirmedNamcoReferral || null;
+    this.coreService.openSharePrescriptionConfirmModal({ namcoReferral }).subscribe((confirmed: boolean) => {
       if (!confirmed) { return; }
-      this.completeVisitAndShare();
+      if (namcoReferral) {
+        this.referToNamco(namcoReferral);
+      } else {
+        this.completeVisitAndShare();
+      }
     });
+  }
+
+  /**
+  * Route the visit to the NAMCO specialist (Referral encounter + Routing Specialization)
+  * instead of completing it.
+  */
+  private referToNamco(namcoReferral: DraftReferral): void {
+    if (this.isReferringToNamco) { return; }
+    this.isReferringToNamco = true;
+    this.v2Service.createNamcoReferralEncounter(this.visit, this.provider?.uuid, namcoReferral.speciality)
+      .pipe(finalize(() => { this.isReferringToNamco = false; }))
+      .subscribe({
+        next: (referralEncounter) => {
+          if (!referralEncounter) { this.completeVisitAndShare(); return; }
+          this.visitReferred = true;
+          this.prescriptionShared = true;
+          this.coreService.openSharePrescriptionSuccessModal({ isReferral: true }).subscribe((result: string | boolean) => {
+            if (result === 'view') {
+              this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
+            } else if (result === 'dashboard') {
+              this.router.navigate(['/dashboard']);
+            }
+          });
+        },
+        error: () => {
+          this.coreService.openSharePrescriptionErrorModal({
+            msg: 'Unable to send the referral due to poor network connection. Please try again or come back later',
+            confirmBtnText: 'Try again'
+          }).subscribe((retry: boolean) => {
+            if (retry) { this.referToNamco(namcoReferral); }
+          });
+        }
+      });
   }
 
   private completeVisitAndShare(): void {

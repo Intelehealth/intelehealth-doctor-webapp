@@ -34,6 +34,11 @@ export class WebrtcService {
   private remoteElement: ElementRef | string | any;
   public visitHolderId: null;
 
+  // Connection state streams for UI/components to subscribe
+  public isReconnecting$ = new BehaviorSubject<boolean>(false);
+  public signalReconnecting$ = new Subject<void>();
+  // Synchronous flag for quick checks in components
+  public isCurrentlyReconnecting: boolean = false;
   // Connection quality streams
   public localConnectionQuality$ = new BehaviorSubject<ConnectionQuality | null>(null);
 
@@ -137,7 +142,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setCameraEnabled(true);
         } catch (error) {
-          console.log("camera enable error", error)
           try { handleMediaError({ source: 'camera', error }); } catch(_e) {}
         }
 
@@ -145,7 +149,6 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.setMicrophoneEnabled(true);
         } catch (error) {
-          console.log("microphone enable error", error)
           try { handleMediaError({ source: 'microphone', error }); } catch(_e) {}
         }
       })
@@ -156,11 +159,23 @@ export class WebrtcService {
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
+      // Reconnection-related events
+      .on(RoomEvent.SignalReconnecting, () => {
+        this.signalReconnecting$.next();
+      })
+      .on(RoomEvent.Reconnecting, () => {
+        console.warn("⚠️ Reconnecting...");
+        this.isCurrentlyReconnecting = true;
+        this.isReconnecting$.next(true);
+      })
+      .on(RoomEvent.Reconnected, () => {
+        this.isCurrentlyReconnecting = false;
+        this.isReconnecting$.next(false);
+      })
       .on(RoomEvent.ConnectionQualityChanged, (quality: ConnectionQuality, participant: Participant) => {
         // Emit per-participant quality updates for UI consumption
         if ((participant as any)?.isLocal) {
           this.localConnectionQuality$.next(quality);
-          console.log(quality, " : localConnectionQuality");
         }
       });
 
@@ -173,7 +188,7 @@ export class WebrtcService {
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
-      console.log('error: ', error);
+      console.error('error: ', error);
     }
   }
 
@@ -356,12 +371,9 @@ export class WebrtcService {
   /**
    * Noop function to be passed as default function if nothing passed
    */
-  noop() {
-    console.log('Not Implemented.')
-  }
+  noop() { }
 
   autoStartRecording(payload){
-    console.log("calling auto egress recording api...");
      return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
   }
 

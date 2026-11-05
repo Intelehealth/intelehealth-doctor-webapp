@@ -62,6 +62,7 @@ import { VoiceTranscriptDetailComponent } from './admin-actions/ai-llm/voice-tra
 import { QmsComponent } from './admin-actions/qms/qms.component';
 import { InsightsComponent } from './insights/insights.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
+import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
 import { VisitSummaryV2ConfigComponent } from './admin-actions/visit-summary-v2/visit-summary-v2.component';
 
 
@@ -185,6 +186,10 @@ const routes: Routes = [
             component: PrescriptionNotesComponent
           },
           {
+            path: 'namco-referral',
+            component: NamcoReferralComponent
+          },
+          {
             path: 'visit-summary-v2',
             component: VisitSummaryV2ConfigComponent
           },
@@ -233,6 +238,7 @@ const routes: Routes = [
     VoiceTranscriptDetailComponent,
     InsightsComponent,
     PrescriptionNotesComponent,
+    NamcoReferralComponent,
     VisitSummaryV2ConfigComponent,
     QmsComponent
   ],
