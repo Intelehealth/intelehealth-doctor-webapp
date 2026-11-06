@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { environment } from 'src/environments/environment';
 import { doctorDetails } from 'src/config/constant';
 import { ApiResponseModel, DataItemModel, ProviderAttributeModel, ScheduleModel, ScheduleSlotModel, ScheduledMonthModel } from 'src/app/model/model';
 
@@ -312,14 +313,19 @@ export class SetupCalendarComponent implements OnInit {
     this.ft.clear();
     this.fd.clear();
     this.fs.clear();
+    // Turn server: a saved month can come back with slotSchedule null (e.g. days off
+    // saved before any timing) or with incomplete slots; skip those so the form still renders.
+    const slots: ScheduleSlotModel[] = environment.isTurnServer
+      ? (schedule.slotSchedule || []).filter((s: ScheduleSlotModel) => s?.startTime && s?.endTime && s?.day)
+      : schedule.slotSchedule;
     let uniqTiming = [];
-    for (let h = 0; h < schedule.slotSchedule.length; h++) {
-      if (uniqTiming.findIndex((o: ScheduleSlotModel) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
-        uniqTiming.push(schedule.slotSchedule[h]);
+    for (let h = 0; h < slots.length; h++) {
+      if (uniqTiming.findIndex((o: ScheduleSlotModel) => o.startTime == slots[h].startTime && o.endTime == slots[h].endTime) == -1) {
+        uniqTiming.push(slots[h]);
       }
     }
     uniqTiming.forEach((ut: ScheduleSlotModel) => {
-      let utslots = schedule.slotSchedule.filter((o: ScheduleSlotModel) => o.startTime == ut.startTime && o.endTime == ut.endTime);
+      let utslots = slots.filter((o: ScheduleSlotModel) => o.startTime == ut.startTime && o.endTime == ut.endTime);
       let timingFormGroup = new FormGroup({
         startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
         startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
