@@ -3015,8 +3015,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                         // created) and send it along,
                           if (environment.isTurnServer) {
                             this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
-                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit),
-                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid),
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, false, () => this.autoEndVisitOnTurn()),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisitOnTurn()),
                           });
                           }
                           this.notifyHwForAvailablePrescription("","",followUpDate);
@@ -3061,8 +3061,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                         // Update Prescription: re-notify the patient on WhatsApp, same as Share Prescription.
                         if (environment.isTurnServer) {
                           this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
-                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true),
-                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true),
+                            // Also ends visits shared before auto-end existed, once the resend is confirmed.
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true, () => this.autoEndVisitOnTurn()),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true, () => this.autoEndVisitOnTurn()),
                           });
                         }
                         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
@@ -3244,7 +3245,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitCompleted = true;
             const followUpDate = `${this.followUpForm.value.followUpDate}`;
             if (environment.isTurnServer) {
-              this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid);
+              this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisitOnTurn());
             }
             this.notifyHwForAvailablePrescription("", "", followUpDate);
             this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
@@ -3416,6 +3417,26 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       patientUuid: this.patient?.uuid,
       patientOpenMrsId: this.getPatientIdentifier("OpenMRS ID"),
       doctorUuid: this.provider?.uuid
+    });
+  }
+
+  /**
+  * Turn (IDTP-202): there is no health worker to end the visit, so it is ended once the
+  * prescription is confirmed shared -- called only from notifyPrescriptionOnTurn's success
+  * callback (Visit Complete saved + Turn confirmed the WhatsApp send). Sets stopDatetime
+  * (same call as the HW webapp's "End visit"), which moves the visit from In-progress to
+  * Completed visits. A failure is logged and does not affect the share.
+  * @returns {void}
+  */
+  private autoEndVisitOnTurn(): void {
+    if (!environment.isTurnServer || this.visitEnded || !this.visit?.uuid) return;
+    const visitUuid = this.visit.uuid;
+    this.visitService.endVisit(visitUuid).subscribe({
+      next: () => {
+        this.visitEnded = true;
+        console.log(`[visit-summary] visit ${visitUuid} ended after prescription was shared`);
+      },
+      error: (err) => console.error(`[visit-summary] could not end visit ${visitUuid} after prescription share`, err),
     });
   }
 

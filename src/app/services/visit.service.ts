@@ -141,6 +141,16 @@ export class VisitService {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
+
+  /**
+  * End (close) a visit by setting its stopDatetime -- same call the HW webapp's
+  * "End visit" makes. Ended visits are listed under Completed visits (getEndedVisits).
+  * @param {string} visitId - Visit uuid
+  * @return {Observable<any>}
+  */
+  endVisit(visitId: string): Observable<any> {
+    return this.http.post(`${this.baseURL}/visit/${visitId}`, { stopDatetime: new Date().toISOString() });
+  }
   getDemarcation(enc) {
     let isFollowUp = false;
     const adlIntl = enc?.find?.(e => [e?.type?.name, e?.encounterType?.display].includes(visitTypes.ADULTINITIAL));
