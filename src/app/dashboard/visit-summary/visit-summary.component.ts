@@ -3432,8 +3432,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!environment.isTurnServer || this.visitEnded || !this.visit?.uuid) return;
     const visitUuid = this.visit.uuid;
     this.visitService.endVisit(visitUuid).subscribe({
-      next: () => {
-        this.visitEnded = true;
+      next: (res: any) => {
+        // Same shape as on load (`... || visit.stopDatetime`): the stop time string.
+        this.visitEnded = res?.stopDatetime || new Date().toISOString();
         console.log(`[visit-summary] visit ${visitUuid} ended after prescription was shared`);
       },
       error: (err) => console.error(`[visit-summary] could not end visit ${visitUuid} after prescription share`, err),
