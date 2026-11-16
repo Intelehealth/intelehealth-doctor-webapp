@@ -101,9 +101,12 @@ export class MindmapService {
   *   When provided, Turn builds the PDF from this instead of re-reading OpenMRS,
   *   avoiding any read-after-write lag on the encounter just created.
   * @param {boolean} resend - Explicit resend (Update Prescription), sends again even if already notified once.
+  * @param {Function} onShared - Called only when Turn confirms the prescription was sent to the
+  *   patient (`success: true`, including "already sent"). Not called on 409 (visit not shared
+  *   yet), 422 (no WhatsApp number) or any other error.
   * @return {void}
   */
-  notifyPrescriptionOnTurn(visitUuid: string, visit?: any, resend?: boolean): void {
+  notifyPrescriptionOnTurn(visitUuid: string, visit?: any, resend?: boolean, onShared?: () => void): void {
     const isTurnServer = (environment as any).isTurnServer === true;
     const turnUrl = (environment as any).turnNotifyURL;
     if (!isTurnServer || !turnUrl || !visitUuid) {
@@ -119,6 +122,13 @@ export class MindmapService {
     this.http
       .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, body)
       .subscribe({
+        next: (res: any) => {
+          if (res?.success === true) {
+            onShared?.();
+          } else {
+            console.warn('Turn prescription notify: not confirmed as shared', res);
+          }
+        },
         error: (err) => console.error('Turn prescription notify failed:', err)
       });
   }

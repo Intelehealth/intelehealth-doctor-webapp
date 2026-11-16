@@ -355,9 +355,15 @@ export class SetupCalendarComponent implements OnInit {
     // any timing) or with incomplete slots; skip those so the form (and the
     // "Add more timings" row) still renders. Not gated on isTurnServer: a build
     // without IS_TURN_SERVER would otherwise crash here and show an empty table.
-    const rawSlots = Array.isArray(schedule.slotSchedule) ? schedule.slotSchedule : [];
-    if (schedule.slotSchedule && !Array.isArray(schedule.slotSchedule)) {
-      console.warn('[setup-calendar] slotSchedule is not an array:', schedule.slotSchedule);
+    // JSON columns come back as a string on some DBs (e.g. MariaDB); parse those.
+    let slotSchedule: any = schedule.slotSchedule;
+    if (typeof slotSchedule === 'string') {
+      console.warn('[setup-calendar] slotSchedule came back as a string, parsing it');
+      try { slotSchedule = JSON.parse(slotSchedule); } catch { slotSchedule = []; }
+    }
+    const rawSlots = Array.isArray(slotSchedule) ? slotSchedule : [];
+    if (slotSchedule && !Array.isArray(slotSchedule)) {
+      console.warn('[setup-calendar] slotSchedule is not an array:', slotSchedule);
     }
     const slots: ScheduleSlotModel[] = rawSlots
       .filter((s: ScheduleSlotModel) => s?.startTime && s?.endTime && s?.day);
