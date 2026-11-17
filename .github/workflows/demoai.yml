@@ -2,7 +2,9 @@ name: Demoai
 
 on:
   workflow_dispatch:  # Run manually only from the Actions tab
-
+  push:
+    branches:
+      - development_master
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -31,8 +33,8 @@ jobs:
       # STEP 1: Fetch the .env from the server to use during the build
       - name: Download .env via Native SCP
         run: |
-          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "[ -f /home/ubuntu/deploy/webapp/.env ]"; then
-            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/.env" .env
+          if ssh -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}" "[ -f /home/ubuntu/deploy/webapp/demoai.env ]"; then
+            scp -i ~/.ssh/id_rsa "${{ secrets.REMOTE_USER }}@${{ secrets.DEMOAI_HOST }}:/home/ubuntu/deploy/webapp/demoai.env" .env
           else
             echo "Remote .env not found. Creating an empty local fallback so the workflow can continue."
             : > .env
@@ -61,7 +63,7 @@ jobs:
           script: |
             REMOTE_IMAGE="${{ env.REMOTE_IMAGE }}"
             mkdir -p /home/ubuntu/deploy/webapp
-            [ -f /home/ubuntu/deploy/webapp/.env ] || touch /home/ubuntu/deploy/webapp/.env
+            [ -f /home/ubuntu/deploy/webapp/demoai.env ] || touch /home/ubuntu/deploy/webapp/demoai.env
 
             gunzip -c "$REMOTE_IMAGE" | docker load
             rm -f "$REMOTE_IMAGE"
