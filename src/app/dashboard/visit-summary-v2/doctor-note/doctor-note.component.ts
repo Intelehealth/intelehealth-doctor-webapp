@@ -118,7 +118,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   aiAdvices: string[] = [];
   aiTests: string[] = [];
   aiReferrals: { speciality: string; facility: string; priority: string; reason: string }[] = [];
-  aiFollowUp: AiFollowUp | null = null;
+  aiFollowUps: AiFollowUp[] = [];
 
   addedMedicines: DraftMedication[] = [];
   medInstructionText = '';
@@ -191,7 +191,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       doctorUuid: doctor?.uuid,
       patientUuid: this.patientUuid || this.visit?.patient?.uuid,
       aiSurface,
-      suggestionRef: item?.diagnosis || item?.name || item?.speciality || item?.duration || (typeof item === 'string' ? item : undefined),
+      suggestionRef: Array.isArray(item) ? undefined : item?.diagnosis || item?.name || item?.speciality || item?.duration || item?.reason || (typeof item === 'string' ? item : undefined),
       rawSuggestion: item,
       doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
       patientOpenMrsId: this.getPatientOpenMrsId(),
@@ -447,7 +447,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.aiAdvices = result.advices;
         this.aiTests = result.tests;
         this.aiReferrals = result.referrals;
-        this.aiFollowUp = result.followUp;
+        this.aiFollowUps = result.followUps;
         this.aiMedicationState = 'ready';
       },
       error: () => {
@@ -797,10 +797,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     };
   }
 
-  applyAiFollowUp(): void {
-    if (!this.aiFollowUp) { return; }
+  applyAiFollowUp(followUp: AiFollowUp): void {
+    if (!followUp) { return; }
     this.wantFollowUp = true;
-    this.followUpReason = this.aiFollowUp.reason || this.followUpReason;
+    this.followUpReason = followUp.reason || this.followUpReason;
   }
 
   /** Save every selected test (like "Add Advice"). */

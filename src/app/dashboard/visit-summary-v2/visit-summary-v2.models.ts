@@ -151,7 +151,7 @@ export interface AiTreatmentResult {
   advices: string[];
   tests: string[];
   referrals: { speciality: string; facility: string; priority: string; reason: string }[];
-  followUp: AiFollowUp | null;
+  followUps: AiFollowUp[];
 }
 
 export interface SelectedDiagnosis {

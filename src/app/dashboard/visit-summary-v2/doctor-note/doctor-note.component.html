@@ -534,7 +534,7 @@
 
   <ng-container *ngIf="aiAdvices.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Advice</h4>
-    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice')" title="Report an issue with these suggestions">
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice', aiAdvices)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
     </div>
@@ -611,7 +611,7 @@
 
   <ng-container *ngIf="aiTests.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Tests</h4>
-    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test')" title="Report an issue with these suggestions">
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test', aiTests)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
     </div>
@@ -677,13 +677,13 @@
 
   <ng-container *ngIf="aiReferrals.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Referral</h4>
-    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral')" title="Report an issue with these suggestions">
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral', aiReferrals)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
     </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let r of aiReferrals" (click)="applyAiReferral(r)">
-        <mat-icon>add</mat-icon> {{ r.speciality }}<ng-container *ngIf="r.facility"> - {{ r.facility }}</ng-container>
+        <mat-icon>add</mat-icon> {{ r.speciality || r.reason }}<ng-container *ngIf="r.speciality && r.facility"> - {{ r.facility }}</ng-container>
       </button>
     </div>
   </ng-container>
@@ -767,15 +767,17 @@
     Follow-up is not needed as this patient is being referred to a NAMCO doctor.
   </p>
 
-  <div class="vs2-ai-followup" *ngIf="aiFollowUp && !isNamcoReferralConfirmed">
+  <div class="vs2-ai-followup" *ngIf="aiFollowUps.length && !isNamcoReferralConfirmed">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Follow-up</h4>
-    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup')" title="Report an issue with these suggestions">
+    <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup', aiFollowUps)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
     </div>
-    <button class="vs2-dx-quick" (click)="applyAiFollowUp()">
-      <mat-icon>add</mat-icon> {{ aiFollowUp.duration }}<ng-container *ngIf="aiFollowUp.reason"> - {{ aiFollowUp.reason }}</ng-container>
-    </button>
+    <div class="vs2-dx-quick-row">
+      <button class="vs2-dx-quick" *ngFor="let f of aiFollowUps" (click)="applyAiFollowUp(f)">
+        <mat-icon>add</mat-icon> {{ f.reason || f.duration }}<ng-container *ngIf="f.reason && f.duration && !f.reason.includes(f.duration)"> - {{ f.duration }}</ng-container>
+      </button>
+    </div>
   </div>
 
   <!-- Type column only when the follow-up Type can be picked (followUpTypeEnabled). -->
