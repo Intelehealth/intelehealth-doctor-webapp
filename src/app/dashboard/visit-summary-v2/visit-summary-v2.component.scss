@@ -130,7 +130,9 @@ app-past-visits {
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .vs2-chip-purple {
@@ -1716,17 +1718,23 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 
 .vs2-dx-quick {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
+  max-width: 100%;
   background: #fff;
   border: 1px solid $border;
-  border-radius: 999px;
+  border-radius: 18px;
   padding: 7px 14px;
   font-size: 14px;
+  line-height: 20px;
   color: $navy;
+  text-align: left;
+  overflow-wrap: anywhere;
   cursor: pointer;
 
   mat-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
     font-size: 16px;
     width: 16px;
     height: 16px;
@@ -2492,6 +2500,8 @@ app-patient-header-card:has(+ .vs2-in-progress-banner) .vs2-patient-card {
 
 .vs2-added-chips {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 8px;
   margin-top: 8px;
 }

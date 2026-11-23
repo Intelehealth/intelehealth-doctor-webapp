@@ -22,7 +22,7 @@ import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { AiddxService, AiTxService } from 'aiddx-library';
 import {
-  AiDiagnosisResult, AiDiagnosisSuggestion, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
+  AiDiagnosisResult, AiDiagnosisSuggestion, AiFollowUp, AiMedicationSuggestion, AiTreatmentResult, AyuSuggestedQuestion,
   ComplaintDetail, DetailRow, DocItem, KaleyraCallContext, Patient, PastVisit, PrescriptionData, SuggestionLikelihood,
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
@@ -301,21 +301,60 @@ export class VisitSummaryV2Service {
         durationUnit: m?.duration_unit || '',
         remarks: m?.instructions || ''
       })).filter((m: AiMedicationSuggestion) => !!m.name),
-      advices: (data.medical_advice || []).map((a: any) => a?.v || a).filter(Boolean),
-      tests: (data.tests_to_be_done || []).map((t: any) => t?.test_name || t).filter(Boolean),
-      referrals: (data.referral || []).map((r: any) => ({
-        speciality: r?.referral_to || '',
-        facility: r?.referral_facility || '',
-        priority: '',
-        reason: r?.remark || ''
-      })).filter((r: any) => !!r.speciality),
-      followUp: (data.follow_up || []).filter((f: any) => f?.follow_up_duration).map((f: any) => ({
-        required: f?.follow_up_required,
-        duration: f?.follow_up_duration || '',
-        reason: f?.reason_for_follow_up || ''
-      }))[0] || null
+      advices: this.toSuggestionList(data.medical_advice).map((a: any) => a?.v || a).filter((a: any) => typeof a === 'string' && !!a),
+      tests: this.toSuggestionList(data.tests_to_be_done).map((t: any) => t?.test_name || t).filter((t: any) => typeof t === 'string' && !!t),
+      referrals: this.toReferralList(data.referral),
+      followUps: this.toFollowUps(data.follow_up)
     };
   }
+
+  private toSuggestionList(value: any): any[] {
+    if (Array.isArray(value)) { return value; }
+    if (typeof value !== 'string' || !value.trim()) { return []; }
+    return this.splitSentences(value);
+  }
+
+  private splitSentences(text: string): string[] {
+    const sentences: string[] = [];
+    let current = '';
+    for (let i = 0; i < text.length; i++) {
+      current += text[i];
+      if ('.!?'.includes(text[i]) && (i + 1 === text.length || /\s/.test(text[i + 1]))) {
+        if (current.trim()) { sentences.push(current.trim()); }
+        current = '';
+      }
+    }
+    if (current.trim()) { sentences.push(current.trim()); }
+    return sentences;
+  }
+
+  private toReferralList(value: any): { speciality: string; facility: string; priority: string; reason: string }[] {
+    if (typeof value === 'string') {
+      return value.trim() ? [{ speciality: '', facility: '', priority: '', reason: value.trim() }] : [];
+    }
+    return (Array.isArray(value) ? value : []).map((r: any) => ({
+      speciality: r?.referral_to || '',
+      facility: r?.referral_facility || '',
+      priority: '',
+      reason: r?.remark || ''
+    })).filter((r: any) => !!r.speciality || !!r.reason);
+  }
+
+  private toFollowUps(value: any): AiFollowUp[] {
+    if (typeof value === 'string') {
+      return this.toSuggestionList(value).map((reason: string) => ({
+        required: true,
+        duration: reason.match(/\d+\s*(day|week|month)s?/i)?.[0] || '',
+        reason
+      }));
+    }
+    return (Array.isArray(value) ? value : []).filter((f: any) => f?.follow_up_duration).map((f: any) => ({
+      required: f?.follow_up_required,
+      duration: f?.follow_up_duration || '',
+      reason: f?.reason_for_follow_up || ''
+    })).slice(0, 1);
+  }
+
 
   private mapConfidence(value: any): SuggestionLikelihood {
     if (typeof value === 'string') { return this.mapLikelihood(value); }
