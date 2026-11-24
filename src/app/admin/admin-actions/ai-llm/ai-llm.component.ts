@@ -18,12 +18,20 @@ import { VoiceTranscriptSource } from "src/app/utils/voice-transcript";
 export class AiLlmComponent {
 
   aiLlmDataSource = new MatTableDataSource<any>();
+  jsonVisitSummaryDataSource = new MatTableDataSource<any>();
   aiLlmRecordingDataSource = new MatTableDataSource<any>();
   aiLlmVoiceTranscriptDataSource = new MatTableDataSource<any>();
 
   @ViewChild("aiLlmPaginator") aiLlmPaginator: MatPaginator;
+  @ViewChild('jsonVisitSummaryPaginator') jsonVisitSummaryPaginator: MatPaginator;
   @ViewChild('aiLlmRecordingPaginator') aiLlmRecordingPaginator: MatPaginator;
   @ViewChild('aiLlmVoiceTranscriptPaginator') aiLlmVoiceTranscriptPaginator: MatPaginator;
+
+  readonly jsonVisitSummaryParentKey = "json_format_visit_summary";
+  readonly jsonVisitSummaryChildKeys = ["json_format_visit_summary_ddx", "json_format_visit_summary_ttx"];
+  readonly jsonVisitSummaryKeys = [this.jsonVisitSummaryParentKey, ...this.jsonVisitSummaryChildKeys];
+  jsonVisitSummaryParent: any = null;
+  displayedJsonVisitSummaryColumns: string[] = ["serialNo", "section", "is_enabled"];
 
   sectionEnabled: boolean = false;
   allSectionData: any = {};
@@ -66,6 +74,7 @@ export class AiLlmComponent {
 
   ngAfterViewInit(){
     this.aiLlmDataSource.paginator = this.aiLlmPaginator;
+    this.jsonVisitSummaryDataSource.paginator = this.jsonVisitSummaryPaginator;
     this.aiLlmRecordingDataSource.paginator = this.aiLlmRecordingPaginator;
     this.aiLlmVoiceTranscriptDataSource.paginator = this.aiLlmVoiceTranscriptPaginator;
   }
@@ -86,8 +95,15 @@ export class AiLlmComponent {
    */
   getAILLM(): void {
     this.configService.getAILLM().subscribe((res: any) => {
-      this.aiLlmDataSource = new MatTableDataSource(res.aiLlm);
+      const rows: any[] = res.aiLlm || [];
+      this.aiLlmDataSource = new MatTableDataSource(rows.filter((row) => !this.jsonVisitSummaryKeys.includes(row.key)));
       this.aiLlmDataSource.paginator = this.aiLlmPaginator;
+      this.jsonVisitSummaryParent = rows.find((row) => row.key === this.jsonVisitSummaryParentKey) || null;
+      const children = this.jsonVisitSummaryChildKeys
+        .map((key) => rows.find((row) => row.key === key))
+        .filter((row) => !!row);
+      this.jsonVisitSummaryDataSource = new MatTableDataSource(children);
+      this.jsonVisitSummaryDataSource.paginator = this.jsonVisitSummaryPaginator;
     });
   }
 

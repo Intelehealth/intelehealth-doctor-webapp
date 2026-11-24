@@ -93,6 +93,7 @@ export interface CurrentVisitData {
 
 /** Marker the old non-AI Visit Summary puts in front of an additional instruction's value. */
 const ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
+export const AYU_NOTE_PREFIX = '[AYU_NOTES]';
 const VISIT_NOTE_ENCOUNTER_TYPE = 'd7151f82-c1f3-4152-a605-2f9ea7414a79';
 const SPECIALIST_VISIT_NOTE_ENCOUNTER_TYPE = '086f323a-b90b-49aa-a3ca-fb9ed8ab7426';
 const REFERRAL_ENCOUNTER_TYPE = '95f4ae7f-6caa-4c66-950f-7f3d6072ce56';
@@ -200,14 +201,16 @@ export class VisitSummaryV2Service {
     return this.diagnosisService.getObs(patientUuid, conceptIds.conceptNote).pipe(
       catchError(() => of({ results: [] } as ObsApiResponseModel)),
       map((res: ObsApiResponseModel) => {
-        const obs = (res.results || []).filter((o: ObsModel) => o.encounter?.visit?.uuid === visitUuid).pop();
-        return { value: obs?.value || '', uuid: obs?.uuid || '' };
+        const obs = (res.results || [])
+          .filter((o: ObsModel) => o.encounter?.visit?.uuid === visitUuid && typeof o.value === 'string' && o.value.startsWith(AYU_NOTE_PREFIX))
+          .pop();
+        return { value: obs ? obs.value.slice(AYU_NOTE_PREFIX.length) : '', uuid: obs?.uuid || '' };
       })
     );
   }
 
   saveInteractionNote(patientUuid: string, encounterUuid: string, value: string, existingUuid?: string): Observable<ObsModel> {
-    return this.writeObs(conceptIds.conceptNote, patientUuid, encounterUuid, value, existingUuid);
+    return this.writeObs(conceptIds.conceptNote, patientUuid, encounterUuid, `${AYU_NOTE_PREFIX}${value}`, existingUuid);
   }
 
   /**
@@ -230,9 +233,9 @@ export class VisitSummaryV2Service {
       : this.visitService.postAttribute(visitUuid, payload);
   }
 
-  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false, recompute = false): Observable<AiDiagnosisResult> {
+  loadAiDiagnosis(patientInfo: PatientModel, visit: VisitModel, notes = '', prescriptionShared = false, recompute = false, force = false): Observable<AiDiagnosisResult> {
     const casehistory = this.aiddxService.getDDxPayload(patientInfo, visit, notes);
-    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared, recompute).pipe(
+    return this.aiddxService.getAIDiagnosis(casehistory, visit?.uuid, prescriptionShared, recompute && (force || !!notes.trim())).pipe(
       map((res: any) => this.buildAiDiagnosisResult(res))
     );
   }
@@ -471,7 +474,7 @@ export class VisitSummaryV2Service {
     const diagnosis = this.obsByConcept(encounters, conceptIds.conceptDiagnosis)
       .map(o => this.diagnosisFromValue(o.value)).filter(d => d.name);
     const meds = this.obsByConcept(encounters, conceptIds.conceptMed).filter(o => !!o.value && !this.isMedicationInstruction(o.value)).map(o => this.medFromValue(o.value));
-    const notes = this.obsByConcept(encounters, conceptIds.conceptNote).map(o => o.value).filter(v => !!v && !!String(v).trim());
+    const notes = this.obsByConcept(encounters, conceptIds.conceptNote).map(o => o.value).filter(v => !!v && !!String(v).trim() && !String(v).startsWith(AYU_NOTE_PREFIX));
     const advice = this.obsByConcept(encounters, conceptIds.conceptAdvice).filter(o => !o.value.includes('</a>') && !o.value.startsWith(ADDITIONAL_INSTRUCTION_PREFIX)).map(o => o.value);
     const tests = this.obsByConcept(encounters, conceptIds.conceptTest).map(o => o.value);
     const instructions = this.obsByConcept(encounters, conceptIds.conceptFollowUpInstruction).map(o => o.value);
@@ -659,7 +662,7 @@ export class VisitSummaryV2Service {
         tests: this.parseTests(res.test, visitUuid),
         referrals: this.parseReferrals(res.referral, visitUuid),
         followUp: this.parseFollowUp(res.followUp, visitUuid),
-        notes: this.parseTextItems(res.note, visitUuid),
+        notes: this.parseTextItems(res.note, visitUuid).filter(n => !String(n.value).startsWith(AYU_NOTE_PREFIX)),
         familyHistoryNotes: this.parseTextItems(res.familyHistoryNote, visitUuid),
         pastMedicalHistoryNotes: this.parseTextItems(res.pastMedicalHistoryNote, visitUuid)
       };
@@ -1021,16 +1024,18 @@ export class VisitSummaryV2Service {
   * again once the delete returns, so another change to the list in the meantime can't make it
   * remove the wrong row.
   */
-  removeDraftItem<T extends { uuid?: string }>(list: T[], index: number, uuid?: string): void {
+  removeDraftItem<T extends { uuid?: string }>(list: T[], index: number, uuid?: string, onRemoved?: () => void): void {
     const item = list[index];
     if (!item) { return; }
     if (!uuid) {
       list.splice(index, 1);
+      onRemoved?.();
       return;
     }
     this.deleteObs(uuid).subscribe(() => {
       const at = list.indexOf(item);
       if (at > -1) { list.splice(at, 1); }
+      onRemoved?.();
     });
   }
 
