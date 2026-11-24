@@ -22,6 +22,7 @@ export class KaleyraCallRecorderComponent implements OnInit, OnDestroy {
   elapsedSec = 0;
   stopping = false;
   private timer: any = null;
+  private startToastPending = false;
   private subs = new Subscription();
 
   constructor(
@@ -93,12 +94,18 @@ export class KaleyraCallRecorderComponent implements OnInit, OnDestroy {
     if (!isVoiceTranscriptEnabled(this.appConfigService, 'webapp')) return;
     if (this.phase !== 'ready' || this.stopping) return;
     this.call = call;
+    this.startToastPending = true;
+    this.start();
   }
 
   private onRecorderState(state: VoicedocRecorderState): void {
     if (state === 'recording' || state === 'paused') {
       this.phase = state;
       this.startTimer();
+      if (state === 'recording' && this.startToastPending) {
+        this.startToastPending = false;
+        this.toastr.info('Recording started automatically. Put your phone on speaker near your computer.');
+      }
       return;
     }
     this.clearTimer();
@@ -115,6 +122,7 @@ export class KaleyraCallRecorderComponent implements OnInit, OnDestroy {
   private close(): void {
     this.clearTimer();
     this.call = null;
+    this.startToastPending = false;
     this.phase = 'ready';
     this.elapsedSec = 0;
   }
