@@ -82,17 +82,99 @@
 
           <mat-paginator #aiLlmPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" data-test-id="matPaginatorAILLM"></mat-paginator>
 
-          <div class="ai-llm-note mt-3">
-            <img src="assets/svgs/alert-triangle.svg" alt="" class="alert-icon" />
-            <span>
-              {{ "When 'New JSON format visit summary' is active, the JSON version of the visit summary will be passed to the AI LLM APIs. Make sure the backend changes supporting this format are deployed before making it active." | translate }}
-            </span>
-          </div>
           <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnAddMindmap">
             {{ "Publish" | translate }}
           </button>
         </div>
       
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3" *ngIf="jsonVisitSummaryParent">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/patient-diagnosis.svg" alt="" height="44px"/>
+          <div>
+            <h6 class="mb-0">{{ "New JSON Visit Summary" | translate }}</h6>
+            <div class="msg">
+              <span class="mr-3">{{ "Enable/Disable" | translate }} {{ "JSON Visit Summary" | translate }}</span>
+              <div class="pretty p-switch p-fill light-green light-red">
+                <input type="checkbox" [(ngModel)]="jsonVisitSummaryParent.is_enabled" (change)="updateAILLMEnabledStatus(jsonVisitSummaryParent.id, $event.target.checked)" data-test-id="checkboxJsonVisitSummaryToggle"/>
+                <div class="state">
+                  <label></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button type="button" class="btn" (click)="onPublish()" data-test-id="btnPublishJsonVisitSummary">
+              {{ "Publish" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="jsonVisitSummaryDataSource" matTableResponsive>
+              <ng-container matColumnDef="serialNo">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Sr. No." | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ jsonVisitSummaryPaginator?.pageIndex == 0 ? i + 1 : 1 + i + jsonVisitSummaryPaginator?.pageIndex * jsonVisitSummaryPaginator?.pageSize }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="section">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Section" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="priority-v d-flex flex-row align-items-center">
+                    {{ element.name }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="is_enabled">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ "Active" | translate }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="tooltip-box">
+                    <div class="pretty p-switch p-fill">
+                      <input type="checkbox" [checked]="element.is_enabled" (change)="updateAILLMEnabledStatus(element.id, $event.target.checked)" data-test-id="checkboxJsonVisitSummaryToggleStatus"/>
+                      <div class="state">
+                        <label></label>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedJsonVisitSummaryColumns.length">{{ "No data to display." | translate }}</td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedJsonVisitSummaryColumns"></tr>
+              <tr mat-row [ngClass]="!jsonVisitSummaryParent.is_enabled ? 'text-greyout' : ''" *matRowDef="let row; columns: displayedJsonVisitSummaryColumns"></tr>
+            </table>
+          </div>
+
+          <mat-paginator #jsonVisitSummaryPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements" data-test-id="matPaginatorJsonVisitSummary"></mat-paginator>
+
+          <div class="ai-llm-note mt-3">
+            <img src="assets/svgs/alert-triangle.svg" alt="" class="alert-icon" />
+            <span>
+              {{ "When 'New JSON Visit Summary' is active, the JSON version of the visit summary is passed to the AI LLM APIs for each sub-flag that is also active (DDx, TTx). Make sure the backend changes supporting this format are deployed before making it active." | translate }}
+            </span>
+          </div>
+          <button type="button" class="btn-block mt-3" (click)="onPublish()" data-test-id="btnPublishJsonVisitSummaryBottom">
+            {{ "Publish" | translate }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -82,4 +82,20 @@ describe('AiLlmComponent', () => {
     component.updateAILLMVoiceTranscriptEnabledStatus(2, true);
     expect(configService.updateAILLMVoiceTranscriptEnabledStatus).toHaveBeenCalledWith(2, true);
   });
+
+  it('splits the JSON visit summary rows out of the AI LLM rows', () => {
+    configService.getAILLM.and.returnValue(of({ aiLlm: [
+      { id: 1, key: 'json_format_visit_summary_ttx', name: 'TTx', is_enabled: true },
+      { id: 2, key: 'ai_ddx_precompute', name: 'Precompute', is_enabled: true },
+      { id: 3, key: 'json_format_visit_summary', name: 'Parent', is_enabled: false },
+      { id: 4, key: 'json_format_visit_summary_ddx', name: 'DDx', is_enabled: true }
+    ] }));
+    component.getAILLM();
+    expect(component.aiLlmDataSource.data.map((r) => r.key)).toEqual(['ai_ddx_precompute']);
+    expect(component.jsonVisitSummaryParent.id).toBe(3);
+    expect(component.jsonVisitSummaryDataSource.data.map((r) => r.key)).toEqual([
+      'json_format_visit_summary_ddx',
+      'json_format_visit_summary_ttx'
+    ]);
+  });
 });

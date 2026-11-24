@@ -78,6 +78,9 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   ayuSuggestedQuestions: AyuSuggestedQuestion[] = [];
   ayuRefineText = '';
   private ayuNoteUuid = '';
+  private ayuNoteValue = '';
+  private ayuLoaded = false;
+  private draftLoaded = false;
 
   hasEnoughInfo = true;
 
@@ -235,8 +238,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!notes || !this.canWrite()) { return; }
     this.v2Service.saveInteractionNote(this.patientUuid, this.visitNoteUuid, notes, this.ayuNoteUuid).subscribe(res => {
       this.ayuNoteUuid = res?.uuid || this.ayuNoteUuid;
-      this.loadAiDiagnosis(notes, true);
+      this.ayuNoteValue = notes;
+      this.loadAiDiagnosis(this.buildDdxNotes(), true);
     });
+  }
+
+  buildDdxNotes(): string {
+    return [this.ayuNoteValue, ...this.outcomeNotes.map(n => n.value)]
+      .map(v => String(v || '').trim())
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  private rerunDdxForNotes(force = false): void {
+    if (this.visitCompleted || !this.canWrite()) { return; }
+    this.loadAiDiagnosis(this.buildDdxNotes(), true, force);
+  }
+
+  private maybeLoadInitialDdx(): void {
+    if (!this.draftLoaded || !this.ayuLoaded) { return; }
+    this.loadAiDiagnosis(this.buildDdxNotes());
   }
 
   private buildAyuNotes(): string {
@@ -276,12 +297,18 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
 
   private loadInteractionNote(): void {
     this.aiDiagnosisState = 'loading';
+    this.ayuLoaded = false;
     this.v2Service.loadInteractionNote(this.patientUuid, this.visitUuid).subscribe({
       next: note => {
         this.ayuNoteUuid = note.uuid;
-        this.loadAiDiagnosis(note.value);
+        this.ayuNoteValue = note.value;
+        this.ayuLoaded = true;
+        this.maybeLoadInitialDdx();
       },
-      error: () => this.loadAiDiagnosis()
+      error: () => {
+        this.ayuLoaded = true;
+        this.maybeLoadInitialDdx();
+      }
     });
   }
 
@@ -322,7 +349,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   private loadDraft(): void {
-    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid, [this.visitNoteUuid].filter(Boolean)).subscribe(draft => {
+    this.draftLoaded = false;
+    this.v2Service.loadDraftNote(this.patientUuid, this.visitUuid, [this.visitNoteUuid].filter(Boolean)).subscribe({ next: draft => {
       this.addedDiagnoses = draft.diagnoses;
       this.addedMedicines = draft.medications;
       this.advices = draft.advices;
@@ -344,7 +372,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       if (this.addedDiagnoses.length) {
         this.loadAiTreatment();
       }
-    });
+      this.draftLoaded = true;
+      this.maybeLoadInitialDdx();
+    }, error: () => {
+      this.draftLoaded = true;
+      this.maybeLoadInitialDdx();
+    } });
   }
 
   private canWrite(): boolean {
@@ -464,14 +497,14 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   }
 
   retryAiDiagnosis(): void {
-    this.loadAiDiagnosis(this.buildAyuNotes(), true);
+    this.loadAiDiagnosis(this.buildDdxNotes(), true);
   }
 
-  private loadAiDiagnosis(notes = '', recompute = false): void {
+  private loadAiDiagnosis(notes = '', recompute = false, force = false): void {
     if (!this.visit || !this.patientInfo) { return; }
     this.aiDiagnosisState = 'loading';
     this.aiResponseReceived = false;
-    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted, recompute && !!notes.trim()).subscribe({
+    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted, recompute, force).subscribe({
       next: result => {
         this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;
@@ -857,11 +890,12 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     this.v2Service.saveNote(this.patientUuid, this.visitNoteUuid, value).subscribe(res => {
       this.outcomeNotes.push({ value, uuid: res?.uuid || '' });
       this.newNoteText = '';
+      this.rerunDdxForNotes();
     });
   }
 
   deleteNote(index: number, uuid?: string): void {
-    this.v2Service.removeDraftItem(this.outcomeNotes, index, uuid);
+    this.v2Service.removeDraftItem(this.outcomeNotes, index, uuid, () => this.rerunDdxForNotes(true));
   }
 
   cancelNote(): void {
