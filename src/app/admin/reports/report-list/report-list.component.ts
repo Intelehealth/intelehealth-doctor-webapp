@@ -12,11 +12,12 @@ import { isFeaturePresent } from 'src/app/utils/utility-functions';
 export class ReportListComponent {
   dataSource = new MatTableDataSource<any>();
   reports = [
-    {
-      id: 1,
-      name: 'List of Patients between two dates',
-      buttonName: "Create Report"
-    },
+    // Hidden from the admin report page.
+    // {
+    //   id: 1,
+    //   name: 'List of Patients between two dates',
+    //   buttonName: "Create Report"
+    // },
     {
       id: 2,
       name: 'List of Visits between two dates',
