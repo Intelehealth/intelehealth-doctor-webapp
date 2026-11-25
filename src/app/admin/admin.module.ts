@@ -62,6 +62,7 @@ import { InsightsComponent } from './insights/insights.component';
 import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
 import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
 import { VisitSummaryV2ConfigComponent } from './admin-actions/visit-summary-v2/visit-summary-v2.component';
+import { NcdComponent } from './admin-actions/ncd/ncd.component';
 
 
 // AoT requires an exported function for factories
@@ -188,6 +189,10 @@ const routes: Routes = [
             component: VisitSummaryV2ConfigComponent
           },
           {
+            path: 'ncd',
+            component: NcdComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -232,6 +237,7 @@ const routes: Routes = [
     PrescriptionNotesComponent,
     NamcoReferralComponent,
     VisitSummaryV2ConfigComponent,
+    NcdComponent,
     QmsComponent
   ],
   imports: [
