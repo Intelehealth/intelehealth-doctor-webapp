@@ -16,7 +16,7 @@ on:
   push:
     branches:
       - development_master
- 
+
 jobs:
   set-matrix:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
           else
             echo 'targets=["dev","turn","ttxai","testturn","pathqa"]' >> "$GITHUB_OUTPUT"
           fi
- 
+
   build-and-deploy:
     needs: set-matrix
     # pathqa is an ARM64 server -> build natively on GitHub's ARM runner (no slow QEMU emulation)
@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
- 
+
       - name: Resolve deploy host and platform
         id: resolve
         run: |
@@ -130,22 +130,54 @@ jobs:
             .
           docker image inspect intelehealth-webapp:latest --format 'Built image arch: {{.Os}}/{{.Architecture}}'
           docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
- 
-      - name: Upload Image to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ steps.resolve.outputs.host }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "webapp_image.tar.gz"
-          target: "/home/ubuntu/deploy/webapp/"
- 
+          du -h webapp_image.tar.gz
+
+      - name: Upload and verify Image on Server
+        env:
+          DEPLOY_HOST: ${{ steps.resolve.outputs.host }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$REMOTE_USER" ] || [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "Missing required deployment environment variables." >&2
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 644 ~/.ssh/known_hosts
+
+          SSH_OPTS=(-i ~/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 -o ServerAliveInterval=30 -o ServerAliveCountMax=10)
+
+          echo "Checking destination and disk space on $DEPLOY_HOST"
+          ssh "${SSH_OPTS[@]}" "$REMOTE_USER@$DEPLOY_HOST" 'set -e
+            test -d /home/ubuntu/deploy/webapp
+            df -h /home/ubuntu/deploy/webapp
+            df -Pk /home/ubuntu/deploy/webapp | awk "NR==2 && \$4 < 2048 { print \"Insufficient disk space: less than 2GB available\" > \"/dev/stderr\"; exit 1 }"
+          '
+
+          LOCAL_SHA=$(sha256sum webapp_image.tar.gz | awk '{print $1}')
+          scp "${SSH_OPTS[@]}" webapp_image.tar.gz "$REMOTE_USER@$DEPLOY_HOST:/home/ubuntu/deploy/webapp/webapp_image.tar.gz.uploading"
+
+          REMOTE_SHA=$(ssh "${SSH_OPTS[@]}" "$REMOTE_USER@$DEPLOY_HOST" 'sha256sum /home/ubuntu/deploy/webapp/webapp_image.tar.gz.uploading | awk "{print \$1}"')
+          if [ "$LOCAL_SHA" != "$REMOTE_SHA" ]; then
+            echo "Image checksum mismatch: local=$LOCAL_SHA remote=$REMOTE_SHA" >&2
+            exit 1
+          fi
+
+          ssh "${SSH_OPTS[@]}" "$REMOTE_USER@$DEPLOY_HOST" 'mv -f /home/ubuntu/deploy/webapp/webapp_image.tar.gz.uploading /home/ubuntu/deploy/webapp/webapp_image.tar.gz'
+
       - name: Deploy Container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ steps.resolve.outputs.host }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 30m
+          command_timeout: 30m
           script: |
             cd /home/ubuntu/deploy/webapp/
             chmod 644 webapp_image.tar.gz
