@@ -27,7 +27,8 @@ import {
   SymptomGroup, TimelineGroup, VitalCell
 } from './visit-summary-v2.models';
 import {
-  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE
+  ADVICE_SEARCH_MAX_RESULTS, ADVICE_SEARCH_MIN_LENGTH, AI_CONFIDENCE_HIGH, AI_CONFIDENCE_MODERATE,
+  DEFAULT_MEDICINE_DURATION_UNIT, DURATION_UNIT_IN_DAYS
 } from './doctor-note/doctor-note.constants';
 
 export interface DraftDiagnosis { name: string; type: string; status: string; code: string; uuid: string; }
@@ -143,7 +144,11 @@ export class VisitSummaryV2Service {
   * Connect the logged-in doctor to the visit's health worker through Kaleyra click2call — same
   * checks, payload, toasts and analytics as the old Visit Summary's startKaleyraCall().
   */
-  startKaleyraCall(visit: VisitModel, hwPhoneNo: string): void {
+  startKaleyraCall(visit: VisitModel, hwPhoneNo: string, screen = 'visit_summary_v2'): void {
+    this.analytics.logEvent('kaleyra_call_clicked', 'engagement', 'kaleyra_call_button', 1, {
+      ...this.contactAnalyticsPayload(visit, screen),
+      hasHwPhoneNo: !!hwPhoneNo
+    });
     if (!hwPhoneNo) {
       this.toastr.error('Health worker phone number is not available');
       return;
@@ -195,6 +200,28 @@ export class VisitSummaryV2Service {
         this.toastr.error('Failed to initiate Kaleyra call. Please try again.');
       }
     });
+  }
+
+  /**
+  * Common Google Analytics params for patient/HW contact actions, same fields as the old
+  * Visit Summary's contactAnalyticsPayload() plus the screen the icon was clicked on.
+  */
+  contactAnalyticsPayload(visit: VisitModel, screen: string) {
+    return {
+      doctorUserId: this.helper.userId,
+      patientOpenMrsId: this.patientIdentifier(visit?.patient as any, 'OpenMRS ID'),
+      visitId: visit?.uuid,
+      location: visit?.location?.display || '',
+      screen
+    };
+  }
+
+  /**
+  * Track the patient phone / WhatsApp icons; the link itself does the dialling or opening.
+  */
+  logPatientContact(channel: 'phone' | 'whatsapp', visit: VisitModel, screen: string): void {
+    const event = channel === 'whatsapp' ? 'whatsapp_link_opened' : 'patient_phone_dialled';
+    this.analytics.logEvent(event, 'engagement', 'patient_contact', 1, this.contactAnalyticsPayload(visit, screen));
   }
 
   loadInteractionNote(patientUuid: string, visitUuid: string): Observable<DraftTextItem> {
@@ -273,6 +300,20 @@ export class VisitSummaryV2Service {
     return Math.round(num <= 1 ? num * 100 : num);
   }
 
+  /**
+  * Converts a duration to days, as the medication card edits days only: '2' 'Weeks' → '14' 'Days'
+  * (a month counts as 30 days, no unit means days). A non-numeric duration or unknown unit is kept as is.
+  */
+  toDurationInDays(durationNo: any, durationUnit: any): { durationNo: string; durationUnit: string } {
+    const no = `${durationNo ?? ''}`.trim();
+    const unit = `${durationUnit ?? ''}`.trim();
+    const factor = unit ? DURATION_UNIT_IN_DAYS[unit.toLowerCase().replace(/s$/, '')] : 1;
+    if (!no || !factor || isNaN(Number(no))) {
+      return { durationNo: no, durationUnit: unit };
+    }
+    return { durationNo: `${Number(no) * factor}`, durationUnit: DEFAULT_MEDICINE_DURATION_UNIT };
+  }
+
   private mapLikelihood(value: string): SuggestionLikelihood {
     const likelihood = (value || '').toLowerCase();
     if (likelihood.includes('high')) { return 'High'; }
@@ -292,18 +333,21 @@ export class VisitSummaryV2Service {
     const data = res?.result?.data || {};
     return {
       rawMedicines: data.medications || data.result || [],
-      medicines: (data.medications || data.result || []).map((m: any) => ({
-        name: m?.name || '',
-        label: m?.name || '',
-        likelihood: this.mapConfidence(m?.confidence),
-        confidence: this.mapProbability(m?.confidence),
-        reasons: this.toReasonList(m?.rationale),
-        timing: m?.frequency || '',
-        strength: m?.dosage || '',
-        days: m?.duration ? `${m.duration}` : '',
-        durationUnit: m?.duration_unit || '',
-        remarks: m?.instructions || ''
-      })).filter((m: AiMedicationSuggestion) => !!m.name),
+      medicines: (data.medications || data.result || []).map((m: any) => {
+        const duration = this.toDurationInDays(m?.duration, m?.duration_unit);
+        return {
+          name: m?.name || '',
+          label: m?.name || '',
+          likelihood: this.mapConfidence(m?.confidence),
+          confidence: this.mapProbability(m?.confidence),
+          reasons: this.toReasonList(m?.rationale),
+          timing: m?.frequency || '',
+          strength: m?.dosage || '',
+          days: duration.durationNo,
+          durationUnit: duration.durationUnit,
+          remarks: m?.instructions || ''
+        };
+      }).filter((m: AiMedicationSuggestion) => !!m.name),
       advices: this.toSuggestionList(data.medical_advice).map((a: any) => a?.v || a).filter((a: any) => typeof a === 'string' && !!a),
       tests: this.toSuggestionList(data.tests_to_be_done).map((t: any) => t?.test_name || t).filter((t: any) => typeof t === 'string' && !!t),
       referrals: this.toReferralList(data.referral),
@@ -455,6 +499,7 @@ export class VisitSummaryV2Service {
       patientHistory: mh.patientHistory,
       familyHistory: mh.familyHistory,
       vitals: this.buildVitals(encounters),
+      diagnostics: this.buildDiagnostics(encounters),
       generalExams: pe.generalExams,
       abdomenFindings: pe.abdomenFindings,
       eyeImages: this.imageSrcsFromEncounters(encounters, conceptIds.conceptPhysicalExamination),
@@ -1109,9 +1154,10 @@ export class VisitSummaryV2Service {
       };
       if (chosen) {
         matchedNames.add(norm(chosen.drug));
+        const aiDuration = this.toDurationInDays(ai?.duration, ai?.duration_unit);
         const modified = norm(chosen.dose) !== norm(ai?.dosage || ai?.dose)
-          || norm(chosen.durationNo) !== norm(ai?.duration)
-          || norm(chosen.durationUnit) !== norm(ai?.duration_unit)
+          || norm(chosen.durationNo) !== norm(aiDuration.durationNo)
+          || norm(chosen.durationUnit) !== norm(aiDuration.durationUnit)
           || norm(chosen.instructRemark) !== norm(ai?.instructions)
           || norm(chosen.frequency) !== norm(ai?.frequency);
         Object.assign(item, {
@@ -1155,6 +1201,14 @@ export class VisitSummaryV2Service {
         { concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', value: JSON.stringify(this.buildDoctorDetails(provider)) }
       ]
     }).pipe(tap(() => {
+      // Turn deployments only (no health worker to end the visit): prescription is shared ->
+      // end the visit (sets stopDatetime) so it moves from In-progress to Completed visits.
+      // A failure is logged and does not affect the share.
+      if (environment.isTurnServer) {
+        this.visitService.endVisit(visitUuid).subscribe({
+          error: (err) => console.error(`[visit-summary-v2] could not end visit ${visitUuid} after prescription share`, err),
+        });
+      }
       this.appointmentService.completeAppointment({ visitUuid }).subscribe({ error: () => {} });
       this.linkService.shortUrl(`/i/${visitUuid}`).subscribe({
         next: (res: ApiResponseModel) => {
@@ -1245,7 +1299,11 @@ export class VisitSummaryV2Service {
       patient: this.buildPatient(patient, vitals, patientHistory),
       patientModel: patient,
       clinicName,
-      visitEnded: !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
+      // Turn: the exit survey holds the patient's WhatsApp feedback (saved before the doctor
+      // shares), so only stopDatetime means the visit ended.
+      visitEnded: environment.isTurnServer
+        ? !!visit.stopDatetime
+        : !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
       visitReferred: !!this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL),
       visitCompleted: !!this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE),
       visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
@@ -1379,7 +1437,8 @@ export class VisitSummaryV2Service {
   }
 
   private getVisitStatus(encounters: EncounterModel[]): string {
-    if (this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) { return visitTypes.ENDED_VISIT; }
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) { return visitTypes.ENDED_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) { return visitTypes.COMPLETED_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) { return visitTypes.IN_PROGRESS_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) { return visitTypes.PRIORITY_VISIT; }

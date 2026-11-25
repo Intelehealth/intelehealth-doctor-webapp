@@ -19,6 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
 import { ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -86,12 +87,13 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
-    private translateService: TranslateService) {
+    private translateService: TranslateService,
+    private appConfigService: AppConfigService) {
 
       this.personalInfoForm = new FormGroup({
-        givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-        middleName: new FormControl('', [Validators.pattern(/^[A-Za-z]*$/)]),
-        familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
+        givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+        middleName: new FormControl('', [Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+        familyName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
         gender: new FormControl('M', [Validators.required]),
         birthdate: new FormControl('', [Validators.required]),
         age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),
@@ -129,6 +131,13 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    if (this.appConfigService.patient_visit_summary?.allow_duplicate_phoneno_and_email) {
+      this.phoneNumberValid = true;
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.personalInfoForm.get(doctorDetails.EMAIL_ID).clearAsyncValidators();
+    }
   }
 
   /**
@@ -272,6 +281,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         };
         this.profileService.updateProfileImage(payload).subscribe((res) => {
           this.toastr.success('Profile picture uploaded successfully!', 'Profile Pic Uploaded');
+        }, (err) => {
+          this.toastr.error(err?.error?.error?.message || this.translateService.instant('Something went wrong.'), this.translateService.instant('Upload error!'));
         });
       };
       reader.readAsDataURL(this.file);
@@ -362,6 +373,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   updateProfile() {
     this.submitted = true;
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
+      this.personalInfoForm.markAllAsTouched();
+      this.toastr.warning(this.translateService.instant('Please correct the highlighted fields.'), this.translateService.instant('Profile not saved'));
       return;
     }
 
@@ -371,13 +384,22 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       if (this.provider.person?.preferredName) {
         this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
           this.updateProviderAttributes();
-        });
+        }, (err) => this.onSaveError(err));
       } else {
         this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
           this.updateProviderAttributes();
-        });
+        }, (err) => this.onSaveError(err));
       }
-    });
+    }, (err) => this.onSaveError(err));
+  }
+
+  /**
+  * Show an error toast when saving the profile fails
+  * @param {any} err - Http error response
+  * @return {void}
+  */
+  onSaveError(err) {
+    this.toastr.error(err?.error?.error?.message || this.translateService.instant('Something went wrong.'), this.translateService.instant('Profile not saved'));
   }
 
   /**
@@ -448,7 +470,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           }
         });
       }
-    });
+    }, (err) => this.onSaveError(err));
   }
 
   /**
@@ -493,6 +515,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   validateProviderAttribute(type: string) {
+    if (this.appConfigService.patient_visit_summary?.allow_duplicate_phoneno_and_email) {
+      this.phoneValid = true;
+      this.emailValid = true;
+      this.phoneNumberValid = true;
+      return;
+    }
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
       if (res.success) {

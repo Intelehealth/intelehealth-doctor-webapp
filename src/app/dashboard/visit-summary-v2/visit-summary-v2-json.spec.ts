@@ -66,15 +66,17 @@ describe('VisitSummaryV2Service JSON visit summary payload', () => {
       const ddx = http.expectOne('http://mm/ddx').request.body;
       v2.loadAiTreatment(patientInfo, visit, 'Gastroenteritis').subscribe();
       const ttx = http.expectOne(r => r.url.startsWith('http://mm/ttx')).request.body;
+      expect(typeof ddx.casehistory).toBe('string');
+      expect(typeof ttx.case).toBe('string');
       if (c.ddxJson) {
-        expect(ddx.casehistory).toEqual({ ...summary, notes: 'doc notes' });
+        expect(JSON.parse(ddx.casehistory)).toEqual({ ...summary, notes: 'doc notes' });
       } else {
-        expect(typeof ddx.casehistory).toBe('string');
+        expect(ddx.casehistory.startsWith('{')).toBeFalse();
       }
       if (c.ttxJson) {
-        expect(ttx.case).toEqual(summary);
+        expect(JSON.parse(ttx.case)).toEqual(summary);
       } else {
-        expect(typeof ttx.case).toBe('string');
+        expect(ttx.case.startsWith('{')).toBeFalse();
       }
     });
   });
@@ -83,8 +85,8 @@ describe('VisitSummaryV2Service JSON visit summary payload', () => {
     config.ai_llm = { json_format_visit_summary: true, json_format_visit_summary_ddx: true, json_format_visit_summary_ttx: true };
     const bare: any = { ...visit, encounters: [{ ...visit.encounters[0], obs: [visit.encounters[0].obs[0]] }, visit.encounters[1]] };
     v2.loadAiDiagnosis(patientInfo, bare, 'doc notes').subscribe();
-    expect(typeof http.expectOne('http://mm/ddx').request.body.casehistory).toBe('string');
+    expect(http.expectOne('http://mm/ddx').request.body.casehistory.startsWith('{')).toBeFalse();
     v2.loadAiTreatment(patientInfo, bare, 'Gastroenteritis').subscribe();
-    expect(typeof http.expectOne(r => r.url.startsWith('http://mm/ttx')).request.body.case).toBe('string');
+    expect(http.expectOne(r => r.url.startsWith('http://mm/ttx')).request.body.case.startsWith('{')).toBeFalse();
   });
 });

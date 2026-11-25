@@ -129,7 +129,8 @@ export class AppointmentDetailComponent implements OnInit {
   * @return {string} - Returns visit status
   */
   checkVisitStatus(encounters: EncounterModel[]) {
-    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       return 'Completed';

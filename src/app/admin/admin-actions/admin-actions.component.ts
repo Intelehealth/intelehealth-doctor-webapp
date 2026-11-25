@@ -175,6 +175,13 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/visit-summary-v2",
       isLocalPath: true
     },
+    {
+      title: "NCD Screening",
+      desc: "Manage NCD (Diabetes & Hypertension) screening in the health worker app",
+      icon: "assets/svgs/ncd.svg",
+      path: "admin/actions/ncd",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,

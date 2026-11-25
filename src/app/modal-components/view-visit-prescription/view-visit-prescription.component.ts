@@ -531,7 +531,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   checkVisitStatus(encounters: EncounterModel[]) {
-    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       this.visitStatus = visitTypes.COMPLETED_VISIT;
