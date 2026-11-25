@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { FeatureModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
@@ -11,8 +14,11 @@ import { languages } from 'src/config/constant';
   templateUrl: './namco-referral.component.html',
   styleUrls: ['./namco-referral.component.scss']
 })
-export class NamcoReferralComponent implements OnInit {
-  namcoReferralFeature: any = {};
+export class NamcoReferralComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  namcoReferralData: FeatureModel[];
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -24,29 +30,36 @@ export class NamcoReferralComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.getNamcoReferralSection();
+    this.getNamcoReferral();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   /**
-  * Get the Namco Referral Section feature config.
+  * Get the Namco Referral feature config.
   * @return {void}
   */
-  getNamcoReferralSection(): void {
-    this.configService.getFeatureByKey('namco_referral_section').subscribe((res: any) => {
-      this.namcoReferralFeature = res.feature;
+  getNamcoReferral(): void {
+    this.configService.getFeatures().subscribe(res => {
+      this.namcoReferralData = res.feature?.filter((v: FeatureModel) => v.key === 'namco_referral_section');
+      this.dataSource = new MatTableDataSource(this.namcoReferralData);
+      this.dataSource.paginator = this.paginator;
     });
   }
 
   /**
-  * Update the Namco Referral Section enabled status.
+  * Update Namco Referral status.
   * @return {void}
   */
-  updateNamcoReferralStatus(status: boolean): void {
-    this.configService.updateFeatureEnabledStatus(this.namcoReferralFeature.id, status).subscribe(() => {
-      this.toastr.success("Namco Referral has been successfully updated", "Update successful!");
-      this.getNamcoReferralSection();
+  updateStatus(id: number, status: boolean): void {
+    this.configService.updateFeatureEnabledStatus(id, status).subscribe(() => {
+      const name = this.namcoReferralData?.find((v: FeatureModel) => v.id === id)?.name;
+      this.toastr.success(`${name} has been successfully updated`, "Update successful!");
+      this.getNamcoReferral();
     }, () => {
-      this.getNamcoReferralSection();
+      this.getNamcoReferral();
     });
   }
 
@@ -56,7 +69,8 @@ export class NamcoReferralComponent implements OnInit {
   */
   onPublish(): void {
     this.configService.publishConfig().subscribe(() => {
-      this.toastr.success("Namco Referral changes published successfully!", "Changes published!");
+      const name = this.namcoReferralData?.find((v: FeatureModel) => v.key === 'namco_referral_section')?.name;
+      this.toastr.success(`${name} changes published successfully!`, "Changes published!");
     });
   }
 }
