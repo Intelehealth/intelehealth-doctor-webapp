@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { FeatureModel } from 'src/app/model/model';
 import { ConfigService } from 'src/app/services/config.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
@@ -11,11 +14,11 @@ import { languages } from 'src/config/constant';
   templateUrl: './qms.component.html',
   styleUrls: ['./qms.component.scss']
 })
-export class QmsComponent implements OnInit {
-
-  qmsFeature: any = {};
-  featureMissing = false;
-  isSaving = false;
+export class QmsComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['id', 'name', 'platform', 'updatedAt', 'is_enabled'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  qmsData: FeatureModel[];
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -27,64 +30,47 @@ export class QmsComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.getQmsFeature();
+    this.getQms();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   /**
-  * Whether the toggle and publish buttons can be used.
-  * @return {boolean}
-  */
-  get canEdit(): boolean {
-    return !!this.qmsFeature?.id && !this.isSaving;
-  }
-
-  /**
-  * Get QMS feature config.
+  * Get the QMS feature config.
   * @return {void}
   */
-  getQmsFeature(): void {
-    this.configService.getFeatureByKey('qms_section').subscribe((res: any) => {
-      this.qmsFeature = res?.feature ?? {};
-      this.featureMissing = !this.qmsFeature?.id;
-    }, () => {
-      this.qmsFeature = {};
-      this.featureMissing = true;
-      this.toastr.error("Could not load the QMS setting, please refresh the page.", "Load failed!");
+  getQms(): void {
+    this.configService.getFeatures().subscribe(res => {
+      this.qmsData = res.feature?.filter((v: FeatureModel) => v.key === 'qms_section');
+      this.dataSource = new MatTableDataSource(this.qmsData);
+      this.dataSource.paginator = this.paginator;
     });
   }
 
   /**
-  * Update QMS enabled status.
-  * @param {boolean} checked - new enabled status
+  * Update QMS status.
   * @return {void}
   */
-  updateQmsStatus(checked: boolean): void {
-    if (!this.qmsFeature?.id || this.isSaving) { return; }
-    this.isSaving = true;
-    this.configService.updateFeatureEnabledStatus(this.qmsFeature.id, checked).subscribe(() => {
-      this.isSaving = false;
-      this.toastr.success("QMS has been successfully updated", "Update successful!");
-      this.getQmsFeature();
+  updateStatus(id: number, status: boolean): void {
+    this.configService.updateFeatureEnabledStatus(id, status).subscribe(() => {
+      const name = this.qmsData?.find((v: FeatureModel) => v.id === id)?.name;
+      this.toastr.success(`${name} has been successfully updated`, "Update successful!");
+      this.getQms();
     }, () => {
-      this.isSaving = false;
-      this.toastr.error("QMS could not be updated, please try again.", "Update failed!");
-      this.getQmsFeature();
+      this.getQms();
     });
   }
 
   /**
-  * Publish all pending configuration changes.
+  * Publish QMS changes.
   * @return {void}
   */
   onPublish(): void {
-    if (this.isSaving) { return; }
-    this.isSaving = true;
     this.configService.publishConfig().subscribe(() => {
-      this.isSaving = false;
-      this.toastr.success("All pending configuration changes published successfully!", "Changes published!");
-    }, () => {
-      this.isSaving = false;
-      this.toastr.error("Changes could not be published, please try again.", "Publish failed!");
+      const name = this.qmsData?.find((v: FeatureModel) => v.key === 'qms_section')?.name;
+      this.toastr.success(`${name} changes published successfully!`, "Changes published!");
     });
   }
 }
