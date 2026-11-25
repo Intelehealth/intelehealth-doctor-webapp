@@ -6,6 +6,9 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
+# The environment generator uses CI to provide safe placeholder values for
+# required variables that are absent from the build context.
+ENV CI=true
 RUN npm run build -- --configuration=production
 
 FROM nginx:alpine
@@ -15,4 +18,4 @@ RUN rm -rf ./*
 COPY --from=build /app/dist/intelehealth-ui /usr/share/nginx/html/intelehealth
 
 EXPOSE 81
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "daemon off;"]
