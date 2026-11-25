@@ -6,6 +6,7 @@ import { AppConfigService } from '../services/app-config.service';
 import * as moment from 'moment';
 import { getCacheData, getAge, isNamcoDoctor } from '../utils/utility-functions';
 import { doctorDetails, visitTypes, conceptIds } from 'src/config/constant';
+import { environment } from 'src/environments/environment';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ObsApiResponseModel, ObsModel, ProviderAttributeModel } from '../model/model';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
@@ -114,7 +115,8 @@ export class PrescriptionComponent implements OnInit , OnDestroy{
           visit.cheif_complaint = this.getCheifComplaint(visit);
           visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
-          if (pesenc) {
+          // Turn: the exit survey is the patient's feedback time, not when the visit ended.
+          if (pesenc && !environment.isTurnServer) {
             visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime.replace('Z','+0530'));
           } else {
             visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped.replace('Z','+0530'));

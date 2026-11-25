@@ -821,8 +821,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if this visit has been referred to a specialist
             this.hasReferral = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.REFERRAL);
-            // check if Patient Exit Survey exists for this visit
-            this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
+            // check if Patient Exit Survey exists for this visit.
+            // Turn: the exit survey holds the patient's WhatsApp feedback, saved as soon as it
+            // arrives (before the doctor shares), so only stopDatetime means the visit ended.
+            this.visitEnded = environment.isTurnServer
+              ? visit.stopDatetime
+              : this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             this.maybeAutoStartCall();
             if (this.visitNotePresent) {
@@ -1303,7 +1307,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   checkVisitStatus(encounters: EncounterModel[]): void {
-    if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (environment.isTurnServer ? !!this.visit?.stopDatetime : this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
     } else if (this.visitSummaryService.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       this.visitStatus = visitTypes.COMPLETED_VISIT;
@@ -3012,11 +3017,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                       const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
                           // Prescription just shared -> notify the patient on WhatsApp.
                         // Fetch the visit fresh (now that the encounter above is confirmed
-                        // created) and send it along,
+                        // created) and send it along. Turn saves the patient's held feedback
+                        // before answering; the visit is ended only after that (autoEndVisit).
                           if (environment.isTurnServer) {
                             this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
-                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, false, () => this.autoEndVisitOnTurn()),
-                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisitOnTurn()),
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, false, () => this.autoEndVisit()),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisit()),
                           });
                           }
                           this.notifyHwForAvailablePrescription("","",followUpDate);
@@ -3058,12 +3064,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                           });
                         });
                       } else {
-                        // Update Prescription: re-notify the patient on WhatsApp, same as Share Prescription.
+                        // Update Prescription: re-notify the patient on WhatsApp, same as Share
+                        // Prescription; then end a visit completed before auto-end existed.
                         if (environment.isTurnServer) {
                           this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
-                            // Also ends visits shared before auto-end existed, once the resend is confirmed.
-                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true, () => this.autoEndVisitOnTurn()),
-                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true, () => this.autoEndVisitOnTurn()),
+                            next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, true, () => this.autoEndVisit()),
+                            error: () => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, true, () => this.autoEndVisit()),
                           });
                         }
                         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
@@ -3245,7 +3251,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.visitCompleted = true;
             const followUpDate = `${this.followUpForm.value.followUpDate}`;
             if (environment.isTurnServer) {
-              this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisitOnTurn());
+              // Turn saves held feedback first, then the visit is ended.
+              this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, undefined, false, () => this.autoEndVisit());
             }
             this.notifyHwForAvailablePrescription("", "", followUpDate);
             this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
@@ -3421,14 +3428,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-  * Turn (IDTP-202): there is no health worker to end the visit, so it is ended once the
-  * prescription is confirmed shared -- called only from notifyPrescriptionOnTurn's success
-  * callback (Visit Complete saved + Turn confirmed the WhatsApp send). Sets stopDatetime
-  * (same call as the HW webapp's "End visit"), which moves the visit from In-progress to
-  * Completed visits. A failure is logged and does not affect the share.
+  * Turn deployments only (environment.isTurnServer): ends the visit from the doctor side
+  * once the prescription is shared (Sign & Submit). Called from notifyPrescriptionOnTurn's
+  * onDone, i.e. after Turn has answered -- Turn saves the patient's held feedback (Patient
+  * Exit Survey encounter) before answering, and OpenMRS rejects encounters dated after
+  * the visit's stop time, so the feedback must be written first. Sets stopDatetime (same call as the
+  * HW webapp's "End visit"), which moves the visit from In-progress to Completed visits.
+  * A failure is logged and does not affect the share.
   * @returns {void}
   */
-  private autoEndVisitOnTurn(): void {
+  private autoEndVisit(): void {
+    // Turn deployments only: there is no health worker to end the visit.
     if (!environment.isTurnServer || this.visitEnded || !this.visit?.uuid) return;
     const visitUuid = this.visit.uuid;
     this.visitService.endVisit(visitUuid).subscribe({
