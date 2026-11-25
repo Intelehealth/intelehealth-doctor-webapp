@@ -127,7 +127,7 @@
       </ng-container>
 
       <ng-container *ngIf="activeVisitScope === 'Past Visits'">
-        <app-past-visits *ngIf="activePastVisit" [visit]="activePastVisit"></app-past-visits>
+        <app-past-visits *ngIf="activePastVisit" [visit]="activePastVisit" [diagnosticsEnabled]="diagnosticsEnabled"></app-past-visits>
       </ng-container>
 
     </div>

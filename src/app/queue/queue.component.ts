@@ -15,6 +15,7 @@ import { doctorDetails, visitTypes } from 'src/config/constant';
 import { VisitService } from '../services/visit.service';
 import { QueueService } from '../services/queue.service';
 import { AvailabilityState, DoctorAvailabilityService } from '../services/doctor-availability.service';
+import { AnalyticsService } from '../services/analytics.service';
 
 const QUEUE_VISIT_REPRESENTATION = 'custom:(uuid,location:(display),' +
   'patient:(uuid,person:(display,gender,age,birthdate)),' +
@@ -56,7 +57,8 @@ export class QueueComponent implements OnInit, OnDestroy {
     private visitService: VisitService,
     private availabilityService: DoctorAvailabilityService,
     private toastr: ToastrService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private analytics: AnalyticsService) { }
 
   ngOnInit(): void {
     this.availabilityService.changes
@@ -338,6 +340,14 @@ export class QueueComponent implements OnInit, OnDestroy {
   }
 
   startCall(patient: QueuePatient): void {
+    // The call itself starts on Visit Summary, which logs start_call with the call type.
+    this.analytics.logEvent('start_call_clicked', 'engagement', 'call_button', 1, {
+      doctorUserId: getCacheData(true, doctorDetails.USER)?.uuid,
+      patientUuid: patient.patientUuid,
+      visitId: patient.visitUuid,
+      location: patient.location,
+      screen: 'queue'
+    });
     this.router.navigate(['/dashboard', 'visit-summary', patient.visitUuid]);
   }
 
