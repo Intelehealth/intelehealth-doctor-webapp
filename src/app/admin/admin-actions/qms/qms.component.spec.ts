@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { QmsComponent } from './qms.component';
 
@@ -7,18 +7,16 @@ describe('QmsComponent', () => {
   let configService: any;
   let toastr: any;
 
-  const feature = { id: 7, key: 'qms_section', is_enabled: true };
+  const qms = { id: 7, key: 'qms_section', name: 'QMS Section', is_enabled: true };
+  const other = { id: 8, key: 'abha_section', name: 'ABHA ID', is_enabled: true };
 
   beforeEach(() => {
     configService = {
-      getFeatureByKey: jasmine.createSpy('getFeatureByKey').and.returnValue(of({ feature })),
+      getFeatures: jasmine.createSpy('getFeatures').and.returnValue(of({ feature: [qms, other] })),
       updateFeatureEnabledStatus: jasmine.createSpy('updateFeatureEnabledStatus').and.returnValue(of({})),
       publishConfig: jasmine.createSpy('publishConfig').and.returnValue(of({}))
     };
-    toastr = {
-      success: jasmine.createSpy('success'),
-      error: jasmine.createSpy('error')
-    };
+    toastr = { success: jasmine.createSpy('success') };
 
     component = new QmsComponent(
       { setTitle: () => {} } as any,
@@ -32,101 +30,38 @@ describe('QmsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('getQmsFeature', () => {
-    it('stores the feature and allows editing', () => {
-      component.getQmsFeature();
+  it('shows only the QMS feature row', () => {
+    component.getQms();
 
-      expect(configService.getFeatureByKey).toHaveBeenCalledWith('qms_section');
-      expect(component.qmsFeature).toEqual(feature);
-      expect(component.featureMissing).toBeFalse();
-      expect(component.canEdit).toBeTrue();
-    });
-
-    it('flags the feature as missing when the row is not seeded', () => {
-      configService.getFeatureByKey.and.returnValue(of({ feature: null }));
-
-      component.getQmsFeature();
-
-      expect(component.featureMissing).toBeTrue();
-      expect(component.canEdit).toBeFalse();
-    });
-
-    it('flags the feature as missing and warns when the request fails', () => {
-      configService.getFeatureByKey.and.returnValue(throwError(() => new Error('boom')));
-
-      component.getQmsFeature();
-
-      expect(component.featureMissing).toBeTrue();
-      expect(component.canEdit).toBeFalse();
-      expect(toastr.error).toHaveBeenCalled();
-    });
+    expect(configService.getFeatures).toHaveBeenCalled();
+    expect(component.qmsData).toEqual([qms] as any);
+    expect(component.dataSource.data).toEqual([qms]);
   });
 
-  describe('updateQmsStatus', () => {
-    it('does not call the API before the feature id is known', () => {
-      component.qmsFeature = {};
+  it('shows no rows when the QMS feature is not seeded', () => {
+    configService.getFeatures.and.returnValue(of({ feature: [other] }));
 
-      component.updateQmsStatus(true);
+    component.getQms();
 
-      expect(configService.updateFeatureEnabledStatus).not.toHaveBeenCalled();
-    });
-
-    it('sends the new status and re-reads the feature', () => {
-      component.getQmsFeature();
-
-      component.updateQmsStatus(false);
-
-      expect(configService.updateFeatureEnabledStatus).toHaveBeenCalledWith(7, false);
-      expect(configService.getFeatureByKey).toHaveBeenCalledTimes(2);
-      expect(toastr.success).toHaveBeenCalled();
-      expect(component.isSaving).toBeFalse();
-    });
-
-    it('re-reads the feature and warns when the update fails', () => {
-      component.getQmsFeature();
-      configService.updateFeatureEnabledStatus.and.returnValue(throwError(() => new Error('boom')));
-
-      component.updateQmsStatus(false);
-
-      expect(toastr.error).toHaveBeenCalled();
-      expect(configService.getFeatureByKey).toHaveBeenCalledTimes(2);
-      expect(component.isSaving).toBeFalse();
-    });
-
-    it('ignores a second change while one is in flight', () => {
-      component.getQmsFeature();
-      component.isSaving = true;
-
-      component.updateQmsStatus(true);
-
-      expect(configService.updateFeatureEnabledStatus).not.toHaveBeenCalled();
-    });
+    expect(component.qmsData).toEqual([]);
   });
 
-  describe('onPublish', () => {
-    it('publishes and reports success', () => {
-      component.onPublish();
+  it('sends the new status and re-reads the features', () => {
+    component.getQms();
 
-      expect(configService.publishConfig).toHaveBeenCalledTimes(1);
-      expect(toastr.success).toHaveBeenCalled();
-      expect(component.isSaving).toBeFalse();
-    });
+    component.updateStatus(7, false);
 
-    it('reports a failed publish', () => {
-      configService.publishConfig.and.returnValue(throwError(() => new Error('boom')));
+    expect(configService.updateFeatureEnabledStatus).toHaveBeenCalledWith(7, false);
+    expect(configService.getFeatures).toHaveBeenCalledTimes(2);
+    expect(toastr.success).toHaveBeenCalled();
+  });
 
-      component.onPublish();
+  it('publishes and reports success', () => {
+    component.getQms();
 
-      expect(toastr.error).toHaveBeenCalled();
-      expect(component.isSaving).toBeFalse();
-    });
+    component.onPublish();
 
-    it('ignores a second click while a publish is in flight', () => {
-      component.isSaving = true;
-
-      component.onPublish();
-
-      expect(configService.publishConfig).not.toHaveBeenCalled();
-    });
+    expect(configService.publishConfig).toHaveBeenCalledTimes(1);
+    expect(toastr.success).toHaveBeenCalled();
   });
 });

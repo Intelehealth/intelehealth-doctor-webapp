@@ -150,28 +150,28 @@ export class AdminActionsComponent implements OnInit {
     {
       title: "QMS",
       desc: "Manage QMS functionality",
-      icon: "assets/svgs/menu-queue.svg",
+      icon: "assets/svgs/admin-qms.svg",
       path: "admin/actions/qms",
       isLocalPath: true
     },
     {
       title: "Prescription Notes",
       desc: "Manage specialty-wise notes printed on prescriptions",
-      icon: "assets/svgs/advice.svg",
+      icon: "assets/svgs/admin-prescription-notes.svg",
       path: "admin/actions/prescription-notes",
       isLocalPath: true
     },
     {
       title: "Namco Referral",
       desc: "Manage Namco Referral functionality",
-      icon: "assets/svgs/referral.svg",
+      icon: "assets/svgs/admin-namco-referral.svg",
       path: "admin/actions/namco-referral",
       isLocalPath: true
     },
     {
       title: "Visit Summary V2",
       desc: "Switch doctors to the new visit summary screen",
-      icon: "assets/svgs/consultation-details.svg",
+      icon: "assets/svgs/admin-visit-summary-v2.svg",
       path: "admin/actions/visit-summary-v2",
       isLocalPath: true
     },
