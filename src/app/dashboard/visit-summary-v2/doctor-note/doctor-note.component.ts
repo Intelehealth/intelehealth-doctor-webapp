@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject, Subscription, forkJoin, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
 import { doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
@@ -92,6 +92,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
   /** Raw AI diagnoses / medications (AI rank order) — sent with the doctor's choices to /ddx/manual and /ttx/manual. */
   private aiDiagnosisRaw: any[] = [];
   private aiMedicationRaw: any[] = [];
+  /** Visit the AI diagnosis was already requested for, so a refreshed visit object doesn't request it again. */
+  private aiDiagnosisVisitUuid = '';
+  private aiDiagnosisSub?: Subscription;
+  private aiTreatmentSub?: Subscription;
 
   diagnosisSearchTerm = '';
   diagnosisSearching = false;
@@ -316,7 +320,10 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       this.loadPatientInteraction();
       this.hwPhoneNo = this.v2Service.getHwPhoneNo(this.visit);
     }
-    if ((changes['visit'] || changes['patientInfo']) && this.visit && this.patientInfo) {
+    // Once per visit: starting the visit note reloads the visit, which must not request the AI diagnosis twice.
+    if ((changes['visit'] || changes['patientInfo']) && this.visit && this.patientInfo
+      && this.aiDiagnosisVisitUuid !== this.visit.uuid) {
+      this.aiDiagnosisVisitUuid = this.visit.uuid;
       this.loadInteractionNote();
     }
   }
@@ -341,7 +348,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.savedFollowUpYes = draft.followUp.wantFollowUp;
         this.followUpTimeSlots = this.v2Service.getFollowUpTimeSlots(this.followUpDate);
       }
-      if (this.addedDiagnoses.length) {
+      if (this.addedDiagnoses.length && !this.addedMedicines.length) {
         this.loadAiTreatment();
       }
     });
@@ -440,7 +447,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     const diagnosis = this.addedDiagnoses.map(d => d.name).join(', ');
     if (!diagnosis || !this.visit || !this.patientInfo) { return; }
     this.aiMedicationState = 'loading';
-    this.v2Service.loadAiTreatment(this.patientInfo, this.visit, diagnosis, this.visitCompleted).subscribe({
+    this.aiTreatmentSub?.unsubscribe();
+    this.aiTreatmentSub = this.v2Service.loadAiTreatment(this.patientInfo, this.visit, diagnosis, this.visitCompleted).subscribe({
       next: result => {
         this.aiMedicationSuggestions = result.medicines;
         this.aiMedicationRaw = result.rawMedicines || [];
@@ -471,7 +479,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     if (!this.visit || !this.patientInfo) { return; }
     this.aiDiagnosisState = 'loading';
     this.aiResponseReceived = false;
-    this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted, recompute && !!notes.trim()).subscribe({
+    this.aiDiagnosisSub?.unsubscribe();
+    this.aiDiagnosisSub = this.v2Service.loadAiDiagnosis(this.patientInfo, this.visit, notes, this.visitCompleted, recompute && !!notes.trim()).subscribe({
       next: result => {
         this.aiResponseReceived = true;
         this.aiClinicalSummary = result.summary;
@@ -1030,6 +1039,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       next: (res) => {
         if (!res) { this.showSharePrescriptionError(); return; }
         this.prescriptionShared = true;
+        this.visitCompleted = true;
         this.queueService.markPrescriptionShared(this.visitUuid).subscribe();
         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
           if (result === 'view') {
