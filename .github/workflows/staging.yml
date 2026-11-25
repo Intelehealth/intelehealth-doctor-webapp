@@ -24,7 +24,7 @@ jobs:
       # deploy folder can never block the upload again.
       REMOTE_IMAGE: /tmp/webapp_image-${{ github.run_id }}-${{ matrix.name }}.tar.gz
       TARGET_HOST: ${{ secrets[matrix.host_secret] }}
-      DEPLOY_DIR: /home/ubuntu/deploy/ida6/doctorwebapp   # absolute path (leading slash)
+      DEPLOY_DIR: /home/ubuntu/deploy/ida6/webapp   # matches ~/deploy/ida6/webapp/.env on the server
       CONTAINER_NAME: ida6-webapp-container
 
     steps:
@@ -54,6 +54,12 @@ jobs:
             echo "::error::$DEPLOY_DIR/.env is missing or empty on ${{ matrix.name }}. The production build needs it."
             exit 1
           fi
+
+      # Show which file was used and which variable NAMES it contains (no values)
+      - name: Verify .env
+        run: |
+          echo "Using $DEPLOY_DIR/.env from ${{ matrix.name }}"
+          cut -d= -f1 .env | grep -v '^#' | grep -v '^$'
 
       # STEP 2: Build the Docker image (Dockerfile will now find the .env)
       - name: Build and Save Docker Image

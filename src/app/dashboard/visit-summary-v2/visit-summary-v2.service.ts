@@ -1341,10 +1341,13 @@ export class VisitSummaryV2Service {
     const isMale = gender === 'Male';
     const abhaEnabled = !!this.appConfigService?.abha_section;
 
+    const pregnancy = pregnancyRow?.value || '';
+    const isPregnant = !isMale && /\bpregnant\b/i.test(pregnancy) && !/\bno[nt]?\b/i.test(pregnancy);
+
     return {
       name: name || (p?.display || ''),
       gender,
-      tag: !isMale && pregnancyRow && !/^\s*(no|not)\b/i.test(pregnancyRow.value || '') ? 'Pregnant' : '',
+      tag: isPregnant ? 'Pregnant' : '',
       openMrsId: this.patientIdentifier(patient, 'OpenMRS ID'),
       avatar: `${this.baseURL}/personimage/${p?.uuid}`,
       age: p?.age != null ? `${p.age} Years` : '',
@@ -1353,7 +1356,7 @@ export class VisitSummaryV2Service {
       extraAllergiesCount: Math.max(allergyNames.length - 2, 0),
       abhaNumber: abhaEnabled ? this.patientIdentifierCI(patient, 'abha number') : '',
       abhaAddress: abhaEnabled ? this.patientIdentifierCI(patient, 'abha address') : '',
-      pregnancy: isMale ? '' : (pregnancyRow?.value || ''),
+      pregnancy: isPregnant ? pregnancy : '',
       contactNo: contactNo !== 'NA' ? contactNo : '',
       occupation: this.valOrEmpty(this.personAttr(patient, 'occupation')),
       dateOfBirth: this.formatDate(p?.birthdate),
