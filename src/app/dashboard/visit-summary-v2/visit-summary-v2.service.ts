@@ -1111,6 +1111,14 @@ export class VisitSummaryV2Service {
         { concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e', value: JSON.stringify(this.buildDoctorDetails(provider)) }
       ]
     }).pipe(tap(() => {
+      // Turn deployments only (no health worker to end the visit): prescription is shared ->
+      // end the visit (sets stopDatetime) so it moves from In-progress to Completed visits.
+      // A failure is logged and does not affect the share.
+      if (environment.isTurnServer) {
+        this.visitService.endVisit(visitUuid).subscribe({
+          error: (err) => console.error(`[visit-summary-v2] could not end visit ${visitUuid} after prescription share`, err),
+        });
+      }
       this.appointmentService.completeAppointment({ visitUuid }).subscribe({ error: () => {} });
       this.linkService.shortUrl(`/i/${visitUuid}`).subscribe({
         next: (res: ApiResponseModel) => {
@@ -1201,7 +1209,11 @@ export class VisitSummaryV2Service {
       patient: this.buildPatient(patient, vitals, patientHistory),
       patientModel: patient,
       clinicName,
-      visitEnded: !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
+      // Turn: the exit survey holds the patient's WhatsApp feedback (saved before the doctor
+      // shares), so only stopDatetime means the visit ended.
+      visitEnded: environment.isTurnServer
+        ? !!visit.stopDatetime
+        : !!this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY) || !!visit.stopDatetime,
       visitReferred: !!this.helper.checkIfEncounterExists(encounters, visitTypes.REFERRAL),
       visitCompleted: !!this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE),
       visitNoteProviderUuids: (visitNote?.encounterProviders || []).map((ep: any) => ep?.provider?.uuid).filter(Boolean),
@@ -1335,7 +1347,8 @@ export class VisitSummaryV2Service {
   }
 
   private getVisitStatus(encounters: EncounterModel[]): string {
-    if (this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) { return visitTypes.ENDED_VISIT; }
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.helper.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) { return visitTypes.ENDED_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) { return visitTypes.COMPLETED_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) { return visitTypes.IN_PROGRESS_VISIT; }
     if (this.helper.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) { return visitTypes.PRIORITY_VISIT; }
