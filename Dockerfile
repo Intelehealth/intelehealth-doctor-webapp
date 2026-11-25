@@ -18,4 +18,4 @@ RUN rm -rf ./*
 COPY --from=build /app/dist/intelehealth-ui /usr/share/nginx/html/intelehealth
 
 EXPOSE 81
-CMD ["nginx", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
