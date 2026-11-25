@@ -306,6 +306,15 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
     this.cacheVisitProvider(this.visit);
     const visitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     if (!visitProvider?.provider?.uuid) {
+      this.analytics.logEvent('start_call_blocked', 'engagement', 'call_button', 1, {
+        doctorUserId: this.visitSummaryService.userId,
+        patientOpenMrsId: this.patient?.openMrsId,
+        visitId: this.visit.uuid,
+        location: this.clinicName,
+        callType,
+        reason: 'no_health_worker',
+        screen: 'visit_summary_v2'
+      });
       this.coreService.openConfirmationDialog({
         confirmationMsg: 'This visit has no health worker linked to it, so the call cannot be connected.',
         cancelBtnText: 'Close',
@@ -321,7 +330,8 @@ export class VisitSummaryV2Component implements OnInit, OnDestroy {
       hwId: visitProvider?.provider?.uuid || null,
       visitId: this.visit.uuid,
       location: this.clinicName,
-      callType
+      callType,
+      screen: 'visit_summary_v2'
     });
 
     this.isCalling = true;

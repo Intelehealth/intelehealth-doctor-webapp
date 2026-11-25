@@ -86,7 +86,8 @@ describe('QueueComponent', () => {
       visitService,
       availabilityService,
       toastr,
-      { instant: (key: string) => key } as any
+      { instant: (key: string) => key } as any,
+      { logEvent: jasmine.createSpy('logEvent') } as any
     );
   });
 

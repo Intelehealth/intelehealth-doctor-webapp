@@ -1444,7 +1444,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       hwId : getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER) && getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider ? getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER).provider?.uuid : null,
       visitId: this.visit.uuid,
       location:this.clinicName,
-      callType: callType
+      callType: callType,
+      screen: 'visit_summary'
     });
     
     // WhatsApp patients have no app to ring, so send them the join link.
@@ -1546,6 +1547,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   * @return {void}
   */
   startKaleyraCall(): void {
+    this.analytics.logEvent('kaleyra_call_clicked', 'engagement', 'kaleyra_call_button', 1, {
+      ...this.contactAnalyticsPayload(),
+      hasHwPhoneNo: !!this.hwPhoneNo
+    });
     if (!this.hwPhoneNo) {
       this.toastr.error('Health worker phone number is not available');
       return;
@@ -3014,11 +3019,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                         }).subscribe((post) => {
                           this.visitCompleted = true;
                           this.queueService.markPrescriptionShared(this.visit.uuid).subscribe();
-                      const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
+                          const followUpDate = `${this.followUpForm.value.followUpDate}`; // Removed ,Time:${this.followUpForm.value.followUpTime}
                           // Prescription just shared -> notify the patient on WhatsApp.
-                        // Fetch the visit fresh (now that the encounter above is confirmed
-                        // created) and send it along. Turn saves the patient's held feedback
-                        // before answering; the visit is ended only after that (autoEndVisit).
+                          // Fetch the visit fresh (now that the encounter above is confirmed
+                          // created) and send it along. Turn saves the patient's held feedback
+                          // before answering; the visit is ended only after that (autoEndVisit).
                           if (environment.isTurnServer) {
                             this.visitService.getVisitForPrescription(this.visit.uuid).subscribe({
                             next: (freshVisit) => this.mindmapService.notifyPrescriptionOnTurn(this.visit.uuid, freshVisit, false, () => this.autoEndVisit()),
@@ -3630,7 +3635,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
       doctorUserId: this.visitSummaryService.userId,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       visitId: this.visit?.uuid,
-      location: this.clinicName
+      location: this.clinicName,
+      screen: 'visit_summary'
     };
   }
 
