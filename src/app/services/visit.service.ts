@@ -11,7 +11,6 @@ export class VisitService {
 
   private baseURL = environment.baseURL;
   private baseURLMindmap = environment.mindmapURL;
-  private baseURLAbha = environment.abhaURL;
   public isVisitSummaryShow: boolean = false;
   public isHelpButtonShow: boolean = false;
   public triggerAction: Subject<any> = new Subject();
@@ -347,16 +346,6 @@ export class VisitService {
    addInstructionRemarks(json: Object) : Observable<any>{
     return this.http.post(`${this.baseURLMindmap}/instructionRemarks`, json);
    }
-
-  /**
-   * Post visit data to abdm
-   * @param {any} json - Attribute payload
-   * @return {Observable<any>}
-   */
-  postVisitToABDM(json: any): Observable<any> {
-    const url = `${this.baseURLAbha}/abha/post-care-context`
-    return this.http.post(url, json);
-  }
 
   formatMedicineDisplay(medicine: string, uuid?: string): object {
     const splitMed = medicine?.split?.(':');
