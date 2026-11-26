@@ -185,6 +185,26 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     private appConfigService: AppConfigService
   ) {}
 
+  private isAiSectionOn(key: string): boolean {
+    return this.appConfigService?.ai_llm?.[key] === true;
+  }
+
+  get showAiAdvice(): boolean {
+    return this.isAiSectionOn('ai_ttx_advice');
+  }
+
+  get showAiTests(): boolean {
+    return this.isAiSectionOn('ai_ttx_investigation');
+  }
+
+  get showAiReferral(): boolean {
+    return this.isAiSectionOn('ai_ttx_referral');
+  }
+
+  get showAiFollowUp(): boolean {
+    return this.isAiSectionOn('ai_ttx_followup');
+  }
+
   private getPatientOpenMrsId(): string {
     const identifiers = (this.patientInfo as any)?.identifiers || [];
     const idf = identifiers.find((i: any) => i.identifierType?.display === 'OpenMRS ID');
