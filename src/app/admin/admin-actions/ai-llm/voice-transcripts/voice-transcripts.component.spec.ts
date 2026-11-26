@@ -98,12 +98,32 @@ describe('VoiceTranscriptsComponent', () => {
     expect(rows[0].query(By.css('[title="visit-uuid-0-0000-0000"]'))).toBeTruthy();
   });
 
-  it('always requests the Web source whatever the query param says', () => {
+  it('loads mobile records and selects the Mobile tab for ?source=mobile', () => {
     setup('mobile');
     voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
     create();
-    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'webapp');
+    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'mobile');
+    expect(component.selectedTabIndex).toBe(1);
     expect(fixture.nativeElement.querySelector('[data-test-id="voiceTranscriptsEmptyState"]').textContent).toContain('No recordings found.');
+  });
+
+  it('falls back to webapp for an invalid source', () => {
+    setup('bogus');
+    voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
+    create();
+    expect(voicedoc.listTranscripts).toHaveBeenCalledWith(1, 10, 'webapp');
+    expect(component.selectedTabIndex).toBe(0);
+  });
+
+  it('navigates with the source query param when the tab changes', () => {
+    setup();
+    voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
+    create();
+    component.onTabChange(1);
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { source: 'mobile' }, queryParamsHandling: 'merge' }));
+    router.navigate.calls.reset();
+    component.onTabChange(0);
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
   it('requests the next page when the paginator changes', () => {
@@ -129,11 +149,11 @@ describe('VoiceTranscriptsComponent', () => {
     expect(component.pageIndex).toBe(0);
   });
 
-  it('shows only the Web tab', () => {
+  it('shows the Web and Mobile tabs', () => {
     setup();
     voicedoc.listTranscripts.and.returnValue(listResponse([], 0));
     create();
-    expect(component.sourceOptions.map(o => o.label)).toEqual(['Web']);
+    expect(component.sourceOptions.map(o => o.label)).toEqual(['Web', 'Mobile']);
   });
 
   it('shows "Admin access required" on 403', () => {

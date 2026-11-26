@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { PageEvent } from "@angular/material/paginator";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { interval, Subject, Subscription } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
@@ -24,14 +24,15 @@ export type VoiceTranscriptLoadState = "ok" | "forbidden" | "error";
 export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["startedAt", "patient", "visit", "doctor", "chw", "source", "duration", "chunks", "status", "actions"];
   sourceOptions: { value: VoiceTranscriptSource; label: string }[] = [
-    { value: "webapp", label: "Web" }
+    { value: "webapp", label: "Web" },
+    { value: "mobile", label: "Mobile" }
   ];
   sourceLabels: { [key: string]: string } = VOICE_TRANSCRIPT_SOURCE_LABELS;
   items: VoicedocTranscriptItem[] = [];
   total = 0;
   pageIndex = 0;
   pageSize = 10;
-  readonly source: VoiceTranscriptSource = "webapp";
+  source: VoiceTranscriptSource = "webapp";
   loading = false;
   state: VoiceTranscriptLoadState = "ok";
 
@@ -42,6 +43,7 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private voicedocService: VoicedocService,
     private dialog: MatDialog,
     private pageTitleService: PageTitleService,
@@ -51,7 +53,9 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
-    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const source = params.get("source");
+      this.source = source === "mobile" ? "mobile" : "webapp";
       this.pageIndex = 0;
       this.loadTranscripts();
     });
@@ -127,6 +131,23 @@ export class VoiceTranscriptsComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.state = err?.status === 403 ? "forbidden" : "error";
       }
+    });
+  }
+
+  get selectedTabIndex(): number {
+    return Math.max(0, this.sourceOptions.findIndex(option => option.value === this.source));
+  }
+
+  onTabChange(index: number): void {
+    const option = this.sourceOptions[index];
+    if (option && option.value !== this.source) this.onSourceChange(option.value);
+  }
+
+  onSourceChange(source: VoiceTranscriptSource): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { source },
+      queryParamsHandling: "merge"
     });
   }
 
