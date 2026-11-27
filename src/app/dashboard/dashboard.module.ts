@@ -53,6 +53,7 @@ import { NamcoReferralOutComponent } from './visit-summary-v2/namco-referral-out
 import { SpecialistDoctorNoteComponent } from './visit-summary-v2/specialist-doctor-note/specialist-doctor-note.component';
 import { PrimaryNoteViewComponent } from './visit-summary-v2/primary-note-view/primary-note-view.component';
 import { PrimaryDoctorNoteComponent } from './visit-summary/primary-doctor-note/primary-doctor-note.component';
+import { AbdmModule } from '../abdm/abdm.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -122,7 +123,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     }),
     MatProgressSpinnerModule,
     SharedModule,
-    ReferralConsentComponent
+    ReferralConsentComponent,
+    AbdmModule
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
