@@ -1,10 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize, switchMap, tap } from 'rxjs/operators';
-import { doctorDetails, visitTypes } from 'src/config/constant';
-import { AbdmService } from 'src/app/abdm/abdm.service';
-import { AbdmCareContextData } from 'src/app/abdm/abdm.models';
+import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
+import { doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 import { getCacheData, isFeaturePresent, isNamcoDoctor } from 'src/app/utils/utility-functions';
 import { FOLLOW_UP_TYPE_TELEMEDICINE, FOLLOW_UP_TYPES } from '../specialist-doctor-note/specialist-doctor-note.constants';
@@ -184,12 +182,8 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     private coreService: CoreService,
     private router: Router,
     private queueService: QueueService,
-    private appConfigService: AppConfigService,
-    private abdmService: AbdmService
+    private appConfigService: AppConfigService
   ) {}
-
-  /** HI types picked in the ABDM popup for the current share; sent when the visit is completed. */
-  private abdmHiTypes: string[] = [];
 
   private getPatientOpenMrsId(): string {
     const identifiers = (this.patientInfo as any)?.identifiers || [];
@@ -1031,15 +1025,7 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
     }
     if (this.namcoReferral && !this.namcoReferral.validateForShare()) { return; }
     const namcoReferral = this.namcoReferral?.confirmedNamcoReferral || null;
-    // ABDM: popup opens only if abha_section is on and the patient has ABHA number + ABHA address;
-    // otherwise (or on visit already completed / NAMCO referral) it emits [] and share continues.
-    this.abdmService.resolveAbhaDetails(this.patientInfo, this.visit?.attributes);
-    this.abdmHiTypes = [];
-    this.abdmService.selectHiTypes(this.getAbdmCareContextData(), !!this.visitCompleted || !!namcoReferral).pipe(
-      filter((hiTypes) => hiTypes !== null), // doctor closed the ABDM popup -> abort share
-      tap((hiTypes) => this.abdmHiTypes = hiTypes),
-      switchMap(() => this.coreService.openSharePrescriptionConfirmModal({ namcoReferral }))
-    ).subscribe((confirmed: boolean) => {
+    this.coreService.openSharePrescriptionConfirmModal({ namcoReferral }).subscribe((confirmed: boolean) => {
       if (!confirmed) { return; }
       if (namcoReferral) {
         this.referToNamco(namcoReferral);
@@ -1089,8 +1075,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
         this.prescriptionShared = true;
         this.visitCompleted = true;
         this.queueService.markPrescriptionShared(this.visitUuid).subscribe();
-        // ABDM: link this visit's care context with the selected HI types
-        this.abdmService.linkVisitToABDM({ visit: this.visit, patient: this.patientInfo, encounterUuid: res.uuid, hiTypes: this.abdmHiTypes });
         this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
           if (result === 'view') {
             this.coreService.openVisitPrescriptionModal({ uuid: this.visitUuid });
@@ -1101,29 +1085,6 @@ export class DoctorNoteComponent implements OnChanges, OnInit {
       },
       error: () => this.showSharePrescriptionError()
     });
-  }
-
-  /**
-   * ABDM: visit data previewed in the HI-type selection popup
-   * @returns {AbdmCareContextData}
-   */
-  private getAbdmCareContextData(): AbdmCareContextData {
-    return {
-      visit: this.visit,
-      patient: this.patientInfo,
-      provider: this.provider,
-      vitals: (this.visit?.encounters as any[])?.find((e) => e?.encounterType?.display === visitTypes.VITALS)?.obs ?? [],
-      diagnosis: this.addedDiagnoses.map((d) => ({ diagnosisName: d.name, diagnosisType: d.type, diagnosisStatus: d.status })),
-      medicines: this.addedMedicines,
-      tests: this.tests,
-      advices: this.advices,
-      followUp: {
-        wantFollowUp: this.wantFollowUp === null ? null : (this.wantFollowUp ? 'Yes' : 'No'),
-        followUpDate: this.followUpDate,
-        followUpTime: this.followUpTime,
-        followUpReason: this.followUpReason
-      }
-    };
   }
 
   private showSharePrescriptionError(): void {

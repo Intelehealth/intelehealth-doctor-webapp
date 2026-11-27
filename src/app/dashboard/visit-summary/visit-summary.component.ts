@@ -21,7 +21,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import doses from '../../core/data/dose';
 import { BehaviorSubject, forkJoin, interval, Observable, of, Subject, Subscription } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
@@ -48,8 +48,6 @@ import instructionRemarks from 'src/app/core/data/instructionRemarks';
 import { keepOnlyPairedEvents } from 'src/app/utils/paired-events';
 import { AnalyticsService } from 'src/app/services/analytics.service';
 import { QueueGateResult, QueueService } from 'src/app/services/queue.service';
-import { AbdmService } from 'src/app/abdm/abdm.service';
-import { AbdmCareContextData } from 'src/app/abdm/abdm.models';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -515,8 +513,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
     private webrtcSvc: WebrtcService,
     private providerService: ProviderService,
     private insight: InsightService,
-    private queueService: QueueService,
-    private abdmService: AbdmService) {
+    private queueService: QueueService) {
     Object.keys(this.appConfigService.patient_registration).forEach(obj => {
       this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter((e: { is_enabled: any; }) => e.is_enabled).map((e: { name: any; }) => e.name));
     });
@@ -806,8 +803,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             // expand identifiers (isTurnServer flag / build), so the header shows NA.
             this.clinicName = visit.location?.display || '';
 
-            // ABDM: resolve abha number / abha address for this patient
-            this.abdmService.resolveAbhaDetails(this.patient, visit.attributes);
+            if (this.appConfigService.abha_section) {
+              // check if abha number / abha address exists for this patient
+              this.getAbhaDetails(patient)
+            }
             // check if visit note exists for this visit
             // this.visitNotePresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
 
@@ -2993,14 +2992,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
           const isRapidCompletion = this.hasAILLMEnabled && !this.hasFollowUp && !isFollowUpVisit && consultationDuration !== null && consultationDuration < 60; // less than 1 minute
           //Open Share Prescription Confirmation Modal
           const namcoReferral = this.getConfirmedNamcoReferral();
-          // ABDM: let the doctor pick HI types first. Popup opens only if abha_section is on and the patient has
-          // ABHA number + ABHA address; otherwise (or on visit already completed / NAMCO referral) it emits [] and share continues.
-          let abdmHiTypes: string[] = [];
-          this.abdmService.selectHiTypes(this.getAbdmCareContextData(), !!this.visitCompleted || !!namcoReferral).pipe(
-            filter((hiTypes) => hiTypes !== null), // doctor closed the ABDM popup -> abort share
-            tap((hiTypes) => abdmHiTypes = hiTypes),
-            switchMap(() => this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion, namcoReferral }))
-          ).subscribe((res: boolean) => {
+          this.coreService.openSharePrescriptionConfirmModal({ isRapidCompletion, namcoReferral }).subscribe((res: boolean) => {
             if (res) {
               const completeVisit = () => {
                 if (this.isVisitNoteProvider) {
@@ -3041,8 +3033,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
                           this.notifyHwForAvailablePrescription("","",followUpDate);
                           this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
-                          // ABDM: link this visit's care context with the selected HI types
-                          this.abdmService.linkVisitToABDM({ visit: this.visit, patient: this.patient, encounterUuid: post.uuid, hiTypes: abdmHiTypes });
+                          // if (this.appConfigService.abha_section) {
+                          //   this.updateAbhaDetails(post.uuid);
+                          // }
 
                           this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                             next: (linkSvcRes: ApiResponseModel) => {
@@ -3269,9 +3262,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
             this.notifyHwForAvailablePrescription("", "", followUpDate);
             this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
 
-            // ABDM linking is done only by the primary doctor in sharePrescription(). To enable it for
-            // specialists too, add abdmService.selectHiTypes(...) before the confirm modal and call:
-            // this.abdmService.linkVisitToABDM({ visit: this.visit, patient: this.patient, encounterUuid: post.uuid, hiTypes });
+            // if (this.appConfigService.abha_section) {
+            //   this.updateAbhaDetails(post.uuid);
+            // }
 
             this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
               next: (linkSvcRes: ApiResponseModel) => {
@@ -3497,24 +3490,42 @@ export class VisitSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * ABDM: visit data previewed in the HI-type selection popup
-   * @returns {AbdmCareContextData}
+   * Get Abha numner / Abha address from patient
    */
-  getAbdmCareContextData(): AbdmCareContextData {
-    return {
-      visit: this.visit,
-      patient: this.patient,
-      provider: this.provider,
-      vitals: this.vitalObs,
-      cheifComplaints: this.cheifComplaints,
-      diagnosis: this.existingDiagnosis,
-      medicines: [...(this.medicines ?? []), ...(this.standardMedicines ?? [])],
-      tests: this.tests,
-      advices: this.advices,
-      followUp: this.followUpForm?.value,
-      physicalExaminations: this.physicalExaminationData,
-      patientHistoryData: this.patientHistoryData
-    };
+  getAbhaDetails(_patient: PatientModel): void {
+    this.patient.person.abhaNumber = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha number')?.identifier
+    this.patient.person.abhaAddress = _patient.identifiers.find((v) => v.identifierType?.display?.toLowerCase() === 'abha address')?.identifier
+  }
+
+  updateAbhaDetails(encounterUUID: string): void {
+    let mobileNumber = this.getPersonAttributeValue('Telephone Number');
+    mobileNumber = mobileNumber != 'NA' ? mobileNumber : undefined
+    const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+    const abhaAddress = this.patient?.person?.abhaAddress ?? (abhaNumber ? `${abhaNumber}@sbx` : undefined);
+    if (abhaNumber || abhaAddress || mobileNumber) {
+      // Added call to generate linking token and add isABDMLink attribute 
+      this.visitService.postAttribute(this.visit.uuid,
+        {
+          attributeType: '8ac6b1c7-c781-494a-b4ef-fb7d7632874f', /** Visit Attribute Type for isABDMLinked */
+          value: false,
+        }).subscribe(() => {
+          const abhaNumber = this.patient?.person?.abhaNumber?.replace(/-/g, '');
+          const openMRSID = this.getPatientIdentifier("OpenMRS ID")
+          this.visitService.postVisitToABDM({
+            openMRSID: openMRSID,
+            mobileNumber: mobileNumber,
+            visitUUID: this.visit.uuid,
+            name: this.patient?.person?.display,
+            gender: this.patient?.person?.gender,
+            abhaNumber: abhaNumber,
+            abhaAddress: abhaAddress,
+            yearOfBirth: this?.patient?.person?.birthdate ? Number(this?.patient?.person?.birthdate?.substring(0, 4)) : null,
+            startDateTime: this.visit.startDatetime,
+            encounterUUID: encounterUUID,
+            personDisplay: this.patient?.person?.display
+          }).subscribe();
+        });
+    }
   }
 
   checkPatientRegField(fieldName: string): boolean {
