@@ -1,0 +1,78 @@
+name: NAS production
+
+on:
+  push:
+    branches:
+      - nas_production_master
+
+concurrency:
+  group: webapp-deploy-nasprod
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    if: github.ref == 'refs/heads/nas_production_master'
+    runs-on: ubuntu-latest
+
+    env:
+      DEPLOY_HOST: ${{ secrets.NASPROD_HOST }}
+
+    steps:
+      - name: Check deploy host secret
+        run: |
+          if [ -z "$DEPLOY_HOST" ]; then
+            echo "::error::NASPROD_HOST secret is empty or not set; aborting deploy"
+            exit 1
+          fi
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download .env via Native SCP
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+          scp -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@"$DEPLOY_HOST":/home/ubuntu/deploy/webapp/.env .env
+
+      - name: Build and Save Docker Image
+        run: |
+          docker build -t intelehealth-webapp:latest .
+          docker save intelehealth-webapp:latest | gzip > webapp_image.tar.gz
+
+      - name: Upload Image to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.DEPLOY_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "webapp_image.tar.gz"
+          target: "/tmp"
+
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.DEPLOY_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd /tmp
+            gunzip -c webapp_image.tar.gz | docker load
+
+            docker stop webapp-container || true
+            docker rm webapp-container || true
+
+            docker run -d \
+              --name webapp-container \
+              --restart unless-stopped \
+              -p 81:80 \
+              --env-file /home/ubuntu/deploy/webapp/.env \
+              intelehealth-webapp:latest
+
+            rm -f /tmp/webapp_image.tar.gz
+            docker image prune -f
