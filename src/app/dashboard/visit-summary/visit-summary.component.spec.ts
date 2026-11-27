@@ -22,7 +22,6 @@ import { WebrtcService } from 'src/app/services/webrtc.service';
 import { ProviderService } from 'src/app/services/provider.service';
 import { InsightService } from 'src/app/services/insight.service';
 import { QueueService } from 'src/app/services/queue.service';
-import { AbdmService } from 'src/app/abdm/abdm.service';
 import { VisitSummaryComponent } from './visit-summary.component';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 
@@ -34,7 +33,7 @@ import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper
  */
 /** Methods getVisit() calls that are unrelated to the in-progress message. */
 const COLLABORATORS: (keyof VisitSummaryComponent)[] = [
-  'checkVisitStatus', 'getPastVisitHistory', 'maybeAutoStartCall',
+  'checkVisitStatus', 'getAbhaDetails', 'getPastVisitHistory', 'maybeAutoStartCall',
   'checkIfPatientInteractionPresent', 'checkIfDiagnosisPresent', 'checkIfMedicationPresent',
   'checkIfAdditionalInstructionPresent', 'getAdvicesList', 'checkIfAdvicePresent', 'getTestsList',
   'checkIfTestPresent', 'checkIfReferralPresent', 'checkIfFollowUpPresent', 'checkIfReferralConsentPresent',
@@ -82,8 +81,7 @@ describe('VisitSummaryComponent', () => {
     const component: any = new VisitSummaryComponent(
       stub, stub, router, visitService, stub, stub, stub, stub, stub, stub, stub, stub,
       new VisitSummaryHelperService({} as any, {} as any, {} as any),
-      stub, appConfigService, rolesService, stub, stub, stub, stub, stub, stub,
-      { resolveAbhaDetails: () => {} } as any // AbdmService
+      stub, appConfigService, rolesService, stub, stub, stub, stub, stub, stub
     );
 
     COLLABORATORS.forEach((name) => spyOn(component, name));
@@ -242,8 +240,7 @@ describe('VisitSummaryComponent - patient ID in the rendered header', () => {
         { provide: WebrtcService, useValue: stub },
         { provide: ProviderService, useValue: stub },
         { provide: InsightService, useValue: stub },
-        { provide: QueueService, useValue: stub },
-        { provide: AbdmService, useValue: stub }
+        { provide: QueueService, useValue: stub }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
