@@ -12,12 +12,8 @@ on:
           - turn
           - ttxai
           - testturn
-          - nasprod
           - pathqa
           - nasstaging
-  push:
-    branches:
-      - nas-ida5-development-master
 
 jobs:
   set-matrix:
@@ -31,7 +27,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target }}" != "all" ]; then
             echo "targets=[\"${{ inputs.target }}\"]" >> "$GITHUB_OUTPUT"
           else
-            echo 'targets=["dev","turn","ttxai","testturn","nasprod","pathqa", "nasstaging"]' >> "$GITHUB_OUTPUT"
+            echo 'targets=["dev","turn","ttxai","testturn","pathqa", "nasstaging"]' >> "$GITHUB_OUTPUT"
           fi
  
   build-and-deploy:
@@ -66,9 +62,6 @@ jobs:
               ;;
             testturn)
               echo "host=${{ secrets.TESTTURN_HOST }}" >> "$GITHUB_OUTPUT"
-              ;;
-            nasprod)
-              echo "host=${{ secrets.NAS_HOST }}" >> "$GITHUB_OUTPUT"
               ;;
             nasstaging)
               echo "host=${{ secrets.NASSTAGING_HOST }}" >> "$GITHUB_OUTPUT"
