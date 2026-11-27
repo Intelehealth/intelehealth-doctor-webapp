@@ -45,7 +45,6 @@ export class UploadMindmapJsonComponent {
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsText(this.file, "UTF-8");
@@ -71,7 +70,6 @@ export class UploadMindmapJsonComponent {
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsText(this.file, "UTF-8");

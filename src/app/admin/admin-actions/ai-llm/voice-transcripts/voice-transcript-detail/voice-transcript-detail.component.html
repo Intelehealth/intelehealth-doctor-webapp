@@ -1,0 +1,154 @@
+<div class="voice-transcript-detail" data-test-id="voiceTranscriptDetailModal">
+  <div class="detail-header">
+    <h6 class="mb-0">{{ "Voice Transcript" | translate }}</h6>
+    <button class="modal-close-btn" type="button" (click)="close()" data-test-id="btnCloseVoiceTranscriptDetail">
+      <img src="assets/svgs/CloseX.svg" alt="" />
+    </button>
+  </div>
+
+  <div class="detail-body">
+    <div class="meta-grid" *ngIf="detail">
+      <div><label>{{ "Patient" | translate }}</label><span>{{ detail.patientName || "-" }}<ng-container *ngIf="detail.patientIdentifier"> ({{ detail.patientIdentifier }})</ng-container></span></div>
+      <div><label>{{ "Visit" | translate }}</label><span class="mono">{{ detail.visitUuid || "-" }}</span></div>
+      <div><label>{{ "Doctor" | translate }}</label><span>{{ detail.doctorName || "-" }}</span></div>
+      <div><label>{{ "Health worker" | translate }}</label><span>{{ detail.chwName || "-" }}</span></div>
+      <div><label>{{ "Source" | translate }}</label><span>{{ (sourceLabels[detail.source] || detail.source || "-") | translate }}</span></div>
+      <div><label>{{ "Status" | translate }}</label><span class="text-capitalize">{{ detail.status | translate }}</span></div>
+      <div><label>{{ "Language" | translate }}</label><span>{{ detail.language || "-" }}</span></div>
+      <div><label>{{ "Started" | translate }}</label><span>{{ detail.startedAt ? (detail.startedAt | date : "dd MMM, yyyy h:mm a") : "-" }}</span></div>
+      <div><label>{{ "Ended" | translate }}</label><span>{{ detail.endedAt ? (detail.endedAt | date : "dd MMM, yyyy h:mm a") : "-" }}</span></div>
+      <div><label>{{ "Duration" | translate }}</label><span>{{ duration(detail.durationSec) }}</span></div>
+      <div><label>{{ "Chunks" | translate }}</label><span>{{ detail.chunksUploaded ?? 0 }}/{{ detail.chunksReceived ?? 0 }}<ng-container *ngIf="detail.chunksFailed > 0"> ({{ detail.chunksFailed }} {{ "failed" | translate }})</ng-container></span></div>
+      <div><label>{{ "Recording" | translate }}</label><span class="mono">{{ detail.recordingName || "-" }}</span></div>
+      <div *ngIf="full?.voicedocAccount !== undefined" data-test-id="voiceTranscriptAccount"><label>{{ "Account" | translate }}</label><span class="mono">{{ full.voicedocAccount || ("Shared (fallback)" | translate) }}</span></div>
+      <div class="full" *ngIf="detail.error"><label>{{ "Error" | translate }}</label><span class="text-danger">{{ detail.error }}</span></div>
+    </div>
+
+    <div class="state-msg updating-hint" *ngIf="!loading && state === 'ok' && pending" data-test-id="voiceTranscriptDetailUpdating">{{ "Updating..." | translate }}</div>
+    <div class="state-msg" *ngIf="loading" data-test-id="voiceTranscriptDetailLoading">{{ "Loading..." | translate }}</div>
+    <div class="state-msg text-danger" *ngIf="!loading && state === 'forbidden'">{{ "Admin access required" | translate }}</div>
+    <div class="state-msg text-danger" *ngIf="!loading && state === 'error'">
+      {{ "Could not load transcript." | translate }}
+      <a href="javascript:void(0)" class="view-link ml-2" (click)="load()">{{ "Retry" | translate }}</a>
+    </div>
+
+    <ng-container *ngIf="!loading && state === 'ok'">
+      <div class="json-actions">
+        <button type="button" class="json-toggle" (click)="toggleJson()" data-test-id="btnToggleRecordJson">{{ (showJson ? "Collapse JSON" : "Expand JSON") | translate }}</button>
+        <a href="javascript:void(0)" class="view-link ml-3" *ngIf="showJson" (click)="copyRecordJson()" data-test-id="linkCopyRecordJson">{{ (copiedRecord ? "Copied" : "Copy") | translate }}</a>
+      </div>
+      <pre class="json-view" *ngIf="showJson" [innerHTML]="jsonHtml" data-test-id="voiceTranscriptRecordJson"></pre>
+
+      <div class="block-title">{{ "Transcript" | translate }}</div>
+      <div class="transcript-box" *ngIf="transcript; else noTranscript" data-test-id="voiceTranscriptText">{{ transcript }}</div>
+      <ng-template #noTranscript><div class="state-msg">{{ "No transcript available." | translate }}</div></ng-template>
+
+      <ng-container *ngIf="detail?.status === 'done'">
+        <div class="block-title d-flex align-items-center justify-content-between">
+          <span>{{ "Visit Summary" | translate }}</span>
+          <span class="summary-actions">
+            <span class="visit-summary-meta mr-3" *ngIf="visitSummaryRecordings.length" data-test-id="voiceTranscriptVisitSummaryCount">
+              {{ "Covers" | translate }} {{ visitSummaryRecordings.length }} {{ (visitSummaryRecordings.length === 1 ? "recording" : "recordings") | translate }}
+            </span>
+            <a href="javascript:void(0)" class="view-link" *ngIf="!regenerating && !awaitingVisitSummary" (click)="regenerateVisitSummary()" data-test-id="linkRegenerateVisitSummary">{{ "Regenerate" | translate }}</a>
+          </span>
+        </div>
+        <div class="state-msg" *ngIf="regenerating || (awaitingVisitSummary && !full?.visitSummary)" data-test-id="voiceTranscriptVisitSummaryLoading">{{ "Generating visit summary..." | translate }}</div>
+        <div class="state-msg text-danger" *ngIf="regenerateFailed && !regenerating" data-test-id="voiceTranscriptVisitSummaryError">{{ "Could not generate the visit summary." | translate }}</div>
+        <ng-container *ngIf="!regenerating">
+          <div class="transcript-box visit-summary-box" *ngIf="full?.visitSummary; else noVisitSummary" data-test-id="voiceTranscriptVisitSummary">{{ full.visitSummary }}</div>
+          <ng-template #noVisitSummary><div class="state-msg" *ngIf="!awaitingVisitSummary">{{ "No visit summary available." | translate }}</div></ng-template>
+          <div class="note-status" *ngIf="full?.noteStatus" [class.note-status-ok]="full.noteStatus === 'saved' || full.noteStatus === 'updated'" [class.note-status-error]="full.noteStatus === 'error'" data-test-id="voiceTranscriptNoteStatus">
+            {{ noteStatusLabels[full.noteStatus] || full.noteStatus | translate }}<ng-container *ngIf="full.noteError && full.noteStatus === 'error'">: {{ full.noteError }}</ng-container>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <div class="block-title d-flex align-items-center justify-content-between">
+        <span>{{ "Summary" | translate }}</span>
+        <span class="summary-actions" *ngIf="sections.length">
+          <label class="mb-0 mr-3" *ngIf="emptySectionCount">
+            <input type="checkbox" [(ngModel)]="showEmpty" data-test-id="checkboxShowEmptySections" />
+            {{ "Show empty sections" | translate }} ({{ emptySectionCount }})
+          </label>
+          <a href="javascript:void(0)" class="view-link" (click)="copyRawJson()" data-test-id="linkCopySummaryJson">{{ (copied ? "Copied" : "Copy JSON") | translate }}</a>
+        </span>
+      </div>
+
+      <div class="state-msg" *ngIf="!visibleSections.length">{{ "No summary available." | translate }}</div>
+
+      <div class="summary-section" *ngFor="let section of visibleSections" data-test-id="voiceTranscriptSummarySection">
+        <div class="section-title">{{ section.title }}</div>
+        <div class="state-msg" *ngIf="section.empty">-</div>
+        <ul class="section-list" *ngIf="!section.empty">
+          <li *ngFor="let entry of section.entries">
+            <span *ngIf="entry.text">{{ entry.text }}</span>
+            <div *ngIf="entry.fields" class="field-list">
+              <div *ngFor="let field of entry.fields"><strong>{{ field.label }}:</strong> {{ field.value }}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <ng-container *ngIf="debug && chunkRows.length">
+        <div class="block-title">{{ "Chunks" | translate }}</div>
+        <div class="level-summary" *ngIf="levelSummary" data-test-id="voiceTranscriptLevelSummary">
+          <ng-container *ngIf="levelSummary.localMeasured || levelSummary.remoteMeasured; else noLevels">
+            {{ "Doctor audio detected in" | translate }} {{ levelSummary.localDetected }}/{{ levelSummary.localMeasured }} {{ "chunks" | translate }}
+            &middot;
+            {{ "HW audio detected in" | translate }} {{ levelSummary.remoteDetected }}/{{ levelSummary.remoteMeasured }} {{ "chunks" | translate }}
+          </ng-container>
+          <ng-template #noLevels>{{ "Audio levels were not recorded for these chunks." | translate }}</ng-template>
+        </div>
+        <div class="chunk-table-wrap">
+          <table class="chunk-table" data-test-id="voiceTranscriptChunkTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ "Duration (s)" | translate }}</th>
+                <th>{{ "Status" | translate }}</th>
+                <th>{{ "Attempts" | translate }}</th>
+                <th>{{ "Doctor level" | translate }}</th>
+                <th>{{ "HW level" | translate }}</th>
+                <th>{{ "Transcript" | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let row of chunkRows; trackBy: trackChunk">
+                <tr data-test-id="voiceTranscriptChunkRow">
+                  <td>{{ row.chunk.chunkNumber }}</td>
+                  <td>{{ row.durationSec }}</td>
+                  <td><span class="status-chip" [ngClass]="'status-' + row.chunk.status">{{ row.chunk.status | translate }}</span></td>
+                  <td>{{ row.chunk.attempts ?? "-" }}</td>
+                  <td><ng-container *ngTemplateOutlet="levelCell; context: { $implicit: row.local, side: 'local' }"></ng-container></td>
+                  <td><ng-container *ngTemplateOutlet="levelCell; context: { $implicit: row.remote, side: 'remote' }"></ng-container></td>
+                  <td class="chunk-text" data-test-id="voiceTranscriptChunkText">{{ row.text || "-" }}</td>
+                  <td>
+                    <a href="javascript:void(0)" class="view-link" *ngIf="row.rawHtml" (click)="toggleChunk(row.chunk.chunkNumber)" data-test-id="linkToggleChunkRaw">{{ (expandedChunks.has(row.chunk.chunkNumber) ? "Hide" : "Raw") | translate }}</a>
+                  </td>
+                </tr>
+                <tr class="chunk-raw-row" *ngIf="row.rawHtml && expandedChunks.has(row.chunk.chunkNumber)">
+                  <td colspan="8"><pre class="json-view" [innerHTML]="row.rawHtml" data-test-id="voiceTranscriptChunkRaw"></pre></td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #levelCell let-level let-side="side">
+  <div class="level-cell" [ngSwitch]="level.state">
+    <span *ngSwitchCase="'detached'" class="level-warning" data-test-id="voiceTranscriptLevelDetached">{{ (side === "local" ? "Doctor mic not attached" : "HW audio not attached") | translate }}</span>
+    <span *ngSwitchCase="'na'" class="level-na">{{ "n/a" | translate }}</span>
+    <span *ngSwitchCase="'unknown'" class="level-na">-</span>
+    <ng-container *ngSwitchDefault>
+      <span class="level-bar" [title]="('Peak' | translate) + ': ' + (level.peak !== null ? (level.peak | number: '1.4-4') : '-')"><span class="level-fill" [class.silent]="level.state === 'silent'" [style.width.%]="level.barPercent"></span></span>
+      <span class="level-value">{{ level.rms | number: "1.4-4" }}</span>
+      <span class="silent-badge" *ngIf="level.state === 'silent'" data-test-id="voiceTranscriptSilentBadge">{{ "silent" | translate }}</span>
+    </ng-container>
+  </div>
+</ng-template>

@@ -14,7 +14,7 @@ import { DiagnosisModel, DiagnosticName, DiagnosticUnit, EncounterModel, Encount
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { precription } from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { calculateBMI, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, isFeaturePresent, isValidBase64Image, obsParse, getPatientDisplayId, PatientDisplayId, getPrescriptionSourceEncounterUuids, isNamcoDoctor, getCacheData } from 'src/app/utils/utility-functions';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
 import diagnostics from '../../core/data/diagnostics';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -32,6 +32,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   visit: VisitModel;
   patient: PatientModel;
+  patientDisplayId: PatientDisplayId;
+  // Show or hide the "OpenMRS ID" / "TMH Case Number" label next to the patient ID in the header. The ID itself is always shown.
+  showOpenMrsIdLabel = false;
+  showTmhCaseNumberLabel = false;
   baseUrl: string = environment.baseURL;
   visitStatus: string;
   providerName: string;
@@ -78,6 +82,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   sanitizedValue: SafeHtml;
   recommendation: { uuid: string; value: any; };
   brandName = environment.brandName === 'KCDO';
+  isNamcoDoctorLoggedIn: boolean = isNamcoDoctor(getCacheData(true, doctorDetails.PROVIDER));
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -129,6 +134,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
+            this.patientDisplayId = getPatientDisplayId(patient);
             this.clinicName = visit.location.display;
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
@@ -157,6 +163,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   }
                 });
                 encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
+                  if (!this.consultedDoctor) { return; }
                   this.consultedDoctor.gender = p.provider.person.gender;
                   this.consultedDoctor.person_uuid = p.provider.person.uuid;
                   this.consultedDoctor.attributes = p.provider.attributes;
@@ -166,12 +173,45 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 });
               }
             });
+
+            // Not completed yet (e.g. referred to NAMCO, or viewed before sharing): there is no
+            // Visit Complete "Doctor details", so take the consulted doctor from the doctor's note.
+            if (!this.consultedDoctor) {
+              this.consultedDoctor = this.getDoctorFromVisitNote(visit.encounters);
+            }
           }
         });
       }
     }, (error) => {
 
     });
+  }
+
+  /**
+  * Consulted doctor from the doctor's note encounter, for a visit not completed yet — same shape as
+  * the Visit Complete "Doctor details" (name, uuid, profile attributes by name, e.g. typeOfProfession,
+  * specialization). Prefers the NAMCO specialist's note when there is one.
+  * @param {EncounterModel[]} encounters - Visit encounters
+  * @returns {any} - Doctor details, or undefined when there is no doctor's note
+  */
+  getDoctorFromVisitNote(encounters: EncounterModel[]): any {
+    const noteOf = (type: string) => encounters.find((e: EncounterModel) => e.encounterType?.display === type && e.encounterProviders?.length);
+    const note = noteOf(visitTypes.SPECIALIST_VISIT_NOTE) || noteOf(visitTypes.VISIT_NOTE);
+    const provider: any = note?.encounterProviders?.[0]?.provider;
+    if (!provider) { return undefined; }
+    const doctor: any = {
+      name: provider.person?.display,
+      uuid: provider.uuid,
+      gender: provider.person?.gender,
+      person_uuid: provider.person?.uuid,
+      attributes: provider.attributes
+    };
+    (provider.attributes || []).forEach((attr: any) => {
+      if (attr.voided) { return; }
+      const key = attr.attributeType?.display || attr.display?.split(':')[0]?.trim();
+      if (key && !(key in doctor)) { doctor[key] = attr.value; }
+    });
+    return doctor;
   }
 
   /**
@@ -275,12 +315,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
-
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if(this.appConfigService.patient_visit_summary?.dp_dignosis_secondary){
-
             this.dignosisSecondary = obsParse(obs.value)
           } else {
             if (obs?.uuid)
@@ -310,9 +349,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfNotePresent() {
     this.notes = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.notes.push(obs);
         }
       });
@@ -324,9 +364,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfDiscussionSummaryPresent() {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiscussionSummary).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.discussionSummary = obs.value
         }
       });
@@ -340,9 +381,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   checkIfMedicationPresent(): void {
     this.medicines = [];
     this.standardMedicines = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes(':')) {
             if(this.appConfigService.patient_visit_summary?.standard_medication){
               this.standardMedicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
@@ -357,13 +399,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 uuid: obs.uuid
               });
             }
-          } else {
-            this.additionalInstructions.push(obs);
           }
         }
       });
     });
   }
+
+  // Additional Instructions shares conceptAdvice with Advice
+
+  static readonly ADDITIONAL_INSTRUCTION_PREFIX = '[ADDITIONAL_INSTRUCTION]';
 
   /**
   * Get advices for the visit
@@ -371,11 +415,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfAdvicePresent() {
     this.advices = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            if (!obs.value.includes('</a>')) {
+            if (obs.value.includes('</a>')) return;
+            if (obs.value.startsWith(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX)) {
+              this.additionalInstructions.push({
+                ...obs,
+                value: obs.value.slice(ViewVisitPrescriptionComponent.ADDITIONAL_INSTRUCTION_PREFIX.length),
+              });
+            } else {
               this.advices.push(obs);
             }
           }
@@ -389,10 +440,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfTestPresent() {
     this.tests = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.tests.push(obs);
           }
         });
@@ -405,10 +457,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   checkIfReferralPresent() {
     this.referrals = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if(this.appConfigService.patient_visit_summary?.dp_referral_secondary)
               this.referralSecondary = obs.value
             else if(obs.value.includes(":")) {
@@ -425,21 +478,23 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfFollowUpPresent() {
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: string;
-          if (obs.value.includes('Time:')) {
+          if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
             const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
-            const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
             followUpTime = time ? time : null;
             followUpReason = remark ? remark : null;
-            followUpType = type && type !== 'null' ? type : null;
             wantFollowUp = 'Yes';
           }
+          // Type: fragment can also be present on a 'No' follow-up obs, so parse it independent of wantFollowUp
+          const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
+          followUpType = type && type !== 'null' ? type : (environment.isTurnServer ? 'Telemedicine' : null);
           this.followUp = {
             present: true,
             wantFollowUp,
@@ -462,7 +517,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display == identifierType) {
+        if (idf.identifierType?.display == identifierType) {
           identifier = idf.identifier;
         }
       });
@@ -476,7 +531,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   checkVisitStatus(encounters: EncounterModel[]) {
-    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       this.visitStatus = visitTypes.COMPLETED_VISIT;
@@ -504,17 +560,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string) {
-    const years = moment().diff(birthdate, 'years');
-    const months = moment().diff(birthdate, 'months');
-    const days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} years`;
-    } else if (months > 1) {
-      return `${months} months`;
-    } else {
-      return `${days} days`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**
@@ -526,7 +573,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
-        if (attrType === attr.attributeType.display) {
+        if (attrType === attr.attributeType?.display) {
           val = attr.value;
         }
       });
@@ -653,11 +700,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         signatureValue = await this.toObjectUrl(`${this.signature.value}`);
     }
 
+    // ArogyaPath 2.0 branding is Turn-only; other servers keep the Intelehealth name.
+    const brandLabel = environment.isTurnServer ? 'ArogyaPath 2.0' : 'Intelehealth';
+
     const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 40 ],
-      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      watermark: { text: brandLabel.toUpperCase(), color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
           { text: ''},
@@ -667,7 +717,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage: { toString: () => string; }, pageCount: string) => {
         return {
           columns: [
-            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 0, 0, 0]} ],
+            [ { text: (pageCount === currentPage ? '*The diagnosis and prescription is through telemedicine consultation conducted as per applicable telemedicine guideline\n\n' : '\n\n'),bold: true,fontSize: 9,margin: [10, 0, 0, 0] },{ text: `Copyright ©2023 ${brandLabel}, a 501 (c)(3) & Section 8 non-profit organisation`, fontSize: 8, margin: [5, 0, 0, 0]} ],
             { text: '\n\n'+currentPage.toString() + ' of ' + pageCount, width:"7%", fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
@@ -682,7 +732,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: `${brandLabel} e-Prescription`,
                   alignment: 'center',
                   style: 'header'
                 },
@@ -728,6 +778,33 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
+                      [
+                        {
+                          colSpan: 2,
+                          ul: [
+                            {text: [{text: 'Patient ID:', bold: true}, ` ${getPatientDisplayId(this.patient).id || 'NA'}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
                   sectionName:'cheifComplaint',
                   table: {
                     widths: [30, '*'],
@@ -766,33 +843,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           colSpan: 2,
                           ul: [
                             ...this.getRecords('Vitals')
-                          ]
-                        }
-                      ]
-                    ]
-                  },
-                  layout: {
-                    defaultBorder: false
-                  }
-                },
-                '',
-                '',
-                ''
-              ],
-              [
-                {
-                  colSpan: 4,
-                  table: {
-                    widths: [30, '*'],
-                    headerRows: 1,
-                    body: [
-                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
-                      [
-                        {
-                          colSpan: 2,
-                          ul: [
-                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.getPersonAttributeValue('TMH Case Number') !== 'NA' ? this.getPersonAttributeValue('TMH Case Number') : this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
@@ -877,7 +927,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths:['*', '*', '*', '*', '*'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Follow-up Requested', style: 'tableHeader'}, (this.isFeatureAvailable('followUpType') ? {text: 'Type', style: 'tableHeader'} : []), {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
+                              [{text: 'Follow-up Requested', style: 'tableHeader'}, (this.isFeatureAvailable('followUpType') ? {text: 'Type', style: 'tableHeader'} : []), {text: 'Date', style: 'tableHeader'}, (this.isFeatureAvailable('followUpTime') ? {text: 'Time', style: 'tableHeader'} : []), {text: 'Reason', style: 'tableHeader'}],
                               ...this.getRecords('followUp')
                             ]
                           },
@@ -898,20 +948,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   alignment: 'right',
-
                   stack: isValidSign
                   ? [
-                      { image: `${this.signature.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0] },
+                      { image: `${this.signature.value}`, width: 100, height: 60, margin: [0, 5, 0, 0] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -10, 0, 0] },
                       { text: `${this.consultedDoctor?.typeOfProfession}` },
                       { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
                     ]
                   : [
-                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -40, 0, 0] },
+                      { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, 20, 0, 0] },
                       { text: `${this.consultedDoctor?.typeOfProfession}` },
                       { text: `Registration No. ${this.consultedDoctor?.registrationNumber}` }
                     ]
-
                 },
                 '',
                 '',
@@ -1069,15 +1117,22 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'followUp':
           if (this.followUp) {
             records.push([this.followUp.wantFollowUp, (this.isFeatureAvailable('followUpType') ? [this.followUp.followUpType ?? '-'] : []), this.followUp.followUpDate ? moment(this.followUp.followUpDate).format('DD MMM YYYY') : '-', 
-             this.followUp.followUpTime ?? '-', this.followUp.followUpReason ?? '-']);
+             (this.isFeatureAvailable('followUpTime') ? this.followUp.followUpTime ?? '-' : ''), this.followUp.followUpReason ?? '-']);
           } else {
-            records.push([{ text: 'No follow-up added', colSpan: this.isFeatureAvailable('followUpType') ? 5 : 4, alignment: 'center' }]);
+            records.push([{ text: 'No follow-up added', colSpan: (this.isFeatureAvailable('followUpType') ? 5 : this.isFeatureAvailable('followUpTime') ? 4 : 3), alignment: 'center' }]);
           }
           break;
       case 'cheifComplaint':
-        if(this.appConfigService?.patient_visit_summary?.dp_dignosis_secondary && this.checkUpReasonData.length > 0){
-          this.checkUpReasonData[0].data.forEach((cc:any)=>{
-            records.push({text: [{text: cc.key, bold: true}, cc.value.changingThisBreaksApplicationSecurity], margin: [0, 5, 0, 5]});
+        // Show every complaint's name plus its detail rows (onset, duration, etc.),
+        // not just the bare complaint name -- dp_dignosis_secondary only changes
+        // where the detail value's HTML comes from, not whether details show at all.
+        if (this.checkUpReasonData.length > 0) {
+          this.checkUpReasonData.forEach((complaint: any) => {
+            records.push({ text: [{ text: complaint.title, bold: true }], margin: [0, 5, 0, 2] });
+            (complaint.data || []).forEach((cc: any) => {
+              const value = cc.value?.changingThisBreaksApplicationSecurity ?? cc.value ?? '';
+              records.push({ text: [{ text: `${cc.key}: `, bold: true }, value], margin: [10, 0, 0, 2] });
+            });
           });
         } else if (this.cheifComplaints.length) {
           this.cheifComplaints.forEach(cc => {
@@ -1411,6 +1466,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && this.isNamcoDoctorLoggedIn) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -1477,9 +1533,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
    */
   checkIfFollowUpInstructionsPresent(): void {
     this.followUpInstructions = [];
+    const sourceEncounterUuids = getPrescriptionSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollowUpInstruction).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.followUpInstructions.push(obs);
         }
       });

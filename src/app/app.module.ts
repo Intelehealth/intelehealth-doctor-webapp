@@ -50,6 +50,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Regular Imports
 import { environment } from "../environments/environment";
+import { CONFIG_SERVICE, ENVIRONMENT, SOCKET_SERVICE } from "aiddx-library";
 import { SocketService } from "./services/socket.service";
 import { AppRoutingModule } from './app-routing.module';
 import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
@@ -132,14 +133,17 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        `${environment.mindmapURL}/api/messages/`,
-        `${environment.mindmapURL}/api/support/`,
-        `${environment.mindmapURL}/api/auth/validateProviderAttribute`,
+        `${environment.mindmapURL}/voicedoc/`,
+        `${environment.mindmapURL}/messages/`,
+        `${environment.mindmapURL}/support/`,
+        `${environment.mindmapURL}/auth/validateProviderAttribute`,
         `${environment.baseURL}/pl/`,
         `${environment.webrtcTokenServerUrl}api/getToken`,
-        `${environment.base}/pl/`,
-        `${environment.base}/ddx`,
-        `${environment.base}/ttxv1`,
+        `${environment.mindmapURL}/pl/`,
+        `${environment.mindmapURL}/ddx`,
+        `${environment.mindmapURL}/ddxfinal`,
+        `${environment.mindmapURL}/ttxv1`,
+        `${environment.mindmapURL}/ttxfinal`,
         `${environment.mindmapURL}/appointment/getScheduledMonths`,
         `${environment.mindmapURL}/mindmap/getNotificationStatus`,
         `${environment.mindmapURL}/appointment/getUserSlots`,
@@ -195,6 +199,9 @@ registerLocaleData(localeEn);
     },
     CookieService,
     SocketService,
+    { provide: ENVIRONMENT, useValue: environment },
+    { provide: CONFIG_SERVICE, useExisting: AppConfigService },
+    { provide: SOCKET_SERVICE, useExisting: SocketService },
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

@@ -38,6 +38,21 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { FollowUpInstructionComponent } from './visit-summary/follow-up-instruction/follow-up-instruction.component';
 import { IhLibraryModule } from 'ih-library';
 import { CanDeactivateVisitSummary } from '../core/guards/visit-summary-deactivate.guard';
+import { DigitalStethoscopeComponent } from './visit-summary/digital-stethoscope/digital-stethoscope.component';
+import { ReferralConsentComponent } from './visit-summary/referral-consent/referral-consent.component';
+import { VisitSummaryV2Component } from './visit-summary-v2/visit-summary-v2.component';
+import { KaleyraCallRecorderComponent } from './visit-summary-v2/kaleyra-call-recorder/kaleyra-call-recorder.component';
+import { PatientHeaderCardComponent } from './visit-summary-v2/patient-header-card/patient-header-card.component';
+import { VisitSidebarComponent } from './visit-summary-v2/visit-sidebar/visit-sidebar.component';
+import { CurrentVisitDetailsComponent } from './visit-summary-v2/current-visit-details/current-visit-details.component';
+import { DoctorNoteComponent } from './visit-summary-v2/doctor-note/doctor-note.component';
+import { FollowUpDatePickerComponent } from './visit-summary-v2/follow-up-date-picker/follow-up-date-picker.component';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PastVisitsComponent } from './visit-summary-v2/past-visits/past-visits.component';
+import { NamcoReferralOutComponent } from './visit-summary-v2/namco-referral-out/namco-referral-out.component';
+import { SpecialistDoctorNoteComponent } from './visit-summary-v2/specialist-doctor-note/specialist-doctor-note.component';
+import { PrimaryNoteViewComponent } from './visit-summary-v2/primary-note-view/primary-note-view.component';
+import { PrimaryDoctorNoteComponent } from './visit-summary/primary-doctor-note/primary-doctor-note.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -57,6 +72,19 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     FollowupVisitsComponent,
     NotesComponent,
     FollowUpInstructionComponent,
+    DigitalStethoscopeComponent,
+    VisitSummaryV2Component,
+    KaleyraCallRecorderComponent,
+    PatientHeaderCardComponent,
+    VisitSidebarComponent,
+    CurrentVisitDetailsComponent,
+    DoctorNoteComponent,
+    FollowUpDatePickerComponent,
+    PastVisitsComponent,
+    NamcoReferralOutComponent,
+    SpecialistDoctorNoteComponent,
+    PrimaryNoteViewComponent,
+    PrimaryDoctorNoteComponent,
   ],
   imports: [
     IhLibraryModule,
@@ -79,6 +107,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     NgxDropzoneModule,
     NgbTypeaheadModule,
     MatDatepickerModule,
+    OverlayModule,
     NgxPermissionsModule.forChild({
       permissionsIsolate: false,
       rolesIsolate: false,
@@ -92,7 +121,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
       }
     }),
     MatProgressSpinnerModule,
-    SharedModule
+    SharedModule,
+    ReferralConsentComponent
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },

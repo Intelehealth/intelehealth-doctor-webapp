@@ -9,7 +9,6 @@ import { visitTypes } from "src/config/constant";
 })
 export class VisitService {
 
-
   private baseURL = environment.baseURL;
   private baseURLMindmap = environment.mindmapURL;
   private baseURLAbha = environment.abhaURL;
@@ -28,6 +27,27 @@ export class VisitService {
   getVisit(uuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier,identifierType:(name,uuid,display)),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
+    return this.http.get(url);
+  }
+
+  /**
+  * Turn-server only: full visit representation the Turn prescription PDF is built
+  * from, sent along with the Turn notify call so Turn builds the PDF from this
+  * payload instead of re-reading OpenMRS right after the encounter was created.
+  * @param {string} uuid - Visit uuid
+  * @return {Observable<any>}
+  */
+  getVisitForPrescription(uuid: string): Observable<any> {
+    // Must match turn-io/prescription/openmrs.js's VISIT_CUSTOM_REP exactly.
+    const v =
+      "custom:(uuid,location:(display)," +
+      "patient:(uuid,identifiers:(identifier,identifierType:(name,display))," +
+      "person:(display,gender,age,birthdate,preferredName:(givenName,middleName,familyName)," +
+      "attributes:(value,attributeType:(display,uuid)),preferredAddress:(address1,address2,cityVillage,countyDistrict,stateProvince,postalCode)))," +
+      "encounters:(encounterDatetime,encounterType:(uuid,display)," +
+      "obs:(uuid,display,value,concept:(uuid,display),groupMembers:(uuid,display,value,concept:(uuid,display)))," +
+      "encounterProviders:(provider:(uuid,display,attributes:(value,attributeType:(display))))))";
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -121,6 +141,16 @@ export class VisitService {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
+
+  /**
+  * End (close) a visit by setting its stopDatetime -- same call the HW webapp's
+  * "End visit" makes. Ended visits are listed under Completed visits (getEndedVisits).
+  * @param {string} visitId - Visit uuid
+  * @return {Observable<any>}
+  */
+  endVisit(visitId: string): Observable<any> {
+    return this.http.post(`${this.baseURL}/visit/${visitId}`, { stopDatetime: new Date().toISOString() });
+  }
   getDemarcation(enc) {
     let isFollowUp = false;
     const adlIntl = enc?.find?.(e => [e?.type?.name, e?.encounterType?.display].includes(visitTypes.ADULTINITIAL));
@@ -162,9 +192,17 @@ export class VisitService {
   * @param {string} v - response format
   * @return {Observable<any>}
   */
-  patientInfo(id, v = 'custom:(uuid,attributes,identifiers,person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,address3,address6,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))'): Observable<any> {
+  patientInfo(id, v?: string): Observable<any> {
+    // On Turn deployments, expand `identifiers` to include identifierType.display
+    // so getPatientIdentifier('OpenMRS ID') can resolve the ID (otherwise the
+    // Visit Summary header / prescription show "NA"). Non-Turn servers keep the
+    // original flat `identifiers` representation, gated by environment.isTurnServer.
+    const identifiersRep = environment.isTurnServer
+      ? 'identifiers:(identifier,identifierType:(name,uuid,display))'
+      : 'identifiers';
+    const defaultV = `custom:(uuid,attributes,${identifiersRep},person:(uuid,display,gender,preferredName:(givenName,familyName,middleName),birthdate,age,preferredAddress:(cityVillage,address1,address2,address3,address6,country,stateProvince,countyDistrict,postalCode),attributes:(value,attributeType:(display))))`;
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=${v}`;
+    const url = `${this.baseURL}/patient/${id}?v=${v || defaultV}`;
     return this.http.get(url);
   }
 
@@ -206,34 +244,52 @@ export class VisitService {
     return data;
   }
 
+  parseChiefComplaints(rawValue: string | null | undefined): string[] {
+    if (!rawValue) {
+      return [];
+    }
+    const sections = `${rawValue}`.replace(new RegExp('\u25ba', 'g'), '').split('<b>');
+    const complaints: string[] = [];
+    for (let i = 1; i < sections.length; i++) {
+      const title = sections[i].split('<')[0]?.trim();
+      if (title && !title.match(visitTypes.ASSOCIATED_SYMPTOMS)) {
+        complaints.push(title);
+      }
+    }
+    return complaints;
+  }
+
   /**
   * Get awaiting visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getAwaitingVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}`);
+  getAwaitingVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
   * Get priority visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getPriorityVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}`);
+  getPriorityVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
   * Get inprogress visits
   * @param {string} speciality - Visit speciality
   * @param {number} page - Page number
+  * @param {boolean} countOnly - When true, skip fetching the visit list and only return totalCount (much faster)
   * @return {Observable<any>}
   */
-  getInProgressVisits(speciality: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}`);
+  getInProgressVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
@@ -264,6 +320,16 @@ export class VisitService {
   */
   getEndedVisits(speciality: string, page: number = 1): Observable<any> {
     return this.http.get(`${this.baseURLMindmap}/openmrs/getEndedVisits?speciality=${speciality}&page=${page}`);
+  }
+
+  /**
+  * Get referred visits
+  * @param {string} speciality - Visit speciality
+  * @param {number} page - Page number
+  * @return {Observable<any>}
+  */
+  getReferredVisits(speciality: string, page: number = 1, countOnly: boolean = false): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getReferredVisits?speciality=${speciality}&page=${page}&countOnly=${countOnly}`);
   }
 
   /**
@@ -303,6 +369,20 @@ export class VisitService {
       frequency: splitMed?.[5] ?? '-'
     };
     if (uuid) med.uuid = uuid;
+
+    // Restore AI metadata from 7th field (JSON object, may contain colons)
+    const aiMetaStr = splitMed?.slice(6).join(':');
+    if (aiMetaStr) {
+      try {
+        const aiMeta = JSON.parse(aiMetaStr);
+        med.aiGenerated = true;
+        if (aiMeta.r) med.rationale = aiMeta.r;
+        if (aiMeta.l) med.likelihood = aiMeta.l;
+      } catch {
+        if (aiMetaStr === 'Y') med.aiGenerated = true;
+      }
+    }
+
     return med;
   }
 }

@@ -15,7 +15,6 @@
       </button>
     </div>
   </div>
-
   <div class="row mt-3" data-test-id="calendarSetupMainRow">
     <!-- Month selector -->
     <div class="col-md-3 p-1" data-test-id="monthSelectorCol">
@@ -45,7 +44,7 @@
 
     <!-- Form -->
     <div class="col-md-9 p-1" data-test-id="calendarFormCol">
-      <form [formGroup]="addSlotsForm" data-test-id="calendarForm">....
+      <form [formGroup]="addSlotsForm" data-test-id="calendarForm">
         <div class="card intel-card" data-test-id="calendarFormCard">
           
           <!-- Month header -->
@@ -79,7 +78,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="form-group col-md-6" data-test-id="endDateCol">
                 <label data-test-id="lblEndDate">{{'End date'|translate}}</label>
                 <div class="input-group" data-test-id="endDateInputGroup">
@@ -211,7 +209,6 @@
                                 </div>
                               </ng-template>
                             </ng-select>
-
                             <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem"
                               class="customSelect2" [items]="clockTimeAmPM" appendTo=".intel-card" bindLabel="name" bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate" [clearable]="false" [searchable]="false"
@@ -224,7 +221,6 @@
                                 </div>
                               </ng-template>
                             </ng-select>
-
                           </div>
                         </td>
                         <td>
@@ -240,7 +236,6 @@
                                 </div>
                               </ng-template>
                             </ng-select>
-
                             <ng-select #enddatepicker [class.invalid-input]="submitted && t.controls.endMeridiem.errors"
                               formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM" appendTo=".intel-card" bindLabel="name"
                               bindValue="name" [placeholder]="(clockTimeAmPM[0].name)|translate" [clearable]="false" [searchable]="false">
@@ -252,7 +247,6 @@
                                 </div>
                               </ng-template>
                             </ng-select>
-
                           </div>
                         </td>
                         <td>
@@ -314,7 +308,7 @@
                 <div class="input-group" data-test-id="daysOffInputGroup">
                   <input type="text" [value]="daysOffDates" class="form-control"
                     placeholder="{{'Select dates'|translate}}" readonly data-test-id="etDayOff">
-                  <input type="text" class="form-control hidden-input"  [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)" [matDatepicker]="picker3"
+                  <input type="text" class="form-control hidden-input"  [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)"
                     [matDatepicker]="picker3" readonly data-test-id="etDayOffSelect">
                   <mat-datepicker #picker3 [panelClass]="'daysOffCalendar'" [dateClass]="isDayOff"></mat-datepicker>
                   <div class="input-group-append" data-test-id="dpicSelDayOff">
@@ -326,7 +320,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="col-md-6 pb-3" data-test-id="daysOffActionCol">
                 <div class="h-100 d-flex align-items-end">
                   <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()" data-test-id="btnSaveDayOff">
@@ -338,7 +331,6 @@
                 </div>
               </div>
             </div>
-
             <div class="days-off-chips-con" data-test-id="daysOffChipsCon">
               <h6 class="mb-0" data-test-id="lblYourDaysOff">{{'Your days off'|translate}}</h6>
               <div class="days-off-chips" formArrayName="daysOff" data-test-id="daysOffChips">
@@ -353,7 +345,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </form>
     </div>

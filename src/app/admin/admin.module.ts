@@ -55,7 +55,16 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PatientDetailsComponent } from './admin-actions/patient-details/patient-details.component';
 import { PatientVisitDropdownComponent } from './admin-actions/patient-visit-dropdown/patient-visit-dropdown.component';
 import { HomeScreenComponent } from './admin-actions/home-screen/home-screen.component';
+import { WebrtcLogComponent } from './reports/webrtc-log/webrtc-log.component';
 import { AiLlmComponent } from './admin-actions/ai-llm/ai-llm.component';
+import { VoiceTranscriptsComponent } from './admin-actions/ai-llm/voice-transcripts/voice-transcripts.component';
+import { VoiceTranscriptDetailComponent } from './admin-actions/ai-llm/voice-transcripts/voice-transcript-detail/voice-transcript-detail.component';
+import { QmsComponent } from './admin-actions/qms/qms.component';
+import { InsightsComponent } from './insights/insights.component';
+import { PrescriptionNotesComponent } from './admin-actions/prescription-notes/prescription-notes.component';
+import { NamcoReferralComponent } from './admin-actions/namco-referral/namco-referral.component';
+import { VisitSummaryV2ConfigComponent } from './admin-actions/visit-summary-v2/visit-summary-v2.component';
+import { NcdComponent } from './admin-actions/ncd/ncd.component';
 
 
 // AoT requires an exported function for factories
@@ -162,6 +171,34 @@ const routes: Routes = [
             component: AiLlmComponent
           },
           {
+            path: 'ai-llm/voice-transcripts',
+            component: VoiceTranscriptsComponent
+          },
+          {
+            path: 'qms',
+            component: QmsComponent
+          },
+          {
+            path: 'insights',
+            component: InsightsComponent
+          },
+          {
+            path: 'prescription-notes',
+            component: PrescriptionNotesComponent
+          },
+          {
+            path: 'namco-referral',
+            component: NamcoReferralComponent
+          },
+          {
+            path: 'visit-summary-v2',
+            component: VisitSummaryV2ConfigComponent
+          },
+          {
+            path: 'ncd',
+            component: NcdComponent
+          },
+          {
             path: '',
             component: AdminActionsComponent
           }
@@ -200,7 +237,16 @@ const routes: Routes = [
     PatientDetailsComponent,
     PatientVisitDropdownComponent,
     HomeScreenComponent,
-    AiLlmComponent
+    WebrtcLogComponent,
+    AiLlmComponent,
+    VoiceTranscriptsComponent,
+    VoiceTranscriptDetailComponent,
+    InsightsComponent,
+    PrescriptionNotesComponent,
+    NamcoReferralComponent,
+    VisitSummaryV2ConfigComponent,
+    NcdComponent,
+    QmsComponent
   ],
   imports: [
     CommonModule,

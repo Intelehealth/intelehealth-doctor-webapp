@@ -56,13 +56,14 @@
                 <th de-header-cell *matHeaderCellDef>
                   {{ "Platform" | translate }}
                 </th>
-                <td mat-cell *matCellDef="let element">
+                <td mat-cell *matCellDef="let element; let i = index">
                   <span>{{ element.platform }} </span>
                   <button
                     mat-icon-button
                     aria-label="Edit sections"
                     (click)="element.is_enabled && openDialog(element)"
                     [disabled]="!element.is_enabled"
+                    [attr.data-test-id]="'btnEditLanguage' + i"
                   >
                     <mat-icon
                       class="ml-0"
@@ -93,7 +94,7 @@
                 <th mat-header-cell *matHeaderCellDef class="text-center">
                   {{ "Default Language" | translate }}
                 </th>
-                <td mat-cell *matCellDef="let element" class="text-center">
+                <td mat-cell *matCellDef="let element; let i = index" class="text-center">
                   <div>
                     <div class="pretty p-default p-round mr-0">
                       <input
@@ -104,6 +105,7 @@
                           changeDefault(element.id, $event.target.checked)
                         "
                         [disabled]="!element.is_enabled"
+                        [attr.data-test-id]="'rdDefaultLanguage' + i"
                       />
                       <div class="state p-success">
                         <label></label>
@@ -156,6 +158,7 @@
             [pageSizeOptions]="[5, 10, 20]"
             showFirstLastButtons
             aria-label="Select page of periodic elements"
+            data-test-id="matPaginatorLanguages"
           ></mat-paginator>
           <button
             type="button"

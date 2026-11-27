@@ -261,6 +261,10 @@ export interface CustomVisitModel {
     person_attribute?: any[]
   }
   prescription_started?:any
+  attributes?: any[]
+  routing_specialization?: string
+  status?: string
+  referral_status?: { label: string, statusClass: string }
 }
 
 export interface CustomEncounterModel {
@@ -419,6 +423,7 @@ export interface ObsModel {
     display?: string
   },
   encounter?: {
+    uuid?: string,
     visit?: {
       uuid?: string
     }
@@ -500,7 +505,8 @@ export interface ReferralModel {
   speciality?: string,
   facility?: string,
   priority?: string,
-  reason?: string
+  reason?: string,
+  pendingSave?: boolean
 }
 
 export interface TestModel {
@@ -516,7 +522,6 @@ export interface MedicineModel {
   remark?: string,
   frequency?: string,
   uuid?: string,
-
 }
 
 export interface StandardMedicineModel {
@@ -526,17 +531,19 @@ export interface StandardMedicineModel {
   durationUnit?: string,
   instructRemark?: string,
   frequency?: string,
-  uuid?: string
-}
-
-export interface StandardMedicineModel {
-  drug?: string,
-  dose?: string,
-  durationNo?: string,
-  durationUnit?: string,
-  instructRemark?: string,
-  frequency?: string,
-  uuid?: string
+  uuid?: string,
+  aiGenerated?: boolean,
+  modified?: boolean,
+  rationale?: string[],
+  likelihood?: string,
+  overrideReason?: string,
+  originalAiData?: {
+    dose?: string,
+    durationNo?: string,
+    durationUnit?: string,
+    instructRemark?: string,
+    frequency?: string
+  }
 }
 
 export interface PatientHistoryModel {
@@ -557,6 +564,10 @@ export interface DiagnosisModel {
   diagnosisCode?: string,
   isSnomed? : boolean,
   diagnosisAiGenerated?: string,
+  rationale?: string[],
+  from?: string,
+  likelihood?: string,
+  overrideReason?: string,
 }
 
 export interface DocImagesModel {
@@ -699,6 +710,16 @@ export interface PatientVisitSummaryModel {
   updatedAt?: string,
 }
 
+export interface PrescriptionNotesModel {
+  id: number,
+  specialty: string,
+  notes: string[],
+  is_enabled: boolean,
+  platform?: 'Mobile' | 'Webapp' | 'Both' | null,
+  createdAt?: string,
+  updatedAt?: string,
+}
+
 export interface PatientVisitSummaryConfigModel {
   allow_duplicate_phoneno_and_email: boolean
   appointment_button: boolean
@@ -723,6 +744,8 @@ export interface PatientVisitSummaryConfigModel {
   inprogress_visit_section: boolean
   diagnosis_snomedct: boolean
   standard_medication: boolean
+  family_history_notes?: boolean
+  past_medical_history_notes?: boolean
 }
 
 export interface PagerdutyList {
@@ -812,4 +835,45 @@ export interface DropdownValuesModel {
 
 export interface RecordingResponse {
   recordingId: number;
+}
+
+export interface ScreeningResult {
+  confidence_score: number;
+  condition: string;
+  description: string;
+  condition_detected: string;
+  type?: string;
+}
+
+export interface LungData {
+  lung_bpm: string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+
+export interface HeartData {
+  heart_bpm: number | string;
+  breathing_rate?: number | string;
+  location: string;
+  position: string;
+  point?: number;
+  report_url: string;
+  recorded_time?: string;
+  device?: string;
+  screening_results: ScreeningResult[];
+}
+export interface DetectedCondition {
+  condition: string;
+  confidence: number;
+}
+
+export interface MeasurementPoint {
+  id: number;
+  top: string;
+  left: string;
 }

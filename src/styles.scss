@@ -8,6 +8,7 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
 @import 'bootstrap/scss/bootstrap.scss';
 @import "angular-calendar/css/angular-calendar.css";
 @import "./app/core/directives/mat-table-responsive.directive.scss";
+@import "./app/queue/queue-modals.scss";
 @import "@sjmc11/tourguidejs/src/scss/tour.scss";
 
 @font-face {
@@ -413,6 +414,10 @@ body.font-lato td {
 
 /* Tooltip CSS */
 
+.mat-drawer {
+  overflow-y: unset !important;
+}
+
 .info-message-tooltip {
   font-family: DM Sans;
   font-size: 12px;
@@ -512,6 +517,10 @@ body.font-lato td {
   .mat-dialog-container {
     overflow: visible;
   }
+}
+
+.modal-md.ddx-ttx-override-reason-panel {
+  max-width: min(92vw, 1180px) !important;
 }
 
 .modal-md {
@@ -779,6 +788,21 @@ body.font-lato td {
 
   .mat-dialog-container {
     width: fit-content;
+  }
+}
+
+.cdk-overlay-container.vc-call-minimized {
+  .cdk-overlay-backdrop {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .cdk-global-overlay-wrapper {
+    pointer-events: none;
+  }
+
+  .vc-modal-lg.minimized {
+    pointer-events: auto;
   }
 }
 

@@ -254,7 +254,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
-    this.specializations = this.appConfigService.specialization;
+    this.specializations = [...(this.appConfigService.specialization || [])];
+    this.ensureSpecializationOption(this.specialization);
     this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
@@ -431,7 +432,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case doctorDetails.SPECIALIZATION:
             this.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
-            professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
+            professionalFormValues.specialization = this.specialization;
+            this.ensureSpecializationOption(this.specialization);
             break;
           case doctorDetails.TEXT_OF_SIGN:
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -485,6 +487,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   * @param {string} display - Provider attribute type name/display
   * @return {any} - Provider attribute value
   */
+  /**
+  * Keep the saved specialization selectable (and so shown) even when it isn't one of the configured
+  * options — it's added to this page's list only, the app config is not changed.
+  * @param {string} value - Saved specialization
+  * @return {void}
+  */
+  private ensureSpecializationOption(value: string): void {
+    if (!value || this.specializations.some((s: SpecializationModel) => s.name === value)) { return; }
+    this.specializations = [...this.specializations, { name: value }];
+  }
+
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {

@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, ElementRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { SKIP_ERROR_INTERCEPTOR } from '../core/interceptors/error-interceptor.context';
 import {
   LocalParticipant,
   LocalTrackPublication,
@@ -12,10 +13,12 @@ import {
   RoomConnectOptions,
   RoomEvent,
   Track,
+  ConnectionQuality,
   VideoPresets43,
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { getCacheData } from '../utils/utility-functions';
 
 @Injectable({
@@ -31,6 +34,14 @@ export class WebrtcService {
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
   public visitHolderId: null;
+
+  // Connection state streams for UI/components to subscribe
+  public isReconnecting$ = new BehaviorSubject<boolean>(false);
+  public signalReconnecting$ = new Subject<void>();
+  // Synchronous flag for quick checks in components
+  public isCurrentlyReconnecting: boolean = false;
+  // Connection quality streams
+  public localConnectionQuality$ = new BehaviorSubject<ConnectionQuality | null>(null);
 
   constructor(
     private http: HttpClient,
@@ -61,12 +72,45 @@ export class WebrtcService {
       }));
   }
 
+  generateMagicLink(visitUuid: string, roomId: string, doctorName?: string, patientName?: string, notify?: boolean, phone?: string) {
+    return this.http.post(`${environment.webrtcTokenServerUrl}api/magic-link`, {
+      visitUuid,
+      roomId,
+      doctorName,
+      patientName,
+      notify,
+      phone,
+    });
+  }
+
   startRecording(payload) {
     return this.http.post(`${environment.webrtcTokenServerUrl}api/startRecording`, payload);
   }
 
   stopRecording(id: number, roomId: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`);
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${roomId}`, {
+      context: new HttpContext().set(SKIP_ERROR_INTERCEPTOR, true)
+    });
+  }
+
+  /**
+  * Stop the recording while the page is being closed or reloaded, when an HttpClient
+  * request would be cancelled. keepalive lets the browser finish the request after unload.
+  */
+  stopRecordingOnUnload(id: number, roomId: string) {
+    fetch(`${environment.webrtcTokenServerUrl}api/stopRecording?id=${id}&roomId=${encodeURIComponent(roomId)}`, { keepalive: true })
+      .catch(err => console.error('stop recording on unload failed', err));
+  }
+
+  /**
+  * Report a recording start/stop failure to the backend so it is logged and alerted on,
+  * not only sent to Google Analytics.
+  */
+  reportRecordingError(payload: { action: string, roomId: string, visitId?: string, doctorId?: string, patientId?: string, recordingId?: number, error: string }) {
+    this.http.post(`${environment.webrtcTokenServerUrl}api/recordingError`, payload, {
+      context: new HttpContext().set(SKIP_ERROR_INTERCEPTOR, true)
+    })
+      .subscribe({ error: err => console.error('report recording error failed', err) });
   }
 
   async createRoomAndConnectCall({
@@ -83,6 +127,7 @@ export class WebrtcService {
     handleTrackUnmuted = this.noop,
     handleParticipantDisconnected = this.noop,
     handleParticipantConnect = this.noop,
+    handleMediaError = (_err?: any) => this.noop(),
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
@@ -105,6 +150,9 @@ export class WebrtcService {
         echoCancellation: true,
         autoGainControl: true,
         noiseSuppression: true,
+        // Optimize audio quality
+        sampleRate: 48000,
+        channelCount: 1, // Mono for better bandwidth usage
       }
     });
 
@@ -115,9 +163,16 @@ export class WebrtcService {
       .on(RoomEvent.Connected, handleConnect)
       .on(RoomEvent.Connected, async () => {
         try {
-          await this.room.localParticipant.enableCameraAndMicrophone()
+          await this.room.localParticipant.setCameraEnabled(true);
         } catch (error) {
-          console.log("error", error)
+          try { handleMediaError({ source: 'camera', error }); } catch(_e) {}
+        }
+
+        // then enable microphone
+        try {
+          await this.room.localParticipant.setMicrophoneEnabled(true);
+        } catch (error) {
+          try { handleMediaError({ source: 'microphone', error }); } catch(_e) {}
         }
       })
       .on(RoomEvent.Disconnected, handleDisconnect)
@@ -126,7 +181,26 @@ export class WebrtcService {
       .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
-      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted);
+      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
+      // Reconnection-related events
+      .on(RoomEvent.SignalReconnecting, () => {
+        this.signalReconnecting$.next();
+      })
+      .on(RoomEvent.Reconnecting, () => {
+        console.warn("⚠️ Reconnecting...");
+        this.isCurrentlyReconnecting = true;
+        this.isReconnecting$.next(true);
+      })
+      .on(RoomEvent.Reconnected, () => {
+        this.isCurrentlyReconnecting = false;
+        this.isReconnecting$.next(false);
+      })
+      .on(RoomEvent.ConnectionQualityChanged, (quality: ConnectionQuality, participant: Participant) => {
+        // Emit per-participant quality updates for UI consumption
+        if ((participant as any)?.isLocal) {
+          this.localConnectionQuality$.next(quality);
+        }
+      });
 
     await this.room.connect(this.url, this.token);
   }
@@ -137,7 +211,7 @@ export class WebrtcService {
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
-      console.log('error: ', error);
+      console.error('error: ', error);
     }
   }
 
@@ -151,8 +225,17 @@ export class WebrtcService {
       const videoElement = camTrack.videoTrack?.attach();
       const localContainer: any = this.localContainer;
 
-      videoElement.style.height = '100%';
-      localContainer.appendChild(videoElement);
+      // Ensure only one local video element is rendered to avoid split/duplicate tiles
+      try {
+        if (localContainer) {
+          localContainer.innerHTML = '';
+        }
+      } catch(_e) {}
+
+      if (videoElement) {
+        videoElement.style.height = '100%';
+        localContainer.appendChild(videoElement);
+      }
     }
   }
 
@@ -167,9 +250,15 @@ export class WebrtcService {
     }
 
     if (track.kind === Track.Kind.Audio) {
+      try {
+        this.remoteContainer.querySelectorAll('audio').forEach((a: any) => a.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     } else if (track.kind === Track.Kind.Video) {
       element.style.height = '100%';
+      try {
+        this.remoteContainer.querySelectorAll('video').forEach((v: any) => v.remove());
+      } catch (_e) {}
       this.remoteContainer.appendChild(element);
     }
   }
@@ -179,8 +268,8 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    // remove tracks from all attached elements
-    track?.detach();
+    const detached: any = track?.detach();
+    (Array.isArray(detached) ? detached : [detached]).forEach((el: any) => el?.remove?.());
   }
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
@@ -202,8 +291,9 @@ export class WebrtcService {
    * Method to toggle local video
    */
   public toggleVideo() {
-    this.room.localParticipant.setCameraEnabled(!this.room.localParticipant.isCameraEnabled);
-    return this.room.localParticipant.isCameraEnabled;
+    const next = !this.room.localParticipant.isCameraEnabled;
+    this.room.localParticipant.setCameraEnabled(next).catch(() => {});
+    return !next;
   }
 
 
@@ -211,8 +301,9 @@ export class WebrtcService {
    * Method to toggle local audio
    */
   public toggleAudio() {
-    this.room.localParticipant.setMicrophoneEnabled(!this.room.localParticipant.isMicrophoneEnabled);
-    return this.room.localParticipant.isMicrophoneEnabled;
+    const next = !this.room.localParticipant.isMicrophoneEnabled;
+    this.room.localParticipant.setMicrophoneEnabled(next).catch(() => {});
+    return !next;
   }
 
   handleDisconnect() {
@@ -240,6 +331,17 @@ export class WebrtcService {
       this.room.localParticipant.unpublishTrack(mic, true);
     }
 
+    this.stopAllLocalTracks();
+  }
+
+  private stopAllLocalTracks() {
+    try {
+      this.room?.localParticipant?.trackPublications?.forEach((pub: any) => {
+        pub?.track?.stop?.();
+        const mst = pub?.track?.mediaStreamTrack;
+        if (mst && mst.readyState !== 'ended') mst.stop();
+      });
+    } catch (e) {}
   }
 
   get remoteContainer() {
@@ -259,6 +361,7 @@ export class WebrtcService {
 
     connectOpts.rtcConfig = {
       iceTransportPolicy: 'relay',
+      iceCandidatePoolSize: 10, // Optimize ICE gathering for faster connection
       iceServers: [
         {
           "username": "dc2d2894d5a9023620c467b0e71cfa6a35457e6679785ed6ae9856fe5bdfa269",
@@ -291,12 +394,9 @@ export class WebrtcService {
   /**
    * Noop function to be passed as default function if nothing passed
    */
-  noop() {
-    console.log('Not Implemented.')
-  }
+  noop() { }
 
   autoStartRecording(payload){
-    console.log("calling auto egress recording api...");
      return this.http.post(`${environment.webrtcTokenServerUrl}api/autoStartRecording`, payload);
   }
 

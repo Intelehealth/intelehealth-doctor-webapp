@@ -143,10 +143,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     );
     
     this.dataSource = result.currentPageData;
-    
-    if (result.debugInfo) {
-      console.log('Completed Pagination Debug:', result.debugInfo);
-    }
   }
 
   private updatePaginator(): void {

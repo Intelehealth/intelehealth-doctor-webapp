@@ -1,0 +1,81 @@
+<div class="title-con position-relative" mat-dialog-title data-test-id="prescriptionNotesModalHeader">
+  <h6 class="mb-0 text-left">
+    {{ 'Edit prescription notes' | translate }}
+    <span class="specialty-pill">{{ specialty | translate }}</span>
+  </h6>
+  <div class="close-btn-con">
+    <button class="modal-close-btn" (click)="handleCancel()" data-test-id="btnCloseEditNotes">
+      <img src="assets/svgs/Close-icon.svg" alt="close" />
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content data-test-id="prescriptionNotesModalContent">
+  <div class="main-content">
+    <div class="container-fluid">
+      <p class="hint">{{ 'Each line is shown as a bullet point on the printed prescription.' | translate }}</p>
+      <form [formGroup]="form" (ngSubmit)="handleSubmit()" data-test-id="formPrescriptionNotes">
+        <div formArrayName="notes">
+          <div
+            class="note-row"
+            *ngFor="let row of notes.controls; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i"
+            data-test-id="prescriptionNoteRow-{{ i }}"
+          >
+            <span class="bullet">{{ i + 1 }}.</span>
+            <textarea
+              formControlName="value"
+              class="form-control"
+              rows="2"
+              placeholder="{{ 'Enter a note for the patient' | translate }}"
+              data-test-id="etPrescriptionNote-{{ i }}"
+            ></textarea>
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeNote(i)"
+              [disabled]="notes.length <= 1"
+              [attr.aria-label]="'Remove note' | translate"
+              data-test-id="btnRemovePrescriptionNote-{{ i }}"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+            <div *ngIf="row.get('value').invalid && row.get('value').touched" class="error-text">
+              {{ 'Note text is required and must be under 500 characters.' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="add-note-btn"
+          (click)="addNote()"
+          data-test-id="btnAddPrescriptionNote"
+        >
+          <mat-icon>add</mat-icon>
+          <span>{{ 'Add another note' | translate }}</span>
+        </button>
+
+        <div class="form-actions">
+          <button
+            mat-button
+            type="submit"
+            class="save-btn mr-2"
+            data-test-id="btnSavePrescriptionNotes"
+          >
+            {{ 'Save' | translate }}
+          </button>
+          <button
+            mat-button
+            type="button"
+            class="cancel-btn"
+            (click)="handleCancel()"
+            data-test-id="btnCancelPrescriptionNotes"
+          >
+            {{ 'Cancel' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</mat-dialog-content>

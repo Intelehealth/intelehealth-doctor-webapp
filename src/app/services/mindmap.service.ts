@@ -93,6 +93,61 @@ export class MindmapService {
     return this.http.post(`${environment.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
   }
 
+  /**
+  * Notify the patient on WhatsApp (via the Turn microservice) that their
+  * prescription is ready.
+  * @param {string} visitUuid - OpenMRS visit uuid of the shared prescription
+  * @param {any} visit - Optional full visit payload (see VisitService.getVisitForPrescription).
+  *   When provided, Turn builds the PDF from this instead of re-reading OpenMRS,
+  *   avoiding any read-after-write lag on the encounter just created.
+  * @param {boolean} resend - Explicit resend (Update Prescription), sends again even if already notified once.
+  * @param {Function} onDone - Called once Turn has answered, whatever the outcome (sent, 409,
+  *   422 or error), or straight away if Turn is not configured. Turn saves any feedback the
+  *   patient gave earlier before it answers, so the caller ends the visit here.
+  * @return {void}
+  */
+  notifyPrescriptionOnTurn(visitUuid: string, visit?: any, resend?: boolean, onDone?: () => void): void {
+    const isTurnServer = (environment as any).isTurnServer === true;
+    const turnUrl = (environment as any).turnNotifyURL;
+    if (!isTurnServer || !turnUrl || !visitUuid) {
+      onDone?.();
+      return;
+    }
+    const body: any = { visit_uuid: visitUuid };
+    if (visit) {
+      body.visit = visit;
+    }
+    if (resend) {
+      body.resend = true;
+    }
+    this.http
+      .post(`${turnUrl.replace(/\/+$/, '')}/webhooks/turn/prescription/notify`, body)
+      .subscribe({
+        next: (res: any) => {
+          if (res?.success !== true) {
+            console.warn('Turn prescription notify: not confirmed as shared', res);
+          }
+          onDone?.();
+        },
+        error: (err) => {
+          console.error('Turn prescription notify failed:', err);
+          onDone?.();
+        }
+      });
+  }
+
+
+  notifyHwForVisitStarted(hwUuid: string, data: any): void {
+    if (!hwUuid) {
+      console.warn('Cannot send visit started notification: Health worker UUID is not available');
+      return;
+    }
+
+    this.notifyApp(hwUuid, { silent: true, type: 'visit_started', data }).subscribe({
+      next: () => {},
+      error: (err) => console.error('Failed to send visit started notification:', err)
+    });
+  }
 
   /**
   * Send notification to health worker for available prescription
@@ -119,9 +174,7 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload for notification:",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Reschedule notification sent successfully'),
       error: (err) => console.error('Failed to send reschedule notification:', err)
     });
   }
@@ -130,7 +183,6 @@ export class MindmapService {
   * @returns {void}
   */
   notifyHwForCancelAppointment(appointment): void {
-    console.log("inside cancell notification");
     const hwUuid = appointment?.hwUUID;
 
     if (!hwUuid) {
@@ -151,9 +203,7 @@ export class MindmapService {
         slotDateTime: appointment?.slotJsDate
       }
     }
-    console.log("payload===",payload);
     this.notifyApp(hwUuid, payload).subscribe({
-      next: () => console.log('Cancel notification sent successfully'),
       error: (err) => console.error('Failed to send cancel notification:', err)
     });
   }
