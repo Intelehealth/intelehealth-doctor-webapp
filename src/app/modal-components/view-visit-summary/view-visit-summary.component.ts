@@ -15,7 +15,7 @@ import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { Observable } from 'rxjs';
 import { checkIsEnabled, VISIT_SECTIONS } from 'src/app/utils/visit-sections';
-import { calculateBMI, getFieldValueByLanguage } from 'src/app/utils/utility-functions';
+import { calculateBMI, getAge, getFieldValueByLanguage, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
@@ -145,7 +145,8 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   checkVisitStatus(encounters: EncounterModel[]) {
-    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+    // Turn: an exit survey is only the patient's feedback, not the visit ending.
+    if (!environment.isTurnServer && this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       this.visitStatus = visitTypes.COMPLETED_VISIT;
@@ -173,17 +174,8 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} birthdate - Birthdate
   * @return {string} - Age
   */
-  getAge(birthdate: string) {
-    let years = moment().diff(birthdate, 'years');
-    let months = moment().diff(birthdate, 'months');
-    let days = moment().diff(birthdate, 'days');
-    if (years > 1) {
-      return `${years} years`;
-    } else if (months > 1) {
-      return `${months} months`;
-    } else {
-      return `${days} days`;
-    }
+  getAge(birthdate: string, short = false): string {
+    return getAge(birthdate, this.translateService, short);
   }
 
   /**
@@ -415,9 +407,11 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
+    const adultInitialEncounter = this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL);
+    const sourceEncounterUuids = [...getSourceEncounterUuids(visit), adultInitialEncounter?.uuid].filter(Boolean);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const imageBase64 = await this.toObjectUrl(`${this.baseURL}/obs/${obs.uuid}/value`);
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment, base64: imageBase64.toString()};
           this.eyeImages.push(data);
@@ -443,9 +437,11 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   */
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
+    const adultInitialEncounter = this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL);
+    const sourceEncounterUuids = [...getSourceEncounterUuids(visit), adultInitialEncounter?.uuid].filter(Boolean);
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response) => {
       response.results.forEach(async (obs: ObsModel) => {
-        if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           const src = `${this.baseURL}/obs/${obs.uuid}/value`;
           const base64 = await this.toObjectUrl(src);
           const data = { src: src, section:obs.comment, base64: base64.toString()};
@@ -479,7 +475,7 @@ export class ViewVisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {arra}
   */
   getImagesBySection(section){
-    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
+    return this.eyeImages.filter(o => (o.section || '').split(' - ')[0].trim().toLowerCase() === (section || '').trim().toLowerCase());
   }
 
   /**

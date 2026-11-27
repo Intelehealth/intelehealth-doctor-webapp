@@ -1,0 +1,312 @@
+<div class="intel-card" *ngIf="primaryDoctorVisitNote; else noPrimaryDoctorNote">
+  <div class="card-body">
+    <mat-accordion class="intel-accordion-con" multi>
+
+      <mat-expansion-panel [expanded]="true" *ngIf="familyHistoryNotes.length" data-test-id="pdnPanelFamilyHistoryNotes">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/note.svg" alt="" width="44px" data-test-id="imgNoteIcon" />
+              <h6 class="mb-0 ml-2">{{ 'Family History Notes' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="items-list">
+          <li *ngFor="let n of familyHistoryNotes">{{ n.value }}</li>
+        </ul>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" *ngIf="pastMedicalHistoryNotes.length" data-test-id="pdnPanelPastMedicalHistoryNotes">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/note.svg" alt="" width="44px" data-test-id="imgNoteIcon" />
+              <h6 class="mb-0 ml-2">{{ 'Past Medical History Notes' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="items-list">
+          <li *ngFor="let n of pastMedicalHistoryNotes">{{ n.value }}</li>
+        </ul>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelDiagnosis">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Diagnosis' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngIf="diagnosisSecondary" class="readonly-block">
+          <p><span class="readonly-label">{{ 'Diagnosis' | translate }}:</span> {{ diagnosisSecondary.diagnosis || '-' }}</p>
+          <p *ngIf="diagnosisSecondary.type"><span class="readonly-label">{{ 'Type' | translate }}:</span> {{ diagnosisSecondary.type }}</p>
+          <p *ngIf="diagnosisSecondary.tnm"><span class="readonly-label">{{ 'TNM' | translate }}:</span> {{ diagnosisSecondary.tnm }}</p>
+          <p *ngIf="diagnosisSecondary.otherStaging"><span class="readonly-label">{{ 'Other Staging' | translate }}:</span> {{ diagnosisSecondary.otherStaging }}</p>
+        </div>
+
+        <div class="table-responsive" *ngIf="existingDiagnosis.length">
+          <table class="table" aria-describedby="">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Diagnosis' | translate }}</th>
+                <th scope="col">{{ 'Type' | translate }}</th>
+                <th scope="col">{{ 'Status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of existingDiagnosis">
+                <td>{{ d.diagnosisName }}</td>
+                <td>{{ d.diagnosisType }}</td>
+                <td>{{ d.diagnosisStatus }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-docs" *ngIf="!diagnosisSecondary && !existingDiagnosis.length">{{ 'No diagnosis added!' | translate }}</div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" *ngIf="notes.length" data-test-id="pdnPanelNotes">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/note.svg" alt="" width="44px" data-test-id="imgNoteIcon" />
+              <h6 class="mb-0 ml-2">{{ 'Note' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="items-list">
+          <li *ngFor="let n of notes">{{ n.value }}</li>
+        </ul>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelMedications">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/medication.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Medications' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="table-responsive" *ngIf="medicines.length">
+          <table class="table" aria-describedby="">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Drug name' | translate }}</th>
+                <th scope="col">{{ 'Strength' | translate }}</th>
+                <th scope="col">{{ 'No. of days' | translate }}</th>
+                <th scope="col">{{ 'Timing' | translate }}</th>
+                <th scope="col">{{ 'Frequency' | translate }}</th>
+                <th scope="col">{{ 'Remarks' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of medicines">
+                <td>{{ m.drug }}</td>
+                <td>{{ m.strength }}</td>
+                <td>{{ m.days }}</td>
+                <td>{{ m.timing }}</td>
+                <td>{{ m.frequency }}</td>
+                <td>{{ m.remark }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive" *ngIf="standardMedicines.length">
+          <table class="table" aria-describedby="">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Drug name' | translate }}</th>
+                <th scope="col">{{ 'Dose' | translate }}</th>
+                <th scope="col">{{ 'Frequency' | translate }}</th>
+                <th scope="col">{{ 'Duration (number)' | translate }}</th>
+                <th scope="col">{{ 'Duration (units)' | translate }}</th>
+                <th scope="col">{{ 'Instruction(Remarks)' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of standardMedicines">
+                <td>{{ m.drug }}</td>
+                <td>{{ m.dose }}</td>
+                <td>{{ m.frequency }}</td>
+                <td>{{ m.durationNo }}</td>
+                <td>{{ m.durationUnit }}</td>
+                <td>{{ m.instructRemark }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-docs" *ngIf="!medicines.length && !standardMedicines.length">{{ 'No medicines added!' | translate }}</div>
+
+        <div class="readonly-block mt-3">
+          <p class="readonly-label mb-1">{{ 'Additional instructions' | translate }}</p>
+          <p *ngIf="additionalInstruction; else noAdditionalInstruction">{{ additionalInstruction }}</p>
+          <ng-template #noAdditionalInstruction>
+            <p class="no-docs">{{ 'No additional instructions added' | translate }}</p>
+          </ng-template>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelAdvice">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/advice.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Advice' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <ul class="items-list" *ngIf="advices.length; else noAdvices">
+          <li *ngFor="let ad of advices">{{ ad.value }}</li>
+        </ul>
+        <ng-template #noAdvices>
+          <div class="no-docs">{{ 'No advices added!' | translate }}</div>
+        </ng-template>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelInvestigations">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/test.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Investigations' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="readonly-block" *ngIf="testSecondary">{{ testSecondary }}</div>
+        <ul class="items-list" *ngIf="!testSecondary && tests.length; else noTests">
+          <li *ngFor="let t of tests">{{ t.value }}</li>
+        </ul>
+        <ng-template #noTests>
+          <div class="no-docs" *ngIf="!testSecondary">{{ 'No tests added!' | translate }}</div>
+        </ng-template>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" *ngIf="appConfigService?.namco_referral_section" data-test-id="pdnPanelReferralConsent">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/patient-interaction.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Referral Consent' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="readonly-block" *ngIf="referralConsent; else noReferralConsent">
+          <p>
+            <span class="readonly-label">{{ 'Where should this patient be referred?' | translate }}:</span>
+            {{
+              (referralConsent.decision === 'NAMCO' ? 'Refer to NAMCO'
+                : referralConsent.decision === 'PHC' ? 'Refer to PHC'
+                : referralConsent.decision === 'No referral' ? 'No referral needed'
+                : referralConsent.decision) | translate
+            }}
+          </p>
+          <p *ngIf="referralConsent.decision === 'NAMCO'">
+            <span class="readonly-label">{{ 'Has the patient consented to this referral?' | translate }}:</span>
+            {{ referralConsent.consent || '-' }}
+          </p>
+        </div>
+        <ng-template #noReferralConsent>
+          <div class="no-docs">{{ 'No information' | translate }}</div>
+        </ng-template>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelReferral">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/referral.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Referral' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="readonly-block" *ngIf="referralSecondary">{{ referralSecondary }}</div>
+
+        <div class="table-responsive" *ngIf="!referralSecondary && referrals.length">
+          <table class="table" aria-describedby="">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Referral to' | translate }}</th>
+                <th scope="col">{{ 'Referral facility' | translate }}</th>
+                <th scope="col">{{ 'Priority of Referral' | translate }}</th>
+                <th scope="col">{{ 'Remarks' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of referrals">
+                <td>{{ r.speciality | translate }}</td>
+                <td>{{ r.facility | translate }}</td>
+                <td>{{ r.priority | translate }}</td>
+                <td>{{ r.reason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-docs" *ngIf="!referralSecondary && !referrals.length">{{ 'No referrals added!' | translate }}</div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" data-test-id="pdnPanelFollowUp">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="intel-accordion-title">
+              <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
+              <h6 class="mb-0 ml-2">{{ 'Follow-up' | translate }}</h6>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="table-responsive" *ngIf="followUp; else noFollowUp">
+          <table class="table" aria-describedby="">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Follow Up Requested' | translate }}</th>
+                <!-- <th scope="col">{{ 'Type' | translate }}</th> -->
+                <th scope="col">{{ 'Date' | translate }}</th>
+                <!-- <th scope="col">{{ 'Time' | translate }}</th> -->
+                <th scope="col">{{ 'Reason' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ followUp.wantFollowUp }}</td>
+                <!-- <td>{{ followUp.followUpType || '-' }}</td> -->
+                <td>{{ followUp.followUpDate ? (followUp.followUpDate | date:'dd MMMM yyyy') : '-' }}</td>
+                <!-- <td>{{ followUp.followUpTime || '-' }}</td> -->
+                <td>{{ followUp.followUpReason || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noFollowUp>
+          <div class="no-docs">{{ 'No information' | translate }}</div>
+        </ng-template>
+
+        <div class="readonly-block mt-3" *ngIf="followUpInstructions">
+          <p class="readonly-label mb-1">{{ 'Follow up' | translate }} {{ 'Instructions' | translate }}</p>
+          <p>{{ followUpInstructions }}</p>
+        </div>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+  </div>
+</div>
+
+<ng-template #noPrimaryDoctorNote>
+  <div class="intel-card">
+    <div class="card-body">
+      <div class="no-docs text-center">{{ 'No visit note from the referring doctor yet.' | translate }}</div>
+    </div>
+  </div>
+</ng-template>

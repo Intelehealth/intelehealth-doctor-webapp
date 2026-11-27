@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -6,6 +6,7 @@ import { EncounterModel, ObsApiResponseModel, ObsModel, VisitModel } from 'src/a
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { conceptIds } from 'src/config/constant';
+import { getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-notes',
@@ -24,12 +25,13 @@ export class NotesComponent implements OnInit {
   @Input() visitNotePresent: EncounterModel;
   @Input() title: string = 'notes';
   @Input() isMCCUser: boolean = false;
- 
+  @Input() expanded: boolean = false;
   _visit: VisitModel;
   addNoteForm: FormGroup = new FormGroup({
     note: new FormControl(null, [Validators.required])
   });
   addMoreNote = false;
+  @Output() notesChanged = new EventEmitter<ObsModel[]>();
 
   constructor(
     private diagnosisSvc: DiagnosisService,
@@ -46,9 +48,10 @@ export class NotesComponent implements OnInit {
    */
   checkIfNotePresent(): void {
     this.notes = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this._visit);
     this.diagnosisSvc.getObs(this._visit.patient.uuid, this.conceptId).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this._visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           this.notes.push(obs);
         }
       });
@@ -83,6 +86,7 @@ export class NotesComponent implements OnInit {
       return;
     }
     this.notes.push({ value: this.addNoteForm.value.note });
+    this.notesChanged.emit(this.notes);
     this.addNoteForm.reset();
     // this.encounterSvc.postObs({
     //   concept: this.conceptId,
@@ -104,6 +108,7 @@ export class NotesComponent implements OnInit {
   deleteNote(index: number, uuid: string): void {
     this.diagnosisSvc.deleteObs(uuid).subscribe(() => {
       this.notes.splice(index, 1);
+      this.notesChanged.emit(this.notes);
     });
   }
 

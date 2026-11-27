@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
     const base64cred = btoa(cred);
     this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
       if (res.authenticated && !res.verified) {
+        setCacheData(doctorDetails.USER_NAME, val.username);
         this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
           this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
             if (provider.results.length) {

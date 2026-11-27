@@ -1,8 +1,17 @@
-import { languages, visitTypes } from "src/config/constant";
+import { languages, visitTypes, doctorDetails } from "src/config/constant";
 import * as moment from 'moment';
-import { ProviderAttributeModel } from "../model/model";
+import { EncounterModel, PatientIdentifierModel, PatientModel, ProviderAttributeModel } from '../model/model';
 import { DecimalPipe } from "@angular/common";
 import { environment } from "src/environments/environment";
+
+export function isDebugEnabled(): boolean {
+  try {
+    const value = String(localStorage.getItem('debug') ?? '').trim().toLowerCase();
+    return value === '1' || value === 'true' || value === 'yes' || value === 'on';
+  } catch (_e) {
+    return false;
+  }
+}
 
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
@@ -33,6 +42,11 @@ export function isJsonString(str) {
   }
 }
 
+// A UUID (e.g. room_id) falls back into patientId when there's no matching OpenMRS patient identifier.
+export function isUuid(value: any): boolean {
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 export function getEncounterProviderUUID() {
   return getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER).encounterProviders[0].provider.uuid;
 }
@@ -50,6 +64,13 @@ export function checkIfDateOldThanOneDay(data: string) {
   let hours = moment(data).diff(moment(), 'hours');
   let minutes = moment(data).diff(moment(), 'minutes');
   minutes = minutes - (hours * 60);
+
+  if (environment.isTurnServer) {
+    return minutes < 0
+      ? `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`
+      : moment(data).format('DD MMM, YYYY hh:mm A');
+  }
+
   let resString = "";
   if (hours >= 24) {
     resString = moment(data).format('DD MMM, YYYY hh:mm A');
@@ -97,6 +118,86 @@ export function getSpecialization(attr: ProviderAttributeModel[] = []): string {
 }
 
 /**
+ * Checks whether the provider is a NAMCO doctor using the provider name
+ * heuristic and their specialization attribute's "Namco" prefix.
+* @param {{ person?: { display?: string }, attributes?: ProviderAttributeModel[] }} provider - Provider profile
+* @return {boolean}
+*/
+export function isNamcoDoctor(provider: { person?: { display?: string }, attributes?: ProviderAttributeModel[] } = {}): boolean {
+  const doctorName = provider?.person?.display || '';
+  if (doctorName.toLowerCase().includes('namco')) {
+    return true;
+  }
+  const specialization = getSpecialization(provider?.attributes || []);
+  return specialization.trim().toLowerCase().startsWith('namco');
+}
+
+/**
+ * Returns encounter UUIDs to scope Visit Summary obs reads to.
+ * Normal doctors use their "Visit Note" encounter.
+ * NAMCO doctors use both "Referral" and "Specialist Visit Note"
+ * encounters to retain inherited and newly added data.
+ * Match exact encounter display names to avoid substring conflicts.
+ * @param {{ encounters?: EncounterModel[] }} visit
+ * @return {string[]}
+ */
+export function getSourceEncounterUuids(visit: { encounters?: EncounterModel[] } = {}): string[] {
+  const encounters = visit?.encounters || [];
+  const findEncounter = (label: string, exclude?: string) =>
+    encounters.find((e: EncounterModel) => (e?.display || '').includes(label) && (!exclude || !(e?.display || '').includes(exclude)));
+
+  const provider = getCacheData(true, doctorDetails.PROVIDER);
+  if (isNamcoDoctor(provider)) {
+    const referralEncounter = findEncounter(visitTypes.REFERRAL);
+    const specialistVisitNote = findEncounter(visitTypes.SPECIALIST_VISIT_NOTE);
+    return [referralEncounter?.uuid, specialistVisitNote?.uuid].filter(Boolean);
+  }
+  const visitNote = findEncounter(visitTypes.VISIT_NOTE, visitTypes.SPECIALIST_VISIT_NOTE);
+  return [visitNote?.uuid].filter(Boolean);
+}
+
+/**
+Resolve which encounter's prescription the currently logged-in doctor should see in View
+Prescription — their own, and only their own: a normal doctor sees their "Visit Note"
+encounter, a NAMCO doctor sees their own "Specialist Visit Note" encounter. Deliberately
+login-dependent (mirrors getSourceEncounterUuids() above) so the two doctors' contributions are
+never shown blended together.
+* @param {{ encounters?: EncounterModel[] }} visit - The current visit
+* @return {string[]} - Encounter uuids this visit's prescription should be read from
+*/
+export function getPrescriptionSourceEncounterUuids(visit: { encounters?: EncounterModel[] } = {}): string[] {
+  const encounters = visit?.encounters || [];
+  const findEncounter = (label: string, exclude?: string) =>
+    encounters.find((e: EncounterModel) => (e?.display || '').includes(label) && (!exclude || !(e?.display || '').includes(exclude)));
+
+  const provider = getCacheData(true, doctorDetails.PROVIDER);
+  if (isNamcoDoctor(provider)) {
+    const specialistVisitNote = findEncounter(visitTypes.SPECIALIST_VISIT_NOTE);
+    return [specialistVisitNote?.uuid].filter(Boolean);
+  }
+  const visitNote = findEncounter(visitTypes.VISIT_NOTE, visitTypes.SPECIALIST_VISIT_NOTE);
+  return [visitNote?.uuid].filter(Boolean);
+}
+
+/**
+* Get patient identifier value for a given identifier type
+* @param {PatientModel} patient - Patient
+* @param {string} identifierType - Identifier type
+* @return {string} - Identifier value, or '' if not found
+*/
+export function getPatientIdentifier(patient: PatientModel, identifierType: string): string {
+  let identifier: string = '';
+  if (patient) {
+    patient.identifiers.forEach((idf: PatientIdentifierModel) => {
+      if (idf.identifierType.display === identifierType) {
+        identifier = idf.identifier;
+      }
+    });
+  }
+  return identifier;
+}
+
+/**
 * Retrieve the appropriate language value from an element.
 * @param {any} element - An object containing `lang` and `name`.
 * @return {string} - The value in the selected language or the first available one.
@@ -141,14 +242,59 @@ export function calculateBMI(vitals: any, vitalObs: any, _locale: string = 'en')
   if(height && weight) {
     const decimalPipe = new DecimalPipe(_locale)
     return decimalPipe.transform(weight / ((height/100) * (height/100)), "1.2-2")
-  }  
+  }
   return null;
+}
+
+/**
+ * Convert Celsius to Fahrenheit
+ * @param {number} celsius - Temperature in Celsius
+ * @param {string} _locale - Locale for number formatting (default: 'en')
+ * @return {string|null} - Temperature in Fahrenheit formatted to 1 decimal place
+ */
+export function convertCelsiusToFahrenheit(celsius: number, _locale: string = 'en'): string | null {
+  if (celsius === null || celsius === undefined || isNaN(celsius)) {
+    return null;
+  }
+  const fahrenheit = (celsius * 9 / 5) + 32;
+  const decimalPipe = new DecimalPipe(_locale);
+  return decimalPipe.transform(fahrenheit, "1.1-1");
 }
 
 export function isFeaturePresent(featureName: string, notInclude = false): boolean {
   const featureList = environment.featureList ?? []; // Extract from ENV file
   if(notInclude) return !featureList.includes(featureName);
   return featureList.includes(featureName);
+}
+
+export function getAge(birthdate: string, translateService?: { instant: (key: string) => string }, short = false): string {
+  if (!birthdate) return '';
+  const now = moment();
+  const dob = moment(birthdate);
+  if (!dob.isValid() || dob.isAfter(now)) return '';
+
+  const years = now.diff(dob, 'years');
+  const totalMonths = now.diff(dob, 'months');
+  const days = now.diff(dob, 'days');
+
+  const t = (key: string) => translateService ? translateService.instant(key) : key;
+  const y = short ? 'y,' : t('years');
+  const m = short ? 'm' : t('months');
+  const d = short ? 'd' : t('days');
+
+  if (days <= 28) {
+    return `${days || 1} ${d}`;
+  } else if (totalMonths < 24) {
+    return `${totalMonths || 1} ${m}`;
+  } else if (years < 18) {
+    const remainingMonths = totalMonths - (years * 12);
+    if (remainingMonths > 0) {
+      return `${years} ${y} ${remainingMonths} ${m}`;
+    }
+    return `${years} ${y.replace(',', '')}`;
+  } else {
+    return `${years} ${y.replace(',', '')}`;
+  }
 }
 
 export function getCallDuration(given_seconds: number){
@@ -228,4 +374,28 @@ export  function isValidBase64Image(base64String) {
   } catch (e) {
     return Promise.resolve(false);
   }
+}
+
+export interface PatientDisplayId {
+  /** The ID to show; empty when the patient has neither a TMH Case Number nor an OpenMRS ID */
+  id: string;
+  /** Translation key of the label to show with the id */
+  label: string;
+}
+
+/**
+ * ID shown under the patient's name on TMH deployments (tnmStaging): the TMH Case Number,
+ * or the OpenMRS ID when the patient has none, so the header never shows just "NA".
+ * An identifier is only used as the OpenMRS ID when it is typed "OpenMRS ID", or has no type at all
+ * (the server did not return identifier type names); an identifier of another type is never relabelled.
+ * @param patient - patient with person attributes and identifiers
+ */
+export function getPatientDisplayId(patient: PatientModel): PatientDisplayId {
+  const tmhCaseNumber = patient?.person?.attributes?.find((attr) => attr.attributeType?.display === 'TMH Case Number')?.value;
+  if (tmhCaseNumber && tmhCaseNumber !== 'NA') {
+    return { id: tmhCaseNumber, label: 'TMH Case Number' };
+  }
+  const openMrsId = patient?.identifiers?.find((idf) => idf.identifierType?.display === 'OpenMRS ID')?.identifier
+    || patient?.identifiers?.find((idf) => !idf.identifierType)?.identifier;
+  return openMrsId ? { id: openMrsId, label: 'OpenMRS ID' } : { id: '', label: 'TMH Case Number' };
 }

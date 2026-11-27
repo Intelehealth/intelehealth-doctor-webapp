@@ -1,0 +1,189 @@
+.modal-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-darkestBlue)86;
+  padding: 10px;
+}
+
+.title-con {
+  padding: 24px 24px 16px;
+  background: var(--color-lightGray);
+  position: relative;
+
+  .close-btn-con {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+  }
+
+  h6 {
+    font-size: 24px;
+    line-height: 150%;
+    color: var(--color-darkestBlue);
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0px;
+
+    .specialty-pill {
+      display: inline-block;
+      margin-left: 12px;
+      padding: 2px 12px;
+      background: var(--color-darkBlue);
+      color: var(--color-white);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+  }
+}
+
+::ng-deep .mat-dialog-content,
+::ng-deep .mat-mdc-dialog-content {
+  padding: 0;
+  margin: 0;
+  max-height: 75vh;
+}
+
+.main-content {
+  padding: 24px;
+
+  .hint {
+    font-size: 14px;
+    line-height: 150%;
+    color: var(--color-gray);
+    margin-bottom: 16px;
+  }
+
+  .note-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 8px;
+    align-items: start;
+    margin-bottom: 12px;
+
+    .bullet {
+      padding-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--color-darkestBlue);
+      min-width: 24px;
+    }
+
+    .form-control {
+      width: 100%;
+      resize: vertical;
+      min-height: 44px;
+      font-size: 14px;
+      line-height: 150%;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-lightRed);
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:disabled {
+        color: var(--color-gray);
+        cursor: not-allowed;
+      }
+    }
+
+    .error-text {
+      grid-column: 2 / 3;
+      color: var(--color-lightRed);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  .add-note-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px dashed var(--color-darkBlue);
+    color: var(--color-darkBlue);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 4px;
+    cursor: pointer;
+  }
+}
+
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.save-btn {
+  background: var(--color-darkBlue);
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: var(--color-white);
+  height: 48px;
+  min-width: 100px;
+}
+
+.cancel-btn {
+  background: var(--color-white);
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: var(--color-darkBlue);
+  height: 48px;
+  min-width: 100px;
+}
+
+@media (max-width: 768px) {
+  .title-con h6 {
+    font-size: 20px;
+    text-align: left;
+
+    .specialty-pill {
+      display: block;
+      margin: 8px 0 0;
+      width: fit-content;
+    }
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    .save-btn,
+    .cancel-btn {
+      width: 100%;
+    }
+  }
+}

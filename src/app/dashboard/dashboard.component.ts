@@ -338,9 +338,10 @@ export class DashboardComponent implements OnInit {
       {
         label: "Name",
         key: "patient_name",
-        formatHtml: (element)=> { 
+        formatHtml: (element)=> {
+          const gender = element?.patientGender ? this.translateService.instant(element.patientGender) : '';
           return `
-            <span class="font-bold ml-2">${element?.patientName} (${this.translateService.instant(element?.patientGender)})</span>
+            <span class="font-bold ml-2">${element?.patientName ?? ''}${gender ? ` (${gender})` : ''}</span>
           `
         },
       },
@@ -355,6 +356,9 @@ export class DashboardComponent implements OnInit {
         label: "Starts in",
         key: "starts_in",
         formatHtml: (element) => {
+          if (environment.isTurnServer) {
+            return this.formatStartsInProgress(element);
+          }
           let  color, bold = '';
           if (element.starts_in.includes('Due')){
             color = "#FF475D"; bold = "bold"; // red color & bold
@@ -387,7 +391,7 @@ export class DashboardComponent implements OnInit {
       //     return ""; // Do not return the telephone number
       //   }
       // },
-      {
+      environment.isTurnServer ? null : {
         label: "Actions",
         key: "actions",
         actionButtons: [
@@ -409,9 +413,9 @@ export class DashboardComponent implements OnInit {
               backgroundColor: "#ffe8e8",
             },
           },
-        ]
-      }
-    ],
+        ],
+      },
+    ].filter(Boolean),
   };
 
   pluginConfigObsInProgress: any = {
@@ -682,6 +686,9 @@ export class DashboardComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
     let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
+      if (provider.person?.display?.toLowerCase().includes('namco')) {
+        this.pvs.priority_visit_section = false;
+      }
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
       } else {
@@ -1113,13 +1120,9 @@ export class DashboardComponent implements OnInit {
         const obs = encounter.obs;
         obs.forEach((currentObs :CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
-            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                recent.push(obs1[0]);
-              }
-            }
+            recent = recent.concat(
+              this.visitService.parseChiefComplaints(this.visitService.getData2(currentObs)?.value_text)
+            );
           }
         });
       }
@@ -1173,9 +1176,53 @@ export class DashboardComponent implements OnInit {
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
   * @return {void}
   */
+  startCall(appointment: AppointmentModel) {
+    if (!appointment?.visitUuid) {
+      this.toastr.error(
+        this.translateService.instant('This appointment has no visit linked to it.'),
+        this.translateService.instant('Cannot start call')
+      );
+      return;
+    }
+    this.router.navigate(['/dashboard/visit-summary', appointment.visitUuid], {
+      queryParams: { startCall: 'video' }
+    });
+  }
+
+  formatStartsInProgress(element: any): string {
+    const start = moment(element?.slotJsDate);
+    const now = moment();
+    const minsLeft = start.diff(now, 'minutes');
+    const window = 60;
+    const pct = Math.max(0, Math.min(100, ((window - minsLeft) / window) * 100));
+    let color = '#0FD197';
+    let text = '';
+    if (minsLeft <= 0) {
+      color = '#FF475D';
+      text = `${this.translateService.instant('Due')} : ${start.format('DD MMM, YYYY hh:mm A')}`;
+    } else if (minsLeft < 60) {
+      color = '#FF9F45';
+      text = `${minsLeft} ${this.translateService.instant('min')}`;
+    } else if (start.diff(now, 'hours') < 24) {
+      text = `${start.diff(now, 'hours')} ${this.translateService.instant('hrs')} — ${start.format('DD MMM, hh:mm A')}`;
+    } else {
+      text = start.format('DD MMM, YYYY hh:mm A');
+    }
+
+    return `
+      <div style="min-width:130px;">
+        <span style="color:${color};font-weight:bold;">${text}</span>
+        <div style="height:5px;border-radius:3px;background:#ececf3;margin-top:5px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
-      return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
+      // Turn: an exit survey is only the patient's feedback; it must not block rescheduling.
+      return ((!environment.isTurnServer && e.type.name == visitTypes.PATIENT_EXIT_SURVEY) || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {

@@ -1,0 +1,53 @@
+.report-ai-issue-modal {
+  width: 100%;
+
+  .modal-con {
+    width: 100%;
+
+    p.text-muted {
+      color: #7F7B92;
+      font-size: 14px;
+    }
+  }
+
+  .reason-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .reason-chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #EFE8FF;
+    background: #FFFFFF;
+    color: var(--color-darkBlue);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.selected {
+      background: var(--color-darkBlue);
+      border-color: var(--color-darkBlue);
+      color: #FFFFFF;
+    }
+  }
+
+  .form-group {
+    label {
+      font-size: 14px;
+      color: #7F7B92;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #EFE8FF;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  }
+}

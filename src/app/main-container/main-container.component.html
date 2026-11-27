@@ -14,7 +14,7 @@
       </div>
       <ul class="admin-nav" data-test-id="adminNavList">
         <app-sidebar-menu-list (toggleSidebar)="toggleSidebar()" [drUnread]="drUnread" [pvs]="pvs"
-          [menus]="sidebarMenus" [adminUnread]="adminUnread" data-test-id="sidebarMenuList"></app-sidebar-menu-list>
+          [menus]="sidebarMenus" [qmsSection]="qmsSection" [adminUnread]="adminUnread" data-test-id="sidebarMenuList"></app-sidebar-menu-list>
         <li class="nav-item" (click)="toggleSidebar()" data-test-id="listItemLogout">
           <mat-divider class="mb-2" data-test-id="dividerLogout"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()" data-test-id="linkLogout">

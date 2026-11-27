@@ -17,9 +17,10 @@ export class MenuAccessGuard implements CanActivate {
     const menu = route.data?.menu || route.routeConfig?.data?.menu;
     if (!menu) return true;
 
+    const isAdmin = !!this.roleService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+
     const sidebar_menus = this.appConfigService.sidebar_menus;
-    const isAdmin = !!this.roleService.getRole('ORGANIZATIONAL:SYSTEM ADMINISTRATOR');
-    
+
     if (!sidebar_menus || isAdmin) return true;
 
     if (sidebar_menus && !sidebar_menus[menu]) {

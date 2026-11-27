@@ -38,6 +38,7 @@
                 mat-button
                 class="sort-btn"
                 [matMenuTriggerFor]="sortMenu"
+                data-test-id="btnSortMenuRegistration"
               >
                 <img src="assets/svgs/sort.svg" alt="" height="24px" /><span
                   >Sort</span
@@ -83,6 +84,7 @@
               <div class="pretty p-switch p-fill light-green light-red">
                 <input
                   type="checkbox"
+                  data-test-id="checkboxSectionEnabled"
                   [(ngModel)]="sectionEnabled"
                   (change)="
                     updateFeatureStatus(
@@ -135,6 +137,7 @@
                     {{ element.name }}
                     <button *ngIf="element.validations" mat-icon-button
                         aria-label="Open Validations"
+                        [attr.data-test-id]="'btnEditValidations'"
                         (click)="openValidations(element)">
                         <mat-icon class="ml-0" style="line-height: normal;">edit</mat-icon>
                     </button>
@@ -248,6 +251,7 @@
             [pageSizeOptions]="[5, 10, 20]"
             showFirstLastButtons
             aria-label="Select page of periodic elements"
+            data-test-id="matPaginatorPatientRegistration"
           ></mat-paginator>
           <button
             type="button"
@@ -282,6 +286,7 @@
               <div class="pretty p-switch p-fill light-green light-red">
                 <input
                   type="checkbox"
+                  data-test-id="checkboxRosterQuestionnaireToggle"
                   [(ngModel)]="rosterQuestionnairefeatures.is_enabled"
                   (change)="updateRoosterQuestionnaireStatus($event.target.checked)"
                 />
@@ -400,6 +405,7 @@
             [pageSizeOptions]="[5, 10, 20]"
             showFirstLastButtons
             aria-label="Select page of periodic elements"
+            data-test-id="matPaginatorRosterQuestionnaire"
           ></mat-paginator>
           <button
             type="button"

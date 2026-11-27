@@ -22,20 +22,20 @@
           <div class="row">
             <div class="col-md-6 p-0">
               <mat-tab-group [disableRipple]="true" class="calendar-tab-group" mat-align-tabs="start"
-                (selectedIndexChange)="onTabChanged($event)">
-                <mat-tab>
+                (selectedIndexChange)="onTabChanged($event)" data-test-id="matTabGroupCalendar">
+                <mat-tab data-test-id="matTabDaily">
                   <ng-template mat-tab-label>
                     <span data-test-id="tabDaily">{{ 'Daily' | translate }}</span>
                   </ng-template>
                 </mat-tab>
 
-                <mat-tab>
+                <mat-tab data-test-id="matTabWeekly">
                   <ng-template mat-tab-label>
                     <span data-test-id="tabWeekly">{{ 'Weekly' | translate }}</span>
                   </ng-template>
                 </mat-tab>
 
-                <mat-tab>
+                <mat-tab data-test-id="matTabMonthly">
                   <ng-template mat-tab-label>
                     <span data-test-id="tabMonthly">{{ 'Monthly' | translate }}</span>
                   </ng-template>
@@ -297,8 +297,8 @@
               </div>
             </div>
           </div>
-        </ng-template>
 
+        </ng-template>
       </div>
     </div>
   </div>

@@ -86,29 +86,27 @@ export class MobileAppLanguagesComponent implements OnInit {
   * Open language field modal
   * @return {Observable<any>} - Dialog result
   */
-openDialog(element): void {
-  const id = element?.id;
-   const data = {
-    lang_name : element?.en_name || '',
-    platform: element?.platform || 'Mobile' // Pass the selected or default
-  };
+  openDialog(element): void {
+    const id = element?.id;
+    const data = {
+      lang_name : element?.en_name || '',
+      platform: element?.platform || 'Mobile' // Pass the selected or default
+    };
 
-  const dialogRef = this.coreService.openPlatformSelectionFieldModal({ data });
+    const dialogRef = this.coreService.openPlatformSelectionFieldModal({ data });
 
-  dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
-    this.configServce.updatePlatform(id, result).subscribe(
-      (res) => {
-        element.platform = result; // Update the local data to reflect the change
-        dialogRef.close();
-        this.toastr.success(`Platform for ${element.en_name} is changed successfully.`);
-      },
-      (error) => {
-        dialogRef.close();
-        this.toastr.error(error?.message || 'Failed to update platform details.');
-      }
-    );
-  });
-}
-
-
+    dialogRef.componentInstance.onSubmit.subscribe((result: string) => {
+      this.configServce.updatePlatform(id, result).subscribe(
+        (res) => {
+          element.platform = result; // Update the local data to reflect the change
+          dialogRef.close();
+          this.toastr.success(`Platform for ${element.en_name} is changed successfully.`);
+        },
+        (error) => {
+          dialogRef.close();
+          this.toastr.error(error?.message || 'Failed to update platform details.');
+        }
+      );
+    });
+  }
 }

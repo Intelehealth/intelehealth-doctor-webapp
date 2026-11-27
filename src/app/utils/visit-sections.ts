@@ -35,6 +35,10 @@ export const VISIT_SECTIONS = {
         logo: "assets/svgs/diagnosis-green.svg",
         key: "diagnostics"
     },
+    "digital_stethoscope": {
+        logo: "assets/svgs/diagnosis-green.svg",
+        key: "digital_stethoscope"
+    }
 }
 
 export const checkIsEnabled = (

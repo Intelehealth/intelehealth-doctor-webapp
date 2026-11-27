@@ -22,6 +22,13 @@ export class AdminActionsComponent implements OnInit {
       isLocalPath: true
     },
     {
+      title: "Insights",
+      desc: "AI usage & engagement insights",
+      icon: "assets/svgs/ayu-new.svg",
+      path: "admin/actions/insights",
+      isLocalPath: true
+    },
+    {
       title: "System Admin",
       desc: "Redirect to System Admin portal",
       icon: "assets/svgs/system-admin.svg",
@@ -140,6 +147,41 @@ export class AdminActionsComponent implements OnInit {
       path: "admin/actions/ai-llm",
       isLocalPath: true
     },
+    {
+      title: "QMS",
+      desc: "Manage QMS functionality",
+      icon: "assets/svgs/admin-qms.svg",
+      path: "admin/actions/qms",
+      isLocalPath: true
+    },
+    {
+      title: "Prescription Notes",
+      desc: "Manage specialty-wise notes printed on prescriptions",
+      icon: "assets/svgs/admin-prescription-notes.svg",
+      path: "admin/actions/prescription-notes",
+      isLocalPath: true
+    },
+    {
+      title: "Namco Referral",
+      desc: "Manage Namco Referral functionality",
+      icon: "assets/svgs/admin-namco-referral.svg",
+      path: "admin/actions/namco-referral",
+      isLocalPath: true
+    },
+    {
+      title: "Visit Summary V2",
+      desc: "Switch doctors to the new visit summary screen",
+      icon: "assets/svgs/admin-visit-summary-v2.svg",
+      path: "admin/actions/visit-summary-v2",
+      isLocalPath: true
+    },
+    {
+      title: "NCD Screening",
+      desc: "Manage NCD (Diabetes & Hypertension) screening in the health worker app",
+      icon: "assets/svgs/ncd.svg",
+      path: "admin/actions/ncd",
+      isLocalPath: true
+    },
   ];
   constructor(
     private pageTitleService: PageTitleService,
@@ -150,6 +192,9 @@ export class AdminActionsComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Admin Actions", imgUrl: "assets/svgs/admin-actions.svg" });
+    if (!(environment as any).insightsEnabled) {
+      this.itemList = this.itemList.filter((i) => i.path !== 'admin/actions/insights');
+    }
   }
 
   onModifyClick(item: { isLocalPath: any; path: string | URL; }){

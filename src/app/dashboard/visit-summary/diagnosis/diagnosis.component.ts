@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, NO_ERRORS_SCHEMA, ViewChild, OnDestroy, AfterViewInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,8 +8,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
-import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT } from 'aiddx-library';
-import { isFeaturePresent } from 'src/app/utils/utility-functions';
+import { AiddxLibraryModule, AiddxService, AiTxService, AillmddxComponent, AillmtxMedicationComponent, AillmtxAdviceComponent, AillmtxTestComponent, AillmtxFollowupComponent, AillmtxReferralComponent, ENVIRONMENT, CONFIG_SERVICE } from 'aiddx-library';
+import { getCacheData, isFeaturePresent, getSourceEncounterUuids } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from 'src/app/services/app-config.service';
 import { DiagnosticModel, DropdownItemModel, EncounterModel, ObsApiResponseModel, ObsModel, ReferralModel, TestModel } from 'src/app/model/model';
@@ -20,7 +20,7 @@ import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { DataItemModel, MedicineModel } from 'src/app/model/model';
 import instructionRemarks from 'src/app/core/data/instructionRemarks';
 import durationUnitList from 'src/app/core/data/durationUnitList';
-import { conceptIds, days, facility, refer_prioritie } from 'src/config/constant';
+import { conceptIds, days, doctorDetails, facility, refer_prioritie } from 'src/config/constant';
 import doses from '../../../core/data/dose';
 import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -34,6 +34,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { formatDate } from '@angular/common';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
+import { ReferralConsentComponent } from '../referral-consent/referral-consent.component';
+import { InsightService } from 'src/app/services/insight.service';
+import { insightEvents } from 'src/config/insight-events';
+import { ReportAiIssueDialogData } from 'src/app/modal-components/report-ai-issue/report-ai-issue.component';
+import { CoreService } from 'src/app/services/core/core.service';
+import { AiIssueReportService } from 'src/app/services/ai-issue-report.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -73,18 +79,20 @@ class PickDateAdapter extends NativeDateAdapter {
     NgbTypeaheadModule,
     MatDatepickerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ReferralConsentComponent
   ],
   providers: [
     AiddxService,
     AiTxService,
     { provide: ENVIRONMENT, useValue: environment },
+    { provide: CONFIG_SERVICE, useExisting: AppConfigService },
     { provide: DateAdapter, useClass: PickDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })
-export class DiagnosisComponent implements OnInit, OnDestroy {
+export class DiagnosisComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(AillmddxComponent) aillmddxComponent: AillmddxComponent;
   @ViewChild(AillmtxMedicationComponent) aillmtxMedicationComponent: AillmtxMedicationComponent;
   @ViewChild(AillmtxAdviceComponent) aillmtxAdviceComponent: AillmtxAdviceComponent;
@@ -93,11 +101,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @ViewChild(AillmtxFollowupComponent) aillmtxFollowupComponent: AillmtxFollowupComponent;
   @Input() visit: any;
   @Input() patientInfo: any;
+  @Input() patientHistoryData: any[] = [];
   @Output() diagnosisName: string;
   @Input() isMCCUser: boolean = false;
   @Input() isVisitNoteProvider: boolean = false;
   @Input() visitEnded: EncounterModel | string;
+  @Input() visitCompleted: boolean = false;
   @Input() patientInteractionNotesForm: FormGroup;
+  @Input() referralConsentForm: FormGroup;
+  @Input() isNamcoDoctorLoggedIn: boolean = false;
   @Output() diagnosisSaved = new EventEmitter<any>();
   @Output() medicationSaved = new EventEmitter<any>();
   @Output() adviceSaved = new EventEmitter<any>();
@@ -105,7 +117,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   @Output() referralSaved = new EventEmitter<any>();
   @Output() followUpSaved = new EventEmitter<any>();
   @Output() furtherQuestionsReceived = new EventEmitter<string[]>();
-  @Output() diagnosisReceived = new EventEmitter<any>();
+  // @Output() diagnosisReceived = new EventEmitter<any>();
 
   diagnosisForm: FormGroup;
   diagnosisSecondaryForm: FormGroup;
@@ -123,6 +135,8 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   diagnosisCode: { value: string } = { value: '' };
 
   hasAILLMEnabled: boolean = false;
+  isTurnServer: boolean = environment.isTurnServer;
+  readonly OTHERS_SPECIALITY = 'Others';
 
   medicines: MedicineModel[] = [];
   advices: ObsModel[] = [];
@@ -158,6 +172,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   diagnostics: DiagnosticModel[] = [];
   timeList: string[] = [];
   minDate = new Date();
+  showAndHideUiElement: boolean = true;
+  patientAllergies: string = '';
+  patientCurrentMedications: string = '';
+  allergyDataStatus: 'empty' | 'present' = 'empty';
 
   constructor(
     private fb: FormBuilder,
@@ -169,7 +187,10 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     private encounterService: EncounterService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService,
-    private aiTxService: AiTxService
+    private aiTxService: AiTxService,
+    private insight: InsightService,
+    private coreService: CoreService,
+    private aiIssueReportService: AiIssueReportService
   ) {
     this.diagnosisForm = this.fb.group({
       diagnosisName: ['', Validators.required],
@@ -212,6 +233,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       reason: new FormControl(null)
     });
 
+    // "Others" needs the doctor to type what specialty they mean, in Remarks.
+    this.addReferralForm.get('speciality').valueChanges.subscribe((speciality) => {
+      const reasonControl = this.addReferralForm.get('reason');
+      if (speciality === this.OTHERS_SPECIALITY) {
+        reasonControl.setValidators([Validators.required]);
+      } else {
+        reasonControl.clearValidators();
+      }
+      reasonControl.updateValueAndValidity();
+    });
+
     this.followUpForm = new FormGroup({
       present: new FormControl(false, [Validators.required]),
       wantFollowUp: new FormControl('', [Validators.required]),
@@ -219,16 +251,19 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       followUpTime: new FormControl(null),
       followUpReason: new FormControl(null),
       uuid: new FormControl(null),
-      followUpType: new FormControl(null)
+      followUpType: new FormControl(this.isTurnServer ? 'Telemedicine' : null)
     });
 
 
     this.diagnosis$ = this.diagnosisSubject.asObservable();
-    this.referSpecializations = this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled);
+    this.referSpecializations = [
+      ...(this.appConfigService?.dropdown_values?.['refer specialisation']?.filter((val) => val?.is_enabled) || []),
+      ...(this.isTurnServer ? [{ id: -1, name: this.OTHERS_SPECIALITY, key: 'others', is_enabled: true }] : []),
+    ];
     this.diagnostics = [...this.appConfigService.patient_diagnostics];
   }
 
-  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours"];
+  frequencyList = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "Every 30 minutes", "Every hour", "Every four hours", "Every eight hours", "Twice daily before meals", "Twice daily after meals"];
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -254,11 +289,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
-        if (diagnosisData && diagnosisData.length) {
-          this.diagnosisReceived.emit(diagnosisData);
-        }
-      });
+      // this.aillmddxComponent.diagnosisReceived.subscribe((diagnosisData:any) => {
+      //   if (diagnosisData && diagnosisData.length) {
+      //     this.diagnosisReceived.emit(diagnosisData);
+      //   }
+      // });
     }
   }
 
@@ -285,11 +320,77 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         this.visitNotePresent = visit.encounters.find(({ display = '' }) => display.includes('Visit Note'));
       }
     });
+    this.showAndHideUiElements();
+    this.extractAllergyAndMedicationData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When patientHistoryData input changes, re-extract allergy and medication data
+    if (changes['patientHistoryData'] && changes['patientHistoryData'].currentValue) {
+      this.extractAllergyAndMedicationData();
+    }
   }
 
   ngOnDestroy() {
     // Clear the cache when component is destroyed
     this.aiTxService.clearCache();
+  }
+
+  private getPatientOpenMrsId(): string {
+    const identifiers = this.patientInfo?.identifiers || [];
+    const idf = identifiers.find((i: any) => i.identifierType?.display === 'OpenMRS ID');
+    return idf?.identifier || '';
+  }
+
+  openReportIssue(aiSurface: ReportAiIssueDialogData['aiSurface'], item?: any): void {
+    const doctor = getCacheData(true, doctorDetails.PROVIDER);
+    this.coreService.openReportAiIssueModal({
+      visitUuid: this.visit?.uuid,
+      doctorUuid: doctor?.uuid,
+      patientUuid: this.visit?.patient?.uuid,
+      aiSurface,
+      suggestionRef: item?.diagnosis || item?.name,
+      rawSuggestion: item,
+      doctorName: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patientOpenMrsId: this.getPatientOpenMrsId(),
+    }).subscribe();
+  }
+
+  onMedicationSuggestionReport(payload: any): void {
+    const doctor = getCacheData(true, doctorDetails.PROVIDER);
+    this.aiIssueReportService.create({
+      visit_uuid: this.visit?.uuid,
+      doctor_uuid: doctor?.uuid,
+      patient_uuid: this.visit?.patient?.uuid,
+      ai_surface: 'ttx_medication',
+      reason: payload?.reason,
+      details: payload?.details,
+      suggestion_ref: payload?.suggestion_ref,
+      raw_suggestion: payload?.raw_suggestion,
+      doctor_name: getCacheData(true, doctorDetails.USER)?.person?.display,
+      patient_openmrs_id: this.getPatientOpenMrsId(),
+    }).subscribe({
+      next: () => this.coreService.showToast('success', 'We recorded this report and will review it asap!', 'Reported', 'reportAiIssueSuccessToast'),
+      error: () => this.coreService.showToast('error', 'Could not submit the report. Please try again.', 'Error', 'reportAiIssueErrorToast'),
+    });
+  }
+
+  /**
+   * Extract allergy and drug history data from patient history
+   */
+  extractAllergyAndMedicationData(): void {
+    this.patientAllergies = '';
+    this.patientCurrentMedications = '';
+
+    if (!this.patientHistoryData?.length) return;
+
+    this.patientHistoryData.forEach((historySection: any) => {
+      historySection.data?.forEach((item: any) => {
+        const key = (item.key || '').toLowerCase();
+        if (key === 'allergies') this.patientAllergies = item.value || '';
+        if (key === 'drug history') this.patientCurrentMedications = item.value || '';
+      });
+    });
   }
 
   /**
@@ -301,13 +402,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').setValidators(Validators.required);
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').setValidators(Validators.required);
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       } else {
         this.followUpForm.get('followUpDate').clearValidators();
         this.followUpForm.get('followUpDate').updateValueAndValidity();
-        this.followUpForm.get('followUpTime').clearValidators();
-        this.followUpForm.get('followUpTime').updateValueAndValidity();
+        if (this.isFeatureAvailable('followUpTime') && !this.showAndHideUiElement) {
+          this.followUpForm.get('followUpTime').clearValidators();
+          this.followUpForm.get('followUpTime').updateValueAndValidity();
+        }
       }
     });
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
@@ -321,6 +426,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   
   get selectedDiagnoses(): string[] {
     return this.aillmddxComponent?.selectedDiagnosis || [];
+  }
+
+  /*
+   * Gated on diagnoses actually added to the visit, not Ayu checkbox ticks.
+   */
+  get isTreatmentDisabled(): boolean {
+    return this.isTreatmentLoading || this.existingDiagnosis.length === 0;
   }
 
   get selectedMedication(): any[] {
@@ -343,11 +455,111 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     return this.aillmtxFollowupComponent?.selectedFollowUp || [];
   }
 
+  /**
+   * True once this patient has a confirmed NAMCO referral (Referral Consent decision = NAMCO
+   * with consent = Yes, plus a matching NAMCO Hospital entry in the Referral section) — mirrors
+   * visit-summary.component.ts's getConfirmedNamcoReferral(). Follow-up doesn't apply once the
+   * *referring GP* has handed the patient off to a specialist for this visit — but the NAMCO
+   * doctor who actually receives the referral still needs to be able to set their own
+   * follow-up, so this never blocks their own view of the visit.
+   */
+  get isNamcoReferralConfirmed(): boolean {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm || this.isNamcoDoctorLoggedIn) {
+      return false;
+    }
+    const isNamcoConsented = this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'Yes';
+    if (!isNamcoConsented) {
+      return false;
+    }
+    return this.hasNamcoReferralAdded;
+  }
+
+  /**
+  * Whether the given speciality name is a NAMCO doctor/specialization.
+  * @param {string} speciality - Speciality name
+  * @returns {boolean}
+  */
+  isNamcoSpeciality(speciality: string | undefined): boolean {
+    return (speciality || '').trim().toLowerCase().startsWith('namco');
+  }
+
+  /**
+  * Whether a referral with the given speciality/facility targets NAMCO — i.e. would become
+  * "the" NAMCO referral for this visit.
+  * @param {string} speciality - Referral speciality
+  * @param {string} facility - Referral facility
+  * @returns {boolean}
+  */
+  isNamcoReferralTarget(speciality: string | undefined, facility: string | undefined): boolean {
+    return this.isNamcoSpeciality(speciality) && (facility || '').trim().toLowerCase() === 'namco hospital';
+  }
+
+  /**
+  * True once a NAMCO referral has already been added to this visit's Referral section — used
+  * to cap NAMCO referrals at one per visit without affecting other specialists/facilities.
+  * @returns {boolean}
+  */
+  get hasNamcoReferralAdded(): boolean {
+    return this.referrals.some((r: ReferralModel) => this.isNamcoReferralTarget(r.speciality, r.facility));
+  }
+
+  /**
+   * True when the patient has declined consent for the NAMCO referral (Referral Consent
+   * decision = NAMCO, consent = No) — blocks selecting/saving a NAMCO referral for this visit.
+   */
+  get isNamcoConsentDeclined(): boolean {
+    if (!this.appConfigService?.namco_referral_section || !this.referralConsentForm) {
+      return false;
+    }
+    return this.referralConsentForm.value.decision === 'NAMCO' && this.referralConsentForm.value.consent === 'No';
+  }
+
+  /**
+  * "Referral to" options, filtered by the Referral Consent decision and the picked Referral
+  * facility: NAMCO consent or a NAMCO Hospital facility shows only NAMCO doctors, PHC consent
+  * excludes NAMCO doctors, anything else (or the feature being off) is unfiltered.
+  * @returns {DropdownItemModel[]}
+  */
+  get filteredReferSpecializations(): DropdownItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.referSpecializations;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    const isNamcoFacility = (this.addReferralForm?.value?.facility || '').trim().toLowerCase() === 'namco hospital';
+    if (decision === 'NAMCO' || isNamcoFacility) {
+      return (this.referSpecializations || []).filter((s) => this.isNamcoSpeciality(s.name));
+    }
+    if (decision === 'PHC') {
+      return (this.referSpecializations || []).filter((s) => !this.isNamcoSpeciality(s.name));
+    }
+    return this.referSpecializations;
+  }
+
+  /**
+  * "Referral facility" options, filtered by the Referral Consent decision: PHC excludes
+  * NAMCO Hospital, anything else (or the feature being off) is unfiltered.
+  * @returns {DataItemModel[]}
+  */
+  get filteredFacilities(): DataItemModel[] {
+    if (!this.appConfigService?.namco_referral_section) {
+      return this.facilities;
+    }
+    const decision = this.referralConsentForm?.value?.decision;
+    if (decision === 'NAMCO') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() === 'namco hospital');
+    }
+    if (decision === 'PHC') {
+      return (this.facilities || []).filter((f) => (f.name || '').trim().toLowerCase() !== 'namco hospital');
+    }
+    return this.facilities;
+  }
+
   checkIfDiagnosisPresent(): void {
     this.existingDiagnosis = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes("}") && this.appConfigService.patient_visit_summary?.dp_dignosis_secondary) {
             this.diagnosisSecondaryForm.patchValue(this.obsParse(obs.value, obs.uuid));
           } else {
@@ -378,6 +590,13 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
           }
         }
       });
+
+      // When prescription is shared, trigger ttxfinal for medication
+      if (this.visitCompleted && this.existingDiagnosis.length > 0) {
+        this.diagnosisName = this.existingDiagnosis[0].diagnosisName;
+        this.aiTxService.clearCache();
+        this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
+      }
     });
   }
 
@@ -386,6 +605,9 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.diagnosisValidated = false;
     this.dSearchSubject.next(event.term);
   }
+
+  // Lets the doctor add a diagnosis typed in free text.
+  addDiagnosisTag = (term: string): { name: string } => ({ name: term.trim() });
 
   searchDiagnosis(val: string): void {
     if (val && val.length >= 3) {
@@ -465,20 +687,54 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       
       // Clear the cache before making new treatment calls
       this.aiTxService.clearCache();
-      
-      this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-      this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-      this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-      this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-      this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
       this.diagnosisSubject.next(this.selectedDiagnoses);
       const { diagnosisAiGenerated, ...restForm } = this.diagnosisForm.value;
-      const newDiagnosis = { 
-          ...restForm, 
-          diagnosisName: this.diagnosisName, 
+
+      // For AI-generated diagnoses, extract rationale and likelihood from AI diagnosis list
+      let rationale: string[] = [];
+      let from: string | undefined = undefined;
+      let likelihood: string | undefined = undefined;
+      let rank: any = undefined;
+
+      if (diagnosisAiGenerated && this.aillmddxComponent?.diagnosisList) {
+        const aiDiagnosis = this.aillmddxComponent.diagnosisList.find(
+          (d: any) => d.diagnosis?.toLowerCase() === this.diagnosisName?.toLowerCase()
+        );
+
+        // Extract rank from AI diagnosis (based on order in list)
+        if (aiDiagnosis) {
+          const diagIndex = this.aillmddxComponent.diagnosisList.indexOf(aiDiagnosis);
+          rank = diagIndex >= 0 ? (diagIndex + 1) : undefined;
+        }
+
+        // Extract likelihood
+        if (aiDiagnosis?.likelihood) {
+          likelihood = aiDiagnosis.likelihood;
+        }
+
+        if (aiDiagnosis?.rationale) {
+          if (Array.isArray(aiDiagnosis.rationale) && typeof aiDiagnosis.rationale[0] === 'string') {
+            rationale = aiDiagnosis.rationale.filter((val: string) => val && val.trim() !== '');
+          } else {
+            rationale = aiDiagnosis.rationale
+              .map((obj: any) => Object.values(obj).pop())
+              .filter((val: any) => val && val !== '.' && val.trim() !== '');
+          }
+        }
+        from = 'AI generated';
+      }
+
+      const newDiagnosis = {
+          ...restForm,
+          diagnosisName: this.diagnosisName,
           ...(diagnosisAiGenerated ? { diagnosisAiGenerated: diagnosisAiGenerated } : {}),
+          ...(rationale.length > 0 ? { rationale: rationale } : {}),
+          ...(from ? { from: from } : {}),
+          ...(likelihood ? { likelihood: likelihood } : {}),
+          ...(rank !== undefined ? { rank: rank } : {}),
       };
+
       this.existingDiagnosis.push(newDiagnosis);
       this.removeDiagnosis(this.diagnosisName);
       this.diagnosisForm.patchValue({ diagnosisName: this.selectedDiagnoses?.[0] || null });
@@ -500,17 +756,82 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     
     // Clear the cache before making new treatment calls
     this.aiTxService.clearCache();
-    
-    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(this.diagnosisName);
-    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(this.diagnosisName);
-    this.aillmtxTestComponent?.getAITestWithRetry(this.diagnosisName);
-    this.aillmtxReferralComponent?.getAIReferralWithRetry(this.diagnosisName);
-    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(this.diagnosisName);
 
     const { diagnosisAiGenerated: _ignore, ...rest } = this.diagnosisForm.value;
     this.existingDiagnosis.push({ ...rest, diagnosisName: this.diagnosisName });
     this.diagnosisForm.reset();
     this.diagnosisSaved.emit(this.existingDiagnosis);
+  }
+
+  private getAiDiagnosisMeta(diagnosisName: string): any {
+    const list = this.aillmddxComponent?.diagnosisList;
+    const aiDiagnosis = list?.find(
+      (d: any) => d.diagnosis?.toLowerCase() === diagnosisName?.toLowerCase()
+    );
+    if (!aiDiagnosis) return {};
+
+    let rationale: string[] = [];
+    if (aiDiagnosis?.rationale) {
+      if (Array.isArray(aiDiagnosis.rationale) && typeof aiDiagnosis.rationale[0] === 'string') {
+        rationale = aiDiagnosis.rationale.filter((val: string) => val && val.trim() !== '');
+      } else {
+        rationale = aiDiagnosis.rationale
+          .map((obj: any) => Object.values(obj).pop())
+          .filter((val: any) => val && val !== '.' && val.trim() !== '');
+      }
+    }
+
+    const diagIndex = list.indexOf(aiDiagnosis);
+    return {
+      from: 'AI generated',
+      ...(aiDiagnosis?.likelihood ? { likelihood: aiDiagnosis.likelihood } : {}),
+      ...(diagIndex >= 0 ? { rank: diagIndex + 1 } : {}),
+      ...(rationale.length > 0 ? { rationale } : {}),
+    };
+  }
+
+  get isTreatmentLoading(): boolean {
+    return !!(
+      this.aillmtxMedicationComponent?.isLoading ||
+      this.aillmtxAdviceComponent?.isLoading ||
+      this.aillmtxTestComponent?.isLoading ||
+      this.aillmtxReferralComponent?.isLoading ||
+      this.aillmtxFollowupComponent?.isLoading
+    );
+  }
+
+  confirmAndSuggestTreatment(): void {
+    if (this.isTreatmentLoading) return;
+
+    (this.selectedDiagnoses || []).forEach((name: string) => {
+      const exists = this.existingDiagnosis.some(
+        (d) => d.diagnosisName?.toLowerCase() === name?.toLowerCase()
+      );
+      if (!exists) {
+        this.existingDiagnosis.push({
+          diagnosisName: name,
+          diagnosisType: 'Primary',
+          diagnosisStatus: 'Provisional',
+          ...this.getAiDiagnosisMeta(name),
+        });
+      }
+    });
+
+    if (!this.existingDiagnosis.length) return;
+
+    this.diagnosisSaved.emit(this.existingDiagnosis);
+    this.aiTxService.clearCache();
+    this.getTTxWithRetry();
+  }
+
+  getTTxWithRetry(): void {
+    const multiDDx = this.existingDiagnosis.map(d => d.diagnosisName).join(', ');
+
+    this.aillmtxMedicationComponent?.getAIMedicalWithRetry(multiDDx);
+    this.aillmtxAdviceComponent?.getAIAdviceWithRetry(multiDDx);
+    this.aillmtxTestComponent?.getAITestWithRetry(multiDDx);
+    this.aillmtxReferralComponent?.getAIReferralWithRetry(multiDDx);
+    this.aillmtxFollowupComponent?.getAIFollowUpWithRetry(multiDDx);
   }
 
   deleteDiagnosis(index: number, uuid: string): void {
@@ -531,6 +852,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   }
 
   isFeatureAvailable(featureName: string, notInclude = false): boolean {
+    if ((featureName === 'followUpType' || featureName === 'followUpTime') && !this.showAndHideUiElement) return !notInclude;
     return isFeaturePresent(featureName, notInclude);
   }
 
@@ -549,6 +871,18 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         uuid: uuid
       };
     }
+  }
+
+  onRationaleOpened(payload?: any): void {
+    this.insight.record({
+      event_name: insightEvents.DDX_RATIONALE_OPENED,
+      entity_type: 'visit',
+      entity_id: this.visit?.uuid,
+      properties: {
+        diagnosis_count: payload?.diagnosis_count,
+        doctor_name: getCacheData(true, doctorDetails.USER)?.person?.display
+      }
+    });
   }
 
   onAIDiagnosisSelected(): void {
@@ -623,11 +957,12 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
    * @returns {void}
    */
   checkIfNotePresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote)
       .subscribe({
         next: (response: ObsApiResponseModel) => {
           response.results.forEach((obs: ObsModel) => {
-            if (obs.encounter.visit.uuid === this.visit.uuid) {
+            if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
               this.patientInteractionNotesForm.patchValue({ uuid: obs.uuid, value: obs.value });
             }
           });
@@ -659,18 +994,79 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     if (this.selectedMedication.length > 0) {
       const medicine = this.selectedMedication[0];
 
-      const formattedMedicine = {
+      const formattedMedicine: any = {
         drug: this.addMedicineForm.value.drug,
         dose: this.addMedicineForm.value.dose,
         frequency: this.addMedicineForm.value.frequency,
         durationNo: this.addMedicineForm.value.durationNo,
         durationUnit: this.addMedicineForm.value.durationUnit,
         instructRemark: this.addMedicineForm.value.instructRemark || '',
-        uuid: medicine.uuid
+        uuid: medicine.uuid,
+        aiGenerated: true,
+        // Store ORIGINAL AI values for modification detection
+        originalAiData: {
+          dose: medicine.dosage || medicine.dose,
+          durationNo: medicine.duration || medicine.durationNo,
+          durationUnit: medicine.duration_unit || medicine.durationUnit,
+          instructRemark: medicine.instructions || medicine.instructRemark || '',
+          frequency: medicine.frequency
+        }
       };
+
+      // Extract rationale and likelihood from AI medication component list
+      if (this.aillmtxMedicationComponent) {
+        const medicationList = (this.aillmtxMedicationComponent as any).medicationList ||
+                               (this.aillmtxMedicationComponent as any).medicineList ||
+                               (this.aillmtxMedicationComponent as any).medications;
+
+        if (medicationList && medicationList.length > 0) {
+          const drugName = formattedMedicine.drug?.toLowerCase().trim();
+          const aiMedication = medicationList.find((m: any) =>
+            m.name?.toLowerCase().trim() === drugName ||
+            m.drug?.toLowerCase().trim() === drugName ||
+            m.medication?.toLowerCase().trim() === drugName
+          );
+
+          if (aiMedication) {
+            // Extract rank from AI medication (based on order in list)
+            const medIndex = medicationList.indexOf(aiMedication);
+            formattedMedicine.rank = medIndex >= 0 ? (medIndex + 1) : 'NA';
+            if (aiMedication.rationale) {
+              if (Array.isArray(aiMedication.rationale)) {
+                const isStringArray = typeof aiMedication.rationale[0] === 'string';
+                formattedMedicine.rationale = isStringArray
+                  ? aiMedication.rationale.filter((r: string) => r?.trim())
+                  : aiMedication.rationale.map((obj: any) => Object.values(obj).pop()).filter((val: any) => val?.trim() && val !== '.');
+              } else if (typeof aiMedication.rationale === 'string') {
+                formattedMedicine.rationale = [aiMedication.rationale];
+              }
+            }
+            if (aiMedication.likelihood) {
+              formattedMedicine.likelihood = aiMedication.likelihood;
+            }
+          }
+        }
+      }
+
+      // Fallback: try to extract from medicine object directly
+      if (!formattedMedicine.rationale && medicine.rationale && medicine.rationale.length > 0) {
+        formattedMedicine.rationale = medicine.rationale.filter((r: string) => r?.trim());
+      }
+      if (!formattedMedicine.likelihood && medicine.likelihood) {
+        formattedMedicine.likelihood = medicine.likelihood;
+      }
 
       // Check for duplicates
       if (!this.medicines.find(m => m.drug.toLowerCase() === formattedMedicine.drug.toLowerCase())) {
+        // Warn if similar base drug name exists (same drug, different strength/formulation)
+        const similarDrug = this.findSimilarBaseDrug(formattedMedicine.drug);
+        if (similarDrug) {
+          const baseName = this.extractBaseDrugName(formattedMedicine.drug);
+          this.toastr.warning(
+            this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+            this.translateService.instant('Duplicate Drug Warning')
+          );
+        }
         this.medicines.push(formattedMedicine);
 
         if (this.aillmtxMedicationComponent) {
@@ -715,6 +1111,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Medicine already added, please add another drug.'), this.translateService.instant('Already Added'));
       return;
     }
+
+    // Check for similar base drug name (same drug, different strength/formulation)
+    const similarDrug = this.findSimilarBaseDrug(this.addMedicineForm.value.drug);
+    if (similarDrug) {
+      const baseName = this.extractBaseDrugName(this.addMedicineForm.value.drug);
+      this.toastr.warning(
+        this.translateService.instant(`Please review the medications selected, "${baseName}" appears twice in the prescription and may cause confusion to the patient. Please proceed with caution.`),
+        this.translateService.instant('Duplicate Drug Warning')
+      );
+    }
+
     // Ensure instructRemark is never null
     const medicineData = { ...this.addMedicineForm.value };
     if (!medicineData.instructRemark) {
@@ -726,19 +1133,33 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     this.addMedicineForm.reset();
     this.medicationSaved.emit(this.medicines);
   }
-  
+
+  extractBaseDrugName(drugName: string): string {
+    if (!drugName) return '';
+    const base = drugName.replace(/\s*\d.*$/, '').trim();
+    return (base || drugName.split(' ')[0]).toLowerCase();
+  }
+
+  findSimilarBaseDrug(drugName: string): string | null {
+    const baseName = this.extractBaseDrugName(drugName);
+    if (!baseName) return null;
+    const match = this.medicines.find(m => m.drug && this.extractBaseDrugName(m.drug) === baseName);
+    return match ? match.drug : null;
+  }
+
   checkIfMedicationPresent(): void {
     this.medicines = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           if (obs.value.includes(':') && !this.appConfigService?.patient_visit_summary?.dp_medication_secondary) {
             this.medicines.push(this.visitService.formatMedicineDisplay(obs.value, obs.uuid));
             if (this.aillmtxMedicationComponent) {
               this.aillmtxMedicationComponent.existingMedication = [...this.medicines];
             }
           } else {
-            this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value });
+            this.additionalInstructionForm.patchValue({ uuid: obs.uuid, value: obs.value }, { emitEvent: false });
           }
         }
       });
@@ -807,10 +1228,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   checkIfAdvicePresent(): void {
     this.advices = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if (!obs.value.includes('</a>')) {
               this.advices.push(obs);
               if (this.aillmtxAdviceComponent) {
@@ -921,10 +1343,11 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   checkIfTestPresent(): void {
     this.tests = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             if(this.appConfigService.patient_visit_summary.dp_investigations_secondary) {
               this.testForm.patchValue({uuid:obs.uuid, test:obs.value})
             } else {
@@ -1026,16 +1449,17 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   checkIfReferralPresent(): void {
     this.referrals = [];
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
-          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
+          if (sourceEncounterUuids.includes(obs.encounter?.uuid) && obs_values.length > 1 && !this.appConfigService?.patient_visit_summary?.dp_referral_secondary) {
             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() ? obs_values[3].trim() : '-' });
             if (this.aillmtxReferralComponent) {
               this.aillmtxReferralComponent.existingReferral = [...this.referrals];
             }
-          } else if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          } else if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
             this.referralSecondaryForm.patchValue({ uuid: obs.uuid, ref: obs.value })
           }
         });
@@ -1047,6 +1471,22 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   addReferral(): void {
+    const candidate = this.selectedReferrals.length > 0
+      ? { speciality: (this.selectedReferrals[0] as any).referral_to, facility: (this.selectedReferrals[0] as any).referral_facility }
+      : { speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility };
+    if (this.appConfigService?.namco_referral_section && this.isNamcoReferralTarget(candidate.speciality, candidate.facility)) {
+      // The patient declined consent for the NAMCO referral.
+      if (this.isNamcoConsentDeclined) {
+        this.toastr.warning(this.translateService.instant("This visit will not be referred to a NAMCO doctor because 'Refer to NAMCO' is set to 'No'."), this.translateService.instant('Referral Not Allowed'));
+        return;
+      }
+      // A NAMCO referral only fills once per visit.
+      if (this.hasNamcoReferralAdded) {
+        this.toastr.warning(this.translateService.instant('A NAMCO referral has already been added for this visit.'), this.translateService.instant('Referral Already Added'));
+        return;
+      }
+    }
+
     if (this.selectedReferrals.length > 0) {
       const selectedReferral = this.selectedReferrals[0] as any;
       const refer_reason = selectedReferral.remark ? selectedReferral.remark : '';
@@ -1138,47 +1578,39 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfFollowUpPresent(): void {
+    const sourceEncounterUuids = getSourceEncounterUuids(this.visit);
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
-        if (obs.encounter.visit.uuid === this.visit.uuid) {
+        if (sourceEncounterUuids.includes(obs.encounter?.uuid)) {
           let followUpDate: string, followUpTime: any, followUpReason: any, wantFollowUp: string = 'No', followUpType: any;
-          if (obs.value.includes('Time:')) {
+          if (obs.value.includes('Time:') || obs.value.includes('Remark:')) {
             const result = obs.value.split(',').filter(Boolean);
-            const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
             const remark = result.find((v: string) => v.includes('Remark:'))?.split('Remark:')?.[1]?.trim();
             followUpDate = moment(result[0]).format('YYYY-MM-DD');
-            followUpTime = time ? time : null;
-            followUpReason = (remark && remark !=="null") ? remark : null;
+            followUpReason = remark ? remark : null;
             wantFollowUp = 'Yes';
 
-            // Only try to get Type if the feature is enabled
-            if (this.isFeatureAvailable('followUpType')) {
-              const type = result.find((v: string) => v.includes('Type:'))?.split('Type:')?.[1]?.trim();
-              followUpType = type && type !== 'null' ? type : null;
+            // Only try to get Time if the feature is enabled
+            if (this.isFeatureAvailable('followUpTime')) {
+              const time = result.find((v: string) => v.includes('Time:'))?.split('Time:')?.[1]?.trim();
+              followUpTime = time ? time : null;
             }
+          }
+          // Only try to get Type if the feature is enabled and a follow-up was actually requested
+          if (this.isFeatureAvailable('followUpType') && wantFollowUp === 'Yes') {
+            const type = obs.value.includes('Type:') ? obs.value.split('Type:')?.[1]?.trim() : null;
+            followUpType = type && type !== 'null' ? type : (this.isTurnServer ? 'Telemedicine' : null);
           }
           this.followUpDatetime = obs.value;
           this.followUpForm.patchValue({
             present: true,
             wantFollowUp,
             followUpDate,
-            followUpTime,
+            followUpTime: this.isFeatureAvailable('followUpTime') ? followUpTime : null,
             followUpReason,
             uuid: obs.uuid,
             followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
           });
-
-          if (this.aillmtxFollowupComponent) {
-            this.aillmtxFollowupComponent.existingFollowUp = [{
-              present: true,
-              wantFollowUp,
-              followUpDate,
-              followUpTime,
-              followUpReason,
-              uuid: obs.uuid,
-              followUpType: this.isFeatureAvailable('followUpType') ? followUpType : null
-            }];
-          }
         }
       });
     });
@@ -1190,7 +1622,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   saveFollowUp(): Observable<any> {
     if (this.followUpForm.value.wantFollowUp === 'Yes') {
-      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')},Time:${this.followUpForm.value.followUpTime},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
+      const value = `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}${this.isFeatureAvailable('followUpTime') ? ',Time:' + (this.followUpForm.value.followUpTime) : ''},Remark:${this.followUpForm.value.followUpReason}${this.isFeatureAvailable('followUpType') ? ',Type:' + (this.followUpForm.value.followUpType) : ''}`;
       
       if (this.followUpForm.value.uuid) {
         return this.encounterService.updateObs(this.followUpForm.value.uuid, { value });
@@ -1200,7 +1632,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
           });
@@ -1216,7 +1648,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
             present: true,
             wantFollowUp: 'Yes',
             followUpDate : this.followUpForm.value.followUpDate,
-            followUpTime : this.followUpForm.value.followUpTime,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason : this.followUpForm.value.followUpReason,
             uuid: res.uuid,
             followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
@@ -1225,30 +1657,31 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
         this.followUpSaved.emit(this.followUpForm.value);
       }
     } else {
+      const noFollowUpValue = this.followUpForm.value.wantFollowUp;
       this.encounterService.postObs({
         concept: conceptIds.conceptFollow,
         person: this.visit.patient.uuid,
         obsDatetime: new Date(),
-        value: this.followUpForm.value.wantFollowUp,
+        value: noFollowUpValue,
         encounter: this.visitNotePresent.uuid
       }).subscribe ( (res) => {
           this.followUpForm.patchValue({
             present: true,
             wantFollowUp: 'No',
             followUpDate : null,
-            followUpTime : null,
+            followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
             followUpReason :null,
             uuid: res.uuid,
-            followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+            followUpType : null
           });
           if (this.aillmtxFollowupComponent) {
             this.aillmtxFollowupComponent.existingFollowUp.push({
               present: true,
               wantFollowUp: 'No',
               followUpDate : null,
-              followUpTime : null,
+              followUpTime : this.isFeatureAvailable('followUpTime') ? this.followUpForm.value.followUpTime : null,
               followUpReason : null,
-              followUpType : this.isFeatureAvailable('followUpType') ? this.followUpForm.value.followUpType : null
+              followUpType : null
             });
           }
       });
@@ -1262,7 +1695,7 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
   */
   deleteFollowUp(): void {
     this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
-      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: null }
+      const followUp = { present: false, uuid: null, wantFollowUp: '', followUpDate: null, followUpTime: null, followUpReason: null, followUpType: this.isTurnServer ? 'Telemedicine' : null }
       this.followUpForm.patchValue(followUp);
       this.followUpDatetime = null;
       if (this.aillmtxFollowupComponent) {
@@ -1386,6 +1819,15 @@ export class DiagnosisComponent implements OnInit, OnDestroy {
     if (this.aillmddxComponent) {
       this.aillmddxComponent.selectedDiagnosis = [...this.selectedDiagnoses];
     }
+  }
+
+  /**
+  * Check if login profile then show/hide features accondingly
+  * @returns {boolean}
+  */
+  showAndHideUiElements(): boolean {
+    const doctorName = getCacheData(true, doctorDetails.USER)?.person?.display;
+    return this.showAndHideUiElement = !doctorName || !doctorName.includes('Namco');
   }
 }
 

@@ -1,3 +1,63 @@
+@import 'src/app/dashboard/visit-summary-tokens.scss';
+
+// The in-progress card attaches flush to the bottom of the patient-info card.
+// Bottom spacing (mb-5) lives on the sticky wrapper itself so no transparent
+// margin band is pinned over the scrolling content.
+.patient-sticky-wrap.has-banner {
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .patient-info-main {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+
+    .intel-card {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  .visit-in-progress-card {
+    position: relative;
+    border-radius: 0 0 12px 12px;
+
+    .intel-card {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      box-shadow: none;
+    }
+
+    // Inset divider, same colour token as the visit-summary-v2 banner.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: $border;
+    }
+
+    // Same inset as the patient-info content above (card-body 24px + section 16px),
+    // so the text lines up with the patient photo/name column.
+    .card-body {
+      padding: 20px 40px;
+    }
+  }
+}
+
+.visit-in-progress-msg {
+  margin: 0;
+  font-family: 'DM Sans';
+  font-size: 16px;
+  line-height: 150%;
+  font-weight: 500;
+  color: $amber-strong;
+}
+
 .appointment-banner {
   display: flex;
   align-items: center;
@@ -37,11 +97,28 @@
   }
 }
 
+// Sticky patient info + in-progress message container
+.patient-sticky-wrap {
+  position: sticky;
+  top: 64px;
+  z-index: 100;
+}
+
+.patient-info-main {
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  border-radius: 12px;
+}
+
 .patient-info-wrapper {
   font-family: DM Sans;
 
   .patient-info-section {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
     // border-right: 1px solid rgba(178, 175, 190, 0.2);
+    flex-shrink: 0;
 
     .patient-img-item {
       display: flex;
@@ -57,7 +134,7 @@
 
       h6 {
         margin-bottom: 0px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         line-height: 150%;
         color: var(--color-darkestBlue);
@@ -66,7 +143,7 @@
       p {
         margin-bottom: 0px;
         color: var(--color-gray);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
       }
     }
@@ -74,20 +151,20 @@
     .patient-info-item {
       h6 {
         margin-bottom: 0px;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
         color: var(--color-gray);
+        white-space: nowrap;
       }
 
       p {
         margin-bottom: 0px;
         color: var(--color-darkestBlue);
-        font-size: 16px;
+        font-size: 14px;
         line-height: 150%;
-        word-break: break-all;
+        overflow-wrap: break-word;
       }
     }
-
   }
 
   .patient-info-section:last-child {
@@ -95,13 +172,18 @@
   }
 }
 
+.row.patient-info-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  // gap: 20px;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
 .icon-btn {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
   border-radius: 50%;
   text-decoration: none;
-  margin: 5px;
+  margin: 2px;
 }
 
 ::ng-deep .visit-summary-tab-group.mat-tab-group {
@@ -786,9 +868,18 @@ th.mat-header-cell:last-child {
     padding: 10px 0px !important;
   }
 
-  .patient-info-section {
-    border-bottom: 1px solid rgba(178, 175, 190, 0.2);
-    border-right: none !important;
+  .row.patient-info-wrapper {
+    gap: 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+
+    .patient-info-section {
+      border-bottom: none !important;
+      border-right: 1px solid rgba(178, 175, 190, 0.2) !important;
+      flex: 0 0 auto !important;
+      min-width: fit-content !important;
+      max-width: none !important;
+    }
   }
 
   .visit-provider-con {
@@ -884,8 +975,8 @@ th.mat-header-cell:last-child {
 
 .btn{
   position: absolute;
-  right: 50px;
-  top: 60px;
+  right: 20px;
+  top: 42px;
   border: none;
   background: none;
   outline: none;
@@ -924,6 +1015,25 @@ th.mat-header-cell:last-child {
 
 .video-ctrl-btn.red {
   background: var(--color-red);
+}
+
+.kaleyra-call-btn {
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .remove-icon {
@@ -1011,6 +1121,78 @@ th.mat-header-cell:last-child {
 
     .suggestions-box li {
       margin-bottom: 6px;
+    }
+
+    // Loader for the Ayu suggestion box, matching the bouncing-dots loader the
+    // ddx plugin renders inside the diagnosis panel.
+    .ayu-suggestions-loader {
+      padding: 24px 0;
+
+      .stats-loading {
+        padding: 6px 24px;
+        background: var(--color-lightGray, #f4f2f7);
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-darkBlue);
+        cursor: default;
+
+        div {
+          background: #0060ff;
+          display: inline-block;
+          height: 8px;
+          width: 8px;
+          border-radius: 100%;
+          animation: bouncedelay 1.4s infinite ease-in-out;
+          animation-fill-mode: both;
+        }
+
+        div.eins {
+          animation-delay: -0.32s;
+        }
+
+        div.zwei {
+          animation-delay: -0.16s;
+        }
+      }
+
+      .loading-text {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 18px;
+        color: #7f7b92;
+      }
+    }
+
+    @keyframes bouncedelay {
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .report-issue-btn {
+      background: none;
+      border: none;
+      outline: none;
+      padding: 2px 4px;
+      cursor: pointer;
+      line-height: 0;
+      opacity: 0.75;
+    }
+
+    .report-issue-btn:hover {
+      opacity: 1;
     }
 
   .notes-textarea {

@@ -49,7 +49,7 @@ export class DiagnosisService {
   */
   getObs(patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,comment,value,encounter:(uuid,visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 
@@ -81,7 +81,6 @@ export class DiagnosisService {
       })
     );
   }
-
   
   getSnomedDiagnosisList(term: string): Observable<any> {
     const url = `${environment.base}/getdiags/${term}`;
@@ -124,5 +123,25 @@ export class DiagnosisService {
       });
       return false;
     }
+  }
+
+  /**
+  * Save manual diagnosis to DDx API
+  * @param {any} payload - Diagnosis payload with visitUuid, diagnoses, and ai_assisted
+  * @return {Observable<any>}
+  */
+  saveManualDiagnosis(payload: any): Observable<any> {
+    const url = `${environment.mindmapURL}/ddx/manual`;
+    return this.http.post(url, payload);
+  }
+
+  /**
+  * Save manual treatment/medication to TTx API
+  * @param {any} payload - Treatment payload with visitUuid, medications, and ai_assisted
+  * @return {Observable<any>}
+  */
+  saveManualTreatment(payload: any): Observable<any> {
+    const url = `${environment.mindmapURL}/ttx/manual`;
+    return this.http.post(url, payload);
   }
 }

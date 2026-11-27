@@ -69,6 +69,7 @@ export class ConfigService {
    const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
   }
+
   publishConfig(): Observable<any> {
     const url = `${this.baseURL}/config/publish`;
     return this.http.post(url, null);
@@ -154,7 +155,6 @@ export class ConfigService {
    * @return {Observable<any>}
    */
   deleteImage(url: string, filePath: string): Observable<any> {
-    console.log("calling api delete............",url);
     return this.http.delete(url, { body: { filePath } });
   }
 
@@ -293,6 +293,16 @@ export class ConfigService {
   updateFeatureEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
     const url = `${this.baseURL}/feature/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Get a single feature config by its key
+   * @param {string} key - feature key
+   * @return {Observable<any>}
+   */
+  getFeatureByKey(key: string): Observable<any> {
+    const url = `${this.baseURL}/feature/getByKey/${key}`;
+    return this.http.get(url);
   }
 
   /*
@@ -493,6 +503,7 @@ export class ConfigService {
     const url = `${this.baseURL}/home-screen/updateHomeScreenName/${id}`;
     return this.http.put(url, { lang });
   }
+
   /**
  * Get AI LLM
  * @return {Observable<any>}
@@ -512,7 +523,7 @@ export class ConfigService {
     const url = `${this.baseURL}/ai-llm/updateIsEnabled/${id}`;
     return this.http.put(url, { is_enabled });
   }
-  
+
   /**
    * @returns {Observable<any>}
    */
@@ -549,6 +560,21 @@ export class ConfigService {
     return this.http.get(url);
   }
 
+  getAILLMVoiceTranscript(): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/all`;
+    return this.http.get(url);
+  }
+
+  updateAILLMVoiceTranscriptEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  getAILLMVoiceTranscriptByKey(key: String): Observable<any> {
+    const url = `${this.baseURL}/ai-llm-voice-transcript/getByKey/${key}`;
+    return this.http.get(url);
+  }
+
    /**
    * Update language platform mobile/webapp/both
    * @param {boolean} id - id of language
@@ -557,5 +583,36 @@ export class ConfigService {
   updatePlatform(id: number, platform: string): Observable<any> {
     const url = `${this.baseURL}/language/updatePlatform/${id}`;
     return this.http.put(url, {platform});
+  }
+
+  /**
+   * Get specialty-wise prescription notes (admin view).
+   * @return {Observable<any>}
+   */
+  getPrescriptionNotes(): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/all`;
+    return this.http.get(url);
+  }
+
+  /**
+   * Toggle is_enabled for a specialty's prescription notes.
+   * @param {number} id - id of the prescription-notes row
+   * @param {boolean} is_enabled - enabled status true/false
+   * @return {Observable<any>}
+   */
+  updatePrescriptionNoteEnabledStatus(id: number, is_enabled: boolean): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/updateIsEnabled/${id}`;
+    return this.http.put(url, { is_enabled });
+  }
+
+  /**
+   * Replace the notes array (bullet list) for a specialty.
+   * @param {number} id - id of the prescription-notes row
+   * @param {string[]} notes - non-empty array of bullet strings
+   * @return {Observable<any>}
+   */
+  updatePrescriptionNotesContent(id: number, notes: string[]): Observable<any> {
+    const url = `${this.baseURL}/prescription-notes/updateNotes/${id}`;
+    return this.http.put(url, { notes });
   }
 }

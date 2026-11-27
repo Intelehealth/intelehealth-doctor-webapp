@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { Observable } from 'rxjs';
+import { VoiceTranscriptFlags } from '../utils/voice-transcript';
 import { LanguageModel, PatientRegistrationFieldsConfigModel, VitalModel, SpecializationModel, WebRTCConfigModel, PatientVisitSummaryConfigModel, PatientVisitSection, DropdownValuesModel } from '../model/model';
 
 @Injectable({
@@ -18,6 +19,8 @@ export class AppConfigService {
   public theme_config: any[];
   public patient_vitals: VitalModel[];
   public patient_diagnostics:any[];
+  public digital_stethoscope:any[];
+  public digital_stethoscope_section: boolean;
   public webrtc_section: boolean;
   public webrtc: WebRTCConfigModel;
   public patient_visit_summary: PatientVisitSummaryConfigModel;
@@ -25,12 +28,21 @@ export class AppConfigService {
   public patient_reg_other: boolean;
   public patient_reg_address: boolean;
   public abha_section: boolean;
+  public qms_section: boolean;
   public sidebar_menus: { [key: string]: boolean };
   public patient_visit_sections: PatientVisitSection[]
   public dropdown_values: DropdownValuesModel[]
   public patient_diagnostics_section: boolean;
   public ai_llm_section: boolean;
+  public ai_llm: { [key: string]: boolean };
   public ai_llm_recording_section:  boolean;
+  public ai_llm_recording: { ai_video?: boolean; ai_audio?: boolean };
+  public namco_referral_section: boolean;
+  public ai_llm_voice_transcript_section: boolean;
+  public ai_llm_voice_transcript: VoiceTranscriptFlags;
+  public visit_summary_v2_section: boolean;
+  public prescription_notes_section: boolean;
+  public prescription_notes: { specialty: string; notes: string[]; is_enabled: boolean }[];
   constructor(private http: HttpClient) { }
 
   load(): Promise<any> {

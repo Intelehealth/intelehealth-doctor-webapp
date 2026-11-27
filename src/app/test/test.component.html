@@ -30,7 +30,7 @@
       <ul class="first-list p-0 m-0">
         <li *ngFor="let test of testData, index as i" class="mb-2">
           {{ test.value }}
-          <span (click)="delete(i)" class="btn-height click float-right">
+          <span (click)="delete(i)" class="btn-height click float-right" [attr.data-test-id]="'btnDeleteTest' + i">
             <img *ngIf="!readOnly" alt="" src="assets/svgs/delete-icon.svg" />
           </span>
         </li>
@@ -52,12 +52,13 @@
 
     <ng-container *ngIf="!showAddMore && !readOnly">
       <span class="text-area-label font-bold">Test </span>
-      <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newTest">
+      <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newTest" data-test-id="etTestInput">
       <button
         *ngIf="!readOnly"
         type="button"
         class="btn cancel-add-test-btn font-bold mt-4"
         (click)="showAddMore = !showAddMore; newTest=''"
+        data-test-id="btnCancelAddTest"
       >
         Cancel
       </button>
@@ -65,8 +66,9 @@
       <button
         *ngIf="!readOnly"
         type="button"
-        (click)="submit()" 
+        (click)="submit()"
         class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
+        data-test-id="btnAddTest"
       >
         Add test
       </button>

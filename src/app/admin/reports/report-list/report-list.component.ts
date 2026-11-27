@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CoreService } from 'src/app/services/core/core.service';
+import { isFeaturePresent } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-report-list',
@@ -11,11 +12,12 @@ import { CoreService } from 'src/app/services/core/core.service';
 export class ReportListComponent {
   dataSource = new MatTableDataSource<any>();
   reports = [
-    {
-      id: 1,
-      name: 'List of Patients between two dates',
-      buttonName: "Create Report"
-    },
+    // Hidden from the admin report page.
+    // {
+    //   id: 1,
+    //   name: 'List of Patients between two dates',
+    //   buttonName: "Create Report"
+    // },
     {
       id: 2,
       name: 'List of Visits between two dates',
@@ -32,6 +34,8 @@ export class ReportListComponent {
       title: element.name,
       field1: 'Start date',
       field2: 'End date',
+      // dialog's *ngIf for this input and its required/email validators (report-generator.component.ts).
+      field3: isFeaturePresent('reportEmail') ? 'Email address' : '',
       cancelBtnText: 'Cancel',
       confirmBtnText: 'Generate Report'
     };

@@ -229,6 +229,15 @@ export class SetupCalendarComponent implements OnInit {
     let max = moment(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`, 'YYYY-MMMM-D').endOf('month');
     this.minDate = (min < today) ? today.format('YYYY-MM-DD') : min.format('YYYY-MM-DD');
     this.maxDate = max.format('YYYY-MM-DD');
+
+    // Relax minDate to the schedule's own startDate if it's already in the past, so the datepicker doesn't reject its own saved value.
+    const existingStartDate = this.selectedMonthSchedule?.startDate;
+    if (existingStartDate) {
+      const existingStart = moment(existingStartDate);
+      if (existingStart.isValid() && existingStart.isBefore(moment(this.minDate))) {
+        this.minDate = existingStart.format('YYYY-MM-DD');
+      }
+    }
   }
 
   /**
@@ -268,27 +277,39 @@ export class SetupCalendarComponent implements OnInit {
     this.appointmentService.getUserAppoitment(this.userId, year, month)
       .subscribe({
         next: (res: ApiResponseModel) => {
+          console.log(`[setup-calendar] getSchedule ${month} ${year} response:`, res);
           if (res && res.data) {
             this.selectedMonthSchedule = res.data;
             this.selectedMonthSchedule.added = true;
             this.setData(res.data);
           } else {
-            this.selectedMonthSchedule = {
-              added: false,
-              month: month,
-              year: year,
-              startDate: null,
-              endDate: null,
-              slotDays: '',
-              slotSchedule: [],
-              timings: [],
-              daysOff: []
-            };
-            this.setData(this.selectedMonthSchedule);
+            this.setEmptySchedule(year, month);
           }
           this.getMinMaxDate();
         },
+        // Without this a failed getSchedule left the timings table empty, with no
+        // "Add more timings" row to start from.
+        error: (err) => {
+          console.error(`[setup-calendar] getSchedule ${month} ${year} FAILED:`, err);
+          this.setEmptySchedule(year, month);
+          this.getMinMaxDate();
+        },
       });
+  }
+
+  private setEmptySchedule(year: string, month: string) {
+    this.selectedMonthSchedule = {
+      added: false,
+      month: month,
+      year: year,
+      startDate: null,
+      endDate: null,
+      slotDays: '',
+      slotSchedule: [],
+      timings: [],
+      daysOff: []
+    };
+    this.setData(this.selectedMonthSchedule);
   }
 
   /**
@@ -297,20 +318,67 @@ export class SetupCalendarComponent implements OnInit {
   * @return {void}
   */
   private setData(schedule: ScheduleModel) {
+    console.log('[setup-calendar] setData: schedule =', schedule, '| selectedMonth =', this.selectedMonth);
+    // Fill the day list first: "Add more timings" is disabled while it is empty, so a
+    // failure further down must not leave it disabled.
+    this.filteredDays = [...this.days];
+    try {
+      this.applySchedule(schedule);
+      console.log('[setup-calendar] setData done: timings rows =', this.ft.length,
+        '| daysOff =', this.fd.length, '| filteredDays =', this.filteredDays.length);
+    } catch (err) {
+      console.error('[setup-calendar] setData FAILED, schedule =', schedule, err);
+      // Keep an empty row so a new timing can still be added.
+      if (this.ft.length === 0) this.ft.push(this.newTimingRow());
+    }
+  }
+
+  private newTimingRow(): FormGroup {
+    return new FormGroup({
+      startTime: new FormControl(null, Validators.required),
+      startMeridiem: new FormControl(null, Validators.required),
+      endTime: new FormControl(null, Validators.required),
+      endMeridiem: new FormControl(null, Validators.required),
+      days: new FormControl(null, Validators.required),
+      slots: new FormArray([])
+    });
+  }
+
+  private applySchedule(schedule: ScheduleModel) {
     if (!this.scheduledMonths.some((month: ScheduledMonthModel) => month.name === schedule.month)) {
       this.scheduledMonths.push({ name: schedule.month, year: schedule.year });
     }
     this.ft.clear();
     this.fd.clear();
     this.fs.clear();
+    // A saved month can come back with slotSchedule null (e.g. days off saved before
+    // any timing) or with incomplete slots; skip those so the form (and the
+    // "Add more timings" row) still renders. Not gated on isTurnServer: a build
+    // without IS_TURN_SERVER would otherwise crash here and show an empty table.
+    // JSON columns come back as a string on some DBs (e.g. MariaDB); parse those.
+    let slotSchedule: any = schedule.slotSchedule;
+    if (typeof slotSchedule === 'string') {
+      console.warn('[setup-calendar] slotSchedule came back as a string, parsing it');
+      try { slotSchedule = JSON.parse(slotSchedule); } catch { slotSchedule = []; }
+    }
+    const rawSlots = Array.isArray(slotSchedule) ? slotSchedule : [];
+    if (slotSchedule && !Array.isArray(slotSchedule)) {
+      console.warn('[setup-calendar] slotSchedule is not an array:', slotSchedule);
+    }
+    const slots: ScheduleSlotModel[] = rawSlots
+      .filter((s: ScheduleSlotModel) => s?.startTime && s?.endTime && s?.day);
+    if (slots.length !== rawSlots.length) {
+      console.warn(`[setup-calendar] skipped ${rawSlots.length - slots.length} incomplete slot(s)`,
+        rawSlots.filter((s: ScheduleSlotModel) => !(s?.startTime && s?.endTime && s?.day)));
+    }
     let uniqTiming = [];
-    for (let h = 0; h < schedule.slotSchedule.length; h++) {
-      if (uniqTiming.findIndex((o: ScheduleSlotModel) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
-        uniqTiming.push(schedule.slotSchedule[h]);
+    for (let h = 0; h < slots.length; h++) {
+      if (uniqTiming.findIndex((o: ScheduleSlotModel) => o.startTime == slots[h].startTime && o.endTime == slots[h].endTime) == -1) {
+        uniqTiming.push(slots[h]);
       }
     }
     uniqTiming.forEach((ut: ScheduleSlotModel) => {
-      let utslots = schedule.slotSchedule.filter((o: ScheduleSlotModel) => o.startTime == ut.startTime && o.endTime == ut.endTime);
+      let utslots = slots.filter((o: ScheduleSlotModel) => o.startTime == ut.startTime && o.endTime == ut.endTime);
       let timingFormGroup = new FormGroup({
         startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
         startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
@@ -323,36 +391,35 @@ export class SetupCalendarComponent implements OnInit {
     });
 
     // Add empty formGroup to Timings array for new entry
-    this.ft.push(
-      new FormGroup({
-        startTime: new FormControl(null, Validators.required),
-        startMeridiem: new FormControl(null, Validators.required),
-        endTime: new FormControl(null, Validators.required),
-        endMeridiem: new FormControl(null, Validators.required),
-        days: new FormControl(null, Validators.required),
-        slots: new FormArray([])
-      })
-    );
-    // Push daysOff's to the form
-    if (schedule.daysOff) {
-      schedule.daysOff.forEach((doff: string) => {
+    this.ft.push(this.newTimingRow());
+    console.log('[setup-calendar] timing rows built:', uniqTiming.length, 'saved + 1 empty');
+
+    // Push daysOff's to the form. Older rows may hold a JSON string instead of an array.
+    let daysOff: any = schedule.daysOff;
+    if (typeof daysOff === 'string') {
+      console.warn('[setup-calendar] daysOff is a string:', daysOff);
+      try { daysOff = JSON.parse(daysOff); } catch { daysOff = daysOff.split(','); }
+    }
+    if (Array.isArray(daysOff)) {
+      daysOff.filter(Boolean).forEach((doff: string) => {
         this.fd.push(new FormControl(moment(doff, "DD/MM/YYYY").format("YYYY-MM-DD HH:mm:ss"), Validators.required));
       });
+    } else if (daysOff) {
+      console.warn('[setup-calendar] daysOff ignored, unexpected type:', daysOff);
     }
 
+    if (!this.selectedMonth) {
+      console.warn('[setup-calendar] selectedMonth not set yet, using schedule month/year');
+    }
     this.addSlotsForm.patchValue({
-      month: this.selectedMonth['name'],
-      year: this.selectedMonth['year'],
+      month: this.selectedMonth?.name ?? schedule.month,
+      year: this.selectedMonth?.year ?? schedule.year,
       startDate: (schedule.startDate) ? moment(schedule.startDate).format('YYYY-MM-DD') : null,
       endDate: (schedule.endDate) ? moment(schedule.endDate).format('YYYY-MM-DD') : null,
       slotDays: ''
     });
 
     this.daysOffSelected = [];
-    this.filteredDays = [];
-    this.days.forEach((element, i) => {
-      this.filteredDays.push(element);
-    });
   }
 
   /**
@@ -490,7 +557,14 @@ export class SetupCalendarComponent implements OnInit {
         if (res.status) {
           this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
           this.submitted = false;
+        } else {
+          // Surface a server-reported failure instead of failing silently.
+          this.toastr.error(this.translateService.instant(res.message || "Failed to save the schedule."), this.translateService.instant("Save Failed!"));
         }
+      },
+      // Surface network/HTTP errors instead of failing silently.
+      error: () => {
+        this.toastr.error(this.translateService.instant("Failed to save the schedule. Please try again."), this.translateService.instant("Save Failed!"));
       },
     });
   }

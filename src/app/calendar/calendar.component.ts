@@ -470,7 +470,8 @@ export class CalendarComponent implements OnInit {
   */
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
-      return (e.type.name.includes(visitTypes.PATIENT_EXIT_SURVEY) || e.type.name.includes(visitTypes.VISIT_COMPLETE));
+      // Turn: an exit survey is only the patient's feedback; it must not block rescheduling.
+      return ((!environment.isTurnServer && e.type.name.includes(visitTypes.PATIENT_EXIT_SURVEY)) || e.type.name.includes(visitTypes.VISIT_COMPLETE));
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {

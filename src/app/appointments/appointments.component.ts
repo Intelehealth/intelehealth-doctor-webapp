@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
@@ -32,6 +33,7 @@ export class AppointmentsComponent implements OnInit {
   appointments: AppointmentModel[] = [];
   patientRegFields: string[] = [];
   isMCCUser = false;
+  isTurnServer: boolean = environment.isTurnServer;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
@@ -54,7 +56,8 @@ export class AppointmentsComponent implements OnInit {
     private translateService: TranslateService,
     private mindmapService: MindmapService,
     private appConfigService: AppConfigService,
-    private rolesService: NgxRolesService) { 
+    private router: Router,
+    private rolesService: NgxRolesService) {
       this.isMCCUser = !!this.rolesService.getRole('ORGANIZATIONAL:MCC');
       Object.keys(this.appConfigService.patient_registration).forEach(obj=>{
         this.patientRegFields.push(...this.appConfigService.patient_registration[obj].filter(e=>e.is_enabled).map(e=>e.name));
@@ -111,13 +114,9 @@ export class AppointmentsComponent implements OnInit {
         const obs = encounter.obs;
         obs.forEach((currentObs: CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
-            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                recent.push(obs1[0]);
-              }
-            }
+            recent = recent.concat(
+              this.visitService.parseChiefComplaints(this.visitService.getData2(currentObs)?.value_text)
+            );
           }
         });
       }
@@ -143,6 +142,19 @@ export class AppointmentsComponent implements OnInit {
     return `${hours} hrs`;
   }
 
+  startCall(appointment: AppointmentModel) {
+    if (!appointment?.visitUuid) {
+      this.toastr.error(
+        this.translateService.instant('This appointment has no visit linked to it.'),
+        this.translateService.instant('Cannot start call')
+      );
+      return;
+    }
+    this.router.navigate(['/dashboard/visit-summary', appointment.visitUuid], {
+      queryParams: { startCall: 'video' }
+    });
+  }
+
   /**
   * Reschedule appointment
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
@@ -150,7 +162,8 @@ export class AppointmentsComponent implements OnInit {
   */
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
-      return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
+      // Turn: an exit survey is only the patient's feedback; it must not block rescheduling.
+      return ((!environment.isTurnServer && e.type.name == visitTypes.PATIENT_EXIT_SURVEY) || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {

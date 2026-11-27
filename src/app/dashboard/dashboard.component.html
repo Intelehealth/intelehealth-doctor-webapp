@@ -98,7 +98,6 @@
           <span class="text-muted">{{'Hide all' | translate}}</span> <mat-icon>expand_less</mat-icon>
         </button>
       </div>
-
       <mat-accordion class="intel-accordion-con" multi data-test-id="matAccDashboard">
         <lib-table-grid [pluginConfigObs]="pluginConfigObsAppointment" (visitsCountDate)="onVisitsCountDate($event)"  *ngIf="pvs.appointment_button" data-test-id="matExpAppointment"></lib-table-grid>
         <lib-table-grid [pluginConfigObs]="pluginConfigObsPriority" (visitsCountDate)="onVisitsCountDate($event)" *ngIf="pvs.priority_visit_section" data-test-id="matExpPriority"></lib-table-grid>

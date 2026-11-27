@@ -10,11 +10,14 @@ const configService = jasmine.createSpyObj<ConfigService>('configService', [
     'updateWebrtcEnabledStatus',
     'getWebrtcs',
     'getFeatures',
+    'getFeatureByKey',
     'publishConfig'
 ]);
 
 configService.publishConfig.and.returnValue(of({}));
 
 configService.getWebrtcs.and.returnValue(of(mockWebrtcResponse))
+
+configService.getFeatureByKey.and.returnValue(of({ feature: { id: 1, key: 'namco_referral_section', name: 'Namco Referral Section', is_enabled: true } }))
 
 export { configService };
