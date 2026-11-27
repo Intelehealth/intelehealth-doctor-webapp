@@ -1,0 +1,120 @@
+<div class="title-con position-relative" mat-dialog-title>
+  <h6>{{ 'Visit Care Context' | translate }}</h6>
+  <div class="d-flex align-items-center">
+    <button class="blue-btn" data-test-id="btnAbdmSendData" (click)="sendData()" [disabled]="selectedTabs.length === 0">
+      <span>{{ 'Send Data' | translate }}</span>
+    </button>
+    <button class="close-btn ml-2" data-test-id="btnAbdmClose" (click)="close()" [attr.aria-label]="'Close' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="main-content">
+    <div class="container-fluid">
+      <p class="hint mb-2">{{ 'Select the health record types to share with ABDM' | translate }}</p>
+      <div class="row">
+        <!-- Patient Info Section -->
+        <div class="col-md-12 p-0" *ngIf="data?.patient">
+          <div class="intel-card">
+            <div class="card-body p-1">
+              <div class="row patient-info-wrapper">
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-img-item mb-2">
+                    <div class="patient-img">
+                      <img src="{{ baseURL + '/personimage/' + data.patient?.person?.uuid }}" alt="" width="100%" height="100%" />
+                    </div>
+                    <div class="ml-3">
+                      <h6>
+                        <span>{{ data.patient?.person?.preferredName?.givenName }}</span>
+                        <span *ngIf="data.patient?.person?.preferredName?.middleName">{{ ' ' + data.patient?.person?.preferredName?.middleName }}</span>
+                        <span>{{ ' ' + (data.patient?.person?.preferredName?.familyName || '') }}</span>
+                        <span>{{ ' (' + (data.patient?.person?.gender | translate) + ') ' }}</span>
+                      </h6>
+                      <p>{{ getPatientIdentifier('OpenMRS ID') }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{ 'Age' | translate }}</h6>
+                    <p>{{ data.patient?.person?.birthdate ? getAge(data.patient?.person?.birthdate) : data.patient?.person?.age }}</p>
+                  </div>
+                  <div class="patient-info-item">
+                    <h6>{{ 'Address' | translate }}</h6>
+                    <p>{{ data.patient?.person?.preferredAddress?.cityVillage?.replace(':', ' : ') }}</p>
+                    <p>{{ data.patient?.person?.preferredAddress?.address1 }} {{ data.patient?.person?.preferredAddress?.address2 ? ', ' + data.patient?.person?.preferredAddress?.address2 : '' }}</p>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{ 'Occupation' | translate }}</h6>
+                    <p>{{ getPersonAttributeValue('occupation') }}</p>
+                  </div>
+                  <div class="patient-info-item">
+                    <h6>{{ 'National ID' | translate }}</h6>
+                    <p>{{ getPersonAttributeValue('NationalID') }}</p>
+                  </div>
+                </div>
+
+                <div class="col-md-3 patient-info-section p-3">
+                  <div class="patient-info-item mb-3">
+                    <h6>{{ 'Contact no.' | translate }}</h6>
+                    <p>{{ getPersonAttributeValue('Telephone Number') }}</p>
+                  </div>
+                  <div class="patient-info-item" *ngIf="data.patient?.person?.abhaNumber">
+                    <h6>{{ 'ABHA Number' | translate }}</h6>
+                    <p>{{ data.patient?.person?.abhaNumber }}</p>
+                  </div>
+                  <div class="patient-info-item" *ngIf="data.patient?.person?.abhaAddress">
+                    <h6>{{ 'ABHA Address' | translate }}</h6>
+                    <p>{{ data.patient?.person?.abhaAddress }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HI Type Tabs -->
+        <div class="col-md-12 p-0">
+          <div class="intel-card">
+            <mat-tab-group class="care-context-tab-group" mat-align-tabs="start" [disableRipple]="true"
+              (selectedIndexChange)="selectedTabIndex = $event">
+              <mat-tab *ngFor="let tab of tabs; let i = index">
+                <ng-template mat-tab-label>
+                  <mat-checkbox [(ngModel)]="tab.selected" (click)="$event.stopPropagation()" class="tab-checkbox"
+                    [attr.data-test-id]="'chkAbdmHiType' + i">
+                  </mat-checkbox>
+                  <span class="tab-label">{{ tab.hiType | translate }}</span>
+                </ng-template>
+                <div class="tab-content-wrapper">
+                  <div class="data-section">
+                    <div class="data-section-content mb-3" *ngFor="let section of tab.sections">
+                      <h3 class="section-title mb-0">{{ section.type | translate }}</h3>
+                      <ul class="items-list">
+                        <li *ngFor="let entry of section.entries">
+                          <div class="list-item p-0">
+                            <label>{{ entry.key }}</label>
+                            <div class="list-item-content">{{ entry.value }}</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="no-data" *ngIf="!tab.sections.length">
+                      <mat-icon>info</mat-icon>
+                      <p>{{ 'No data available' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

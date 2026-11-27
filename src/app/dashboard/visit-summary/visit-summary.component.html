@@ -1027,7 +1027,7 @@
                     </label>
                     <div class="col-sm-9 d-flex align-items-center" data-test-id="divPatientOptions">
                       <div class="pretty p-default p-round" data-test-id="wrapperPatientYes">
-                        <input type="radio" value="{{ 'Yes' | translate }}" data-test-id="radioPatientInteractionYes"
+                        <input type="radio" value="{{ 'Yes' | translate }}" data-test-id="patientRadioYes"
                           (click)="patientInteraction = 'Yes'" [checked]="patientInteraction === 'Yes'"
                           [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
                         <div class="state p-success" data-test-id="statePatientYes">
@@ -1035,7 +1035,7 @@
                         </div>
                       </div>
                       <div class="pretty p-default p-round" data-test-id="wrapperPatientNo">
-                        <input type="radio" value="{{ 'No' | translate }}" data-test-id="radioPatientInteractionNo"
+                        <input type="radio" value="{{ 'No' | translate }}" data-test-id="patientRadioNo"
                           (click)="patientInteraction = 'No'" [checked]="patientInteraction === 'No'"
                           [attr.disabled]="(!isVisitNoteProvider || visitEnded) ? 'disabled' : null" />
                         <div class="state p-success" data-test-id="statePatientNo">

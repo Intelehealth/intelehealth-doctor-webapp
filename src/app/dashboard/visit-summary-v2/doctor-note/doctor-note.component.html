@@ -532,15 +532,11 @@
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['advice']">
 
-  <ng-container *ngIf="showAiAdvice && aiAdvices.length">
+  <ng-container *ngIf="aiAdvices.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Advice</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_advice', aiAdvices)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
-    </div>
-    <div class="vs2-ai-disclaimer">
-      <b>Disclaimer:</b> This AI-generated suggestion is intended to support not replace your clinical judgment and may
-      not account for all relevant factors. Please use your own judgement before acting.
     </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let a of aiAdvices" [class.vs2-dx-quick-on]="isAdviceSelected(a)"
@@ -613,15 +609,11 @@
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['test']">
 
-  <ng-container *ngIf="showAiTests && aiTests.length">
+  <ng-container *ngIf="aiTests.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Tests</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_test', aiTests)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
-    </div>
-    <div class="vs2-ai-disclaimer">
-      <b>Disclaimer:</b> This AI-generated suggestion is intended to support not replace your clinical judgment and may
-      not account for all relevant factors. Please use your own judgement before acting.
     </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let t of aiTests" [class.vs2-dx-quick-on]="isTestSelected(t)"
@@ -683,15 +675,11 @@
   <div class="vs2-divider"></div>
   <div class="vs2-section-body" *ngIf="!collapsed['referral']">
 
-  <ng-container *ngIf="showAiReferral && aiReferrals.length">
+  <ng-container *ngIf="aiReferrals.length">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Referral</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_referral', aiReferrals)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
-    </div>
-    <div class="vs2-ai-disclaimer">
-      <b>Disclaimer:</b> This AI-generated suggestion is intended to support not replace your clinical judgment and may
-      not account for all relevant factors. Please use your own judgement before acting.
     </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let r of aiReferrals" (click)="applyAiReferral(r)">
@@ -779,15 +767,11 @@
     Follow-up is not needed as this patient is being referred to a NAMCO doctor.
   </p>
 
-  <div class="vs2-ai-followup" *ngIf="showAiFollowUp && aiFollowUps.length && !isNamcoReferralConfirmed">
+  <div class="vs2-ai-followup" *ngIf="aiFollowUps.length && !isNamcoReferralConfirmed">
     <div class="vs2-ai-dx-head"><h4 class="vs2-ai-dx-title"><img src="assets/svgs/ai-sparkle.svg" alt="" /> AI-Suggested Follow-up</h4>
     <button type="button" class="vs2-report-issue-btn" (click)="openReportIssue('ttx_followup', aiFollowUps)" title="Report an issue with these suggestions">
       <img src="assets/svgs/alert-triangle.svg" alt="" width="20" height="20" />
     </button>
-    </div>
-    <div class="vs2-ai-disclaimer">
-      <b>Disclaimer:</b> This AI-generated suggestion is intended to support not replace your clinical judgment and may
-      not account for all relevant factors. Please use your own judgement before acting.
     </div>
     <div class="vs2-dx-quick-row">
       <button class="vs2-dx-quick" *ngFor="let f of aiFollowUps" (click)="applyAiFollowUp(f)">
