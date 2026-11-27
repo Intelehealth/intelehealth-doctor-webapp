@@ -1,11 +1,6 @@
 name: nas-ida5-web
 
 on:
-  push:
-    branches:
-      - nas-ida5-development-master
-    tags:
-      - 'v*'          # e.g. v1.0.0, v2.3.1
   workflow_dispatch:  # Allows manual trigger
 
 # Prevent two deployments to the same branch from overlapping
@@ -24,8 +19,6 @@ jobs:
         include:
           - name: nas-staging-new
             host_secret: NASSTAGINGNEW_HOST
-          - name: nas-prod
-            host_secret: NASPROD_HOST
 
     env:
       DEPLOY_HOST: ${{ secrets[matrix.host_secret] }}
